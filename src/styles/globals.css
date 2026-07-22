@@ -1,0 +1,126 @@
+/* ─── Selection ─── */
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* ─── Typography utilities ─── */
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.mono {
+  font-family: 'DM Mono', monospace;
+}
+
+/* ─── Smooth scroll ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 0;
+}
+
+/* ─── Hero portrait ─── */
+.hero-image-wrap {
+  overflow: hidden;
+  border-radius: 1.75rem 1.75rem 0.25rem 0.25rem;
+  transform: rotate(3deg);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+}
+
+.hero-image {
+  display: block;
+  filter: saturate(0.9) contrast(1.03);
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.hero-section:hover .hero-image {
+  transform: scale(1.04);
+}
+
+.hero-vignette {
+  background: radial-gradient(
+    ellipse at 62% 38%,
+    transparent 16%,
+    rgba(16, 16, 16, 0.14) 52%,
+    var(--background) 84%
+  );
+}
+
+/* ─── Project cards ─── */
+.project-art {
+  transform: translateZ(0);
+  transition:
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.7s ease;
+}
+
+.project-card:hover .project-art {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-8px);
+  box-shadow: 0 34px 70px rgba(0, 0, 0, 0.28);
+}
+
+.project-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.24),
+    transparent 38%,
+    rgba(0, 0, 0, 0.2)
+  );
+  pointer-events: none;
+}
+
+/* ─── Marquee ─── */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 34s linear infinite;
+}
+
+.marquee-track:hover .marquee {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ─── Responsive hero ─── */
+@media (max-width: 767px) {
+  .hero-image-wrap {
+    right: -8%;
+    top: 20%;
+    height: 108vw;
+    width: 72vw;
+    min-height: 0;
+    min-width: 0;
+    opacity: 0.88;
+  }
+
+  .hero-vignette {
+    background: radial-gradient(
+      ellipse at 65% 36%,
+      transparent 8%,
+      rgba(16, 16, 16, 0.3) 48%,
+      var(--background) 76%
+    );
+  }
+}
+
+/* ─── Focus visible utility ─── */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
