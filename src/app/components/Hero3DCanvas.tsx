@@ -4,33 +4,40 @@ import { useGLTF, Center, Float, Environment, ContactShadows } from "@react-thre
 import * as THREE from "three";
 import ErrorBoundary from "./ErrorBoundary";
 
-const MODEL_PATH = "/models/Ravanimate%20Logo.glb";
+const MODEL_PATH = "/models/ravanimate-logo.glb";
 
 function LogoModel() {
-  const { scene } = useGLTF(MODEL_PATH);
+  const gltf = useGLTF(MODEL_PATH);
+  const scene = gltf?.scene || (gltf?.scenes && gltf.scenes[0]);
+
   const groupRef = useRef<THREE.Group>(null);
   const idleY = useRef(0);
   const mouse = useRef({ x: 0, y: 0 });
 
-  // Clone scene to avoid re-use issues and ensure materials PBR settings
+  // Clone scene safely to avoid re-use issues and apply PBR settings
   const clonedScene = useMemo(() => {
     if (!scene) return null;
-    const s = scene.clone();
-    s.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        if (mesh.material) {
-          const mat = mesh.material as THREE.MeshStandardMaterial;
-          if (mat) {
-            mat.envMapIntensity = 1.2;
-            mat.needsUpdate = true;
+    try {
+      const s = scene.clone();
+      s.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          if (mesh.material) {
+            const mat = mesh.material as THREE.MeshStandardMaterial;
+            if (mat) {
+              mat.envMapIntensity = 1.2;
+              mat.needsUpdate = true;
+            }
           }
         }
-      }
-    });
-    return s;
+      });
+      return s;
+    } catch (e) {
+      console.warn("Scene clone warning:", e);
+      return scene;
+    }
   }, [scene]);
 
   useEffect(() => {
