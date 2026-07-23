@@ -29,8 +29,22 @@ export default defineConfig({
       // Alias @ to the src directory
       '@': path.resolve(__dirname, './src'),
     },
+    // Force all packages to use the same React instance
+    dedupe: ['react', 'react-dom', 'three'],
+  },
+  optimizeDeps: {
+    // Pre-bundle R3F packages together so they share the same React instance
+    include: [
+      'react',
+      'react-dom',
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'motion/react',
+    ],
   },
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })
+

@@ -1,4 +1,4 @@
-import { useRef, useCallback, Suspense } from "react";
+import { useRef, useCallback, lazy, Suspense } from "react";
 import {
   motion,
   useMotionValue,
@@ -6,7 +6,8 @@ import {
   useTransform,
 } from "motion/react";
 import ErrorBoundary from "./ErrorBoundary";
-import Hero3DCanvas from "./Hero3DCanvas";
+
+const Hero3DCanvas = lazy(() => import("./Hero3DCanvas"));
 
 export default function HeroPortrait() {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -25,13 +26,10 @@ export default function HeroPortrait() {
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!cardRef.current) return;
-
       const rect = cardRef.current.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return;
-
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-
       mouseX.set(x * 2);
       mouseY.set(y * 2);
     },
@@ -53,7 +51,7 @@ export default function HeroPortrait() {
         rotateX,
         rotateY,
         transformPerspective: 1400,
-        transformStyle: "preserve-3d",
+        transformStyle: "preserve-3d" as any,
         willChange: "transform",
       }}
     >
@@ -75,7 +73,7 @@ export default function HeroPortrait() {
                 R
               </div>
               <p className="text-[11px] font-bold tracking-widest text-primary mono uppercase">
-                RAVANMATE CREATIVE
+                RAVANIMATE CREATIVE
               </p>
             </div>
           }
