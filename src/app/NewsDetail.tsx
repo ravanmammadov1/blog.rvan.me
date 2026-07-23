@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { format } from "date-fns";
@@ -66,6 +66,7 @@ const portableTextComponents = {
 
 export default function NewsDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [news, setNews] = useState<NewsItem | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -77,6 +78,16 @@ export default function NewsDetail() {
         .finally(() => setLoading(false));
     }
   }, [slug]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        navigate("/news");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [navigate]);
 
   if (loading) {
     return (

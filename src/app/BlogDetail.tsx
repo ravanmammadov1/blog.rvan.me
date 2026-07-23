@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, ArrowUp } from "lucide-react";
 
@@ -19,8 +19,10 @@ import CommentSection from "./components/CommentSection";
 
 export default function BlogDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
 
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,34 +41,10 @@ export default function BlogDetail() {
         setLoading(true);
         setError(null);
 
-        const article = await client.fetch(
-          `
-          *[_type == "blog" && slug.current == $slug][0]{
-            _id,
-            title,
-            slug,
-            excerpt,
-            body,
-            publishDate,
-            readTime,
-            category,
-            tags,
-            featured,
-            coverImage
-          }
-          `,
-          { slug }
-        );
-
-        setPost(article || null);
-
-        if (article?._id) {
-          const related = await client.fetch(
+        const [article, all] = await Promise.all([
+          client.fetch(
             `
-            *[
-              _type == "blog" &&
-              _id != $id
-            ] | order(publishDate desc)[0...3]{
+            *[_type == "blog" && slug.current == $slug][0]{
               _id,
               title,
               slug,
@@ -80,10 +58,27 @@ export default function BlogDetail() {
               coverImage
             }
             `,
-            { id: article._id }
-          );
+            { slug }
+          ),
+          client.fetch(
+            `
+            *[_type == "blog"] | order(publishDate desc){
+              _id,
+              title,
+              slug,
+              coverImage,
+              category
+            }
+            `
+          ),
+        ]);
 
-          setRelatedPosts(related || []);
+        setPost(article || null);
+        setAllPosts(all || []);
+
+        if (article?._id) {
+          const related = (all || []).filter((p: BlogPost) => p._id !== article._id).slice(0, 3);
+          setRelatedPosts(related);
         }
       } catch (err) {
         console.error("Error fetching blog post:", err);
@@ -104,6 +99,17 @@ export default function BlogDetail() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Keyboard Escape navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        navigate("/blog");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -128,11 +134,11 @@ export default function BlogDetail() {
             {error || "The requested blog post could not be found."}
           </p>
           <Link
-            to="/"
+            to="/blog"
             className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm text-white backdrop-blur-xl transition hover:bg-white/20"
           >
             <ArrowLeft size={16} />
-            Back to Home
+            Back to Blog Archive
           </Link>
         </div>
       </main>
@@ -141,6 +147,15 @@ export default function BlogDetail() {
 
   const imgBuilder = urlFor(post.coverImage);
   const coverUrl = imgBuilder ? imgBuilder.width(1200).url() : undefined;
+
+  const currentIndex = allPosts.findIndex(
+    (p) => p.slug?.current === slug || p._id === post._id
+  );
+  const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+  const nextPost =
+    currentIndex >= 0 && currentIndex < allPosts.length - 1
+      ? allPosts[currentIndex + 1]
+      : null;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -189,6 +204,31 @@ export default function BlogDetail() {
             <AuthorCard />
 
             <CommentSection postId={post._id} postTitle={post.title} />
+
+            {/* Previous / Next Article Navigation */}
+            {(prevPost || nextPost) && (
+              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-border pt-12">
+                {prevPost ? (
+                  <Link
+                    to={`/blog/${prevPost.slug?.current || prevPost._id}`}
+                    className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-6 transition-all hover:border-primary"
+                  >
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← PREVIOUS ARTICLE</span>
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{prevPost.title}</p>
+                  </Link>
+                ) : <div />}
+
+                {nextPost ? (
+                  <Link
+                    to={`/blog/${nextPost.slug?.current || nextPost._id}`}
+                    className="group flex flex-col justify-between items-end rounded-xl border border-border bg-surface p-6 transition-all hover:border-primary text-right"
+                  >
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">NEXT ARTICLE →</span>
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{nextPost.title}</p>
+                  </Link>
+                ) : <div />}
+              </div>
+            )}
 
             <RelatedPosts
               posts={relatedPosts}

@@ -20,6 +20,75 @@ const fadeUp = {
   }),
 };
 
+const fallbackBlogPosts: BlogPost[] = [
+  {
+    _id: "fb1",
+    title: "The 3-Second Rule: First Frames That Retain Attention",
+    slug: { current: "the-3-second-rule" },
+    excerpt: "If your creative doesn't capture visual attention within three seconds, it never will. Here is how to structure opening frames for maximum impact.",
+    category: "Marketing",
+    tags: ["Hook", "Motion", "Performance Creative"],
+    featured: true,
+    publishDate: "2025-06-15",
+    readTime: "4 min read",
+  },
+  {
+    _id: "fb2",
+    title: "Kill Your Darlings: Editing Creative Work for Clarity",
+    slug: { current: "kill-your-darlings" },
+    excerpt: "The hardest part of creative direction is cutting elements you love that fail to serve the core message. Ego is the enemy of visual clarity.",
+    category: "Design",
+    tags: ["Process", "Creative Direction", "Editing"],
+    featured: false,
+    publishDate: "2025-05-20",
+    readTime: "5 min read",
+  },
+  {
+    _id: "fb3",
+    title: "Constraints Are Fuel: Turning Limits Into Breakthrough Ideas",
+    slug: { current: "constraints-are-fuel" },
+    excerpt: "A blank canvas breeds hesitation; a tight creative brief produces focus. How boundaries force breakthrough design decisions.",
+    category: "Design",
+    tags: ["Strategy", "Creative Process"],
+    featured: false,
+    publishDate: "2025-04-10",
+    readTime: "4 min read",
+  },
+  {
+    _id: "fb4",
+    title: "Gestalt Principles in Branding and Motion",
+    slug: { current: "gestalt-principles-in-branding" },
+    excerpt: "How the human brain perceives unified visual forms from individual components: proximity, similarity, closure, and continuity.",
+    category: "Design",
+    tags: ["Gestalt", "Branding", "Visual Psychology"],
+    featured: false,
+    publishDate: "2025-03-18",
+    readTime: "6 min read",
+  },
+  {
+    _id: "fb5",
+    title: "The AIDA Framework: Structuring High-Converting Creative",
+    slug: { current: "aida-framework-marketing" },
+    excerpt: "Attention, Interest, Desire, Action: the time-tested framework for building landing pages, video ads, and brand campaigns.",
+    category: "Marketing",
+    tags: ["AIDA", "Performance Creative", "Copywriting"],
+    featured: false,
+    publishDate: "2025-02-28",
+    readTime: "5 min read",
+  },
+  {
+    _id: "fb6",
+    title: "Visual Hierarchy: Guiding the User's Eye",
+    slug: { current: "visual-hierarchy-principles" },
+    excerpt: "Visual hierarchy is the arrangement of design elements in order of visual importance. Learn how to control focus through scale, contrast, and spatial placement.",
+    category: "Design",
+    tags: ["Visual Hierarchy", "UI Design", "Layout"],
+    featured: false,
+    publishDate: "2025-01-15",
+    readTime: "5 min read",
+  },
+];
+
 export default function BlogArchive() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,9 +118,16 @@ export default function BlogArchive() {
       `
       )
       .then((data) => {
-        setPosts(data || []);
+        if (data && data.length > 0) {
+          setPosts(data);
+        } else {
+          setPosts(fallbackBlogPosts);
+        }
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error("Error fetching blog archive from Sanity:", err);
+        setPosts(fallbackBlogPosts);
+      })
       .finally(() => setLoading(false));
   }, []);
 

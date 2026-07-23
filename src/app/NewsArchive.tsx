@@ -20,6 +20,33 @@ const fadeUp = {
   }),
 };
 
+const fallbackNewsList: NewsItem[] = [
+  {
+    _id: "fn1",
+    title: "Ravan Mammadov Launches Redesigned Portfolio & CMS System",
+    slug: { current: "portfolio-cms-system-launch" },
+    category: "Milestone",
+    excerpt: "Unveiling a new agency-quality portfolio website powered by Vite, React, and Sanity Studio CMS.",
+    publishedAt: "2025-07-01T12:00:00Z",
+  },
+  {
+    _id: "fn2",
+    title: "New Motion Design & Brand Systems Case Study Published",
+    slug: { current: "motion-design-case-study-release" },
+    category: "Project Launch",
+    excerpt: "Exploring the brand motion system and creative execution for automotive and tech campaigns.",
+    publishedAt: "2025-06-20T12:00:00Z",
+  },
+  {
+    _id: "fn3",
+    title: "Integrating 3D Interactive Embeds into Brand Experiences",
+    slug: { current: "3d-interactive-embeds-update" },
+    category: "Workflow",
+    excerpt: "How WebGL and 3D embeds are replacing static images in high-converting portfolio hero sections.",
+    publishedAt: "2025-05-15T12:00:00Z",
+  },
+];
+
 export default function NewsArchive() {
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +56,17 @@ export default function NewsArchive() {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchNews()
-      .then((data) => setNewsList(data))
+      .then((data) => {
+        if (data && data.length > 0) {
+          setNewsList(data);
+        } else {
+          setNewsList(fallbackNewsList);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching news from Sanity:", err);
+        setNewsList(fallbackNewsList);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -80,7 +117,7 @@ export default function NewsArchive() {
             <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
             <span>BACK TO HOME</span>
           </Link>
-          <div className="flex items-center gap-6 text-[11px] font-semibold tracking-[.16em]">
+          <div className="flex items-center gap-6 text-[11px] font-semibold tracking-[.16em] uppercase">
             <Link to="/news" className="text-primary">
               NEWS
             </Link>
@@ -103,12 +140,12 @@ export default function NewsArchive() {
             animate="visible"
             custom={0.1}
           >
-            <p className="eyebrow text-primary mb-4">ANNOUNCEMENTS & RELEASES</p>
+            <p className="eyebrow text-primary mb-4">ANNOUNCEMENTS & FIELD NOTES</p>
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-4xl">
-              News & Updates.
+              Latest News.
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-              Stay up to date with major announcements, new releases, media features, and creative progress.
+              Updates on creative launches, major client milestones, design system releases, and technical breakdowns.
             </p>
           </motion.div>
 
@@ -139,21 +176,18 @@ export default function NewsArchive() {
 
             {/* Search Input */}
             <div className="relative w-full md:w-80">
-              <Search
-                size={16}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
-              />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <input
                 type="text"
                 placeholder="Search news..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-border bg-surface pl-10 pr-10 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                className="w-full rounded-full border border-border bg-surface pl-10 pr-9 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   <X size={14} />
                 </button>
@@ -163,82 +197,80 @@ export default function NewsArchive() {
         </div>
       </section>
 
-      {/* Grid section */}
-      <section className="px-6 pb-32 md:px-10">
+      {/* News Grid */}
+      <section className="px-6 pb-28 md:px-10">
         <div className="mx-auto max-w-[1600px]">
           {loading ? (
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="h-96 rounded-lg border border-border bg-surface animate-pulse" />
+                <div key={n} className="h-64 rounded-xl border border-border bg-surface animate-pulse" />
               ))}
             </div>
           ) : filteredNews.length === 0 ? (
-            <div className="py-24 text-center border border-border rounded-lg bg-surface/50">
-              <p className="text-lg text-muted-foreground">No news articles found matching your criteria.</p>
+            <div className="rounded-2xl border border-border bg-surface p-12 text-center my-12">
+              <p className="text-lg text-muted-foreground">No news announcements match your search.</p>
+              <button
+                onClick={() => {
+                  setActiveCategory("All");
+                  setSearchQuery("");
+                }}
+                className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:underline"
+              >
+                RESET FILTERS
+              </button>
             </div>
           ) : (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {filteredNews.map((item, index) => {
-                const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
+                const newsSlug = item.slug?.current || item._id;
                 const formattedDate = item.publishedAt
                   ? format(new Date(item.publishedAt), "MMM d, yyyy")
                   : null;
-
-                const newsSlug = item.slug?.current || item._id;
+                const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
 
                 return (
                   <motion.article
-                    key={item._id}
+                    key={item._id || index}
                     variants={fadeUp}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, amount: 0.1 }}
+                    viewport={{ once: true, amount: 0.15 }}
                     custom={index * 0.08}
-                    className="group flex flex-col justify-between rounded-lg border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50"
+                    className="group rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary flex flex-col justify-between"
                   >
-                    <Link to={`/news/${newsSlug}`} className="flex flex-col justify-between h-full">
-                      <div>
-                        {imgUrl && (
-                          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md bg-background mb-6">
-                            <img
-                              src={imgUrl}
-                              alt={item.title}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground mono mb-3">
-                          {item.category && (
-                            <span className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-primary">
-                              <Tag size={12} />
-                              {item.category}
-                            </span>
-                          )}
-                          {formattedDate && (
-                            <span className="flex items-center gap-1">
-                              <Calendar size={12} />
-                              {formattedDate}
-                            </span>
-                          )}
+                    <Link to={`/news/${newsSlug}`}>
+                      {imgUrl && (
+                        <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background">
+                          <img
+                            src={imgUrl}
+                            alt={item.title}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
                         </div>
+                      )}
 
-                        <h2 className="text-xl font-semibold tracking-tight transition-colors group-hover:text-primary">
-                          {item.title}
-                        </h2>
-
-                        {item.excerpt && (
-                          <p className="mt-3 text-xs leading-relaxed text-muted-foreground line-clamp-3">
-                            {item.excerpt}
-                          </p>
-                        )}
+                      <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
+                        {item.category && <span className="text-primary">{item.category}</span>}
+                        {formattedDate && <span>{formattedDate}</span>}
                       </div>
 
-                      <div className="mt-6 flex items-center justify-between border-t border-border/50 pt-4 text-xs font-bold tracking-wider text-primary mono">
-                        <span>READ FULL ARTICLE</span>
-                        <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      </div>
+                      <h3 className="text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3">
+                        {item.title}
+                      </h3>
+
+                      {item.excerpt && (
+                        <p className="text-xs leading-relaxed text-muted-foreground line-clamp-3 mb-6">
+                          {item.excerpt}
+                        </p>
+                      )}
                     </Link>
+
+                    <div className="border-t border-border/50 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
+                      <Link to={`/news/${newsSlug}`} className="inline-flex items-center gap-1.5 hover:underline">
+                        <span>READ FULL ARTICLE</span>
+                        <ArrowUpRight size={14} />
+                      </Link>
+                    </div>
                   </motion.article>
                 );
               })}
@@ -251,12 +283,9 @@ export default function NewsArchive() {
       <footer className="border-t border-border px-6 py-10 md:px-10">
         <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
           <span>© {new Date().getFullYear()} RAVAN MAMMADOV</span>
-          <div className="flex gap-6">
-            <Link to="/" className="hover:text-primary">HOME</Link>
-            <Link to="/news" className="hover:text-primary">NEWS</Link>
-            <Link to="/tools" className="hover:text-primary">TOOLS</Link>
-            <Link to="/blog" className="hover:text-primary">BLOG</Link>
-          </div>
+          <Link to="/" className="transition-colors hover:text-primary">
+            HOME
+          </Link>
         </div>
       </footer>
     </main>

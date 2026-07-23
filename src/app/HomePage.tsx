@@ -547,16 +547,13 @@ export default function HomePage() {
             ))}
           </div>
 
-          <motion.button
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+          <Link
+            to="/work"
             className="group mt-16 flex w-full items-center justify-between border-y border-black/15 py-6 text-xs font-bold tracking-[.18em] transition-all duration-300 hover:px-4"
           >
             <span>VIEW FULL ARCHIVE</span>
             <MoveUpRight className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" size={17} />
-          </motion.button>
+          </Link>
         </div>
       </section>
 
