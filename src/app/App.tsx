@@ -1,4 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 import HomePage from "./HomePage";
 import WorkArchive from "./WorkArchive";
 import WorkDetail from "./WorkDetail";
@@ -11,16 +14,20 @@ import NotFound from "./NotFound";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/work" element={<WorkArchive />} />
-      <Route path="/work/:slug" element={<WorkDetail />} />
-      <Route path="/blog" element={<BlogArchive />} />
-      <Route path="/blog/:slug" element={<BlogDetail />} />
-      <Route path="/news" element={<NewsArchive />} />
-      <Route path="/news/:slug" element={<NewsDetail />} />
-      <Route path="/tools" element={<ToolsArchive />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/work" element={<WorkArchive />} />
+        <Route path="/work/:slug" element={<WorkDetail />} />
+        <Route path="/blog" element={<BlogArchive />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
+        <Route path="/news" element={<NewsArchive />} />
+        <Route path="/news/:slug" element={<NewsDetail />} />
+        <Route path="/tools" element={<ToolsArchive />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Analytics />
+      <SpeedInsights />
+    </>
   );
 }

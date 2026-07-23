@@ -11,7 +11,6 @@ function LogoModel() {
   const scene = gltf?.scene || (gltf?.scenes && gltf.scenes[0]);
 
   const groupRef = useRef<THREE.Group>(null);
-  const idleY = useRef(0);
   const mouse = useRef({ x: 0, y: 0 });
 
   // Clone scene safely to avoid re-use issues and apply PBR settings
@@ -54,24 +53,21 @@ function LogoModel() {
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // Slow idle rotation around Y
-    idleY.current += delta * 0.2;
-
-    // Max 5 degrees tilt = 5 * (Math.PI / 180) ≈ 0.087 radians
-    const maxTilt = 5 * (Math.PI / 180);
-    const targetY = idleY.current + mouse.current.x * maxTilt;
+    // Max 6 degrees tilt = 6 * (Math.PI / 180) ≈ 0.105 radians
+    const maxTilt = 6 * (Math.PI / 180);
+    const targetY = mouse.current.x * maxTilt;
     const targetX = -mouse.current.y * maxTilt;
 
-    // Smooth lerp (spring damping effect)
+    // Premium spring-damped lerp
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
       targetY,
-      delta * 4
+      delta * 5
     );
     groupRef.current.rotation.x = THREE.MathUtils.lerp(
       groupRef.current.rotation.x,
       targetX,
-      delta * 4
+      delta * 5
     );
   });
 
@@ -79,9 +75,9 @@ function LogoModel() {
 
   return (
     <group ref={groupRef}>
-      <Float speed={1.8} rotationIntensity={0.15} floatIntensity={0.5}>
+      <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.3}>
         <Center>
-          <primitive object={clonedScene} scale={1.8} />
+          <primitive object={clonedScene} scale={1.15} />
         </Center>
       </Float>
     </group>
@@ -154,14 +150,14 @@ export default function Hero3DCanvas() {
             {/* Realistic PBR Environment Lighting */}
             <Environment preset="city" environmentIntensity={0.8} />
 
-            {/* 3D Model with Floating & Mouse Motion */}
+            {/* 3D Model with Subtle Mouse Interaction */}
             <LogoModel />
 
             {/* Soft Contact Shadows */}
             <ContactShadows
-              position={[0, -1.8, 0]}
+              position={[0, -1.3, 0]}
               opacity={0.55}
-              scale={8}
+              scale={6}
               blur={2.2}
               far={4}
               color="#000000"
