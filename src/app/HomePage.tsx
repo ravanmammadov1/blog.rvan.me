@@ -76,14 +76,14 @@ const projects = [
 ];
 
 const services = [
-  { name: "Motion Design", relatedBlogSlug: "motion-design-principles", externalLink: "https://www.motiondesign.school" },
-  { name: "Creative Direction", relatedBlogSlug: "creative-direction-frameworks", externalLink: "https://www.adweek.com" },
-  { name: "Brand Identity", relatedBlogSlug: "gestalt-principles-in-branding", externalLink: "https://www.underconsideration.com/brandnew" },
-  { name: "3D Design", relatedBlogSlug: "3d-visual-hierarchy-tactics", externalLink: "https://www.vectary.com" },
-  { name: "Digital Marketing", relatedBlogSlug: "aida-framework-marketing", externalLink: "https://www.marketingweek.com" },
-  { name: "Performance Creative", relatedBlogSlug: "growth-hacking-performance-creative", externalLink: "https://www.marketingprofs.com" },
-  { name: "Social Media Design", relatedBlogSlug: "scarcity-principle-fomo-marketing", externalLink: "https://www.socialmediatoday.com" },
-  { name: "AI Assisted Design", relatedBlogSlug: "ai-assisted-creative-workflows", externalLink: "https://www.smashingmagazine.com" },
+  { name: "Motion Design", relatedBlogSlug: "physics-of-kinetic-motion-timing-easing-curves", externalLink: "https://www.motiondesign.school" },
+  { name: "Creative Direction", relatedBlogSlug: "client-communication-handling-revisions-design-choices", externalLink: "https://www.adweek.com" },
+  { name: "Brand Identity", relatedBlogSlug: "building-brand-worlds-visual-systems", externalLink: "https://www.underconsideration.com/brandnew" },
+  { name: "3D Design", relatedBlogSlug: "blender-3d-product-visualization-lighting-materials", externalLink: "https://www.vectary.com" },
+  { name: "Digital Marketing", relatedBlogSlug: "saas-landing-page-ui-blueprints-conversion", externalLink: "https://www.marketingweek.com" },
+  { name: "Performance Creative", relatedBlogSlug: "aida-framework-performance-creative-attention-action", externalLink: "https://www.marketingprofs.com" },
+  { name: "Social Media Design", relatedBlogSlug: "short-form-video-blueprint-hooks-retention", externalLink: "https://www.socialmediatoday.com" },
+  { name: "AI Assisted Design", relatedBlogSlug: "ai-assisted-design-workflows-creativity", externalLink: "https://www.smashingmagazine.com" },
 ];
 
 const marqueeWords = [
@@ -107,17 +107,17 @@ const principles = [
   {
     label: "ATTENTION",
     tools: "In a world of infinite scroll, attention is the only real currency.",
-    relatedBlogSlug: "the-3-second-rule",
+    relatedBlogSlug: "10-graphic-design-rules-art-directors-never-break",
   },
   {
     label: "MOTION",
     tools: "Static explains. Motion persuades. How it moves is the message.",
-    relatedBlogSlug: "motion-design-principles",
+    relatedBlogSlug: "physics-of-kinetic-motion-timing-easing-curves",
   },
   {
     label: "TENSION",
     tools: "Great work isn't calm — it's controlled tension that keeps the eye awake.",
-    relatedBlogSlug: "gestalt-principles-in-branding",
+    relatedBlogSlug: "building-brand-worlds-visual-systems",
   },
 ];
 
@@ -128,7 +128,7 @@ const fieldNotes = [
     badge: "HOOK",
     desc1: "If it doesn't earn a second look in three seconds, it never will. The first frame does 80% of the work.",
     desc2: "Lead with tension, contrast or a question — never with a warm-up. The scroll is merciless and it never sleeps.",
-    relatedBlogSlug: "the-3-second-rule",
+    relatedBlogSlug: "10-graphic-design-rules-art-directors-never-break",
   },
   {
     role: "Kill your darlings",
@@ -136,7 +136,7 @@ const fieldNotes = [
     badge: "CRAFT",
     desc1: "The idea you love most is usually the one holding the work back. Ego is the enemy of clarity.",
     desc2: "Cut anything that serves the maker more than the message. What remains should feel inevitable, not decorated.",
-    relatedBlogSlug: "kill-your-darlings",
+    relatedBlogSlug: "client-communication-handling-revisions-design-choices",
   },
   {
     role: "Constraints are fuel",
@@ -144,7 +144,7 @@ const fieldNotes = [
     badge: "PROCESS",
     desc1: "A blank canvas is paralysing. A tight brief is a launchpad. Limits force the interesting decisions.",
     desc2: "The best ideas are born the moment someone says it can't be done — that's where the real design begins.",
-    relatedBlogSlug: "constraints-are-fuel",
+    relatedBlogSlug: "overcoming-creative-burnout-design-frameworks",
   },
 ];
 

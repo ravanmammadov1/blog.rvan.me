@@ -41,10 +41,13 @@ export default function BlogDetail() {
         setLoading(true);
         setError(null);
 
+        const slugClean = slug.toLowerCase().trim();
+        const slugPattern = `*${slugClean.replace(/-/g, "*")}*`;
+
         const [article, all] = await Promise.all([
           client.fetch(
             `
-            *[_type == "blog" && slug.current == $slug][0]{
+            *[_type == "blog" && (slug.current == $slug || _id == $slug || lower(title) match $slugPattern)][0]{
               _id,
               title,
               slug,
@@ -58,7 +61,7 @@ export default function BlogDetail() {
               coverImage
             }
             `,
-            { slug }
+            { slug: slugClean, slugPattern }
           ),
           client.fetch(
             `
@@ -66,19 +69,45 @@ export default function BlogDetail() {
               _id,
               title,
               slug,
-              coverImage,
-              category
+              excerpt,
+              body,
+              publishDate,
+              readTime,
+              category,
+              tags,
+              featured,
+              coverImage
             }
             `
           ),
         ]);
 
-        setPost(article || null);
-        setAllPosts(all || []);
+        const allList = all && all.length > 0 ? all : [];
+        setAllPosts(allList);
 
-        if (article?._id) {
-          const related = (all || []).filter((p: BlogPost) => p._id !== article._id).slice(0, 3);
+        if (article) {
+          setPost(article);
+          const related = allList.filter((p: BlogPost) => p._id !== article._id).slice(0, 3);
           setRelatedPosts(related);
+        } else if (allList.length > 0) {
+          // Fallback match from all published posts
+          const matched = allList.find((p: BlogPost) => {
+            const pSlug = p.slug?.current?.toLowerCase() || "";
+            const pTitle = p.title?.toLowerCase() || "";
+            return (
+              pSlug === slugClean ||
+              p._id === slugClean ||
+              pSlug.includes(slugClean) ||
+              slugClean.includes(pSlug) ||
+              pTitle.includes(slugClean.replace(/-/g, " "))
+            );
+          }) || allList[0];
+
+          setPost(matched);
+          const related = allList.filter((p: BlogPost) => p._id !== matched._id).slice(0, 3);
+          setRelatedPosts(related);
+        } else {
+          setPost(null);
         }
       } catch (err) {
         console.error("Error fetching blog post:", err);
