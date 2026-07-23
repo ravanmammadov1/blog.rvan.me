@@ -21,6 +21,9 @@ import {
   Target,
   Layers,
   TrendingUp,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 import RavanPhoto from "@/imports/Ravan.png";
@@ -181,6 +184,51 @@ export default function HomePage() {
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
   const [sanityProjects, setSanityProjects] = useState<ProjectItem[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
+
+  // Contact Form State
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactHoneypot, setContactHoneypot] = useState("");
+  const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [contactErrorMessage, setContactErrorMessage] = useState("");
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (contactStatus === "loading") return;
+
+    setContactStatus("loading");
+    setContactErrorMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactName,
+          email: contactEmail,
+          projectDetails: contactMessage,
+          honeypot: contactHoneypot,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit inquiry.");
+      }
+
+      setContactStatus("success");
+      setContactName("");
+      setContactEmail("");
+      setContactMessage("");
+      setContactHoneypot("");
+    } catch (err: any) {
+      console.error("Contact form error:", err);
+      setContactStatus("error");
+      setContactErrorMessage(err.message || "Something went wrong. Please try again or send an email directly.");
+    }
+  };
 
   useEffect(() => {
     fetchSiteSettings().then((data) => {
@@ -919,53 +967,100 @@ export default function HomePage() {
                 Fill out the details below and I'll respond within 24 hours.
               </p>
 
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert("Thank you for your message! Ravan will get back to you shortly.");
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                    YOUR NAME
-                  </label>
+              {contactStatus === "success" ? (
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600">
+                    <CheckCircle2 size={24} />
+                  </div>
+                  <h4 className="text-lg font-bold text-black mb-2">Inquiry Received!</h4>
+                  <p className="text-xs text-black/70 leading-relaxed mb-6">
+                    Thank you for reaching out. Your message has been routed directly to Ravan's inbox.
+                  </p>
+                  <button
+                    onClick={() => setContactStatus("idle")}
+                    className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-[10px] font-bold tracking-widest text-white uppercase hover:bg-primary hover:text-black transition-colors mono"
+                  >
+                    SEND ANOTHER MESSAGE
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  {/* Anti-spam honeypot */}
                   <input
                     type="text"
-                    required
-                    placeholder="Jane Doe"
-                    className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none"
+                    name="hp_field"
+                    value={contactHoneypot}
+                    onChange={(e) => setContactHoneypot(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className="hidden"
                   />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                    YOUR EMAIL
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="jane@company.com"
-                    className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                    PROJECT DETAILS
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    placeholder="Tell me about your timeline, scope, and vision..."
-                    className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full rounded-lg bg-black py-4 text-xs font-bold tracking-[.18em] uppercase text-white hover:bg-primary hover:text-black transition-colors"
-                >
-                  SUBMIT INQUIRY
-                </button>
-              </form>
+
+                  {contactStatus === "error" && (
+                    <div className="flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-700 text-xs font-medium">
+                      <AlertCircle size={16} className="mt-0.5 flex-shrink-0 text-red-600" />
+                      <p>{contactErrorMessage}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
+                      YOUR NAME
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contactName}
+                      onChange={(e) => setContactName(e.target.value)}
+                      placeholder="Jane Doe"
+                      disabled={contactStatus === "loading"}
+                      className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
+                      YOUR EMAIL
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                      placeholder="jane@company.com"
+                      disabled={contactStatus === "loading"}
+                      className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
+                      PROJECT DETAILS
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={contactMessage}
+                      onChange={(e) => setContactMessage(e.target.value)}
+                      placeholder="Tell me about your timeline, scope, and vision..."
+                      disabled={contactStatus === "loading"}
+                      className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={contactStatus === "loading"}
+                    className="w-full rounded-lg bg-black py-4 text-xs font-bold tracking-[.18em] uppercase text-white hover:bg-primary hover:text-black transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    {contactStatus === "loading" ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span>SUBMITTING INQUIRY...</span>
+                      </>
+                    ) : (
+                      <span>SUBMIT INQUIRY</span>
+                    )}
+                  </button>
+                </form>
+              )}
             </motion.div>
           </div>
         </div>
