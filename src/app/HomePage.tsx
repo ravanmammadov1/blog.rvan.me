@@ -33,6 +33,7 @@ import coverLimitless from "@/imports/cbfd4b251276815.6a33abf0bf48e.png";
 import coverOmoda from "@/imports/063f86251210609.6a4670b82b027.png";
 import { client, urlFor } from "../lib/sanityClient";
 import { fetchSiteSettings, fetchProjects, fetchAboutSection } from "../lib/sanityQueries";
+import SiteHeader from "./components/SiteHeader";
 import { SiteSettings, ProjectItem, AboutSection as IAboutSection } from "../types/cms";
 import BlogSection from "./components/blog/BlogSection";
 import HeroPortrait from "./components/HeroPortrait";
@@ -348,110 +349,8 @@ export default function HomePage() {
         style={{ left: springX, top: springY }}
       />
 
-      {/* ── Header ── */}
-      <motion.header className="fixed inset-x-0 top-0 z-50">
-        <motion.div className="absolute inset-0 bg-background/90 backdrop-blur-md" style={{ opacity: headerBg }} />
-        <div className="relative mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10 md:py-6">
-          <button
-            onClick={() => scrollTo("top")}
-            className="group flex items-center gap-3 text-left mix-blend-difference"
-            aria-label="Back to top"
-          >
-            {siteSettings?.logo ? (
-              <img
-                src={urlFor(siteSettings.logo)?.url() || ""}
-                alt="Ravan Mammadov Logo"
-                className="h-10 w-10 rounded-full object-contain border border-white/50 p-1"
-              />
-            ) : (
-              <span className="grid h-10 w-10 place-items-center rounded-full border border-white/50 text-sm font-bold transition-transform duration-500 group-hover:rotate-45">
-                R
-              </span>
-            )}
-            <span className="hidden text-[10px] font-bold leading-tight tracking-[.24em] sm:block">
-              RAVAN
-              <br />
-              MAMMADOV
-            </span>
-          </button>
-
-          <nav className="hidden items-center gap-8 text-[11px] font-semibold tracking-[.16em] uppercase mix-blend-difference lg:flex">
-            {navItems.map((item) =>
-              item.type === "link" ? (
-                <Link
-                  key={item.label}
-                  to={item.target}
-                  className="text-[11px] font-semibold tracking-[.16em] uppercase transition-colors duration-300 hover:text-primary"
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <button
-                  key={item.label}
-                  onClick={() => scrollTo(item.target)}
-                  className="text-[11px] font-semibold tracking-[.16em] uppercase transition-colors duration-300 hover:text-primary"
-                >
-                  {item.label}
-                </button>
-              )
-            )}
-          </nav>
-
-          <button
-            onClick={() => scrollTo("contact")}
-            className="mix-blend-difference hidden items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-[10px] font-bold tracking-[.16em] transition duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground sm:flex"
-          >
-            {"LET'S TALK"} <ArrowUpRight size={13} />
-          </button>
-
-          <button
-            className="mix-blend-difference grid h-10 w-10 place-items-center rounded-full border border-white/40 lg:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-      </motion.header>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35, ease: EASE }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-background px-8 pt-16 lg:hidden"
-          >
-            {navItems.map((item, i) =>
-              item.type === "link" ? (
-                <Link
-                  key={item.label}
-                  to={item.target}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-baseline gap-4 border-b border-border py-6 text-left text-4xl font-semibold uppercase tracking-tight transition-colors hover:text-primary"
-                >
-                  <span className="mono text-xs text-muted-foreground">0{i + 1}</span>
-                  {item.label}
-                </Link>
-              ) : (
-                <motion.button
-                  key={item.label}
-                  initial={{ opacity: 0, x: -24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.4 }}
-                  onClick={() => scrollTo(item.target)}
-                  className="flex items-baseline gap-4 border-b border-border py-6 text-left text-4xl font-semibold uppercase tracking-tight transition-colors hover:text-primary"
-                >
-                  <span className="mono text-xs text-muted-foreground">0{i + 1}</span>
-                  {item.label}
-                </motion.button>
-              )
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Unified Header ── */}
+      <SiteHeader siteSettings={siteSettings} />
 
       {/* ── Hero ── */}
       <section

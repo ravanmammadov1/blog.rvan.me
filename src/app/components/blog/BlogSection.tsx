@@ -34,21 +34,21 @@ export default function BlogSection({ posts }: BlogSectionProps) {
   }, [posts]);
 
   const featuredPost = useMemo(() => {
-    return posts.find((post) => post.featured);
+    return posts.find((post) => post.featured) || posts[0];
   }, [posts]);
 
   const filteredPosts = useMemo(() => {
     const list = posts.filter((post) => post._id !== featuredPost?._id);
 
     if (activeCategory === "All") {
-      return list;
+      return list.slice(0, 3); // Display max 3 cards on homepage
     }
 
-    return list.filter((post) => post.category === activeCategory);
+    return list.filter((post) => post.category === activeCategory).slice(0, 3);
   }, [posts, activeCategory, featuredPost]);
 
   return (
-    <section id="blog" className="px-6 py-28 md:px-10 md:py-40">
+    <section id="blog" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
       <div className="mx-auto max-w-[1600px]">
         {/* Section header */}
         <motion.div
@@ -69,7 +69,7 @@ export default function BlogSection({ posts }: BlogSectionProps) {
             to="/blog"
             className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            VIEW ALL
+            EXPLORE ALL ARTICLES ({posts.length})
             <ArrowUpRight
               size={14}
               className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -91,9 +91,6 @@ export default function BlogSection({ posts }: BlogSectionProps) {
             </div>
             <p className="text-lg font-medium text-muted-foreground">
               Articles coming soon.
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground/60">
-              Fresh perspectives on design, motion, and creative strategy.
             </p>
           </motion.div>
         ) : (
@@ -144,20 +141,20 @@ export default function BlogSection({ posts }: BlogSectionProps) {
               ))}
             </motion.div>
 
-            {/* View all link — mobile */}
+            {/* Explore Blog Archive CTA */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="mt-12 md:hidden"
+              className="mt-16 flex justify-center"
             >
               <Link
                 to="/blog"
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-border py-4 text-xs font-bold tracking-[.14em] text-muted-foreground transition hover:border-primary hover:text-primary"
+                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-lg"
               >
-                VIEW ALL ARTICLES
-                <ArrowUpRight size={14} />
+                EXPLORE FULL BLOG ARCHIVE ({posts.length} ARTICLES)
+                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </motion.div>
           </>

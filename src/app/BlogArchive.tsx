@@ -1,13 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowLeft, Search, X } from "lucide-react";
+import { Search, X, ArrowLeft } from "lucide-react";
 
 import { client } from "../lib/sanityClient";
+import { fetchSiteSettings } from "../lib/sanityQueries";
+import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import BlogCard from "./components/blog/BlogCard";
 import CategoryFilter from "./components/blog/CategoryFilter";
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -32,64 +35,10 @@ const fallbackBlogPosts: BlogPost[] = [
     publishDate: "2025-06-15",
     readTime: "4 min read",
   },
-  {
-    _id: "fb2",
-    title: "Kill Your Darlings: Editing Creative Work for Clarity",
-    slug: { current: "kill-your-darlings" },
-    excerpt: "The hardest part of creative direction is cutting elements you love that fail to serve the core message. Ego is the enemy of visual clarity.",
-    category: "Design",
-    tags: ["Process", "Creative Direction", "Editing"],
-    featured: false,
-    publishDate: "2025-05-20",
-    readTime: "5 min read",
-  },
-  {
-    _id: "fb3",
-    title: "Constraints Are Fuel: Turning Limits Into Breakthrough Ideas",
-    slug: { current: "constraints-are-fuel" },
-    excerpt: "A blank canvas breeds hesitation; a tight creative brief produces focus. How boundaries force breakthrough design decisions.",
-    category: "Design",
-    tags: ["Strategy", "Creative Process"],
-    featured: false,
-    publishDate: "2025-04-10",
-    readTime: "4 min read",
-  },
-  {
-    _id: "fb4",
-    title: "Gestalt Principles in Branding and Motion",
-    slug: { current: "gestalt-principles-in-branding" },
-    excerpt: "How the human brain perceives unified visual forms from individual components: proximity, similarity, closure, and continuity.",
-    category: "Design",
-    tags: ["Gestalt", "Branding", "Visual Psychology"],
-    featured: false,
-    publishDate: "2025-03-18",
-    readTime: "6 min read",
-  },
-  {
-    _id: "fb5",
-    title: "The AIDA Framework: Structuring High-Converting Creative",
-    slug: { current: "aida-framework-marketing" },
-    excerpt: "Attention, Interest, Desire, Action: the time-tested framework for building landing pages, video ads, and brand campaigns.",
-    category: "Marketing",
-    tags: ["AIDA", "Performance Creative", "Copywriting"],
-    featured: false,
-    publishDate: "2025-02-28",
-    readTime: "5 min read",
-  },
-  {
-    _id: "fb6",
-    title: "Visual Hierarchy: Guiding the User's Eye",
-    slug: { current: "visual-hierarchy-principles" },
-    excerpt: "Visual hierarchy is the arrangement of design elements in order of visual importance. Learn how to control focus through scale, contrast, and spatial placement.",
-    category: "Design",
-    tags: ["Visual Hierarchy", "UI Design", "Layout"],
-    featured: false,
-    publishDate: "2025-01-15",
-    readTime: "5 min read",
-  },
 ];
 
 export default function BlogArchive() {
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -98,6 +47,10 @@ export default function BlogArchive() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    fetchSiteSettings().then((data) => {
+      if (data) setSiteSettings(data);
+    });
 
     client
       .fetch(
@@ -173,34 +126,12 @@ export default function BlogArchive() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="Blog — Ravan Mammadov"
-        description="Insights on motion design, creative direction, brand building, and the intersection of design and performance."
+        title="Blog & Insights — Ravan Mammadov"
+        description="Insights on motion design, creative direction, brand building, and performance creative strategy."
       />
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10">
-          <Link
-            to="/"
-            className="group flex items-center gap-3 text-xs font-bold tracking-[.18em] uppercase hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-            <span>BACK TO HOME</span>
-          </Link>
-
-          <div className="flex items-center gap-6 text-[11px] font-semibold tracking-[.16em] uppercase">
-            <Link to="/news" className="hover:text-primary transition-colors">
-              NEWS
-            </Link>
-            <Link to="/tools" className="hover:text-primary transition-colors">
-              TOOLS
-            </Link>
-            <Link to="/blog" className="text-primary">
-              BLOG
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Global Unified Header */}
+      <SiteHeader siteSettings={siteSettings} />
 
       <div className="mx-auto max-w-[1600px] px-6 py-20 md:px-10 md:py-28">
         {/* Page heading */}

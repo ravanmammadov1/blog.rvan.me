@@ -4,10 +4,11 @@ import { motion } from "motion/react";
 import { ArrowLeft, ArrowUpRight, Calendar, User, ExternalLink, Tag } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 
-import { fetchProjectBySlug, fetchProjects } from "../lib/sanityQueries";
+import { fetchProjectBySlug, fetchProjects, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { ProjectItem } from "../types/cms";
+import { ProjectItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -197,12 +198,16 @@ const portableTextComponents = {
 export default function WorkDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [project, setProject] = useState<ProjectItem | null>(null);
   const [allProjects, setAllProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchSiteSettings().then((data) => {
+      if (data) setSiteSettings(data);
+    });
 
     async function loadData() {
       if (!slug) {
@@ -306,29 +311,8 @@ export default function WorkDetail() {
         description={project.description || `${project.title} by Ravan Mammadov`}
       />
 
-      {/* Header / Nav */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10">
-          <Link
-            to="/work"
-            className="group flex items-center gap-3 text-xs font-bold tracking-[.18em] uppercase hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-            <span>BACK TO WORK</span>
-          </Link>
-          <div className="flex items-center gap-6 text-[11px] font-semibold tracking-[.16em] uppercase">
-            <Link to="/news" className="hover:text-primary transition-colors">
-              NEWS
-            </Link>
-            <Link to="/tools" className="hover:text-primary transition-colors">
-              TOOLS
-            </Link>
-            <Link to="/blog" className="hover:text-primary transition-colors">
-              BLOG
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Global Unified Header */}
+      <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero section */}
       <section className="px-6 pt-16 pb-12 md:px-10 md:pt-24">

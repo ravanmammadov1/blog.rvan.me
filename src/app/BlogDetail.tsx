@@ -4,9 +4,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, ArrowUp } from "lucide-react";
 
 import { client, urlFor } from "../lib/sanityClient";
+import { fetchSiteSettings } from "../lib/sanityQueries";
+import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
 import ReadingProgress from "./components/blog/ReadingProgress";
 import BlogHero from "./components/blog/BlogHero";
 import BlogContent from "./components/blog/BlogContent";
@@ -21,6 +24,7 @@ export default function BlogDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
 
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [post, setPost] = useState<BlogPost | null>(null);
   const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
@@ -30,6 +34,10 @@ export default function BlogDetail() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    fetchSiteSettings().then((data) => {
+      if (data) setSiteSettings(data);
+    });
 
     async function fetchPost() {
       if (!slug) {
@@ -196,13 +204,16 @@ export default function BlogDetail() {
         publishDate={post.publishDate}
       />
 
+      {/* Global Unified Header */}
+      <SiteHeader siteSettings={siteSettings} />
+
       <ReadingProgress />
 
       <div className="mx-auto max-w-7xl px-6 py-10">
         <BlogHero post={post} />
 
         <div className="mt-16 grid gap-12 lg:grid-cols-12">
-          {/* Sidebar — Table of Contents */}
+          {/* Sidebar — Sticky Table of Contents */}
           <aside className="hidden lg:col-span-3 lg:order-2 lg:block">
             <div className="sticky top-28 space-y-8">
               {Array.isArray(post.body) && <TableOfContents body={post.body} />}
@@ -258,6 +269,17 @@ export default function BlogDetail() {
                 ) : <div />}
               </div>
             )}
+
+            {/* Back to Blog Archive Navigation Button */}
+            <div className="mt-10 flex justify-center border-t border-border/40 pt-8">
+              <Link
+                to="/blog"
+                className="group inline-flex items-center gap-3 rounded-full border border-border bg-surface px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary hover:text-primary mono"
+              >
+                <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
+                BACK TO BLOG ARCHIVE
+              </Link>
+            </div>
 
             <RelatedPosts
               posts={relatedPosts}

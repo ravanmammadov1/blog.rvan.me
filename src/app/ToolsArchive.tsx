@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowLeft, Search, X, ExternalLink, Wrench, Layers } from "lucide-react";
 
-import { fetchTools } from "../lib/sanityQueries";
+import { fetchTools, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { ToolItem } from "../types/cms";
+import { ToolItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
 import ColorContrastTool from "./components/ColorContrastTool";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -21,6 +22,7 @@ const fadeUp = {
 };
 
 export default function ToolsArchive() {
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [toolsList, setToolsList] = useState<ToolItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -28,6 +30,9 @@ export default function ToolsArchive() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchSiteSettings().then((data) => {
+      if (data) setSiteSettings(data);
+    });
     fetchTools()
       .then((data) => setToolsList(data))
       .finally(() => setLoading(false));
@@ -70,29 +75,8 @@ export default function ToolsArchive() {
         description="The software, hardware, plugins, and creative tech tools powering my practice."
       />
 
-      {/* Header / Nav */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10">
-          <Link
-            to="/"
-            className="group flex items-center gap-3 text-xs font-bold tracking-[.18em] uppercase hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-            <span>BACK TO HOME</span>
-          </Link>
-          <div className="flex items-center gap-6 text-[11px] font-semibold tracking-[.16em]">
-            <Link to="/news" className="hover:text-primary transition-colors">
-              NEWS
-            </Link>
-            <Link to="/tools" className="text-primary">
-              TOOLS
-            </Link>
-            <Link to="/blog" className="hover:text-primary transition-colors">
-              BLOG
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Global Unified Header */}
+      <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero section */}
       <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28">

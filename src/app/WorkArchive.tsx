@@ -74,6 +74,7 @@ const fallbackProjects: ProjectItem[] = [
 ];
 
 export default function WorkArchive() {
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTag, setActiveTag] = useState("All");
@@ -82,6 +83,9 @@ export default function WorkArchive() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchSiteSettings().then((data) => {
+      if (data) setSiteSettings(data);
+    });
     fetchProjects()
       .then((data) => {
         if (data && data.length > 0) {
@@ -136,30 +140,7 @@ export default function WorkArchive() {
         description="Full archive of motion design, 3D brand systems, creative direction, and digital marketing campaigns."
       />
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10">
-          <Link
-            to="/"
-            className="group flex items-center gap-3 text-xs font-bold tracking-[.18em] uppercase hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-            <span>BACK TO HOME</span>
-          </Link>
-
-          <div className="flex items-center gap-6 text-[11px] font-semibold tracking-[.16em] uppercase">
-            <Link to="/news" className="hover:text-primary transition-colors">
-              NEWS
-            </Link>
-            <Link to="/tools" className="hover:text-primary transition-colors">
-              TOOLS
-            </Link>
-            <Link to="/blog" className="hover:text-primary transition-colors">
-              BLOG
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero section */}
       <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28">
