@@ -4,9 +4,9 @@ import { motion } from "motion/react";
 import { ArrowLeft, Search, X, ArrowUpRight, Calendar, Tag } from "lucide-react";
 import { format } from "date-fns";
 
-import { fetchNews } from "../lib/sanityQueries";
+import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { NewsItem } from "../types/cms";
+import { NewsItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 
 const EASE = [0.22, 1, 0.36, 1] as const;

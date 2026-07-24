@@ -92,6 +92,27 @@ export interface SEOSettings {
   ogImage?: any;
 }
 
+export interface ServiceItemSetting {
+  name: string;
+  relatedBlogSlug?: string;
+  externalLink?: string;
+}
+
+export interface PrincipleItemSetting {
+  label: string;
+  tools?: string;
+  relatedBlogSlug?: string;
+}
+
+export interface FieldNoteItemSetting {
+  period?: string;
+  role: string;
+  badge?: string;
+  desc1?: string;
+  desc2?: string;
+  relatedBlogSlug?: string;
+}
+
 export interface SiteSettings {
   _id?: string;
   heroTitle?: string;
@@ -101,6 +122,9 @@ export interface SiteSettings {
   favicon?: any;
   logo?: any;
   resumeFileUrl?: string;
+  services?: ServiceItemSetting[];
+  principles?: PrincipleItemSetting[];
+  fieldNotes?: FieldNoteItemSetting[];
   socialLinks?: SocialLinks;
   seo?: SEOSettings;
 }
