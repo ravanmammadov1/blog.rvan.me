@@ -5,10 +5,11 @@ import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { format } from "date-fns";
 import { PortableText } from "@portabletext/react";
 
-import { fetchNewsBySlug } from "../lib/sanityQueries";
+import { fetchNewsBySlug, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { NewsItem } from "../types/cms";
+import { NewsItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
 import CommentSection from "./components/CommentSection";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -67,11 +68,15 @@ const portableTextComponents = {
 export default function NewsDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [news, setNews] = useState<NewsItem | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchSiteSettings().then((data) => {
+      if (data) setSiteSettings(data);
+    });
     if (slug) {
       fetchNewsBySlug(slug)
         .then((data) => setNews(data))
@@ -138,20 +143,11 @@ export default function NewsDetail() {
       <SEO
         title={`${news.title} — News`}
         description={news.excerpt || news.title}
+        favicon={siteSettings?.favicon}
       />
 
-      {/* Nav */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10">
-          <Link
-            to="/news"
-            className="group flex items-center gap-3 text-xs font-bold tracking-[.18em] uppercase hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-            <span>BACK TO NEWS</span>
-          </Link>
-        </div>
-      </header>
+      {/* Global Unified Header */}
+      <SiteHeader siteSettings={siteSettings} />
 
       {/* Header section */}
       <article className="px-6 pt-16 pb-28 md:px-10 md:pt-24">

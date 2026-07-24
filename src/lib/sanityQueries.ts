@@ -17,6 +17,7 @@ export async function fetchSiteSettings(): Promise<SiteSettings | null> {
         heroSubtitle,
         availabilityStatus,
         heroEmbedUrl,
+        favicon,
         logo,
         "resumeFileUrl": resumeFile.asset->url,
         socialLinks,
@@ -131,9 +132,10 @@ export async function fetchNews(): Promise<NewsItem[]> {
 
 export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
   try {
+    const slugClean = (slug || "").toLowerCase().trim();
     const data = await client.fetch(
       `
-      *[_type == "news" && slug.current == $slug][0]{
+      *[_type == "news" && (slug.current == $slug || _id == $slug || lower(slug.current) == $slugClean)][0]{
         _id,
         title,
         slug,
@@ -144,7 +146,7 @@ export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
         category
       }
     `,
-      { slug }
+      { slug, slugClean }
     );
     return data || null;
   } catch (error) {

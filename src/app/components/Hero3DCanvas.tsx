@@ -1,6 +1,6 @@
 import { useRef, useMemo, Suspense, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Center, Float, Environment, ContactShadows } from "@react-three/drei";
+import { useGLTF, Center, Float, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -20,6 +20,7 @@ function LogoModel() {
   const groupRef = useRef<THREE.Group>(null);
   const mouse = useRef({ x: 0, y: 0 });
 
+  // Clone scene safely and configure pure PBR materials without self-shadowing artifacts
   const clonedScene = useMemo(() => {
     if (!scene) return null;
     try {
@@ -27,12 +28,14 @@ function LogoModel() {
       s.traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
           const mesh = child as THREE.Mesh;
-          mesh.castShadow = true;
-          mesh.receiveShadow = true;
+          // Disable self-shadowing and contact shadow map reception to eliminate dark gradient artifacts
+          mesh.castShadow = false;
+          mesh.receiveShadow = false;
           if (mesh.material) {
             const mat = mesh.material as THREE.MeshStandardMaterial;
             if (mat) {
-              mat.envMapIntensity = 1.2;
+              mat.envMapIntensity = 1.4;
+              mat.roughness = Math.min(mat.roughness, 0.35);
               mat.needsUpdate = true;
             }
           }
@@ -108,31 +111,23 @@ export default function Hero3DCanvas() {
               powerPreference: "high-performance",
               stencil: false,
               depth: true,
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 1.1,
             }}
             camera={{ position: [0, 0, 5], fov: 45 }}
             className="h-full w-full"
           >
-            <ambientLight intensity={0.6} />
-            <directionalLight
-              position={[5, 8, 5]}
-              intensity={1.8}
-              castShadow
-              shadow-mapSize={[512, 512]}
-            />
-            <pointLight position={[-4, -4, 4]} intensity={0.7} color="#E2FE52" />
+            {/* Clean, shadowless studio lighting setup */}
+            <ambientLight intensity={0.85} />
+            <directionalLight position={[0, 6, 8]} intensity={1.6} />
+            <directionalLight position={[0, -6, -4]} intensity={0.4} color="#ffffff" />
+            <pointLight position={[-4, 2, 4]} intensity={0.8} color="#E2FE52" />
 
-            <Environment preset="city" environmentIntensity={0.8} />
+            {/* High-quality PBR environment reflections */}
+            <Environment preset="city" environmentIntensity={1.0} />
 
+            {/* 3D Model without artificial shadow planes or self-shadow gradient artifacts */}
             <LogoModel />
-
-            <ContactShadows
-              position={[0, -1.3, 0]}
-              opacity={0.5}
-              scale={6}
-              blur={2.2}
-              far={4}
-              color="#000000"
-            />
           </Canvas>
         </Suspense>
       </div>

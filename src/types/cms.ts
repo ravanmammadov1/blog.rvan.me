@@ -98,6 +98,7 @@ export interface SiteSettings {
   heroSubtitle?: string;
   availabilityStatus?: string;
   heroEmbedUrl?: string;
+  favicon?: any;
   logo?: any;
   resumeFileUrl?: string;
   socialLinks?: SocialLinks;

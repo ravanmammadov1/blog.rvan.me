@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { urlFor } from "../../lib/sanityClient";
 
 interface SEOProps {
   title?: string;
@@ -8,6 +9,7 @@ interface SEOProps {
   type?: "website" | "article" | "profile";
   publishDate?: string;
   authorName?: string;
+  favicon?: any;
   jsonLd?: Record<string, any>;
 }
 
@@ -19,6 +21,7 @@ export default function SEO({
   type = "website",
   publishDate,
   authorName = "Ravan Mammadov",
+  favicon,
   jsonLd,
 }: SEOProps) {
   useEffect(() => {
@@ -70,7 +73,7 @@ export default function SEO({
 
     updateCanonical(url);
 
-    // Favicon link setup
+    // Favicon link setup (dynamic from Sanity if available, or fallback to /favicon.webp)
     let favLink: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
     if (!favLink) {
       favLink = document.createElement("link");
@@ -78,7 +81,8 @@ export default function SEO({
       favLink.type = "image/webp";
       document.head.appendChild(favLink);
     }
-    favLink.href = "/favicon.webp";
+    const sanityFaviconUrl = favicon ? urlFor(favicon)?.url() : null;
+    favLink.href = sanityFaviconUrl || "/favicon.webp";
 
     // JSON-LD Structured Data
     let scriptElement: HTMLScriptElement | null = document.querySelector("#seo-json-ld");
