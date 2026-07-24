@@ -384,12 +384,12 @@ export default function HomePage() {
               </motion.div>
             </div>
 
-            {/* Right 3D Model Column (Dedicated spacious container) */}
+            {/* Right 3D Model Column (Desktop only >=1024px, completely hidden on mobile & tablet) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.3, ease: EASE }}
-              className="lg:col-span-5 h-[380px] sm:h-[480px] lg:h-[600px] w-full relative flex items-center justify-center"
+              className="hidden lg:flex lg:col-span-5 h-[600px] w-full relative items-center justify-center"
             >
               <HeroPortrait />
             </motion.div>
