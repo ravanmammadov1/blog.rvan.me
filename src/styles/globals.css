@@ -29,10 +29,11 @@ html {
 
 /* ─── Hero portrait ─── */
 .hero-image-wrap {
-  overflow: hidden;
-  border-radius: 1.75rem 1.75rem 0.25rem 0.25rem;
-  transform: rotate(3deg);
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+  overflow: visible;
+  border-radius: 0;
+  transform: none;
+  box-shadow: none;
+  background: transparent;
 }
 
 .hero-image {
@@ -46,12 +47,7 @@ html {
 }
 
 .hero-vignette {
-  background: radial-gradient(
-    ellipse at 62% 38%,
-    transparent 16%,
-    rgba(16, 16, 16, 0.14) 52%,
-    var(--background) 84%
-  );
+  background: transparent;
 }
 
 /* ─── Project cards ─── */
