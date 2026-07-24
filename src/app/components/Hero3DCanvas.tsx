@@ -4,7 +4,7 @@ import { useGLTF, Center, Float, Environment, ContactShadows } from "@react-thre
 import * as THREE from "three";
 import ErrorBoundary from "./ErrorBoundary";
 
-const MODEL_PATH = "/models/ravanimate-logo.glb";
+const MODEL_PATH = "/models/ravan-logo.glb";
 
 function LogoModel() {
   const gltf = useGLTF(MODEL_PATH);
