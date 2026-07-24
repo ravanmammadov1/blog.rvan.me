@@ -70,6 +70,16 @@ export default function SEO({
 
     updateCanonical(url);
 
+    // Favicon link setup
+    let favLink: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
+    if (!favLink) {
+      favLink = document.createElement("link");
+      favLink.rel = "icon";
+      favLink.type = "image/webp";
+      document.head.appendChild(favLink);
+    }
+    favLink.href = "/favicon.webp";
+
     // JSON-LD Structured Data
     let scriptElement: HTMLScriptElement | null = document.querySelector("#seo-json-ld");
     if (!scriptElement) {
