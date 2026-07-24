@@ -154,6 +154,10 @@ const stats = [
   { value: "18", label: "Awards & features" },
 ];
 
+function Eyebrow({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <p className={`eyebrow ${className}`}>{children}</p>;
+}
+
 export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
