@@ -53,7 +53,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     }
   };
 
-  const navItems = [
+  const defaultNavItems = [
     { label: "WORK", target: "work" },
     { label: "ABOUT", target: "about" },
     { label: "EXPERTISE", target: "expertise" },
@@ -63,12 +63,21 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     { label: "CONTACT", target: "contact" },
   ];
 
+  const navItems = (siteSettings?.navItems && siteSettings.navItems.length > 0
+    ? siteSettings.navItems
+    : defaultNavItems
+  ).filter((item) => !("hidden" in item && item.hidden));
+
+  const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full transition-all duration-300">
+      <header className="sticky top-0 z-50 w-full transition-all duration-500">
         <div
-          className={`absolute inset-0 transition-opacity duration-300 bg-background/90 backdrop-blur-md border-b border-border ${
-            scrolled || !isHomePage ? "opacity-100" : "opacity-0 md:opacity-90"
+          className={`absolute inset-0 transition-all duration-500 ${
+            scrolled || !isHomePage
+              ? "bg-background/80 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_1px_0_0_rgba(255,255,255,0.04)]"
+              : "bg-background/40 backdrop-blur-sm border-b border-transparent"
           }`}
         />
         <div className="relative mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10 md:py-5">
@@ -125,7 +134,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               onClick={() => handleNavClick("contact")}
               className="hidden items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-[10px] font-bold tracking-[.16em] uppercase transition duration-300 hover:border-primary hover:bg-primary hover:text-black sm:flex"
             >
-              {"LET'S TALK"} <ArrowUpRight size={13} />
+              {letsTalkLabel} <ArrowUpRight size={13} />
             </button>
 
             {/* Mobile Menu Toggle Button */}

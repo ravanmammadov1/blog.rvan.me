@@ -90,6 +90,26 @@ export interface SEOSettings {
   metaTitle?: string;
   metaDescription?: string;
   ogImage?: any;
+  twitterHandle?: string;
+  googleVerification?: string;
+}
+
+export interface NavItemSetting {
+  label: string;
+  target: string;
+  hidden?: boolean;
+}
+
+export interface AnnouncementBar {
+  text?: string;
+  link?: string;
+  linkLabel?: string;
+  enabled?: boolean;
+}
+
+export interface HeroCoordinates {
+  lat?: string;
+  lng?: string;
 }
 
 export interface ServiceItemSetting {
@@ -127,6 +147,13 @@ export interface SiteSettings {
   fieldNotes?: FieldNoteItemSetting[];
   socialLinks?: SocialLinks;
   seo?: SEOSettings;
+  navItems?: NavItemSetting[];
+  contactHeading?: string;
+  contactSubtext?: string;
+  letsTalkLabel?: string;
+  heroCoordinates?: HeroCoordinates;
+  footerText?: string;
+  announcementBar?: AnnouncementBar;
 }
 
 export interface CommentItem {

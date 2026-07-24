@@ -8,6 +8,8 @@ import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
 import { NewsItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
+
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

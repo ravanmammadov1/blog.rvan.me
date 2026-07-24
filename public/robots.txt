@@ -1,5 +1,11 @@
-# https://www.robotstxt.org/robotstxt.html
+# robots.txt for rvan.me
 User-agent: *
 Allow: /
 
-Sitemap: https://ravanmammadov.com/sitemap.xml
+# Block crawlers from API and internal paths
+Disallow: /api/
+Disallow: /dist/
+Disallow: /_sanity/
+
+# Sitemap
+Sitemap: https://rvan.me/sitemap.xml

@@ -21,7 +21,17 @@ export async function fetchSiteSettings(): Promise<SiteSettings | null> {
         logo,
         "resumeFileUrl": resumeFile.asset->url,
         socialLinks,
-        seo
+        seo,
+        navItems,
+        contactHeading,
+        contactSubtext,
+        letsTalkLabel,
+        heroCoordinates,
+        footerText,
+        announcementBar,
+        services,
+        principles,
+        fieldNotes
       }
     `);
     return data || null;

@@ -8,81 +8,106 @@ interface SEOProps {
   url?: string;
   type?: "website" | "article" | "profile";
   publishDate?: string;
+  modifiedDate?: string;
   authorName?: string;
   favicon?: any;
+  noIndex?: boolean;
   jsonLd?: Record<string, any>;
 }
+
+const SITE_DOMAIN = "https://rvan.me";
 
 export default function SEO({
   title = "Ravan Mammadov — Senior Creative Designer & Art Director",
   description = "Senior Creative Designer based in Baku, blending motion design, brand worlds, and performance creative into high-impact digital experiences.",
   image,
-  url = typeof window !== "undefined" ? window.location.href : "https://ravanimate.com",
+  url,
   type = "website",
   publishDate,
+  modifiedDate,
   authorName = "Ravan Mammadov",
   favicon,
+  noIndex = false,
   jsonLd,
 }: SEOProps) {
+  const resolvedUrl = url || (typeof window !== "undefined" ? window.location.href : SITE_DOMAIN);
+
   useEffect(() => {
     // Document Title
     document.title = title;
 
     // Helper for updating or creating meta tags
-    const updateMeta = (selector: string, content: string) => {
+    const updateMeta = (selector: string, content: string, attrName = "content") => {
       let element = document.querySelector(selector);
-      if (element) {
-        element.setAttribute("content", content);
-      } else {
+      if (!element) {
         const meta = document.createElement("meta");
-        if (selector.startsWith('meta[name="')) {
-          meta.name = selector.replace('meta[name="', "").replace('"]', "");
-        } else if (selector.startsWith('meta[property="')) {
-          meta.setAttribute("property", selector.replace('meta[property="', "").replace('"]', ""));
+        if (selector.includes('name="')) {
+          meta.name = selector.match(/name="([^"]+)"/)?.[1] || "";
+        } else if (selector.includes('property="')) {
+          meta.setAttribute("property", selector.match(/property="([^"]+)"/)?.[1] || "");
         }
-        meta.content = content;
         document.head.appendChild(meta);
+        element = meta;
       }
+      element.setAttribute(attrName, content);
     };
 
-    // Helper for updating canonical link
-    const updateCanonical = (hrefUrl: string) => {
-      let link: HTMLLinkElement | null = document.querySelector('link[rel="canonical"]');
-      if (!link) {
-        link = document.createElement("link");
-        link.rel = "canonical";
-        document.head.appendChild(link);
-      }
-      link.href = hrefUrl;
-    };
+    // Robots
+    updateMeta('meta[name="robots"]', noIndex ? "noindex, nofollow" : "index, follow");
 
+    // Core meta
     updateMeta('meta[name="description"]', description);
+
+    // Open Graph
     updateMeta('meta[property="og:title"]', title);
     updateMeta('meta[property="og:description"]', description);
-    updateMeta('meta[property="og:url"]', url);
+    updateMeta('meta[property="og:url"]', resolvedUrl);
     updateMeta('meta[property="og:type"]', type);
-    updateMeta('meta[name="twitter:card"]', image ? "summary_large_image" : "summary");
+    updateMeta('meta[property="og:site_name"]', "Ravan Mammadov");
+
+    // Twitter/X Card
+    updateMeta('meta[name="twitter:card"]', "summary_large_image");
     updateMeta('meta[name="twitter:title"]', title);
     updateMeta('meta[name="twitter:description"]', description);
-    updateMeta('meta[name="twitter:url"]', url);
+    updateMeta('meta[name="twitter:url"]', resolvedUrl);
+    updateMeta('meta[name="twitter:creator"]', "@ravanimate");
+    updateMeta('meta[name="twitter:site"]', "@ravanimate");
 
-    if (image) {
-      updateMeta('meta[property="og:image"]', image);
-      updateMeta('meta[name="twitter:image"]', image);
+    // OG Image
+    const ogImage = image || `${SITE_DOMAIN}/og-image.jpg`;
+    updateMeta('meta[property="og:image"]', ogImage);
+    updateMeta('meta[property="og:image:width"]', "1200");
+    updateMeta('meta[property="og:image:height"]', "630");
+    updateMeta('meta[name="twitter:image"]', ogImage);
+
+    // Article-specific
+    if (type === "article") {
+      if (publishDate) updateMeta('meta[property="article:published_time"]', publishDate);
+      if (modifiedDate) updateMeta('meta[property="article:modified_time"]', modifiedDate);
+      updateMeta('meta[property="article:author"]', authorName);
     }
 
-    updateCanonical(url);
-
-    // Favicon link setup (dynamic from Sanity if available, or fallback to /favicon.webp)
-    let favLink: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
-    if (!favLink) {
-      favLink = document.createElement("link");
-      favLink.rel = "icon";
-      favLink.type = "image/webp";
-      document.head.appendChild(favLink);
+    // Canonical URL
+    let canonical: HTMLLinkElement | null = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
     }
+    canonical.href = resolvedUrl;
+
+    // Favicon — dynamic from Sanity if available, otherwise keep static files
     const sanityFaviconUrl = favicon ? urlFor(favicon)?.url() : null;
-    favLink.href = sanityFaviconUrl || "/favicon.webp";
+    if (sanityFaviconUrl) {
+      let favLink: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
+      if (!favLink) {
+        favLink = document.createElement("link");
+        favLink.rel = "icon";
+        document.head.appendChild(favLink);
+      }
+      favLink.href = sanityFaviconUrl;
+      favLink.type = "image/webp";
+    }
 
     // JSON-LD Structured Data
     let scriptElement: HTMLScriptElement | null = document.querySelector("#seo-json-ld");
@@ -101,33 +126,41 @@ export default function SEO({
             "@type": "BlogPosting",
             headline: title,
             description: description,
-            image: image ? [image] : [],
+            image: ogImage ? [ogImage] : [],
             datePublished: publishDate,
+            dateModified: modifiedDate || publishDate,
+            url: resolvedUrl,
             author: {
               "@type": "Person",
               name: authorName,
               jobTitle: "Senior Creative Designer & Marketer",
+              url: SITE_DOMAIN,
+            },
+            publisher: {
+              "@type": "Person",
+              name: "Ravan Mammadov",
+              url: SITE_DOMAIN,
             },
           }
         : {
             "@context": "https://schema.org",
             "@type": "Person",
             name: "Ravan Mammadov",
-            url: "https://ravanimate.com",
-            jobTitle: "Senior Creative Designer & Marketer",
+            url: SITE_DOMAIN,
+            jobTitle: "Senior Creative Designer & Art Director",
+            description: "Senior Creative Designer based in Baku, specializing in motion design, brand worlds, and performance creative.",
             sameAs: [
               "https://www.behance.net/mammadovravan",
               "https://www.linkedin.com/in/ravanmammadov1/",
               "https://www.instagram.com/ravanimate/",
             ],
+            knowsAbout: ["Motion Design", "Art Direction", "Brand Identity", "3D Design", "Performance Creative"],
           });
 
-    scriptElement.text = JSON.stringify(defaultJsonLd);
-
-    return () => {
-      // Keep script cleaned or updated on unmount if needed
-    };
-  }, [title, description, image, url, type, publishDate, authorName, jsonLd]);
+    scriptElement.text = JSON.stringify(defaultJsonLd, null, 0);
+  }, [title, description, image, resolvedUrl, type, publishDate, modifiedDate, authorName, noIndex, jsonLd]);
 
   return null;
 }
+
+
