@@ -21,8 +21,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      setScrolled(window.scrollY > 20);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -72,15 +73,14 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full transition-all duration-500">
-        <div
-          className={`absolute inset-0 transition-all duration-500 ${
-            scrolled || !isHomePage
-              ? "bg-background/80 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_1px_0_0_rgba(255,255,255,0.04)]"
-              : "bg-background/40 backdrop-blur-sm border-b border-transparent"
-          }`}
-        />
-        <div className="relative mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10 md:py-5">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+          scrolled || !isHomePage
+            ? "bg-background/88 backdrop-blur-md border-b border-border/60 shadow-lg shadow-black/20 py-3 md:py-4"
+            : "bg-background/20 backdrop-blur-sm border-b border-transparent py-4 md:py-5"
+        }`}
+      >
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 md:px-10">
           {/* Logo & Brand */}
           <button
             onClick={() => handleNavClick(isHomePage ? "top" : "/")}
@@ -91,10 +91,10 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               <img
                 src={urlFor(siteSettings.logo)?.url() || ""}
                 alt="Ravan Mammadov Logo"
-                className="h-10 w-10 rounded-full object-contain border border-white/40 p-1 transition-transform duration-500 group-hover:scale-105"
+                className="h-9 w-9 md:h-10 md:w-10 rounded-full object-contain border border-white/40 p-1 transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <span className="grid h-10 w-10 place-items-center rounded-full border border-white/40 text-sm font-bold transition-transform duration-500 group-hover:rotate-45 group-hover:border-primary group-hover:text-primary">
+              <span className="grid h-9 w-9 md:h-10 md:w-10 place-items-center rounded-full border border-white/40 text-sm font-bold transition-transform duration-300 group-hover:rotate-45 group-hover:border-primary group-hover:text-primary">
                 R
               </span>
             )}
@@ -139,7 +139,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
             {/* Mobile Menu Toggle Button */}
             <button
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/40 lg:hidden text-foreground hover:border-primary"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/40 lg:hidden text-foreground hover:border-primary transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
@@ -156,8 +156,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35, ease: EASE }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-background px-8 pt-16 lg:hidden"
+            transition={{ duration: 0.3, ease: EASE }}
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-background/95 backdrop-blur-xl px-8 pt-20 lg:hidden"
           >
             <div className="space-y-2">
               {navItems.map((item, i) => (
@@ -165,9 +165,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                   key={item.label}
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
+                  transition={{ delay: i * 0.04, duration: 0.25 }}
                   onClick={() => handleNavClick(item.target)}
-                  className="flex w-full items-baseline gap-4 border-b border-border py-5 text-left text-3xl font-semibold uppercase tracking-tight transition-colors hover:text-primary"
+                  className="flex w-full items-baseline gap-4 border-b border-border/50 py-4 text-left text-2xl font-semibold uppercase tracking-tight transition-colors hover:text-primary"
                 >
                   <span className="mono text-xs text-muted-foreground">0{i + 1}</span>
                   {item.label}
@@ -175,8 +175,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border flex justify-between items-center text-xs mono text-muted-foreground">
-              <span>AVAILABLE FOR Q3 2025</span>
+            <div className="mt-8 pt-6 border-t border-border/50 flex justify-between items-center text-xs mono text-muted-foreground">
+              <span>AVAILABLE FOR SELECT WORK</span>
               <button
                 onClick={() => handleNavClick("contact")}
                 className="text-primary font-bold hover:underline"
