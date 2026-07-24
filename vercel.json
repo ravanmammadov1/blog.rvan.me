@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/ravanmammadov",
+      "destination": "/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/ravan-mammadov",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

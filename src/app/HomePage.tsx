@@ -376,7 +376,7 @@ export default function HomePage() {
                   <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                 </a>
                 <Link
-                  to="/ravanmammadov"
+                  to="/ravan-mammadov"
                   className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
                 >
                   READ BIOGRAPHY →
@@ -648,7 +648,7 @@ export default function HomePage() {
 
                 <div className="mt-10 flex flex-wrap gap-6 items-center">
                   <Link
-                    to="/ravanmammadov"
+                    to="/ravan-mammadov"
                     className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition hover:bg-white mono"
                   >
                     READ FULL BIOGRAPHY & CAREER <ArrowUpRight size={14} />
