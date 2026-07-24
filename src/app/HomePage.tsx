@@ -309,16 +309,10 @@ export default function HomePage() {
       {/* ── 1. Hero ── */}
       <section
         id="top"
-        className="hero-section relative isolate min-h-screen px-6 pb-16 pt-32 md:px-10 md:pt-40"
+        className="relative isolate min-h-[calc(100vh-5rem)] px-6 pb-16 pt-28 md:px-10 md:pt-36 flex items-center"
       >
         <div className="absolute inset-0 -z-10 overflow-hidden bg-background">
-          <div
-            className="hero-image-wrap absolute right-[5%] top-[8%] h-[62vw] max-h-[790px] min-h-[450px] w-[43vw] min-w-[300px]"
-            aria-hidden="true"
-          >
-            <HeroPortrait />
-          </div>
-          <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:64px_64px]" />
+          <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:64px_64px]" />
         </div>
 
         {/* Corner coordinate detail */}
@@ -328,58 +322,78 @@ export default function HomePage() {
           49.86° E
         </div>
 
-        <div className="mx-auto flex min-h-[calc(100vh-11rem)] max-w-[1600px] flex-col justify-end">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.1}
-            className="mb-8 flex items-center gap-3 text-[11px] font-bold tracking-[.24em] text-primary mono"
-          >
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-            {availabilityStatus}
-          </motion.div>
+        <div className="mx-auto w-full max-w-[1600px]">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-8 items-center">
+            {/* Left Content Column */}
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={0.1}
+                className="mb-6 flex items-center gap-3 text-[11px] font-bold tracking-[.24em] text-primary mono"
+              >
+                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
+                {availabilityStatus}
+              </motion.div>
 
-          <h1 className="max-w-[1280px] overflow-hidden text-[14.5vw] font-semibold leading-[.78] tracking-[-.09em] sm:text-[13vw] lg:text-[10.7vw]">
-            {heroTitle.split(" ").map((word, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: "110%", opacity: 0 }}
-                animate={{ y: "0%", opacity: 1 }}
-                transition={{ duration: 0.9, delay: 0.2 + i * 0.08, ease: EASE }}
-                className="inline-block mr-[0.2em]"
-              >
-                {word}
-              </motion.span>
-            ))}
-          </h1>
+              <h1 className="text-[12vw] font-bold leading-[.85] tracking-[-.08em] sm:text-[9.5vw] lg:text-[6.5vw] text-foreground">
+                {heroTitle.split(" ").map((word, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ y: "110%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    transition={{ duration: 0.9, delay: 0.15 + i * 0.08, ease: EASE }}
+                    className="inline-block mr-[0.22em]"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </h1>
 
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.4}
-            className="mt-10 flex flex-col justify-between gap-8 pt-8 md:flex-row md:items-end border-t border-border/40"
-          >
-            <p className="max-w-xl text-base leading-relaxed text-muted-foreground font-medium md:text-lg">
-              {heroSubtitle}
-            </p>
-            <div className="flex flex-wrap items-center gap-6">
-              <a
-                href="#work"
-                className="group flex items-center gap-3 rounded-full border border-white/20 bg-surface px-7 py-4 text-xs font-bold tracking-[.18em] transition duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground mono uppercase"
+              <motion.p
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={0.35}
+                className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground font-medium md:text-lg"
               >
-                EXPLORE SELECTED WORK
-                <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-              </a>
-              <Link
-                to="/ravanmammadov"
-                className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
+                {heroSubtitle}
+              </motion.p>
+
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={0.45}
+                className="mt-10 flex flex-wrap items-center gap-6"
               >
-                READ BIOGRAPHY →
-              </Link>
+                <a
+                  href="#work"
+                  className="group flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl mono uppercase"
+                >
+                  EXPLORE SELECTED WORK
+                  <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                </a>
+                <Link
+                  to="/ravanmammadov"
+                  className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
+                >
+                  READ BIOGRAPHY →
+                </Link>
+              </motion.div>
             </div>
-          </motion.div>
+
+            {/* Right 3D Model Column (Dedicated spacious container) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.3, ease: EASE }}
+              className="lg:col-span-5 h-[380px] sm:h-[480px] lg:h-[600px] w-full relative flex items-center justify-center"
+            >
+              <HeroPortrait />
+            </motion.div>
+          </div>
         </div>
       </section>
 
