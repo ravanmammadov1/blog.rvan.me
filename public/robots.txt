@@ -1,4 +1,4 @@
-# robots.txt for rvan.me
+# robots.txt for www.rvan.me
 User-agent: *
 Allow: /
 
@@ -8,4 +8,4 @@ Disallow: /dist/
 Disallow: /_sanity/
 
 # Sitemap
-Sitemap: https://rvan.me/sitemap.xml
+Sitemap: https://www.rvan.me/sitemap.xml

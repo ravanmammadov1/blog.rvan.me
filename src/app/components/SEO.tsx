@@ -15,7 +15,7 @@ interface SEOProps {
   jsonLd?: Record<string, any>;
 }
 
-const SITE_DOMAIN = "https://rvan.me";
+const SITE_DOMAIN = "https://www.rvan.me";
 
 export default function SEO({
   title = "Ravan Mammadov — Senior Creative Designer & Art Director",
@@ -30,7 +30,9 @@ export default function SEO({
   noIndex = false,
   jsonLd,
 }: SEOProps) {
-  const resolvedUrl = url || (typeof window !== "undefined" ? window.location.href : SITE_DOMAIN);
+  const rawUrl = url || (typeof window !== "undefined" ? window.location.href : SITE_DOMAIN);
+  const resolvedUrl = rawUrl.replace(/^https?:\/\/(www\.)?rvan\.me/i, "https://www.rvan.me");
+
 
   useEffect(() => {
     // Document Title

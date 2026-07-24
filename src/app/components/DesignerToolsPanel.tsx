@@ -370,7 +370,7 @@ function SpacingScaleTool() {
 function SeoMetaPreview() {
   const [title, setTitle] = useState("Ravan Mammadov — Senior Creative Designer & Art Director");
   const [desc, setDesc] = useState("Senior Creative Designer based in Baku, blending motion design, brand worlds, and performance creative into high-impact digital experiences.");
-  const [url, setUrl] = useState("https://rvan.me");
+  const [url, setUrl] = useState("https://www.rvan.me");
 
   const titleLen = title.length;
   const descLen = desc.length;

@@ -112,7 +112,7 @@ export default function RavanMammadovPage() {
     "@type": "Person",
     name: "Ravan Mammadov",
     jobTitle: "Senior Creative Designer & Marketer",
-    url: "https://rvan.me/ravanmammadov",
+    url: "https://www.rvan.me/ravanmammadov",
     sameAs: [
       "https://www.linkedin.com/in/ravanmammadov1/",
       "https://www.behance.net/mammadovravan",
