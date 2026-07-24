@@ -44,6 +44,18 @@ export interface StatItem {
   label: string;
 }
 
+export interface ExperienceItem {
+  year?: string;
+  role: string;
+  company?: string;
+  desc?: string;
+}
+
+export interface SkillCategory {
+  category: string;
+  skills: string[];
+}
+
 export interface AboutSection {
   _id?: string;
   heading?: string;
@@ -51,6 +63,8 @@ export interface AboutSection {
   introParagraph2?: string;
   profilePhoto?: any;
   stats?: StatItem[];
+  experience?: ExperienceItem[];
+  skills?: SkillCategory[];
 }
 
 export interface TestimonialItem {

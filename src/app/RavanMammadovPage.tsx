@@ -14,6 +14,7 @@ import {
   Mail,
 } from "lucide-react";
 
+import RavanPortrait from "@/imports/ravan_1.png";
 import { client, urlFor } from "../lib/sanityClient";
 import { fetchAboutSection, fetchSiteSettings, fetchTestimonials } from "../lib/sanityQueries";
 import { AboutSection as IAboutSection, SiteSettings, TestimonialItem } from "../types/cms";
@@ -198,8 +199,12 @@ export default function RavanMammadovPage() {
             >
               <div className="rounded-3xl border border-border bg-surface p-8 shadow-2xl">
                 <div className="flex items-center gap-4 border-b border-border pb-6">
-                  <div className="h-16 w-16 rounded-2xl border-2 border-primary bg-primary/10 flex items-center justify-center text-primary font-bold text-3xl mono">
-                    R
+                  <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary bg-black flex-shrink-0">
+                    <img
+                      src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait : RavanPortrait}
+                      alt="Ravan Mammadov"
+                      className="h-full w-full object-cover object-top"
+                    />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-foreground">Ravan Mammadov</h3>
@@ -242,9 +247,9 @@ export default function RavanMammadovPage() {
           </motion.div>
 
           <div className="mt-16 space-y-8 border-l-2 border-border pl-6 md:pl-10">
-            {timelineEvents.map((item, idx) => (
+            {(aboutSection?.experience && aboutSection.experience.length > 0 ? aboutSection.experience : timelineEvents).map((item, idx) => (
               <motion.div
-                key={item.role}
+                key={item.role + idx}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
@@ -255,8 +260,8 @@ export default function RavanMammadovPage() {
                 <div className="absolute -left-[31px] md:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background" />
                 <span className="text-xs font-bold tracking-widest text-primary mono">{item.year}</span>
                 <h3 className="mt-2 text-2xl font-bold text-foreground">{item.role}</h3>
-                <p className="text-sm font-semibold text-muted-foreground mono">{item.company}</p>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground/80">{item.desc}</p>
+                {item.company && <p className="text-sm font-semibold text-muted-foreground mono">{item.company}</p>}
+                {item.desc && <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground/80">{item.desc}</p>}
               </motion.div>
             ))}
           </div>
@@ -274,8 +279,8 @@ export default function RavanMammadovPage() {
           </motion.div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {skillsList.map((group) => (
-              <div key={group.category} className="rounded-3xl border border-border bg-surface p-8">
+            {(aboutSection?.skills && aboutSection.skills.length > 0 ? aboutSection.skills : skillsList).map((group, idx) => (
+              <div key={group.category + idx} className="rounded-3xl border border-border bg-surface p-8">
                 <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                   <Zap size={18} className="text-primary" /> {group.category}
                 </h3>

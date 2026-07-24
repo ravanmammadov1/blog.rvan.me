@@ -39,7 +39,9 @@ export async function fetchAboutSection(): Promise<AboutSection | null> {
         introParagraph1,
         introParagraph2,
         profilePhoto,
-        stats
+        stats,
+        experience,
+        skills
       }
     `);
     return data || null;

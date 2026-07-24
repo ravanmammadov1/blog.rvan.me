@@ -206,9 +206,17 @@ export default function NewsArchive() {
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {filteredNews.map((item, index) => {
                 const newsSlug = item.slug?.current || item._id;
-                const formattedDate = item.publishedAt
-                  ? format(new Date(item.publishedAt), "MMM d, yyyy")
-                  : null;
+                let formattedDate: string | null = null;
+                if (item.publishedAt) {
+                  try {
+                    const d = new Date(item.publishedAt);
+                    if (!isNaN(d.getTime())) {
+                      formattedDate = format(d, "MMM d, yyyy");
+                    }
+                  } catch (e) {
+                    formattedDate = null;
+                  }
+                }
                 const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
 
                 return (

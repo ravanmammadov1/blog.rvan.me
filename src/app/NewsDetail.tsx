@@ -118,9 +118,17 @@ export default function NewsDetail() {
   }
 
   const coverUrl = news.coverImage ? urlFor(news.coverImage)?.url() : null;
-  const formattedDate = news.publishedAt
-    ? format(new Date(news.publishedAt), "MMMM d, yyyy")
-    : null;
+  let formattedDate: string | null = null;
+  if (news.publishedAt) {
+    try {
+      const d = new Date(news.publishedAt);
+      if (!isNaN(d.getTime())) {
+        formattedDate = format(d, "MMMM d, yyyy");
+      }
+    } catch (e) {
+      formattedDate = null;
+    }
+  }
 
   return (
     <main

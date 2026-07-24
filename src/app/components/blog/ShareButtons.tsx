@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Link2, Share2, Twitter, Linkedin } from "lucide-react";
+import { Check, Link2, Share2, Linkedin } from "lucide-react";
 
 interface ShareButtonsProps {
   title: string;
@@ -30,7 +30,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
     }
   };
 
-  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(currentUrl)}`;
+  const xShareUrl = `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${encodeURIComponent(currentUrl)}`;
   const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
 
   return (
@@ -67,14 +67,17 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
           )}
         </button>
 
+        {/* Modern X (formerly Twitter) Share Icon */}
         <a
-          href={twitterShareUrl}
+          href={xShareUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center rounded-full border border-white/15 bg-white/5 p-2 text-white transition hover:bg-white/15"
-          aria-label="Share on Twitter"
+          aria-label="Share on X"
         >
-          <Twitter size={14} />
+          <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
         </a>
 
         <a
