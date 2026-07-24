@@ -57,18 +57,18 @@ export default function HeroPortrait() {
     >
       {/* Background Layer */}
       <div
-        className="absolute inset-0 bg-surface/90 backdrop-blur-md rounded-[inherit]"
+        className="absolute inset-0 bg-black rounded-[inherit]"
         style={{ transform: "translateZ(-20px)" }}
       />
 
       {/* 3D GLB Model Layer */}
       <div
-        className="absolute inset-0 h-full w-full rounded-[inherit] overflow-hidden"
+        className="absolute inset-0 h-full w-full rounded-[inherit] overflow-hidden bg-black"
         style={{ transform: "translateZ(25px)" }}
       >
         <ErrorBoundary
           fallback={
-            <div className="flex h-full w-full flex-col items-center justify-center p-6 bg-surface text-foreground text-center">
+            <div className="flex h-full w-full flex-col items-center justify-center p-6 bg-black text-foreground text-center">
               <div className="h-14 w-14 rounded-2xl border border-primary/50 bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl mono mb-3">
                 R
               </div>
@@ -80,7 +80,7 @@ export default function HeroPortrait() {
         >
           <Suspense
             fallback={
-              <div className="flex h-full w-full items-center justify-center bg-surface/80">
+              <div className="flex h-full w-full items-center justify-center bg-black">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               </div>
             }

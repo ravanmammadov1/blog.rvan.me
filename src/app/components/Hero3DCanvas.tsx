@@ -93,7 +93,7 @@ try {
 
 function Loader() {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface/80 backdrop-blur-md text-foreground">
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black text-foreground">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       <span className="mt-3 text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
         LOADING 3D LOGO...
@@ -104,7 +104,7 @@ function Loader() {
 
 function FallbackVisual() {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center p-8 bg-surface text-foreground text-center">
+    <div className="flex h-full w-full flex-col items-center justify-center p-8 bg-black text-foreground text-center">
       <div className="h-16 w-16 rounded-2xl border-2 border-primary/60 bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl mono mb-4 animate-pulse">
         R
       </div>
