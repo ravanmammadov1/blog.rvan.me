@@ -66,7 +66,11 @@ export default function BlogDetail() {
               category,
               tags,
               featured,
-              coverImage
+              coverImage,
+              authorName,
+              authorRole,
+              authorPhoto,
+              authorBio
             }
             `,
             { slug: slugClean, slugPattern }
@@ -84,7 +88,11 @@ export default function BlogDetail() {
               category,
               tags,
               featured,
-              coverImage
+              coverImage,
+              authorName,
+              authorRole,
+              authorPhoto,
+              authorBio
             }
             `
           ),
@@ -241,7 +249,7 @@ export default function BlogDetail() {
 
             <ShareButtons title={post.title} />
 
-            <AuthorCard />
+            <AuthorCard post={post} />
 
             <CommentSection postId={post._id} postTitle={post.title} />
 
