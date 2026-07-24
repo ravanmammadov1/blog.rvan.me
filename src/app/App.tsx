@@ -1,9 +1,3 @@
-<>
-  <App />
-  <Analytics />
-  <SpeedInsights />
-</>
-
 import { Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -16,6 +10,7 @@ import BlogDetail from "./BlogDetail";
 import NewsArchive from "./NewsArchive";
 import NewsDetail from "./NewsDetail";
 import ToolsArchive from "./ToolsArchive";
+import RavanMammadovPage from "./RavanMammadovPage";
 import NotFound from "./NotFound";
 
 export default function App() {
@@ -30,6 +25,8 @@ export default function App() {
         <Route path="/news" element={<NewsArchive />} />
         <Route path="/news/:slug" element={<NewsDetail />} />
         <Route path="/tools" element={<ToolsArchive />} />
+        <Route path="/ravanmammadov" element={<RavanMammadovPage />} />
+        <Route path="/about" element={<RavanMammadovPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Analytics />

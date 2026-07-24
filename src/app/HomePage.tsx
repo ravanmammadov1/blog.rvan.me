@@ -24,6 +24,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Sparkles,
+  UserCheck,
 } from "lucide-react";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 import RavanPhoto from "@/imports/Ravan.png";
@@ -32,14 +34,14 @@ import coverWuling from "@/imports/466885252088463.6a4df53862539.jpg";
 import coverLimitless from "@/imports/cbfd4b251276815.6a33abf0bf48e.png";
 import coverOmoda from "@/imports/063f86251210609.6a4670b82b027.png";
 import { client, urlFor } from "../lib/sanityClient";
-import { fetchSiteSettings, fetchProjects, fetchAboutSection } from "../lib/sanityQueries";
+import { fetchSiteSettings, fetchProjects, fetchAboutSection, fetchTestimonials } from "../lib/sanityQueries";
 import SiteHeader from "./components/SiteHeader";
-import { SiteSettings, ProjectItem, AboutSection as IAboutSection } from "../types/cms";
+import { SiteSettings, ProjectItem, AboutSection as IAboutSection, TestimonialItem } from "../types/cms";
 import BlogSection from "./components/blog/BlogSection";
 import HeroPortrait from "./components/HeroPortrait";
 import TestimonialsSection from "./components/TestimonialsSection";
+import SEO from "./components/SEO";
 
-/* ─── Motion tokens ─── */
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
@@ -51,53 +53,98 @@ const fadeUp = {
   }),
 };
 
-/* ─── Data ─── */
+function useSmoothCursor() {
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, [mouseX, mouseY]);
+
+  const springConfig = { damping: 28, stiffness: 220, mass: 0.6 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+
+  return { springX, springY };
+}
+
 const projects = [
   {
     number: "01",
     title: "Wuling / Creative Campaign",
+    slug: "wuling-creative-campaign",
     type: "Art direction · Motion · Campaign",
     image: coverWuling,
     accent: "#e8fd52",
     year: "2024",
+    liveUrl: undefined as string | undefined,
   },
   {
     number: "02",
     title: "Limitless Drive",
+    slug: "limitless-drive",
     type: "Brand identity · 3D · Automotive",
     image: coverLimitless,
     accent: "#ff764b",
-    year: "2023",
+    year: "2024",
+    liveUrl: undefined as string | undefined,
   },
   {
     number: "03",
     title: "Omoda & Jaecoo",
-    type: "Social system · Performance creative",
+    slug: "omoda-jaecoo",
+    type: "Creative suite · Motion system",
     image: coverOmoda,
-    accent: "#f9ead4",
-    year: "2023",
+    accent: "#5ce1e6",
+    year: "2025",
+    liveUrl: undefined as string | undefined,
   },
 ];
 
 const services = [
-  { name: "Motion Design", relatedBlogSlug: "physics-of-kinetic-motion-timing-easing-curves", externalLink: "https://www.motiondesign.school" },
-  { name: "Creative Direction", relatedBlogSlug: "client-communication-handling-revisions-design-choices", externalLink: "https://www.adweek.com" },
-  { name: "Brand Identity", relatedBlogSlug: "building-brand-worlds-visual-systems", externalLink: "https://www.underconsideration.com/brandnew" },
-  { name: "3D Design", relatedBlogSlug: "blender-3d-product-visualization-lighting-materials", externalLink: "https://www.vectary.com" },
-  { name: "Digital Marketing", relatedBlogSlug: "saas-landing-page-ui-blueprints-conversion", externalLink: "https://www.marketingweek.com" },
-  { name: "Performance Creative", relatedBlogSlug: "aida-framework-performance-creative-attention-action", externalLink: "https://www.marketingprofs.com" },
-  { name: "Social Media Design", relatedBlogSlug: "short-form-video-blueprint-hooks-retention", externalLink: "https://www.socialmediatoday.com" },
-  { name: "AI Assisted Design", relatedBlogSlug: "ai-assisted-design-workflows-creativity", externalLink: "https://www.smashingmagazine.com" },
+  {
+    name: "3D & Motion Craft",
+    externalLink: "#",
+    relatedBlogSlug: "blender-3d-product-visualization-lighting-materials",
+  },
+  {
+    name: "Brand Worlds & Systems",
+    externalLink: "#",
+    relatedBlogSlug: "building-brand-worlds-visual-systems",
+  },
+  {
+    name: "Performance Creative",
+    externalLink: "#",
+    relatedBlogSlug: "performance-creative-scaling-testing-video",
+  },
+  {
+    name: "Art Direction & Growth",
+    externalLink: "#",
+    relatedBlogSlug: "agency-grade-portfolio-blueprints-5-figure-clients",
+  },
 ];
 
-const marqueeWords = [
-  "MOTION",
-  "BRAND WORLDS",
-  "ART DIRECTION",
-  "3D",
-  "PERFORMANCE CREATIVE",
-  "CAMPAIGN",
-  "STRATEGY",
+const principles = [
+  {
+    label: "Attention first",
+    tools: "If the first 3 seconds don't hook, the rest of the message is invisible.",
+    relatedBlogSlug: "short-form-video-blueprint-hooks-retention",
+  },
+  {
+    label: "Clarity over complexity",
+    tools: "Simple visual hierarchy always beats over-designed noise.",
+    relatedBlogSlug: "visual-hierarchy-secrets-controlling-eye-flow",
+  },
+  {
+    label: "Design made to scale",
+    tools: "Every system should work smoothly from 16px icons to massive billboards.",
+    relatedBlogSlug: "documenting-scalable-design-systems-tokens",
+  },
 ];
 
 const stats = [
@@ -107,84 +154,13 @@ const stats = [
   { value: "18", label: "Awards & features" },
 ];
 
-const principles = [
-  {
-    label: "ATTENTION",
-    tools: "In a world of infinite scroll, attention is the only real currency.",
-    relatedBlogSlug: "10-graphic-design-rules-art-directors-never-break",
-  },
-  {
-    label: "MOTION",
-    tools: "Static explains. Motion persuades. How it moves is the message.",
-    relatedBlogSlug: "physics-of-kinetic-motion-timing-easing-curves",
-  },
-  {
-    label: "TENSION",
-    tools: "Great work isn't calm — it's controlled tension that keeps the eye awake.",
-    relatedBlogSlug: "building-brand-worlds-visual-systems",
-  },
-];
-
-const fieldNotes = [
-  {
-    role: "The 3-second rule",
-    period: "N° 01",
-    badge: "HOOK",
-    desc1: "If it doesn't earn a second look in three seconds, it never will. The first frame does 80% of the work.",
-    desc2: "Lead with tension, contrast or a question — never with a warm-up. The scroll is merciless and it never sleeps.",
-    relatedBlogSlug: "10-graphic-design-rules-art-directors-never-break",
-  },
-  {
-    role: "Kill your darlings",
-    period: "N° 02",
-    badge: "CRAFT",
-    desc1: "The idea you love most is usually the one holding the work back. Ego is the enemy of clarity.",
-    desc2: "Cut anything that serves the maker more than the message. What remains should feel inevitable, not decorated.",
-    relatedBlogSlug: "client-communication-handling-revisions-design-choices",
-  },
-  {
-    role: "Constraints are fuel",
-    period: "N° 03",
-    badge: "PROCESS",
-    desc1: "A blank canvas is paralysing. A tight brief is a launchpad. Limits force the interesting decisions.",
-    desc2: "The best ideas are born the moment someone says it can't be done — that's where the real design begins.",
-    relatedBlogSlug: "overcoming-creative-burnout-design-frameworks",
-  },
-];
-
-/* ─── Smooth cursor hook ─── */
-function useSmoothCursor() {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  const springX = useSpring(cursorX, { stiffness: 180, damping: 22, mass: 0.5 });
-  const springY = useSpring(cursorY, { stiffness: 180, damping: 22, mass: 0.5 });
-
-  useEffect(() => {
-    const move = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-    };
-    window.addEventListener("mousemove", move);
-    return () => window.removeEventListener("mousemove", move);
-  }, [cursorX, cursorY]);
-
-  return { springX, springY };
-}
-
-/* ─── Reusable eyebrow label ─── */
-function Eyebrow({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <p className={`eyebrow ${className}`}>{children}</p>;
-}
-
-/* ─── App ─── */
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeExperience, setActiveExperience] = useState<number | null>(0);
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
   const [sanityProjects, setSanityProjects] = useState<ProjectItem[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+  const [aboutTab, setAboutTab] = useState<"about" | "testimonials">("about");
 
   // Contact Form State
   const [contactName, setContactName] = useState("");
@@ -244,6 +220,10 @@ export default function HomePage() {
       if (data && data.length > 0) setSanityProjects(data);
     });
 
+    fetchTestimonials().then((data) => {
+      if (data) setTestimonials(data);
+    });
+
     client
       .fetch(`
         *[_type == "blog"] | order(featured desc, publishDate desc){
@@ -267,23 +247,7 @@ export default function HomePage() {
 
   const { scrollY, scrollYProgress } = useScroll();
   const progressScale = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
-  const headerBg = useTransform(scrollY, [0, 80], [0, 1]);
   const { springX, springY } = useSmoothCursor();
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setMenuOpen(false);
-  };
-
-  const navItems = [
-    { label: "WORK", type: "scroll", target: "work" },
-    { label: "ABOUT", type: "scroll", target: "about" },
-    { label: "EXPERTISE", type: "scroll", target: "expertise" },
-    { label: "NEWS", type: "link", target: "/news" },
-    { label: "TOOLS", type: "link", target: "/tools" },
-    { label: "BLOG", type: "link", target: "/blog" },
-    { label: "CONTACT", type: "scroll", target: "contact" },
-  ];
 
   const displayProjects = useMemo(() => {
     if (sanityProjects.length > 0) {
@@ -304,6 +268,11 @@ export default function HomePage() {
     }));
   }, [sanityProjects]);
 
+  // Show max 3 featured projects on homepage
+  const homepageProjects = useMemo(() => {
+    return displayProjects.slice(0, 3);
+  }, [displayProjects]);
+
   const heroTitle = siteSettings?.heroTitle || "MOVE THE NEEDLE.";
   const heroSubtitle = siteSettings?.heroSubtitle || "Senior creative designer blending motion, brand worlds and high-performing digital ideas into work that earns attention.";
   const availabilityStatus = siteSettings?.availabilityStatus || "AVAILABLE FOR SELECT WORK · Q3 2025";
@@ -313,29 +282,10 @@ export default function HomePage() {
       className="overflow-hidden bg-background text-foreground"
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
-      <style>{`
-        ::selection { background: var(--primary); color: var(--primary-foreground); }
-        .eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
-        .mono { font-family: 'DM Mono', monospace; }
-        .hero-image-wrap { overflow: hidden; border-radius: 1.75rem 1.75rem .25rem .25rem; transform: rotate(3deg); box-shadow: 0 40px 90px rgba(0,0,0,.5); max-height: 680px; object-fit: cover; }
-        .hero-image { display: block; filter: saturate(.9) contrast(1.03); transition: transform 1.2s cubic-bezier(.2,.7,.2,1); object-fit: cover; }
-        .hero-section:hover .hero-image { transform: scale(1.04); }
-        .hero-vignette { background: radial-gradient(ellipse at 62% 38%, transparent 16%, rgba(16,16,16,.14) 52%, var(--background) 84%); }
-        .project-art { transform: translateZ(0); transition: transform .7s cubic-bezier(.2,.7,.2,1), box-shadow .7s ease; }
-        .project-card:hover .project-art { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-8px); box-shadow: 0 34px 70px rgba(0,0,0,.28); }
-        .project-art::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(115deg, rgba(255,255,255,.24), transparent 38%, rgba(0,0,0,.2)); pointer-events: none; }
-        .marquee { display: flex; width: max-content; animation: marquee 34s linear infinite; }
-        .marquee-track:hover .marquee { animation-play-state: paused; }
-        @keyframes marquee { to { transform: translateX(-50%); } }
-        @media (max-width: 1024px) {
-          .hero-image-wrap { max-height: 500px; width: 45vw; right: 2%; }
-        }
-        @media (max-width: 767px) {
-          .hero-image-wrap { position: relative; right: auto; top: auto; height: 60vw; max-height: 360px; width: 100%; max-width: 320px; margin: 0 auto 1.5rem auto; opacity: .9; }
-          .hero-vignette { background: radial-gradient(ellipse at 65% 36%, transparent 8%, rgba(16,16,16,.3) 48%, var(--background) 76%); }
-        }
-        ::-webkit-scrollbar { width: 0; }
-      `}</style>
+      <SEO
+        title="Ravan Mammadov — Senior Creative Designer & Marketer"
+        description="Portfolio of Ravan Mammadov. Blending 3D, motion design, brand worlds, and growth creative for global brands."
+      />
 
       {/* Scroll progress */}
       <motion.div
@@ -349,10 +299,10 @@ export default function HomePage() {
         style={{ left: springX, top: springY }}
       />
 
-      {/* ── Unified Header ── */}
+      {/* ── 1. Unified Header ── */}
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* ── Hero ── */}
+      {/* ── 1. Hero ── */}
       <section
         id="top"
         className="hero-section relative isolate min-h-screen px-6 pb-16 pt-32 md:px-10 md:pt-40"
@@ -362,10 +312,9 @@ export default function HomePage() {
             className="hero-image-wrap absolute right-[5%] top-[8%] h-[62vw] max-h-[790px] min-h-[450px] w-[43vw] min-w-[300px]"
             aria-hidden="true"
           >
-          <HeroPortrait embedUrl={siteSettings?.heroEmbedUrl} />
+            <HeroPortrait />
           </div>
           <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:64px_64px]" />
-          <div className="hero-vignette absolute inset-0" />
         </div>
 
         {/* Corner coordinate detail */}
@@ -392,9 +341,9 @@ export default function HomePage() {
               <motion.span
                 key={i}
                 initial={{ y: "110%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1, delay: 0.15 + i * 0.14, ease: EASE }}
-                className={`block ${i === 1 ? "ml-[9vw] text-primary" : ""}`}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{ duration: 0.9, delay: 0.2 + i * 0.08, ease: EASE }}
+                className="inline-block mr-[0.2em]"
               >
                 {word}
               </motion.span>
@@ -405,180 +354,130 @@ export default function HomePage() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            custom={0.7}
-            className="mt-12 grid items-end gap-8 border-t border-border pt-6 md:grid-cols-12"
+            custom={0.4}
+            className="mt-10 flex flex-col justify-between gap-8 pt-8 md:flex-row md:items-end border-t border-border/40"
           >
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground md:col-span-4">
+            <p className="max-w-xl text-base leading-relaxed text-muted-foreground font-medium md:text-lg">
               {heroSubtitle}
             </p>
-            <div className="md:col-span-5" />
-            <button
-              onClick={() => scrollTo("work")}
-              className="group flex items-center justify-between rounded-full border border-border px-6 py-4 text-[11px] font-bold tracking-[.18em] transition duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground md:col-span-3"
-            >
-              EXPLORE SELECTED WORK
-              <ArrowDownRight className="transition-transform duration-300 group-hover:translate-y-1" size={16} />
-            </button>
+            <div className="flex flex-wrap items-center gap-6">
+              <a
+                href="#work"
+                className="group flex items-center gap-3 rounded-full border border-white/20 bg-surface px-7 py-4 text-xs font-bold tracking-[.18em] transition duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground mono uppercase"
+              >
+                EXPLORE SELECTED WORK
+                <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+              </a>
+              <Link
+                to="/ravanmammadov"
+                className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
+              >
+                READ BIOGRAPHY →
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── Marquee divider ── */}
-      <div className="marquee-track relative overflow-hidden border-y border-border bg-surface py-5">
-        <div className="marquee">
-          {[...marqueeWords, ...marqueeWords].map((word, i) => (
-            <span key={i} className="flex items-center gap-8 pr-8 text-lg font-semibold tracking-[-.02em] text-foreground/70">
-              {word}
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Work ── */}
-      <section id="work" className="bg-paper px-6 py-28 text-paper-foreground md:px-10 md:py-40">
+      {/* ── 2. Selected Work ── */}
+      <section id="work" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
         <div className="mx-auto max-w-[1600px]">
           <motion.div
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="mb-16 flex items-end justify-between border-b border-black/15 pb-6"
+            className="mb-16 flex items-end justify-between border-b border-border pb-6"
           >
             <div>
-              <p className="eyebrow text-black/45">Selected Work / 2022—2025</p>
-              <h2 className="mt-5 text-6xl font-semibold tracking-[-.07em] md:text-8xl">Made to move.</h2>
+              <Eyebrow className="text-muted-foreground">01 / Selected Work</Eyebrow>
+              <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                Built to be remembered.
+              </h2>
             </div>
-            <span className="hidden text-xs font-medium text-black/40 mono md:block">({String(displayProjects.length).padStart(2, '0')} — 25)</span>
+            <Link
+              to="/work"
+              className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+            >
+              VIEW ALL PROJECTS ({displayProjects.length})
+              <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
           </motion.div>
 
-          <div className="grid gap-x-6 gap-y-12 lg:grid-cols-3">
-            {displayProjects.map((project, index) => (
+          <div className="grid gap-12 lg:gap-20">
+            {homepageProjects.map((project, index) => (
               <motion.article
-                key={index}
+                key={project.slug}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.15 }}
-                custom={index * 0.12}
-                onHoverStart={() => setHoveredProject(index)}
-                onHoverEnd={() => setHoveredProject(null)}
-                className="project-card cursor-pointer"
+                viewport={{ once: true }}
+                custom={index * 0.1}
+                className="project-card group relative grid gap-8 lg:grid-cols-12 items-center"
+                onMouseEnter={() => setHoveredProject(index)}
+                onMouseLeave={() => setHoveredProject(null)}
               >
-                <Link to={`/work/${project.slug}`}>
-                  <div className="project-art relative aspect-[16/11] overflow-hidden rounded-lg">
-                    <ImageWithFallback
-                      src={project.image}
-                      alt={project.title}
-                      className="h-full w-full object-cover object-center transition-transform duration-700"
-                      style={{ transform: hoveredProject === index ? "scale(1.05)" : "scale(1)" }}
-                    />
-                    <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-black/45 to-transparent" />
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent" />
-                    <span className="absolute left-6 top-6 text-xs font-bold text-white mono">{project.number}</span>
-                    <span className="absolute right-6 top-6 grid h-10 w-10 place-items-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-sm transition-all duration-500 hover:rotate-45 hover:bg-white/25">
-                      <ArrowUpRight size={17} />
-                    </span>
-                    <div className="absolute bottom-6 left-6 text-[10px] tracking-[.2em] text-white mono">CREATIVE SYSTEMS™</div>
-                    <div className="absolute bottom-6 right-6 text-[10px] tracking-[.15em] text-white/60 mono">{project.year}</div>
-                  </div>
-                  <div className="flex items-start justify-between gap-4 pt-6">
-                    <div>
-                      <h3 className="text-2xl font-semibold tracking-[-.04em]">{project.title}</h3>
-                      <p className="mt-2 text-[11px] font-medium uppercase tracking-[.14em] text-black/45">{project.type}</p>
+                <div className="lg:col-span-7">
+                  <Link to={`/work/${project.slug}`} className="block overflow-hidden rounded-2xl border border-border bg-surface">
+                    <div className="project-art relative aspect-[16/10] overflow-hidden">
+                      <ImageWithFallback
+                        src={project.image}
+                        alt={project.title}
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
                     </div>
-                    <span className="mt-1.5 h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: project.accent }} />
+                  </Link>
+                </div>
+                <div className="lg:col-span-5 lg:pl-6">
+                  <div className="flex items-center gap-4 text-xs font-bold tracking-[.2em] text-muted-foreground mono">
+                    <span>{project.number}</span>
+                    <span>·</span>
+                    <span>{project.year}</span>
                   </div>
-                </Link>
+                  <h3 className="mt-4 text-3xl font-semibold tracking-[-.04em] md:text-5xl">
+                    <Link to={`/work/${project.slug}`} className="transition-colors duration-300 hover:text-primary">
+                      {project.title}
+                    </Link>
+                  </h3>
+                  <p className="mt-4 text-sm font-medium text-muted-foreground">{project.type}</p>
+
+                  <div className="mt-8 flex flex-wrap items-center gap-4">
+                    <Link
+                      to={`/work/${project.slug}`}
+                      className="group/btn inline-flex items-center gap-3 rounded-full border border-border bg-surface px-6 py-3.5 text-xs font-bold tracking-[.18em] text-foreground transition duration-300 hover:border-primary hover:bg-primary hover:text-black mono uppercase"
+                    >
+                      VIEW CASE STUDY
+                      <ArrowUpRight size={14} className="transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+                    </Link>
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase"
+                      >
+                        LIVE SITE <ArrowUpRight size={12} />
+                      </a>
+                    )}
+                  </div>
+                </div>
               </motion.article>
             ))}
           </div>
 
-          <Link
-            to="/work"
-            className="group mt-16 flex w-full items-center justify-between border-y border-black/15 py-6 text-xs font-bold tracking-[.18em] transition-all duration-300 hover:px-4"
-          >
-            <span>VIEW FULL ARCHIVE</span>
-            <MoveUpRight className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" size={17} />
-          </Link>
-        </div>
-      </section>
-
-      {/* ── About ── */}
-      <section id="about" className="relative px-6 py-32 md:px-10 md:py-44">
-        <div className="mx-auto grid max-w-[1600px] gap-12 lg:grid-cols-12 lg:gap-10">
-          {/* Portrait */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="lg:col-span-4"
-          >
-            <div className="relative overflow-hidden rounded-lg border border-border">
-              <ImageWithFallback
-                src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait : RavanPortrait}
-                alt="Portrait of Ravan Mammadov"
-                className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
-              />
-              <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-gradient-to-t from-background to-transparent p-5 text-[10px] tracking-[.2em] mono">
-                <span>RAVAN MAMMADOV</span>
-                <span className="text-primary">EST. BAKU</span>
-              </div>
-            </div>
-          </motion.div>
-
-          <div className="lg:col-span-7 lg:col-start-6">
-            <Eyebrow className="text-muted-foreground">01 / About the practice</Eyebrow>
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={0.1}
-              className="mt-6 text-4xl font-medium leading-[1.05] tracking-[-.05em] sm:text-5xl lg:text-6xl"
+          <div className="mt-20 flex justify-center">
+            <Link
+              to="/work"
+              className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
             >
-              {aboutSection?.heading || "I create visual energy for brands that refuse to blend in."}
-            </motion.h2>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={0.2}
-              className="mt-12 grid gap-8 border-t border-border pt-6 md:grid-cols-2"
-            >
-              <p className="text-base leading-relaxed text-muted-foreground">
-                {aboutSection?.introParagraph1 ||
-                  "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative."}
-              </p>
-              <p className="text-base leading-relaxed text-muted-foreground">
-                {aboutSection?.introParagraph2 ||
-                  "My approach pairs a designer's eye with a marketer's clarity: beautiful ideas, built to be remembered and made to perform."}
-              </p>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={0.3}
-              className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-4"
-            >
-              {(aboutSection?.stats && aboutSection.stats.length > 0 ? aboutSection.stats : stats).map((s) => (
-                <div key={s.label} className="bg-background p-6">
-                  <p className="text-4xl font-semibold tracking-[-.05em] text-primary">{s.value}</p>
-                  <p className="mt-2 text-[11px] font-medium uppercase tracking-[.12em] text-muted-foreground">{s.label}</p>
-                </div>
-              ))}
-            </motion.div>
+              <span>VIEW FULL PROJECT ARCHIVE ({displayProjects.length} PROJECTS)</span>
+              <MoveUpRight className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" size={17} />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Expertise ── */}
+      {/* ── 3. Expertise ── */}
       <section id="expertise" className="bg-primary px-6 py-28 text-primary-foreground md:px-10 md:py-40">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
@@ -624,120 +523,131 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Process & Tools ── */}
-      <section className="px-6 py-32 md:px-10 md:py-40">
+      {/* ── 4. News / Blog ── */}
+      <BlogSection posts={blogPosts} />
+
+      {/* ── 5. About (Integrated with Testimonials tab) ── */}
+      <section id="about" className="relative px-6 py-32 md:px-10 md:py-44 border-t border-border">
         <div className="mx-auto max-w-[1600px]">
-          <div className="grid gap-12 lg:grid-cols-12">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="lg:col-span-4"
-            >
-              <Eyebrow className="text-muted-foreground">03 / The Philosophy</Eyebrow>
-              <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-5xl">
-                Why some work sticks.
+          {/* About Header with Tab Switcher */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-8 mb-16 gap-6">
+            <div>
+              <Eyebrow className="text-muted-foreground">04 / About the Practice</Eyebrow>
+              <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                {aboutTab === "about" ? "Refusing to blend in." : "What Collaborators Say."}
               </h2>
-            </motion.div>
-            <div className="lg:col-span-7 lg:col-start-6">
-              {principles.map((group, index) => (
-                <motion.div
-                  key={group.label}
+            </div>
+
+            {/* Tab Toggle */}
+            <div className="inline-flex rounded-full border border-border bg-surface p-1.5 mono text-xs font-bold">
+              <button
+                onClick={() => setAboutTab("about")}
+                className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
+                  aboutTab === "about" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                BIOGRAPHY & STATS
+              </button>
+              <button
+                onClick={() => setAboutTab("testimonials")}
+                className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
+                  aboutTab === "testimonials" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                COLLABORATOR REVIEWS ({testimonials.length})
+              </button>
+            </div>
+          </div>
+
+          {aboutTab === "about" ? (
+            <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+              {/* Portrait */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="lg:col-span-4"
+              >
+                <div className="relative overflow-hidden rounded-2xl border border-border">
+                  <ImageWithFallback
+                    src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait : RavanPortrait}
+                    alt="Portrait of Ravan Mammadov"
+                    className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
+                  />
+                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-gradient-to-t from-background via-background/90 to-transparent p-5 text-[10px] tracking-[.2em] mono">
+                    <span>RAVAN MAMMADOV</span>
+                    <span className="text-primary font-bold">SENIOR DESIGNER</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              <div className="lg:col-span-7 lg:col-start-6">
+                <motion.h3
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true }}
-                  custom={index * 0.1}
-                  className="border-t border-border py-8"
+                  className="text-3xl font-medium leading-[1.1] tracking-[-.04em] md:text-5xl"
                 >
-                  <Link to={`/blog/${group.relatedBlogSlug}`} className="group block">
-                    <div className="flex items-baseline justify-between gap-5">
-                      <span className="text-[11px] font-bold tracking-[.2em] mono transition-colors group-hover:text-primary">
-                        0{index + 1} / {group.label}
-                      </span>
-                      <Crosshair className="text-primary transition-transform group-hover:scale-125" size={16} />
-                    </div>
-                    <p className="mt-5 text-xl tracking-[-.03em] text-muted-foreground transition-colors group-hover:text-foreground md:text-3xl">
-                      {group.tools}
-                    </p>
-                  </Link>
+                  {aboutSection?.heading || "I create visual energy for brands that refuse to blend in."}
+                </motion.h3>
+
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={0.2}
+                  className="mt-10 grid gap-8 border-t border-border pt-6 md:grid-cols-2"
+                >
+                  <p className="text-base leading-relaxed text-muted-foreground font-medium">
+                    {aboutSection?.introParagraph1 ||
+                      "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative."}
+                  </p>
+                  <p className="text-base leading-relaxed text-muted-foreground font-medium">
+                    {aboutSection?.introParagraph2 ||
+                      "My approach pairs a designer's eye with a marketer's clarity: beautiful ideas, built to be remembered and made to perform."}
+                  </p>
                 </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── Experience ── */}
-      <section className="bg-surface px-6 py-28 md:px-10 md:py-36">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <Eyebrow className="text-muted-foreground">04 / Field Notes</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-              Rules worth breaking.
-            </h2>
-          </motion.div>
-          <div className="mt-12 border-t border-border">
-            {fieldNotes.map((exp, index) => (
-              <div key={exp.role} className="border-b border-border">
-                <button
-                  onClick={() => setActiveExperience(activeExperience === index ? null : index)}
-                  className="group flex w-full items-center justify-between gap-6 py-8 text-left"
+                {/* Stats */}
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={0.3}
+                  className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4"
                 >
-                  <span className="flex items-baseline gap-6">
-                    <span className="hidden text-xs text-muted-foreground mono sm:block">{exp.period}</span>
-                    <span className="text-2xl font-semibold tracking-[-.04em] transition-colors duration-300 group-hover:text-primary md:text-4xl">
-                      {exp.role}
-                    </span>
-                  </span>
-                  <span className="flex items-center gap-4 text-[10px] font-bold tracking-[.16em] text-muted-foreground mono">
-                    <span className="hidden md:block">{exp.badge}</span>
-                    <ChevronDown
-                      className={`transition-transform duration-300 ${activeExperience === index ? "rotate-180 text-primary" : ""}`}
-                      size={18}
-                    />
-                  </span>
-                </button>
-                <AnimatePresence>
-                  {activeExperience === index && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.45, ease: EASE }}
-                      className="overflow-hidden"
-                    >
-                      <div className="grid gap-6 pb-9 text-sm leading-relaxed text-muted-foreground md:grid-cols-2 md:pl-[calc(6rem+1.5rem)]">
-                        <p>{exp.desc1}</p>
-                        <div>
-                          <p>{exp.desc2}</p>
-                          {exp.relatedBlogSlug && (
-                            <Link
-                              to={`/blog/${exp.relatedBlogSlug}`}
-                              className="mt-4 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:underline"
-                            >
-                              READ FULL ESSAY <ArrowUpRight size={14} />
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  {(aboutSection?.stats && aboutSection.stats.length > 0 ? aboutSection.stats : stats).map((s) => (
+                    <div key={s.label} className="bg-background p-6">
+                      <p className="text-3xl font-bold tracking-[-.05em] text-primary mono">{s.value}</p>
+                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground mono">{s.label}</p>
+                    </div>
+                  ))}
+                </motion.div>
+
+                <div className="mt-10 flex flex-wrap gap-6 items-center">
+                  <Link
+                    to="/ravanmammadov"
+                    className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition hover:bg-white mono"
+                  >
+                    READ FULL BIOGRAPHY & CAREER <ArrowUpRight size={14} />
+                  </Link>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            /* Integrated Testimonials View inside About */
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+              <TestimonialsSection />
+            </motion.div>
+          )}
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <TestimonialsSection />
-
-      {/* ── Blog ── */}
-      <BlogSection posts={blogPosts} />
-
-      {/* ── Contact ── */}
+      {/* ── 6. Contact ── */}
       <section
         id="contact"
         className="relative overflow-hidden bg-paper px-6 py-32 text-paper-foreground md:px-10 md:py-44"
@@ -746,7 +656,7 @@ export default function HomePage() {
         <div className="absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-destructive opacity-25 blur-3xl" />
         <div className="relative mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-black/45">06 / Start a conversation</p>
+            <p className="eyebrow text-black/45">05 / Start a conversation</p>
           </motion.div>
 
           <div className="grid gap-12 lg:grid-cols-12 mt-8 items-start">
@@ -979,8 +889,11 @@ export default function HomePage() {
             <a href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
               INSTAGRAM
             </a>
-            <a href={`mailto:${siteSettings?.socialLinks?.email || "mammadovravan1@gmail.com"}`} className="transition-colors hover:text-primary">
-              EMAIL
+            <a href={siteSettings?.socialLinks?.facebook || "https://www.facebook.com/rvnmmmdv/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
+              FACEBOOK
+            </a>
+            <a href={siteSettings?.socialLinks?.pinterest || "https://tr.pinterest.com/mammadovravan1/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
+              PINTEREST
             </a>
           </div>
         </div>
