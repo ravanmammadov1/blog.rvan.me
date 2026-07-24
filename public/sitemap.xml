@@ -12,14 +12,6 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- Portfolio / Work -->
-  <url>
-    <loc>https://www.rvan.me/work</loc>
-    <lastmod>2026-07-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
   <!-- Blog -->
   <url>
     <loc>https://www.rvan.me/blog</loc>
