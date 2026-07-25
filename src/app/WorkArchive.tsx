@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowUpRight, Search, X, FolderKanban } from "lucide-react";
 
-import { fetchProjects } from "../lib/sanityQueries";
+import { fetchProjects, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { ProjectItem } from "../types/cms";
+import { ProjectItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
+import SiteHeader from "./components/SiteHeader";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
