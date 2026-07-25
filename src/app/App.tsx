@@ -16,9 +16,11 @@ import RavanMammadovPage from "./RavanMammadovPage";
 import NotFound from "./NotFound";
 
 import { useGA4Tracker } from "./hooks/useGA4Tracker";
+import { useClarity } from "./hooks/useClarity";
 
 export default function App() {
   useGA4Tracker();
+  useClarity();
 
   return (
     <>
