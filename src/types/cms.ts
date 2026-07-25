@@ -90,7 +90,12 @@ export interface SEOSettings {
   metaTitle?: string;
   metaDescription?: string;
   ogImage?: any;
+  twitterImage?: any;
+  siteName?: string;
   twitterHandle?: string;
+  canonicalUrl?: string;
+  defaultKeywords?: string;
+  author?: string;
   googleVerification?: string;
 }
 
