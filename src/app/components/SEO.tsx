@@ -78,8 +78,11 @@ export default function SEO({
     // OG Image
     const ogImage = image || `${SITE_DOMAIN}/og-image.jpg`;
     updateMeta('meta[property="og:image"]', ogImage);
+    updateMeta('meta[property="og:image:secure_url"]', ogImage);
+    updateMeta('meta[property="og:image:type"]', "image/jpeg");
     updateMeta('meta[property="og:image:width"]', "1200");
     updateMeta('meta[property="og:image:height"]', "630");
+    updateMeta('meta[property="og:image:alt"]', title);
     updateMeta('meta[name="twitter:image"]', ogImage);
 
     // Article-specific
