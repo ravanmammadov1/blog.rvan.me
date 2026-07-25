@@ -17,6 +17,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Static core indexable pages
     const staticPages = [
       { url: `${DOMAIN}/`, lastmod: today, changefreq: "daily", priority: "1.0" },
+      { url: `${DOMAIN}/work`, lastmod: today, changefreq: "weekly", priority: "0.9" },
+      { url: `${DOMAIN}/expertise`, lastmod: today, changefreq: "weekly", priority: "0.9" },
+      { url: `${DOMAIN}/contact`, lastmod: today, changefreq: "monthly", priority: "0.8" },
       { url: `${DOMAIN}/blog`, lastmod: today, changefreq: "daily", priority: "0.9" },
       { url: `${DOMAIN}/news`, lastmod: today, changefreq: "weekly", priority: "0.8" },
       { url: `${DOMAIN}/tools`, lastmod: today, changefreq: "monthly", priority: "0.8" },

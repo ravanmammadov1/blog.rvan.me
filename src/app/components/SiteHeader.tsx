@@ -31,43 +31,67 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const handleNavClick = (target: string) => {
     setMenuOpen(false);
 
+    // Clean routes
     if (target.startsWith("/")) {
       navigate(target);
       return;
     }
 
-    if (isHomePage) {
-      const element = document.getElementById(target);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    } else {
-      navigate(`/#${target}`);
-      setTimeout(() => {
-        const element = document.getElementById(target);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
+    // Map section IDs to clean routes
+    if (target === "work") {
+      navigate("/work");
+      return;
     }
+    if (target === "expertise") {
+      navigate("/expertise");
+      return;
+    }
+    if (target === "contact") {
+      navigate("/contact");
+      return;
+    }
+    if (target === "about") {
+      navigate("/ravan-mammadov");
+      return;
+    }
+
+    if (target === "top") {
+      if (isHomePage) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/");
+      }
+      return;
+    }
+
+    navigate(`/${target}`);
   };
 
   const defaultNavItems = [
-    { label: "WORK", target: "work" },
-    { label: "ABOUT", target: "about" },
-    { label: "EXPERTISE", target: "expertise" },
+    { label: "WORK", target: "/work" },
+    { label: "ABOUT", target: "/ravan-mammadov" },
+    { label: "EXPERTISE", target: "/expertise" },
     { label: "NEWS", target: "/news" },
     { label: "TOOLS", target: "/tools" },
     { label: "BLOG", target: "/blog" },
-    { label: "CONTACT", target: "contact" },
+    { label: "CONTACT", target: "/contact" },
   ];
 
-  const navItems = (siteSettings?.navItems && siteSettings.navItems.length > 0
+  const rawNavItems = siteSettings?.navItems && siteSettings.navItems.length > 0
     ? siteSettings.navItems
-    : defaultNavItems
-  ).filter((item) => !("hidden" in item && item.hidden));
+    : defaultNavItems;
+
+  const navItems = rawNavItems
+    .filter((item) => !("hidden" in item && item.hidden))
+    .map((item) => {
+      // Normalize target to clean routes
+      let cleanTarget = item.target;
+      if (cleanTarget === "work") cleanTarget = "/work";
+      if (cleanTarget === "expertise") cleanTarget = "/expertise";
+      if (cleanTarget === "contact") cleanTarget = "/contact";
+      if (cleanTarget === "about") cleanTarget = "/ravan-mammadov";
+      return { ...item, target: cleanTarget };
+    });
 
   const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
 
@@ -83,7 +107,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 md:px-10">
           {/* Logo & Brand */}
           <button
-            onClick={() => handleNavClick(isHomePage ? "top" : "/")}
+            onClick={() => handleNavClick("top")}
             className="group flex items-center gap-3 text-left focus:outline-none"
             aria-label="Ravan Mammadov Home"
           >
@@ -108,11 +132,10 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           {/* Desktop Navigation Links */}
           <nav className="hidden items-center gap-8 text-[11px] font-semibold tracking-[.16em] uppercase lg:flex">
             {navItems.map((item) => {
+              const targetRoute = item.target.startsWith("/") ? item.target : `/${item.target}`;
               const isActive =
-                (item.target === "/blog" && location.pathname.startsWith("/blog")) ||
-                (item.target === "/news" && location.pathname.startsWith("/news")) ||
-                (item.target === "/tools" && location.pathname.startsWith("/tools")) ||
-                (item.target === "work" && location.pathname.startsWith("/work"));
+                location.pathname === targetRoute ||
+                (targetRoute !== "/" && location.pathname.startsWith(targetRoute));
 
               return (
                 <button
@@ -131,7 +154,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => handleNavClick("contact")}
+              onClick={() => handleNavClick("/contact")}
               className="hidden items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-[10px] font-bold tracking-[.16em] uppercase transition duration-300 hover:border-primary hover:bg-primary hover:text-black sm:flex"
             >
               {letsTalkLabel} <ArrowUpRight size={13} />
@@ -178,7 +201,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             <div className="mt-8 pt-6 border-t border-border/50 flex justify-between items-center text-xs mono text-muted-foreground">
               <span>AVAILABLE FOR SELECT WORK</span>
               <button
-                onClick={() => handleNavClick("contact")}
+                onClick={() => handleNavClick("/contact")}
                 className="text-primary font-bold hover:underline"
               >
                 START PROJECT →
