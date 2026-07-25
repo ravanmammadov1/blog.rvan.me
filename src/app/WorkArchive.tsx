@@ -102,22 +102,91 @@ export default function WorkArchive() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Primary 8 categories in order of importance
+  const PRIMARY_CATEGORIES = [
+    "All",
+    "Motion Design",
+    "3D",
+    "Branding",
+    "Automotive",
+    "Commercial",
+    "Digital Marketing",
+    "Art Direction",
+  ] as const;
+
+  // Map arbitrary tags / types to primary taxonomy
+  const mapToPrimaryCategory = (rawTag: string): string | null => {
+    const lower = rawTag.toLowerCase().trim();
+    if (!lower) return null;
+
+    if (lower.includes("motion")) return "Motion Design";
+    if (lower.includes("3d")) return "3D";
+    if (
+      lower.includes("brand") ||
+      lower.includes("visual identity") ||
+      lower.includes("identity") ||
+      lower.includes("visual system") ||
+      lower.includes("social system")
+    ) {
+      return "Branding";
+    }
+    if (lower.includes("automotive") || lower.includes("car")) return "Automotive";
+    if (
+      lower.includes("campaign") ||
+      lower.includes("commercial") ||
+      lower.includes("product launch") ||
+      lower.includes("performance creative") ||
+      lower.includes("video ad")
+    ) {
+      return "Commercial";
+    }
+    if (
+      lower.includes("digital marketing") ||
+      lower.includes("cro") ||
+      lower.includes("marketing") ||
+      lower.includes("growth") ||
+      lower.includes("social media")
+    ) {
+      return "Digital Marketing";
+    }
+    if (lower.includes("art direction") || lower.includes("creative direction")) {
+      return "Art Direction";
+    }
+
+    return null;
+  };
+
   const tagsList = useMemo(() => {
-    const set = new Set<string>();
+    // Only present categories that actually match projects in the database or fallback
+    const availableCategories = new Set<string>(["All"]);
+
     projects.forEach((p) => {
-      if (p.tags) p.tags.forEach((t) => set.add(t));
-      if (p.type) set.add(p.type.split("·")[0].trim());
+      const candidates = [...(p.tags || []), ...(p.type ? p.type.split("·").map((s) => s.trim()) : [])];
+      candidates.forEach((cand) => {
+        const mapped = mapToPrimaryCategory(cand);
+        if (mapped) availableCategories.add(mapped);
+      });
     });
-    return ["All", ...Array.from(set)];
+
+    // Return in defined primary order
+    return PRIMARY_CATEGORIES.filter((cat) => availableCategories.has(cat));
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
       const slugStr = p.slug?.current || p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      const matchesTag =
-        activeTag === "All" ||
-        (p.tags && p.tags.includes(activeTag)) ||
-        (p.type && p.type.toLowerCase().includes(activeTag.toLowerCase()));
+
+      const projectTagsAndTypes = [
+        ...(p.tags || []),
+        ...(p.type ? p.type.split("·").map((s) => s.trim()) : []),
+      ];
+
+      const mappedCategories = projectTagsAndTypes
+        .map(mapToPrimaryCategory)
+        .filter(Boolean) as string[];
+
+      const matchesCategory =
+        activeTag === "All" || mappedCategories.includes(activeTag);
 
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
@@ -125,9 +194,10 @@ export default function WorkArchive() {
         p.title.toLowerCase().includes(q) ||
         (p.client && p.client.toLowerCase().includes(q)) ||
         (p.description && p.description.toLowerCase().includes(q)) ||
+        (p.type && p.type.toLowerCase().includes(q)) ||
         slugStr.includes(q);
 
-      return matchesTag && matchesSearch;
+      return matchesCategory && matchesSearch;
     });
   }, [projects, activeTag, searchQuery]);
 
@@ -182,20 +252,20 @@ export default function WorkArchive() {
               ))}
             </div>
 
-            {/* Search Input */}
-            <div className="relative w-full md:w-80">
+            {/* Search Input — Expanded by ~25% (w-80 -> w-96) */}
+            <div className="relative w-full md:w-96 shrink-0">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <input
                 type="text"
-                placeholder="Search projects by title or client..."
+                placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-border bg-surface pl-10 pr-9 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                className="w-full rounded-full border border-border bg-surface pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   <X size={14} />
                 </button>
