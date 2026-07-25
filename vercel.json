@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "redirects": [
     {
       "source": "/ravanmammadov",
@@ -196,7 +197,7 @@
       "destination": "/api/rss"
     },
     {
-      "source": "/((?!assets/|favicon|apple-touch-icon|google|humans|llms|robots|og-image).*)",
+      "source": "/((?!api/|assets/|.*\\.[a-[z0-9]+).*)",
       "destination": "/"
     }
   ],
