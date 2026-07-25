@@ -9,6 +9,96 @@
       "source": "/about",
       "destination": "/ravan-mammadov",
       "permanent": true
+    },
+    {
+      "source": "/blog/agency-grade-portfolio-blueprints-5-figure-clients",
+      "destination": "/blog/agency-portfolio-blueprints-5-figure-clients",
+      "permanent": true
+    },
+    {
+      "source": "/blog/blender-3d-product-visualization-lighting-materials",
+      "destination": "/blog/3d-product-visualization-lighting-materials",
+      "permanent": true
+    },
+    {
+      "source": "/blog/conversion-rate-optimization-cro-product-design",
+      "destination": "/blog/cro-frameworks-for-product-designers",
+      "permanent": true
+    },
+    {
+      "source": "/blog/documenting-scalable-design-systems-tokens",
+      "destination": "/blog/scalable-design-systems-tokens-components",
+      "permanent": true
+    },
+    {
+      "source": "/blog/figma-power-workflows-auto-layout-variables",
+      "destination": "/blog/figma-auto-layout-component-tokens",
+      "permanent": true
+    },
+    {
+      "source": "/blog/hero-section-architecture-above-the-fold",
+      "destination": "/blog/hero-section-architecture-above-fold",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-to-get-featured-on-behance-case-study",
+      "destination": "/blog/how-to-get-featured-on-behance",
+      "permanent": true
+    },
+    {
+      "source": "/blog/micro-interactions-ui-motion-physics-2026",
+      "destination": "/blog/micro-interactions-ui-motion-physics",
+      "permanent": true
+    },
+    {
+      "source": "/blog/performance-creative-scaling-testing-video",
+      "destination": "/blog/performance-creative-scaling-video-assets",
+      "permanent": true
+    },
+    {
+      "source": "/blog/physics-of-kinetic-motion-timing-easing-curves",
+      "destination": "/blog/kinetic-motion-timing-easing-curves",
+      "permanent": true
+    },
+    {
+      "source": "/blog/pricing-value-positioning-hourly-to-packages",
+      "destination": "/blog/pricing-value-positioning-value-packages",
+      "permanent": true
+    },
+    {
+      "source": "/blog/saas-landing-page-ui-blueprints-conversion",
+      "destination": "/blog/saas-landing-page-ui-blueprints",
+      "permanent": true
+    },
+    {
+      "source": "/blog/seo-strategy-designers-ranking-case-studies",
+      "destination": "/blog/seo-strategy-for-designers",
+      "permanent": true
+    },
+    {
+      "source": "/blog/short-form-video-blueprint-hooks-retention",
+      "destination": "/blog/short-form-video-hooks-retention",
+      "permanent": true
+    },
+    {
+      "source": "/blog/typography-pairing-blueprints-editorial-product",
+      "destination": "/blog/typography-pairing-editorial-product-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ux-psychology-8-cognitive-biases-user-behavior",
+      "destination": "/blog/ux-psychology-8-cognitive-biases",
+      "permanent": true
+    },
+    {
+      "source": "/blog/visual-hierarchy-secrets-controlling-eye-flow",
+      "destination": "/blog/visual-hierarchy-secrets-eye-flow",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-ad-campaigns-fail-creative-fatigue",
+      "destination": "/blog/why-ad-campaigns-fail-creative-fatigue",
+      "permanent": true
     }
   ],
   "rewrites": [

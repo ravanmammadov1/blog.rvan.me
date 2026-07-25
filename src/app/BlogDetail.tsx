@@ -208,6 +208,7 @@ export default function BlogDetail() {
         title={`${post.title} — Ravan Mammadov`}
         description={post.excerpt || `Read ${post.title} by Ravan Mammadov.`}
         image={coverUrl}
+        url={`https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
       />
