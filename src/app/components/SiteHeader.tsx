@@ -31,6 +31,11 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const handleNavClick = (target: string | undefined) => {
     setMenuOpen(false);
 
+    if (!target) {
+      navigate("/");
+      return;
+    }
+
     // Clean routes
     if (typeof target === "string" && target.startsWith("/")) {
       navigate(target);
@@ -38,20 +43,32 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     }
 
     // Map section IDs to clean routes
-    if (target === "work") {
+    if (target === "work" || target === "Work") {
       navigate("/work");
       return;
     }
-    if (target === "expertise") {
+    if (target === "expertise" || target === "Expertise") {
       navigate("/expertise");
       return;
     }
-    if (target === "contact") {
+    if (target === "contact" || target === "Contact") {
       navigate("/contact");
       return;
     }
-    if (target === "about") {
+    if (target === "about" || target === "About") {
       navigate("/ravan-mammadov");
+      return;
+    }
+    if (target === "news" || target === "News") {
+      navigate("/news");
+      return;
+    }
+    if (target === "tools" || target === "Tools") {
+      navigate("/tools");
+      return;
+    }
+    if (target === "blog" || target === "Blog") {
+      navigate("/blog");
       return;
     }
 
@@ -77,19 +94,24 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     { label: "CONTACT", target: "/contact" },
   ];
 
-  const rawNavItems = siteSettings?.navItems && siteSettings.navItems.length > 0
-    ? siteSettings.navItems
-    : defaultNavItems;
+  const rawNavItems =
+    siteSettings?.navItems &&
+    Array.isArray(siteSettings.navItems) &&
+    siteSettings.navItems.length >= 5
+      ? siteSettings.navItems
+      : defaultNavItems;
 
   const navItems = rawNavItems
-    .filter((item) => !("hidden" in item && item.hidden))
+    .filter((item) => item && typeof item === "object" && !("hidden" in item && item.hidden))
     .map((item) => {
-      // Normalize target to clean routes
-      let cleanTarget = item.target;
+      let cleanTarget = item.target || "/";
       if (cleanTarget === "work") cleanTarget = "/work";
       if (cleanTarget === "expertise") cleanTarget = "/expertise";
       if (cleanTarget === "contact") cleanTarget = "/contact";
       if (cleanTarget === "about") cleanTarget = "/ravan-mammadov";
+      if (cleanTarget === "news") cleanTarget = "/news";
+      if (cleanTarget === "tools") cleanTarget = "/tools";
+      if (cleanTarget === "blog") cleanTarget = "/blog";
       return { ...item, target: cleanTarget };
     });
 
@@ -130,7 +152,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden items-center gap-8 text-[11px] font-semibold tracking-[.16em] uppercase lg:flex">
+          <nav className="hidden items-center gap-6 xl:gap-8 text-[11px] font-semibold tracking-[.16em] uppercase md:flex">
             {navItems.map((item) => {
               const targetRoute =
                 typeof item?.target === "string" && item.target.startsWith("/")
@@ -165,7 +187,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
             {/* Mobile Menu Toggle Button */}
             <button
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/40 lg:hidden text-foreground hover:border-primary transition-colors"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/40 md:hidden text-foreground hover:border-primary transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
@@ -183,7 +205,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: EASE }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-background/95 backdrop-blur-xl px-8 pt-20 lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col justify-center bg-background/95 backdrop-blur-xl px-8 pt-20 md:hidden"
           >
             <div className="space-y-2">
               {navItems.map((item, i) => (
