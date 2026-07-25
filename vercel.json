@@ -196,7 +196,7 @@
       "destination": "/api/rss"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|favicon|apple-touch-icon|google|humans|llms|robots|og-image).*)",
       "destination": "/"
     }
   ],
