@@ -110,7 +110,7 @@ const services = [
   {
     name: "3D & Motion Craft",
     externalLink: "#",
-    relatedBlogSlug: "3d-product-visualization-lighting-materials",
+    relatedBlogSlug: "3d-product-visualization-guide",
   },
   {
     name: "Brand Worlds & Systems",
@@ -120,12 +120,12 @@ const services = [
   {
     name: "Performance Creative",
     externalLink: "#",
-    relatedBlogSlug: "performance-creative-scaling-video-assets",
+    relatedBlogSlug: "performance-creative-video-scaling",
   },
   {
     name: "Art Direction & Growth",
     externalLink: "#",
-    relatedBlogSlug: "agency-portfolio-blueprints-5-figure-clients",
+    relatedBlogSlug: "portfolio-client-blueprint",
   },
 ];
 
@@ -133,7 +133,7 @@ const principles = [
   {
     label: "Attention first",
     tools: "If the first 3 seconds don't hook, the rest of the message is invisible.",
-    relatedBlogSlug: "short-form-video-hooks-retention",
+    relatedBlogSlug: "short-form-video-hooks",
   },
   {
     label: "Clarity over complexity",
@@ -143,7 +143,7 @@ const principles = [
   {
     label: "Design made to scale",
     tools: "Every system should work smoothly from 16px icons to massive billboards.",
-    relatedBlogSlug: "scalable-design-systems-tokens-components",
+    relatedBlogSlug: "scalable-design-systems",
   },
 ];
 

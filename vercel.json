@@ -12,62 +12,132 @@
     },
     {
       "source": "/blog/agency-grade-portfolio-blueprints-5-figure-clients",
-      "destination": "/blog/agency-portfolio-blueprints-5-figure-clients",
+      "destination": "/blog/portfolio-client-blueprint",
+      "permanent": true
+    },
+    {
+      "source": "/blog/agency-portfolio-blueprints-5-figure-clients",
+      "destination": "/blog/portfolio-client-blueprint",
       "permanent": true
     },
     {
       "source": "/blog/blender-3d-product-visualization-lighting-materials",
-      "destination": "/blog/3d-product-visualization-lighting-materials",
+      "destination": "/blog/3d-product-visualization-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/3d-product-visualization-lighting-materials",
+      "destination": "/blog/3d-product-visualization-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/after-effects-optimization-expressions-render-systems",
+      "destination": "/blog/after-effects-render-optimization",
+      "permanent": true
+    },
+    {
+      "source": "/blog/building-responsive-web-apps-css-tokens",
+      "destination": "/blog/responsive-web-apps",
       "permanent": true
     },
     {
       "source": "/blog/conversion-rate-optimization-cro-product-design",
-      "destination": "/blog/cro-frameworks-for-product-designers",
+      "destination": "/blog/cro-for-product-designers",
+      "permanent": true
+    },
+    {
+      "source": "/blog/cro-frameworks-for-product-designers",
+      "destination": "/blog/cro-for-product-designers",
       "permanent": true
     },
     {
       "source": "/blog/documenting-scalable-design-systems-tokens",
-      "destination": "/blog/scalable-design-systems-tokens-components",
+      "destination": "/blog/scalable-design-systems",
+      "permanent": true
+    },
+    {
+      "source": "/blog/scalable-design-systems-tokens-components",
+      "destination": "/blog/scalable-design-systems",
       "permanent": true
     },
     {
       "source": "/blog/figma-power-workflows-auto-layout-variables",
-      "destination": "/blog/figma-auto-layout-component-tokens",
+      "destination": "/blog/figma-auto-layout-tokens",
+      "permanent": true
+    },
+    {
+      "source": "/blog/figma-auto-layout-component-tokens",
+      "destination": "/blog/figma-auto-layout-tokens",
       "permanent": true
     },
     {
       "source": "/blog/hero-section-architecture-above-the-fold",
-      "destination": "/blog/hero-section-architecture-above-fold",
+      "destination": "/blog/hero-section-architecture",
+      "permanent": true
+    },
+    {
+      "source": "/blog/hero-section-architecture-above-fold",
+      "destination": "/blog/hero-section-architecture",
       "permanent": true
     },
     {
       "source": "/blog/how-to-get-featured-on-behance-case-study",
-      "destination": "/blog/how-to-get-featured-on-behance",
+      "destination": "/blog/how-to-get-featured-behance",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-to-get-featured-on-behance",
+      "destination": "/blog/how-to-get-featured-behance",
       "permanent": true
     },
     {
       "source": "/blog/micro-interactions-ui-motion-physics-2026",
-      "destination": "/blog/micro-interactions-ui-motion-physics",
+      "destination": "/blog/ui-motion-physics-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/micro-interactions-ui-motion-physics",
+      "destination": "/blog/ui-motion-physics-guide",
       "permanent": true
     },
     {
       "source": "/blog/performance-creative-scaling-testing-video",
-      "destination": "/blog/performance-creative-scaling-video-assets",
+      "destination": "/blog/performance-creative-video-scaling",
+      "permanent": true
+    },
+    {
+      "source": "/blog/performance-creative-scaling-video-assets",
+      "destination": "/blog/performance-creative-video-scaling",
       "permanent": true
     },
     {
       "source": "/blog/physics-of-kinetic-motion-timing-easing-curves",
-      "destination": "/blog/kinetic-motion-timing-easing-curves",
+      "destination": "/blog/kinetic-motion-timing-easing",
+      "permanent": true
+    },
+    {
+      "source": "/blog/kinetic-motion-timing-easing-curves",
+      "destination": "/blog/kinetic-motion-timing-easing",
       "permanent": true
     },
     {
       "source": "/blog/pricing-value-positioning-hourly-to-packages",
-      "destination": "/blog/pricing-value-positioning-value-packages",
+      "destination": "/blog/pricing-value-positioning-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/pricing-value-positioning-value-packages",
+      "destination": "/blog/pricing-value-positioning-guide",
       "permanent": true
     },
     {
       "source": "/blog/saas-landing-page-ui-blueprints-conversion",
-      "destination": "/blog/saas-landing-page-ui-blueprints",
+      "destination": "/blog/saas-landing-page-blueprints",
+      "permanent": true
+    },
+    {
+      "source": "/blog/saas-landing-page-ui-blueprints",
+      "destination": "/blog/saas-landing-page-blueprints",
       "permanent": true
     },
     {
@@ -77,17 +147,32 @@
     },
     {
       "source": "/blog/short-form-video-blueprint-hooks-retention",
-      "destination": "/blog/short-form-video-hooks-retention",
+      "destination": "/blog/short-form-video-hooks",
+      "permanent": true
+    },
+    {
+      "source": "/blog/short-form-video-hooks-retention",
+      "destination": "/blog/short-form-video-hooks",
       "permanent": true
     },
     {
       "source": "/blog/typography-pairing-blueprints-editorial-product",
-      "destination": "/blog/typography-pairing-editorial-product-design",
+      "destination": "/blog/typography-pairing-editorial-product",
+      "permanent": true
+    },
+    {
+      "source": "/blog/typography-pairing-editorial-product-design",
+      "destination": "/blog/typography-pairing-editorial-product",
       "permanent": true
     },
     {
       "source": "/blog/ux-psychology-8-cognitive-biases-user-behavior",
-      "destination": "/blog/ux-psychology-8-cognitive-biases",
+      "destination": "/blog/ux-psychology-cognitive-biases",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ux-psychology-8-cognitive-biases",
+      "destination": "/blog/ux-psychology-cognitive-biases",
       "permanent": true
     },
     {
@@ -97,7 +182,7 @@
     },
     {
       "source": "/blog/why-ad-campaigns-fail-creative-fatigue",
-      "destination": "/blog/why-ad-campaigns-fail-creative-fatigue",
+      "destination": "/blog/why-ad-campaigns-fail-fatigue",
       "permanent": true
     }
   ],
@@ -105,6 +190,10 @@
     {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "/api/rss"
     },
     {
       "source": "/(.*)",
@@ -130,6 +219,14 @@
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.clarity.ms https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; worker-src 'self' blob:; frame-src 'self' https:;"
         }
       ]
     }

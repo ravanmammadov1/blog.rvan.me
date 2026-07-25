@@ -1,0 +1,24 @@
+/* humans.txt */
+
+/* AUTHOR & CREATOR */
+    Senior Creative Designer & Art Director: Ravan Mammadov
+    Website: https://www.rvan.me
+    Location: Baku, Azerbaijan
+    LinkedIn: https://www.linkedin.com/in/ravanmammadov1/
+    Behance: https://www.behance.net/mammadovravan
+    Instagram: https://www.instagram.com/ravanimate/
+
+/* SITE TECHNOLOGY & ARCHITECTURE */
+    Core Framework: React 18 & TypeScript
+    Build Tool & Bundler: Vite 6
+    Styling & UI System: Tailwind CSS & Lucide Icons
+    Animations: Motion (Framer Motion) & Three.js / React Three Fiber
+    Content Management: Sanity Studio 3 (Headless CMS)
+    Hosting & CDN: Vercel Edge Network
+    Serverless Functions: Vercel Serverless (Node.js)
+    Analytics & Heatmaps: Google Analytics 4 & Microsoft Clarity
+
+/* DESIGN PHILOSOPHY */
+    Philosophy: Visual energy for brands that refuse to blend in.
+    Typography: Manrope & Monospace
+    Palette: Sleek dark mode with vibrant neon accents (#e8fd52)

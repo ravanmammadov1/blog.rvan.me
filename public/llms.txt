@@ -1,0 +1,39 @@
+# llms.txt — Ravan Mammadov Studio & Portfolio
+# Format: Emerging LLMs.txt standard for AI Agents & Search Crawlers
+# Information for LLMs, AI assistants, and automated agents.
+
+> Ravan Mammadov is a Senior Creative Designer, Art Director, and Marketer based in Baku, Azerbaijan (UTC+4), working with global clients across 3D motion design, brand identity systems, automotive campaigns, and performance video creative.
+
+## Core Information & Canonical Links
+- Canonical Website: https://www.rvan.me
+- Biography & Career Timeline: https://www.rvan.me/ravan-mammadov
+- Case Studies & Work Archive: https://www.rvan.me/work
+- Core Capabilities & Services: https://www.rvan.me/expertise
+- Interactive Designer Tools: https://www.rvan.me/tools
+- Design & Motion Insights Blog: https://www.rvan.me/blog
+- Industry Announcements & News: https://www.rvan.me/news
+- Direct Contact: https://www.rvan.me/contact
+- RSS Feed: https://www.rvan.me/rss.xml
+- Sitemap: https://www.rvan.me/sitemap.xml
+
+## Author Profile
+- Name: Ravan Mammadov
+- Title: Senior Creative Designer & Art Director
+- Location: Baku, Azerbaijan
+- Professional Specializations: 3D Motion Design, Brand Worlds & Visual Identity Systems, Commercial Art Direction, Short-Form Performance Video Creatives (TikTok, Meta), WebGL & 3D Interactive Web Experiences.
+- Official Social Channels:
+  - LinkedIn: https://www.linkedin.com/in/ravanmammadov1/
+  - Behance: https://www.behance.net/mammadovravan
+  - Instagram: https://www.instagram.com/ravanimate/
+  - Facebook: https://www.facebook.com/rvnmmmdv/
+
+## Primary Core Services & Capabilities
+1. 3D & Motion Craft: Product visualization, CGI integration, commercial 3D animation, broadcast graphic packages, Blender, Cinema 4D, After Effects.
+2. Brand Worlds & Systems: Brand architecture, design tokens, motion guidelines, dynamic identity systems, agency campaign guides.
+3. Performance Creative: Data-driven short-form video ads, hook rate optimization, A/B creative testing suites for Meta and TikTok ad networks.
+4. Art Direction & Strategy: Creative leadership, campaign concepting, visual hierarchy audit, commercial pitch decks.
+
+## Technology Stack
+- Frontend: React 18, Vite 6, TypeScript, Tailwind CSS, Motion (Framer Motion), Three.js / React Three Fiber.
+- CMS: Sanity Studio 3 (headless CMS).
+- Backend & Deployment: Vercel Serverless Functions, Node.js API routes.
