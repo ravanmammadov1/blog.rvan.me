@@ -126,8 +126,9 @@ export default function BlogArchive() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="Blog & Insights — Ravan Mammadov"
-        description="Insights on motion design, creative direction, brand building, and performance creative strategy."
+        title="Design & Motion Insights Blog — Ravan Mammadov Studio"
+        description="In-depth articles and agency-grade guides on 3D motion design, visual hierarchy, brand systems, performance creative, and UX psychology."
+        url="https://www.rvan.me/blog"
       />
 
       {/* Global Unified Header */}

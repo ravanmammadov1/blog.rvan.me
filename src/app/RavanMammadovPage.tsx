@@ -135,9 +135,10 @@ export default function RavanMammadovPage() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Senior Creative Designer & Marketer"
-        description="Official biography, career timeline, skills, awards, and testimonials for Ravan Mammadov, Senior Creative Designer blending motion, brand worlds, and growth creative."
-        schema={personSchema}
+        title="Biography & Career Timeline — Ravan Mammadov Studio"
+        description="Official biography, career trajectory, core philosophy, awards, and client testimonials for Senior Creative Designer and Marketer Ravan Mammadov."
+        url="https://www.rvan.me/ravan-mammadov"
+        jsonLd={personSchema}
       />
 
       <SiteHeader siteSettings={siteSettings} />

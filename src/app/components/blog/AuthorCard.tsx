@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { BlogPost } from "../../../types/blog";
 import { AboutSection } from "../../../types/cms";
 import { fetchAboutSection } from "../../../lib/sanityQueries";
@@ -57,7 +58,9 @@ export default function AuthorCard({ post }: AuthorCardProps) {
         </div>
 
         <h4 className="mt-1 text-xl font-bold text-white">
-          {authorName}
+          <Link to="/ravan-mammadov" className="hover:text-primary transition-colors">
+            {authorName}
+          </Link>
         </h4>
 
         <p className="mt-1 text-xs font-medium text-white/60">

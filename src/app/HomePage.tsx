@@ -287,8 +287,9 @@ export default function HomePage() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Senior Creative Designer & Marketer"
-        description="Portfolio of Ravan Mammadov. Blending 3D, motion design, brand worlds, and growth creative for global brands."
+        title="Ravan Mammadov — Senior Creative Designer & Art Director"
+        description="Senior Creative Designer blending 3D motion design, brand worlds, and high-performing digital marketing ideas into work that commands attention."
+        url="https://www.rvan.me/"
       />
 
       {/* Scroll progress */}

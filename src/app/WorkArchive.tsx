@@ -137,8 +137,9 @@ export default function WorkArchive() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="Work Archive — Selected Projects by Ravan Mammadov"
-        description="Full archive of motion design, 3D brand systems, creative direction, and digital marketing campaigns."
+        title="Portfolio Work Archive & Case Studies — Ravan Mammadov"
+        description="Explore selected case studies across 3D motion design, commercial art direction, automotive campaign suites, and high-converting performance creative."
+        url="https://www.rvan.me/work"
       />
 
       <SiteHeader siteSettings={siteSettings} />

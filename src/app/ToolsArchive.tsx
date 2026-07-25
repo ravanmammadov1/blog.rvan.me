@@ -71,8 +71,9 @@ export default function ToolsArchive() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="Tools & Designer Utilities — Ravan Mammadov"
-        description="Interactive tools for designers and marketers: color contrast checker, gradient generator, typography scale, SVG encoder, CSS shadow builder, SEO previewer, AI prompt templates, and more."
+        title="Interactive Designer Utilities & Daily Stack — Ravan Mammadov"
+        description="Free in-browser tools for designers and marketers: color contrast checker, typography scale builder, SVG minifier, CSS shadow generator, and AI prompts."
+        url="https://www.rvan.me/tools"
       />
 
       {/* Global Unified Header */}

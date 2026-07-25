@@ -109,8 +109,9 @@ export default function NewsArchive() {
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title="News & Updates — Ravan Mammadov"
-        description="Latest announcements, field updates, and creative releases."
+        title="News & Creative Field Notes — Ravan Mammadov Studio"
+        description="Latest announcements, agency milestones, brand releases, and motion design field updates from creative designer Ravan Mammadov."
+        url="https://www.rvan.me/news"
       />
 
       {/* Global Unified Header */}
