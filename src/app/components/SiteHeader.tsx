@@ -28,11 +28,11 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleNavClick = (target: string) => {
+  const handleNavClick = (target: string | undefined) => {
     setMenuOpen(false);
 
     // Clean routes
-    if (target.startsWith("/")) {
+    if (typeof target === "string" && target.startsWith("/")) {
       navigate(target);
       return;
     }
@@ -132,10 +132,13 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           {/* Desktop Navigation Links */}
           <nav className="hidden items-center gap-8 text-[11px] font-semibold tracking-[.16em] uppercase lg:flex">
             {navItems.map((item) => {
-              const targetRoute = item.target.startsWith("/") ? item.target : `/${item.target}`;
+              const targetRoute =
+                typeof item?.target === "string" && item.target.startsWith("/")
+                  ? item.target
+                  : `/${item?.target ?? ""}`;
               const isActive =
                 location.pathname === targetRoute ||
-                (targetRoute !== "/" && location.pathname.startsWith(targetRoute));
+                (targetRoute !== "/" && typeof location?.pathname === "string" && location.pathname.startsWith(targetRoute));
 
               return (
                 <button
