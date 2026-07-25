@@ -15,7 +15,11 @@ import ToolsArchive from "./ToolsArchive";
 import RavanMammadovPage from "./RavanMammadovPage";
 import NotFound from "./NotFound";
 
+import { useGA4Tracker } from "./hooks/useGA4Tracker";
+
 export default function App() {
+  useGA4Tracker();
+
   return (
     <>
       <Routes>
