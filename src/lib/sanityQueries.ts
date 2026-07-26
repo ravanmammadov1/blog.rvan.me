@@ -284,3 +284,65 @@ export async function voteComment(commentId: string, type: "like" | "dislike") {
     throw error;
   }
 }
+
+export async function fetchResources() {
+  try {
+    const data = await client.fetch(`
+      *[_type == "resource" && status == "published"] | order(sortPriority asc, featuredScore desc, _createdAt desc){
+        _id,
+        title,
+        "slug": slug.current,
+        resourceType,
+        description,
+        benefitSummary,
+        link,
+        logo,
+        status,
+        verificationStatus,
+        isGlobal,
+        countries,
+        body,
+        category->{
+          name,
+          "slug": slug.current
+        },
+        tags[]->{
+          name,
+          "slug": slug.current
+        },
+        difficultyLevel,
+        completionTime,
+        company,
+        salaryRange,
+        prizePool,
+        startDate,
+        endDate,
+        fundingAmount,
+        featuredScore,
+        sortPriority,
+        badges,
+        analyticsId
+      }
+    `);
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching resources from Sanity:", error);
+    return [];
+  }
+}
+
+export async function fetchResourceCategories() {
+  try {
+    const data = await client.fetch(`
+      *[_type == "resourceCategory"] | order(name asc){
+        _id,
+        name,
+        "slug": slug.current
+      }
+    `);
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching resource categories from Sanity:", error);
+    return [];
+  }
+}

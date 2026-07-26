@@ -208,12 +208,19 @@ export interface ResourceItem {
   category?: ResourceCategory;
   tags?: ResourceTag[];
   description: string;
+  benefitSummary?: string;
   link: string;
   logo?: any;
+  status: "draft" | "review" | "published" | "archived" | "expired";
+  verificationStatus: "official" | "verified" | "community";
   isGlobal?: boolean;
   countries?: string[];
   body?: any[];
   
+  // Roadmap specific
+  difficultyLevel?: "beginner" | "intermediate" | "advanced" | "all";
+  completionTime?: string;
+
   // Conditional fields
   company?: string;
   salaryRange?: string;
@@ -221,4 +228,10 @@ export interface ResourceItem {
   startDate?: string;
   endDate?: string;
   fundingAmount?: string;
+
+  // Sorting & badges
+  featuredScore?: number;
+  sortPriority?: number;
+  badges?: string[];
+  analyticsId?: string;
 }
