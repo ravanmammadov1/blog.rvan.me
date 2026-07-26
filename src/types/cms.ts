@@ -172,3 +172,53 @@ export interface CommentItem {
   dislikes: number;
   createdAt: string;
 }
+
+export interface ResourceTag {
+  _id: string;
+  name: string;
+  slug?: {
+    current: string;
+  };
+}
+
+export interface ResourceCategory {
+  _id: string;
+  name: string;
+  slug?: {
+    current: string;
+  };
+}
+
+export interface ResourceItem {
+  _id: string;
+  title: string;
+  slug?: {
+    current: string;
+  };
+  resourceType:
+    | "studentPack"
+    | "aiCredits"
+    | "software"
+    | "roadmap"
+    | "scholarship"
+    | "internship"
+    | "job"
+    | "hackathon"
+    | "startupProgram";
+  category?: ResourceCategory;
+  tags?: ResourceTag[];
+  description: string;
+  link: string;
+  logo?: any;
+  isGlobal?: boolean;
+  countries?: string[];
+  body?: any[];
+  
+  // Conditional fields
+  company?: string;
+  salaryRange?: string;
+  prizePool?: string;
+  startDate?: string;
+  endDate?: string;
+  fundingAmount?: string;
+}
