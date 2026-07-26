@@ -176,25 +176,20 @@ export interface CommentItem {
 export interface ResourceTag {
   _id: string;
   name: string;
-  slug?: {
-    current: string;
-  };
+  slug?: string;
 }
 
 export interface ResourceCategory {
   _id: string;
   name: string;
-  slug?: {
-    current: string;
-  };
+  slug?: string;
 }
+
 
 export interface ResourceItem {
   _id: string;
   title: string;
-  slug?: {
-    current: string;
-  };
+  slug?: string;
   resourceType:
     | "studentPack"
     | "aiCredits"
@@ -234,4 +229,14 @@ export interface ResourceItem {
   sortPriority?: number;
   badges?: string[];
   analyticsId?: string;
+
+  // SEO overrides
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    ogImage?: any;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+  };
 }
+

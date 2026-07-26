@@ -321,7 +321,14 @@ export async function fetchResources() {
         featuredScore,
         sortPriority,
         badges,
-        analyticsId
+        analyticsId,
+        seo{
+          metaTitle,
+          metaDescription,
+          ogImage,
+          canonicalUrl,
+          noIndex
+        }
       }
     `);
     return data || [];

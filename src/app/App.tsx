@@ -19,6 +19,8 @@ const RavanMammadovPage = lazy(() => import("./RavanMammadovPage"));
 const PrivacyPolicyPage = lazy(() => import("./PrivacyPolicyPage"));
 const CookiePolicyPage = lazy(() => import("./CookiePolicyPage"));
 const TermsPage = lazy(() => import("./TermsPage"));
+const ResourcesArchive = lazy(() => import("./ResourcesArchive"));
+const ResourceDetail = lazy(() => import("./ResourceDetail"));
 
 import { useGA4Tracker } from "./hooks/useGA4Tracker";
 import { useClarity } from "./hooks/useClarity";
@@ -50,6 +52,8 @@ function AppContent() {
           <Route path="/cookie-policy" element={<CookiePolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/terms-of-service" element={<Navigate to="/terms" replace />} />
+          <Route path="/resources" element={<ResourcesArchive />} />
+          <Route path="/resources/:slug" element={<ResourceDetail />} />
 
           {/* 301 Redirects & legacy route alias compatibility */}
           <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
