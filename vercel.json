@@ -1,5 +1,11 @@
 {
   "cleanUrls": true,
+  "crons": [
+    {
+      "path": "/api/ingest-news",
+      "schedule": "0 */12 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/ravanmammadov",
