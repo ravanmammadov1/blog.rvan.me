@@ -15,8 +15,10 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  const canNativeShare = typeof navigator.share === "function";
+
   const handleNativeShare = async () => {
-    if (navigator.share) {
+    if (canNativeShare) {
       try {
         await navigator.share({
           title,
@@ -40,7 +42,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
       </span>
 
       <div className="flex flex-wrap items-center gap-3">
-        {navigator.share && (
+        {canNativeShare && (
           <button
             onClick={handleNativeShare}
             className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white transition hover:bg-white/15"

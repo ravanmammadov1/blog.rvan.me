@@ -77,9 +77,11 @@ export default function NewsArchive() {
   }, []);
 
   const categories = useMemo(() => {
-    const list = [
-      ...new Set(newsList.map((n) => n.category).filter(Boolean)),
-    ];
+    const validCategories = newsList
+      .map((n) => n.category)
+      .filter((value): value is string => typeof value === "string" && value.trim() !== "");
+
+    const list = [...new Set(validCategories)];
     return ["All", ...list];
   }, [newsList]);
 

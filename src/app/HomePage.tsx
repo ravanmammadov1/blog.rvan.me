@@ -166,6 +166,7 @@ export default function HomePage() {
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [aboutTab, setAboutTab] = useState<"about" | "testimonials">("about");
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
   // Contact Form State
   const [contactName, setContactName] = useState("");

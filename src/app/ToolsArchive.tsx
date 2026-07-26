@@ -39,9 +39,11 @@ export default function ToolsArchive() {
   }, []);
 
   const categories = useMemo(() => {
-    const list = [
-      ...new Set(toolsList.map((t) => t.category).filter(Boolean)),
-    ];
+    const validCategories = toolsList
+      .map((t) => t.category)
+      .filter((value): value is string => typeof value === "string" && value.trim() !== "");
+
+    const list = [...new Set(validCategories)];
     return ["All", ...list];
   }, [toolsList]);
 

@@ -34,6 +34,8 @@ const fallbackBlogPosts: BlogPost[] = [
     featured: true,
     publishDate: "2025-06-15",
     readTime: "4 min read",
+    body: [],
+    coverImage: null,
   },
 ];
 
