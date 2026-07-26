@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowLeft, Calendar, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, Tag, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { PortableText } from "@portabletext/react";
 
 import { fetchNewsBySlug, fetchSiteSettings } from "../lib/sanityQueries";
-import { urlFor } from "../lib/sanityClient";
+import { urlFor, client } from "../lib/sanityClient";
 import { NewsItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -65,11 +65,29 @@ const portableTextComponents = {
   },
 };
 
+function getReadingTime(body: any[] | undefined): number {
+  if (!body || !Array.isArray(body)) return 1;
+  let textContent = "";
+  for (const block of body) {
+    if (block._type === "block" && block.children) {
+      for (const child of block.children) {
+        if (child.text) {
+          textContent += child.text + " ";
+        }
+      }
+    }
+  }
+  const words = textContent.trim().split(/\s+/).length;
+  const readingTime = Math.ceil(words / 200);
+  return Math.max(1, readingTime);
+}
+
 export default function NewsDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [news, setNews] = useState<NewsItem | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -77,9 +95,34 @@ export default function NewsDetail() {
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
     });
+  }, []);
+
+  useEffect(() => {
     if (slug) {
+      setLoading(true);
       fetchNewsBySlug(slug)
-        .then((data) => setNews(data))
+        .then(async (data) => {
+          setNews(data);
+          if (data) {
+            // Fetch related articles prioritizing matching category, then most recent news
+            const related = await client.fetch<NewsItem[]>(
+              `*[_type == "news" && _id != $currentId] | order(category == $category desc, publishedAt desc)[0...3]{
+                _id,
+                title,
+                slug,
+                coverImage,
+                excerpt,
+                publishedAt,
+                category
+              }`,
+              { currentId: data._id, category: data.category || "" }
+            );
+            setRelatedArticles(related || []);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching news details:", err);
+        })
         .finally(() => setLoading(false));
     }
   }, [slug]);
@@ -135,14 +178,52 @@ export default function NewsDetail() {
     }
   }
 
+  const readingTime = getReadingTime(news.body);
+  const siteDomain = siteSettings?.seo?.canonicalUrl || "https://www.rvan.me";
+  const articleUrl = `${siteDomain}/news/${news.slug?.current || slug}`;
+
+  // Structured NewsArticle JSON-LD
+  const newsArticleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: news.title,
+    description: news.excerpt || news.title,
+    image: coverUrl ? [coverUrl] : [],
+    datePublished: news.publishedAt,
+    dateModified: news.publishedAt,
+    url: articleUrl,
+    author: {
+      "@type": "Person",
+      name: siteSettings?.seo?.author || "Ravan Mammadov",
+      url: siteDomain,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: siteSettings?.seo?.siteName || "Ravan Mammadov",
+      logo: {
+        "@type": "ImageObject",
+        url: siteSettings?.logo ? urlFor(siteSettings.logo)?.url() : `${siteDomain}/logo.png`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": articleUrl,
+    },
+  };
+
   return (
     <main
       className="min-h-screen bg-background text-foreground"
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <SEO
-        title={`${news.title} — News`}
+        title={`${news.title} — Premium Editorial`}
         description={news.excerpt || news.title}
+        image={coverUrl || undefined}
+        url={articleUrl}
+        type="article"
+        publishDate={news.publishedAt}
+        jsonLd={newsArticleJsonLd}
         favicon={siteSettings?.favicon}
       />
 
@@ -166,6 +247,10 @@ export default function NewsDetail() {
                   {formattedDate}
                 </span>
               )}
+              <span className="flex items-center gap-1">
+                <Clock size={12} />
+                {readingTime} MIN READ
+              </span>
             </div>
 
             <h1 className="text-4xl font-semibold tracking-tight md:text-6xl text-foreground leading-tight">
@@ -208,7 +293,51 @@ export default function NewsDetail() {
             </motion.div>
           )}
 
-          <CommentSection postId={news._id} postTitle={news.title} />
+          {/* Related Articles Section */}
+          {relatedArticles.length > 0 && (
+            <div className="mt-24 border-t border-border pt-16">
+              <h3 className="text-xs font-bold tracking-[.18em] mb-8 mono uppercase text-primary">
+                Related Articles
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedArticles.map((article) => {
+                  const relatedCover = article.coverImage ? urlFor(article.coverImage)?.url() : null;
+                  return (
+                    <Link
+                      key={article._id}
+                      to={`/news/${article.slug?.current}`}
+                      className="group flex flex-col justify-between p-4 rounded-lg border border-border bg-surface/30 hover:bg-surface hover:border-primary transition-all duration-300"
+                    >
+                      <div>
+                        {relatedCover && (
+                          <div className="aspect-video w-full overflow-hidden rounded mb-4 border border-border">
+                            <img
+                              src={relatedCover}
+                              alt={article.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                        )}
+                        <span className="text-[10px] font-bold tracking-wider mono text-muted-foreground uppercase">
+                          {article.category}
+                        </span>
+                        <h4 className="mt-2 text-sm font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                          {article.title}
+                        </h4>
+                      </div>
+                      <span className="mt-4 text-[10px] font-semibold text-muted-foreground mono">
+                        {article.publishedAt ? format(new Date(article.publishedAt), "MMM d, yyyy") : ""}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-16">
+            <CommentSection postId={news._id} postTitle={news.title} />
+          </div>
         </div>
       </article>
 

@@ -12,10 +12,16 @@ const client = createClient({
 
 const feeds = [
   { category: "Design", url: "https://uxdesign.cc/feed", sourceName: "UX Collective" },
-  { category: "AI", url: "https://techcrunch.com/category/artificial-intelligence/feed/", sourceName: "TechCrunch AI" },
-  { category: "Development", url: "https://dev.to/feed", sourceName: "Dev.to" },
-  { category: "Marketing", url: "https://blog.hubspot.com/marketing/rss.xml", sourceName: "HubSpot Marketing" },
+  { category: "Development", url: "https://www.smashingmagazine.com/categories/web-development/index.xml", sourceName: "Smashing Magazine" },
+  { category: "AI", url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/", sourceName: "MIT Technology Review AI" },
+  { category: "Marketing", url: "https://contentmarketinginstitute.com/feed/", sourceName: "Content Marketing Institute" },
   { category: "Motion Design", url: "https://motionographer.com/feed/", sourceName: "Motionographer" }
+];
+
+const blacklistedKeywords = [
+  "bug fix", "patch note", "changelog", "weekly digest", "documentation update",
+  "release note", "minor release", "hotfix", "update v", "weekly wrap",
+  "monthly newsletter", "monthly wrap", "digest", "newsletter", "v1.", "v2.", "v3."
 ];
 
 function extractCdataOrText(xmlStr: string, tag: string): string {
@@ -56,19 +62,25 @@ function slugify(text: string): string {
     .replace(/(^-|-$)+/g, "");
 }
 
+function isHighImpact(title: string, description: string): boolean {
+  const text = `${title} ${description}`.toLowerCase();
+  return !blacklistedKeywords.some((keyword) => text.includes(keyword));
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!process.env.SANITY_API_WRITE_TOKEN) {
     console.error("SANITY_API_WRITE_TOKEN is not configured.");
     return res.status(500).json({ error: "SANITY_API_WRITE_TOKEN is missing" });
   }
 
-  const results: Array<{ feed: string; count: number; imported: number; errors: number }> = [];
+  const results: Array<{ feed: string; count: number; imported: number; filtered: number; errors: number }> = [];
 
   try {
     for (const feed of feeds) {
       console.log(`Ingesting feed: ${feed.sourceName}`);
       let feedItemCount = 0;
       let importedCount = 0;
+      let filteredCount = 0;
       let errorCount = 0;
 
       try {
@@ -98,6 +110,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const rawDescription = extractCdataOrText(itemXml, "description") || extractCdataOrText(itemXml, "content:encoded");
 
             if (!title || !link) continue;
+
+            // Low-impact filtering
+            if (!isHighImpact(title, rawDescription)) {
+              console.log(`Skipped low-impact news: ${title}`);
+              filteredCount++;
+              continue;
+            }
 
             const publishedAt = pubDateStr ? new Date(pubDateStr).toISOString() : new Date().toISOString();
             const excerpt = cleanHtml(rawDescription).substring(0, 215) + "...";
@@ -201,6 +220,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         feed: feed.sourceName,
         count: feedItemCount,
         imported: importedCount,
+        filtered: filteredCount,
         errors: errorCount
       });
     }
