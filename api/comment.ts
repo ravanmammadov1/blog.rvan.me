@@ -1,6 +1,78 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@sanity/client";
 
+const spamKeywords = [
+  "viagra", "cialis", "levitra", "casino", "porn", "sex", "gambling", "crypto",
+  "bitcoin", "etherium", "solana", "invest", "earn money", "make money", "passive income",
+  "buy followers", "seo services", "backlinks", "cheap price", "dating", "girls", "cams"
+];
+
+const profanityList = [
+  "fuck", "shit", "asshole", "bitch", "cunt", "dick", "cock", "pussy", "bastard"
+];
+
+function analyzeComment(authorName: string, authorEmail: string, text: string): "approved" | "pending" | "declined" {
+  let score = 0;
+  const lowerText = text.toLowerCase();
+  const lowerName = authorName.toLowerCase();
+  const lowerEmail = authorEmail.toLowerCase();
+
+  // 1. Check valid email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(authorEmail)) {
+    return "declined"; // Invalid email format is rejected immediately
+  }
+
+  // 2. Check for links
+  const hasLinks = /https?:\/\/[^\s]+|www\.[^\s]+|\b[a-z0-9]+(?:\.[a-z0-9]+)*\.(?:com|net|org|xyz|ru|biz|info|cc|top|club|click|gq|cf|ml|tk|ga)\b/i.test(text);
+  if (hasLinks) {
+    score += 5; // Direct rejection trigger or high suspicious score
+  }
+
+  // 3. Length check
+  if (text.length >= 500) {
+    score += 2;
+  }
+
+  // 4. Check profanity
+  const hasProfanity = profanityList.some(word => lowerText.includes(word));
+  if (hasProfanity) {
+    score += 3;
+  }
+
+  // 5. Check spam keywords
+  const hasSpamKeywords = spamKeywords.some(word => lowerText.includes(word) || lowerName.includes(word) || lowerEmail.includes(word));
+  if (hasSpamKeywords) {
+    score += 5; // Instant rejection score
+  }
+
+  // 6. Suspicious patterns (multiple exclamations, all caps)
+  const isAllCaps = text === text.toUpperCase() && text.length > 10;
+  if (isAllCaps) {
+    score += 2;
+  }
+  const hasMultipleExclamations = /!!!/i.test(text);
+  if (hasMultipleExclamations) {
+    score += 1;
+  }
+
+  // 7. Temporary/Spam email domains
+  const spamDomains = ["mailinator.com", "tempmail.com", "yopmail.com", "sharklasers.com", "guerrillamail.com", "10minutemail.com"];
+  const emailDomain = authorEmail.split("@")[1] || "";
+  if (spamDomains.includes(emailDomain)) {
+    score += 4;
+  }
+
+  // Final Decision Matrix
+  if (score >= 5) {
+    return "declined"; // Obvious spam
+  } else if (score > 0) {
+    return "pending"; // Suspicious, send to Pending
+  } else {
+    return "approved"; // Automatically approve
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Allow OPTIONS preflight for CORS just in case
   if (req.method === "OPTIONS") {
@@ -52,7 +124,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ error: "Comment text must be at least 4 characters." });
       }
 
-      // 2. Create comment document
+      // 2. Analyze comment for smart moderation
+      const status = analyzeComment(authorName, authorEmail, commentText);
+
+      // 3. Create comment document
       const doc = {
         _type: "comment",
         relatedPost: {
@@ -62,14 +137,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         authorName: authorName.trim(),
         authorEmail: authorEmail.trim(),
         commentText: commentText.trim(),
-        status: "pending",
+        status,
         likes: 0,
         dislikes: 0,
         createdAt: new Date().toISOString(),
       };
 
       const result = await client.create(doc);
-      return res.status(200).json({ success: true, docId: result._id });
+      return res.status(200).json({ success: true, docId: result._id, status });
 
     } else if (action === "vote") {
       // 1. Vote validation
