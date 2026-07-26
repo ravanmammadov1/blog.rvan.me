@@ -24,6 +24,9 @@ export default function Footer({ siteSettings }: FooterProps) {
           <Link to="/terms" className="transition-colors hover:text-primary">
             TERMS OF SERVICE
           </Link>
+          <Link to="/resources" className="transition-colors hover:text-primary">
+            RESOURCES
+          </Link>
           <button
             onClick={openPreferences}
             type="button"

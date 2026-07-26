@@ -71,6 +71,10 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       navigate("/blog");
       return;
     }
+    if (target === "resources" || target === "Resources") {
+      navigate("/resources");
+      return;
+    }
 
     if (target === "top") {
       if (isHomePage) {
@@ -89,6 +93,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     { label: "ABOUT", target: "/ravan-mammadov" },
     { label: "EXPERTISE", target: "/expertise" },
     { label: "NEWS", target: "/news" },
+    { label: "RESOURCES", target: "/resources" },
     { label: "TOOLS", target: "/tools" },
     { label: "BLOG", target: "/blog" },
     { label: "CONTACT", target: "/contact" },
@@ -112,6 +117,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       if (cleanTarget === "news") cleanTarget = "/news";
       if (cleanTarget === "tools") cleanTarget = "/tools";
       if (cleanTarget === "blog") cleanTarget = "/blog";
+      if (cleanTarget === "resources") cleanTarget = "/resources";
       return { ...item, target: cleanTarget };
     });
 

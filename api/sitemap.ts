@@ -24,10 +24,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       { url: `${DOMAIN}/news`, lastmod: today, changefreq: "weekly", priority: "0.8" },
       { url: `${DOMAIN}/tools`, lastmod: today, changefreq: "monthly", priority: "0.8" },
       { url: `${DOMAIN}/ravan-mammadov`, lastmod: today, changefreq: "monthly", priority: "0.7" },
+      { url: `${DOMAIN}/resources`, lastmod: today, changefreq: "daily", priority: "0.9" },
     ];
 
     // Fetch dynamic content from Sanity CMS
-    const [blogs, news, projects] = await Promise.all([
+    const [blogs, news, projects, resources] = await Promise.all([
       client.fetch<Array<{ slug: string; updatedAt?: string; publishDate?: string }>>(`
         *[_type == "blog" && defined(slug.current)]{
           "slug": slug.current,
@@ -44,6 +45,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       `),
       client.fetch<Array<{ slug: string; updatedAt?: string }>>(`
         *[_type == "projects" && defined(slug.current)]{
+          "slug": slug.current,
+          "_updatedAt": _updatedAt
+        }
+      `),
+      client.fetch<Array<{ slug: string; updatedAt?: string }>>(`
+        *[_type == "resource" && status == "published" && defined(slug.current)]{
           "slug": slug.current,
           "_updatedAt": _updatedAt
         }
@@ -94,6 +101,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             url: `${DOMAIN}/work/${proj.slug}`,
             lastmod: formattedDate,
             changefreq: "monthly",
+            priority: "0.8",
+          });
+        }
+      });
+    }
+
+    // Resource detail URLs
+    if (Array.isArray(resources)) {
+      resources.forEach((resource) => {
+        if (resource.slug) {
+          const dateStr = resource.updatedAt || today;
+          const formattedDate = dateStr ? new Date(dateStr).toISOString().split("T")[0] : today;
+          dynamicPages.push({
+            url: `${DOMAIN}/resources/${resource.slug}`,
+            lastmod: formattedDate,
+            changefreq: "weekly",
             priority: "0.8",
           });
         }
