@@ -49,8 +49,8 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       setName("");
       setEmail("");
       setText("");
-    } catch (err) {
-      alert("Failed to submit comment. Please try again.");
+    } catch (err: any) {
+      alert(`Failed to submit comment: ${err.message || "Please try again."}`);
     } finally {
       setSubmitting(false);
     }

@@ -235,35 +235,52 @@ export async function submitComment(
   commentText: string
 ) {
   try {
-    const doc = {
-      _type: "comment",
-      relatedPost: {
-        _type: "reference",
-        _ref: postId,
+    const response = await fetch("/api/comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      authorName,
-      authorEmail,
-      commentText,
-      status: "pending",
-      likes: 0,
-      dislikes: 0,
-      createdAt: new Date().toISOString(),
-    };
-    const result = await client.create(doc);
-    return result;
-  } catch (error) {
-    console.error("Error submitting comment to Sanity:", error);
+      body: JSON.stringify({
+        action: "submit",
+        postId,
+        authorName,
+        authorEmail,
+        commentText,
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to submit comment.");
+    }
+    return data;
+  } catch (error: any) {
+    console.error("Error submitting comment via API:", error);
     throw error;
   }
 }
 
 export async function voteComment(commentId: string, type: "like" | "dislike") {
   try {
-    const field = type === "like" ? "likes" : "dislikes";
-    const result = await client.patch(commentId).inc({ [field]: 1 }).commit();
-    return result;
-  } catch (error) {
-    console.error(`Error voting ${type} on comment:`, error);
+    const response = await fetch("/api/comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "vote",
+        commentId,
+        voteType: type,
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to submit vote.");
+    }
+    return data;
+  } catch (error: any) {
+    console.error(`Error voting ${type} via API:`, error);
     throw error;
   }
 }
