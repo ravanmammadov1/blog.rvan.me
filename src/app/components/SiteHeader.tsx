@@ -152,7 +152,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden items-center gap-6 xl:gap-8 text-[11px] font-semibold tracking-[.16em] uppercase md:flex">
+          <nav className="hidden items-center gap-5 lg:gap-7 text-[10px] font-bold tracking-[.18em] mono uppercase md:flex">
             {navItems.map((item) => {
               const targetRoute =
                 typeof item?.target === "string" && item.target.startsWith("/")
@@ -166,8 +166,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.target)}
-                  className={`text-[11px] font-semibold tracking-[.16em] uppercase transition-colors duration-300 hover:text-primary ${
-                    isActive ? "text-primary font-bold" : "text-foreground/90"
+                  className={`text-[10px] font-bold tracking-[.18em] mono uppercase transition-colors duration-300 hover:text-primary ${
+                    isActive ? "text-primary font-bold" : "text-foreground/90 font-semibold"
                   }`}
                 >
                   {item.label}

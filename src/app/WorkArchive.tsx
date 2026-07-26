@@ -8,6 +8,8 @@ import { urlFor } from "../lib/sanityClient";
 import { ProjectItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
+import Footer from "./components/Footer";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -374,6 +376,9 @@ export default function WorkArchive() {
           )}
         </div>
       </section>
+
+      <Footer siteSettings={siteSettings} />
+      <ScrollToTopButton />
     </main>
   );
 }

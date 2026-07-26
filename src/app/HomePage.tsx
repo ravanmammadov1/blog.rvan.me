@@ -45,9 +45,10 @@ import { SiteSettings, ProjectItem, AboutSection as IAboutSection, TestimonialIt
 import BlogSection from "./components/blog/BlogSection";
 import { lazy, Suspense } from "react";
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
-import TestimonialsSection from "./components/TestimonialsSection";
 import SEO from "./components/SEO";
 import { useCookieConsent } from "./context/CookieConsentContext";
+import Footer from "./components/Footer";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -920,53 +921,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="px-6 py-10 md:px-10 border-t border-border">
-        <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} RAVAN MAMMADOV STUDIO</span>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link to="/privacy-policy" className="transition-colors hover:text-primary">
-              PRIVACY POLICY
-            </Link>
-            <Link to="/cookie-policy" className="transition-colors hover:text-primary">
-              COOKIE POLICY
-            </Link>
-            <Link to="/terms" className="transition-colors hover:text-primary">
-              TERMS OF SERVICE
-            </Link>
-            <button onClick={openPreferences} className="transition-colors hover:text-primary uppercase">
-              COOKIE PREFERENCES
-            </button>
-            <span>·</span>
-            <a href={siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
-              BEHANCE
-            </a>
-            <a href={siteSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
-              LINKEDIN
-            </a>
-            <a href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
-              INSTAGRAM
-            </a>
-          </div>
-        </div>
-      </footer>
-
-      {/* Floating Back to Top Button (Bottom-Left) */}
-      <AnimatePresence>
-        {showBackToTop && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 left-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-surface/80 text-foreground backdrop-blur-md transition hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-lg shadow-black/40"
-            aria-label="Back to top"
-          >
-            <ArrowUp size={18} />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <Footer siteSettings={siteSettings} />
+      <ScrollToTopButton />
     </main>
   );
 }

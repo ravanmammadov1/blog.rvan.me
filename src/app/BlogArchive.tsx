@@ -11,6 +11,8 @@ import BlogCard from "./components/blog/BlogCard";
 import CategoryFilter from "./components/blog/CategoryFilter";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
+import Footer from "./components/Footer";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -257,15 +259,8 @@ export default function BlogArchive() {
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-border px-6 py-10 md:px-10">
-        <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} RAVAN MAMMADOV</span>
-          <Link to="/" className="transition-colors hover:text-primary">
-            HOME
-          </Link>
-        </div>
-      </footer>
+      <Footer siteSettings={siteSettings} />
+      <ScrollToTopButton />
     </main>
   );
 }
