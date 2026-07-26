@@ -1,12 +1,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { lazy, Suspense } from "react";
 
 import HomePage from "./HomePage";
 import ExpertisePage from "./ExpertisePage";
 import ContactPage from "./ContactPage";
 import NotFound from "./NotFound";
-import { lazy, Suspense } from "react";
 
 const WorkArchive = lazy(() => import("./WorkArchive"));
 const WorkDetail = lazy(() => import("./WorkDetail"));
@@ -16,13 +16,19 @@ const NewsArchive = lazy(() => import("./NewsArchive"));
 const NewsDetail = lazy(() => import("./NewsDetail"));
 const ToolsArchive = lazy(() => import("./ToolsArchive"));
 const RavanMammadovPage = lazy(() => import("./RavanMammadovPage"));
+const PrivacyPolicyPage = lazy(() => import("./PrivacyPolicyPage"));
+const CookiePolicyPage = lazy(() => import("./CookiePolicyPage"));
 
 import { useGA4Tracker } from "./hooks/useGA4Tracker";
 import { useClarity } from "./hooks/useClarity";
+import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
+import CookieConsentBanner from "./components/CookieConsentBanner";
+import CookiePreferencesModal from "./components/CookiePreferencesModal";
 
-export default function App() {
+function AppContent() {
   useGA4Tracker();
   useClarity();
+  const { consent } = useCookieConsent();
 
   return (
     <>
@@ -39,16 +45,34 @@ export default function App() {
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/tools" element={<ToolsArchive />} />
           <Route path="/ravan-mammadov" element={<RavanMammadovPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/cookie-policy" element={<CookiePolicyPage />} />
 
-        {/* 301 Redirects & legacy route alias compatibility */}
-        <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
-        <Route path="/about" element={<Navigate to="/ravan-mammadov" replace />} />
+          {/* 301 Redirects & legacy route alias compatibility */}
+          <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
+          <Route path="/about" element={<Navigate to="/ravan-mammadov" replace />} />
 
-        <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-      <Analytics />
-      <SpeedInsights />
+
+      <CookieConsentBanner />
+      <CookiePreferencesModal />
+
+      {consent?.analytics && (
+        <>
+          <Analytics />
+          <SpeedInsights />
+        </>
+      )}
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <CookieConsentProvider>
+      <AppContent />
+    </CookieConsentProvider>
   );
 }

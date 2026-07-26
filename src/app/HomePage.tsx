@@ -47,6 +47,7 @@ import { lazy, Suspense } from "react";
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 import TestimonialsSection from "./components/TestimonialsSection";
 import SEO from "./components/SEO";
+import { useCookieConsent } from "./context/CookieConsentContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -165,6 +166,7 @@ function Eyebrow({ children, className = "" }: { children: React.ReactNode; clas
 }
 
 export default function HomePage() {
+  const { openPreferences } = useCookieConsent();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
   const [sanityProjects, setSanityProjects] = useState<ProjectItem[]>([]);
@@ -919,8 +921,18 @@ export default function HomePage() {
       {/* ── Footer ── */}
       <footer className="px-6 py-10 md:px-10 border-t border-border">
         <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} RAVAN MAMMADOV</span>
-          <div className="flex flex-wrap gap-x-6 gap-y-3">
+          <span>© {new Date().getFullYear()} RAVAN MAMMADOV STUDIO</span>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link to="/privacy-policy" className="transition-colors hover:text-primary">
+              PRIVACY POLICY
+            </Link>
+            <Link to="/cookie-policy" className="transition-colors hover:text-primary">
+              COOKIE POLICY
+            </Link>
+            <button onClick={openPreferences} className="transition-colors hover:text-primary uppercase">
+              COOKIE PREFERENCES
+            </button>
+            <span>·</span>
             <a href={siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
               BEHANCE
             </a>
@@ -929,12 +941,6 @@ export default function HomePage() {
             </a>
             <a href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
               INSTAGRAM
-            </a>
-            <a href={siteSettings?.socialLinks?.facebook || "https://www.facebook.com/rvnmmmdv/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
-              FACEBOOK
-            </a>
-            <a href={siteSettings?.socialLinks?.pinterest || "https://tr.pinterest.com/mammadovravan1/"} target="_blank" rel="noreferrer" className="transition-colors hover:text-primary">
-              PINTEREST
             </a>
           </div>
         </div>

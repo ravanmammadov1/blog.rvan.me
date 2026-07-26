@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useCookieConsent } from "../context/CookieConsentContext";
 
 declare global {
   interface Window {
@@ -11,12 +12,15 @@ export const CLARITY_PROJECT_ID =
 
 /**
  * Custom React hook to safely initialize Microsoft Clarity in production environments.
- * Prevents duplicate initialization and seamlessly handles SPA session recordings.
+ * Prevents duplicate initialization and handles session recordings ONLY when analytics consent is granted.
  */
 export function useClarity() {
+  const { consent } = useCookieConsent();
+
   useEffect(() => {
-    // Only run in browser context
+    // Only run in browser context and ONLY if analytics consent is granted
     if (typeof window === "undefined") return;
+    if (!consent?.analytics) return;
 
     // Prevent duplicate script insertion
     if (window.clarity) return;
@@ -34,5 +38,6 @@ export function useClarity() {
       y = l.getElementsByTagName(r)[0];
       y.parentNode.insertBefore(t, y);
     })(window, document, "clarity", "script", CLARITY_PROJECT_ID);
-  }, []);
+  }, [consent]);
 }
+
