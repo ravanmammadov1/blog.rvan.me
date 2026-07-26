@@ -1,27 +1,36 @@
 import React, { useState } from 'react'
 
-const ERROR_IMG_SRC =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIzLjciPjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iNiIvPjxwYXRoIGQ9Im0xNiA1OCAxNi0xOCAzMiAzMiIvPjxjaXJjbGUgY3g9IjUzIiBjeT0iMzUiIHI9IjciLz48L3N2Zz4KCg=='
+interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  fallbackSrc?: string;
+}
 
-export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  const [didError, setDidError] = useState(false)
+export function ImageWithFallback(props: ImageWithFallbackProps) {
+  const { src, fallbackSrc, alt, style, className, onError, ...rest } = props
+  const [currentSrc, setCurrentSrc] = useState<string | undefined>(src)
+  const [hasFailed, setHasFailed] = useState(false)
 
-  const handleError = () => {
-    setDidError(true)
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    if (!hasFailed && fallbackSrc && currentSrc !== fallbackSrc) {
+      setCurrentSrc(fallbackSrc)
+      setHasFailed(true)
+    } else {
+      setHasFailed(true)
+    }
+    if (onError) onError(e)
   }
 
-  const { src, alt, style, className, ...rest } = props
+  const activeSrc = hasFailed && fallbackSrc ? fallbackSrc : (currentSrc || src || fallbackSrc);
 
-  return didError ? (
-    <div
-      className={`inline-block bg-gray-100 text-center align-middle ${className ?? ''}`}
+  return (
+    <img
+      src={activeSrc}
+      alt={alt || "Project image"}
+      className={className}
       style={style}
-    >
-      <div className="flex items-center justify-center w-full h-full">
-        <img src={ERROR_IMG_SRC} alt="Error loading image" {...rest} data-original-url={src} />
-      </div>
-    </div>
-  ) : (
-    <img src={src} alt={alt} className={className} style={style} {...rest} onError={handleError} />
+      loading={props.loading || "lazy"}
+      decoding="async"
+      {...rest}
+      onError={handleError}
+    />
   )
 }

@@ -90,8 +90,8 @@ export default function SEO({
       element.setAttribute(attrName, content);
     };
 
-    // Robots
-    updateMeta('meta[name="robots"]', noIndex ? "noindex, nofollow" : "index, follow");
+    // Robots & Rich Directives
+    updateMeta('meta[name="robots"]', noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
 
     // Core meta
     updateMeta('meta[name="description"]', resolvedDescription);
@@ -104,6 +104,7 @@ export default function SEO({
     updateMeta('meta[property="og:url"]', resolvedUrl);
     updateMeta('meta[property="og:type"]', type);
     updateMeta('meta[property="og:site_name"]', resolvedSiteName);
+    updateMeta('meta[property="og:locale"]', "en_US");
 
     // Twitter/X Card
     updateMeta('meta[name="twitter:card"]', "summary_large_image");
@@ -112,6 +113,7 @@ export default function SEO({
     updateMeta('meta[name="twitter:url"]', resolvedUrl);
     updateMeta('meta[name="twitter:creator"]', resolvedTwitterHandle);
     updateMeta('meta[name="twitter:site"]', resolvedTwitterHandle);
+    updateMeta('meta[name="twitter:image:alt"]', resolvedTitle);
 
     // Images
     updateMeta('meta[property="og:image"]', resolvedOgImage);

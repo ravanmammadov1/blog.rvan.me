@@ -461,10 +461,12 @@ export default function HomePage() {
                 <div className="lg:col-span-7">
                   <Link to={`/work/${project.slug}`} className="block overflow-hidden rounded-2xl border border-border bg-surface">
                     <div className="project-art relative aspect-[16/10] overflow-hidden">
-                      <picture>
-                        <source srcSet={`${project.image.medium} 800w, ${project.image.large} 1200w`} type="image/webp" />
-                        <img src={project.image.medium} alt={project.title} className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
-                      </picture>
+                      <ImageWithFallback
+                        src={typeof project.image === "string" ? project.image : (project.image?.medium || project.image?.large || projects[index % projects.length].image)}
+                        fallbackSrc={typeof projects[index % projects.length].image === "string" ? (projects[index % projects.length].image as any) : projects[index % projects.length].image?.medium}
+                        alt={project.title}
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
                     </div>
                   </Link>
                 </div>
@@ -928,6 +930,9 @@ export default function HomePage() {
             </Link>
             <Link to="/cookie-policy" className="transition-colors hover:text-primary">
               COOKIE POLICY
+            </Link>
+            <Link to="/terms" className="transition-colors hover:text-primary">
+              TERMS OF SERVICE
             </Link>
             <button onClick={openPreferences} className="transition-colors hover:text-primary uppercase">
               COOKIE PREFERENCES
