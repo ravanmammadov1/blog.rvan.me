@@ -46,9 +46,27 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
-  // Increase chunk size warning limit to avoid warnings for large bundles
+  // Build optimizations and manual chunking to reduce initial bundle weight
   build: {
-    chunkSizeWarningLimit: 1500 // in kB, adjust as needed
+    target: 'es2020',
+    chunkSizeWarningLimit: 1500, // in kB, adjust as needed
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@react-three') || id.includes('three')) {
+              return 'r3f-vendor';
+            }
+            if (id.includes('motion') || id.includes('framer-motion') || id.includes('motion/react')) {
+              return 'motion-vendor';
+            }
+            return 'vendor';
+          }
+        },
+      },
+    },
+    // Enable brotli size reports for CI visibility
+    brotliSize: true,
   },
 })
 

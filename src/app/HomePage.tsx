@@ -39,7 +39,8 @@ import { fetchSiteSettings, fetchProjects, fetchAboutSection, fetchTestimonials 
 import SiteHeader from "./components/SiteHeader";
 import { SiteSettings, ProjectItem, AboutSection as IAboutSection, TestimonialItem } from "../types/cms";
 import BlogSection from "./components/blog/BlogSection";
-import HeroPortrait from "./components/HeroPortrait";
+import { lazy, Suspense } from "react";
+const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 import TestimonialsSection from "./components/TestimonialsSection";
 import SEO from "./components/SEO";
 
@@ -405,7 +406,9 @@ export default function HomePage() {
               transition={{ duration: 1, delay: 0.3, ease: EASE }}
               className="hidden lg:flex lg:col-span-5 h-[600px] w-full relative items-center justify-center"
             >
-              <HeroPortrait />
+                  <Suspense fallback={<div style={{height: 400}} aria-hidden="true" />}> 
+                    <HeroPortrait />
+                  </Suspense>
             </motion.div>
           </div>
         </div>
