@@ -1,5 +1,5 @@
 import { useRef, useMemo, Suspense, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Center, Float, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import ErrorBoundary from "./ErrorBoundary";
@@ -19,6 +19,7 @@ function LogoModel() {
 
   const groupRef = useRef<THREE.Group>(null);
   const mouse = useRef({ x: 0, y: 0 });
+  const { invalidate } = useThree();
 
   // Clone scene safely and configure pure PBR materials without self-shadowing artifacts
   const clonedScene = useMemo(() => {
@@ -52,6 +53,10 @@ function LogoModel() {
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
       mouse.current = { x, y };
+      // Request a render frame when pointer moves to avoid continuous render
+      try {
+        invalidate();
+      } catch (e) {}
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
@@ -65,16 +70,19 @@ function LogoModel() {
     const targetY = mouse.current.x * maxTilt;
     const targetX = -mouse.current.y * maxTilt;
 
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(
-      groupRef.current.rotation.y,
-      targetY,
-      delta * 5
-    );
-    groupRef.current.rotation.x = THREE.MathUtils.lerp(
-      groupRef.current.rotation.x,
-      targetX,
-      delta * 5
-    );
+    const ry = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetY, delta * 5);
+    const rx = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetX, delta * 5);
+
+    const dy = Math.abs(groupRef.current.rotation.y - ry);
+    const dx = Math.abs(groupRef.current.rotation.x - rx);
+
+    groupRef.current.rotation.y = ry;
+    groupRef.current.rotation.x = rx;
+
+    // Continue invalidating frames while motion is above a tiny threshold
+    if (dy > 0.0005 || dx > 0.0005) {
+      try { invalidate(); } catch (e) {}
+    }
   });
 
   if (!clonedScene) return null;
@@ -104,9 +112,10 @@ export default function Hero3DCanvas() {
       <div className="relative h-full w-full overflow-hidden bg-transparent transition-opacity duration-700 ease-out">
         <Suspense fallback={null}>
           <Canvas
-            dpr={[1, 1.5]}
+            frameloop="demand"
+            dpr={[1, 1.2]}
             gl={{
-              antialias: true,
+              antialias: false,
               alpha: true,
               powerPreference: "high-performance",
               stencil: false,

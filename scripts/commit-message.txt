@@ -1,0 +1,9 @@
+perf: bundle analysis, responsive images, lazy routes, R3F demand rendering, and other production optimizations
+
+- Added bundle visualizer (conditional on ANALYZE=1)
+- Converted key hero and portrait images to WebP responsive variants
+- Implemented <picture> + srcset for responsive loading
+- Lazy-loaded heavy route bundles and DesignerToolsPanel
+- Optimized Three.js canvas to frameloop='demand' and on-demand invalidation
+- Added tsconfig files for better editor/type-checking
+- Minor runtime and type fixes

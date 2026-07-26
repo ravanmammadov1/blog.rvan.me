@@ -4,7 +4,9 @@ import { BlogPost } from "../../../types/blog";
 import { AboutSection } from "../../../types/cms";
 import { fetchAboutSection } from "../../../lib/sanityQueries";
 import { urlFor } from "../../../lib/sanityClient";
-import RavanPortrait from "@/imports/ravan_1.png";
+import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
+import RavanPortrait800 from "@/imports/ravan_1-800.webp";
+import RavanPortrait400 from "@/imports/ravan_1-400.webp";
 
 interface AuthorCardProps {
   post?: BlogPost | null;
@@ -45,11 +47,10 @@ export default function AuthorCard({ post }: AuthorCardProps) {
   return (
     <div className="my-16 flex flex-col items-center gap-6 rounded-2xl border border-white/10 bg-surface/60 p-8 text-center backdrop-blur-md sm:flex-row sm:text-left">
       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-2 border-primary/60 bg-black">
-        <img
-          src={authorPhotoUrl}
-          alt={authorName}
-          className="h-full w-full object-cover object-top"
-        />
+        <picture>
+          <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
+          <img src={authorPhotoUrl} alt={authorName} className="h-full w-full object-cover object-top" />
+        </picture>
       </div>
 
       <div>

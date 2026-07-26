@@ -8,7 +8,8 @@ import { urlFor } from "../lib/sanityClient";
 import { ToolItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
-import DesignerToolsPanel from "./components/DesignerToolsPanel";
+import { lazy, Suspense } from "react";
+const DesignerToolsPanel = lazy(() => import("./components/DesignerToolsPanel"));
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -117,7 +118,9 @@ export default function ToolsArchive() {
               </div>
               <span className="text-xs text-muted-foreground">Works in your browser · No installation needed</span>
             </div>
-            <DesignerToolsPanel />
+            <Suspense fallback={<div className="h-40" aria-hidden="true" />}>
+              <DesignerToolsPanel />
+            </Suspense>
           </motion.div>
         </div>
       </section>

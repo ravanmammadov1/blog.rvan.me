@@ -30,9 +30,13 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 import RavanPhoto from "@/imports/Ravan.png";
-import RavanPortrait from "@/imports/ravan_1.png";
-import coverWuling from "@/imports/466885252088463.6a4df53862539.jpg";
-import coverLimitless from "@/imports/cbfd4b251276815.6a33abf0bf48e.png";
+import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
+import RavanPortrait800 from "@/imports/ravan_1-800.webp";
+import RavanPortrait400 from "@/imports/ravan_1-400.webp";
+import coverWuling1200 from "@/imports/466885252088463.6a4df53862539-1200.webp";
+import coverWuling800 from "@/imports/466885252088463.6a4df53862539-800.webp";
+import coverLimitless1200 from "@/imports/cbfd4b251276815.6a33abf0bf48e-1200.webp";
+import coverLimitless800 from "@/imports/cbfd4b251276815.6a33abf0bf48e-800.webp";
 import coverOmoda from "@/imports/063f86251210609.6a4670b82b027.png";
 import { client, urlFor } from "../lib/sanityClient";
 import { fetchSiteSettings, fetchProjects, fetchAboutSection, fetchTestimonials } from "../lib/sanityQueries";
@@ -81,7 +85,7 @@ const projects = [
     title: "Wuling / Creative Campaign",
     slug: "wuling-creative-campaign",
     type: "Art direction · Motion · Campaign",
-    image: coverWuling,
+    image: { large: coverWuling1200, medium: coverWuling800 },
     accent: "#e8fd52",
     year: "2024",
     liveUrl: undefined as string | undefined,
@@ -91,7 +95,7 @@ const projects = [
     title: "Limitless Drive",
     slug: "limitless-drive",
     type: "Brand identity · 3D · Automotive",
-    image: coverLimitless,
+    image: { large: coverLimitless1200, medium: coverLimitless800 },
     accent: "#ff764b",
     year: "2024",
     liveUrl: undefined as string | undefined,
@@ -455,11 +459,10 @@ export default function HomePage() {
                 <div className="lg:col-span-7">
                   <Link to={`/work/${project.slug}`} className="block overflow-hidden rounded-2xl border border-border bg-surface">
                     <div className="project-art relative aspect-[16/10] overflow-hidden">
-                      <ImageWithFallback
-                        src={project.image}
-                        alt={project.title}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
+                      <picture>
+                        <source srcSet={`${project.image.medium} 800w, ${project.image.large} 1200w`} type="image/webp" />
+                        <img src={project.image.medium} alt={project.title} className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                      </picture>
                     </div>
                   </Link>
                 </div>
@@ -605,11 +608,14 @@ export default function HomePage() {
                 className="lg:col-span-4"
               >
                 <div className="relative overflow-hidden rounded-2xl border border-border">
-                  <ImageWithFallback
-                    src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait : RavanPortrait}
-                    alt="Portrait of Ravan Mammadov"
-                    className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
-                  />
+                  <picture>
+                    <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
+                    <img
+                      src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200}
+                      alt="Portrait of Ravan Mammadov"
+                      className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
+                    />
+                  </picture>
                   <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-gradient-to-t from-background via-background/90 to-transparent p-5 text-[10px] tracking-[.2em] mono">
                     <span>RAVAN MAMMADOV</span>
                     <span className="text-primary font-bold">SENIOR DESIGNER</span>

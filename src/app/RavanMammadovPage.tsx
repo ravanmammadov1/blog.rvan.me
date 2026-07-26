@@ -14,7 +14,9 @@ import {
   Mail,
 } from "lucide-react";
 
-import RavanPortrait from "@/imports/ravan_1.png";
+import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
+import RavanPortrait800 from "@/imports/ravan_1-800.webp";
+import RavanPortrait400 from "@/imports/ravan_1-400.webp";
 import { client, urlFor } from "../lib/sanityClient";
 import { fetchAboutSection, fetchSiteSettings, fetchTestimonials } from "../lib/sanityQueries";
 import { AboutSection as IAboutSection, SiteSettings, TestimonialItem } from "../types/cms";
@@ -201,11 +203,10 @@ export default function RavanMammadovPage() {
               <div className="rounded-3xl border border-border bg-surface p-8 shadow-2xl">
                 <div className="flex items-center gap-4 border-b border-border pb-6">
                   <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary bg-black flex-shrink-0">
-                    <img
-                      src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait : RavanPortrait}
-                      alt="Ravan Mammadov"
-                      className="h-full w-full object-cover object-top"
-                    />
+                    <picture>
+                      <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
+                      <img src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200} alt="Ravan Mammadov" className="h-full w-full object-cover object-top" />
+                    </picture>
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-foreground">Ravan Mammadov</h3>
