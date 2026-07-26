@@ -22,8 +22,8 @@ export default defineConfig({
     figmaAssetResolver(),
     // The React and Tailwind plugins are both required for Make, even if
     // Tailwind is not being actively used – do not remove them
-    react(),
     tailwindcss(),
+    react(),
     // Bundle visualizer when ANALYZE env var is set
     ...(process.env.ANALYZE === '1' ? [visualizer({ filename: 'dist/bundle-stats.html', gzipSize: true })] : []),
   ],
@@ -53,21 +53,8 @@ export default defineConfig({
   build: {
     target: 'es2020',
     chunkSizeWarningLimit: 1500, // in kB, adjust as needed
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('@react-three') || id.includes('three')) {
-              return 'r3f-vendor';
-            }
-            if (id.includes('motion') || id.includes('framer-motion') || id.includes('motion/react')) {
-              return 'motion-vendor';
-            }
-            return 'vendor';
-          }
-        },
-      },
-    },
+    // Use Vite's default chunking so React and React Three Fiber remain compatible.
+    // Custom manualChunks can split React hooks across unsafe boundaries.
     // Enable brotli size reports for CI visibility
     brotliSize: true,
   },
