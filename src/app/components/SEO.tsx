@@ -140,17 +140,28 @@ export default function SEO({
     }
     canonical.href = resolvedUrl;
 
-    // Favicon — dynamic from Sanity if available
+    // Favicon — keep the shared browser asset links consistent for all pages
     const sanityFaviconUrl = (favicon || activeSettings?.favicon) ? urlFor(favicon || activeSettings?.favicon)?.url() : null;
-    if (sanityFaviconUrl) {
-      let favLink: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
-      if (!favLink) {
-        favLink = document.createElement("link");
-        favLink.rel = "icon";
-        document.head.appendChild(favLink);
+    const ensureLink = (rel: string, href: string, type?: string, sizes?: string) => {
+      let link: HTMLLinkElement | null = document.querySelector(`link[rel="${rel}"]`);
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = rel;
+        document.head.appendChild(link);
       }
-      favLink.href = sanityFaviconUrl;
-      favLink.type = "image/webp";
+      link.href = href;
+      if (type) link.type = type;
+      if (sizes) link.sizes = sizes;
+    };
+
+    ensureLink("icon", sanityFaviconUrl || "/favicon.ico", sanityFaviconUrl ? "image/webp" : "image/x-icon", sanityFaviconUrl ? "" : "any");
+    ensureLink("apple-touch-icon", "/apple-touch-icon.png", "image/png", "180x180");
+    const manifestLink = document.querySelector('link[rel="manifest"]');
+    if (!manifestLink) {
+      const manifest = document.createElement("link");
+      manifest.rel = "manifest";
+      manifest.href = "/site.webmanifest";
+      document.head.appendChild(manifest);
     }
 
     // JSON-LD Structured Data
