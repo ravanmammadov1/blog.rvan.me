@@ -1,35 +1,24 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import {
   motion,
   useScroll,
   useSpring,
-  useTransform,
   useMotionValue,
   AnimatePresence,
 } from "motion/react";
 import {
   ArrowDownRight,
   ArrowUpRight,
-  ChevronDown,
-  Crosshair,
-  Menu,
   MoveUpRight,
-  Plus,
-  X,
   Zap,
-  Target,
-  Layers,
-  TrendingUp,
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Sparkles,
-  UserCheck,
-  ArrowUp,
 } from "lucide-react";
+import { format } from "date-fns";
+
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
-import RavanPhoto from "@/imports/Ravan.png";
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
@@ -42,13 +31,24 @@ import { client, urlFor } from "../lib/sanityClient";
 import { fetchSiteSettings, fetchProjects, fetchAboutSection, fetchTestimonials } from "../lib/sanityQueries";
 import SiteHeader from "./components/SiteHeader";
 import { SiteSettings, ProjectItem, AboutSection as IAboutSection, TestimonialItem } from "../types/cms";
-import BlogSection from "./components/blog/BlogSection";
-import { lazy, Suspense } from "react";
-const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
+import BlogCard from "./components/blog/BlogCard";
+import TestimonialsSection from "./components/TestimonialsSection";
 import SEO from "./components/SEO";
 import { useCookieConsent } from "./context/CookieConsentContext";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+
+const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
+
+// Modular Section Enable/Disable Toggles
+const CONFIG_SHOW_HERO = true;
+const CONFIG_SHOW_NEWS = true;
+const CONFIG_SHOW_BLOG = true;
+const CONFIG_SHOW_RESOURCES = true;
+const CONFIG_SHOW_TOOLS = true;
+const CONFIG_SHOW_WORK = true;
+const CONFIG_SHOW_ABOUT = true;
+const CONFIG_SHOW_CONTACT = true;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -59,6 +59,30 @@ const fadeUp = {
     y: 0,
     transition: { duration: 0.9, delay, ease: EASE },
   }),
+};
+
+const RESOURCE_TYPE_LABELS: Record<string, string> = {
+  studentPack: "Student Pack",
+  aiCredits: "AI Credits",
+  software: "Free Software",
+  roadmap: "Learning Roadmap",
+  scholarship: "Scholarship",
+  internship: "Internship",
+  job: "Remote Job",
+  hackathon: "Hackathon",
+  startupProgram: "Startup Program",
+};
+
+const RESOURCE_TYPE_ICONS: Record<string, string> = {
+  studentPack: "🎒",
+  aiCredits: "🤖",
+  software: "💻",
+  roadmap: "🗺️",
+  scholarship: "🎓",
+  internship: "🏢",
+  job: "💼",
+  hackathon: "⚡",
+  startupProgram: "🚀",
 };
 
 function useSmoothCursor() {
@@ -81,7 +105,7 @@ function useSmoothCursor() {
   return { springX, springY };
 }
 
-const projects = [
+const fallbackProjects = [
   {
     number: "01",
     title: "Wuling / Creative Campaign",
@@ -137,24 +161,6 @@ const services = [
   },
 ];
 
-const principles = [
-  {
-    label: "Attention first",
-    tools: "If the first 3 seconds don't hook, the rest of the message is invisible.",
-    relatedBlogSlug: "short-form-video-hooks",
-  },
-  {
-    label: "Clarity over complexity",
-    tools: "Simple visual hierarchy always beats over-designed noise.",
-    relatedBlogSlug: "visual-hierarchy-secrets-eye-flow",
-  },
-  {
-    label: "Design made to scale",
-    tools: "Every system should work smoothly from 16px icons to massive billboards.",
-    relatedBlogSlug: "scalable-design-systems",
-  },
-];
-
 const stats = [
   { value: "8+", label: "Years crafting" },
   { value: "120+", label: "Projects shipped" },
@@ -167,14 +173,17 @@ function Eyebrow({ children, className = "" }: { children: React.ReactNode; clas
 }
 
 export default function HomePage() {
-  const { openPreferences } = useCookieConsent();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
   const [sanityProjects, setSanityProjects] = useState<ProjectItem[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [newsList, setNewsList] = useState<any[]>([]);
+  const [toolsList, setToolsList] = useState<any[]>([]);
+  const [resourcesList, setResourcesList] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [aboutTab, setAboutTab] = useState<"about" | "testimonials">("about");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
 
   // Contact Form State
   const [contactName, setContactName] = useState("");
@@ -183,17 +192,6 @@ export default function HomePage() {
   const [contactHoneypot, setContactHoneypot] = useState("");
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [contactErrorMessage, setContactErrorMessage] = useState("");
-
-  const [showBackToTop, setShowBackToTop] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400);
-    };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -249,6 +247,7 @@ export default function HomePage() {
       if (data) setTestimonials(data);
     });
 
+    // Fetch Blogs
     client
       .fetch(`
         *[_type == "blog"] | order(featured desc, publishDate desc){
@@ -261,16 +260,78 @@ export default function HomePage() {
           featured,
           publishDate,
           readTime,
-          coverImage
+          coverImage,
+          body
         }
       `)
       .then((data) => {
-        setBlogPosts(data);
+        setBlogPosts(data || []);
+      })
+      .catch(console.error);
+
+    // Fetch News (latest 3)
+    client
+      .fetch(`
+        *[_type == "news"] | order(publishedAt desc)[0...3]{
+          _id,
+          title,
+          "slug": slug.current,
+          coverImage,
+          excerpt,
+          publishedAt,
+          category
+        }
+      `)
+      .then((data) => {
+        setNewsList(data || []);
+      })
+      .catch(console.error);
+
+    // Fetch Tools (latest 4)
+    client
+      .fetch(`
+        *[_type == "tools"] | order(category asc, name asc)[0...4]{
+          _id,
+          name,
+          description,
+          icon,
+          link,
+          category
+        }
+      `)
+      .then((data) => {
+        setToolsList(data || []);
+      })
+      .catch(console.error);
+
+    // Fetch Resources (published, sortPriority, featuredScore)
+    client
+      .fetch(`
+        *[_type == "resource" && status == "published"] | order(sortPriority asc, featuredScore desc, _createdAt desc)[0...4]{
+          _id,
+          title,
+          "slug": slug.current,
+          resourceType,
+          description,
+          benefitSummary,
+          link,
+          logo,
+          status,
+          verificationStatus,
+          isGlobal,
+          countries,
+          difficultyLevel,
+          completionTime,
+          badges
+        }
+      `)
+      .then((data) => {
+        setResourcesList(data || []);
       })
       .catch(console.error);
   }, []);
 
-  const { scrollY, scrollYProgress } = useScroll();
+  const { scrollYProgress } = useScroll();
   const progressScale = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
   const { springX, springY } = useSmoothCursor();
 
@@ -281,19 +342,18 @@ export default function HomePage() {
         title: p.title,
         slug: p.slug?.current || p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         type: p.type || (p.tags && p.tags.length > 0 ? p.tags.join(" · ") : "Creative Project"),
-        image: p.coverImage ? urlFor(p.coverImage)?.url() || projects[index % projects.length].image : projects[index % projects.length].image,
+        image: p.coverImage ? urlFor(p.coverImage)?.url() || fallbackProjects[index % fallbackProjects.length].image : fallbackProjects[index % fallbackProjects.length].image,
         accent: p.accent || "#e8fd52",
         year: p.year || "2025",
         liveUrl: p.liveUrl,
       }));
     }
-    return projects.map((p) => ({
+    return fallbackProjects.map((p) => ({
       ...p,
       slug: p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     }));
   }, [sanityProjects]);
 
-  // Show max 3 featured projects on homepage
   const homepageProjects = useMemo(() => {
     return displayProjects.slice(0, 3);
   }, [displayProjects]);
@@ -325,319 +385,766 @@ export default function HomePage() {
         style={{ left: springX, top: springY }}
       />
 
-      {/* ── 1. Unified Header ── */}
+      {/* ── Header ── */}
       <SiteHeader siteSettings={siteSettings} />
 
       {/* ── 1. Hero ── */}
-      <section
-        id="top"
-        className="relative isolate min-h-[calc(100vh-5rem)] px-6 pb-16 pt-28 md:px-10 md:pt-36 flex items-center"
-      >
-        <div className="absolute inset-0 -z-10 overflow-hidden bg-background">
-          <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:64px_64px]" />
-        </div>
-
-        {/* Corner coordinate detail */}
-        <div className="absolute left-6 top-28 hidden text-[10px] tracking-[.2em] text-muted-foreground mono md:left-10 md:block">
-          40.40° N
-          <br />
-          49.86° E
-        </div>
-
-        <div className="mx-auto w-full max-w-[1600px]">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-8 items-center">
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 flex flex-col justify-center">
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                custom={0.1}
-                className="mb-6 flex items-center gap-3 text-[11px] font-bold tracking-[.24em] text-primary mono"
-              >
-                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
-                {availabilityStatus}
-              </motion.div>
-
-              <h1 className="text-[12vw] font-bold leading-[.85] tracking-[-.08em] sm:text-[9.5vw] lg:text-[6.5vw] text-foreground">
-                {heroTitle.split(" ").map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ y: "110%", opacity: 0 }}
-                    animate={{ y: "0%", opacity: 1 }}
-                    transition={{ duration: 0.9, delay: 0.15 + i * 0.08, ease: EASE }}
-                    className="inline-block mr-[0.22em]"
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </h1>
-
-              <motion.p
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                custom={0.35}
-                className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground font-medium md:text-lg"
-              >
-                {heroSubtitle}
-              </motion.p>
-
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                animate="visible"
-                custom={0.45}
-                className="mt-10 flex flex-wrap items-center gap-6"
-              >
-                <a
-                  href="#work"
-                  className="group flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl mono uppercase"
-                >
-                  EXPLORE SELECTED WORK
-                  <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-                </a>
-                <Link
-                  to="/ravan-mammadov"
-                  className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
-                >
-                  READ BIOGRAPHY →
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Right 3D Model Column (Desktop only >=1024px, completely hidden on mobile & tablet) */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3, ease: EASE }}
-              className="hidden lg:flex lg:col-span-5 h-[600px] w-full relative items-center justify-center"
-            >
-                  <Suspense fallback={<div style={{height: 400}} aria-hidden="true" />}> 
-                    <HeroPortrait />
-                  </Suspense>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 2. Selected Work ── */}
-      <section id="work" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="mb-16 flex items-end justify-between border-b border-border pb-6"
-          >
-            <div>
-              <Eyebrow className="text-muted-foreground">01 / Selected Work</Eyebrow>
-              <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-                Built to be remembered.
-              </h2>
-            </div>
-            <Link
-              to="/work"
-              className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
-            >
-              VIEW ALL PROJECTS ({displayProjects.length})
-              <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </Link>
-          </motion.div>
-
-          <div className="grid gap-12 lg:gap-20">
-            {homepageProjects.map((project, index) => (
-              <motion.article
-                key={project.slug}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={index * 0.1}
-                className="project-card group relative grid gap-8 lg:grid-cols-12 items-center"
-                onMouseEnter={() => setHoveredProject(index)}
-                onMouseLeave={() => setHoveredProject(null)}
-              >
-                <div className="lg:col-span-7">
-                  <Link to={`/work/${project.slug}`} className="block overflow-hidden rounded-2xl border border-border bg-surface">
-                    <div className="project-art relative aspect-[16/10] overflow-hidden">
-                      <ImageWithFallback
-                        src={typeof project.image === "string" ? project.image : (project.image?.medium || project.image?.large || projects[index % projects.length].image)}
-                        fallbackSrc={typeof projects[index % projects.length].image === "string" ? (projects[index % projects.length].image as any) : projects[index % projects.length].image?.medium}
-                        alt={project.title}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
-                    </div>
-                  </Link>
-                </div>
-                <div className="lg:col-span-5 lg:pl-6">
-                  <div className="flex items-center gap-4 text-xs font-bold tracking-[.2em] text-muted-foreground mono">
-                    <span>{project.number}</span>
-                    <span>·</span>
-                    <span>{project.year}</span>
-                  </div>
-                  <h3 className="mt-4 text-3xl font-semibold tracking-[-.04em] md:text-5xl">
-                    <Link to={`/work/${project.slug}`} className="transition-colors duration-300 hover:text-primary">
-                      {project.title}
-                    </Link>
-                  </h3>
-                  <p className="mt-4 text-sm font-medium text-muted-foreground">{project.type}</p>
-
-                  <div className="mt-8 flex flex-wrap items-center gap-4">
-                    <Link
-                      to={`/work/${project.slug}`}
-                      className="group/btn inline-flex items-center gap-3 rounded-full border border-border bg-surface px-6 py-3.5 text-xs font-bold tracking-[.18em] text-foreground transition duration-300 hover:border-primary hover:bg-primary hover:text-black mono uppercase"
-                    >
-                      VIEW CASE STUDY
-                      <ArrowUpRight size={14} className="transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
-                    </Link>
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase"
-                      >
-                        LIVE SITE <ArrowUpRight size={12} />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </motion.article>
-            ))}
+      {CONFIG_SHOW_HERO && (
+        <section
+          id="top"
+          className="relative isolate min-h-[calc(100vh-5rem)] px-6 pb-16 pt-28 md:px-10 md:pt-36 flex items-center animate-fade-in"
+        >
+          <div className="absolute inset-0 -z-10 overflow-hidden bg-background">
+            <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:64px_64px]" />
           </div>
 
-          <div className="mt-20 flex justify-center">
-            <Link
-              to="/work"
-              className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
-            >
-              <span>VIEW FULL PROJECT ARCHIVE ({displayProjects.length} PROJECTS)</span>
-              <MoveUpRight className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" size={17} />
-            </Link>
+          <div className="absolute left-6 top-28 hidden text-[10px] tracking-[.2em] text-muted-foreground mono md:left-10 md:block">
+            40.40° N
+            <br />
+            49.86° E
           </div>
-        </div>
-      </section>
 
-      {/* ── 3. Expertise ── */}
-      <section id="expertise" className="bg-primary px-6 py-28 text-primary-foreground md:px-10 md:py-40">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-black/50">02 / Expertise</p>
-            <h2 className="mt-6 max-w-4xl text-5xl font-semibold leading-[.92] tracking-[-.07em] md:text-7xl">
-              A wider lens for ambitious ideas.
-            </h2>
-          </motion.div>
-          <div className="mt-16 grid border-l border-t border-black/20 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((service, index) => {
-              const Content = (
-                <div className="group flex min-h-44 flex-col justify-between border-b border-r border-black/20 p-6 transition-colors duration-300 hover:bg-background hover:text-primary">
-                  <span className="text-[11px] font-bold text-black/40 mono group-hover:text-primary/60">
-                    0{index + 1}
-                  </span>
-                  <div>
-                    <p className="text-lg font-semibold tracking-[-.03em]">{service.name}</p>
-                    <ArrowUpRight className="mt-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100" size={16} />
-                  </div>
-                </div>
-              );
-
-              return (
+          <div className="mx-auto w-full max-w-[1600px]">
+            <div className="grid gap-10 lg:grid-cols-12 lg:gap-8 items-center">
+              {/* Left Content Column */}
+              <div className="lg:col-span-7 flex flex-col justify-center">
                 <motion.div
-                  key={service.name}
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.1}
+                  className="mb-6 flex items-center gap-3 text-[11px] font-bold tracking-[.24em] text-primary mono"
+                >
+                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
+                  {availabilityStatus}
+                </motion.div>
+
+                <h1 className="text-[12vw] font-bold leading-[.85] tracking-[-.08em] sm:text-[9.5vw] lg:text-[6.5vw] text-foreground">
+                  {heroTitle.split(" ").map((word, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ y: "110%", opacity: 0 }}
+                      animate={{ y: "0%", opacity: 1 }}
+                      transition={{ duration: 0.9, delay: 0.15 + i * 0.08, ease: EASE }}
+                      className="inline-block mr-[0.22em]"
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </h1>
+
+                <motion.p
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.35}
+                  className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground font-medium md:text-lg"
+                >
+                  {heroSubtitle}
+                </motion.p>
+
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.45}
+                  className="mt-10 flex flex-wrap items-center gap-6"
+                >
+                  <Link
+                    to="/resources"
+                    className="group flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl mono uppercase"
+                  >
+                    EXPLORE DIRECTORY
+                    <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                  </Link>
+                  <a
+                    href="#work"
+                    className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
+                  >
+                    SELECTED WORK →
+                  </a>
+                </motion.div>
+              </div>
+
+              {/* Right Portrait */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.3, ease: EASE }}
+                className="hidden lg:flex lg:col-span-5 h-[600px] w-full relative items-center justify-center"
+              >
+                <Suspense fallback={<div style={{ height: 400 }} aria-hidden="true" />}>
+                  <HeroPortrait />
+                </Suspense>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 2. Featured News ── */}
+      {CONFIG_SHOW_NEWS && (
+        <section id="news" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
+          <div className="mx-auto max-w-[1600px]">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-16 flex items-end justify-between border-b border-border pb-6"
+            >
+              <div>
+                <Eyebrow className="text-muted-foreground">02 / Announcements & Field Notes</Eyebrow>
+                <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                  Latest updates.
+                </h2>
+              </div>
+              <Link
+                to="/news"
+                className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+              >
+                VIEW ALL NEWS
+                <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+
+            {newsList.length === 0 ? (
+              <div className="h-64 rounded-xl border border-border bg-surface flex items-center justify-center text-muted-foreground text-sm">
+                No news updates available.
+              </div>
+            ) : (
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {newsList.map((item, index) => {
+                  const newsSlug = item.slug || item._id;
+                  let formattedDate = "";
+                  if (item.publishedAt) {
+                    try {
+                      formattedDate = format(new Date(item.publishedAt), "MMM d, yyyy");
+                    } catch (e) {
+                      formattedDate = "";
+                    }
+                  }
+                  const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
+
+                  return (
+                    <motion.article
+                      key={item._id}
+                      variants={fadeUp}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      custom={index * 0.08}
+                      className="group rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary flex flex-col justify-between"
+                    >
+                      <Link to={`/news/${newsSlug}`}>
+                        {imgUrl && (
+                          <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background">
+                            <img
+                              src={imgUrl}
+                              alt={item.title}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
+                          {item.category && <span className="text-primary">{item.category}</span>}
+                          {formattedDate && <span>{formattedDate}</span>}
+                        </div>
+                        <h3 className="text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3 line-clamp-2">
+                          {item.title}
+                        </h3>
+                        {item.excerpt && (
+                          <p className="text-xs leading-relaxed text-muted-foreground line-clamp-3 mb-6">
+                            {item.excerpt}
+                          </p>
+                        )}
+                      </Link>
+                      <div className="border-t border-border/50 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
+                        <Link to={`/news/${newsSlug}`} className="inline-flex items-center gap-1.5 hover:underline">
+                          <span>READ FULL ARTICLE</span>
+                          <ArrowUpRight size={14} />
+                        </Link>
+                      </div>
+                    </motion.article>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="mt-16 flex justify-center md:hidden">
+              <Link
+                to="/news"
+                className="group inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-3 text-xs font-bold tracking-[.14em] text-foreground transition-colors hover:border-primary mono"
+              >
+                VIEW ALL NEWS
+                <ArrowUpRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 3. Featured Blog Articles ── */}
+      {CONFIG_SHOW_BLOG && (
+        <section id="blog" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
+          <div className="mx-auto max-w-[1600px]">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-16 flex items-end justify-between border-b border-border pb-6"
+            >
+              <div>
+                <Eyebrow className="text-muted-foreground">03 / Insights & Ideas</Eyebrow>
+                <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                  Thinking out loud.
+                </h2>
+              </div>
+              <Link
+                to="/blog"
+                className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+              >
+                EXPLORE ALL ARTICLES
+                <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+
+            {blogPosts.length === 0 ? (
+              <div className="h-64 rounded-xl border border-border bg-surface flex items-center justify-center text-muted-foreground text-sm">
+                No blog articles available.
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {blogPosts
+                  .slice(0, 3)
+                  .map((post) => (
+                    <BlogCard
+                      key={post._id}
+                      post={post}
+                      hovered={hoveredBlog === post._id}
+                      onHoverStart={() => setHoveredBlog(post._id)}
+                      onHoverEnd={() => setHoveredBlog(null)}
+                    />
+                  ))}
+              </div>
+            )}
+
+            <div className="mt-16 flex justify-center">
+              <Link
+                to="/blog"
+                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-lg"
+              >
+                EXPLORE FULL BLOG ARCHIVE ({blogPosts.length} ARTICLES)
+                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 4. Featured Resources ── */}
+      {CONFIG_SHOW_RESOURCES && (
+        <section id="resources" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
+          <div className="mx-auto max-w-[1600px]">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-16 flex items-end justify-between border-b border-border pb-6"
+            >
+              <div>
+                <Eyebrow className="text-muted-foreground">04 / Resources Directory</Eyebrow>
+                <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                  Curated Knowledge.
+                </h2>
+              </div>
+              <Link
+                to="/resources"
+                className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+              >
+                VIEW ALL RESOURCES
+                <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+
+            {/* Top resource types cards grid */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-12">
+              {[
+                { type: "aiCredits", label: "Free AI Credits", icon: "🤖", desc: "Credits and tokens for premium generative AI platforms." },
+                { type: "studentPack", label: "Student Packs", icon: "🎒", desc: "Premium software licenses and packs for students." },
+                { type: "roadmap", label: "Learning Roadmaps", icon: "🗺️", desc: "Step-by-step masterclass pathways for design and tech." },
+                { type: "software", label: "Free Software", icon: "💻", desc: "Completely free design, development, and animation tools." },
+                { type: "job", label: "Remote Jobs", icon: "💼", desc: "High-paying remote roles in creative and design fields." },
+                { type: "hackathon", label: "Hackathons", icon: "⚡", desc: "Active hackathons, challenges, and prize program entries." }
+              ].map((item, index) => (
+                <motion.div
+                  key={item.type}
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true }}
-                  custom={index * 0.06}
+                  custom={index * 0.05}
                 >
-                  {service.relatedBlogSlug ? (
-                    <Link to={`/blog/${service.relatedBlogSlug}`}>{Content}</Link>
-                  ) : (
-                    <a href={service.externalLink} target="_blank" rel="noreferrer">
-                      {Content}
-                    </a>
-                  )}
+                  <Link
+                    to={`/resources?type=${item.type}`}
+                    className="group flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50 hover:bg-surface/80"
+                  >
+                    <div>
+                      <span className="text-3xl block mb-4">{item.icon}</span>
+                      <h3 className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                        {item.label}
+                      </h3>
+                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                        {item.desc}
+                      </p>
+                    </div>
+                    <span className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold tracking-widest text-primary mono uppercase">
+                      EXPLORE <ArrowUpRight size={10} />
+                    </span>
+                  </Link>
                 </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. News / Blog ── */}
-      <BlogSection posts={blogPosts} />
-
-      {/* ── 5. About (Integrated with Testimonials tab) ── */}
-      <section id="about" className="relative px-6 py-32 md:px-10 md:py-44 border-t border-border">
-        <div className="mx-auto max-w-[1600px]">
-          {/* About Header with Tab Switcher */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-8 mb-16 gap-6">
-            <div>
-              <Eyebrow className="text-muted-foreground">04 / About the Practice</Eyebrow>
-              <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-                {aboutTab === "about" ? "Refusing to blend in." : "What Collaborators Say."}
-              </h2>
+              ))}
             </div>
 
-            {/* Tab Toggle */}
-            <div className="inline-flex rounded-full border border-border bg-surface p-1.5 mono text-xs font-bold">
-              <button
-                onClick={() => setAboutTab("about")}
-                className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
-                  aboutTab === "about" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
-                }`}
+            {/* Dynamic preview list */}
+            {resourcesList.length > 0 && (
+              <div className="border-t border-border/50 pt-12">
+                <p className="text-xs font-bold tracking-widest text-muted-foreground mono uppercase mb-6">
+                  NEWLY ADDED RESOURCES
+                </p>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  {resourcesList.slice(0, 4).map((resource, index) => {
+                    const logoUrl = resource.logo ? urlFor(resource.logo)?.width(80).url() : null;
+                    const slug = resource.slug || resource._id;
+                    const typeLabel = RESOURCE_TYPE_LABELS[resource.resourceType] || resource.resourceType;
+                    const typeIcon = RESOURCE_TYPE_ICONS[resource.resourceType] || "📦";
+
+                    return (
+                      <motion.div
+                        key={resource._id}
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        custom={index * 0.05}
+                        className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-5 transition-all duration-300 hover:border-primary/50"
+                      >
+                        <div>
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex-shrink-0">
+                              {logoUrl ? (
+                                <img
+                                  src={logoUrl}
+                                  alt={resource.title}
+                                  className="h-8 w-8 rounded-lg object-contain border border-border bg-background p-1"
+                                />
+                              ) : (
+                                <div className="h-8 w-8 rounded-lg border border-border bg-background flex items-center justify-center text-sm">
+                                  {typeIcon}
+                                </div>
+                              )}
+                            </div>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mono">
+                              {typeLabel}
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-semibold leading-snug text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                            <Link to={`/resources/${slug}`}>{resource.title}</Link>
+                          </h4>
+                          {resource.benefitSummary && (
+                            <span className="inline-block mt-2 rounded bg-primary/10 border border-primary/20 px-2 py-0.5 text-[9px] font-bold text-primary">
+                              {resource.benefitSummary}
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-4 border-t border-border/40 pt-3 flex items-center justify-between text-[10px] font-bold tracking-widest uppercase mono">
+                          <Link to={`/resources/${slug}`} className="text-primary hover:underline flex items-center gap-0.5">
+                            VIEW <ArrowUpRight size={10} />
+                          </Link>
+                          <a href={resource.link} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            ACCESS
+                          </a>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-16 flex justify-center">
+              <Link
+                to="/resources"
+                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
               >
-                BIOGRAPHY & STATS
-              </button>
-              <button
-                onClick={() => setAboutTab("testimonials")}
-                className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
-                  aboutTab === "testimonials" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                COLLABORATOR REVIEWS ({testimonials.length})
-              </button>
+                EXPLORE CURATED DIRECTORY ({resourcesList.length}+ ITEMS)
+                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
             </div>
           </div>
+        </section>
+      )}
 
-          {aboutTab === "about" ? (
-            <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-              {/* Portrait */}
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="lg:col-span-4"
+      {/* ── 5. Featured Tools ── */}
+      {CONFIG_SHOW_TOOLS && (
+        <section id="tools" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
+          <div className="mx-auto max-w-[1600px]">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-16 flex items-end justify-between border-b border-border pb-6"
+            >
+              <div>
+                <Eyebrow className="text-muted-foreground">05 / Utilities & Stack</Eyebrow>
+                <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                  Utilities & Stack.
+                </h2>
+              </div>
+              <Link
+                to="/tools"
+                className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
               >
-                <div className="relative overflow-hidden rounded-2xl border border-border">
-                  <picture>
-                    <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
-                    <img
-                      src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200}
-                      alt="Portrait of Ravan Mammadov"
-                      className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
-                    />
-                  </picture>
-                  <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-gradient-to-t from-background via-background/90 to-transparent p-5 text-[10px] tracking-[.2em] mono">
-                    <span>RAVAN MAMMADOV</span>
-                    <span className="text-primary font-bold">SENIOR DESIGNER</span>
+                VIEW ALL UTILITIES
+                <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+
+            {toolsList.length === 0 ? (
+              <div className="h-64 rounded-xl border border-border bg-surface flex items-center justify-center text-muted-foreground text-sm">
+                No tools or stack items available.
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {toolsList.map((tool, index) => {
+                  const iconUrl = tool.icon ? urlFor(tool.icon)?.url() : null;
+                  const CardElement = tool.link ? "a" : "div";
+                  const cardProps = tool.link
+                    ? { href: tool.link, target: "_blank", rel: "noreferrer" }
+                    : {};
+
+                  return (
+                    <motion.div
+                      key={tool._id}
+                      variants={fadeUp}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      custom={index * 0.05}
+                    >
+                      <CardElement
+                        {...cardProps}
+                        className="group flex h-full flex-col justify-between rounded-lg border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50 hover:bg-surface/80 cursor-pointer"
+                      >
+                        <div>
+                          <div className="flex items-center gap-4 mb-4">
+                            {iconUrl ? (
+                              <img
+                                src={iconUrl}
+                                alt={tool.name}
+                                className="h-10 w-10 rounded-lg object-contain bg-background border border-border p-2"
+                              />
+                            ) : (
+                              <div className="grid h-10 w-10 place-items-center rounded-lg border border-border bg-background text-primary">
+                                <Zap size={18} />
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="text-sm font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
+                                {tool.name}
+                              </h3>
+                              {tool.category && (
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mono block mt-0.5">
+                                  {tool.category}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {tool.description && (
+                            <p className="text-xs leading-relaxed text-muted-foreground mt-2 line-clamp-2">
+                              {tool.description}
+                            </p>
+                          )}
+                        </div>
+                        {tool.link && (
+                          <span className="mt-4 inline-flex items-center gap-1 text-[9px] font-bold tracking-widest text-primary mono uppercase">
+                            ACCESS UTILITY <ArrowUpRight size={10} />
+                          </span>
+                        )}
+                      </CardElement>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="mt-16 flex justify-center">
+              <Link
+                to="/tools"
+                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
+              >
+                EXPLORE ALL IN-BROWSER UTILITIES
+                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 6. Selected Work ── */}
+      {CONFIG_SHOW_WORK && (
+        <section id="work" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
+          <div className="mx-auto max-w-[1600px]">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-16 flex items-end justify-between border-b border-border pb-6"
+            >
+              <div>
+                <Eyebrow className="text-muted-foreground">06 / Selected Work</Eyebrow>
+                <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                  Built to be remembered.
+                </h2>
+              </div>
+              <Link
+                to="/work"
+                className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+              >
+                VIEW ALL PROJECTS ({displayProjects.length})
+                <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </motion.div>
+
+            <div className="grid gap-12 lg:gap-20">
+              {homepageProjects.map((project, index) => (
+                <motion.article
+                  key={project.slug}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={index * 0.1}
+                  className="project-card group relative grid gap-8 lg:grid-cols-12 items-center"
+                  onMouseEnter={() => setHoveredProject(index)}
+                  onMouseLeave={() => setHoveredProject(null)}
+                >
+                  <div className="lg:col-span-7">
+                    <Link to={`/work/${project.slug}`} className="block overflow-hidden rounded-2xl border border-border bg-surface">
+                      <div className="project-art relative aspect-[16/10] overflow-hidden">
+                        <ImageWithFallback
+                          src={typeof project.image === "string" ? project.image : (project.image?.medium || project.image?.large || fallbackProjects[index % fallbackProjects.length].image)}
+                          fallbackSrc={typeof fallbackProjects[index % fallbackProjects.length].image === "string" ? (fallbackProjects[index % fallbackProjects.length].image as any) : fallbackProjects[index % fallbackProjects.length].image?.medium}
+                          alt={project.title}
+                          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        />
+                      </div>
+                    </Link>
+                  </div>
+                  <div className="lg:col-span-5 lg:pl-6">
+                    <div className="flex items-center gap-4 text-xs font-bold tracking-[.2em] text-muted-foreground mono">
+                      <span>{project.number}</span>
+                      <span>·</span>
+                      <span>{project.year}</span>
+                    </div>
+                    <h3 className="mt-4 text-3xl font-semibold tracking-[-.04em] md:text-5xl">
+                      <Link to={`/work/${project.slug}`} className="transition-colors duration-300 hover:text-primary">
+                        {project.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-4 text-sm font-medium text-muted-foreground">{project.type}</p>
+
+                    <div className="mt-8 flex flex-wrap items-center gap-4">
+                      <Link
+                        to={`/work/${project.slug}`}
+                        className="group/btn inline-flex items-center gap-3 rounded-full border border-border bg-surface px-6 py-3.5 text-xs font-bold tracking-[.18em] text-foreground transition duration-300 hover:border-primary hover:bg-primary hover:text-black mono uppercase"
+                      >
+                        VIEW CASE STUDY
+                        <ArrowUpRight size={14} className="transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+                      </Link>
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase"
+                        >
+                          LIVE SITE <ArrowUpRight size={12} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+
+            <div className="mt-20 flex justify-center">
+              <Link
+                to="/work"
+                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
+              >
+                <span>VIEW FULL PROJECT ARCHIVE ({displayProjects.length} PROJECTS)</span>
+                <MoveUpRight className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" size={17} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 7. About ── */}
+      {CONFIG_SHOW_ABOUT && (
+        <section id="about" className="relative px-6 py-32 md:px-10 md:py-44 border-t border-border">
+          <div className="mx-auto max-w-[1600px]">
+            <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-8 mb-16 gap-6">
+              <div>
+                <Eyebrow className="text-muted-foreground">07 / About the Practice</Eyebrow>
+                <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+                  {aboutTab === "about" ? "Refusing to blend in." : "What Collaborators Say."}
+                </h2>
+              </div>
+
+              <div className="inline-flex rounded-full border border-border bg-surface p-1.5 mono text-xs font-bold">
+                <button
+                  onClick={() => setAboutTab("about")}
+                  className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
+                    aboutTab === "about" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  BIOGRAPHY & STATS
+                </button>
+                <button
+                  onClick={() => setAboutTab("testimonials")}
+                  className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
+                    aboutTab === "testimonials" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  COLLABORATOR REVIEWS ({testimonials.length})
+                </button>
+              </div>
+            </div>
+
+            {aboutTab === "about" ? (
+              <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  className="lg:col-span-4"
+                >
+                  <div className="relative overflow-hidden rounded-2xl border border-border">
+                    <picture>
+                      <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
+                      <img
+                        src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200}
+                        alt="Portrait of Ravan Mammadov"
+                        className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
+                      />
+                    </picture>
+                    <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-gradient-to-t from-background via-background/90 to-transparent p-5 text-[10px] tracking-[.2em] mono">
+                      <span>RAVAN MAMMADOV</span>
+                      <span className="text-primary font-bold">SENIOR DESIGNER</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <div className="lg:col-span-7 lg:col-start-6">
+                  <motion.h3
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="text-3xl font-medium leading-[1.1] tracking-[-.04em] md:text-5xl"
+                  >
+                    {aboutSection?.heading || "I create visual energy for brands that refuse to blend in."}
+                  </motion.h3>
+
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={0.2}
+                    className="mt-10 grid gap-8 border-t border-border pt-6 md:grid-cols-2"
+                  >
+                    <p className="text-base leading-relaxed text-muted-foreground font-medium">
+                      {aboutSection?.introParagraph1 ||
+                        "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative."}
+                    </p>
+                    <p className="text-base leading-relaxed text-muted-foreground font-medium">
+                      {aboutSection?.introParagraph2 ||
+                        "My approach pairs a designer's eye with a marketer's clarity: beautiful ideas, built to be remembered and made to perform."}
+                    </p>
+                  </motion.div>
+
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={0.3}
+                    className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4"
+                  >
+                    {(aboutSection?.stats && aboutSection.stats.length > 0 ? aboutSection.stats : stats).map((s) => (
+                      <div key={s.label} className="bg-background p-6">
+                        <p className="text-3xl font-bold tracking-[-.05em] text-primary mono">{s.value}</p>
+                        <p className="mt-2 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground mono">{s.label}</p>
+                      </div>
+                    ))}
+                  </motion.div>
+
+                  <div className="mt-10 flex flex-wrap gap-6 items-center">
+                    <Link
+                      to="/ravan-mammadov"
+                      className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition hover:bg-white mono"
+                    >
+                      READ FULL BIOGRAPHY & CAREER <ArrowUpRight size={14} />
+                    </Link>
                   </div>
                 </div>
+              </div>
+            ) : (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+                <TestimonialsSection />
               </motion.div>
+            )}
+          </div>
+        </section>
+      )}
 
-              <div className="lg:col-span-7 lg:col-start-6">
-                <motion.h3
+      {/* ── 8. Contact ── */}
+      {CONFIG_SHOW_CONTACT && (
+        <section
+          id="contact"
+          className="relative overflow-hidden bg-paper px-6 py-32 text-paper-foreground md:px-10 md:py-44"
+        >
+          <div className="absolute -right-16 -top-16 h-80 w-80 rounded-full bg-primary opacity-70 blur-3xl" />
+          <div className="absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-destructive opacity-25 blur-3xl" />
+          <div className="relative mx-auto max-w-[1600px]">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <p className="eyebrow text-black/45">08 / Start a conversation</p>
+            </motion.div>
+
+            <div className="grid gap-12 lg:grid-cols-12 mt-8 items-start">
+              <div className="lg:col-span-7">
+                <motion.h2
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true }}
-                  className="text-3xl font-medium leading-[1.1] tracking-[-.04em] md:text-5xl"
+                  custom={0.1}
+                  className="text-[12vw] font-semibold leading-[.82] tracking-[-.09em] lg:text-[8vw]"
                 >
-                  {aboutSection?.heading || "I create visual energy for brands that refuse to blend in."}
-                </motion.h3>
+                  {"LET'S MAKE"}
+                  <br />
+                  <span className="text-destructive">SOMETHING</span>
+                  <br />
+                  MOVE.
+                </motion.h2>
 
                 <motion.div
                   variants={fadeUp}
@@ -645,281 +1152,198 @@ export default function HomePage() {
                   whileInView="visible"
                   viewport={{ once: true }}
                   custom={0.2}
-                  className="mt-10 grid gap-8 border-t border-border pt-6 md:grid-cols-2"
+                  className="mt-12 space-y-6"
                 >
-                  <p className="text-base leading-relaxed text-muted-foreground font-medium">
-                    {aboutSection?.introParagraph1 ||
-                      "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative."}
+                  <p className="max-w-md text-base leading-relaxed text-black/70 font-medium">
+                    Have an ambitious campaign, motion project, or visual system in mind? I'm always open to new creative partnerships.
                   </p>
-                  <p className="text-base leading-relaxed text-muted-foreground font-medium">
-                    {aboutSection?.introParagraph2 ||
-                      "My approach pairs a designer's eye with a marketer's clarity: beautiful ideas, built to be remembered and made to perform."}
-                  </p>
-                </motion.div>
 
-                {/* Stats */}
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={0.3}
-                  className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4"
-                >
-                  {(aboutSection?.stats && aboutSection.stats.length > 0 ? aboutSection.stats : stats).map((s) => (
-                    <div key={s.label} className="bg-background p-6">
-                      <p className="text-3xl font-bold tracking-[-.05em] text-primary mono">{s.value}</p>
-                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground mono">{s.label}</p>
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <a
+                      href={`mailto:${siteSettings?.socialLinks?.email || "mammadovravan1@gmail.com"}`}
+                      className="group inline-flex items-center gap-3 rounded-full bg-black text-white px-7 py-4 text-xs font-bold tracking-[.18em] uppercase transition duration-300 hover:bg-primary hover:text-black"
+                    >
+                      SEND EMAIL DIRECTLY
+                      <ArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" size={16} />
+                    </a>
+
+                    {siteSettings?.resumeFileUrl && (
+                      <a
+                        href={siteSettings.resumeFileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full border border-black/30 px-6 py-4 text-xs font-bold tracking-[.18em] uppercase text-black hover:border-black hover:bg-black/10 transition-colors mono"
+                      >
+                        DOWNLOAD RESUME (PDF)
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="mt-12 border-t border-black/15 pt-8">
+                    <p className="text-xs font-bold tracking-widest text-black/50 mono uppercase mb-6">
+                      CONNECT ACROSS PLATFORMS
+                    </p>
+                    <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold tracking-tight text-black">
+                      <a
+                        href={siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
+                      >
+                        BEHANCE
+                      </a>
+                      <a
+                        href={siteSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
+                      >
+                        LINKEDIN
+                      </a>
+                      <a
+                        href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
+                      >
+                        INSTAGRAM
+                      </a>
+                      <a
+                        href={siteSettings?.socialLinks?.facebook || "https://www.facebook.com/rvnmmmdv/"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
+                      >
+                        FACEBOOK
+                      </a>
+                      <a
+                        href={siteSettings?.socialLinks?.pinterest || "https://tr.pinterest.com/mammadovravan1/"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
+                      >
+                        PINTEREST
+                      </a>
                     </div>
-                  ))}
+                  </div>
                 </motion.div>
-
-                <div className="mt-10 flex flex-wrap gap-6 items-center">
-                  <Link
-                    to="/ravan-mammadov"
-                    className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition hover:bg-white mono"
-                  >
-                    READ FULL BIOGRAPHY & CAREER <ArrowUpRight size={14} />
-                  </Link>
-                </div>
               </div>
-            </div>
-          ) : (
-            /* Integrated Testimonials View inside About */
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-              <TestimonialsSection />
-            </motion.div>
-          )}
-        </div>
-      </section>
 
-      {/* ── 6. Contact ── */}
-      <section
-        id="contact"
-        className="relative overflow-hidden bg-paper px-6 py-32 text-paper-foreground md:px-10 md:py-44"
-      >
-        <div className="absolute -right-16 -top-16 h-80 w-80 rounded-full bg-primary opacity-70 blur-3xl" />
-        <div className="absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-destructive opacity-25 blur-3xl" />
-        <div className="relative mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-black/45">05 / Start a conversation</p>
-          </motion.div>
-
-          <div className="grid gap-12 lg:grid-cols-12 mt-8 items-start">
-            <div className="lg:col-span-7">
-              <motion.h2
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={0.1}
-                className="text-[12vw] font-semibold leading-[.82] tracking-[-.09em] lg:text-[8vw]"
-              >
-                {"LET'S MAKE"}
-                <br />
-                <span className="text-destructive">SOMETHING</span>
-                <br />
-                MOVE.
-              </motion.h2>
-
+              {/* Inquiry Form */}
               <motion.div
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                custom={0.2}
-                className="mt-12 space-y-6"
+                custom={0.3}
+                className="lg:col-span-5 rounded-2xl border border-black/15 bg-white/70 backdrop-blur-md p-8 shadow-xl"
               >
-                <p className="max-w-md text-base leading-relaxed text-black/70 font-medium">
-                  Have an ambitious campaign, motion project, or visual system in mind? I'm always open to new creative partnerships.
+                <h3 className="text-2xl font-semibold tracking-tight text-black mb-2">
+                  Send a message
+                </h3>
+                <p className="text-xs text-black/60 mb-6">
+                  Fill out the details below and I'll respond within 24 hours.
                 </p>
 
-                <div className="flex flex-wrap gap-4 pt-2">
-                  <a
-                    href={`mailto:${siteSettings?.socialLinks?.email || "mammadovravan1@gmail.com"}`}
-                    className="group inline-flex items-center gap-3 rounded-full bg-black text-white px-7 py-4 text-xs font-bold tracking-[.18em] uppercase transition duration-300 hover:bg-primary hover:text-black"
-                  >
-                    SEND EMAIL DIRECTLY
-                    <ArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" size={16} />
-                  </a>
-
-                  {siteSettings?.resumeFileUrl && (
-                    <a
-                      href={siteSettings.resumeFileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-black/30 px-6 py-4 text-xs font-bold tracking-[.18em] uppercase text-black hover:border-black hover:bg-black/10 transition-colors mono"
-                    >
-                      DOWNLOAD RESUME (PDF)
-                    </a>
-                  )}
-                </div>
-
-                {/* Social Links List */}
-                <div className="mt-12 border-t border-black/15 pt-8">
-                  <p className="text-xs font-bold tracking-widest text-black/50 mono uppercase mb-6">
-                    CONNECT ACROSS PLATFORMS
-                  </p>
-                  <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold tracking-tight text-black">
-                    <a
-                      href={siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                    >
-                      BEHANCE
-                    </a>
-                    <a
-                      href={siteSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                    >
-                      LINKEDIN
-                    </a>
-                    <a
-                      href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                    >
-                      INSTAGRAM
-                    </a>
-                    <a
-                      href={siteSettings?.socialLinks?.facebook || "https://www.facebook.com/rvnmmmdv/"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                    >
-                      FACEBOOK
-                    </a>
-                    <a
-                      href={siteSettings?.socialLinks?.pinterest || "https://tr.pinterest.com/mammadovravan1/"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                    >
-                      PINTEREST
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Quick Contact Form */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={0.3}
-              className="lg:col-span-5 rounded-2xl border border-black/15 bg-white/70 backdrop-blur-md p-8 shadow-xl"
-            >
-              <h3 className="text-2xl font-semibold tracking-tight text-black mb-2">
-                Send a message
-              </h3>
-              <p className="text-xs text-black/60 mb-6">
-                Fill out the details below and I'll respond within 24 hours.
-              </p>
-
-              {contactStatus === "success" ? (
-                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600">
-                    <CheckCircle2 size={24} />
-                  </div>
-                  <h4 className="text-lg font-bold text-black mb-2">Inquiry Received!</h4>
-                  <p className="text-xs text-black/70 leading-relaxed mb-6">
-                    Thank you for reaching out. Your message has been routed directly to Ravan's inbox.
-                  </p>
-                  <button
-                    onClick={() => setContactStatus("idle")}
-                    className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-[10px] font-bold tracking-widest text-white uppercase hover:bg-primary hover:text-black transition-colors mono"
-                  >
-                    SEND ANOTHER MESSAGE
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleContactSubmit} className="space-y-4">
-                  {/* Anti-spam honeypot */}
-                  <input
-                    type="text"
-                    name="hp_field"
-                    value={contactHoneypot}
-                    onChange={(e) => setContactHoneypot(e.target.value)}
-                    tabIndex={-1}
-                    autoComplete="off"
-                    className="hidden"
-                  />
-
-                  {contactStatus === "error" && (
-                    <div className="flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-700 text-xs font-medium">
-                      <AlertCircle size={16} className="mt-0.5 flex-shrink-0 text-red-600" />
-                      <p>{contactErrorMessage}</p>
+                {contactStatus === "success" ? (
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600">
+                      <CheckCircle2 size={24} />
                     </div>
-                  )}
-
-                  <div>
-                    <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                      YOUR NAME
-                    </label>
+                    <h4 className="text-lg font-bold text-black mb-2">Inquiry Received!</h4>
+                    <p className="text-xs text-black/70 leading-relaxed mb-6">
+                      Thank you for reaching out. Your message has been routed directly to Ravan's inbox.
+                    </p>
+                    <button
+                      onClick={() => setContactStatus("idle")}
+                      className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-[10px] font-bold tracking-widest text-white uppercase hover:bg-primary hover:text-black transition-colors mono"
+                    >
+                      SEND ANOTHER MESSAGE
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleContactSubmit} className="space-y-4">
                     <input
                       type="text"
-                      required
-                      value={contactName}
-                      onChange={(e) => setContactName(e.target.value)}
-                      placeholder="Jane Doe"
-                      disabled={contactStatus === "loading"}
-                      className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                      name="hp_field"
+                      value={contactHoneypot}
+                      onChange={(e) => setContactHoneypot(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      className="hidden"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                      YOUR EMAIL
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="jane@company.com"
-                      disabled={contactStatus === "loading"}
-                      className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                      PROJECT DETAILS
-                    </label>
-                    <textarea
-                      required
-                      rows={4}
-                      value={contactMessage}
-                      onChange={(e) => setContactMessage(e.target.value)}
-                      placeholder="Tell me about your timeline, scope, and vision..."
-                      disabled={contactStatus === "loading"}
-                      className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={contactStatus === "loading"}
-                    className="w-full rounded-lg bg-black py-4 text-xs font-bold tracking-[.18em] uppercase text-white hover:bg-primary hover:text-black transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
-                  >
-                    {contactStatus === "loading" ? (
-                      <>
-                        <Loader2 size={16} className="animate-spin" />
-                        <span>SUBMITTING INQUIRY...</span>
-                      </>
-                    ) : (
-                      <span>SUBMIT INQUIRY</span>
+
+                    {contactStatus === "error" && (
+                      <div className="flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-700 text-xs font-medium">
+                        <AlertCircle size={16} className="mt-0.5 flex-shrink-0 text-red-600" />
+                        <p>{contactErrorMessage}</p>
+                      </div>
                     )}
-                  </button>
-                </form>
-              )}
-            </motion.div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
+                        YOUR NAME
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
+                        placeholder="Jane Doe"
+                        disabled={contactStatus === "loading"}
+                        className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
+                        YOUR EMAIL
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                        placeholder="jane@company.com"
+                        disabled={contactStatus === "loading"}
+                        className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
+                        PROJECT DETAILS
+                      </label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
+                        placeholder="Tell me about your timeline, scope, and vision..."
+                        disabled={contactStatus === "loading"}
+                        className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={contactStatus === "loading"}
+                      className="w-full rounded-lg bg-black py-4 text-xs font-bold tracking-[.18em] uppercase text-white hover:bg-primary hover:text-black transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                    >
+                      {contactStatus === "loading" ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          <span>SUBMITTING INQUIRY...</span>
+                        </>
+                      ) : (
+                        <span>SUBMIT INQUIRY</span>
+                      )}
+                    </button>
+                  </form>
+                )}
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />
