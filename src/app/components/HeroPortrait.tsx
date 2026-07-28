@@ -10,6 +10,10 @@ const grainStyle = `
   50% { opacity: 0.05; }
   100% { opacity: 0.03; }
 }
+@keyframes floatAnim {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(0.2deg); }
+}
 .grain-overlay {
   pointer-events: none;
   position: absolute;
