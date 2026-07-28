@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, lazy, Suspense } from "react";
+import { useEffect, useState, useMemo, lazy, Suspense, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   motion,
@@ -39,6 +39,15 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
+
+// Lazy-load below-fold sections
+const NewsSection = lazy(() => import("./components/home/NewsSection"));
+const BlogSection = lazy(() => import("./components/home/BlogSection"));
+const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
+const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
+const WorkSection = lazy(() => import("./components/home/WorkSection"));
+const AboutSection = lazy(() => import("./components/home/AboutSection"));
+const ContactSection = lazy(() => import("./components/home/ContactSection"));
 
 // Modular Section Enable/Disable Toggles
 const CONFIG_SHOW_HERO = true;

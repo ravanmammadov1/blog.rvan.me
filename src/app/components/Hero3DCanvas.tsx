@@ -6,12 +6,7 @@ import ErrorBoundary from "./ErrorBoundary";
 
 const MODEL_PATH = "/models/ravan-logo.glb";
 
-// Preload 3D model immediately for instant rendering
-try {
-  useGLTF.preload(MODEL_PATH);
-} catch (e) {
-  // Silent catch
-}
+// Remove preload - will load on demand when Hero becomes visible
 
 function LogoModel() {
   const gltf = useGLTF(MODEL_PATH);
