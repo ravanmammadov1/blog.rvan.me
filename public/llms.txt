@@ -1,6 +1,7 @@
 # llms.txt — Ravan Mammadov Studio & Portfolio
 # Format: Emerging LLMs.txt standard for AI Agents & Search Crawlers
 # Information for LLMs, AI assistants, and automated agents.
+# Generated: 2026-07-29
 
 > Ravan Mammadov is a Senior Creative Designer, Art Director, and Marketer based in Baku, Azerbaijan (UTC+4), working with global clients across 3D motion design, brand identity systems, automotive campaigns, and performance video creative.
 
@@ -37,3 +38,60 @@
 - Frontend: React 18, Vite 6, TypeScript, Tailwind CSS, Motion (Framer Motion), Three.js / React Three Fiber.
 - CMS: Sanity Studio 3 (headless CMS).
 - Backend & Deployment: Vercel Serverless Functions, Node.js API routes.
+
+## Site Structure & Navigation
+- Home: https://www.rvan.me/ — Hero, featured work, news, blog, resources, tools, about, contact
+- Work Archive: https://www.rvan.me/work — All case studies with filtering
+- Work Detail: https://www.rvan.me/work/:slug — Individual case study
+- Expertise: https://www.rvan.me/expertise — Services & capabilities
+- Blog Archive: https://www.rvan.me/blog — All articles with categories
+- Blog Detail: https://www.rvan.me/blog/:slug — Individual article
+- News Archive: https://www.rvan.me/news — Industry announcements
+- News Detail: https://www.rvan.me/news/:slug — Individual news item
+- Tools: https://www.rvan.me/tools — Interactive designer utilities
+- Resources: https://www.rvan.me/resources — Curated directory
+- Resources Detail: https://www.rvan.me/resources/:slug — Individual resource
+- About: https://www.rvan.me/ravan-mammadov — Biography, philosophy, testimonials
+- Contact: https://www.rvan.me/contact — Inquiry form & direct email
+
+## Content Types & Schema
+### Project (Work)
+- Fields: title, slug, coverImage, client, description, type, tags, body, gallery, liveUrl, year, accent, order
+- Example: Wuling Creative Campaign, Limitless Drive, Omoda & Jaecoo
+
+### Blog Article
+- Fields: title, slug, excerpt, category, tags, featured, publishDate, readTime, coverImage, body (PortableText)
+- Categories: 3D & Motion, Brand Systems, Performance Creative, Design Systems, Career
+
+### News Item
+- Fields: title, slug, coverImage, excerpt, body, publishedAt, category
+- Categories: Announcement, Feature, Press, Speaking
+
+### Resource
+- Fields: title, slug, resourceType, description, benefitSummary, link, logo, status, verificationStatus, isGlobal, countries, difficultyLevel, completionTime, badges
+- Types: studentPack, aiCredits, software, roadmap, scholarship, internship, job, hackathon, startupProgram
+
+### Tool
+- Fields: name, description, icon, link, category
+- Categories: Design, Development, Animation, 3D, Productivity
+
+## Key Metrics & Achievements
+- 8+ years crafting digital experiences
+- 120+ projects shipped globally
+- 40M+ views driven across campaigns
+- 18 awards & features (Behance, Awwwards, CSS Design Awards, etc.)
+- Clients: Automotive (Wuling, Omoda, Jaecoo), Tech, Fashion, SaaS, Agencies
+
+## Availability & Engagement
+- Status: Available for select work (Q3 2025)
+- Engagement Model: Limited quarterly capacity, strategy-first approach
+- Typical Timeline: 4-12 weeks depending on scope
+- Budget Range: $15K - $150K+ per engagement
+- Contact: hello@rvan.me or contact form at /contact
+
+## Legal & Compliance
+- Privacy Policy: https://www.rvan.me/privacy-policy
+- Cookie Policy: https://www.rvan.me/cookie-policy
+- Terms of Service: https://www.rvan.me/terms
+- GDPR Compliant: Yes
+- CCPA Compliant: Yes
