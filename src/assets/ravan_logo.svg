@@ -3,9 +3,17 @@
   <!-- Generator: Adobe Illustrator 30.6.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 109)  -->
   <defs>
     <style>
-      .st0 { fill: url(#linear-gradient2); }
-      .st1 { fill: url(#linear-gradient1); }
-      .st2 { fill: url(#linear-gradient); }
+      .st0 {
+        fill: url(#linear-gradient2);
+      }
+
+      .st1 {
+        fill: url(#linear-gradient1);
+      }
+
+      .st2 {
+        fill: url(#linear-gradient);
+      }
     </style>
     <linearGradient id="linear-gradient" x1="199.14" y1="545.79" x2="391.39" y2="546.99" gradientTransform="translate(-146.95 -208.13) scale(.75)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#4f66b6"/>
