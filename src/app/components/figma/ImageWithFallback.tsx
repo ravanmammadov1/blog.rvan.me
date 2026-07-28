@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getOptimizedImageUrl } from "../../lib/sanityClient";
+import { getOptimizedImageUrl } from "../../../lib/sanityClient";
 
 interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
