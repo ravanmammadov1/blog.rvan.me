@@ -116,11 +116,6 @@ export default function ContactSection() {
                 {letsTalkLabel}
                 <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
               </a>
-
-              <div className="text-sm text-muted-foreground">
-                <p className="font-semibold text-foreground/80">Or reach out directly:</p>
-                <p className="mt-1 font-mono hover:text-primary transition-colors">hello@rvan.me</p>
-              </div>
             </div>
           </motion.div>
 

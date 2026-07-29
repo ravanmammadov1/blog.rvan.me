@@ -257,10 +257,6 @@ export default function HomePage() {
       })
       .catch(console.error);
   }, []);
-
-  const { scrollYProgress } = useScroll();
-  const progressScale = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
-
   const displayProjects = useMemo(() => {
     if (sanityProjects.length > 0) {
       return sanityProjects.map((p, index) => ({
@@ -298,13 +294,6 @@ export default function HomePage() {
         description="Senior Creative Designer blending 3D motion design, brand worlds, and high-performing digital marketing ideas into work that commands attention."
         url="https://www.rvan.me/"
       />
-
-      {/* Scroll progress */}
-      <motion.div
-        className="fixed left-0 top-0 z-[70] h-[2px] w-full origin-left bg-primary"
-        style={{ scaleX: progressScale }}
-      />
-
       {/* Ambient star field backdrop */}
       <Suspense fallback={null}>
         <AmbientStars />

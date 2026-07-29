@@ -114,22 +114,22 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 R
               </span>
             )}
-            <span className="hidden text-[10px] font-bold leading-tight tracking-[.24em] sm:block uppercase">
+            <span className="hidden text-[10px] font-medium leading-tight tracking-[.16em] sm:block uppercase">
               RAVAN
               <br />
               MAMMADOV
             </span>
           </button>
-
+ 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-1 text-[10px] font-bold tracking-[.16em] mono uppercase md:flex">
+          <nav className="hidden items-center gap-1.5 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex">
             {navItems.map((item) => {
               const isActive =
                 item.target === "/"
                   ? location.pathname === "/"
                   : location.pathname === item.target ||
                     location.pathname.startsWith(item.target + "/");
-
+ 
               return (
                 <button
                   key={item.label}
@@ -167,12 +167,12 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               );
             })}
           </nav>
-
+ 
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
             <button
               onClick={() => handleNavClick("/contact")}
-              className="hidden items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-[10px] font-bold tracking-[.16em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black sm:flex glass-sm"
+              className="hidden items-center gap-2 rounded-full border border-white/20 px-4.5 py-2 text-[10px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black sm:flex glass-sm"
             >
               {letsTalkLabel} <ArrowUpRight size={13} />
             </button>
