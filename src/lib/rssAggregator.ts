@@ -252,25 +252,31 @@ export async function aggregateAllResources(cmsResources: any[] = []): Promise<N
   });
 
   // Map CMS static resources to NormalizedResource format
-  const mappedCms: NormalizedResource[] = cmsResources.map((item) => ({
-    id: item._id,
-    title: item.title,
-    slug: item.slug || item._id,
-    resourceType: item.resourceType || item.category?.slug || "general",
-    description: item.description || "",
-    benefitSummary: item.benefitSummary,
-    link: item.link,
-    sourceName: "Rvaninate Studio",
-    publishedAt: item._createdAt || new Date().toISOString(),
-    category: item.category?.slug || mapResourceTypeToCategory(item.resourceType),
-    country: item.isGlobal ? "Global" : (item.countries && item.countries[0]) || "Global",
-    workType: item.resourceType === "job" || item.resourceType === "internship" ? "remote" : "na",
-    isFree: true,
-    difficulty: item.difficultyLevel || "all",
-    logoUrl: item.logoUrl,
-    isRss: false,
-    analyticsId: item._id,
-  }));
+  const mappedCms: NormalizedResource[] = cmsResources.map((item) => {
+    const cat = (typeof item.category === 'object' && item.category?.slug) 
+      ? item.category.slug 
+      : mapResourceTypeToCategory(item.resourceType);
+
+    return {
+      id: item._id,
+      title: item.title,
+      slug: item.slug || item._id,
+      resourceType: item.resourceType || "freeDesignAssets",
+      description: item.description || "",
+      benefitSummary: item.benefitSummary || "Curated Resource",
+      link: item.link,
+      sourceName: item.benefitSummary || "Rvan.me Curated",
+      publishedAt: item._createdAt || new Date().toISOString(),
+      category: cat,
+      country: item.isGlobal ? "Global" : (item.countries && item.countries[0]) || "Global",
+      workType: item.workType || (item.resourceType === "remoteDesignJobs" || item.resourceType === "remoteMarketingJobs" ? "remote" : "na"),
+      isFree: true,
+      difficulty: item.difficultyLevel || "all",
+      logoUrl: item.logoUrl,
+      isRss: false,
+      analyticsId: item._id,
+    };
+  });
 
   // Merge and deduplicate by title / link
   const combinedMap = new Map<string, NormalizedResource>();
