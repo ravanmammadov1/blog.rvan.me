@@ -6,7 +6,7 @@ import {
   useSpring,
   useMotionValue,
   AnimatePresence,
-} from "motion/react";
+} from "framer-motion";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -48,6 +48,42 @@ const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const WorkSection = lazy(() => import("./components/home/WorkSection"));
 const AboutSection = lazy(() => import("./components/home/AboutSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
+
+// ─── Aurora global keyframes (injected once) ─────────────────────────────────
+if (typeof document !== "undefined") {
+  const styleId = "__aurora_keyframes__";
+  if (!document.getElementById(styleId)) {
+    const s = document.createElement("style");
+    s.id = styleId;
+    s.textContent = `
+      @media (prefers-reduced-motion: no-preference) {
+        @keyframes auroraBlob1 {
+          0%,100% { transform: translate(0,0) scale(1); }
+          33%      { transform: translate(6%,4%) scale(1.08); }
+          66%      { transform: translate(-5%,2%) scale(0.96); }
+        }
+        @keyframes auroraBlob2 {
+          0%,100% { transform: translate(0,0) scale(1); }
+          40%      { transform: translate(-7%,-5%) scale(1.1); }
+          70%      { transform: translate(4%,3%) scale(0.94); }
+        }
+        @keyframes auroraBlob3 {
+          0%,100% { transform: translate(0,0) scale(1); }
+          50%      { transform: translate(5%,-6%) scale(1.06); }
+        }
+        @keyframes heroFloat {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-14px); }
+        }
+        @keyframes heroWordReveal {
+          from { clip-path: inset(0 0 100% 0); opacity: 0; }
+          to   { clip-path: inset(0 0 0% 0);   opacity: 1; }
+        }
+      }
+    `;
+    document.head.appendChild(s);
+  }
+}
 
 // Modular Section Enable/Disable Toggles
 const CONFIG_SHOW_HERO = true;
@@ -401,93 +437,194 @@ export default function HomePage() {
       {CONFIG_SHOW_HERO && (
         <section
           id="top"
-          className="relative isolate min-h-[calc(100vh-5rem)] px-6 pb-16 pt-28 md:px-10 md:pt-36 flex items-center animate-fade-in"
+          className="relative isolate min-h-screen overflow-hidden flex items-center"
+          style={{ paddingTop: "5rem" }}
         >
-          <div className="absolute inset-0 -z-10 overflow-hidden bg-background">
-            <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:64px_64px]" />
+          {/* ── Aurora background blobs ── */}
+          <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+            {/* Base dark background */}
+            <div className="absolute inset-0 bg-background" />
+
+            {/* Blob 1 — blue/indigo top-left */}
+            <div
+              style={{
+                position: "absolute",
+                top: "-10%",
+                left: "-5%",
+                width: "55%",
+                height: "65%",
+                background:
+                  "radial-gradient(ellipse at 40% 40%, rgba(79,102,182,0.22) 0%, rgba(66,111,186,0.10) 50%, transparent 75%)",
+                filter: "blur(56px)",
+                animation: "auroraBlob1 28s ease-in-out infinite",
+                willChange: "transform",
+              }}
+            />
+
+            {/* Blob 2 — violet/purple top-right */}
+            <div
+              style={{
+                position: "absolute",
+                top: "5%",
+                right: "-8%",
+                width: "50%",
+                height: "60%",
+                background:
+                  "radial-gradient(ellipse at 60% 30%, rgba(152,79,159,0.18) 0%, rgba(79,102,182,0.10) 55%, transparent 80%)",
+                filter: "blur(64px)",
+                animation: "auroraBlob2 36s ease-in-out infinite",
+                willChange: "transform",
+              }}
+            />
+
+            {/* Blob 3 — teal bottom-center */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "0%",
+                left: "30%",
+                width: "45%",
+                height: "45%",
+                background:
+                  "radial-gradient(ellipse at 50% 80%, rgba(97,197,173,0.14) 0%, rgba(66,111,186,0.08) 55%, transparent 80%)",
+                filter: "blur(60px)",
+                animation: "auroraBlob3 22s ease-in-out infinite",
+                willChange: "transform",
+              }}
+            />
+
+            {/* Very subtle grid on top of blobs */}
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
+                backgroundSize: "80px 80px",
+              }}
+            />
           </div>
 
-          <div className="absolute left-6 top-28 hidden text-[10px] tracking-[.2em] text-muted-foreground mono md:left-10 md:block">
-            40.40° N
-            <br />
-            49.86° E
+          {/* ── Geo label ── */}
+          <div className="absolute left-8 bottom-10 hidden text-[10px] tracking-[.2em] text-muted-foreground/50 font-mono md:block">
+            40.40° N · 49.86° E
           </div>
 
-          <div className="mx-auto w-full max-w-[1600px]">
-            <div className="grid gap-10 lg:grid-cols-12 lg:gap-8 items-center">
-              {/* Left Content Column */}
-              <div className="lg:col-span-7 flex flex-col justify-center">
+          {/* ── Content grid ── */}
+          <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 py-20 lg:py-0">
+            <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-6 min-h-[calc(100vh-5rem)]">
+
+              {/* Left — text content */}
+              <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
+
+                {/* Availability badge */}
                 <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0.1}
-                  className="mb-6 flex items-center gap-3 text-[11px] font-bold tracking-[.24em] text-primary mono"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
+                  className="mb-8 inline-flex w-fit items-center gap-2.5 rounded-full border border-primary/30 bg-primary/8 px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase"
                 >
-                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
+                  <span
+                    className="h-2 w-2 rounded-full bg-primary"
+                    style={{ animation: "pulse 2s ease-in-out infinite" }}
+                  />
                   {availabilityStatus}
                 </motion.div>
 
-                <h1 className="text-[12vw] font-bold leading-[.85] tracking-[-.08em] sm:text-[9.5vw] lg:text-[6.5vw] text-foreground">
+                {/* Headline — word-by-word clip reveal */}
+                <h1 className="mb-0 overflow-hidden">
                   {heroTitle.split(" ").map((word, i) => (
-                    <motion.span
+                    <span
                       key={i}
-                      initial={{ y: "110%", opacity: 0 }}
-                      animate={{ y: "0%", opacity: 1 }}
-                      transition={{ duration: 0.9, delay: 0.15 + i * 0.08, ease: EASE }}
-                      className="inline-block mr-[0.22em]"
+                      className="inline-block overflow-hidden"
+                      style={{ marginRight: "0.18em" }}
                     >
-                      {word}
-                    </motion.span>
+                      <motion.span
+                        className="inline-block text-[13vw] font-bold leading-[0.88] tracking-[-0.07em] sm:text-[10vw] lg:text-[7.2vw] xl:text-[6.5vw] text-foreground"
+                        initial={{ y: "110%" }}
+                        animate={{ y: "0%" }}
+                        transition={{
+                          duration: 1.0,
+                          delay: 0.18 + i * 0.1,
+                          ease: EASE,
+                        }}
+                      >
+                        {word}
+                      </motion.span>
+                    </span>
                   ))}
                 </h1>
 
+                {/* Subtitle */}
                 <motion.p
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0.35}
-                  className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground font-medium md:text-lg"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 0.55, ease: EASE }}
+                  className="mt-8 max-w-[520px] text-[15px] leading-[1.7] text-muted-foreground font-medium md:text-base lg:text-[16px]"
                 >
                   {heroSubtitle}
                 </motion.p>
 
+                {/* CTAs */}
                 <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0.45}
-                  className="mt-10 flex flex-wrap items-center gap-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.72, ease: EASE }}
+                  className="mt-10 flex flex-wrap items-center gap-4"
                 >
                   <Link
                     to="/resources"
-                    className="group flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl mono uppercase"
+                    className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_32px_rgba(232,253,82,0.35)] mono uppercase"
                   >
                     EXPLORE DIRECTORY
-                    <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                    <ArrowDownRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                   </Link>
                   <a
                     href="#work"
-                    className="text-xs font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase"
+                    className="inline-flex items-center gap-2 rounded-full border border-border/60 px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary mono uppercase"
                   >
-                    SELECTED WORK →
+                    SELECTED WORK
+                    <ArrowUpRight size={14} />
                   </a>
+                </motion.div>
+
+                {/* Stats strip */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 1.0, ease: EASE }}
+                  className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/40 bg-border/20 sm:grid-cols-4"
+                >
+                  {stats.map((s) => (
+                    <div key={s.label} className="bg-background/60 px-5 py-4 backdrop-blur-sm">
+                      <p className="text-2xl font-bold tracking-[-0.04em] text-primary mono">{s.value}</p>
+                      <p className="mt-1 text-[9px] font-bold uppercase tracking-[.14em] text-muted-foreground/70 mono">{s.label}</p>
+                    </div>
+                  ))}
                 </motion.div>
               </div>
 
-              {/* Right Portrait */}
+              {/* Right — SVG logo focal point */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.92 }}
+                initial={{ opacity: 0, scale: 0.88 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.3, ease: EASE }}
-                className="hidden lg:flex lg:col-span-5 h-[600px] w-full relative items-center justify-center"
+                transition={{ duration: 1.1, delay: 0.25, ease: EASE }}
+                className="flex items-center justify-center lg:col-span-6 xl:col-span-5 lg:h-[calc(100vh-5rem)] lg:max-h-[800px]"
               >
                 <Suspense fallback={<div style={{ height: 400 }} aria-hidden="true" />}>
                   <HeroPortrait />
                 </Suspense>
               </motion.div>
+
             </div>
           </div>
+
+          {/* Bottom fade to next section */}
+          <div
+            className="pointer-events-none absolute bottom-0 inset-x-0 h-32"
+            style={{
+              background: "linear-gradient(to bottom, transparent, var(--background, #09090b))",
+            }}
+          />
         </section>
       )}
 

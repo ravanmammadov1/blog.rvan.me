@@ -1,211 +1,132 @@
-// HeroPortrait component – premium SVG hero with depth, ambient light, interactive grid, grain, and staggered entrance
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion, useMotionValue, useTransform, Variants } from "motion/react";
-import logo from "@/imports/ravan_logo.svg"; // SVG asset
+/**
+ * HeroPortrait — Apple-inspired SVG hero visual
+ *
+ * Features:
+ * - SVG logo as focal centrepiece
+ * - Soft floating animation (CSS keyframe, GPU-only)
+ * - Mouse-parallax via framer-motion (max 8px, desktop only)
+ * - Ambient radial aurora glow behind the logo
+ * - prefers-reduced-motion respected
+ * - No Three.js, no Canvas, no WebGL, no broken .map() calls
+ */
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import ravanLogo from "@/assets/ravan_logo.svg";
 
-// Simple grain overlay CSS (light noise)
-const grainStyle = `
-@keyframes grainAnim {
-  0% { opacity: 0.03; }
-  50% { opacity: 0.05; }
-  100% { opacity: 0.03; }
-}
-@keyframes floatAnim {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(0.2deg); }
-}
-.grain-overlay {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04), transparent);
-  mix-blend-mode: overlay;
-  animation: grainAnim 8s ease-in-out infinite;
-}
-`;
+// ─── constants ───────────────────────────────────────────────────────────────
+const MAX_PARALLAX = 8; // px
+const SPRING_CONFIG = { stiffness: 120, damping: 22, mass: 0.6 };
 
-// Create a lightweight grid (15x15) using SVG lines
-const Grid = ({ translateX, translateY }: { translateX: any; translateY: any }) => {
-  const lines = useMemo(() => {
-    const cols = 15;
-    const rows = 15;
-    const step = 100 / (cols - 1);
-    const items: JSX.Element[] = [];
-    for (let i = 0; i < cols; i++) {
-      const x = i * step;
-      items.push(
-        <line
-          key={`v-${i}`}
-          x1={`${x}%`}
-          y1="0%"
-          x2={`${x}%`}
-          y2="100%"
-          stroke="rgba(255,255,255,0.07)"
-          strokeWidth={0.5}
-        />
-      );
-    }
-    for (let i = 0; i < rows; i++) {
-      const y = i * step;
-      items.push(
-        <line
-          key={`h-${i}`}
-          x1="0%"
-          y1={`${y}%`}
-          x2="100%"
-          y2={`${y}%`}
-          stroke="rgba(255,255,255,0.07)"
-          strokeWidth={0.5}
-        />
-      );
-    }
-    return items;
-  }, []);
-
-  return (
-    <motion.svg
-      viewBox="0 0 100 100"
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ x: translateX, y: translateY, willChange: "transform" }}
-    >
-      {lines}
-    </motion.svg>
-  );
-};
-
-// Framer‑motion variants for staggered entrance
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
-  },
-};
-
-const layerVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
-};
-
+// ─── component ───────────────────────────────────────────────────────────────
 export default function HeroPortrait() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [prefersReduced, setPrefersReduced] = useState(false);
 
-  // Mouse tracking for parallax (max 6px)
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const maxOffset = 6; // pixels
-  const translateX = useTransform(mouseX, [-1, 1], [-maxOffset, maxOffset]);
-  const translateY = useTransform(mouseY, [-1, 1], [-maxOffset, maxOffset]);
-
+  // Detect reduced-motion preference once on mount
   useEffect(() => {
-    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
-    checkDesktop();
-    window.addEventListener("resize", checkDesktop);
-    return () => window.removeEventListener("resize", checkDesktop);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReduced(mq.matches);
+    const handler = () => setPrefersReduced(mq.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
+
+  // Raw mouse position (normalised -1 → 1)
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+
+  // Smooth spring followers
+  const springX = useSpring(rawX, SPRING_CONFIG);
+  const springY = useSpring(rawY, SPRING_CONFIG);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!isDesktop || !containerRef.current) return;
+      if (prefersReduced || !containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 .. 0.5
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      mouseX.set(x * 2);
-      mouseY.set(y * 2);
+      rawX.set(((e.clientX - rect.left) / rect.width - 0.5) * 2);
+      rawY.set(((e.clientY - rect.top) / rect.height - 0.5) * 2);
     },
-    [isDesktop, mouseX, mouseY]
+    [prefersReduced, rawX, rawY]
   );
 
   const handleMouseLeave = useCallback(() => {
-    mouseX.set(0);
-    mouseY.set(0);
-  }, [mouseX, mouseY]);
-
-  // Mobile: simple static SVG (no heavy effects)
-  if (!isDesktop) {
-    return (
-      <div className="relative flex items-center justify-center h-full w-full">
-        <img src={logo} alt="Ravan Logo" className="max-w-full h-auto" />
-      </div>
-    );
-  }
+    rawX.set(0);
+    rawY.set(0);
+  }, [rawX, rawY]);
 
   return (
-    <motion.div
+    <div
       ref={containerRef}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      className="relative flex h-full w-full items-center justify-center"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative flex items-center justify-center h-full w-full"
-      style={{ perspective: 800, animation: "floatAnim 12s ease-in-out infinite" }}
-      whileHover={{ scale: 1.02 }}
+      aria-hidden="true"
     >
-      {/* Ambient radial glow */}
+      {/* Ambient aurora glow — behind the logo */}
       <motion.div
-        className="absolute inset-0 rounded-full pointer-events-none"
+        className="hero-glow pointer-events-none absolute inset-0"
+        animate={
+          prefersReduced
+            ? {}
+            : {
+                opacity: [0.55, 0.85, 0.55],
+                scale: [1, 1.08, 1],
+              }
+        }
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         style={{
-          background: "radial-gradient(circle at center, rgba(255,255,255,0.12), transparent)",
-          filter: "blur(40px)",
+          background:
+            "radial-gradient(ellipse 65% 65% at 50% 50%, rgba(79,102,182,0.28) 0%, rgba(97,197,173,0.18) 50%, transparent 80%)",
+          filter: "blur(28px)",
         }}
-        animate={{ opacity: [0.5, 0.8, 0.5] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
       />
 
-      {/* Grid background that reacts to mouse */}
-      <motion.div variants={layerVariants} className="relative z-10">
-        <Grid translateX={translateX} translateY={translateY} />
+      {/* Floating + parallax logo wrapper */}
+      <motion.div
+        className="relative z-10"
+        style={
+          prefersReduced
+            ? {}
+            : {
+                x: springX,
+                y: springY,
+                translateX: `calc(${MAX_PARALLAX}px * var(--px, 0))`,
+                translateY: `calc(${MAX_PARALLAX}px * var(--py, 0))`,
+              }
+        }
+        whileHover={prefersReduced ? {} : { scale: 1.03 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
+        {/* Floating keyframe wrapper */}
+        <div
+          style={
+            prefersReduced
+              ? {}
+              : { animation: "heroFloat 7s ease-in-out infinite" }
+          }
+        >
+          <img
+            src={ravanLogo}
+            alt="Ravan Mammadov logo"
+            className="h-auto w-full max-w-[340px] select-none drop-shadow-2xl lg:max-w-[420px]"
+            draggable={false}
+          />
+        </div>
       </motion.div>
 
-      {/* Logo layers for depth effect */}
-      <motion.div variants={layerVariants} className="relative z-20">
-        {/* First copy – slightly offset, lower opacity */}
-        <motion.img
-          src={logo}
-          alt="Ravan Logo"
-          className="max-w-full h-auto absolute inset-0 opacity-30"
-          style={{
-            x: translateX,
-            y: translateY,
-            filter: "blur(2px)",
-            willChange: "transform",
-          }}
-        />
-        {/* Main crisp logo */}
-        <motion.img
-          src={logo}
-          alt="Ravan Logo"
-          className="max-w-full h-auto relative"
-          style={{
-            x: translateX,
-            y: translateY,
-            willChange: "transform",
-          }}
-        />
-        {/* Second copy – lighter, opposite offset for subtle depth */}
-        <motion.img
-          src={logo}
-          alt="Ravan Logo"
-          className="max-w-full h-auto absolute inset-0 opacity-20"
-          style={{
-            x: translateX.map((v: any) => -v),
-            y: translateY.map((v: any) => -v),
-            filter: "blur(4px)",
-            willChange: "transform",
-          }}
-        />
-      </motion.div>
-
-      {/* Light grain overlay */}
-      <div className="grain-overlay" />
-    </motion.div>
+      {/* Subtle secondary glow echo */}
+      <motion.div
+        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2"
+        style={{
+          width: "70%",
+          height: "40%",
+          background:
+            "radial-gradient(ellipse at 50% 100%, rgba(152,79,159,0.18) 0%, transparent 70%)",
+          filter: "blur(32px)",
+        }}
+        animate={prefersReduced ? {} : { opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      />
+    </div>
   );
-}
-
-// Inject the grain keyframes into the document head (runs once)
-if (typeof document !== "undefined") {
-  const style = document.createElement("style");
-  style.textContent = grainStyle;
-  document.head.appendChild(style);
 }
