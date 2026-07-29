@@ -100,19 +100,25 @@ function RelatedCard({ resource }: { resource: ResourceItem }) {
   return (
     <Link
       to={`/resources/${slug}`}
-      className="group flex items-start gap-3 rounded-xl border border-border bg-surface p-4 transition-all hover:border-primary/50 hover:-translate-y-0.5"
+      className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-300 hover:border-primary/50 hover:-translate-y-0.5 glass-sm relative overflow-hidden"
     >
-      <div className="flex-shrink-0">
+      <div 
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+        style={{
+          background: "radial-gradient(circle at top right, rgba(6,182,212,0.05) 0%, transparent 60%)",
+        }}
+      />
+      <div className="flex-shrink-0 relative z-10">
         {logoUrl ? (
-          <img src={logoUrl} alt={resource.title} className="h-9 w-9 rounded-lg object-contain border border-border bg-background p-1" />
+          <img src={logoUrl} alt={resource.title} className="h-9 w-9 rounded-lg object-contain border border-white/10 bg-background p-1" />
         ) : (
-          <div className="h-9 w-9 rounded-lg border border-border bg-background flex items-center justify-center text-lg">
+          <div className="h-9 w-9 rounded-lg border border-white/10 bg-background flex items-center justify-center text-lg">
             {RESOURCE_TYPE_ICONS[resource.resourceType] || "📦"}
           </div>
         )}
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mono mb-0.5">
+      <div className="min-w-0 flex-1 relative z-10">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 mono mb-0.5">
           {RESOURCE_TYPE_LABELS[resource.resourceType] || resource.resourceType}
         </p>
         <h4 className="text-sm font-semibold leading-snug text-foreground line-clamp-2 group-hover:text-primary transition-colors">
@@ -213,6 +219,42 @@ export default function ResourceDetail() {
         jsonLd={resourceJsonLd}
       />
 
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — cyan / blue, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(6,182,212,0.06) 0%, rgba(59,130,246,0.03) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — violet / blue, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(139,92,246,0.05) 0%, rgba(59,130,246,0.03) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       <SiteHeader siteSettings={siteSettings} />
 
       <div className="mx-auto max-w-[1600px] px-6 pt-20 pb-28 md:px-10 md:pt-28">
@@ -236,19 +278,25 @@ export default function ResourceDetail() {
               initial="hidden"
               animate="visible"
               custom={0.1}
-              className="rounded-2xl border border-border bg-surface p-8 mb-8"
+              className="rounded-2xl border border-white/10 bg-white/5 p-8 mb-8 glass relative overflow-hidden group"
             >
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+              <div 
+                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                style={{
+                  background: "radial-gradient(circle at top right, rgba(6,182,212,0.04) 0%, transparent 60%)",
+                }}
+              />
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-start relative z-10">
                 {/* Logo */}
                 <div className="flex-shrink-0">
                   {logoUrl ? (
                     <img
                       src={logoUrl}
                       alt={resource.title}
-                      className="h-20 w-20 rounded-2xl object-contain border border-border bg-background p-3"
+                      className="h-20 w-20 rounded-2xl object-contain border border-white/10 bg-background p-3"
                     />
                   ) : (
-                    <div className="h-20 w-20 rounded-2xl border border-border bg-background flex items-center justify-center text-4xl">
+                    <div className="h-20 w-20 rounded-2xl border border-white/10 bg-background flex items-center justify-center text-4xl">
                       {typeIcon}
                     </div>
                   )}
@@ -276,25 +324,25 @@ export default function ResourceDetail() {
                     </div>
                   )}
 
-                  <p className="text-sm leading-relaxed text-muted-foreground">{resource.description}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground/80 font-medium">{resource.description}</p>
                 </div>
               </div>
 
               {/* Action buttons */}
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-3 relative z-10">
                 <a
                   href={resource.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => resource.analyticsId && console.debug("[resource-click]", resource.analyticsId)}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:opacity-90 transition-opacity"
+                  className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
                   <ExternalLink size={13} />
                   ACCESS RESOURCE
                 </a>
                 <Link
                   to="/resources"
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-xs font-bold uppercase tracking-widest text-foreground hover:border-primary transition-colors"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-widest text-foreground hover:border-primary/50 hover:bg-white/10 transition-all duration-300 glass-sm"
                 >
                   <ArrowLeft size={13} />
                   BACK TO DIRECTORY
@@ -311,13 +359,19 @@ export default function ResourceDetail() {
                 initial="hidden"
                 animate="visible"
                 custom={0.2}
-                className="rounded-2xl border border-border bg-surface p-6 mb-8"
+                className="rounded-2xl border border-white/10 bg-white/5 p-6 mb-8 glass relative overflow-hidden group"
               >
-                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-5">Details</h2>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div 
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                  style={{
+                    background: "radial-gradient(circle at top right, rgba(6,182,212,0.03) 0%, transparent 60%)",
+                  }}
+                />
+                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-5 relative z-10">Details</h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 relative z-10">
                   {resource.company && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <Building2 size={14} className="text-muted-foreground" />
                       </div>
                       <div>
@@ -328,7 +382,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.salaryRange && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <DollarSign size={14} className="text-muted-foreground" />
                       </div>
                       <div>
@@ -339,7 +393,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.prizePool && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <Trophy size={14} className="text-primary" />
                       </div>
                       <div>
@@ -350,7 +404,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.fundingAmount && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <DollarSign size={14} className="text-emerald-400" />
                       </div>
                       <div>
@@ -361,7 +415,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.startDate && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <Calendar size={14} className="text-muted-foreground" />
                       </div>
                       <div>
@@ -372,7 +426,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.endDate && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <Calendar size={14} className="text-rose-400" />
                       </div>
                       <div>
@@ -383,7 +437,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.difficultyLevel && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <Layers size={14} className="text-muted-foreground" />
                       </div>
                       <div>
@@ -394,7 +448,7 @@ export default function ResourceDetail() {
                   )}
                   {resource.completionTime && (
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                      <div className="h-8 w-8 rounded-lg bg-background border border-white/10 flex items-center justify-center flex-shrink-0">
                         <Clock size={14} className="text-muted-foreground" />
                       </div>
                       <div>
@@ -414,7 +468,7 @@ export default function ResourceDetail() {
                 initial="hidden"
                 animate="visible"
                 custom={0.3}
-                className="rounded-2xl border border-border bg-surface p-8 mb-8"
+                className="rounded-2xl border border-white/10 bg-white/5 p-8 mb-8 glass"
               >
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-6">About this Resource</h2>
                 <div className="prose-sm max-w-none">
@@ -432,7 +486,7 @@ export default function ResourceDetail() {
                     <Link
                       key={tag._id}
                       to={`/resources?q=${encodeURIComponent(tag.name)}`}
-                      className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 glass-sm"
                     >
                       {tag.name}
                     </Link>
@@ -452,9 +506,15 @@ export default function ResourceDetail() {
               custom={0.15}
               className="sticky top-[90px] space-y-4"
             >
-              <div className="rounded-2xl border border-border bg-surface p-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-5">Quick Info</h3>
-                <div className="space-y-4">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass relative overflow-hidden group">
+                <div 
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                  style={{
+                    background: "radial-gradient(circle at top right, rgba(6,182,212,0.03) 0%, transparent 60%)",
+                  }}
+                />
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-5 relative z-10">Quick Info</h3>
+                <div className="space-y-4 relative z-10">
                   {/* Verification */}
                   <div className={`flex items-center gap-2.5 rounded-xl border px-3 py-2.5 ${verification.bg}`}>
                     <VerifyIcon size={14} className={verification.color} />
@@ -462,7 +522,7 @@ export default function ResourceDetail() {
                   </div>
 
                   {/* Availability */}
-                  <div className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5">
+                  <div className="flex items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5">
                     {resource.isGlobal ? (
                       <><Globe size={14} className="text-muted-foreground" /><span className="text-xs font-semibold text-foreground">Available Globally</span></>
                     ) : (
@@ -472,20 +532,20 @@ export default function ResourceDetail() {
 
                   {/* Category */}
                   {resource.category && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5">
                       <BookOpen size={14} className="text-muted-foreground" />
                       <span className="text-xs font-semibold text-foreground">{resource.category.name}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-6 relative z-10">
                   <a
                     href={resource.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => resource.analyticsId && console.debug("[resource-click]", resource.analyticsId)}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:opacity-90 transition-opacity"
+                    className="w-full inline-flex items-center justify-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-4 py-3 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] glass-sm"
                   >
                     <ExternalLink size={12} />
                     ACCESS RESOURCE
@@ -495,14 +555,14 @@ export default function ResourceDetail() {
 
               {/* Related resources */}
               {related.length > 0 && (
-                <div className="rounded-2xl border border-border bg-surface p-6">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-4">Related Resources</h3>
                   <div className="space-y-3">
                     {related.map((r) => <RelatedCard key={r._id} resource={r} />)}
                   </div>
                   <Link
                     to="/resources"
-                    className="mt-4 block text-center text-xs font-bold uppercase tracking-widest text-primary mono hover:underline"
+                    className="mt-4 block text-center text-xs font-bold uppercase tracking-widest text-primary mono hover:text-white transition-colors"
                   >
                     VIEW ALL RESOURCES →
                   </Link>

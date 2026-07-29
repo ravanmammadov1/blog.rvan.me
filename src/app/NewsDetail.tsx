@@ -11,6 +11,7 @@ import { NewsItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import CommentSection from "./components/CommentSection";
+import Footer from "./components/Footer";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -227,16 +228,52 @@ export default function NewsDetail() {
         favicon={siteSettings?.favicon}
       />
 
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — emerald / teal, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.06) 0%, rgba(6,182,212,0.03) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — violet / blue, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(139,92,246,0.05) 0%, rgba(59,130,246,0.03) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       {/* Global Unified Header */}
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Header section */}
-      <article className="px-6 pt-16 pb-28 md:px-10 md:pt-24">
+      <article className="px-6 pt-16 pb-28 md:px-10 md:pt-24 relative z-10">
         <div className="mx-auto max-w-4xl">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
             <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground mono mb-6">
               {news.category && (
-                <span className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-primary">
+                <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-primary glass-sm">
                   <Tag size={12} />
                   {news.category}
                 </span>
@@ -270,7 +307,7 @@ export default function NewsDetail() {
               initial="hidden"
               animate="visible"
               custom={0.3}
-              className="mt-10 overflow-hidden rounded-xl border border-border"
+              className="mt-10 overflow-hidden rounded-xl border border-white/10"
             >
               <img
                 src={coverUrl}
@@ -287,7 +324,7 @@ export default function NewsDetail() {
               initial="hidden"
               animate="visible"
               custom={0.4}
-              className="mt-12 border-t border-border pt-10 font-sans"
+              className="mt-12 border-t border-white/10 pt-10 font-sans"
             >
               <PortableText value={news.body} components={portableTextComponents} />
             </motion.div>
@@ -295,7 +332,7 @@ export default function NewsDetail() {
 
           {/* Related Articles Section */}
           {relatedArticles.length > 0 && (
-            <div className="mt-24 border-t border-border pt-16">
+            <div className="mt-24 border-t border-white/10 pt-16">
               <h3 className="text-xs font-bold tracking-[.18em] mb-8 mono uppercase text-primary">
                 Related Articles
               </h3>
@@ -306,11 +343,11 @@ export default function NewsDetail() {
                     <Link
                       key={article._id}
                       to={`/news/${article.slug?.current}`}
-                      className="group flex flex-col justify-between p-4 rounded-lg border border-border bg-surface/30 hover:bg-surface hover:border-primary transition-all duration-300"
+                      className="group flex flex-col justify-between p-4 rounded-lg border border-white/10 bg-white/5 hover:border-primary/50 hover:bg-white/10 transition-all duration-300 glass"
                     >
                       <div>
                         {relatedCover && (
-                          <div className="aspect-video w-full overflow-hidden rounded mb-4 border border-border">
+                          <div className="aspect-video w-full overflow-hidden rounded mb-4 border border-white/10">
                             <img
                               src={relatedCover}
                               alt={article.title}
@@ -342,14 +379,7 @@ export default function NewsDetail() {
       </article>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 py-10 md:px-10">
-        <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} RAVAN MAMMADOV</span>
-          <Link to="/news" className="hover:text-primary">
-            ← BACK TO ALL NEWS
-          </Link>
-        </div>
-      </footer>
+      <Footer siteSettings={siteSettings} />
     </main>
   );
 }

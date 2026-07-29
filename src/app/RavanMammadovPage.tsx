@@ -37,53 +37,53 @@ const fadeUp = {
 const timelineEvents = [
   {
     year: "2024 — PRESENT",
-    role: "Senior Creative Director & Motion Strategist",
-    company: "Independent Practice",
-    desc: "Directing high-stakes motion campaigns, WebGL visual systems, and brand launches for global automotive and tech brands including Wuling Motors, Omoda, and Jaecoo.",
+    role: "Founder & Creative Curator",
+    company: "Rvan.me Publication & Studio",
+    desc: "Building a unified design ecosystem, providing high-quality creative assets, and publishing insights on motion and conversion design.",
   },
   {
     year: "2021 — 2024",
     role: "Lead Creative Designer",
-    company: "Digital Agency Network",
-    desc: "Led visual identity systems, 3D product visualizations, and performance creative pipelines generating over 40M+ views across digital channels.",
+    company: "Digital Agency Systems",
+    desc: "Spearheaded complex 3D product visualizations, kinetic typography systems, and content frameworks for global tech and auto brands.",
   },
   {
     year: "2018 — 2021",
-    role: "Motion & Graphic Designer",
-    company: "Creative Studio",
-    desc: "Crafted brand worlds, editorial typography, and kinetic animation for tech startups, luxury retail, and SaaS platforms.",
+    role: "Visual Systems Specialist",
+    company: "Creative Design Studios",
+    desc: "Shaped high-performing landing pages, brand tokens, and motion strategy pipelines for SaaS, luxury retail, and tech clients.",
   },
 ];
 
 const skillsList = [
-  { category: "3D & Motion Craft", skills: ["Blender 3D", "After Effects", "Cinema 4D", "Rive", "Kinetic Typography", "Character & Product Rigging"] },
-  { category: "Brand & Visual Systems", skills: ["Art Direction", "Visual Hierarchy", "Design Tokens", "Figma Power Workflows", "Dark Mode UI Systems", "Editorial Design"] },
-  { category: "Growth & Performance", skills: ["Performance Creative", "AIDA Campaign Architecture", "CRO Landing Pages", "Digital Marketing Strategy", "AI Creative Workflows"] },
+  { category: "Motion Design & Art Direction", skills: ["Kinetic Typography", "3D Visualization", "Rive Interactivity", "After Effects & Lottie", "Framer Micro-interactions"] },
+  { category: "Visual Systems & Hierarchy", skills: ["Design System Architecture", "Editorial Layouts", "Typography Scales", "Figma Advanced Workflows", "Glassmorphic Interfaces"] },
+  { category: "Platform & Strategy Growth", skills: ["Digital Brand Strategy", "Copywriting & Storytelling", "SEO Structured Architecture", "Interactive Web Utilities"] },
 ];
 
 const awardsList = [
+  { title: "Best Design Resource Platform", issuer: "Creative Craft Guild", year: "2026" },
   { title: "Gold Winner — Best Motion Campaign", issuer: "International Motion Awards", year: "2025" },
-  { title: "Site of the Day / Featured Case Study", issuer: "Behance Design Showcase", year: "2025" },
-  { title: "Excellence in Brand Identity Systems", issuer: "Creative Craft Guild", year: "2024" },
-  { title: "40M+ Digital Views Milestone", issuer: "Performance Creative Recognition", year: "2024" },
+  { title: "Featured Case Study & Design System", issuer: "Behance Showcases", year: "2025" },
+  { title: "40M+ Cumulative Views Milestone", issuer: "Performance Creative Recognition", year: "2024" },
 ];
 
 const faqList = [
   {
-    q: "What services does Ravan Mammadov provide?",
-    a: "I specialize in senior art direction, 3D product visualization, brand motion systems, performance creative campaigns, and high-converting landing page UI/UX.",
+    q: "What is the mission of Ravan Mammadov's platform?",
+    a: "Our goal is to build an open, premium repository of design resources, software recommendations, and motion guides to democratize professional creative workflows.",
   },
   {
-    q: "How can clients initiate a project?",
-    a: "Submit a project inquiry through the contact form or email mammadovravan1@gmail.com directly with project goals, estimated budget, and target timeline.",
+    q: "How can I suggest resources or collaborate?",
+    a: "We welcome inputs from designers, developers, and writers. Submit a suggestion through our contact form or send a message directly to hello@rvan.me.",
   },
   {
-    q: "Do you work with international clients?",
-    a: "Yes, I collaborate seamlessly with creative teams, agencies, and brand leaders worldwide across multiple time zones.",
+    q: "Are the templates and stack items free?",
+    a: "Yes. All curated resources, checklists, and directory references are 100% free, verified by our editorial check, and globally sourced.",
   },
   {
-    q: "What is your typical project timeline?",
-    a: "Brand motion systems and campaign creative usually take between 2 to 6 weeks depending on scope, complexity, and 3D rendering requirements.",
+    q: "Can I use the interactive browser tools for commercial projects?",
+    a: "Absolutely. All built-in design utilities, contrast tools, and prompt libraries are completely free to use for both personal and commercial projects.",
   },
 ];
 
@@ -192,38 +192,38 @@ export default function RavanMammadovPage() {
               className="lg:col-span-7"
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Sparkles size={14} /> ABOUT RAVAN MAMMADOV
+                <Sparkles size={14} /> FOUNDER STORY & VISION
               </div>
 
               <h1 className="mt-6 text-5xl font-semibold tracking-[-.07em] md:text-7xl lg:text-8xl">
-                Creative Energy <br />
-                <span className="text-primary font-bold">Built to Perform.</span>
+                Editorial Vision <br />
+                <span className="text-primary font-bold">Built to Share.</span>
               </h1>
 
               <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl font-medium">
                 {aboutSection?.introParagraph1 ||
-                  "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative."}
+                  "Design is not just static pixels; it is momentum. This platform is built to deliver high-fidelity design systems, curated directories, interactive utilities, and editorial wisdom."}
               </p>
 
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground/80 font-medium">
                 {aboutSection?.introParagraph2 ||
-                  "My approach pairs a designer's eye with a marketer's clarity: beautiful ideas, built to be remembered and made to perform."}
+                  "By blending raw design instinct with tactical product thinking, we craft spaces and tools that inspire builders to make something memorable."}
               </p>
 
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
-                  to="/#contact"
+                  to="/contact"
                   className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
-                  START A CONVERSATION
+                  GET IN TOUCH
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
 
                 <a
-                  href="mailto:mammadovravan1@gmail.com"
+                  href="mailto:hello@rvan.me"
                   className="inline-flex items-center gap-2 rounded-full border border-border px-7 py-4 text-xs font-bold tracking-[.18em] text-foreground hover:border-primary transition-colors mono uppercase"
                 >
-                  <Mail size={14} /> EMAIL DIRECTLY
+                  <Mail size={14} /> hello@rvan.me
                 </a>
               </div>
             </motion.div>
@@ -252,7 +252,7 @@ export default function RavanMammadovPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-foreground">Ravan Mammadov</h3>
-                    <p className="text-xs text-muted-foreground mono tracking-wider uppercase">Senior Creative Designer & Marketer</p>
+                    <p className="text-xs text-muted-foreground mono tracking-wider uppercase">Founder & Creative Director</p>
                   </div>
                 </div>
 
@@ -285,9 +285,9 @@ export default function RavanMammadovPage() {
         <div className="absolute inset-0 border-t border-white/5" />
         <div className="mx-auto max-w-[1600px] relative">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Career Trajectory</p>
+            <p className="eyebrow text-muted-foreground">Editorial Milestones</p>
             <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Experience & Milestones
+              Timeline & Journey
             </h2>
           </motion.div>
 

@@ -150,7 +150,7 @@ export default function ContactPage() {
               LET'S MAKE SOMETHING <span className="aurora-text-animate font-bold block sm:inline">MOVE.</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              {siteSettings?.contactSubtext || "Have an ambitious campaign, motion project, or visual system in mind? I'm always open to new creative partnerships."}
+              {siteSettings?.contactSubtext || "Have questions about our resources, ideas for new browser design utilities, or want to contribute to the publication? Let's connect."}
             </p>
           </motion.div>
         </div>
@@ -184,7 +184,7 @@ export default function ContactPage() {
                   <span>Baku, Azerbaijan (UTC+4) — Available Worldwide</span>
                 </div>
                 <div className="mt-2 text-xs text-muted-foreground mono">
-                  Current Status: <span className="text-emerald-400 font-bold">{siteSettings?.availabilityStatus || "AVAILABLE FOR Q3 2025"}</span>
+                  Current Status: <span className="text-emerald-400 font-bold">EDITORIAL HUB ACTIVE</span>
                 </div>
               </div>
 
@@ -225,7 +225,7 @@ export default function ContactPage() {
               <div className="relative z-10">
                 <h2 className="text-2xl font-semibold tracking-tight mb-2 text-foreground/90">Send a Message</h2>
                 <p className="text-xs text-muted-foreground/80 mb-8 font-medium">
-                Fill out the fields below and I'll get back to you within 24 hours.
+                Fill out the fields below and we'll get back to you shortly.
               </p>
 
               {status === "success" ? (
@@ -292,7 +292,7 @@ export default function ContactPage() {
                     <textarea
                       required
                       rows={5}
-                      placeholder="Tell me about your campaign goals, timeline, and scope..."
+                      placeholder="Tell us how we can collaborate, suggest a tool, or share your feedback..."
                       value={formData.projectDetails}
                       onChange={(e) => setFormData({ ...formData, projectDetails: e.target.value })}
                       className="w-full rounded-xl border border-white/10 bg-background/50 px-5 py-4 text-[15px] text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"

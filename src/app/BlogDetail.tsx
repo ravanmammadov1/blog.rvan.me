@@ -213,6 +213,42 @@ export default function BlogDetail() {
         publishDate={post.publishDate}
       />
 
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — violet / blue, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(139,92,246,0.06) 0%, rgba(59,130,246,0.03) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — emerald / teal, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(16,185,129,0.05) 0%, rgba(6,182,212,0.03) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       {/* Global Unified Header */}
       <SiteHeader siteSettings={siteSettings} />
 
@@ -256,11 +292,11 @@ export default function BlogDetail() {
 
             {/* Previous / Next Article Navigation */}
             {(prevPost || nextPost) && (
-              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-border pt-12">
+              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-white/10 pt-12">
                 {prevPost ? (
                   <Link
                     to={`/blog/${prevPost.slug?.current || prevPost._id}`}
-                    className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-6 transition-all hover:border-primary"
+                    className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5"
                   >
                     <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← PREVIOUS ARTICLE</span>
                     <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{prevPost.title}</p>
@@ -270,7 +306,7 @@ export default function BlogDetail() {
                 {nextPost ? (
                   <Link
                     to={`/blog/${nextPost.slug?.current || nextPost._id}`}
-                    className="group flex flex-col justify-between items-end rounded-xl border border-border bg-surface p-6 transition-all hover:border-primary text-right"
+                    className="group flex flex-col justify-between items-end rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 text-right"
                   >
                     <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">NEXT ARTICLE →</span>
                     <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{nextPost.title}</p>
@@ -280,10 +316,10 @@ export default function BlogDetail() {
             )}
 
             {/* Back to Blog Archive Navigation Button */}
-            <div className="mt-10 flex justify-center border-t border-border/40 pt-8">
+            <div className="mt-10 flex justify-center border-t border-white/10 pt-8">
               <Link
                 to="/blog"
-                className="group inline-flex items-center gap-3 rounded-full border border-border bg-surface px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary hover:text-primary mono"
+                className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary mono glass-sm"
               >
                 <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
                 BACK TO BLOG ARCHIVE

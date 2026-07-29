@@ -141,26 +141,26 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                       : "text-foreground/60 hover:text-foreground"
                   }`}
                 >
-                  {/* Aurora glow behind active item */}
+                   {/* Aurora glow behind active item */}
                   {isActive && (
                     <motion.span
                       layoutId="nav-aurora-bg"
                       className="absolute inset-0 rounded-lg"
                       style={{
                         background:
-                          "radial-gradient(ellipse at 50% 50%, rgba(16,185,129,0.12) 0%, rgba(59,130,246,0.08) 50%, transparent 80%)",
-                        backdropFilter: "blur(4px)",
-                        border: "1px solid rgba(255,255,255,0.06)",
+                          "radial-gradient(ellipse at 50% 50%, rgba(232,253,82,0.1) 0%, rgba(59,130,246,0.06) 50%, transparent 80%)",
+                        backdropFilter: "blur(6px)",
+                        border: "1px solid rgba(255,255,255,0.08)",
                       }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
                     />
                   )}
                   {/* Animated underline indicator */}
                   {isActive && (
                     <motion.span
                       layoutId="nav-indicator"
-                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[1px] w-1/2 rounded-full bg-primary/70"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[1px] w-1/2 rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
@@ -242,12 +242,12 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             </div>
 
             <div className="mt-8 pt-6 border-t border-border/30 flex justify-between items-center text-xs mono text-muted-foreground relative z-10">
-              <span>AVAILABLE FOR SELECT WORK</span>
+              <span>CREATIVE PLATFORM & PUBLICATION</span>
               <button
                 onClick={() => handleNavClick("/contact")}
                 className="text-primary font-bold hover:underline"
               >
-                START PROJECT →
+                COLLABORATE →
               </button>
             </div>
           </motion.div>

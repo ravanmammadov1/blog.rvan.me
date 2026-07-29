@@ -197,20 +197,20 @@ export default function BlogArchive() {
           initial="hidden"
           animate="visible"
           custom={0.15}
-          className="mt-14 space-y-6 border-b border-border pb-8"
+          className="mt-14 space-y-6 border-b border-white/10 pb-8"
         >
           {/* Search */}
           <div className="relative max-w-md">
             <Search
               size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60"
             />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search articles..."
-              className="w-full rounded-full border border-border bg-surface py-3 pl-11 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-full border border-white/10 bg-white/5 py-3 pl-11 pr-10 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
             />
             {searchQuery && (
               <button
