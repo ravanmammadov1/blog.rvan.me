@@ -12,27 +12,20 @@ import {
   ArrowUpRight,
   MoveUpRight,
   Zap,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
 
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
-import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
-import RavanPortrait800 from "@/imports/ravan_1-800.webp";
-import RavanPortrait400 from "@/imports/ravan_1-400.webp";
 import coverWuling1200 from "@/imports/466885252088463.6a4df53862539-1200.webp";
 import coverWuling800 from "@/imports/466885252088463.6a4df53862539-800.webp";
 import coverLimitless1200 from "@/imports/cbfd4b251276815.6a33abf0bf48e-1200.webp";
 import coverLimitless800 from "@/imports/cbfd4b251276815.6a33abf0bf48e-800.webp";
 import coverOmoda from "@/imports/063f86251210609.6a4670b82b027.png";
 import { client, urlFor } from "../lib/sanityClient";
-import { fetchSiteSettings, fetchProjects, fetchAboutSection, fetchTestimonials } from "../lib/sanityQueries";
+import { fetchSiteSettings, fetchProjects } from "../lib/sanityQueries";
 import SiteHeader from "./components/SiteHeader";
-import { SiteSettings, ProjectItem, AboutSection as IAboutSection, TestimonialItem } from "../types/cms";
+import { SiteSettings, ProjectItem } from "../types/cms";
 import BlogCard from "./components/blog/BlogCard";
-import TestimonialsSection from "./components/TestimonialsSection";
 import SEO from "./components/SEO";
 import { useCookieConsent } from "./context/CookieConsentContext";
 import Footer from "./components/Footer";
@@ -46,7 +39,6 @@ const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
 const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const WorkSection = lazy(() => import("./components/home/WorkSection"));
-const AboutSection = lazy(() => import("./components/home/AboutSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
 
 
@@ -57,7 +49,6 @@ const CONFIG_SHOW_BLOG = true;
 const CONFIG_SHOW_RESOURCES = true;
 const CONFIG_SHOW_TOOLS = true;
 const CONFIG_SHOW_WORK = true;
-const CONFIG_SHOW_ABOUT = true;
 const CONFIG_SHOW_CONTACT = true;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -165,77 +156,21 @@ function Eyebrow({ children, className = "" }: { children: React.ReactNode; clas
 
 export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
   const [sanityProjects, setSanityProjects] = useState<ProjectItem[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [newsList, setNewsList] = useState<any[]>([]);
   const [toolsList, setToolsList] = useState<any[]>([]);
   const [resourcesList, setResourcesList] = useState<any[]>([]);
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
-  const [aboutTab, setAboutTab] = useState<"about" | "testimonials">("about");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
-
-  // Contact Form State
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactMessage, setContactMessage] = useState("");
-  const [contactHoneypot, setContactHoneypot] = useState("");
-  const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [contactErrorMessage, setContactErrorMessage] = useState("");
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (contactStatus === "loading") return;
-
-    setContactStatus("loading");
-    setContactErrorMessage("");
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: contactName,
-          email: contactEmail,
-          projectDetails: contactMessage,
-          honeypot: contactHoneypot,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to submit inquiry.");
-      }
-
-      setContactStatus("success");
-      setContactName("");
-      setContactEmail("");
-      setContactMessage("");
-      setContactHoneypot("");
-    } catch (err: any) {
-      console.error("Contact form error:", err);
-      setContactStatus("error");
-      setContactErrorMessage(err.message || "Something went wrong. Please try again or send an email directly.");
-    }
-  };
 
   useEffect(() => {
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
     });
 
-    fetchAboutSection().then((data) => {
-      if (data) setAboutSection(data);
-    });
-
     fetchProjects().then((data) => {
       if (data && data.length > 0) setSanityProjects(data);
-    });
-
-    fetchTestimonials().then((data) => {
-      if (data) setTestimonials(data);
     });
 
     // Fetch Blogs
@@ -1078,354 +1013,10 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── 7. About ── */}
-      {CONFIG_SHOW_ABOUT && (
-        <section id="about" className="relative px-6 py-32 md:px-10 md:py-44 border-t border-border">
-          <div className="mx-auto max-w-[1600px]">
-            <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-8 mb-16 gap-6">
-              <div>
-                <Eyebrow className="text-muted-foreground">07 / About the Practice</Eyebrow>
-                <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-                  {aboutTab === "about" ? "Refusing to blend in." : "What Collaborators Say."}
-                </h2>
-              </div>
-
-              <div className="inline-flex rounded-full border border-border bg-surface p-1.5 mono text-xs font-bold">
-                <button
-                  onClick={() => setAboutTab("about")}
-                  className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
-                    aboutTab === "about" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  BIOGRAPHY & STATS
-                </button>
-                <button
-                  onClick={() => setAboutTab("testimonials")}
-                  className={`rounded-full px-6 py-2.5 transition-all duration-300 ${
-                    aboutTab === "testimonials" ? "bg-primary text-black font-bold" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  COLLABORATOR REVIEWS ({testimonials.length})
-                </button>
-              </div>
-            </div>
-
-            {aboutTab === "about" ? (
-              <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  className="lg:col-span-4"
-                >
-                  <div className="relative overflow-hidden rounded-2xl border border-border">
-                    <picture>
-                      <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
-                      <img
-                        src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200}
-                        alt="Portrait of Ravan Mammadov"
-                        className="aspect-[4/5] w-full object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
-                      />
-                    </picture>
-                    <div className="absolute bottom-0 inset-x-0 flex items-center justify-between bg-gradient-to-t from-background via-background/90 to-transparent p-5 text-[10px] tracking-[.2em] mono">
-                      <span>RAVAN MAMMADOV</span>
-                      <span className="text-primary font-bold">SENIOR DESIGNER</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <div className="lg:col-span-7 lg:col-start-6">
-                  <motion.h3
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="text-3xl font-medium leading-[1.1] tracking-[-.04em] md:text-5xl"
-                  >
-                    {aboutSection?.heading || "I create visual energy for brands that refuse to blend in."}
-                  </motion.h3>
-
-                  <motion.div
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    custom={0.2}
-                    className="mt-10 grid gap-8 border-t border-border pt-6 md:grid-cols-2"
-                  >
-                    <p className="text-base leading-relaxed text-muted-foreground font-medium">
-                      {aboutSection?.introParagraph1 ||
-                        "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative."}
-                    </p>
-                    <p className="text-base leading-relaxed text-muted-foreground font-medium">
-                      {aboutSection?.introParagraph2 ||
-                        "My approach pairs a designer's eye with a marketer's clarity: beautiful ideas, built to be remembered and made to perform."}
-                    </p>
-                  </motion.div>
-
-                  <motion.div
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    custom={0.3}
-                    className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4"
-                  >
-                    {(aboutSection?.stats && aboutSection.stats.length > 0 ? aboutSection.stats : stats).map((s) => (
-                      <div key={s.label} className="bg-background p-6">
-                        <p className="text-3xl font-bold tracking-[-.05em] text-primary mono">{s.value}</p>
-                        <p className="mt-2 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground mono">{s.label}</p>
-                      </div>
-                    ))}
-                  </motion.div>
-
-                  <div className="mt-10 flex flex-wrap gap-6 items-center">
-                    <Link
-                      to="/ravan-mammadov"
-                      className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition hover:bg-white mono"
-                    >
-                      READ FULL BIOGRAPHY & CAREER <ArrowUpRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-                <TestimonialsSection />
-              </motion.div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* ── 8. Contact ── */}
       {CONFIG_SHOW_CONTACT && (
-        <section
-          id="contact"
-          className="relative overflow-hidden bg-paper px-6 py-32 text-paper-foreground md:px-10 md:py-44"
-        >
-          <div className="absolute -right-16 -top-16 h-80 w-80 rounded-full bg-primary opacity-70 blur-3xl" />
-          <div className="absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-destructive opacity-25 blur-3xl" />
-          <div className="relative mx-auto max-w-[1600px]">
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <p className="eyebrow text-black/45">08 / Start a conversation</p>
-            </motion.div>
-
-            <div className="grid gap-12 lg:grid-cols-12 mt-8 items-start">
-              <div className="lg:col-span-7">
-                <motion.h2
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={0.1}
-                  className="text-[12vw] font-semibold leading-[.82] tracking-[-.09em] lg:text-[8vw]"
-                >
-                  {"LET'S MAKE"}
-                  <br />
-                  <span className="text-destructive">SOMETHING</span>
-                  <br />
-                  MOVE.
-                </motion.h2>
-
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={0.2}
-                  className="mt-12 space-y-6"
-                >
-                  <p className="max-w-md text-base leading-relaxed text-black/70 font-medium">
-                    Have an ambitious campaign, motion project, or visual system in mind? I'm always open to new creative partnerships.
-                  </p>
-
-                  <div className="flex flex-wrap gap-4 pt-2">
-                    <a
-                      href={`mailto:${siteSettings?.socialLinks?.email || "mammadovravan1@gmail.com"}`}
-                      className="group inline-flex items-center gap-3 rounded-full bg-black text-white px-7 py-4 text-xs font-bold tracking-[.18em] uppercase transition duration-300 hover:bg-primary hover:text-black"
-                    >
-                      SEND EMAIL DIRECTLY
-                      <ArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" size={16} />
-                    </a>
-
-                    {siteSettings?.resumeFileUrl && (
-                      <a
-                        href={siteSettings.resumeFileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-black/30 px-6 py-4 text-xs font-bold tracking-[.18em] uppercase text-black hover:border-black hover:bg-black/10 transition-colors mono"
-                      >
-                        DOWNLOAD RESUME (PDF)
-                      </a>
-                    )}
-                  </div>
-
-                  {/* Social Links */}
-                  <div className="mt-12 border-t border-black/15 pt-8">
-                    <p className="text-xs font-bold tracking-widest text-black/50 mono uppercase mb-6">
-                      CONNECT ACROSS PLATFORMS
-                    </p>
-                    <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold tracking-tight text-black">
-                      <a
-                        href={siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan"}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                      >
-                        BEHANCE
-                      </a>
-                      <a
-                        href={siteSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/"}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                      >
-                        LINKEDIN
-                      </a>
-                      <a
-                        href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                      >
-                        INSTAGRAM
-                      </a>
-                      <a
-                        href={siteSettings?.socialLinks?.facebook || "https://www.facebook.com/rvnmmmdv/"}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                      >
-                        FACEBOOK
-                      </a>
-                      <a
-                        href={siteSettings?.socialLinks?.pinterest || "https://tr.pinterest.com/mammadovravan1/"}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-primary transition-colors underline decoration-2 underline-offset-4"
-                      >
-                        PINTEREST
-                      </a>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Inquiry Form */}
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={0.3}
-                className="lg:col-span-5 rounded-2xl border border-black/15 bg-white/70 backdrop-blur-md p-8 shadow-xl"
-              >
-                <h3 className="text-2xl font-semibold tracking-tight text-black mb-2">
-                  Send a message
-                </h3>
-                <p className="text-xs text-black/60 mb-6">
-                  Fill out the details below and I'll respond within 24 hours.
-                </p>
-
-                {contactStatus === "success" ? (
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600">
-                      <CheckCircle2 size={24} />
-                    </div>
-                    <h4 className="text-lg font-bold text-black mb-2">Inquiry Received!</h4>
-                    <p className="text-xs text-black/70 leading-relaxed mb-6">
-                      Thank you for reaching out. Your message has been routed directly to Ravan's inbox.
-                    </p>
-                    <button
-                      onClick={() => setContactStatus("idle")}
-                      className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-[10px] font-bold tracking-widest text-white uppercase hover:bg-primary hover:text-black transition-colors mono"
-                    >
-                      SEND ANOTHER MESSAGE
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <input
-                      type="text"
-                      name="hp_field"
-                      value={contactHoneypot}
-                      onChange={(e) => setContactHoneypot(e.target.value)}
-                      tabIndex={-1}
-                      autoComplete="off"
-                      className="hidden"
-                    />
-
-                    {contactStatus === "error" && (
-                      <div className="flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-700 text-xs font-medium">
-                        <AlertCircle size={16} className="mt-0.5 flex-shrink-0 text-red-600" />
-                        <p>{contactErrorMessage}</p>
-                      </div>
-                    )}
-
-                    <div>
-                      <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                        YOUR NAME
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={contactName}
-                        onChange={(e) => setContactName(e.target.value)}
-                        placeholder="Jane Doe"
-                        disabled={contactStatus === "loading"}
-                        className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                        YOUR EMAIL
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={contactEmail}
-                        onChange={(e) => setContactEmail(e.target.value)}
-                        placeholder="jane@company.com"
-                        disabled={contactStatus === "loading"}
-                        className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold tracking-widest text-black/60 mono uppercase mb-1">
-                        PROJECT DETAILS
-                      </label>
-                      <textarea
-                        required
-                        rows={4}
-                        value={contactMessage}
-                        onChange={(e) => setContactMessage(e.target.value)}
-                        placeholder="Tell me about your timeline, scope, and vision..."
-                        disabled={contactStatus === "loading"}
-                        className="w-full rounded-lg border border-black/20 bg-white px-4 py-3 text-sm font-medium text-black placeholder:text-black/40 focus:border-black focus:outline-none disabled:opacity-50"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={contactStatus === "loading"}
-                      className="w-full rounded-lg bg-black py-4 text-xs font-bold tracking-[.18em] uppercase text-white hover:bg-primary hover:text-black transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
-                    >
-                      {contactStatus === "loading" ? (
-                        <>
-                          <Loader2 size={16} className="animate-spin" />
-                          <span>SUBMITTING INQUIRY...</span>
-                        </>
-                      ) : (
-                        <span>SUBMIT INQUIRY</span>
-                      )}
-                    </button>
-                  </form>
-                )}
-              </motion.div>
-            </div>
-          </div>
-        </section>
+        <Suspense fallback={<div className="h-96" />}>
+          <ContactSection />
+        </Suspense>
       )}
 
       <Footer siteSettings={siteSettings} />

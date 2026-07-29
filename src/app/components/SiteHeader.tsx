@@ -61,15 +61,14 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     navigate(`/${target}`);
   };
 
-  // ── Base nav items (Expertise removed) ──
   const baseNavItems = [
     { label: "HOME",      target: "/" },
     { label: "WORK",      target: "/work" },
-    { label: "ABOUT",     target: "/ravan-mammadov" },
     { label: "NEWS",      target: "/news" },
     { label: "RESOURCES", target: "/resources" },
     { label: "TOOLS",     target: "/tools" },
     { label: "BLOG",      target: "/blog" },
+    { label: "ABOUT",     target: "/ravan-mammadov" },
     { label: "CONTACT",   target: "/contact" },
   ];
 
