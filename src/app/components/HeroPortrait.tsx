@@ -63,36 +63,30 @@ export default function HeroPortrait() {
   return (
     <div
       ref={containerRef}
-      className="relative flex h-full w-full items-center justify-center"
+      className="relative flex h-full w-full items-center justify-center transform-gpu"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-hidden="true"
     >
-      {/* Layer 1 — deep aurora core glow (slowest pulse) */}
+      {/* Layer 1 — deep emerald/teal vector radial light field */}
       <motion.div
-        className="pointer-events-none absolute"
+        className="pointer-events-none absolute w-full h-full transform-gpu"
         style={{
-          width: "90%",
-          height: "90%",
           background:
-            "radial-gradient(ellipse 70% 70% at 50% 50%, rgba(16,185,129,0.18) 0%, rgba(6,182,212,0.12) 35%, rgba(79,102,182,0.10) 60%, transparent 80%)",
-          filter: "blur(48px)",
+            "radial-gradient(circle at center, rgba(16,185,129,0.14) 0%, rgba(6,182,212,0.07) 35%, rgba(79,102,182,0.03) 60%, transparent 80%)",
         }}
-        animate={reduced ? {} : { opacity: [0.5, 0.9, 0.5], scale: [1, 1.12, 1] }}
+        animate={reduced ? {} : { opacity: [0.6, 0.9, 0.6], scale: [1, 1.05, 1] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Layer 2 — violet echo glow (offset timing) */}
+      {/* Layer 2 — violet vector radial light field */}
       <motion.div
-        className="pointer-events-none absolute"
+        className="pointer-events-none absolute w-[80%] h-[80%] transform-gpu"
         style={{
-          width: "70%",
-          height: "70%",
           background:
-            "radial-gradient(ellipse 60% 55% at 52% 48%, rgba(139,92,246,0.14) 0%, rgba(59,130,246,0.08) 50%, transparent 75%)",
-          filter: "blur(36px)",
+            "radial-gradient(circle at center, rgba(139,92,246,0.08) 0%, rgba(59,130,246,0.03) 55%, transparent 75%)",
         }}
-        animate={reduced ? {} : { opacity: [0.3, 0.65, 0.3], scale: [1.05, 0.95, 1.05] }}
+        animate={reduced ? {} : { opacity: [0.4, 0.7, 0.4], scale: [1.03, 0.97, 1.03] }}
         transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 3 }}
       />
 
@@ -106,7 +100,7 @@ export default function HeroPortrait() {
         {/* Floating keyframe wrapper */}
         <div className={reduced ? "" : "hero-logo-float"}>
           {/* Gradient animated wrapper for the SVG */}
-          <div className={`relative ${reduced ? "" : "hero-logo-hue"}`}>
+          <div className={`relative ${reduced ? "" : "hero-logo-float"}`}>
             <img
               src={ravanLogo}
               alt="Ravan Mammadov"
@@ -128,17 +122,14 @@ export default function HeroPortrait() {
         </div>
       </motion.div>
 
-      {/* Layer 3 — bottom teal ground glow */}
+      {/* Layer 3 — bottom teal vector radial ground light */}
       <motion.div
-        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2"
+        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[40%] transform-gpu"
         style={{
-          width: "65%",
-          height: "35%",
           background:
-            "radial-gradient(ellipse at 50% 100%, rgba(16,185,129,0.15) 0%, rgba(6,182,212,0.08) 40%, transparent 70%)",
-          filter: "blur(40px)",
+            "radial-gradient(ellipse at bottom, rgba(16,185,129,0.12) 0%, rgba(6,182,212,0.05) 50%, transparent 80%)",
         }}
-        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
+        animate={reduced ? {} : { opacity: [0.4, 0.7, 0.4] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
       />
     </div>

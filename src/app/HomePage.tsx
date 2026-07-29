@@ -311,15 +311,17 @@ export default function HomePage() {
           style={{ paddingTop: "5rem" }}
         >
           {/* ══ Premium Deep-Black Hero Background (Apple & Vercel Aesthetic) ══ */}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-[#050506] transform-gpu" aria-hidden="true">
-            {/* Soft, subtle radial aura behind the headline */}
-            <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full opacity-30 transform-gpu"
-              style={{
-                background: "radial-gradient(ellipse at center, rgba(16,185,129,0.12) 0%, rgba(6,182,212,0.06) 45%, transparent 70%)",
-              }}
-            />
-          </div>
+          <div 
+            className="pointer-events-none absolute inset-0 -z-10 bg-[#050506] transform-gpu" 
+            aria-hidden="true"
+            style={{
+              backgroundImage: `
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 40% 45%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 60% 55%, rgba(139, 92, 246, 0.05) 0%, transparent 50%)
+              `
+            }}
+          />
 
           {/* Geo label */}
           <div className="absolute left-8 bottom-10 hidden text-[9px] tracking-[.22em] text-muted-foreground/40 font-mono md:block">
