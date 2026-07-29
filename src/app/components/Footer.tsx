@@ -10,8 +10,17 @@ export default function Footer({ siteSettings }: FooterProps) {
   const { openPreferences } = useCookieConsent();
 
   return (
-    <footer className="px-6 py-10 md:px-10 border-t border-border bg-background text-foreground">
-      <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
+    <footer className="relative px-6 py-10 md:px-10 border-t border-border bg-background text-foreground overflow-hidden">
+      {/* Subtle aurora glow at the bottom */}
+      <div 
+        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-full opacity-30"
+        style={{
+          background: "radial-gradient(ellipse at 50% 100%, rgba(16,185,129,0.1) 0%, rgba(59,130,246,0.05) 50%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+      />
+      
+      <div className="relative z-10 mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
         <span>© {new Date().getFullYear()} RAVAN MAMMADOV STUDIO</span>
         
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">

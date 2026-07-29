@@ -95,25 +95,6 @@ const RESOURCE_TYPE_ICONS: Record<string, string> = {
   startupProgram: "🚀",
 };
 
-function useSmoothCursor() {
-  const mouseX = useMotionValue(-100);
-  const mouseY = useMotionValue(-100);
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, [mouseX, mouseY]);
-
-  const springConfig = { damping: 28, stiffness: 220, mass: 0.6 };
-  const springX = useSpring(mouseX, springConfig);
-  const springY = useSpring(mouseY, springConfig);
-
-  return { springX, springY };
-}
 
 const fallbackProjects = [
   {
@@ -343,7 +324,6 @@ export default function HomePage() {
 
   const { scrollYProgress } = useScroll();
   const progressScale = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
-  const { springX, springY } = useSmoothCursor();
 
   const displayProjects = useMemo(() => {
     if (sanityProjects.length > 0) {
@@ -389,11 +369,6 @@ export default function HomePage() {
         style={{ scaleX: progressScale }}
       />
 
-      {/* Smooth cursor ring */}
-      <motion.div
-        className="pointer-events-none fixed z-[60] hidden h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary mix-blend-difference md:block"
-        style={{ left: springX, top: springY }}
-      />
 
       {/* ── Header ── */}
       <SiteHeader siteSettings={siteSettings} />
@@ -496,7 +471,7 @@ export default function HomePage() {
                       style={{ marginRight: "0.16em" }}
                     >
                       <motion.span
-                        className="inline-block text-[13vw] font-bold leading-[0.86] tracking-[-0.07em] sm:text-[10vw] lg:text-[7.2vw] xl:text-[6.2vw] text-foreground"
+                        className={`inline-block text-[13vw] font-bold leading-[0.86] tracking-[-0.07em] sm:text-[10vw] lg:text-[7.2vw] xl:text-[6.2vw] ${word.includes('MOVE') ? 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 aurora-text-animate' : 'text-foreground'}`}
                         initial={{ y: "112%" }}
                         animate={{ y: "0%" }}
                         transition={{ duration: 1.05, delay: 0.15 + i * 0.1, ease: EASE }}
