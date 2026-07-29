@@ -49,41 +49,6 @@ const WorkSection = lazy(() => import("./components/home/WorkSection"));
 const AboutSection = lazy(() => import("./components/home/AboutSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
 
-// ─── Aurora global keyframes (injected once) ─────────────────────────────────
-if (typeof document !== "undefined") {
-  const styleId = "__aurora_keyframes__";
-  if (!document.getElementById(styleId)) {
-    const s = document.createElement("style");
-    s.id = styleId;
-    s.textContent = `
-      @media (prefers-reduced-motion: no-preference) {
-        @keyframes auroraBlob1 {
-          0%,100% { transform: translate(0,0) scale(1); }
-          33%      { transform: translate(6%,4%) scale(1.08); }
-          66%      { transform: translate(-5%,2%) scale(0.96); }
-        }
-        @keyframes auroraBlob2 {
-          0%,100% { transform: translate(0,0) scale(1); }
-          40%      { transform: translate(-7%,-5%) scale(1.1); }
-          70%      { transform: translate(4%,3%) scale(0.94); }
-        }
-        @keyframes auroraBlob3 {
-          0%,100% { transform: translate(0,0) scale(1); }
-          50%      { transform: translate(5%,-6%) scale(1.06); }
-        }
-        @keyframes heroFloat {
-          0%,100% { transform: translateY(0px); }
-          50%      { transform: translateY(-14px); }
-        }
-        @keyframes heroWordReveal {
-          from { clip-path: inset(0 0 100% 0); opacity: 0; }
-          to   { clip-path: inset(0 0 0% 0);   opacity: 1; }
-        }
-      }
-    `;
-    document.head.appendChild(s);
-  }
-}
 
 // Modular Section Enable/Disable Toggles
 const CONFIG_SHOW_HERO = true;
@@ -440,113 +405,101 @@ export default function HomePage() {
           className="relative isolate min-h-screen overflow-hidden flex items-center"
           style={{ paddingTop: "5rem" }}
         >
-          {/* ── Aurora background blobs ── */}
+          {/* ══ Aurora background — 4 blob layers ══ */}
           <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-            {/* Base dark background */}
             <div className="absolute inset-0 bg-background" />
 
-            {/* Blob 1 — blue/indigo top-left */}
+            {/* Blob 1 — emerald / teal, top-left */}
             <div
+              className="aurora-blob-1 absolute"
               style={{
-                position: "absolute",
-                top: "-10%",
-                left: "-5%",
-                width: "55%",
-                height: "65%",
-                background:
-                  "radial-gradient(ellipse at 40% 40%, rgba(79,102,182,0.22) 0%, rgba(66,111,186,0.10) 50%, transparent 75%)",
-                filter: "blur(56px)",
-                animation: "auroraBlob1 28s ease-in-out infinite",
-                willChange: "transform",
-              }}
-            />
-
-            {/* Blob 2 — violet/purple top-right */}
-            <div
-              style={{
-                position: "absolute",
-                top: "5%",
-                right: "-8%",
-                width: "50%",
-                height: "60%",
-                background:
-                  "radial-gradient(ellipse at 60% 30%, rgba(152,79,159,0.18) 0%, rgba(79,102,182,0.10) 55%, transparent 80%)",
+                top: "-15%", left: "-10%",
+                width: "60%", height: "70%",
+                background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.16) 0%, rgba(6,182,212,0.09) 45%, transparent 72%)",
                 filter: "blur(64px)",
-                animation: "auroraBlob2 36s ease-in-out infinite",
-                willChange: "transform",
               }}
             />
 
-            {/* Blob 3 — teal bottom-center */}
+            {/* Blob 2 — blue / indigo, top-right */}
             <div
+              className="aurora-blob-2 absolute"
               style={{
-                position: "absolute",
-                bottom: "0%",
-                left: "30%",
-                width: "45%",
-                height: "45%",
-                background:
-                  "radial-gradient(ellipse at 50% 80%, rgba(97,197,173,0.14) 0%, rgba(66,111,186,0.08) 55%, transparent 80%)",
-                filter: "blur(60px)",
-                animation: "auroraBlob3 22s ease-in-out infinite",
-                willChange: "transform",
+                top: "0%", right: "-12%",
+                width: "55%", height: "65%",
+                background: "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.14) 0%, rgba(79,70,229,0.09) 50%, transparent 78%)",
+                filter: "blur(72px)",
               }}
             />
 
-            {/* Very subtle grid on top of blobs */}
+            {/* Blob 3 — soft violet, centre */}
+            <div
+              className="aurora-blob-3 absolute"
+              style={{
+                top: "25%", left: "25%",
+                width: "50%", height: "50%",
+                background: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.10) 0%, rgba(16,185,129,0.06) 55%, transparent 80%)",
+                filter: "blur(80px)",
+              }}
+            />
+
+            {/* Blob 4 — teal ground, bottom */}
+            <div
+              className="aurora-blob-4 absolute"
+              style={{
+                bottom: "-5%", left: "20%",
+                width: "60%", height: "40%",
+                background: "radial-gradient(ellipse at 50% 90%, rgba(6,182,212,0.12) 0%, rgba(16,185,129,0.07) 50%, transparent 75%)",
+                filter: "blur(56px)",
+              }}
+            />
+
+            {/* Micro grid overlay */}
             <div
               className="absolute inset-0"
               style={{
                 backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
-                backgroundSize: "80px 80px",
+                  "linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)",
+                backgroundSize: "72px 72px",
               }}
             />
           </div>
 
-          {/* ── Geo label ── */}
-          <div className="absolute left-8 bottom-10 hidden text-[10px] tracking-[.2em] text-muted-foreground/50 font-mono md:block">
-            40.40° N · 49.86° E
+          {/* Geo label */}
+          <div className="absolute left-8 bottom-10 hidden text-[9px] tracking-[.22em] text-muted-foreground/40 font-mono md:block">
+            40.40° N &nbsp;·&nbsp; 49.86° E
           </div>
 
-          {/* ── Content grid ── */}
-          <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 py-20 lg:py-0">
-            <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-6 min-h-[calc(100vh-5rem)]">
+          {/* ══ Content grid ══ */}
+          <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 py-24 lg:py-0">
+            <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-8 min-h-[calc(100vh-5rem)]">
 
-              {/* Left — text content */}
+              {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
 
-                {/* Availability badge */}
+                {/* Glass availability badge */}
                 <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 14, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
-                  className="mb-8 inline-flex w-fit items-center gap-2.5 rounded-full border border-primary/30 bg-primary/8 px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase"
+                  className="mb-9 inline-flex w-fit items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge"
                 >
-                  <span
-                    className="h-2 w-2 rounded-full bg-primary"
-                    style={{ animation: "pulse 2s ease-in-out infinite" }}
-                  />
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary badge-pulse-dot" />
                   {availabilityStatus}
                 </motion.div>
 
-                {/* Headline — word-by-word clip reveal */}
-                <h1 className="mb-0 overflow-hidden">
+                {/* Headline — word-by-word reveal */}
+                <h1 className="mb-0">
                   {heroTitle.split(" ").map((word, i) => (
                     <span
                       key={i}
                       className="inline-block overflow-hidden"
-                      style={{ marginRight: "0.18em" }}
+                      style={{ marginRight: "0.16em" }}
                     >
                       <motion.span
-                        className="inline-block text-[13vw] font-bold leading-[0.88] tracking-[-0.07em] sm:text-[10vw] lg:text-[7.2vw] xl:text-[6.5vw] text-foreground"
-                        initial={{ y: "110%" }}
+                        className="inline-block text-[13vw] font-bold leading-[0.86] tracking-[-0.07em] sm:text-[10vw] lg:text-[7.2vw] xl:text-[6.2vw] text-foreground"
+                        initial={{ y: "112%" }}
                         animate={{ y: "0%" }}
-                        transition={{
-                          duration: 1.0,
-                          delay: 0.18 + i * 0.1,
-                          ease: EASE,
-                        }}
+                        transition={{ duration: 1.05, delay: 0.15 + i * 0.1, ease: EASE }}
                       >
                         {word}
                       </motion.span>
@@ -554,61 +507,70 @@ export default function HomePage() {
                   ))}
                 </h1>
 
-                {/* Subtitle */}
+                {/* Tagline */}
                 <motion.p
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, delay: 0.55, ease: EASE }}
-                  className="mt-8 max-w-[520px] text-[15px] leading-[1.7] text-muted-foreground font-medium md:text-base lg:text-[16px]"
+                  transition={{ duration: 0.9, delay: 0.6, ease: EASE }}
+                  className="mt-8 max-w-[500px] text-[15px] leading-[1.75] text-muted-foreground font-medium lg:text-[15.5px]"
                 >
                   {heroSubtitle}
                 </motion.p>
 
                 {/* CTAs */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.72, ease: EASE }}
-                  className="mt-10 flex flex-wrap items-center gap-4"
+                  transition={{ duration: 0.8, delay: 0.76, ease: EASE }}
+                  className="mt-10 flex flex-wrap items-center gap-3"
                 >
+                  {/* Primary CTA */}
                   <Link
                     to="/resources"
-                    className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_32px_rgba(232,253,82,0.35)] mono uppercase"
+                    className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(216,255,68,0.30)] mono uppercase"
                   >
                     EXPLORE DIRECTORY
                     <ArrowDownRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                   </Link>
+
+                  {/* Secondary CTA — glass */}
                   <a
                     href="#work"
-                    className="inline-flex items-center gap-2 rounded-full border border-border/60 px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary mono uppercase"
+                    className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-foreground/80 transition-all duration-300 hover:text-foreground mono uppercase glass-sm"
                   >
                     SELECTED WORK
-                    <ArrowUpRight size={14} />
+                    <ArrowUpRight size={13} />
                   </a>
                 </motion.div>
 
-                {/* Stats strip */}
+                {/* Glass stats grid */}
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 1.0, ease: EASE }}
-                  className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/40 bg-border/20 sm:grid-cols-4"
+                  className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-4"
                 >
-                  {stats.map((s) => (
-                    <div key={s.label} className="bg-background/60 px-5 py-4 backdrop-blur-sm">
+                  {stats.map((s, i) => (
+                    <motion.div
+                      key={s.label}
+                      className="glass-stat rounded-xl px-4 py-4"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 1.05 + i * 0.07, ease: EASE }}
+                    >
                       <p className="text-2xl font-bold tracking-[-0.04em] text-primary mono">{s.value}</p>
-                      <p className="mt-1 text-[9px] font-bold uppercase tracking-[.14em] text-muted-foreground/70 mono">{s.label}</p>
-                    </div>
+                      <p className="mt-1 text-[9px] font-bold uppercase tracking-[.14em] text-muted-foreground/60 mono">{s.label}</p>
+                    </motion.div>
                   ))}
                 </motion.div>
               </div>
 
               {/* Right — SVG logo focal point */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.88 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.1, delay: 0.25, ease: EASE }}
-                className="flex items-center justify-center lg:col-span-6 xl:col-span-5 lg:h-[calc(100vh-5rem)] lg:max-h-[800px]"
+                initial={{ opacity: 0, scale: 0.85, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
+                className="flex items-center justify-center lg:col-span-6 xl:col-span-5 lg:h-[calc(100vh-5rem)] lg:max-h-[820px]"
               >
                 <Suspense fallback={<div style={{ height: 400 }} aria-hidden="true" />}>
                   <HeroPortrait />
@@ -618,17 +580,17 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Bottom fade to next section */}
+          {/* Bottom fade */}
           <div
-            className="pointer-events-none absolute bottom-0 inset-x-0 h-32"
-            style={{
-              background: "linear-gradient(to bottom, transparent, var(--background, #09090b))",
-            }}
+            className="pointer-events-none absolute bottom-0 inset-x-0 h-40"
+            style={{ background: "linear-gradient(to bottom, transparent, #101010)" }}
           />
         </section>
       )}
 
+
       {/* ── 2. Featured News ── */}
+
       {CONFIG_SHOW_NEWS && (
         <section id="news" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
           <div className="mx-auto max-w-[1600px]">

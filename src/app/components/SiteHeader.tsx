@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
@@ -172,11 +172,20 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.target)}
-                  className={`text-[10px] font-bold tracking-[.18em] mono uppercase transition-colors duration-300 hover:text-primary ${
-                    isActive ? "text-primary font-bold" : "text-foreground/90 font-semibold"
+                  className={`relative text-[10px] font-bold tracking-[.18em] mono uppercase transition-all duration-300 hover:text-primary px-2 py-1 ${
+                    isActive
+                      ? "text-primary nav-active-glow"
+                      : "text-foreground/70 hover:text-foreground"
                   }`}
                 >
                   {item.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-indicator"
+                      className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 h-[1.5px] w-3/4 rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
                 </button>
               );
             })}

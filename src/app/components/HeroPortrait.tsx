@@ -1,52 +1,58 @@
 /**
- * HeroPortrait — Apple-inspired SVG hero visual
+ * HeroPortrait — Premium SVG focal centrepiece
  *
- * Features:
- * - SVG logo as focal centrepiece
- * - Soft floating animation (CSS keyframe, GPU-only)
- * - Mouse-parallax via framer-motion (max 8px, desktop only)
- * - Ambient radial aurora glow behind the logo
- * - prefers-reduced-motion respected
- * - No Three.js, no Canvas, no WebGL, no broken .map() calls
+ * - Animated SVG gradient shift (filter hue-rotate loop)
+ * - Gentle floating 7px / 11s ease-in-out loop
+ * - Mouse parallax max 5px, spring-smoothed, desktop only
+ * - Aurora-reactive multi-layer glow behind the logo
+ * - Hover: scale 1.015 only
+ * - prefers-reduced-motion: all animations disabled
+ * - Zero Three.js / Canvas / WebGL
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import ravanLogo from "@/assets/ravan_logo.svg";
 
-// ─── constants ───────────────────────────────────────────────────────────────
-const MAX_PARALLAX = 8; // px
-const SPRING_CONFIG = { stiffness: 120, damping: 22, mass: 0.6 };
+const MAX_PX = 5;
+const SPRING = { stiffness: 80, damping: 20, mass: 0.8 };
 
-// ─── component ───────────────────────────────────────────────────────────────
 export default function HeroPortrait() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [prefersReduced, setPrefersReduced] = useState(false);
+  const [reduced, setReduced] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  // Detect reduced-motion preference once on mount
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReduced(mq.matches);
-    const handler = () => setPrefersReduced(mq.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    setReduced(mq.matches);
+    const mql = () => setReduced(mq.matches);
+    mq.addEventListener("change", mql);
+
+    const sizeMq = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(sizeMq.matches);
+    const sizeHandler = () => setIsDesktop(sizeMq.matches);
+    sizeMq.addEventListener("change", sizeHandler);
+
+    return () => {
+      mq.removeEventListener("change", mql);
+      sizeMq.removeEventListener("change", sizeHandler);
+    };
   }, []);
 
-  // Raw mouse position (normalised -1 → 1)
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
-
-  // Smooth spring followers
-  const springX = useSpring(rawX, SPRING_CONFIG);
-  const springY = useSpring(rawY, SPRING_CONFIG);
+  const springX = useSpring(rawX, SPRING);
+  const springY = useSpring(rawY, SPRING);
+  const logoX = useTransform(springX, (v) => v * MAX_PX);
+  const logoY = useTransform(springY, (v) => v * MAX_PX);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (prefersReduced || !containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      rawX.set(((e.clientX - rect.left) / rect.width - 0.5) * 2);
-      rawY.set(((e.clientY - rect.top) / rect.height - 0.5) * 2);
+      if (reduced || !isDesktop || !containerRef.current) return;
+      const r = containerRef.current.getBoundingClientRect();
+      rawX.set((e.clientX - r.left) / r.width * 2 - 1);
+      rawY.set((e.clientY - r.top) / r.height * 2 - 1);
     },
-    [prefersReduced, rawX, rawY]
+    [reduced, isDesktop, rawX, rawY]
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -62,70 +68,78 @@ export default function HeroPortrait() {
       onMouseLeave={handleMouseLeave}
       aria-hidden="true"
     >
-      {/* Ambient aurora glow — behind the logo */}
+      {/* Layer 1 — deep aurora core glow (slowest pulse) */}
       <motion.div
-        className="hero-glow pointer-events-none absolute inset-0"
-        animate={
-          prefersReduced
-            ? {}
-            : {
-                opacity: [0.55, 0.85, 0.55],
-                scale: [1, 1.08, 1],
-              }
-        }
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute"
         style={{
+          width: "90%",
+          height: "90%",
           background:
-            "radial-gradient(ellipse 65% 65% at 50% 50%, rgba(79,102,182,0.28) 0%, rgba(97,197,173,0.18) 50%, transparent 80%)",
-          filter: "blur(28px)",
+            "radial-gradient(ellipse 70% 70% at 50% 50%, rgba(16,185,129,0.18) 0%, rgba(6,182,212,0.12) 35%, rgba(79,102,182,0.10) 60%, transparent 80%)",
+          filter: "blur(48px)",
         }}
+        animate={reduced ? {} : { opacity: [0.5, 0.9, 0.5], scale: [1, 1.12, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Floating + parallax logo wrapper */}
+      {/* Layer 2 — violet echo glow (offset timing) */}
+      <motion.div
+        className="pointer-events-none absolute"
+        style={{
+          width: "70%",
+          height: "70%",
+          background:
+            "radial-gradient(ellipse 60% 55% at 52% 48%, rgba(139,92,246,0.14) 0%, rgba(59,130,246,0.08) 50%, transparent 75%)",
+          filter: "blur(36px)",
+        }}
+        animate={reduced ? {} : { opacity: [0.3, 0.65, 0.3], scale: [1.05, 0.95, 1.05] }}
+        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+      />
+
+      {/* Floating + parallax wrapper */}
       <motion.div
         className="relative z-10"
-        style={
-          prefersReduced
-            ? {}
-            : {
-                x: springX,
-                y: springY,
-                translateX: `calc(${MAX_PARALLAX}px * var(--px, 0))`,
-                translateY: `calc(${MAX_PARALLAX}px * var(--py, 0))`,
-              }
-        }
-        whileHover={prefersReduced ? {} : { scale: 1.03 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        style={reduced ? {} : { x: logoX, y: logoY }}
+        whileHover={reduced ? {} : { scale: 1.015 }}
+        transition={{ type: "spring", stiffness: 200, damping: 30 }}
       >
         {/* Floating keyframe wrapper */}
-        <div
-          style={
-            prefersReduced
-              ? {}
-              : { animation: "heroFloat 7s ease-in-out infinite" }
-          }
-        >
-          <img
-            src={ravanLogo}
-            alt="Ravan Mammadov logo"
-            className="h-auto w-full max-w-[340px] select-none drop-shadow-2xl lg:max-w-[420px]"
-            draggable={false}
-          />
+        <div className={reduced ? "" : "hero-logo-float"}>
+          {/* Gradient animated wrapper for the SVG */}
+          <div className={`relative ${reduced ? "" : "hero-logo-hue"}`}>
+            <img
+              src={ravanLogo}
+              alt="Ravan Mammadov"
+              className="hero-logo-img h-auto w-full max-w-[300px] select-none lg:max-w-[380px] xl:max-w-[440px]"
+              draggable={false}
+            />
+            {/* Glass shine overlay on the logo */}
+            {!reduced && (
+              <div
+                className="pointer-events-none absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(255,255,255,0.03) 100%)",
+                  mixBlendMode: "screen",
+                }}
+              />
+            )}
+          </div>
         </div>
       </motion.div>
 
-      {/* Subtle secondary glow echo */}
+      {/* Layer 3 — bottom teal ground glow */}
       <motion.div
         className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2"
         style={{
-          width: "70%",
-          height: "40%",
+          width: "65%",
+          height: "35%",
           background:
-            "radial-gradient(ellipse at 50% 100%, rgba(152,79,159,0.18) 0%, transparent 70%)",
-          filter: "blur(32px)",
+            "radial-gradient(ellipse at 50% 100%, rgba(16,185,129,0.15) 0%, rgba(6,182,212,0.08) 40%, transparent 70%)",
+          filter: "blur(40px)",
         }}
-        animate={prefersReduced ? {} : { opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
       />
     </div>
   );

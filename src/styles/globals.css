@@ -120,3 +120,131 @@ html {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   PREMIUM AURORA + GLASSMORPHISM SYSTEM
+   GPU-friendly transforms only. Respects prefers-reduced-motion.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Aurora blob animations ─── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes aurora1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    30%      { transform: translate(5%,3%) scale(1.07); }
+    65%      { transform: translate(-4%,2%) scale(0.96); }
+  }
+  @keyframes aurora2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    40%      { transform: translate(-6%,-4%) scale(1.1); }
+    72%      { transform: translate(4%,3%) scale(0.95); }
+  }
+  @keyframes aurora3 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(4%,-5%) scale(1.06); }
+  }
+  @keyframes aurora4 {
+    0%,100% { transform: translate(0,0) scale(1); opacity: 0.5; }
+    45%      { transform: translate(-3%,5%) scale(1.08); opacity: 0.85; }
+  }
+
+  /* ─── Hero logo float ─── */
+  @keyframes heroLogoFloat {
+    0%,100% { transform: translateY(0px); }
+    50%      { transform: translateY(-7px); }
+  }
+
+  /* ─── SVG gradient hue shift (very slow, subtle) ─── */
+  @keyframes heroLogoHue {
+    0%,100% { filter: hue-rotate(0deg) saturate(1) brightness(1); }
+    50%      { filter: hue-rotate(20deg) saturate(1.08) brightness(1.04); }
+  }
+
+  /* ─── Hero word clip reveal ─── */
+  @keyframes wordReveal {
+    from { transform: translateY(110%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  /* ─── Soft pulse for badge dot ─── */
+  @keyframes badgePulse {
+    0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(216,255,68,0.5); }
+    50%      { opacity: 0.7; box-shadow: 0 0 0 5px rgba(216,255,68,0); }
+  }
+
+  .aurora-blob-1 { animation: aurora1 26s ease-in-out infinite; }
+  .aurora-blob-2 { animation: aurora2 34s ease-in-out infinite; }
+  .aurora-blob-3 { animation: aurora3 20s ease-in-out infinite; }
+  .aurora-blob-4 { animation: aurora4 18s ease-in-out infinite; }
+  .hero-logo-float { animation: heroLogoFloat 11s ease-in-out infinite; }
+  .hero-logo-hue   { animation: heroLogoHue 14s ease-in-out infinite; }
+  .badge-pulse-dot { animation: badgePulse 2.4s ease-in-out infinite; }
+}
+
+/* ─── Glassmorphism system ─── */
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.06) inset,
+    0 16px 48px rgba(0,0,0,0.28),
+    0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.glass-sm {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.05) inset,
+    0 8px 24px rgba(0,0,0,0.22);
+}
+
+.glass-badge {
+  background: rgba(216, 255, 68, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(216, 255, 68, 0.20);
+  box-shadow:
+    0 1px 0 0 rgba(216,255,68,0.1) inset,
+    0 4px 16px rgba(0,0,0,0.20);
+}
+
+.glass-stat {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.05) inset,
+    0 4px 20px rgba(0,0,0,0.24);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-stat:hover {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ─── Nav active aurora glow ─── */
+.nav-active-glow {
+  position: relative;
+}
+.nav-active-glow::after {
+  content: '';
+  position: absolute;
+  inset: -4px -8px;
+  border-radius: 8px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(216,255,68,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ─── Hero logo image ─── */
+.hero-logo-img {
+  filter: drop-shadow(0 24px 48px rgba(0,0,0,0.4));
+  will-change: transform;
+}
+
