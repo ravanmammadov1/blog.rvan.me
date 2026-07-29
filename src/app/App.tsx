@@ -26,21 +26,6 @@ import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsent
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import CookiePreferencesModal from "./components/CookiePreferencesModal";
 import { GlobalNoiseBackdrop } from "@/components/ui/noise-background";
-import { motion, useScroll, useSpring } from "framer-motion";
-
-function LeftScrollIndicator() {
-  const { scrollYProgress } = useScroll();
-  const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
-  return (
-    <div className="fixed left-0 top-0 bottom-0 z-[60] w-[2px] bg-white/5 pointer-events-none" aria-hidden="true">
-      <motion.div
-        className="w-full bg-primary origin-top h-full"
-        style={{ scaleY }}
-      />
-    </div>
-  );
-}
 
 function AppContent() {
   useClarity();
@@ -49,7 +34,6 @@ function AppContent() {
   return (
     <>
       <GlobalNoiseBackdrop />
-      <LeftScrollIndicator />
       <Suspense fallback={<div />}> 
         <Routes>
           <Route path="/" element={<HomePage />} />

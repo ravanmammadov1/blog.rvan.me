@@ -310,61 +310,13 @@ export default function HomePage() {
           className="relative isolate min-h-screen overflow-hidden flex items-center"
           style={{ paddingTop: "5rem" }}
         >
-          {/* ══ Aurora background — 4 blob layers ══ */}
-          <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-            <div className="absolute inset-0 bg-background" />
-
-            {/* Blob 1 — emerald / teal, top-left */}
+          {/* ══ Premium Deep-Black Hero Background (Apple & Vercel Aesthetic) ══ */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[#050506] transform-gpu" aria-hidden="true">
+            {/* Soft, subtle radial aura behind the headline */}
             <div
-              className="aurora-blob-1 absolute"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full opacity-30 transform-gpu"
               style={{
-                top: "-15%", left: "-10%",
-                width: "60%", height: "70%",
-                background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.16) 0%, rgba(6,182,212,0.09) 45%, transparent 72%)",
-                filter: "blur(64px)",
-              }}
-            />
-
-            {/* Blob 2 — blue / indigo, top-right */}
-            <div
-              className="aurora-blob-2 absolute"
-              style={{
-                top: "0%", right: "-12%",
-                width: "55%", height: "65%",
-                background: "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.14) 0%, rgba(79,70,229,0.09) 50%, transparent 78%)",
-                filter: "blur(72px)",
-              }}
-            />
-
-            {/* Blob 3 — soft violet, centre */}
-            <div
-              className="aurora-blob-3 absolute"
-              style={{
-                top: "25%", left: "25%",
-                width: "50%", height: "50%",
-                background: "radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.10) 0%, rgba(16,185,129,0.06) 55%, transparent 80%)",
-                filter: "blur(80px)",
-              }}
-            />
-
-            {/* Blob 4 — teal ground, bottom */}
-            <div
-              className="aurora-blob-4 absolute"
-              style={{
-                bottom: "-5%", left: "20%",
-                width: "60%", height: "40%",
-                background: "radial-gradient(ellipse at 50% 90%, rgba(6,182,212,0.12) 0%, rgba(16,185,129,0.07) 50%, transparent 75%)",
-                filter: "blur(56px)",
-              }}
-            />
-
-            {/* Micro grid overlay */}
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)",
-                backgroundSize: "72px 72px",
+                background: "radial-gradient(ellipse at center, rgba(16,185,129,0.12) 0%, rgba(6,182,212,0.06) 45%, transparent 70%)",
               }}
             />
           </div>
