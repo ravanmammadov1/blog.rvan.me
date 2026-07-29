@@ -25,6 +25,7 @@ import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import CookiePreferencesModal from "./components/CookiePreferencesModal";
+import { GlobalNoiseBackdrop } from "@/components/ui/noise-background";
 
 function AppContent() {
   useClarity();
@@ -32,6 +33,7 @@ function AppContent() {
 
   return (
     <>
+      <GlobalNoiseBackdrop />
       <Suspense fallback={<div />}> 
         <Routes>
           <Route path="/" element={<HomePage />} />
