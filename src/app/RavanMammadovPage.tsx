@@ -91,6 +91,7 @@ export default function RavanMammadovPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
@@ -107,6 +108,26 @@ export default function RavanMammadovPage() {
     fetchTestimonials().then((data) => {
       if (data) setTestimonials(data);
     });
+
+    // Fetch latest 6 projects (Behance / CMS)
+    client.fetch(`
+      *[_type == "projects"] | order(order asc, _createdAt desc)[0...6]{
+        _id,
+        title,
+        "slug": slug.current,
+        client,
+        description,
+        type,
+        tags,
+        behanceCoverUrl,
+        coverImage,
+        liveUrl,
+        year,
+        accent
+      }
+    `).then((data) => {
+      setProjects(data || []);
+    }).catch(console.error);
   }, []);
 
   const personSchema = {
@@ -400,6 +421,111 @@ export default function RavanMammadovPage() {
           </div>
         </div>
       </section>
+
+      {/* Selected Work (Behance Integration) */}
+      {projects.length > 0 && (
+        <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+          <div className="absolute inset-0 border-t border-white/5" />
+          <div className="mx-auto max-w-[1600px] relative">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <p className="eyebrow text-muted-foreground">Portfolio Showcase</p>
+                <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+                  Selected Work
+                </h2>
+              </motion.div>
+
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={0.1}
+              >
+                <a
+                  href="https://www.behance.net/mammadovravan"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2.5 rounded-full border border-primary/50 bg-primary/10 px-6 py-3 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                >
+                  VIEW FULL BEHANCE
+                  <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
+              </motion.div>
+            </div>
+
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project, idx) => {
+                const coverSrc = project.behanceCoverUrl || (project.coverImage ? urlFor(project.coverImage)?.url() : null);
+
+                return (
+                  <motion.article
+                    key={project._id || idx}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.1 }}
+                    custom={idx * 0.08}
+                    className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 flex flex-col justify-between relative overflow-hidden"
+                  >
+                    {/* Hover Glow */}
+                    <div 
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                      style={{
+                        background: "radial-gradient(circle at top right, rgba(16,185,129,0.06) 0%, transparent 60%)",
+                      }}
+                    />
+
+                    <div className="relative z-10 flex-1">
+                      {coverSrc && (
+                        <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background border border-white/5 relative">
+                          <img
+                            src={coverSrc}
+                            alt={project.title}
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
+                        <span className="text-primary">{project.type || "Behance Case Study"}</span>
+                        <span>{project.year || "2026"}</span>
+                      </div>
+
+                      <h3 className="text-lg font-semibold leading-snug text-foreground group-hover:text-primary transition-colors mb-3 line-clamp-2">
+                        {project.title}
+                      </h3>
+
+                      <p className="text-xs leading-relaxed text-muted-foreground/80 line-clamp-3 mb-6 font-medium">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-foreground mono uppercase mt-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tags?.slice(0, 2).map((tag: string) => (
+                          <span key={tag} className="text-[9px] font-semibold text-muted-foreground/60 border border-white/5 bg-white/5 rounded-full px-2 py-0.5">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <a
+                        href={project.liveUrl || `https://www.behance.net/mammadovravan`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
+                      >
+                        VIEW PROJECT <ArrowUpRight size={12} />
+                      </a>
+                    </div>
+                  </motion.article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQ Section */}
       <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
