@@ -7,11 +7,21 @@ import { format } from "date-fns";
 import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
 import { NewsItem, SiteSettings } from "../types/cms";
+import { aggregateAllResources, NormalizedResource } from "../lib/rssAggregator";
+import { Rss, ExternalLink } from "lucide-react";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
+function formatPubDate(isoStr: string): string {
+  try {
+    const d = new Date(isoStr);
+    return format(d, "MMM d, yyyy");
+  } catch (e) {
+    return "Recently";
+  }
+}
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -54,6 +64,7 @@ const fallbackNewsList: NewsItem[] = [
 export default function NewsArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [designNewsFeeds, setDesignNewsFeeds] = useState<NormalizedResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,6 +87,16 @@ export default function NewsArchive() {
         setNewsList(fallbackNewsList);
       })
       .finally(() => setLoading(false));
+
+    // Load live RSS design news feeds
+    aggregateAllResources([])
+      .then((items) => {
+        const designNews = items.filter(
+          (i) => i.category === "latestDesignNews" || i.category === "techNews" || i.category === "aiNews"
+        );
+        setDesignNewsFeeds(designNews);
+      })
+      .catch((err) => console.error("Error fetching RSS news feeds:", err));
   }, []);
 
   const categories = useMemo(() => {
@@ -321,6 +342,65 @@ export default function NewsArchive() {
           )}
         </div>
       </section>
+
+      {/* Live Design News Section (RSS Aggregation) */}
+      {designNewsFeeds.length > 0 && (
+        <section className="px-6 pb-28 md:px-10 relative z-10 border-t border-white/10 pt-16">
+          <div className="mx-auto max-w-[1600px]">
+            <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <p className="eyebrow text-primary mb-2 flex items-center gap-2">
+                  <Rss size={14} /> LIVE RSS AGGREGATION
+                </p>
+                <h2 className="text-3xl font-semibold tracking-tight md:text-5xl">
+                  Design News & Articles
+                </h2>
+              </div>
+              <p className="text-xs text-muted-foreground mono max-w-md">
+                Real-time articles aggregated from Smashing Magazine, UX Collective, Abduzeedo, and trusted industry publishers.
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {designNewsFeeds.slice(0, 9).map((item, idx) => (
+                <article
+                  key={item.id || idx}
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 flex flex-col justify-between relative overflow-hidden"
+                >
+                  <div className="relative z-10 flex-1">
+                    <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
+                      <span className="text-primary flex items-center gap-1">
+                        <Rss size={10} /> {item.sourceName}
+                      </span>
+                      <span>{formatPubDate(item.publishedAt)}</span>
+                    </div>
+
+                    <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors mb-3 line-clamp-2">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-xs leading-relaxed text-muted-foreground/80 line-clamp-3 mb-6 font-medium">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-foreground mono uppercase">
+                    <span className="text-[10px] text-muted-foreground">OPEN ACCESS</span>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
+                    >
+                      READ ARTICLE <ExternalLink size={11} />
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />

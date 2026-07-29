@@ -28,7 +28,6 @@ const fadeUp = {
 
 export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
   all: { label: "All Resources", icon: "⚡" },
-  latestDesignNews: { label: "Latest Design News", icon: "📰" },
   remoteDesignJobs: { label: "Remote Design Jobs", icon: "🎨" },
   remoteMarketingJobs: { label: "Remote Marketing Jobs", icon: "📈" },
   freeDesignAssets: { label: "Free Design Assets", icon: "🎁" },
