@@ -27,23 +27,16 @@ const fadeUp = {
 };
 
 export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
-  all: { label: "All Opportunities", icon: "⚡" },
-  scholarships: { label: "Scholarships", icon: "🎓" },
-  remoteJobs: { label: "Remote Jobs", icon: "💼" },
-  juniorJobs: { label: "Junior Jobs", icon: "🧑‍💻" },
-  designJobs: { label: "Design Jobs", icon: "🎨" },
-  marketingJobs: { label: "Marketing Jobs", icon: "📈" },
-  aiNews: { label: "AI News", icon: "🤖" },
-  techNews: { label: "Tech News", icon: "📰" },
-  startupNews: { label: "Startup News", icon: "🚀" },
-  freeCourses: { label: "Free Courses", icon: "📚" },
-  tutorials: { label: "Tutorials", icon: "🎥" },
-  designResources: { label: "Design Resources", icon: "🛠" },
-  freeAssets: { label: "Free Assets", icon: "🎁" },
-  grants: { label: "Grants", icon: "💰" },
-  competitions: { label: "Competitions", icon: "🏆" },
-  conferences: { label: "Conferences", icon: "🌍" },
-  events: { label: "Events", icon: "📅" },
+  all: { label: "All Resources", icon: "⚡" },
+  latestDesignNews: { label: "Latest Design News", icon: "📰" },
+  remoteDesignJobs: { label: "Remote Design Jobs", icon: "🎨" },
+  remoteMarketingJobs: { label: "Remote Marketing Jobs", icon: "📈" },
+  freeDesignAssets: { label: "Free Design Assets", icon: "🎁" },
+  freeMockups: { label: "Free Mockups", icon: "📐" },
+  freeFonts: { label: "Free Fonts", icon: "🔤" },
+  freeIcons: { label: "Free Icons", icon: "⭐" },
+  freeUIKits: { label: "Free UI Kits", icon: "📱" },
+  designPodcasts: { label: "Design Podcasts", icon: "🎙️" },
 };
 
 function formatPubDate(isoStr: string): string {
