@@ -21,14 +21,12 @@ const TermsPage = lazy(() => import("./TermsPage"));
 const ResourcesArchive = lazy(() => import("./ResourcesArchive"));
 const ResourceDetail = lazy(() => import("./ResourceDetail"));
 
-import { useGA4Tracker } from "./hooks/useGA4Tracker";
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import CookiePreferencesModal from "./components/CookiePreferencesModal";
 
 function AppContent() {
-  useGA4Tracker();
   useClarity();
   const { consent } = useCookieConsent();
 

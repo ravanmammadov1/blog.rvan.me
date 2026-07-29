@@ -37,18 +37,25 @@ export default function ToolsSection() {
   }, []);
 
   return (
-    <section id="tools" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
-      <div className="mx-auto max-w-[1600px]">
+    <section id="tools" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
+      {/* Subtle section aurora background */}
+      <div 
+        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
+        style={{
+          background: "radial-gradient(circle at 10% 80%, rgba(232,253,82,0.06) 0%, rgba(245,158,11,0.04) 50%, transparent 70%)",
+        }}
+      />
+      <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-border pb-6"
+          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
             <Eyebrow className="text-muted-foreground">05 / Designer Toolkit</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               Tools of the trade.
             </h2>
           </div>
@@ -62,7 +69,7 @@ export default function ToolsSection() {
         </motion.div>
 
         {toolsList.length === 0 ? (
-          <div className="h-64 rounded-xl border border-border bg-surface flex items-center justify-center text-muted-foreground text-sm">
+          <div className="h-64 rounded-xl border border-white/10 bg-white/5 glass flex items-center justify-center text-muted-foreground text-sm">
             No tools available.
           </div>
         ) : (
@@ -75,40 +82,51 @@ export default function ToolsSection() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 custom={index * 0.08}
-                className="group rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50 hover:bg-surface/80 flex flex-col"
+                className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 flex flex-col relative overflow-hidden"
               >
-                <div className="flex items-center gap-4 mb-4">
-                  {tool.icon && (
-                    <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-background flex items-center justify-center text-2xl">
-                      {tool.icon}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                      {tool.name}
-                    </h3>
-                    {tool.category && (
-                      <span className="text-[10px] font-bold tracking-wider text-primary mono uppercase mt-1 block">
-                        {tool.category}
-                      </span>
+                {/* Internal Glow */}
+                <div 
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                  style={{
+                    background: "radial-gradient(circle at top right, rgba(232,253,82,0.06) 0%, transparent 60%)",
+                  }}
+                />
+                <div className="relative z-10 flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    {tool.icon && (
+                      <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-background border border-white/5 flex items-center justify-center text-2xl">
+                        {tool.icon}
+                      </div>
                     )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                        {tool.name}
+                      </h3>
+                      {tool.category && (
+                        <span className="text-[10px] font-bold tracking-wider text-primary mono uppercase mt-1 block">
+                          {tool.category}
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  {tool.description && (
+                    <p className="text-xs leading-relaxed text-muted-foreground/80 mb-4 flex-1 line-clamp-3 font-medium">
+                      {tool.description}
+                    </p>
+                  )}
                 </div>
-                {tool.description && (
-                  <p className="text-xs leading-relaxed text-muted-foreground mb-4 flex-1 line-clamp-3">
-                    {tool.description}
-                  </p>
-                )}
                 {tool.link && (
-                  <a
-                    href={tool.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[.14em] text-primary mono uppercase hover:underline"
-                  >
-                    <span>VIEW TOOL</span>
-                    <ArrowUpRight size={12} className="transition-transform group-hover:translate-x-0.5" />
-                  </a>
+                  <div className="relative z-10 border-t border-white/10 pt-4 mt-2">
+                    <a
+                      href={tool.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[.14em] text-primary mono uppercase hover:text-white transition-colors duration-300"
+                    >
+                      <span>VIEW TOOL</span>
+                      <ArrowUpRight size={12} />
+                    </a>
+                  </div>
                 )}
               </motion.article>
             ))}
@@ -118,7 +136,7 @@ export default function ToolsSection() {
         <div className="mt-16 flex justify-center md:hidden">
           <Link
             to="/tools"
-            className="group inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-3 text-xs font-bold tracking-[.14em] text-foreground transition-colors hover:border-primary mono"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold tracking-[.14em] text-foreground transition-all duration-300 hover:bg-white/10 hover:border-white/20 mono"
           >
             VIEW ALL TOOLS
             <ArrowUpRight size={14} />

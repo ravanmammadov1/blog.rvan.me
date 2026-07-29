@@ -79,8 +79,16 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
       custom={index * 0.05}
-      className="group relative flex flex-col rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/5"
+      className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 relative overflow-hidden"
     >
+      {/* Internal Glow */}
+      <div 
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+        style={{
+          background: "radial-gradient(circle at top right, rgba(6,182,212,0.05) 0%, transparent 60%)",
+        }}
+      />
+      <div className="relative z-10 flex-1 flex flex-col">
       {/* Badges row */}
       {resource.badges && resource.badges.length > 0 && (
         <div className="absolute top-4 right-4 flex flex-wrap gap-1 justify-end">
@@ -102,10 +110,10 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
             <img
               src={logoUrl}
               alt={resource.title}
-              className="h-11 w-11 rounded-xl object-contain border border-border bg-background p-1.5"
+              className="h-11 w-11 rounded-xl object-contain border border-white/10 bg-background p-1.5"
             />
           ) : (
-            <div className="h-11 w-11 rounded-xl border border-border bg-background flex items-center justify-center text-xl">
+            <div className="h-11 w-11 rounded-xl border border-white/10 bg-background flex items-center justify-center text-xl">
               {typeIcon}
             </div>
           )}
@@ -120,13 +128,13 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
 
       {/* Benefit summary callout */}
       {resource.benefitSummary && (
-        <div className="mb-3 rounded-lg bg-primary/8 border border-primary/15 px-3 py-2">
+        <div className="mb-3 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2">
           <p className="text-xs font-bold text-primary">{resource.benefitSummary}</p>
         </div>
       )}
 
       {/* Description */}
-      <p className="text-xs leading-relaxed text-muted-foreground line-clamp-3 mb-4 flex-1">
+      <p className="text-[13px] leading-relaxed text-muted-foreground/80 line-clamp-3 mb-4 flex-1 font-medium">
         {resource.description}
       </p>
 
@@ -136,7 +144,7 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
           <VerifyIcon size={11} />
           {verification.label}
         </span>
-        <span className="w-px h-3 bg-border" />
+        <span className="w-px h-3 bg-white/10" />
         <span className="flex items-center gap-1">
           {resource.isGlobal ? (
             <><Globe size={11} /> Global</>
@@ -147,7 +155,7 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
         {/* Difficulty for roadmaps */}
         {resource.difficultyLevel && resource.difficultyLevel !== "all" && (
           <>
-            <span className="w-px h-3 bg-border" />
+            <span className="w-px h-3 bg-white/10" />
             <span className="capitalize">{resource.difficultyLevel}</span>
           </>
         )}
@@ -159,7 +167,7 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
           {resource.tags.slice(0, 4).map((tag) => (
             <span
               key={tag._id}
-              className="rounded-full border border-border bg-background px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+              className="rounded-full border border-white/10 bg-background/50 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground/80"
             >
               {tag.name}
             </span>
@@ -168,10 +176,11 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
       )}
 
       {/* CTA */}
-      <div className="flex items-center justify-between border-t border-border/50 pt-4">
+      </div>
+      <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 mt-auto">
         <Link
           to={`/resources/${slug}`}
-          className="text-[10px] font-bold tracking-widest text-primary mono uppercase hover:underline flex items-center gap-1"
+          className="text-[10px] font-bold tracking-widest text-primary mono uppercase hover:text-white transition-colors duration-300 flex items-center gap-1"
         >
           VIEW RESOURCE <ArrowUpRight size={12} />
         </Link>
@@ -179,13 +188,7 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
           href={resource.link}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => {
-            if (resource.analyticsId) {
-              // Analytics hook point — replace with your tracker
-              console.debug("[resource-click]", resource.analyticsId);
-            }
-          }}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground transition-all hover:border-primary hover:text-primary"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 glass-sm"
         >
           <ExternalLink size={10} />
           ACCESS
@@ -286,10 +289,46 @@ export default function ResourcesArchive() {
         }}
       />
 
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — cyan / blue, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.04) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — violet / blue, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(139,92,246,0.05) 0%, rgba(59,130,246,0.03) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero */}
-      <section className="px-6 pt-20 pb-10 md:px-10 md:pt-28">
+      <section className="px-6 pt-20 pb-10 md:px-10 md:pt-28 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
             <p className="eyebrow text-primary mb-4">CURATED KNOWLEDGE PLATFORM</p>
@@ -303,7 +342,7 @@ export default function ResourcesArchive() {
 
           {/* Stats bar */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-border pt-8"
+            className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-8"
           >
             {[
               { label: "Resources", value: resources.length.toString() },
@@ -312,7 +351,7 @@ export default function ResourcesArchive() {
             ].map(({ label, value }) => (
               <div key={label} className="flex items-baseline gap-2">
                 <span className="text-3xl font-semibold tracking-tight text-foreground">{value}</span>
-                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono">{label}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mono">{label}</span>
               </div>
             ))}
           </motion.div>
@@ -320,22 +359,22 @@ export default function ResourcesArchive() {
       </section>
 
       {/* Search + Filter Bar */}
-      <section className="sticky top-[64px] z-20 bg-background/95 backdrop-blur-sm border-b border-border px-6 py-4 md:px-10">
+      <section className="sticky top-[64px] z-20 bg-background/80 backdrop-blur-md border-b border-white/10 px-6 py-4 md:px-10">
         <div className="mx-auto max-w-[1600px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Search */}
           <div className="relative w-full md:w-96">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
             <input
               type="text"
               placeholder="Search resources, companies, tags…"
               value={searchQuery}
               onChange={(e) => setParam("q", e.target.value)}
-              className="w-full rounded-full border border-border bg-surface pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
+              className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
             />
             {searchQuery && (
               <button
                 onClick={() => setParam("q", "")}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X size={13} />
               </button>
@@ -346,7 +385,7 @@ export default function ResourcesArchive() {
             {/* Mobile filter toggle */}
             <button
               onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="md:hidden inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-xs font-bold text-foreground tracking-wide"
+              className="md:hidden inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-foreground tracking-wide glass-sm hover:bg-white/10 transition-colors"
             >
               <SlidersHorizontal size={13} />
               Filters
@@ -360,7 +399,7 @@ export default function ResourcesArchive() {
                 <select
                   value={activeType}
                   onChange={(e) => setParam("type", e.target.value)}
-                  className="appearance-none rounded-full border border-border bg-surface pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                  className="appearance-none rounded-full border border-white/10 bg-white/5 pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary/50 focus:outline-none cursor-pointer glass-sm hover:bg-white/10 transition-all duration-300"
                 >
                   <option value="all">All Types</option>
                   {resourceTypes.map((type) => (
@@ -376,7 +415,7 @@ export default function ResourcesArchive() {
                   <select
                     value={activeCat}
                     onChange={(e) => setParam("category", e.target.value)}
-                    className="appearance-none rounded-full border border-border bg-surface pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                    className="appearance-none rounded-full border border-white/10 bg-white/5 pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary/50 focus:outline-none cursor-pointer glass-sm hover:bg-white/10 transition-all duration-300"
                   >
                     <option value="all">All Categories</option>
                     {categories.map((cat) => (
@@ -393,7 +432,7 @@ export default function ResourcesArchive() {
                   <select
                     value={activeCountry}
                     onChange={(e) => setParam("country", e.target.value)}
-                    className="appearance-none rounded-full border border-border bg-surface pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                    className="appearance-none rounded-full border border-white/10 bg-white/5 pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary/50 focus:outline-none cursor-pointer glass-sm hover:bg-white/10 transition-all duration-300"
                   >
                     <option value="all">All Countries</option>
                     <option value="global">Global Only</option>
@@ -431,7 +470,7 @@ export default function ResourcesArchive() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="relative">
                     <select value={activeType} onChange={(e) => setParam("type", e.target.value)}
-                      className="w-full appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 py-2.5 text-xs font-medium text-foreground focus:outline-none">
+                      className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 pl-3 pr-8 py-2.5 text-xs font-medium text-foreground focus:outline-none glass-sm">
                       <option value="all">All Types</option>
                       {resourceTypes.map((type) => (
                         <option key={type} value={type}>{RESOURCE_TYPE_LABELS[type] || type}</option>
@@ -442,7 +481,7 @@ export default function ResourcesArchive() {
                   {categories.length > 0 && (
                     <div className="relative">
                       <select value={activeCat} onChange={(e) => setParam("category", e.target.value)}
-                        className="w-full appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 py-2.5 text-xs font-medium text-foreground focus:outline-none">
+                        className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 pl-3 pr-8 py-2.5 text-xs font-medium text-foreground focus:outline-none glass-sm">
                         <option value="all">All Categories</option>
                         {categories.map((cat) => (
                           <option key={cat._id} value={cat.slug ?? cat._id}>{cat.name}</option>
@@ -466,10 +505,10 @@ export default function ResourcesArchive() {
       {/* Type chip tabs */}
       <section className="px-6 pt-6 pb-2 md:px-10">
         <div className="mx-auto max-w-[1600px]">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 relative z-10">
             <button
               onClick={() => setParam("type", "all")}
-              className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all ${activeType === "all" ? "bg-primary text-primary-foreground" : "border border-border bg-surface text-muted-foreground hover:text-foreground hover:border-primary/50"}`}
+              className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${activeType === "all" ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.2)]" : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:border-primary/50 glass-sm"}`}
             >
               All Resources
             </button>
@@ -480,11 +519,11 @@ export default function ResourcesArchive() {
                 <button
                   key={key}
                   onClick={() => setParam("type", activeType === key ? "all" : key)}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all flex items-center gap-1.5 ${activeType === key ? "bg-primary text-primary-foreground" : "border border-border bg-surface text-muted-foreground hover:text-foreground hover:border-primary/50"}`}
+                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 flex items-center gap-1.5 ${activeType === key ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.2)]" : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:border-primary/50 glass-sm"}`}
                 >
                   <span>{RESOURCE_TYPE_ICONS[key]}</span>
                   {label}
-                  <span className={`text-[9px] font-bold ${activeType === key ? "opacity-70" : "text-muted-foreground"}`}>
+                  <span className={`text-[9px] font-bold ${activeType === key ? "text-black/80" : "text-muted-foreground"}`}>
                     {count}
                   </span>
                 </button>
@@ -508,18 +547,18 @@ export default function ResourcesArchive() {
           {loading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-72 rounded-2xl border border-border bg-surface animate-pulse" />
+                <div key={i} className="h-72 rounded-2xl border border-white/10 bg-white/5 animate-pulse glass" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-border bg-surface p-16 text-center my-12"
+              className="rounded-2xl border border-white/10 bg-white/5 p-16 text-center my-12 glass"
             >
               <div className="text-5xl mb-6">🔍</div>
               <h3 className="text-xl font-semibold mb-2">No resources found</h3>
-              <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto">
+              <p className="text-sm text-muted-foreground/80 mb-8 max-w-md mx-auto font-medium">
                 {searchQuery
                   ? `No resources match "${searchQuery}".`
                   : "No resources match your current filters."}
@@ -549,16 +588,16 @@ export default function ResourcesArchive() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.7, ease: EASE }}
-              className="rounded-2xl border border-border bg-surface p-12 text-center"
+              className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center glass"
             >
               <div className="text-5xl mb-6">📦</div>
               <h3 className="text-2xl font-semibold mb-3 tracking-tight">Resources Coming Soon</h3>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto mb-8">
+              <p className="text-sm text-muted-foreground/80 max-w-md mx-auto mb-8 font-medium">
                 We're actively curating a world-class free resource library. Check back soon or subscribe for updates.
               </p>
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:opacity-90 transition-opacity"
+                className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
               >
                 SUGGEST A RESOURCE <ArrowUpRight size={13} />
               </Link>

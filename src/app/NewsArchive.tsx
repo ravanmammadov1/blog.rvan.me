@@ -119,10 +119,46 @@ export default function NewsArchive() {
       />
 
       {/* Global Unified Header */}
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — emerald / teal, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.08) 0%, rgba(6,182,212,0.04) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — blue / indigo, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.05) 0%, rgba(79,70,229,0.03) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero section */}
-      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28">
+      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div
             variants={fadeUp}
@@ -153,10 +189,10 @@ export default function NewsArchive() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`rounded-full px-4 py-2 text-xs font-medium tracking-wide transition-all ${
+                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${
                     activeCategory === cat
-                      ? "bg-primary text-primary-foreground font-semibold"
-                      : "border border-border bg-surface hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                      ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.25)]"
+                      : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
                   }`}
                 >
                   {cat}
@@ -166,18 +202,18 @@ export default function NewsArchive() {
 
             {/* Search Input */}
             <div className="relative w-full md:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={16} />
               <input
                 type="text"
                 placeholder="Search news..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-border bg-surface pl-10 pr-9 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground/45 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X size={14} />
                 </button>
@@ -188,23 +224,23 @@ export default function NewsArchive() {
       </section>
 
       {/* News Grid */}
-      <section className="px-6 pb-28 md:px-10">
+      <section className="px-6 pb-28 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           {loading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="h-64 rounded-xl border border-border bg-surface animate-pulse" />
+                <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
               ))}
             </div>
           ) : filteredNews.length === 0 ? (
-            <div className="rounded-2xl border border-border bg-surface p-12 text-center my-12">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-12 glass">
               <p className="text-lg text-muted-foreground">No news announcements match your search.</p>
               <button
                 onClick={() => {
                   setActiveCategory("All");
                   setSearchQuery("");
                 }}
-                className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:underline"
+                className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white transition-colors duration-300"
               >
                 RESET FILTERS
               </button>
@@ -234,37 +270,46 @@ export default function NewsArchive() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.15 }}
                     custom={index * 0.08}
-                    className="group rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary flex flex-col justify-between"
+                    className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:border-white/20 flex flex-col justify-between relative overflow-hidden"
                   >
-                    <Link to={`/news/${newsSlug}`}>
-                      {imgUrl && (
-                        <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background">
-                          <img
-                            src={imgUrl}
-                            alt={item.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                    {/* Internal Glow */}
+                    <div 
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                      style={{
+                        background: "radial-gradient(circle at top right, rgba(16,185,129,0.06) 0%, transparent 60%)",
+                      }}
+                    />
+                    <div className="relative z-10 flex-1">
+                      <Link to={`/news/${newsSlug}`}>
+                        {imgUrl && (
+                          <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background border border-white/5">
+                            <img
+                              src={imgUrl}
+                              alt={item.title}
+                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
+                          {item.category && <span className="text-primary">{item.category}</span>}
+                          {formattedDate && <span>{formattedDate}</span>}
                         </div>
-                      )}
 
-                      <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
-                        {item.category && <span className="text-primary">{item.category}</span>}
-                        {formattedDate && <span>{formattedDate}</span>}
-                      </div>
+                        <h3 className="text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3">
+                          {item.title}
+                        </h3>
 
-                      <h3 className="text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3">
-                        {item.title}
-                      </h3>
+                        {item.excerpt && (
+                          <p className="text-xs leading-relaxed text-muted-foreground/85 line-clamp-3 mb-6 font-medium">
+                            {item.excerpt}
+                          </p>
+                        )}
+                      </Link>
+                    </div>
 
-                      {item.excerpt && (
-                        <p className="text-xs leading-relaxed text-muted-foreground line-clamp-3 mb-6">
-                          {item.excerpt}
-                        </p>
-                      )}
-                    </Link>
-
-                    <div className="border-t border-border/50 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
-                      <Link to={`/news/${newsSlug}`} className="inline-flex items-center gap-1.5 hover:underline">
+                    <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase mt-4">
+                      <Link to={`/news/${newsSlug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
                         <span>READ FULL ARTICLE</span>
                         <ArrowUpRight size={14} />
                       </Link>

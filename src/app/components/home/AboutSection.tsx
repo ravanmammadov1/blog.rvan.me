@@ -61,19 +61,26 @@ export default function AboutSection() {
   }, []);
 
   return (
-    <section id="about" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
-      <div className="mx-auto max-w-[1600px]">
+    <section id="about" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
+      {/* Subtle section aurora background */}
+      <div 
+        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
+        style={{
+          background: "radial-gradient(circle at 10% 30%, rgba(139,92,246,0.06) 0%, transparent 60%)",
+        }}
+      />
+      <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-border pb-6"
+          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">07 / About</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-              The person behind the pixels.
+            <Eyebrow className="text-muted-foreground">07 / Creative Platform & Publication</Eyebrow>
+            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Behind the publication.
             </h2>
           </div>
         </motion.div>
@@ -88,23 +95,14 @@ export default function AboutSection() {
               viewport={{ once: true }}
               custom={0.1}
             >
-              {aboutSection?.introParagraph1 && (
-                <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-6">
-                  {aboutSection.introParagraph1}
-                </p>
-              )}
-              {aboutSection?.introParagraph2 && (
-                <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-10">
-                  {aboutSection.introParagraph2}
-                </p>
-              )}
-              {!aboutSection?.introParagraph1 && !aboutSection?.introParagraph2 && (
-                <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-10">
-                  I'm Ravan Mammadov, a Senior Creative Designer and Art Director based in Baku, Azerbaijan.
-                  With 8+ years of experience, I blend 3D motion design, brand identity systems, and performance
-                  creative strategy to deliver work that commands attention and drives measurable results.
-                </p>
-              )}
+              <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-6">
+                This platform is curated by Ravan Mammadov—Senior Creative Designer and Art Director. 
+                Our mission is to share advanced insights, resources, and free tools to help designers and marketing creatives build high-impact digital experiences.
+              </p>
+              <p className="text-base leading-relaxed text-muted-foreground/80 font-medium md:text-base mb-10">
+                We believe that the intersection of design, motion, and clear marketing strategy is where true engagement happens. 
+                Explore our curated directories, frameworks, and articles designed to build authority.
+              </p>
             </motion.div>
 
             {/* Stats */}
@@ -114,14 +112,14 @@ export default function AboutSection() {
               whileInView="visible"
               viewport={{ once: true }}
               custom={0.2}
-              className="grid grid-cols-2 gap-8 md:grid-cols-4"
+              className="grid grid-cols-2 gap-6 md:grid-cols-4"
             >
               {stats.map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                <div key={i} className="text-center rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat">
+                  <div className="text-2xl md:text-3xl font-bold tracking-tight text-primary mono">
                     {stat.value}
                   </div>
-                  <div className="mt-1 text-xs font-bold tracking-[.18em] text-muted-foreground mono uppercase">
+                  <div className="mt-1 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
                     {stat.label}
                   </div>
                 </div>
@@ -138,13 +136,13 @@ export default function AboutSection() {
               className="mt-12"
             >
               <h3 className="text-sm font-semibold tracking-tight text-foreground mb-6">
-                Core Capabilities
+                Core Domains & Frameworks
               </h3>
               <div className="space-y-3">
                 {services.map((service, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between py-3 border-b border-border/50 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    className="flex items-center justify-between py-3 border-b border-white/10 text-sm font-medium text-foreground hover:text-primary transition-colors"
                   >
                     <span>{service.name}</span>
                     <ArrowUpRight size={14} className="text-muted-foreground" />
@@ -162,7 +160,7 @@ export default function AboutSection() {
               whileInView="visible"
               viewport={{ once: true }}
               custom={0.15}
-              className="relative"
+              className="relative rounded-3xl overflow-hidden border border-white/10"
             >
               {aboutSection?.profilePhoto ? (
                 <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-background">
@@ -190,22 +188,22 @@ export default function AboutSection() {
               custom={0.25}
               className="mt-8"
             >
-              <div className="flex gap-4 border-b border-border/50 mb-6">
+              <div className="flex gap-4 border-b border-white/10 mb-6">
                 <button
                   onClick={() => setAboutTab("about")}
-                  className={`pb-3 text-sm font-bold tracking-[.14em] mono uppercase transition-colors ${
+                  className={`pb-3 text-sm font-bold tracking-[.14em] mono uppercase transition-all ${
                     aboutTab === "about" ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  About
+                  Philosophy
                 </button>
                 <button
                   onClick={() => setAboutTab("testimonials")}
-                  className={`pb-3 text-sm font-bold tracking-[.14em] mono uppercase transition-colors ${
+                  className={`pb-3 text-sm font-bold tracking-[.14em] mono uppercase transition-all ${
                     aboutTab === "testimonials" ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Testimonials
+                  Reviews & Feedback
                 </button>
               </div>
 
@@ -221,20 +219,22 @@ export default function AboutSection() {
                     {aboutSection?.experience && aboutSection.experience.length > 0 ? (
                       <div className="space-y-6">
                         {aboutSection.experience.map((exp: any, i: number) => (
-                          <div key={i} className="space-y-2">
+                          <div key={i} className="space-y-2 p-4 rounded-xl border border-white/10 bg-white/5 glass">
                             <div className="flex items-center justify-between gap-4">
                               <h4 className="text-base font-semibold text-foreground">{exp.role}</h4>
-                              <span className="text-xs font-bold tracking-[.14em] text-muted-foreground mono uppercase whitespace-nowrap">
+                              <span className="text-[10px] font-bold tracking-[.14em] text-muted-foreground mono uppercase whitespace-nowrap">
                                 {exp.period}
                               </span>
                             </div>
-                            <p className="text-sm text-muted-foreground">{exp.company}</p>
-                            {exp.description && <p className="text-xs text-muted-foreground/80">{exp.description}</p>}
+                            <p className="text-xs text-muted-foreground">{exp.company}</p>
+                            {exp.description && <p className="text-[11px] text-muted-foreground/80 font-medium">{exp.description}</p>}
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">Experience details coming soon.</p>
+                      <p className="text-sm text-muted-foreground p-4 rounded-xl border border-white/10 bg-white/5 glass">
+                        Crafting visual systems that drive engagement. Publications updated weekly.
+                      </p>
                     )}
                   </motion.div>
                 )}

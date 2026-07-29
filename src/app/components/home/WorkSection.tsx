@@ -102,19 +102,26 @@ export default function WorkSection() {
   }, [displayProjects]);
 
   return (
-    <section id="work" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
-      <div className="mx-auto max-w-[1600px]">
+    <section id="work" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
+      {/* Subtle section aurora background */}
+      <div 
+        className="pointer-events-none absolute inset-0 -z-10 opacity-20"
+        style={{
+          background: "radial-gradient(circle at 90% 10%, rgba(16,185,129,0.05) 0%, transparent 60%)",
+        }}
+      />
+      <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-border pb-6"
+          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">06 / Selected Work</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-              Case studies.
+            <Eyebrow className="text-muted-foreground">06 / Selected Projects</Eyebrow>
+            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Creative Case Studies.
             </h2>
           </div>
           <Link
@@ -139,7 +146,7 @@ export default function WorkSection() {
             >
               <Link
                 to={`/work/${project.slug}`}
-                className="block rounded-2xl overflow-hidden bg-surface border border-border transition-all duration-500 hover:border-primary"
+                className="block rounded-2xl overflow-hidden bg-white/5 border border-white/10 glass transition-all duration-500 hover:border-primary/50"
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {typeof project.image === "object" && project.image.large ? (
@@ -148,33 +155,33 @@ export default function WorkSection() {
                       <img
                         src={project.image.large}
                         alt={project.title}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
                       />
                     </picture>
                   ) : (
                     <img
                       src={project.image as string}
                       alt={project.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-white mono uppercase mb-2">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-white/90 mono uppercase mb-2">
                       <span style={{ color: project.accent }}>{project.number}</span>
                       <span>{project.year}</span>
                     </div>
                     <h3 className="text-xl font-semibold leading-tight text-white mb-2">
                       {project.title}
                     </h3>
-                    <p className="text-sm text-white/80 line-clamp-2">
+                    <p className="text-xs text-white/70 line-clamp-2 font-medium">
                       {project.type}
                     </p>
                   </div>
                 </div>
               </Link>
               <div className="mt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Link to={`/work/${project.slug}`} className="inline-flex items-center gap-1.5 hover:underline">
+                <Link to={`/work/${project.slug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
                   <span>VIEW CASE STUDY</span>
                   <ArrowUpRight size={12} />
                 </Link>
@@ -183,7 +190,7 @@ export default function WorkSection() {
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 hover:underline"
+                    className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300"
                   >
                     <span>LIVE PROJECT</span>
                     <ArrowUpRight size={12} />
@@ -197,7 +204,7 @@ export default function WorkSection() {
         <div className="mt-16 flex justify-center">
           <Link
             to="/work"
-            className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-lg"
+            className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
           >
             EXPLORE FULL WORK ARCHIVE
             <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

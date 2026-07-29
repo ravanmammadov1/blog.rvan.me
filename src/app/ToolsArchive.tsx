@@ -8,6 +8,7 @@ import { urlFor } from "../lib/sanityClient";
 import { ToolItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
+import Footer from "./components/Footer";
 import { lazy, Suspense } from "react";
 const DesignerToolsPanel = lazy(() => import("./components/DesignerToolsPanel"));
 
@@ -80,10 +81,46 @@ export default function ToolsArchive() {
       />
 
       {/* Global Unified Header */}
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — gold / amber, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(232,253,82,0.06) 0%, rgba(245,158,11,0.04) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — violet / blue, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(139,92,246,0.05) 0%, rgba(59,130,246,0.03) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero section */}
-      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28">
+      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div
             variants={fadeUp}
@@ -148,10 +185,10 @@ export default function ToolsArchive() {
                     <button
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
-                      className={`rounded-full px-4 py-2 text-xs font-medium tracking-wide transition-all ${
+                      className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${
                         activeCategory === cat
-                          ? "bg-primary text-primary-foreground font-semibold"
-                          : "border border-border bg-surface hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                          ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.25)]"
+                          : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
                       }`}
                     >
                       {cat}
@@ -163,19 +200,19 @@ export default function ToolsArchive() {
                 <div className="relative w-full sm:w-64">
                   <Search
                     size={16}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60"
                   />
                   <input
                     type="text"
                     placeholder="Search tools..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-full border border-border bg-surface pl-10 pr-10 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-10 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <X size={14} />
                     </button>
@@ -188,11 +225,11 @@ export default function ToolsArchive() {
             {loading ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="h-44 rounded-lg border border-border bg-surface animate-pulse" />
+                  <div key={n} className="h-44 rounded-lg border border-white/10 bg-white/5 animate-pulse glass" />
                 ))}
               </div>
             ) : filteredTools.length === 0 ? (
-              <div className="py-16 text-center border border-border rounded-lg bg-surface/50">
+              <div className="py-16 text-center border border-white/10 rounded-lg bg-white/5 glass">
                 <p className="text-muted-foreground">No tools found matching your criteria.</p>
               </div>
             ) : (
@@ -215,19 +252,26 @@ export default function ToolsArchive() {
                     >
                       <CardElement
                         {...cardProps}
-                        className="group flex h-full flex-col justify-between rounded-lg border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50 hover:bg-surface/80 cursor-pointer"
+                        className="group flex h-full flex-col justify-between rounded-lg border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 cursor-pointer relative overflow-hidden"
                       >
-                        <div>
+                        {/* Internal Glow */}
+                        <div 
+                          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                          style={{
+                            background: "radial-gradient(circle at top right, rgba(232,253,82,0.05) 0%, transparent 60%)",
+                          }}
+                        />
+                        <div className="relative z-10">
                           <div className="flex items-start justify-between gap-4 mb-4">
                             <div className="flex items-center gap-4">
                               {iconUrl ? (
                                 <img
                                   src={iconUrl}
                                   alt={tool.name}
-                                  className="h-12 w-12 rounded-lg object-contain bg-background border border-border p-2"
+                                  className="h-12 w-12 rounded-lg object-contain bg-background border border-white/10 p-2"
                                 />
                               ) : (
-                                <div className="grid h-12 w-12 place-items-center rounded-lg border border-border bg-background text-primary">
+                                <div className="grid h-12 w-12 place-items-center rounded-lg border border-white/10 bg-background text-primary">
                                   <Wrench size={20} />
                                 </div>
                               )}
@@ -245,7 +289,7 @@ export default function ToolsArchive() {
 
                             {tool.link && (
                               <div
-                                className="grid h-8 w-8 place-items-center rounded-full border border-border text-muted-foreground transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
+                                className="grid h-8 w-8 place-items-center rounded-full border border-white/10 text-muted-foreground transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
                                 aria-label={`Visit ${tool.name}`}
                               >
                                 <ExternalLink size={14} />
@@ -254,7 +298,7 @@ export default function ToolsArchive() {
                           </div>
 
                           {tool.description && (
-                            <p className="text-xs leading-relaxed text-muted-foreground mt-2">
+                            <p className="text-xs leading-relaxed text-muted-foreground mt-2 font-medium">
                               {tool.description}
                             </p>
                           )}
@@ -270,17 +314,7 @@ export default function ToolsArchive() {
       )}
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 py-10 md:px-10">
-        <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} RAVAN MAMMADOV</span>
-          <div className="flex gap-6">
-            <Link to="/" className="hover:text-primary">HOME</Link>
-            <Link to="/news" className="hover:text-primary">NEWS</Link>
-            <Link to="/tools" className="hover:text-primary">TOOLS</Link>
-            <Link to="/blog" className="hover:text-primary">BLOG</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer siteSettings={siteSettings} />
     </main>
   );
 }

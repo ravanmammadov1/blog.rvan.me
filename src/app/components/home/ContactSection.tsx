@@ -70,18 +70,25 @@ export default function ContactSection() {
   const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
 
   return (
-    <section id="contact" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
-      <div className="mx-auto max-w-[1600px]">
+    <section id="contact" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
+      {/* Subtle section aurora background */}
+      <div 
+        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
+        style={{
+          background: "radial-gradient(circle at 50% 50%, rgba(16,185,129,0.06) 0%, rgba(6,182,212,0.04) 55%, transparent 70%)",
+        }}
+      />
+      <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-border pb-6"
+          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">08 / Contact</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+            <Eyebrow className="text-muted-foreground">08 / Contact & Collaboration</Eyebrow>
+            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               {contactHeading}
             </h2>
           </div>
@@ -98,21 +105,21 @@ export default function ContactSection() {
             className="flex flex-col justify-center"
           >
             <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-10">
-              {contactSubtext}
+              Have questions about our resources, feedback on our design guides, or interest in collaborating on creative tools? Reach out below.
             </p>
 
             <div className="space-y-6">
               <a
                 href="mailto:hello@rvan.me"
-                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
+                className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
               >
                 {letsTalkLabel}
                 <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
               </a>
 
               <div className="text-sm text-muted-foreground">
-                <p className="font-medium">Or reach me directly:</p>
-                <p className="mt-1 font-mono">hello@rvan.me</p>
+                <p className="font-semibold text-foreground/80">Or reach out directly:</p>
+                <p className="mt-1 font-mono hover:text-primary transition-colors">hello@rvan.me</p>
               </div>
             </div>
           </motion.div>
@@ -124,11 +131,19 @@ export default function ContactSection() {
             whileInView="visible"
             viewport={{ once: true }}
             custom={0.2}
+            className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12 glass shadow-2xl relative overflow-hidden group"
           >
-            <form onSubmit={handleContactSubmit} className="space-y-6" noValidate>
+            {/* Subtle hover glow */}
+            <div 
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+              style={{
+                background: "radial-gradient(circle at top right, rgba(16,185,129,0.05) 0%, transparent 60%)",
+              }}
+            />
+            <form onSubmit={handleContactSubmit} className="space-y-6 relative z-10" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
+                  <label htmlFor="name" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
                     Name
                   </label>
                   <input
@@ -138,12 +153,12 @@ export default function ContactSection() {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
                     placeholder="Your name"
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-xs font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
+                  <label htmlFor="email" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
                     Email
                   </label>
                   <input
@@ -153,15 +168,15 @@ export default function ContactSection() {
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
                     placeholder="your@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-xs font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
-                  Project Details
+                <label htmlFor="message" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
+                  Details & Message
                 </label>
                 <textarea
                   id="message"
@@ -169,9 +184,9 @@ export default function ContactSection() {
                   value={contactMessage}
                   onChange={(e) => setContactMessage(e.target.value)}
                   required
-                  rows={6}
-                  className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
-                  placeholder="Tell me about your project, timeline, budget, and what you're looking for..."
+                  rows={5}
+                  className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"
+                  placeholder="How can we collaborate? Share your details..."
                 />
               </div>
 
@@ -190,7 +205,7 @@ export default function ContactSection() {
               <button
                 type="submit"
                 disabled={contactStatus === "loading"}
-                className="w-full group inline-flex items-center justify-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-[1.02] hover:bg-white hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-primary"
+                className="w-full group inline-flex items-center justify-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm disabled:opacity-50"
               >
                 {contactStatus === "loading" && (
                   <>
@@ -212,7 +227,7 @@ export default function ContactSection() {
                 )}
                 {contactStatus === "idle" && (
                   <>
-                    SEND INQUIRY
+                    SEND MESSAGE
                     <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                   </>
                 )}
@@ -225,7 +240,7 @@ export default function ContactSection() {
               )}
               {contactStatus === "success" && (
                 <p className="text-sm text-green-400 text-center" role="status">
-                  I'll get back to you within 1-2 business days.
+                  We'll review your query and respond shortly.
                 </p>
               )}
             </form>
