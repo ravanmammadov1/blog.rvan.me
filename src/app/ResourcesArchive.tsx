@@ -1,15 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, ArrowUpRight, Globe, MapPin,
   BadgeCheck, Users, Award, ExternalLink,
-  Layers, ChevronDown, SlidersHorizontal
+  Layers, ChevronDown, SlidersHorizontal, Rss, Clock, Sparkles
 } from "lucide-react";
+import { formatDistanceToNow, parseISO } from "date-fns";
 
-import { fetchResources, fetchResourceCategories, fetchSiteSettings } from "../lib/sanityQueries";
+import { fetchResources, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { ResourceItem, ResourceCategory, SiteSettings } from "../types/cms";
+import { SiteSettings } from "../types/cms";
+import { aggregateAllResources, NormalizedResource } from "../lib/rssAggregator";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -24,173 +26,122 @@ const fadeUp = {
   }),
 };
 
-const RESOURCE_TYPE_LABELS: Record<string, string> = {
-  studentPack: "Student Pack",
-  aiCredits: "AI Credits",
-  software: "Free Software",
-  roadmap: "Learning Roadmap",
-  scholarship: "Scholarship",
-  internship: "Internship",
-  job: "Remote Job",
-  hackathon: "Hackathon",
-  startupProgram: "Startup Program",
+export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
+  all: { label: "All Opportunities", icon: "⚡" },
+  scholarships: { label: "Scholarships", icon: "🎓" },
+  remoteJobs: { label: "Remote Jobs", icon: "💼" },
+  juniorJobs: { label: "Junior Jobs", icon: "🧑‍💻" },
+  designJobs: { label: "Design Jobs", icon: "🎨" },
+  marketingJobs: { label: "Marketing Jobs", icon: "📈" },
+  aiNews: { label: "AI News", icon: "🤖" },
+  techNews: { label: "Tech News", icon: "📰" },
+  startupNews: { label: "Startup News", icon: "🚀" },
+  freeCourses: { label: "Free Courses", icon: "📚" },
+  tutorials: { label: "Tutorials", icon: "🎥" },
+  designResources: { label: "Design Resources", icon: "🛠" },
+  freeAssets: { label: "Free Assets", icon: "🎁" },
+  grants: { label: "Grants", icon: "💰" },
+  competitions: { label: "Competitions", icon: "🏆" },
+  conferences: { label: "Conferences", icon: "🌍" },
+  events: { label: "Events", icon: "📅" },
 };
 
-const RESOURCE_TYPE_ICONS: Record<string, string> = {
-  studentPack: "🎒",
-  aiCredits: "🤖",
-  software: "💻",
-  roadmap: "🗺️",
-  scholarship: "🎓",
-  internship: "🏢",
-  job: "💼",
-  hackathon: "⚡",
-  startupProgram: "🚀",
-};
+function formatPubDate(isoStr: string): string {
+  try {
+    const d = parseISO(isoStr);
+    return formatDistanceToNow(d, { addSuffix: true });
+  } catch (e) {
+    return "Recently";
+  }
+}
 
-const BADGE_COLORS: Record<string, string> = {
-  Free: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  New: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  Popular: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  Trending: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-  Partner: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  Hot: "bg-red-500/10 text-red-400 border-red-500/20",
-  Limited: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-};
-
-const VERIFICATION_CONFIG = {
-  official: { label: "Official", icon: BadgeCheck, color: "text-blue-400" },
-  verified: { label: "Verified", icon: Award, color: "text-emerald-400" },
-  community: { label: "Community", icon: Users, color: "text-muted-foreground" },
-};
-
-function ResourceCard({ resource, index }: { resource: ResourceItem; index: number }) {
-  const logoUrl = resource.logo ? urlFor(resource.logo)?.width(80).url() : null;
-  const slug = resource.slug?.current || resource._id;
-  const typeLabel = RESOURCE_TYPE_LABELS[resource.resourceType] || resource.resourceType;
-  const typeIcon = RESOURCE_TYPE_ICONS[resource.resourceType] || "📦";
-  const verification = VERIFICATION_CONFIG[resource.verificationStatus] ?? VERIFICATION_CONFIG.community;
-  const VerifyIcon = verification.icon;
+function ResourceCard({ resource, index }: { resource: NormalizedResource; index: number }) {
+  const catConfig = CATEGORY_MAP[resource.category] || { label: resource.category, icon: "📦" };
 
   return (
     <motion.article
       variants={fadeUp}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }}
-      custom={index * 0.05}
-      className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 relative overflow-hidden"
+      viewport={{ once: true, amount: 0.05 }}
+      custom={index * 0.04}
+      className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 overflow-hidden min-h-[300px]"
     >
-      {/* Internal Glow */}
+      {/* Dynamic Aurora Glow */}
       <div 
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
         style={{
-          background: "radial-gradient(circle at top right, rgba(6,182,212,0.05) 0%, transparent 60%)",
+          background: "radial-gradient(circle at top right, rgba(6,182,212,0.06) 0%, transparent 60%)",
         }}
       />
+
       <div className="relative z-10 flex-1 flex flex-col">
-      {/* Badges row */}
-      {resource.badges && resource.badges.length > 0 && (
-        <div className="absolute top-4 right-4 flex flex-wrap gap-1 justify-end">
-          {resource.badges.slice(0, 2).map((badge) => (
-            <span
-              key={badge}
-              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase ${BADGE_COLORS[badge] ?? "bg-surface text-muted-foreground border-border"}`}
-            >
-              {badge}
-            </span>
-          ))}
-        </div>
-      )}
+        {/* Source & Date Bar */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono glass-sm">
+            <span className="text-sm">{catConfig.icon}</span>
+            {catConfig.label}
+          </span>
 
-      {/* Header: logo + type */}
-      <div className="flex items-start gap-4 mb-4">
-        <div className="flex-shrink-0">
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt={resource.title}
-              className="h-11 w-11 rounded-xl object-contain border border-white/10 bg-background p-1.5"
-            />
-          ) : (
-            <div className="h-11 w-11 rounded-xl border border-white/10 bg-background flex items-center justify-center text-xl">
-              {typeIcon}
-            </div>
+          <span className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground/80 mono">
+            <Clock size={11} />
+            {formatPubDate(resource.publishedAt)}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="mt-1 text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2">
+          {resource.title}
+        </h3>
+
+        {/* Source Badge */}
+        <div className="mt-2 flex items-center gap-2 text-[11px] font-bold text-muted-foreground mono">
+          <span className="text-foreground/90">{resource.sourceName}</span>
+          {resource.isRss && (
+            <span className="inline-flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] text-primary">
+              <Rss size={9} /> RSS
+            </span>
           )}
         </div>
-        <div className="min-w-0 flex-1 pt-0.5">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mono">{typeLabel}</span>
-          <h3 className="mt-0.5 text-base font-semibold leading-snug text-foreground line-clamp-2 group-hover:text-primary transition-colors pr-14">
-            {resource.title}
-          </h3>
-        </div>
-      </div>
 
-      {/* Benefit summary callout */}
-      {resource.benefitSummary && (
-        <div className="mb-3 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2">
-          <p className="text-xs font-bold text-primary">{resource.benefitSummary}</p>
-        </div>
-      )}
+        {/* Summary Description */}
+        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground/80 line-clamp-3 flex-1 font-medium">
+          {resource.description}
+        </p>
 
-      {/* Description */}
-      <p className="text-[13px] leading-relaxed text-muted-foreground/80 line-clamp-3 mb-4 flex-1 font-medium">
-        {resource.description}
-      </p>
-
-      {/* Meta: verification + geo */}
-      <div className="flex items-center gap-3 mb-4 text-[10px] font-semibold text-muted-foreground">
-        <span className={`flex items-center gap-1 ${verification.color}`}>
-          <VerifyIcon size={11} />
-          {verification.label}
-        </span>
-        <span className="w-px h-3 bg-white/10" />
-        <span className="flex items-center gap-1">
-          {resource.isGlobal ? (
-            <><Globe size={11} /> Global</>
-          ) : (
-            <><MapPin size={11} /> {resource.countries?.slice(0, 3).join(", ") || "Select Countries"}</>
-          )}
-        </span>
-        {/* Difficulty for roadmaps */}
-        {resource.difficultyLevel && resource.difficultyLevel !== "all" && (
-          <>
-            <span className="w-px h-3 bg-white/10" />
-            <span className="capitalize">{resource.difficultyLevel}</span>
-          </>
-        )}
-      </div>
-
-      {/* Tags */}
-      {resource.tags && resource.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {resource.tags.slice(0, 4).map((tag) => (
-            <span
-              key={tag._id}
-              className="rounded-full border border-white/10 bg-background/50 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground/80"
-            >
-              {tag.name}
+        {/* Badges / Meta row */}
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-muted-foreground">
+          {resource.workType && resource.workType !== "na" && (
+            <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-400 capitalize">
+              {resource.workType}
             </span>
-          ))}
+          )}
+          {resource.country && (
+            <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-foreground/80">
+              <Globe size={10} />
+              {resource.country}
+            </span>
+          )}
+          {resource.isFree && (
+            <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-primary font-bold">
+              FREE
+            </span>
+          )}
         </div>
-      )}
-
-      {/* CTA */}
       </div>
-      <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 mt-auto">
-        <Link
-          to={`/resources/${slug}`}
-          className="text-[10px] font-bold tracking-widest text-primary mono uppercase hover:text-white transition-colors duration-300 flex items-center gap-1"
-        >
-          VIEW RESOURCE <ArrowUpRight size={12} />
-        </Link>
+
+      {/* CTA Footer */}
+      <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 mt-5">
+        <span className="text-[10px] font-semibold text-muted-foreground/60 mono">
+          VERIFIED SOURCE
+        </span>
         <a
           href={resource.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 glass-sm"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
         >
-          <ExternalLink size={10} />
+          <ExternalLink size={11} />
           ACCESS
         </a>
       </div>
@@ -201,16 +152,17 @@ function ResourceCard({ resource, index }: { resource: ResourceItem; index: numb
 export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [resources, setResources] = useState<ResourceItem[]>([]);
-  const [categories, setCategories] = useState<ResourceCategory[]>([]);
+  const [resources, setResources] = useState<NormalizedResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // State from URL params for shareable filters
+  // Filter params
   const searchQuery = searchParams.get("q") || "";
-  const activeType = searchParams.get("type") || "all";
-  const activeCat = searchParams.get("category") || "all";
+  const activeCategory = searchParams.get("category") || "all";
   const activeCountry = searchParams.get("country") || "all";
+  const activeWorkType = searchParams.get("workType") || "all";
+  const activeDateRange = searchParams.get("date") || "all";
+  const activeSource = searchParams.get("source") || "all";
 
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -225,75 +177,91 @@ export default function ResourcesArchive() {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchSiteSettings().then((d) => { if (d) setSiteSettings(d); });
-    Promise.all([fetchResources(), fetchResourceCategories()])
-      .then(([res, cats]) => {
-        setResources(res);
-        setCategories(cats);
+
+    fetchResources()
+      .then(async (cmsItems) => {
+        const aggregated = await aggregateAllResources(cmsItems);
+        setResources(aggregated);
       })
+      .catch((err) => console.error("Error loading resources:", err))
       .finally(() => setLoading(false));
   }, []);
 
-  // Derive all countries from resources
-  const allCountries = useMemo(() => {
-    const seen = new Set<string>();
-    resources.forEach((r) => {
-      if (!r.isGlobal && r.countries) r.countries.forEach((c) => seen.add(c));
-    });
-    return Array.from(seen).sort();
+  // Filter options derived from current resources
+  const sourcesList = useMemo(() => {
+    return Array.from(new Set(resources.map((r) => r.sourceName))).sort();
   }, [resources]);
 
-  const resourceTypes = useMemo(() => {
-    const types = [...new Set(resources.map((r) => r.resourceType))];
-    return types;
+  const countriesList = useMemo(() => {
+    return Array.from(new Set(resources.map((r) => r.country))).filter(Boolean).sort();
   }, [resources]);
 
-  const filtered = useMemo(() => {
+  const filteredResources = useMemo(() => {
     let result = resources;
 
-    if (activeType !== "all") result = result.filter((r) => r.resourceType === activeType);
-    if (activeCat !== "all") result = result.filter((r) => r.category?.slug === activeCat);
-    if (activeCountry !== "all") {
-      result = result.filter((r) => r.isGlobal || r.countries?.includes(activeCountry));
+    if (activeCategory !== "all") {
+      result = result.filter((r) => r.category === activeCategory);
     }
+
+    if (activeCountry !== "all") {
+      result = result.filter((r) => r.country.toLowerCase() === activeCountry.toLowerCase());
+    }
+
+    if (activeWorkType !== "all") {
+      result = result.filter((r) => r.workType === activeWorkType);
+    }
+
+    if (activeSource !== "all") {
+      result = result.filter((r) => r.sourceName === activeSource);
+    }
+
+    if (activeDateRange !== "all") {
+      const now = Date.now();
+      result = result.filter((r) => {
+        const itemTime = new Date(r.publishedAt).getTime();
+        const diffHours = (now - itemTime) / (1000 * 60 * 60);
+        if (activeDateRange === "today") return diffHours <= 24;
+        if (activeDateRange === "week") return diffHours <= 24 * 7;
+        if (activeDateRange === "month") return diffHours <= 24 * 30;
+        return true;
+      });
+    }
+
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (r) =>
           r.title?.toLowerCase().includes(q) ||
           r.description?.toLowerCase().includes(q) ||
-          r.benefitSummary?.toLowerCase().includes(q) ||
-          r.company?.toLowerCase().includes(q) ||
-          r.tags?.some((t) => t.name?.toLowerCase().includes(q))
+          r.sourceName?.toLowerCase().includes(q) ||
+          r.category?.toLowerCase().includes(q)
       );
     }
+
     return result;
-  }, [resources, activeType, activeCat, activeCountry, searchQuery]);
+  }, [resources, activeCategory, activeCountry, activeWorkType, activeDateRange, activeSource, searchQuery]);
 
-  const hasActiveFilters = activeType !== "all" || activeCat !== "all" || activeCountry !== "all" || !!searchQuery;
+  const hasActiveFilters =
+    activeCategory !== "all" ||
+    activeCountry !== "all" ||
+    activeWorkType !== "all" ||
+    activeDateRange !== "all" ||
+    activeSource !== "all" ||
+    !!searchQuery;
 
-  const resetAll = () => setSearchParams({}, { replace: true });
+  const resetAllFilters = () => setSearchParams({}, { replace: true });
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Manrope', sans-serif" }}>
       <SEO
-        title="Free Resources for Designers, Students & Creators — Rvan.me"
-        description="Curated directory of free AI credits, student packs, scholarships, remote jobs, hackathons, learning roadmaps, and startup programs. Globally sourced and verified."
+        title="Dynamic Opportunities & Resources Directory — Rvan.me"
+        description="Auto-updating directory of scholarships, remote jobs, AI updates, tech news, free courses, grants, and startup competitions."
         url="https://www.rvan.me/resources"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: "Free Resources — Rvan.me",
-          description: "Free resources for designers, students and creators.",
-          url: "https://www.rvan.me/resources",
-          publisher: { "@type": "Person", name: "Ravan Mammadov", url: "https://www.rvan.me" }
-        }}
       />
 
-      {/* ── Aurora background blobs ── */}
+      {/* ── Background blobs ── */}
       <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
         <div className="absolute inset-0 bg-background" />
-        
-        {/* Blob 1 — cyan / blue, top-left */}
         <div
           className="aurora-blob-1 absolute"
           style={{
@@ -303,8 +271,6 @@ export default function ResourcesArchive() {
             filter: "blur(64px)",
           }}
         />
-
-        {/* Blob 2 — violet / blue, top-right */}
         <div
           className="aurora-blob-2 absolute"
           style={{
@@ -314,8 +280,6 @@ export default function ResourcesArchive() {
             filter: "blur(72px)",
           }}
         />
-
-        {/* Micro grid overlay */}
         <div
           className="absolute inset-0"
           style={{
@@ -327,46 +291,62 @@ export default function ResourcesArchive() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Hero */}
+      {/* Hero Header */}
       <section className="px-6 pt-20 pb-10 md:px-10 md:pt-28 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
-            <p className="eyebrow text-primary mb-4">CURATED KNOWLEDGE PLATFORM</p>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-emerald-400 uppercase mono">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                LIVE RSS AGGREGATION ACTIVE
+              </span>
+            </div>
+            
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl">
-              Free Resources.
+              Dynamic Resources.
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Scholarships, AI credits, student packs, remote jobs, hackathons, and learning roadmaps — all free, all verified, globally sourced.
+              Auto-updating feed of scholarships, remote jobs, AI updates, startup news, free courses, and creative assets. Sourced globally, updated hourly.
             </p>
           </motion.div>
 
-          {/* Stats bar */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.2}
-            className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-8"
-          >
-            {[
-              { label: "Resources", value: resources.length.toString() },
-              { label: "Types", value: Object.keys(RESOURCE_TYPE_LABELS).length.toString() },
-              { label: "Countries", value: allCountries.length > 0 ? `${allCountries.length}+` : "Global" },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-baseline gap-2">
-                <span className="text-3xl font-semibold tracking-tight text-foreground">{value}</span>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mono">{label}</span>
-              </div>
-            ))}
+          {/* Dynamic Category Chips Scroll */}
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.2} className="mt-10 overflow-x-auto pb-4 no-scrollbar">
+            <div className="flex items-center gap-2.5 min-w-max">
+              {Object.entries(CATEGORY_MAP).map(([key, item]) => {
+                const isActive = activeCategory === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setParam("category", key)}
+                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all duration-300 ${
+                      isActive
+                        ? "border-primary bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.25)]"
+                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-primary/50 hover:text-foreground glass-sm"
+                    }`}
+                  >
+                    <span>{item.icon}</span>
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Search + Filter Bar */}
-      <section className="sticky top-[64px] z-20 bg-background/80 backdrop-blur-md border-b border-white/10 px-6 py-4 md:px-10">
+      {/* Multi-Facet Search & Filter Bar */}
+      <section className="sticky top-[64px] z-20 bg-background/85 backdrop-blur-md border-y border-white/10 px-6 py-4 md:px-10">
         <div className="mx-auto max-w-[1600px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          {/* Search */}
+          {/* Global Search Input */}
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
             <input
               type="text"
-              placeholder="Search resources, companies, tags…"
+              placeholder="Search opportunities, sources, titles…"
               value={searchQuery}
               onChange={(e) => setParam("q", e.target.value)}
               className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
@@ -381,230 +361,107 @@ export default function ResourcesArchive() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Mobile filter toggle */}
-            <button
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="md:hidden inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-foreground tracking-wide glass-sm hover:bg-white/10 transition-colors"
+          {/* Multi-Facet Filter Selectors */}
+          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+            {/* Work Type Filter */}
+            <select
+              value={activeWorkType}
+              onChange={(e) => setParam("workType", e.target.value)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
             >
-              <SlidersHorizontal size={13} />
-              Filters
-              {hasActiveFilters && <span className="h-2 w-2 rounded-full bg-primary" />}
-            </button>
+              <option value="all">Work Type: All</option>
+              <option value="remote">Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="onsite">On-site</option>
+            </select>
 
-            {/* Desktop filters inline */}
-            <div className="hidden md:flex items-center gap-3">
-              {/* Resource Type */}
-              <div className="relative">
-                <select
-                  value={activeType}
-                  onChange={(e) => setParam("type", e.target.value)}
-                  className="appearance-none rounded-full border border-white/10 bg-white/5 pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary/50 focus:outline-none cursor-pointer glass-sm hover:bg-white/10 transition-all duration-300"
-                >
-                  <option value="all">All Types</option>
-                  {resourceTypes.map((type) => (
-                    <option key={type} value={type}>{RESOURCE_TYPE_LABELS[type] || type}</option>
-                  ))}
-                </select>
-                <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-              </div>
-
-              {/* Category */}
-              {categories.length > 0 && (
-                <div className="relative">
-                  <select
-                    value={activeCat}
-                    onChange={(e) => setParam("category", e.target.value)}
-                    className="appearance-none rounded-full border border-white/10 bg-white/5 pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary/50 focus:outline-none cursor-pointer glass-sm hover:bg-white/10 transition-all duration-300"
-                  >
-                    <option value="all">All Categories</option>
-                    {categories.map((cat) => (
-                      <option key={cat._id} value={cat.slug ?? cat._id}>{cat.name}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                </div>
-              )}
-
-              {/* Country */}
-              {allCountries.length > 0 && (
-                <div className="relative">
-                  <select
-                    value={activeCountry}
-                    onChange={(e) => setParam("country", e.target.value)}
-                    className="appearance-none rounded-full border border-white/10 bg-white/5 pl-4 pr-8 py-2.5 text-xs font-medium text-foreground focus:border-primary/50 focus:outline-none cursor-pointer glass-sm hover:bg-white/10 transition-all duration-300"
-                  >
-                    <option value="all">All Countries</option>
-                    <option value="global">Global Only</option>
-                    {allCountries.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                </div>
-              )}
-
-              {hasActiveFilters && (
-                <button
-                  onClick={resetAll}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <X size={12} /> Clear
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile filter dropdown */}
-        <AnimatePresence>
-          {showMobileFilters && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: EASE }}
-              className="overflow-hidden md:hidden"
+            {/* Country Filter */}
+            <select
+              value={activeCountry}
+              onChange={(e) => setParam("country", e.target.value)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
             >
-              <div className="mx-auto max-w-[1600px] pt-4 flex flex-col gap-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="relative">
-                    <select value={activeType} onChange={(e) => setParam("type", e.target.value)}
-                      className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 pl-3 pr-8 py-2.5 text-xs font-medium text-foreground focus:outline-none glass-sm">
-                      <option value="all">All Types</option>
-                      {resourceTypes.map((type) => (
-                        <option key={type} value={type}>{RESOURCE_TYPE_LABELS[type] || type}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={11} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                  </div>
-                  {categories.length > 0 && (
-                    <div className="relative">
-                      <select value={activeCat} onChange={(e) => setParam("category", e.target.value)}
-                        className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 pl-3 pr-8 py-2.5 text-xs font-medium text-foreground focus:outline-none glass-sm">
-                        <option value="all">All Categories</option>
-                        {categories.map((cat) => (
-                          <option key={cat._id} value={cat.slug ?? cat._id}>{cat.name}</option>
-                        ))}
-                      </select>
-                      <ChevronDown size={11} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                    </div>
-                  )}
-                </div>
-                {hasActiveFilters && (
-                  <button onClick={resetAll} className="text-xs font-bold text-primary hover:underline text-left">
-                    Clear all filters
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </section>
+              <option value="all">Region: All</option>
+              {countriesList.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
 
-      {/* Type chip tabs */}
-      <section className="px-6 pt-6 pb-2 md:px-10">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="flex flex-wrap gap-2 relative z-10">
-            <button
-              onClick={() => setParam("type", "all")}
-              className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${activeType === "all" ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.2)]" : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:border-primary/50 glass-sm"}`}
+            {/* Date Range Filter */}
+            <select
+              value={activeDateRange}
+              onChange={(e) => setParam("date", e.target.value)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
             >
-              All Resources
-            </button>
-            {Object.entries(RESOURCE_TYPE_LABELS).map(([key, label]) => {
-              const count = resources.filter((r) => r.resourceType === key).length;
-              if (count === 0) return null;
-              return (
-                <button
-                  key={key}
-                  onClick={() => setParam("type", activeType === key ? "all" : key)}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 flex items-center gap-1.5 ${activeType === key ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.2)]" : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:border-primary/50 glass-sm"}`}
-                >
-                  <span>{RESOURCE_TYPE_ICONS[key]}</span>
-                  {label}
-                  <span className={`text-[9px] font-bold ${activeType === key ? "text-black/80" : "text-muted-foreground"}`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+              <option value="all">Date: Any Time</option>
+              <option value="today">Past 24 Hours</option>
+              <option value="week">Past Week</option>
+              <option value="month">Past Month</option>
+            </select>
+
+            {/* Source Filter */}
+            {sourcesList.length > 0 && (
+              <select
+                value={activeSource}
+                onChange={(e) => setParam("source", e.target.value)}
+                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer hidden lg:block"
+              >
+                <option value="all">Source: All</option>
+                {sourcesList.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            )}
+
+            {/* Reset Filters */}
+            {hasActiveFilters && (
+              <button
+                onClick={resetAllFilters}
+                className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline mono"
+              >
+                <X size={12} /> Reset
+              </button>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Results grid */}
-      <section className="px-6 py-10 pb-28 md:px-10">
+      {/* Directory Content Grid */}
+      <section className="px-6 py-12 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px]">
-          {/* Result count */}
-          <div className="mb-6 flex items-center justify-between">
-            <p className="text-xs font-bold text-muted-foreground mono uppercase tracking-widest">
-              {loading ? "Loading…" : `${filtered.length} Resource${filtered.length !== 1 ? "s" : ""}`}
-              {hasActiveFilters && !loading && " · Filtered"}
-            </p>
-          </div>
-
           {loading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="h-72 rounded-2xl border border-white/10 bg-white/5 animate-pulse glass" />
               ))}
             </div>
-          ) : filtered.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-white/10 bg-white/5 p-16 text-center my-12 glass"
-            >
-              <div className="text-5xl mb-6">🔍</div>
-              <h3 className="text-xl font-semibold mb-2">No resources found</h3>
-              <p className="text-sm text-muted-foreground/80 mb-8 max-w-md mx-auto font-medium">
-                {searchQuery
-                  ? `No resources match "${searchQuery}".`
-                  : "No resources match your current filters."}
-              </p>
+          ) : filteredResources.length === 0 ? (
+            <div className="py-20 text-center glass rounded-2xl border border-white/10 p-12">
+              <p className="text-4xl mb-4">🔍</p>
+              <h3 className="text-xl font-bold">No opportunities found</h3>
+              <p className="text-sm text-muted-foreground mt-2">Try adjusting your filters or search query.</p>
               <button
-                onClick={resetAll}
-                className="text-xs font-bold tracking-widest text-primary uppercase mono hover:underline"
+                onClick={resetAllFilters}
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold text-black uppercase mono"
               >
-                RESET ALL FILTERS
+                CLEAR ALL FILTERS
               </button>
-            </motion.div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((resource, index) => (
-                <ResourceCard key={resource._id} resource={resource} index={index} />
-              ))}
             </div>
+          ) : (
+            <>
+              <div className="mb-6 flex items-center justify-between text-xs font-bold text-muted-foreground mono">
+                <span>SHOWING {filteredResources.length} OPPORTUNITIES</span>
+                <span>SORTED BY RECENT</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredResources.map((resItem, idx) => (
+                  <ResourceCard key={resItem.id} resource={resItem} index={idx} />
+                ))}
+              </div>
+            </>
           )}
         </div>
       </section>
-
-      {/* CTA bottom band */}
-      {!loading && resources.length === 0 && (
-        <section className="px-6 pb-24 md:px-10">
-          <div className="mx-auto max-w-[1600px]">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.7, ease: EASE }}
-              className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center glass"
-            >
-              <div className="text-5xl mb-6">📦</div>
-              <h3 className="text-2xl font-semibold mb-3 tracking-tight">Resources Coming Soon</h3>
-              <p className="text-sm text-muted-foreground/80 max-w-md mx-auto mb-8 font-medium">
-                We're actively curating a world-class free resource library. Check back soon or subscribe for updates.
-              </p>
-              <Link
-                to="/contact"
-                className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
-              >
-                SUGGEST A RESOURCE <ArrowUpRight size={13} />
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      )}
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />
