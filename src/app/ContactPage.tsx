@@ -6,6 +6,7 @@ import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
+import Footer from "./components/Footer";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -93,8 +94,44 @@ export default function ContactPage() {
 
       <SiteHeader siteSettings={siteSettings} />
 
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — emerald / teal, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.06) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — blue / indigo, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.08) 0%, rgba(79,70,229,0.05) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb" className="px-6 pt-24 md:px-10 max-w-[1600px] mx-auto">
+      <nav aria-label="Breadcrumb" className="px-6 pt-24 md:px-10 max-w-[1600px] mx-auto relative z-10">
         <ol className="flex items-center gap-2 text-xs mono text-muted-foreground">
           <li>
             <Link to="/" className="hover:text-primary transition-colors">HOME</Link>
@@ -105,12 +142,12 @@ export default function ContactPage() {
       </nav>
 
       {/* Hero Header */}
-      <section className="px-6 pt-6 pb-12 md:px-10 md:pb-16">
+      <section className="px-6 pt-6 pb-12 md:px-10 md:pb-16 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
             <p className="eyebrow text-primary mb-4">START A CONVERSATION</p>
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-4xl uppercase">
-              {siteSettings?.contactHeading || "LET'S MAKE SOMETHING MOVE."}
+              LET'S MAKE SOMETHING <span className="aurora-text-animate font-bold block sm:inline">MOVE.</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
               {siteSettings?.contactSubtext || "Have an ambitious campaign, motion project, or visual system in mind? I'm always open to new creative partnerships."}
@@ -120,9 +157,9 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Content Grid */}
-      <section className="px-6 pb-28 md:px-10">
+      <section className="px-6 pb-28 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px]">
-          <div className="grid gap-12 lg:grid-cols-12 border-t border-border/60 pt-12">
+          <div className="grid gap-12 lg:grid-cols-12 border-t border-white/10 pt-12">
             {/* Direct Information */}
             <div className="lg:col-span-5 space-y-8">
               <div>
@@ -138,7 +175,7 @@ export default function ContactPage() {
                 </a>
               </div>
 
-              <div className="pt-4 border-t border-border/40">
+              <div className="pt-4 border-t border-white/10">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-3">
                   Location & Availability
                 </h2>
@@ -151,7 +188,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-border/40">
+              <div className="pt-4 border-t border-white/10">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-4">
                   Connect Across Networks
                 </h2>
@@ -167,9 +204,9 @@ export default function ContactPage() {
                       href={social.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:border-primary hover:text-primary transition-colors mono"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono hover:-translate-y-0.5 shadow-sm"
                     >
-                      {social.label} <ArrowUpRight size={12} />
+                      {social.label} <ArrowUpRight size={12} className="opacity-70 group-hover:opacity-100" />
                     </a>
                   ))}
                 </div>
@@ -177,9 +214,17 @@ export default function ContactPage() {
             </div>
 
             {/* Interactive Contact Form */}
-            <div className="lg:col-span-7 rounded-2xl border border-border bg-surface p-8 md:p-12">
-              <h2 className="text-2xl font-semibold tracking-tight mb-2">Send a Message</h2>
-              <p className="text-xs text-muted-foreground mb-8">
+            <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12 glass shadow-2xl relative overflow-hidden group">
+              {/* Subtle hover glow */}
+              <div 
+                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                style={{
+                  background: "radial-gradient(circle at top right, rgba(16,185,129,0.05) 0%, transparent 60%)",
+                }}
+              />
+              <div className="relative z-10">
+                <h2 className="text-2xl font-semibold tracking-tight mb-2 text-foreground/90">Send a Message</h2>
+                <p className="text-xs text-muted-foreground/80 mb-8 font-medium">
                 Fill out the fields below and I'll get back to you within 24 hours.
               </p>
 
@@ -212,7 +257,7 @@ export default function ContactPage() {
 
                   <div className="grid gap-6 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
+                      <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
                         Your Name *
                       </label>
                       <input
@@ -221,12 +266,12 @@ export default function ContactPage() {
                         placeholder="Alex Morgan"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
+                        className="w-full rounded-xl border border-white/10 bg-background/50 px-5 py-4 text-[15px] text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
+                      <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
                         Your Email *
                       </label>
                       <input
@@ -235,13 +280,13 @@ export default function ContactPage() {
                         placeholder="alex@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
+                        className="w-full rounded-xl border border-white/10 bg-background/50 px-5 py-4 text-[15px] text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
                       Project Details & Message *
                     </label>
                     <textarea
@@ -250,7 +295,7 @@ export default function ContactPage() {
                       placeholder="Tell me about your campaign goals, timeline, and scope..."
                       value={formData.projectDetails}
                       onChange={(e) => setFormData({ ...formData, projectDetails: e.target.value })}
-                      className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
+                      className="w-full rounded-xl border border-white/10 bg-background/50 px-5 py-4 text-[15px] text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"
                     />
                   </div>
 
@@ -264,7 +309,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-xs font-bold tracking-widest text-black uppercase hover:bg-white transition-colors disabled:opacity-50 mono"
+                    className="group inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm disabled:opacity-50"
                   >
                     {status === "loading" ? (
                       <>
@@ -278,26 +323,14 @@ export default function ContactPage() {
                   </button>
                 </form>
               )}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border px-6 py-10 md:px-10">
-        <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} RAVAN MAMMADOV</span>
-          <div className="flex gap-6">
-            <Link to="/" className="hover:text-primary">HOME</Link>
-            <Link to="/work" className="hover:text-primary">WORK</Link>
-            <Link to="/expertise" className="hover:text-primary">EXPERTISE</Link>
-            <Link to="/news" className="hover:text-primary">NEWS</Link>
-            <Link to="/tools" className="hover:text-primary">TOOLS</Link>
-            <Link to="/blog" className="hover:text-primary">BLOG</Link>
-            <Link to="/contact" className="hover:text-primary">CONTACT</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
