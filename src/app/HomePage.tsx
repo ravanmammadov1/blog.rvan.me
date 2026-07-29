@@ -316,9 +316,9 @@ export default function HomePage() {
             aria-hidden="true"
             style={{
               backgroundImage: `
-                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 55%),
-                radial-gradient(circle at 40% 45%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 60% 55%, rgba(139, 92, 246, 0.05) 0%, transparent 50%)
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.04) 25%, rgba(16, 185, 129, 0.01) 45%, transparent 60%),
+                radial-gradient(circle at 40% 45%, rgba(6, 182, 212, 0.06) 0%, rgba(6, 182, 212, 0.03) 25%, rgba(6, 182, 212, 0.01) 45%, transparent 55%),
+                radial-gradient(circle at 60% 55%, rgba(139, 92, 246, 0.05) 0%, rgba(139, 92, 246, 0.025) 25%, rgba(139, 92, 246, 0.008) 45%, transparent 55%)
               `
             }}
           />

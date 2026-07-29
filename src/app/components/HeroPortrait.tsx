@@ -73,10 +73,10 @@ export default function HeroPortrait() {
         className="pointer-events-none absolute w-full h-full transform-gpu"
         style={{
           background:
-            "radial-gradient(circle at center, rgba(16,185,129,0.14) 0%, rgba(6,182,212,0.07) 35%, rgba(79,102,182,0.03) 60%, transparent 80%)",
+            "radial-gradient(circle at center, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.08) 25%, rgba(6,182,212,0.04) 50%, rgba(79,102,182,0.01) 75%, transparent 100%)",
         }}
-        animate={reduced ? {} : { opacity: [0.6, 0.9, 0.6], scale: [1, 1.05, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? {} : { opacity: [0.55, 0.85, 0.55] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* Layer 2 — violet vector radial light field */}
@@ -84,10 +84,10 @@ export default function HeroPortrait() {
         className="pointer-events-none absolute w-[80%] h-[80%] transform-gpu"
         style={{
           background:
-            "radial-gradient(circle at center, rgba(139,92,246,0.08) 0%, rgba(59,130,246,0.03) 55%, transparent 75%)",
+            "radial-gradient(circle at center, rgba(139,92,246,0.07) 0%, rgba(139,92,246,0.04) 30%, rgba(59,130,246,0.02) 60%, transparent 100%)",
         }}
-        animate={reduced ? {} : { opacity: [0.4, 0.7, 0.4], scale: [1.03, 0.97, 1.03] }}
-        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 3 }}
       />
 
       {/* Floating + parallax wrapper */}
@@ -127,10 +127,10 @@ export default function HeroPortrait() {
         className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[40%] transform-gpu"
         style={{
           background:
-            "radial-gradient(ellipse at bottom, rgba(16,185,129,0.12) 0%, rgba(6,182,212,0.05) 50%, transparent 80%)",
+            "radial-gradient(ellipse at bottom, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.04) 45%, transparent 100%)",
         }}
-        animate={reduced ? {} : { opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
       />
     </div>
   );

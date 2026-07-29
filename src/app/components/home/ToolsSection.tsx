@@ -82,15 +82,8 @@ export default function ToolsSection() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 custom={index * 0.08}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 flex flex-col relative overflow-hidden"
+                className="group p-6 aurora-card flex flex-col relative"
               >
-                {/* Internal Glow */}
-                <div 
-                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                  style={{
-                    background: "radial-gradient(circle at top right, rgba(232,253,82,0.06) 0%, transparent 60%)",
-                  }}
-                />
                 <div className="relative z-10 flex-1">
                   <div className="flex items-center gap-4 mb-4">
                     {tool.icon && (

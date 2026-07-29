@@ -257,13 +257,7 @@ export default function RavanMammadovPage() {
               custom={0.2}
               className="lg:col-span-5"
             >
-              <div className="rounded-3xl border border-white/10 bg-surface/40 p-8 shadow-2xl glass backdrop-blur-xl relative overflow-hidden group">
-                <div 
-                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                  style={{
-                    background: "radial-gradient(circle at top right, rgba(16,185,129,0.1) 0%, transparent 60%)",
-                  }}
-                />
+              <div className="p-8 aurora-card shadow-2xl relative">
                 <div className="flex items-center gap-4 border-b border-white/10 pb-6 relative z-10">
                   <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary/50 bg-black flex-shrink-0 shadow-[0_0_15px_rgba(232,253,82,0.2)]">
                     <picture>
@@ -278,19 +272,19 @@ export default function RavanMammadovPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-6 pt-6 relative z-10">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
+                  <div className="p-4 aurora-card transition-colors duration-300">
                     <span className="text-3xl font-bold text-primary mono">8+</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Years Crafting</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
+                  <div className="p-4 aurora-card transition-colors duration-300">
                     <span className="text-3xl font-bold text-primary mono">120+</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Projects Shipped</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
+                  <div className="p-4 aurora-card transition-colors duration-300">
                     <span className="text-3xl font-bold text-primary mono">40M+</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Views Driven</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
+                  <div className="p-4 aurora-card transition-colors duration-300">
                     <span className="text-3xl font-bold text-primary mono">18</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Awards & Features</p>
                   </div>
@@ -347,14 +341,7 @@ export default function RavanMammadovPage() {
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
             {(aboutSection?.skills && aboutSection.skills.length > 0 ? aboutSection.skills : skillsList).map((group, idx) => (
-              <div key={group.category + idx} className="rounded-3xl border border-white/10 bg-white/5 p-8 glass group relative overflow-hidden transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:-translate-y-1">
-                {/* Hover Glow */}
-                <div 
-                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                  style={{
-                    background: "radial-gradient(circle at center, rgba(59,130,246,0.1) 0%, transparent 70%)",
-                  }}
-                />
+              <div key={group.category + idx} className="p-8 aurora-card group relative">
                 <h3 className="text-lg font-bold text-foreground mb-8 flex items-center gap-3 relative z-10">
                   <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
                     <Zap size={16} />
@@ -387,7 +374,7 @@ export default function RavanMammadovPage() {
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {awardsList.map((award) => (
-              <div key={award.title} className="rounded-2xl border border-border bg-background p-6">
+              <div key={award.title} className="p-6 aurora-card">
                 <Award size={24} className="text-primary mb-4" />
                 <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{award.year} · {award.issuer}</span>
                 <h4 className="mt-2 text-base font-bold text-foreground">{award.title}</h4>
@@ -410,7 +397,7 @@ export default function RavanMammadovPage() {
 
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t) => (
-              <div key={t._id} className="flex flex-col justify-between rounded-3xl border border-white/10 bg-white/5 p-8 glass-stat transition-all duration-300 hover:bg-white/10">
+              <div key={t._id} className="flex flex-col justify-between p-8 aurora-card">
                 <p className="text-[15px] leading-relaxed text-muted-foreground/90 italic">"{t.quote}"</p>
                 <div className="mt-10 border-t border-white/10 pt-6">
                   <p className="font-bold text-foreground/90 text-[15px]">{t.name}</p>
@@ -466,16 +453,8 @@ export default function RavanMammadovPage() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.1 }}
                     custom={idx * 0.08}
-                    className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 flex flex-col justify-between relative overflow-hidden"
+                    className="group p-6 aurora-card flex flex-col justify-between relative"
                   >
-                    {/* Hover Glow */}
-                    <div 
-                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                      style={{
-                        background: "radial-gradient(circle at top right, rgba(16,185,129,0.06) 0%, transparent 60%)",
-                      }}
-                    />
-
                     <div className="relative z-10 flex-1">
                       {coverSrc && (
                         <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background border border-white/5 relative">

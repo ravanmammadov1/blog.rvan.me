@@ -291,15 +291,8 @@ export default function NewsArchive() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.15 }}
                     custom={index * 0.08}
-                    className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 hover:border-white/20 flex flex-col justify-between relative overflow-hidden"
+                    className="group p-6 aurora-card flex flex-col justify-between relative"
                   >
-                    {/* Internal Glow */}
-                    <div 
-                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                      style={{
-                        background: "radial-gradient(circle at top right, rgba(16,185,129,0.06) 0%, transparent 60%)",
-                      }}
-                    />
                     <div className="relative z-10 flex-1">
                       <Link to={`/news/${newsSlug}`}>
                         {imgUrl && (
@@ -365,7 +358,7 @@ export default function NewsArchive() {
               {designNewsFeeds.slice(0, 9).map((item, idx) => (
                 <article
                   key={item.id || idx}
-                  className="group rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 flex flex-col justify-between relative overflow-hidden"
+                  className="group p-6 aurora-card flex flex-col justify-between relative"
                 >
                   <div className="relative z-10 flex-1">
                     <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">

@@ -252,15 +252,8 @@ export default function ToolsArchive() {
                     >
                       <CardElement
                         {...cardProps}
-                        className="group flex h-full flex-col justify-between rounded-lg border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 cursor-pointer relative overflow-hidden"
+                        className="group flex h-full flex-col justify-between p-6 aurora-card cursor-pointer relative"
                       >
-                        {/* Internal Glow */}
-                        <div 
-                          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                          style={{
-                            background: "radial-gradient(circle at top right, rgba(232,253,82,0.05) 0%, transparent 60%)",
-                          }}
-                        />
                         <div className="relative z-10">
                           <div className="flex items-start justify-between gap-4 mb-4">
                             <div className="flex items-center gap-4">

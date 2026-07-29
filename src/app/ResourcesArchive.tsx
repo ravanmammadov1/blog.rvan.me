@@ -71,21 +71,10 @@ function ResourceCard({ resource, index, isFeatured = false }: { resource: Norma
       viewport={{ once: true, amount: 0.05 }}
       custom={index * 0.04}
       className={cn(
-        "group relative flex flex-col rounded-2xl border bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1 overflow-hidden min-h-[320px]",
-        isFeatured 
-          ? "border-primary/30 hover:border-primary/60 hover:shadow-primary/5 hover:shadow-2xl" 
-          : "border-white/10 hover:border-white/20 hover:shadow-xl"
+        "group relative flex flex-col p-6 aurora-card min-h-[320px]",
+        isFeatured ? "border-primary/35 shadow-[0_0_20px_rgba(232,253,82,0.02)]" : ""
       )}
     >
-      {/* Background Hover Aura Glow */}
-      <div 
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-        style={{
-          background: isFeatured 
-            ? "radial-gradient(circle at top right, rgba(232,253,82,0.06) 0%, transparent 60%)" 
-            : "radial-gradient(circle at top right, rgba(6,182,212,0.06) 0%, transparent 60%)",
-        }}
-      />
 
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Card Header metadata */}
