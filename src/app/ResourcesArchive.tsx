@@ -26,16 +26,13 @@ const fadeUp = {
   }),
 };
 
-export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
-  all: { label: "All Resources", icon: "⚡" },
-  remoteDesignJobs: { label: "Remote Design Jobs", icon: "🎨" },
-  remoteMarketingJobs: { label: "Remote Marketing Jobs", icon: "📈" },
-  freeDesignAssets: { label: "Free Design Assets", icon: "🎁" },
-  freeMockups: { label: "Free Mockups", icon: "📐" },
-  freeFonts: { label: "Free Fonts", icon: "🔤" },
-  freeIcons: { label: "Free Icons", icon: "⭐" },
-  freeUIKits: { label: "Free UI Kits", icon: "📱" },
-  designPodcasts: { label: "Design Podcasts", icon: "🎙️" },
+export const CATEGORY_MAP: Record<string, { label: string; icon: string; description: string }> = {
+  all: { label: "All Resources", icon: "⚡", description: "Every practical resource in one view" },
+  jobs: { label: "Jobs", icon: "💼", description: "Remote design, marketing, and freelance jobs" },
+  freeDesignAssets: { label: "Free Design Assets", icon: "🎁", description: "Fonts, icons, mockups, UI kits, templates" },
+  tools: { label: "Tools", icon: "🛠️", description: "AI tools, design tools, dev tools, productivity" },
+  learning: { label: "Learning", icon: "📚", description: "Courses, tutorials, podcasts, and case studies" },
+  opportunities: { label: "Opportunities", icon: "🚀", description: "Scholarships, grants, competitions, and events" },
 };
 
 function formatPubDate(isoStr: string): string {
@@ -326,8 +323,8 @@ export default function ResourcesArchive() {
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="Dynamic Opportunities & Resources Directory — Rvan.me"
-        description="Auto-updating directory of design news, remote jobs, assets, mockups, fonts, icons, UI kits, and podcasts."
+        title="Practical Resources Directory — Jobs, Assets, Tools & Learning — Rvan.me"
+        description="Curated practical resources directory for creative professionals: remote jobs, free design assets, AI tools, design tools, learning resources, and opportunities."
         url="https://www.rvan.me/resources"
       />
 
@@ -373,16 +370,24 @@ export default function ResourcesArchive() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                LIVE RSS AGGREGATION ACTIVE
+                LIVE CURATED DIRECTORY
               </span>
             </div>
             
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl">
-              Design Resources.
+              Resources.
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Fully automated creative publication directory. Real-time news, remote design & marketing jobs, mockups, fonts, assets, and design podcasts. Updated hourly.
+              Practical resources for creative professionals — remote jobs, free design assets, AI tools, learning materials, and career opportunities. Curated and updated automatically.
             </p>
+
+            {/* Cross-link to News */}
+            <div className="mt-6 flex items-center gap-3">
+              <span className="text-xs text-muted-foreground mono">Looking for industry news?</span>
+              <a href="/news" className="text-xs font-bold text-primary hover:text-white transition-colors mono flex items-center gap-1 underline-offset-4 hover:underline">
+                Visit the News Hub <ArrowUpRight size={12} />
+              </a>
+            </div>
           </motion.div>
 
           {/* Categories Chip Carousel */}

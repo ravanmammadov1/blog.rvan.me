@@ -18,15 +18,11 @@ const fadeUp = {
 
 export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
   all: { label: "All Directory", icon: "⚡" },
-  remoteDesignJobs: { label: "Remote Design Jobs", icon: "🎨" },
-  remoteMarketingJobs: { label: "Remote Marketing Jobs", icon: "📈" },
+  jobs: { label: "Jobs", icon: "💼" },
   freeDesignAssets: { label: "Free Assets", icon: "🎁" },
-  freeMockups: { label: "Free Mockups", icon: "📐" },
-  freeFonts: { label: "Free Fonts", icon: "🔤" },
-  freeIcons: { label: "Free Icons", icon: "⭐" },
-  freeUIKits: { label: "Free UI Kits", icon: "📱" },
-  latestDesignNews: { label: "Design News", icon: "📰" },
-  designPodcasts: { label: "Design Podcasts", icon: "🎙️" },
+  tools: { label: "Tools", icon: "🛠️" },
+  learning: { label: "Learning", icon: "📚" },
+  opportunities: { label: "Opportunities", icon: "🚀" },
 };
 
 function cn(...classes: any[]) {
