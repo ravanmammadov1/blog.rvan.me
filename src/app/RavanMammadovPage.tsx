@@ -145,8 +145,44 @@ export default function RavanMammadovPage() {
 
       <SiteHeader siteSettings={siteSettings} />
 
+      {/* ── Aurora background blobs ── */}
+      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-background" />
+        
+        {/* Blob 1 — emerald / teal, top-left */}
+        <div
+          className="aurora-blob-1 absolute"
+          style={{
+            top: "-15%", left: "-10%",
+            width: "60%", height: "70%",
+            background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.06) 45%, transparent 72%)",
+            filter: "blur(64px)",
+          }}
+        />
+
+        {/* Blob 2 — blue / indigo, top-right */}
+        <div
+          className="aurora-blob-2 absolute"
+          style={{
+            top: "0%", right: "-12%",
+            width: "55%", height: "65%",
+            background: "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.08) 0%, rgba(79,70,229,0.05) 50%, transparent 78%)",
+            filter: "blur(72px)",
+          }}
+        />
+
+        {/* Micro grid overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+      </div>
+
       {/* Hero / Biography Header */}
-      <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32">
+      <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
             <motion.div
@@ -177,7 +213,7 @@ export default function RavanMammadovPage() {
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   to="/#contact"
-                  className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition hover:bg-white"
+                  className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
                   START A CONVERSATION
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -200,9 +236,15 @@ export default function RavanMammadovPage() {
               custom={0.2}
               className="lg:col-span-5"
             >
-              <div className="rounded-3xl border border-border bg-surface p-8 shadow-2xl">
-                <div className="flex items-center gap-4 border-b border-border pb-6">
-                  <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary bg-black flex-shrink-0">
+              <div className="rounded-3xl border border-white/10 bg-surface/40 p-8 shadow-2xl glass backdrop-blur-xl relative overflow-hidden group">
+                <div 
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                  style={{
+                    background: "radial-gradient(circle at top right, rgba(16,185,129,0.1) 0%, transparent 60%)",
+                  }}
+                />
+                <div className="flex items-center gap-4 border-b border-white/10 pb-6 relative z-10">
+                  <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary/50 bg-black flex-shrink-0 shadow-[0_0_15px_rgba(232,253,82,0.2)]">
                     <picture>
                       <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
                       <img src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200} alt="Ravan Mammadov" className="h-full w-full object-cover object-top" />
@@ -214,20 +256,20 @@ export default function RavanMammadovPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 pt-6">
-                  <div className="rounded-2xl border border-border bg-background/50 p-4">
+                <div className="grid grid-cols-2 gap-6 pt-6 relative z-10">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
                     <span className="text-3xl font-bold text-primary mono">8+</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Years Crafting</p>
                   </div>
-                  <div className="rounded-2xl border border-border bg-background/50 p-4">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
                     <span className="text-3xl font-bold text-primary mono">120+</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Projects Shipped</p>
                   </div>
-                  <div className="rounded-2xl border border-border bg-background/50 p-4">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
                     <span className="text-3xl font-bold text-primary mono">40M+</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Views Driven</p>
                   </div>
-                  <div className="rounded-2xl border border-border bg-background/50 p-4">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 glass-stat transition-colors duration-300 hover:bg-white/10">
                     <span className="text-3xl font-bold text-primary mono">18</span>
                     <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Awards & Features</p>
                   </div>
@@ -239,16 +281,17 @@ export default function RavanMammadovPage() {
       </section>
 
       {/* Experience & Career Timeline */}
-      <section className="bg-surface px-6 py-28 md:px-10 md:py-36 border-t border-border">
-        <div className="mx-auto max-w-[1600px]">
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-[1600px] relative">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="eyebrow text-muted-foreground">Career Trajectory</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               Experience & Milestones
             </h2>
           </motion.div>
 
-          <div className="mt-16 space-y-8 border-l-2 border-border pl-6 md:pl-10">
+          <div className="mt-16 space-y-8 border-l-[1px] border-white/20 pl-6 md:pl-10 relative">
             {(aboutSection?.experience && aboutSection.experience.length > 0 ? aboutSection.experience : timelineEvents).map((item, idx) => (
               <motion.div
                 key={item.role + idx}
@@ -257,13 +300,13 @@ export default function RavanMammadovPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 custom={idx * 0.1}
-                className="relative"
+                className="relative group p-6 -ml-6 md:-ml-10 md:pl-10 rounded-2xl transition-all duration-500 hover:bg-white/5"
               >
-                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background" />
-                <span className="text-xs font-bold tracking-widest text-primary mono">{item.year}</span>
-                <h3 className="mt-2 text-2xl font-bold text-foreground">{item.role}</h3>
-                {item.company && <p className="text-sm font-semibold text-muted-foreground mono">{item.company}</p>}
-                {item.desc && <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground/80">{item.desc}</p>}
+                <div className="absolute left-[23px] md:left-[7px] top-8 h-2.5 w-2.5 rounded-full border border-primary bg-background shadow-[0_0_10px_rgba(232,253,82,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-primary" />
+                <span className="text-xs font-bold tracking-[.2em] text-primary mono transition-colors duration-300 group-hover:text-white">{item.year}</span>
+                <h3 className="mt-3 text-2xl font-bold text-foreground/90 transition-colors duration-300 group-hover:text-primary">{item.role}</h3>
+                {item.company && <p className="mt-1 text-sm font-semibold text-muted-foreground mono tracking-wide">{item.company}</p>}
+                {item.desc && <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground/70 transition-colors duration-300 group-hover:text-foreground/90">{item.desc}</p>}
               </motion.div>
             ))}
           </div>
@@ -271,25 +314,36 @@ export default function RavanMammadovPage() {
       </section>
 
       {/* Skills Matrix */}
-      <section className="px-6 py-28 md:px-10 md:py-36 border-t border-border">
-        <div className="mx-auto max-w-[1600px]">
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-[1600px] relative">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="eyebrow text-muted-foreground">Core Competencies</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               Skills & Tooling
             </h2>
           </motion.div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
             {(aboutSection?.skills && aboutSection.skills.length > 0 ? aboutSection.skills : skillsList).map((group, idx) => (
-              <div key={group.category + idx} className="rounded-3xl border border-border bg-surface p-8">
-                <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
-                  <Zap size={18} className="text-primary" /> {group.category}
+              <div key={group.category + idx} className="rounded-3xl border border-white/10 bg-white/5 p-8 glass group relative overflow-hidden transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:-translate-y-1">
+                {/* Hover Glow */}
+                <div 
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                  style={{
+                    background: "radial-gradient(circle at center, rgba(59,130,246,0.1) 0%, transparent 70%)",
+                  }}
+                />
+                <h3 className="text-lg font-bold text-foreground mb-8 flex items-center gap-3 relative z-10">
+                  <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
+                    <Zap size={16} />
+                  </div>
+                  {group.category}
                 </h3>
-                <ul className="space-y-3">
+                <ul className="space-y-4 relative z-10">
                   {group.skills.map((skill) => (
-                    <li key={skill} className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
-                      <CheckCircle2 size={16} className="text-primary flex-shrink-0" />
+                    <li key={skill} className="flex items-center gap-3 text-[15px] text-muted-foreground/80 font-medium transition-colors duration-300 group-hover:text-foreground/90">
+                      <CheckCircle2 size={14} className="text-primary/70 flex-shrink-0" />
                       <span>{skill}</span>
                     </li>
                   ))}
@@ -323,22 +377,23 @@ export default function RavanMammadovPage() {
       </section>
 
       {/* What Collaborators Say (Testimonials) */}
-      <section className="px-6 py-28 md:px-10 md:py-36 border-t border-border">
-        <div className="mx-auto max-w-[1600px]">
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-[1600px] relative">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="eyebrow text-muted-foreground">Collaborator Feedback</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               What Collaborators Say
             </h2>
           </motion.div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t) => (
-              <div key={t._id} className="flex flex-col justify-between rounded-3xl border border-border bg-surface p-8">
-                <p className="text-sm leading-relaxed text-muted-foreground italic">"{t.quote}"</p>
-                <div className="mt-8 border-t border-border/50 pt-6">
-                  <p className="font-bold text-foreground text-sm">{t.name}</p>
-                  <p className="text-xs text-muted-foreground mono mt-0.5">{t.role} {t.company && `· ${t.company}`}</p>
+              <div key={t._id} className="flex flex-col justify-between rounded-3xl border border-white/10 bg-white/5 p-8 glass-stat transition-all duration-300 hover:bg-white/10">
+                <p className="text-[15px] leading-relaxed text-muted-foreground/90 italic">"{t.quote}"</p>
+                <div className="mt-10 border-t border-white/10 pt-6">
+                  <p className="font-bold text-foreground/90 text-[15px]">{t.name}</p>
+                  <p className="text-xs text-muted-foreground mono mt-1 tracking-wide">{t.role} {t.company && `· ${t.company}`}</p>
                 </div>
               </div>
             ))}
@@ -347,31 +402,52 @@ export default function RavanMammadovPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-surface px-6 py-28 md:px-10 md:py-36 border-t border-border">
-        <div className="mx-auto max-w-4xl">
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-4xl relative">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
             <p className="eyebrow text-muted-foreground">Clarifications</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-5xl">
-              Frequently Asked Questions
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Frequently Asked
             </h2>
           </motion.div>
 
-          <div className="mt-16 space-y-4">
-            {faqList.map((item, idx) => (
-              <div key={item.q} className="rounded-2xl border border-border bg-background overflow-hidden">
+          <div className="mx-auto mt-16 max-w-4xl space-y-4">
+            {(aboutSection?.faqs && aboutSection.faqs.length > 0 ? aboutSection.faqs : faqList).map((faq, idx) => (
+              <motion.div
+                key={faq.q}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={idx * 0.1}
+                className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 glass transition-all duration-300"
+              >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="flex w-full items-center justify-between p-6 text-left font-bold text-foreground text-lg"
+                  className="flex w-full items-center justify-between p-6 text-left focus:outline-none transition-colors duration-300 hover:bg-white/5"
                 >
-                  <span>{item.q}</span>
-                  <ChevronDown className={`transition-transform duration-300 ${openFaq === idx ? "rotate-180 text-primary" : ""}`} size={20} />
+                  <h3 className="text-[17px] font-bold text-foreground/90 transition-colors duration-300 hover:text-primary">{faq.q}</h3>
+                  <ChevronDown
+                    size={20}
+                    className={`text-primary transition-transform duration-500 ${openFaq === idx ? "rotate-180" : ""}`}
+                  />
                 </button>
-                {openFaq === idx && (
-                  <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground border-t border-border/50 pt-4">
-                    {item.a}
-                  </div>
-                )}
-              </div>
+                <AnimatePresence>
+                  {openFaq === idx && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                    >
+                      <div className="border-t border-white/10 p-6 text-[15px] leading-relaxed text-muted-foreground/80 font-medium">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
           </div>
         </div>

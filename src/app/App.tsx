@@ -4,7 +4,6 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
 
 import HomePage from "./HomePage";
-import ExpertisePage from "./ExpertisePage";
 import ContactPage from "./ContactPage";
 import NotFound from "./NotFound";
 
@@ -40,7 +39,6 @@ function AppContent() {
           <Route path="/" element={<HomePage />} />
           <Route path="/work" element={<WorkArchive />} />
           <Route path="/work/:slug" element={<WorkDetail />} />
-          <Route path="/expertise" element={<ExpertisePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogArchive />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
