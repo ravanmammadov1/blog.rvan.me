@@ -1,73 +1,57 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, Rss, Clock, ExternalLink, Globe, Award, BadgeCheck, Users, ChevronDown } from "lucide-react";
 import { client, urlFor } from "../../../lib/sanityClient";
 import { Eyebrow } from "../Eyebrow";
+import { aggregateAllResources, NormalizedResource } from "../../../lib/rssAggregator";
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 28 },
   visible: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
+    opacity: 1, y: 0,
+    transition: { duration: 0.8, delay, ease: EASE },
   }),
 };
 
-const RESOURCE_TYPE_LABELS: Record<string, string> = {
-  studentPack: "Student Pack",
-  aiCredits: "AI Credits",
-  software: "Free Software",
-  roadmap: "Learning Roadmap",
-  scholarship: "Scholarship",
-  internship: "Internship",
-  job: "Remote Job",
-  hackathon: "Hackathon",
-  startupProgram: "Startup Program",
+export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
+  all: { label: "All Directory", icon: "⚡" },
+  remoteDesignJobs: { label: "Remote Design Jobs", icon: "🎨" },
+  remoteMarketingJobs: { label: "Remote Marketing Jobs", icon: "📈" },
+  freeDesignAssets: { label: "Free Assets", icon: "🎁" },
+  freeMockups: { label: "Free Mockups", icon: "📐" },
+  freeFonts: { label: "Free Fonts", icon: "🔤" },
+  freeIcons: { label: "Free Icons", icon: "⭐" },
+  freeUIKits: { label: "Free UI Kits", icon: "📱" },
+  latestDesignNews: { label: "Design News", icon: "📰" },
+  designPodcasts: { label: "Design Podcasts", icon: "🎙️" },
 };
 
-const RESOURCE_TYPE_ICONS: Record<string, string> = {
-  studentPack: "🎒",
-  aiCredits: "🤖",
-  software: "💻",
-  roadmap: "🗺️",
-  scholarship: "🎓",
-  internship: "🏢",
-  job: "💼",
-  hackathon: "⚡",
-  startupProgram: "🚀",
-};
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function ResourcesSection() {
-  const [resourcesList, setResourcesList] = useState<any[]>([]);
+  const [allResources, setAllResources] = useState<NormalizedResource[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   useEffect(() => {
-    // Fetch Resources (published, sortPriority, featuredScore)
-    client
-      .fetch(`
-        *[_type == "resource" && status == "published"] | order(sortPriority asc, featuredScore desc, _createdAt desc)[0...4]{
-          _id,
-          title,
-          "slug": slug.current,
-          resourceType,
-          description,
-          benefitSummary,
-          link,
-          logo,
-          status,
-          verificationStatus,
-          isGlobal,
-          countries,
-          difficultyLevel,
-          completionTime,
-          badges
-        }
-      `)
-      .then((data) => {
-        setResourcesList(data || []);
+    // Load both RSS feeds and CMS resource documents
+    aggregateAllResources([])
+      .then((items) => {
+        setAllResources(items || []);
       })
-      .catch(console.error);
+      .catch((err) => console.error("Error aggregating resources for homepage:", err))
+      .finally(() => setLoading(false));
   }, []);
+
+  const filteredResources = useMemo(() => {
+    if (activeCategory === "all") return allResources;
+    return allResources.filter((r) => r.category === activeCategory);
+  }, [allResources, activeCategory]);
 
   return (
     <section id="resources" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
@@ -84,131 +68,122 @@ export default function ResourcesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
+          className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between border-b border-white/10 pb-6 gap-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">04 / Resources Directory</Eyebrow>
+            <Eyebrow className="text-muted-foreground">04 / Live Curated Directory</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Curated Knowledge.
+              Knowledge & Assets.
             </h2>
           </div>
           <Link
             to="/resources"
-            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+            className="group inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono"
           >
-            VIEW ALL RESOURCES
+            OPEN FULL DIRECTORY
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
 
-        {/* Top resource types cards grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-12">
-          {[
-            { type: "aiCredits", label: "Free AI Credits", icon: "🤖", desc: "Credits and tokens for premium generative AI platforms." },
-            { type: "studentPack", label: "Student Packs", icon: "🎒", desc: "Premium software licenses and packs for students." },
-            { type: "roadmap", label: "Learning Roadmaps", icon: "🗺️", desc: "Step-by-step masterclass pathways for design and tech." },
-            { type: "software", label: "Free Software", icon: "💻", desc: "Completely free design, development, and animation tools." },
-            { type: "job", label: "Remote Jobs", icon: "💼", desc: "High-paying remote roles in creative and design fields." },
-            { type: "hackathon", label: "Hackathons", icon: "⚡", desc: "Active hackathons, challenges, and prize program entries." }
-          ].map((item, index) => (
-            <motion.div
-              key={item.type}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={index * 0.05}
+        {/* Category Tabs */}
+        <div className="mb-12 flex flex-wrap gap-2">
+          {Object.entries(CATEGORY_MAP).map(([key, config]) => (
+            <button
+              key={key}
+              onClick={() => setActiveCategory(key)}
+              className={cn(
+                "rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300",
+                activeCategory === key
+                  ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.25)]"
+                  : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
+              )}
             >
-              <Link
-                to={`/resources?type=${item.type}`}
-                className="group flex h-full flex-col justify-between p-6 aurora-card"
-              >
-                <div>
-                  <span className="text-3xl block mb-4">{item.icon}</span>
-                  <h3 className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                    {item.label}
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground/80 font-medium">
-                    {item.desc}
-                  </p>
-                </div>
-                <div className="mt-6 flex items-center gap-2 text-xs font-bold tracking-[.14em] text-primary mono uppercase">
-                  <span>VIEW ALL</span>
-                  <ArrowUpRight size={12} className="transition-transform group-hover:translate-x-0.5" />
-                </div>
-              </Link>
-            </motion.div>
+              <span className="mr-1.5">{config.icon}</span>
+              {config.label}
+            </button>
           ))}
         </div>
 
-        {/* Featured Resources */}
-        {resourcesList.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {resourcesList.map((resource, index) => (
-              <motion.article
-                key={resource._id}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={index * 0.08}
-                className="group p-6 aurora-card flex flex-col relative"
-              >
-                <div className="relative z-10 flex-1">
-                  <div className="flex items-start gap-4 mb-4">
-                    {resource.logo && (
-                      <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-background border border-white/5 overflow-hidden">
-                        <img
-                          src={urlFor(resource.logo)?.url() || ""}
-                          alt={resource.title}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-2">
-                        {resource.resourceType && RESOURCE_TYPE_LABELS[resource.resourceType] && (
-                          <span className="text-primary">{RESOURCE_TYPE_LABELS[resource.resourceType]}</span>
-                        )}
-                        {resource.verificationStatus && (
-                          <span className="text-green-400">✓ Verified</span>
-                        )}
-                      </div>
-                      <h3 className="text-lg font-semibold leading-tight text-foreground line-clamp-2">
-                        {resource.title}
-                      </h3>
+        {/* Grid Area */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="h-64 rounded-2xl border border-white/10 bg-white/5 animate-pulse glass" />
+            ))}
+          </div>
+        ) : filteredResources.length === 0 ? (
+          <div className="py-16 text-center border border-white/10 rounded-2xl bg-white/5 glass">
+            <p className="text-muted-foreground text-sm">No live updates found in this category.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredResources.slice(0, 8).map((resource, index) => {
+              const catConfig = CATEGORY_MAP[resource.category] || { label: resource.category, icon: "📦" };
+              const officialSources = ["Smashing Magazine", "We Work Remotely", "UX Collective", "Abduzeedo"];
+              const isOfficial = officialSources.includes(resource.sourceName);
+              const isVerified = !resource.isRss;
+
+              return (
+                <motion.article
+                  key={resource.id || index}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={index * 0.05}
+                  className="group p-5 aurora-card flex flex-col justify-between relative min-h-[300px]"
+                >
+                  <div className="relative z-10 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[9px] font-semibold text-primary mono">
+                        {catConfig.icon} {catConfig.label.slice(0, 14)}...
+                      </span>
+                      {resource.isRss && (
+                        <span className="text-[9px] text-muted-foreground/60 flex items-center gap-1 mono">
+                          <Rss size={9} /> RSS
+                        </span>
+                      )}
                     </div>
-                  </div>
-                  {resource.description && (
-                    <p className="text-[13px] leading-relaxed text-muted-foreground/80 mb-4 line-clamp-3 font-medium">
+
+                    <h3 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                      {resource.title}
+                    </h3>
+
+                    <p className="text-xs leading-relaxed text-muted-foreground/80 line-clamp-3 mb-4 font-medium flex-1">
                       {resource.description}
                     </p>
-                  )}
-                  {resource.benefitSummary && (
-                    <p className="text-xs leading-relaxed text-primary/90 mb-4 line-clamp-2 font-semibold">
-                      {resource.benefitSummary}
-                    </p>
-                  )}
-                </div>
-                <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase mt-4">
-                  <Link to={`/resources/${resource.slug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
-                    <span>VIEW DETAILS</span>
-                    <ArrowUpRight size={12} />
-                  </Link>
-                  {resource.link && (
+
+                    <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-semibold text-muted-foreground/75 mb-4">
+                      <span className="text-foreground/90">{resource.sourceName}</span>
+                      {resource.workType && resource.workType !== "na" && (
+                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400 capitalize">
+                          {resource.workType}
+                        </span>
+                      )}
+                      {resource.isFree && (
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-primary font-bold">
+                          FREE
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between">
+                    <span className="text-[9px] font-semibold text-muted-foreground/50 mono">
+                      OPPORTUNITY
+                    </span>
                     <a
                       href={resource.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300"
+                      className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
                     >
-                      <span>EXTERNAL LINK</span>
-                      <ArrowUpRight size={12} />
+                      OPEN <ExternalLink size={10} />
                     </a>
-                  )}
-                </div>
-              </motion.article>
-            ))}
+                  </div>
+                </motion.article>
+              );
+            })}
           </div>
         )}
 

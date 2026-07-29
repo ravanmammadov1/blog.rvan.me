@@ -49,7 +49,7 @@ const CONFIG_SHOW_NEWS = true;
 const CONFIG_SHOW_BLOG = true;
 const CONFIG_SHOW_RESOURCES = true;
 const CONFIG_SHOW_TOOLS = true;
-const CONFIG_SHOW_WORK = true;
+const CONFIG_SHOW_WORK = false;
 const CONFIG_SHOW_CONTACT = true;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -610,148 +610,11 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── 4. Featured Resources ── */}
+      {/* ── 4. Live Curated Resources Directory ── */}
       {CONFIG_SHOW_RESOURCES && (
-        <section id="resources" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
-          <div className="mx-auto max-w-[1600px]">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="mb-16 flex items-end justify-between border-b border-border pb-6"
-            >
-              <div>
-                <Eyebrow className="text-muted-foreground">04 / Resources Directory</Eyebrow>
-                <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-                  Curated Knowledge.
-                </h2>
-              </div>
-              <Link
-                to="/resources"
-                className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
-              >
-                VIEW ALL RESOURCES
-                <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </Link>
-            </motion.div>
-
-            {/* Top resource types cards grid */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-12">
-              {[
-                { type: "aiCredits", label: "Free AI Credits", icon: "🤖", desc: "Credits and tokens for premium generative AI platforms." },
-                { type: "studentPack", label: "Student Packs", icon: "🎒", desc: "Premium software licenses and packs for students." },
-                { type: "roadmap", label: "Learning Roadmaps", icon: "🗺️", desc: "Step-by-step masterclass pathways for design and tech." },
-                { type: "software", label: "Free Software", icon: "💻", desc: "Completely free design, development, and animation tools." },
-                { type: "job", label: "Remote Jobs", icon: "💼", desc: "High-paying remote roles in creative and design fields." },
-                { type: "hackathon", label: "Hackathons", icon: "⚡", desc: "Active hackathons, challenges, and prize program entries." }
-              ].map((item, index) => (
-                <motion.div
-                  key={item.type}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={index * 0.05}
-                >
-                  <Link
-                    to={`/resources?type=${item.type}`}
-                    className="group flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50 hover:bg-surface/80"
-                  >
-                    <div>
-                      <span className="text-3xl block mb-4">{item.icon}</span>
-                      <h3 className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                        {item.label}
-                      </h3>
-                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                        {item.desc}
-                      </p>
-                    </div>
-                    <span className="mt-4 inline-flex items-center gap-1 text-[10px] font-bold tracking-widest text-primary mono uppercase">
-                      EXPLORE <ArrowUpRight size={10} />
-                    </span>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Dynamic preview list */}
-            {resourcesList.length > 0 && (
-              <div className="border-t border-border/50 pt-12">
-                <p className="text-xs font-bold tracking-widest text-muted-foreground mono uppercase mb-6">
-                  NEWLY ADDED RESOURCES
-                </p>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  {resourcesList.slice(0, 4).map((resource, index) => {
-                    const logoUrl = resource.logo ? urlFor(resource.logo)?.width(80).url() : null;
-                    const slug = resource.slug || resource._id;
-                    const typeLabel = RESOURCE_TYPE_LABELS[resource.resourceType] || resource.resourceType;
-                    const typeIcon = RESOURCE_TYPE_ICONS[resource.resourceType] || "📦";
-
-                    return (
-                      <motion.div
-                        key={resource._id}
-                        variants={fadeUp}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        custom={index * 0.05}
-                        className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-5 transition-all duration-300 hover:border-primary/50"
-                      >
-                        <div>
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="flex-shrink-0">
-                              {logoUrl ? (
-                                <img
-                                  src={logoUrl}
-                                  alt={resource.title}
-                                  className="h-8 w-8 rounded-lg object-contain border border-border bg-background p-1"
-                                />
-                              ) : (
-                                <div className="h-8 w-8 rounded-lg border border-border bg-background flex items-center justify-center text-sm">
-                                  {typeIcon}
-                                </div>
-                              )}
-                            </div>
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mono">
-                              {typeLabel}
-                            </span>
-                          </div>
-                          <h4 className="text-sm font-semibold leading-snug text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                            <Link to={`/resources/${slug}`}>{resource.title}</Link>
-                          </h4>
-                          {resource.benefitSummary && (
-                            <span className="inline-block mt-2 rounded bg-primary/10 border border-primary/20 px-2 py-0.5 text-[9px] font-bold text-primary">
-                              {resource.benefitSummary}
-                            </span>
-                          )}
-                        </div>
-                        <div className="mt-4 border-t border-border/40 pt-3 flex items-center justify-between text-[10px] font-bold tracking-widest uppercase mono">
-                          <Link to={`/resources/${slug}`} className="text-primary hover:underline flex items-center gap-0.5">
-                            VIEW <ArrowUpRight size={10} />
-                          </Link>
-                          <a href={resource.link} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                            ACCESS
-                          </a>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="mt-16 flex justify-center">
-              <Link
-                to="/resources"
-                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl"
-              >
-                EXPLORE CURATED DIRECTORY ({resourcesList.length}+ ITEMS)
-                <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
-            </div>
-          </div>
-        </section>
+        <Suspense fallback={<div className="h-96" />}>
+          <ResourcesSection />
+        </Suspense>
       )}
 
       {/* ── 5. Featured Tools ── */}

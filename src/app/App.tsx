@@ -7,8 +7,6 @@ import HomePage from "./HomePage";
 import ContactPage from "./ContactPage";
 import NotFound from "./NotFound";
 
-const WorkArchive = lazy(() => import("./WorkArchive"));
-const WorkDetail = lazy(() => import("./WorkDetail"));
 const BlogArchive = lazy(() => import("./BlogArchive"));
 const BlogDetail = lazy(() => import("./BlogDetail"));
 const NewsArchive = lazy(() => import("./NewsArchive"));
@@ -37,8 +35,8 @@ function AppContent() {
       <Suspense fallback={<div />}> 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/work" element={<WorkArchive />} />
-          <Route path="/work/:slug" element={<WorkDetail />} />
+          <Route path="/work" element={<Navigate to="/ravan-mammadov#selected-work" replace />} />
+          <Route path="/work/:slug" element={<Navigate to="/ravan-mammadov#selected-work" replace />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogArchive />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />

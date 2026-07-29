@@ -127,7 +127,29 @@ export default function RavanMammadovPage() {
       }
     `).then((data) => {
       setProjects(data || []);
+      // Scroll to hash target on initial load after content mounts
+      if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        setTimeout(() => {
+          const element = document.getElementById(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 300);
+      }
     }).catch(console.error);
+  }, []);
+
+  // Listen to hash changes dynamically if page stays mounted
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash) {
+        const element = document.getElementById(window.location.hash.substring(1));
+        if (element) element.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const personSchema = {
@@ -411,7 +433,7 @@ export default function RavanMammadovPage() {
 
       {/* Selected Work (Behance Integration) */}
       {projects.length > 0 && (
-        <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <section id="selected-work" className="px-6 py-28 md:px-10 md:py-36 relative z-10">
           <div className="absolute inset-0 border-t border-white/5" />
           <div className="mx-auto max-w-[1600px] relative">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">

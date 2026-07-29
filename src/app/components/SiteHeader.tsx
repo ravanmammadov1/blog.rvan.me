@@ -41,7 +41,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       return;
     }
 
-    if (target === "work" || target === "Work") { navigate("/work"); return; }
+    if (target === "work" || target === "Work") { navigate("/ravan-mammadov#selected-work"); return; }
     if (target === "contact" || target === "Contact") { navigate("/contact"); return; }
     if (target === "about" || target === "About") { navigate("/ravan-mammadov"); return; }
     if (target === "news" || target === "News") { navigate("/news"); return; }
@@ -63,7 +63,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   const baseNavItems = [
     { label: "HOME",      target: "/" },
-    { label: "WORK",      target: "/work" },
+    { label: "WORK",      target: "/ravan-mammadov#selected-work" },
     { label: "NEWS",      target: "/news" },
     { label: "RESOURCES", target: "/resources" },
     { label: "TOOLS",     target: "/tools" },
