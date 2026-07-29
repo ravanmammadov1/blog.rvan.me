@@ -40,6 +40,7 @@ const ResourcesSection = lazy(() => import("./components/home/ResourcesSection")
 const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const WorkSection = lazy(() => import("./components/home/WorkSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
+const AmbientStars = lazy(() => import("./components/home/AmbientStars"));
 
 
 // Modular Section Enable/Disable Toggles
@@ -303,6 +304,11 @@ export default function HomePage() {
         className="fixed left-0 top-0 z-[70] h-[2px] w-full origin-left bg-primary"
         style={{ scaleX: progressScale }}
       />
+
+      {/* Ambient star field backdrop */}
+      <Suspense fallback={null}>
+        <AmbientStars />
+      </Suspense>
 
 
       {/* ── Header ── */}
