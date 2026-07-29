@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <main
       className="min-h-screen bg-background text-foreground grid place-items-center px-6 py-24"
-      style={{ fontFamily: "'Manrope', sans-serif" }}
+      style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO title="Page Not Found — Ravan Mammadov" />
       <motion.div

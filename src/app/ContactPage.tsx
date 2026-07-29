@@ -83,7 +83,7 @@ export default function ContactPage() {
   return (
     <main
       className="min-h-screen bg-background text-foreground"
-      style={{ fontFamily: "'Manrope', sans-serif" }}
+      style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
         title="Contact — Let's Make Something Move | Ravan Mammadov"

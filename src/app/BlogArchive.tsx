@@ -127,7 +127,7 @@ export default function BlogArchive() {
   return (
     <main
       className="min-h-screen bg-background text-foreground"
-      style={{ fontFamily: "'Manrope', sans-serif" }}
+      style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
         title="Design & Motion Insights Blog — Ravan Mammadov Studio"

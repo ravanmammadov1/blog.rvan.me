@@ -252,7 +252,7 @@ export default function ResourcesArchive() {
   const resetAllFilters = () => setSearchParams({}, { replace: true });
 
   return (
-    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Manrope', sans-serif" }}>
+    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title="Dynamic Opportunities & Resources Directory — Rvan.me"
         description="Auto-updating directory of scholarships, remote jobs, AI updates, tech news, free courses, grants, and startup competitions."

@@ -291,7 +291,7 @@ export default function HomePage() {
   return (
     <main
       className="overflow-hidden bg-background text-foreground"
-      style={{ fontFamily: "'Manrope', sans-serif" }}
+      style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
         title="Ravan Mammadov — Senior Creative Designer & Art Director"

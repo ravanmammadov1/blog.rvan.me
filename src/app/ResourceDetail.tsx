@@ -173,7 +173,7 @@ export default function ResourceDetail() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Manrope', sans-serif" }}>
+      <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
         <SiteHeader siteSettings={siteSettings} />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="space-y-4 w-full max-w-2xl px-6">
@@ -209,7 +209,7 @@ export default function ResourceDetail() {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Manrope', sans-serif" }}>
+    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title={seoTitle}
         description={seoDesc}
