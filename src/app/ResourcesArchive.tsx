@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, ArrowUpRight, Globe, MapPin,
   BadgeCheck, Users, Award, ExternalLink,
-  Layers, ChevronDown, SlidersHorizontal, Rss, Clock, Sparkles
+  SlidersHorizontal, Rss, Clock, Sparkles, Filter, ChevronDown
 } from "lucide-react";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
@@ -48,8 +48,21 @@ function formatPubDate(isoStr: string): string {
   }
 }
 
-function ResourceCard({ resource, index }: { resource: NormalizedResource; index: number }) {
+function ResourceCard({ resource, index, isFeatured = false }: { resource: NormalizedResource; index: number; isFeatured?: boolean }) {
   const catConfig = CATEGORY_MAP[resource.category] || { label: resource.category, icon: "📦" };
+
+  // Calculate Verification Badges dynamically
+  const officialSources = ["Smashing Magazine", "We Work Remotely", "UX Collective", "Abduzeedo"];
+  const isOfficial = officialSources.includes(resource.sourceName);
+  const isVerified = !resource.isRss;
+
+  const badgeText = isOfficial ? "Official" : isVerified ? "Verified" : "Community";
+  const badgeColor = isOfficial 
+    ? "text-blue-400 border-blue-500/30 bg-blue-500/5" 
+    : isVerified 
+      ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/5" 
+      : "text-muted-foreground border-white/10 bg-white/5";
+  const BadgeIcon = isOfficial ? BadgeCheck : isVerified ? Award : Users;
 
   return (
     <motion.article
@@ -58,18 +71,25 @@ function ResourceCard({ resource, index }: { resource: NormalizedResource; index
       whileInView="visible"
       viewport={{ once: true, amount: 0.05 }}
       custom={index * 0.04}
-      className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 overflow-hidden min-h-[300px]"
+      className={cn(
+        "group relative flex flex-col rounded-2xl border bg-white/5 p-6 glass transition-all duration-500 hover:-translate-y-1 overflow-hidden min-h-[320px]",
+        isFeatured 
+          ? "border-primary/30 hover:border-primary/60 hover:shadow-primary/5 hover:shadow-2xl" 
+          : "border-white/10 hover:border-white/20 hover:shadow-xl"
+      )}
     >
-      {/* Dynamic Aurora Glow */}
+      {/* Background Hover Aura Glow */}
       <div 
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
         style={{
-          background: "radial-gradient(circle at top right, rgba(6,182,212,0.06) 0%, transparent 60%)",
+          background: isFeatured 
+            ? "radial-gradient(circle at top right, rgba(232,253,82,0.06) 0%, transparent 60%)" 
+            : "radial-gradient(circle at top right, rgba(6,182,212,0.06) 0%, transparent 60%)",
         }}
       />
 
       <div className="relative z-10 flex-1 flex flex-col">
-        {/* Source & Date Bar */}
+        {/* Card Header metadata */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono glass-sm">
             <span className="text-sm">{catConfig.icon}</span>
@@ -87,7 +107,7 @@ function ResourceCard({ resource, index }: { resource: NormalizedResource; index
           {resource.title}
         </h3>
 
-        {/* Source Badge */}
+        {/* Publisher / Source */}
         <div className="mt-2 flex items-center gap-2 text-[11px] font-bold text-muted-foreground mono">
           <span className="text-foreground/90">{resource.sourceName}</span>
           {resource.isRss && (
@@ -97,24 +117,35 @@ function ResourceCard({ resource, index }: { resource: NormalizedResource; index
           )}
         </div>
 
-        {/* Summary Description */}
+        {/* Snippet Description */}
         <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground/80 line-clamp-3 flex-1 font-medium">
           {resource.description}
         </p>
 
-        {/* Badges / Meta row */}
+        {/* Meta / badging row */}
         <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-muted-foreground">
+          {/* Verification Badge */}
+          <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 ${badgeColor}`}>
+            <BadgeIcon size={11} />
+            {badgeText}
+          </span>
+
+          {/* Work Type Badge */}
           {resource.workType && resource.workType !== "na" && (
             <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-400 capitalize">
               {resource.workType}
             </span>
           )}
+
+          {/* Country / Region Badge */}
           {resource.country && (
             <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-foreground/80">
               <Globe size={10} />
               {resource.country}
             </span>
           )}
+
+          {/* Price badge */}
           {resource.isFree && (
             <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-primary font-bold">
               FREE
@@ -123,10 +154,10 @@ function ResourceCard({ resource, index }: { resource: NormalizedResource; index
         </div>
       </div>
 
-      {/* CTA Footer */}
+      {/* CTA bottom row */}
       <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 mt-5">
         <span className="text-[10px] font-semibold text-muted-foreground/60 mono">
-          VERIFIED SOURCE
+          {isFeatured ? "🔥 FEATURED" : "OPPORTUNITY"}
         </span>
         <a
           href={resource.link}
@@ -135,11 +166,16 @@ function ResourceCard({ resource, index }: { resource: NormalizedResource; index
           className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
         >
           <ExternalLink size={11} />
-          ACCESS
+          OPEN RESOURCE
         </a>
       </div>
     </motion.article>
   );
+}
+
+// Utility class merger helper function locally to ensure zero import issues
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function ResourcesArchive() {
@@ -149,6 +185,9 @@ export default function ResourcesArchive() {
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  // Lazy loading pagination state
+  const [visibleCount, setVisibleCount] = useState(12);
+
   // Filter params
   const searchQuery = searchParams.get("q") || "";
   const activeCategory = searchParams.get("category") || "all";
@@ -156,6 +195,9 @@ export default function ResourcesArchive() {
   const activeWorkType = searchParams.get("workType") || "all";
   const activeDateRange = searchParams.get("date") || "all";
   const activeSource = searchParams.get("source") || "all";
+  const activeSort = searchParams.get("sort") || "latest";
+  const activePricing = searchParams.get("price") || "all";
+  const activeBadge = searchParams.get("badge") || "all";
 
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -165,6 +207,8 @@ export default function ResourcesArchive() {
       next.set(key, value);
     }
     setSearchParams(next, { replace: true });
+    // Reset visible count on filter updates
+    setVisibleCount(12);
   };
 
   useEffect(() => {
@@ -180,7 +224,7 @@ export default function ResourcesArchive() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Filter options derived from current resources
+  // Filter options derived from aggregated resource set
   const sourcesList = useMemo(() => {
     return Array.from(new Set(resources.map((r) => r.sourceName))).sort();
   }, [resources]);
@@ -189,6 +233,7 @@ export default function ResourcesArchive() {
     return Array.from(new Set(resources.map((r) => r.country))).filter(Boolean).sort();
   }, [resources]);
 
+  // Derived filter matching operations
   const filteredResources = useMemo(() => {
     let result = resources;
 
@@ -206,6 +251,24 @@ export default function ResourcesArchive() {
 
     if (activeSource !== "all") {
       result = result.filter((r) => r.sourceName === activeSource);
+    }
+
+    if (activePricing === "free") {
+      result = result.filter((r) => r.isFree);
+    } else if (activePricing === "paid") {
+      result = result.filter((r) => !r.isFree);
+    }
+
+    if (activeBadge !== "all") {
+      const officialSources = ["Smashing Magazine", "We Work Remotely", "UX Collective", "Abduzeedo"];
+      result = result.filter((r) => {
+        const isOfficial = officialSources.includes(r.sourceName);
+        const isVerified = !r.isRss;
+        if (activeBadge === "official") return isOfficial;
+        if (activeBadge === "verified") return isVerified && !isOfficial;
+        if (activeBadge === "community") return r.isRss && !isOfficial;
+        return true;
+      });
     }
 
     if (activeDateRange !== "all") {
@@ -231,8 +294,29 @@ export default function ResourcesArchive() {
       );
     }
 
-    return result;
-  }, [resources, activeCategory, activeCountry, activeWorkType, activeDateRange, activeSource, searchQuery]);
+    // Apply Sorting Options
+    const sorted = [...result];
+    if (activeSort === "latest") {
+      sorted.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    } else if (activeSort === "popular") {
+      // Sort by RSS priority or custom ordering
+      sorted.sort((a, b) => (b.isFree ? 1 : 0) - (a.isFree ? 1 : 0));
+    } else if (activeSort === "alphabetical") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return sorted;
+  }, [resources, activeCategory, activeCountry, activeWorkType, activeDateRange, activeSource, searchQuery, activeSort, activePricing, activeBadge]);
+
+  // Featured Today: Top 3 high priority items, or the 3 newest items from the active set
+  const featuredResources = useMemo(() => {
+    const pool = resources.filter((r) => {
+      const officialSources = ["Smashing Magazine", "We Work Remotely", "UX Collective", "Abduzeedo"];
+      return officialSources.includes(r.sourceName);
+    });
+    const selectFrom = pool.length >= 3 ? pool : resources;
+    return selectFrom.slice(0, 3);
+  }, [resources]);
 
   const hasActiveFilters =
     activeCategory !== "all" ||
@@ -240,15 +324,22 @@ export default function ResourcesArchive() {
     activeWorkType !== "all" ||
     activeDateRange !== "all" ||
     activeSource !== "all" ||
+    activeSort !== "latest" ||
+    activePricing !== "all" ||
+    activeBadge !== "all" ||
     !!searchQuery;
 
   const resetAllFilters = () => setSearchParams({}, { replace: true });
+
+  const loadMore = () => {
+    setVisibleCount((prev) => prev + 12);
+  };
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title="Dynamic Opportunities & Resources Directory — Rvan.me"
-        description="Auto-updating directory of scholarships, remote jobs, AI updates, tech news, free courses, grants, and startup competitions."
+        description="Auto-updating directory of design news, remote jobs, assets, mockups, fonts, icons, UI kits, and podcasts."
         url="https://www.rvan.me/resources"
       />
 
@@ -285,7 +376,7 @@ export default function ResourcesArchive() {
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero Header */}
-      <section className="px-6 pt-20 pb-10 md:px-10 md:pt-28 relative z-10">
+      <section className="px-6 pt-20 pb-6 md:px-10 md:pt-28 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
             <div className="flex items-center gap-2 mb-4">
@@ -299,14 +390,14 @@ export default function ResourcesArchive() {
             </div>
             
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl">
-              Dynamic Resources.
+              Design Resources.
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Auto-updating feed of scholarships, remote jobs, AI updates, startup news, free courses, and creative assets. Sourced globally, updated hourly.
+              Fully automated creative publication directory. Real-time news, remote design & marketing jobs, mockups, fonts, assets, and design podcasts. Updated hourly.
             </p>
           </motion.div>
 
-          {/* Dynamic Category Chips Scroll */}
+          {/* Categories Chip Carousel */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.2} className="mt-10 overflow-x-auto pb-4 no-scrollbar">
             <div className="flex items-center gap-2.5 min-w-max">
               {Object.entries(CATEGORY_MAP).map(([key, item]) => {
@@ -331,15 +422,36 @@ export default function ResourcesArchive() {
         </div>
       </section>
 
-      {/* Multi-Facet Search & Filter Bar */}
+      {/* Featured Section: 🔥 Featured Today */}
+      {!searchQuery && activeCategory === "all" && featuredResources.length > 0 && (
+        <section className="px-6 py-6 md:px-10 relative z-10">
+          <div className="mx-auto max-w-[1600px] border-t border-white/10 pt-10">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>🔥</span> Featured Today
+              </h2>
+              <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mono">
+                Editor's Choice
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {featuredResources.map((resItem, idx) => (
+                <ResourceCard key={`feat-${resItem.id}`} resource={resItem} index={idx} isFeatured={true} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Multi-Facet Filter Bar */}
       <section className="sticky top-[64px] z-20 bg-background/85 backdrop-blur-md border-y border-white/10 px-6 py-4 md:px-10">
-        <div className="mx-auto max-w-[1600px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          {/* Global Search Input */}
-          <div className="relative w-full md:w-96">
+        <div className="mx-auto max-w-[1600px] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {/* Global Search Bar */}
+          <div className="relative w-full lg:w-96">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
             <input
               type="text"
-              placeholder="Search opportunities, sources, titles…"
+              placeholder="Search news, jobs, assets, podcasts…"
               value={searchQuery}
               onChange={(e) => setParam("q", e.target.value)}
               className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
@@ -354,21 +466,55 @@ export default function ResourcesArchive() {
             )}
           </div>
 
-          {/* Multi-Facet Filter Selectors */}
-          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+          {/* Filter Facets & Sorting */}
+          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
+            {/* Sorting */}
+            <select
+              value={activeSort}
+              onChange={(e) => setParam("sort", e.target.value)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
+            >
+              <option value="latest">Sort: Latest</option>
+              <option value="popular">Sort: Popular</option>
+              <option value="alphabetical">Sort: A-Z</option>
+            </select>
+
+            {/* Verification Status Badges */}
+            <select
+              value={activeBadge}
+              onChange={(e) => setParam("badge", e.target.value)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
+            >
+              <option value="all">Badge: All</option>
+              <option value="official">Official Sources</option>
+              <option value="verified">Verified Hubs</option>
+              <option value="community">Community Submissions</option>
+            </select>
+
+            {/* Price Filter */}
+            <select
+              value={activePricing}
+              onChange={(e) => setParam("price", e.target.value)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
+            >
+              <option value="all">Price: All</option>
+              <option value="free">Free Only</option>
+              <option value="paid">Paid</option>
+            </select>
+
             {/* Work Type Filter */}
             <select
               value={activeWorkType}
               onChange={(e) => setParam("workType", e.target.value)}
               className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer"
             >
-              <option value="all">Work Type: All</option>
-              <option value="remote">Remote</option>
+              <option value="all">Type: All</option>
+              <option value="remote">Remote Only</option>
               <option value="hybrid">Hybrid</option>
-              <option value="onsite">On-site</option>
+              <option value="onsite">On-Site</option>
             </select>
 
-            {/* Country Filter */}
+            {/* Country / Region Filter */}
             <select
               value={activeCountry}
               onChange={(e) => setParam("country", e.target.value)}
@@ -392,34 +538,20 @@ export default function ResourcesArchive() {
               <option value="month">Past Month</option>
             </select>
 
-            {/* Source Filter */}
-            {sourcesList.length > 0 && (
-              <select
-                value={activeSource}
-                onChange={(e) => setParam("source", e.target.value)}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary/50 glass-sm cursor-pointer hidden lg:block"
-              >
-                <option value="all">Source: All</option>
-                {sourcesList.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            )}
-
             {/* Reset Filters */}
             {hasActiveFilters && (
               <button
                 onClick={resetAllFilters}
-                className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline mono"
+                className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline mono whitespace-nowrap"
               >
-                <X size={12} /> Reset
+                <X size={12} /> Reset Filters
               </button>
             )}
           </div>
         </div>
       </section>
 
-      {/* Directory Content Grid */}
+      {/* Directory Grid Content */}
       <section className="px-6 py-12 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           {loading ? (
@@ -429,28 +561,45 @@ export default function ResourcesArchive() {
               ))}
             </div>
           ) : filteredResources.length === 0 ? (
-            <div className="py-20 text-center glass rounded-2xl border border-white/10 p-12">
-              <p className="text-4xl mb-4">🔍</p>
-              <h3 className="text-xl font-bold">No opportunities found</h3>
-              <p className="text-sm text-muted-foreground mt-2">Try adjusting your filters or search query.</p>
+            /* Beautiful empty state */
+            <div className="py-20 text-center glass rounded-2xl border border-white/10 p-12 max-w-xl mx-auto shadow-2xl relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent pointer-events-none opacity-50" />
+              <p className="text-5xl mb-4 relative z-10">🔍</p>
+              <h3 className="text-xl font-semibold relative z-10">No opportunities found</h3>
+              <p className="text-sm text-muted-foreground mt-2 relative z-10">We couldn't find matching opportunities for the active filters.</p>
               <button
                 onClick={resetAllFilters}
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold text-black uppercase mono"
+                className="mt-6 relative z-10 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold text-black uppercase mono hover:scale-105 transition-transform"
               >
-                CLEAR ALL FILTERS
+                CLEAR FILTER RULES
               </button>
             </div>
           ) : (
             <>
               <div className="mb-6 flex items-center justify-between text-xs font-bold text-muted-foreground mono">
-                <span>SHOWING {filteredResources.length} OPPORTUNITIES</span>
-                <span>SORTED BY RECENT</span>
+                <span>Latest Updates ({filteredResources.length} Found)</span>
+                <span>Sorted by {activeSort.toUpperCase()}</span>
               </div>
+
+              {/* Render limited visible resources for performance */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredResources.map((resItem, idx) => (
+                {filteredResources.slice(0, visibleCount).map((resItem, idx) => (
                   <ResourceCard key={resItem.id} resource={resItem} index={idx} />
                 ))}
               </div>
+
+              {/* Load More Button */}
+              {filteredResources.length > visibleCount && (
+                <div className="mt-16 flex justify-center">
+                  <button
+                    onClick={loadMore}
+                    className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                  >
+                    SHOW MORE RESOURCES
+                    <ChevronDown size={14} className="transition-transform group-hover:translate-y-0.5" />
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
