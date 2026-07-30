@@ -63,7 +63,6 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   const baseNavItems = [
     { label: "HOME",      target: "/" },
-    { label: "WORK",      target: "/ravan-mammadov#selected-work" },
     { label: "NEWS",      target: "/news" },
     { label: "RESOURCES", target: "/resources" },
     { label: "TOOLS",     target: "/tools" },

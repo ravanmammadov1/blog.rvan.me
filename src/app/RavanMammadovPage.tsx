@@ -1,17 +1,13 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowUpRight,
   Award,
-  Briefcase,
   CheckCircle2,
   ChevronDown,
   Sparkles,
-  UserCheck,
   Zap,
-  Globe,
-  Mail,
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
@@ -22,6 +18,7 @@ import { fetchAboutSection, fetchSiteSettings, fetchTestimonials } from "../lib/
 import { AboutSection as IAboutSection, SiteSettings, TestimonialItem } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
+import Footer from "./components/Footer";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -127,7 +124,6 @@ export default function RavanMammadovPage() {
       }
     `).then((data) => {
       setProjects(data || []);
-      // Scroll to hash target on initial load after content mounts
       if (window.location.hash) {
         const hash = window.location.hash.substring(1);
         setTimeout(() => {
@@ -140,7 +136,6 @@ export default function RavanMammadovPage() {
     }).catch(console.error);
   }, []);
 
-  // Listen to hash changes dynamically if page stays mounted
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash) {
@@ -224,7 +219,7 @@ export default function RavanMammadovPage() {
         />
       </div>
 
-      {/* Hero / Biography Header */}
+      {/* 1. Hero / Biography Header */}
       <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
@@ -253,20 +248,14 @@ export default function RavanMammadovPage() {
                   "By blending raw design instinct with tactical product thinking, we craft spaces and tools that inspire builders to make something memorable."}
               </p>
 
+              {/* Contact Button — Mailto Link directly launching email client */}
               <div className="mt-10 flex flex-wrap gap-4">
-                <Link
-                  to="/contact"
+                <a
+                  href="mailto:hello@rvan.me?subject=Project%20Inquiry"
                   className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
                   GET IN TOUCH
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </Link>
-
-                <a
-                  href="mailto:hello@rvan.me"
-                  className="inline-flex items-center gap-2 rounded-full border border-border px-7 py-4 text-xs font-bold tracking-[.18em] text-foreground hover:border-primary transition-colors mono uppercase"
-                >
-                  <Mail size={14} /> hello@rvan.me
                 </a>
               </div>
             </motion.div>
@@ -317,124 +306,9 @@ export default function RavanMammadovPage() {
         </div>
       </section>
 
-      {/* Experience & Career Timeline */}
-      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
-        <div className="absolute inset-0 border-t border-white/5" />
-        <div className="mx-auto max-w-[1600px] relative">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Editorial Milestones</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Timeline & Journey
-            </h2>
-          </motion.div>
-
-          <div className="mt-16 space-y-8 border-l-[1px] border-white/20 pl-6 md:pl-10 relative">
-            {(aboutSection?.experience && aboutSection.experience.length > 0 ? aboutSection.experience : timelineEvents).map((item, idx) => (
-              <motion.div
-                key={item.role + idx}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={idx * 0.1}
-                className="relative group p-6 -ml-6 md:-ml-10 md:pl-10 rounded-2xl transition-all duration-500 hover:bg-white/5"
-              >
-                <div className="absolute left-[23px] md:left-[7px] top-8 h-2.5 w-2.5 rounded-full border border-primary bg-background shadow-[0_0_10px_rgba(232,253,82,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-primary" />
-                <span className="text-xs font-bold tracking-[.2em] text-primary mono transition-colors duration-300 group-hover:text-white">{item.year}</span>
-                <h3 className="mt-3 text-2xl font-bold text-foreground/90 transition-colors duration-300 group-hover:text-primary">{item.role}</h3>
-                {item.company && <p className="mt-1 text-sm font-semibold text-muted-foreground mono tracking-wide">{item.company}</p>}
-                {item.desc && <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground/70 transition-colors duration-300 group-hover:text-foreground/90">{item.desc}</p>}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Skills Matrix */}
-      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
-        <div className="absolute inset-0 border-t border-white/5" />
-        <div className="mx-auto max-w-[1600px] relative">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Core Competencies</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Skills & Tooling
-            </h2>
-          </motion.div>
-
-          <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {(aboutSection?.skills && aboutSection.skills.length > 0 ? aboutSection.skills : skillsList).map((group, idx) => (
-              <div key={group.category + idx} className="p-8 aurora-card group relative">
-                <h3 className="text-lg font-bold text-foreground mb-8 flex items-center gap-3 relative z-10">
-                  <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
-                    <Zap size={16} />
-                  </div>
-                  {group.category}
-                </h3>
-                <ul className="space-y-4 relative z-10">
-                  {group.skills.map((skill) => (
-                    <li key={skill} className="flex items-center gap-3 text-[15px] text-muted-foreground/80 font-medium transition-colors duration-300 group-hover:text-foreground/90">
-                      <CheckCircle2 size={14} className="text-primary/70 flex-shrink-0" />
-                      <span>{skill}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Awards & Recognition */}
-      <section className="bg-surface px-6 py-24 md:px-10 border-t border-border">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Recognition</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-              Awards & Features
-            </h2>
-          </motion.div>
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {awardsList.map((award) => (
-              <div key={award.title} className="p-6 aurora-card">
-                <Award size={24} className="text-primary mb-4" />
-                <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{award.year} · {award.issuer}</span>
-                <h4 className="mt-2 text-base font-bold text-foreground">{award.title}</h4>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What Collaborators Say (Testimonials) */}
-      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
-        <div className="absolute inset-0 border-t border-white/5" />
-        <div className="mx-auto max-w-[1600px] relative">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Collaborator Feedback</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              What Collaborators Say
-            </h2>
-          </motion.div>
-
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t) => (
-              <div key={t._id} className="flex flex-col justify-between p-8 aurora-card">
-                <p className="text-[15px] leading-relaxed text-muted-foreground/90 italic">"{t.quote}"</p>
-                <div className="mt-10 border-t border-white/10 pt-6">
-                  <p className="font-bold text-foreground/90 text-[15px]">{t.name}</p>
-                  <p className="text-xs text-muted-foreground mono mt-1 tracking-wide">{t.role} {t.company && `· ${t.company}`}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Selected Work (Behance Integration) */}
+      {/* 2. Selected Work (Moved Directly Below Founder Introduction Section) */}
       {projects.length > 0 && (
-        <section id="selected-work" className="px-6 py-28 md:px-10 md:py-36 relative z-10">
-          <div className="absolute inset-0 border-t border-white/5" />
+        <section id="selected-work" className="px-6 py-20 md:px-10 md:py-28 relative z-10 border-t border-white/10">
           <div className="mx-auto max-w-[1600px] relative">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
               <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
@@ -528,7 +402,121 @@ export default function RavanMammadovPage() {
         </section>
       )}
 
-      {/* FAQ Section */}
+      {/* 3. Experience & Career Timeline */}
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-[1600px] relative">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <p className="eyebrow text-muted-foreground">Editorial Milestones</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Timeline & Journey
+            </h2>
+          </motion.div>
+
+          <div className="mt-16 space-y-8 border-l-[1px] border-white/20 pl-6 md:pl-10 relative">
+            {(aboutSection?.experience && aboutSection.experience.length > 0 ? aboutSection.experience : timelineEvents).map((item, idx) => (
+              <motion.div
+                key={item.role + idx}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={idx * 0.1}
+                className="relative group p-6 -ml-6 md:-ml-10 md:pl-10 rounded-2xl transition-all duration-500 hover:bg-white/5"
+              >
+                <div className="absolute left-[23px] md:left-[7px] top-8 h-2.5 w-2.5 rounded-full border border-primary bg-background shadow-[0_0_10px_rgba(232,253,82,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-primary" />
+                <span className="text-xs font-bold tracking-[.2em] text-primary mono transition-colors duration-300 group-hover:text-white">{item.year}</span>
+                <h3 className="mt-3 text-2xl font-bold text-foreground/90 transition-colors duration-300 group-hover:text-primary">{item.role}</h3>
+                {item.company && <p className="mt-1 text-sm font-semibold text-muted-foreground mono tracking-wide">{item.company}</p>}
+                {item.desc && <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground/70 transition-colors duration-300 group-hover:text-foreground/90">{item.desc}</p>}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Skills Matrix */}
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-[1600px] relative">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <p className="eyebrow text-muted-foreground">Core Competencies</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Skills & Tooling
+            </h2>
+          </motion.div>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
+            {(aboutSection?.skills && aboutSection.skills.length > 0 ? aboutSection.skills : skillsList).map((group, idx) => (
+              <div key={group.category + idx} className="p-8 aurora-card group relative">
+                <h3 className="text-lg font-bold text-foreground mb-8 flex items-center gap-3 relative z-10">
+                  <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
+                    <Zap size={16} />
+                  </div>
+                  {group.category}
+                </h3>
+                <ul className="space-y-4 relative z-10">
+                  {group.skills.map((skill) => (
+                    <li key={skill} className="flex items-center gap-3 text-[15px] text-muted-foreground/80 font-medium transition-colors duration-300 group-hover:text-foreground/90">
+                      <CheckCircle2 size={14} className="text-primary/70 flex-shrink-0" />
+                      <span>{skill}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Awards & Recognition */}
+      <section className="bg-surface px-6 py-24 md:px-10 border-t border-border">
+        <div className="mx-auto max-w-[1600px]">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <p className="eyebrow text-muted-foreground">Recognition</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
+              Awards & Features
+            </h2>
+          </motion.div>
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {awardsList.map((award) => (
+              <div key={award.title} className="p-6 aurora-card">
+                <Award size={24} className="text-primary mb-4" />
+                <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{award.year} · {award.issuer}</span>
+                <h4 className="mt-2 text-base font-bold text-foreground">{award.title}</h4>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. What Collaborators Say (Testimonials) */}
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
+        <div className="absolute inset-0 border-t border-white/5" />
+        <div className="mx-auto max-w-[1600px] relative">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <p className="eyebrow text-muted-foreground">Collaborator Feedback</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              What Collaborators Say
+            </h2>
+          </motion.div>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {testimonials.map((t) => (
+              <div key={t._id} className="flex flex-col justify-between p-8 aurora-card">
+                <p className="text-[15px] leading-relaxed text-muted-foreground/90 italic">"{t.quote}"</p>
+                <div className="mt-10 border-t border-white/10 pt-6">
+                  <p className="font-bold text-foreground/90 text-[15px]">{t.name}</p>
+                  <p className="text-xs text-muted-foreground mono mt-1 tracking-wide">{t.role} {t.company && `· ${t.company}`}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. FAQ Section */}
       <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
         <div className="absolute inset-0 border-t border-white/5" />
         <div className="mx-auto max-w-4xl relative">
@@ -579,6 +567,8 @@ export default function RavanMammadovPage() {
           </div>
         </div>
       </section>
+
+      <Footer siteSettings={siteSettings} />
     </main>
   );
 }
