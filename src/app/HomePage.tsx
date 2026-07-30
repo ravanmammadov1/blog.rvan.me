@@ -32,6 +32,7 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
+const HeroParticles = lazy(() => import("./components/HeroParticles"));
 
 // Lazy-load below-fold sections
 const NewsSection = lazy(() => import("./components/home/NewsSection"));
@@ -164,6 +165,21 @@ export default function HomePage() {
   const [resourcesList, setResourcesList] = useState<any[]>([]);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
+
+  // Mouse tracking for Hero particles
+  const mouseRef = useRef({ x: -99999, y: -99999 });
+
+  const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  }, []);
+
+  const handleHeroMouseLeave = useCallback(() => {
+    mouseRef.current = { x: -99999, y: -99999 };
+  }, []);
 
   useEffect(() => {
     fetchSiteSettings().then((data) => {
@@ -307,9 +323,15 @@ export default function HomePage() {
       {CONFIG_SHOW_HERO && (
         <section
           id="top"
+          onMouseMove={handleHeroMouseMove}
+          onMouseLeave={handleHeroMouseLeave}
           className="relative isolate min-h-screen overflow-hidden flex items-center"
           style={{ paddingTop: "5rem" }}
         >
+          {/* Interactive WebGL Hero Particles */}
+          <Suspense fallback={null}>
+            <HeroParticles mouseRef={mouseRef} />
+          </Suspense>
           {/* ══ Premium Deep-Black Hero Background (Apple & Vercel Aesthetic) ══ */}
           <div 
             className="pointer-events-none absolute inset-0 -z-10 bg-[#050506] transform-gpu" 
