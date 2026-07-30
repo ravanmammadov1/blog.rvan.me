@@ -97,23 +97,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
   },
-  {
-    id: "cur-news-4",
-    title: "Design Systems at Scale: Managing Multi-Brand Design Tokens",
-    slug: "design-systems-at-scale-multi-brand-tokens",
-    resourceType: "designNews",
-    description: "How leading creative teams synchronize Figma variables with React/Tailwind codebases seamlessly using automated CI pipelines.",
-    benefitSummary: "Creative Bloq",
-    link: "https://www.creativebloq.com/design-systems-at-scale-2025",
-    sourceName: "Creative Bloq",
-    publishedAt: "2025-07-26T16:45:00Z",
-    formattedDate: "4 days ago",
-    category: "designNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── AI NEWS ──
   {
@@ -152,23 +135,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
-  },
-  {
-    id: "cur-ai-news-3",
-    title: "Hugging Face Releases Open-Weight Multimodal Code Model",
-    slug: "huggingface-open-weight-multimodal-code",
-    resourceType: "aiNews",
-    description: "State-of-the-art open weights model fine-tuned for frontend code generation, SVG vector layout creation, and UI component synthesis.",
-    benefitSummary: "Hugging Face",
-    link: "https://huggingface.co/blog/",
-    sourceName: "Hugging Face",
-    publishedAt: "2025-07-27T13:00:00Z",
-    formattedDate: "3 days ago",
-    category: "aiNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
   },
 
   // ── FRONTEND NEWS ──
@@ -209,23 +175,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isRss: false,
     isTrending: true,
   },
-  {
-    id: "cur-fe-news-3",
-    title: "Chrome 128: Native CSS Container Queries, View Transitions & Scroll-Driven Motion",
-    slug: "chrome-128-view-transitions-scroll-driven-motion",
-    resourceType: "frontendNews",
-    description: "Chrome Web Platform update featuring native browser animation primitives without heavy JavaScript runtime overhead.",
-    benefitSummary: "Chrome Devs",
-    link: "https://developer.chrome.com/blog/",
-    sourceName: "Chrome Devs",
-    publishedAt: "2025-07-26T11:20:00Z",
-    formattedDate: "4 days ago",
-    category: "frontendNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── DEVELOPMENT NEWS ──
   {
@@ -245,23 +194,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
-  },
-  {
-    id: "cur-dev-news-2",
-    title: "Hacker News Discussions: Architecture Trends for Distributed Web Systems",
-    slug: "hacker-news-architecture-trends",
-    resourceType: "devNews",
-    description: "Engineering retrospective on micro-frontends vs monolithic architecture, edge databases, and Serverless computing costs.",
-    benefitSummary: "Hacker News",
-    link: "https://news.ycombinator.com/",
-    sourceName: "Hacker News",
-    publishedAt: "2025-07-28T08:00:00Z",
-    formattedDate: "2 days ago",
-    category: "devNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
   },
 
   // ── MARKETING NEWS ──
@@ -283,23 +215,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isRss: false,
     isTrending: true,
   },
-  {
-    id: "cur-mkt-news-2",
-    title: "Search Engine Journal: Modern Technical SEO Audit Framework",
-    slug: "search-engine-journal-technical-seo-audit",
-    resourceType: "marketingNews",
-    description: "Step-by-step checklist for Core Web Vitals optimization, structured data schemas, canonical URL management, and mobile indexability.",
-    benefitSummary: "Search Engine Journal",
-    link: "https://www.searchenginejournal.com/",
-    sourceName: "Search Engine Journal",
-    publishedAt: "2025-07-27T14:00:00Z",
-    formattedDate: "3 days ago",
-    category: "marketingNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── MOTION NEWS ──
   {
@@ -319,23 +234,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
-  },
-  {
-    id: "cur-mot-news-2",
-    title: "Motionographer Showcase: Top 3D Brand Idents & Visual FX Campaigns",
-    slug: "motionographer-showcase-3d-idents",
-    resourceType: "motionographer",
-    description: "Curated collection of innovative studio branding, title sequences, 3D commercial product reveals, and kinetic typography.",
-    benefitSummary: "Motionographer",
-    link: "https://motionographer.com/",
-    sourceName: "Motionographer",
-    publishedAt: "2025-07-26T15:30:00Z",
-    formattedDate: "4 days ago",
-    category: "motionNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
   },
 ];
 
@@ -382,40 +280,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isRss: false,
     isTrending: true,
   },
-  {
-    id: "cur-job-3",
-    title: "Growth Marketing Lead — Creative & Paid Media",
-    slug: "growth-marketing-lead-remote",
-    resourceType: "jobs",
-    description: "Scale multi-channel performance marketing, visual ad creative, and user acquisition engines.",
-    benefitSummary: "We Work Remotely",
-    link: "https://weworkremotely.com/categories/remote-sales-and-marketing-jobs",
-    sourceName: "We Work Remotely",
-    publishedAt: "2025-07-27T09:00:00Z",
-    formattedDate: "3 days ago",
-    category: "jobs",
-    country: "Global",
-    workType: "remote",
-    isFree: true,
-    isRss: false,
-  },
-  {
-    id: "cur-job-4",
-    title: "Frontend Engineer (React / Next.js) — Remote",
-    slug: "frontend-engineer-react-remote",
-    resourceType: "jobs",
-    description: "Build high-performance web applications, motion interfaces, and design systems for next-gen creative tools.",
-    benefitSummary: "Wellfound (AngelList)",
-    link: "https://wellfound.com/jobs",
-    sourceName: "Wellfound",
-    publishedAt: "2025-07-26T11:00:00Z",
-    formattedDate: "4 days ago",
-    category: "jobs",
-    country: "Global",
-    workType: "remote",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── FREE DESIGN ASSETS ──
   {
@@ -437,40 +301,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isTrending: true,
     isFeatured: true,
   },
-  {
-    id: "cur-asset-2",
-    title: "Craftwork Freebies — Vector & 3D UI Assets",
-    slug: "craftwork-freebies",
-    resourceType: "freeDesignAssets",
-    description: "Handcrafted free vector illustrations, 3D icon sets, and website templates for Figma and Blender.",
-    benefitSummary: "Craftwork Studio",
-    link: "https://craftwork.design/freebies/",
-    sourceName: "Craftwork",
-    publishedAt: "2025-07-25T11:00:00Z",
-    formattedDate: "5 days ago",
-    category: "freeDesignAssets",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
-  {
-    id: "cur-asset-3",
-    title: "Storyset by Freepik — Free Customizable Illustrations",
-    slug: "storyset-customizable-illustrations",
-    resourceType: "freeDesignAssets",
-    description: "Awesome free vector illustrations for website heroes, mobile apps, and presentations with editable colors & layers.",
-    benefitSummary: "Freepik",
-    link: "https://storyset.com/",
-    sourceName: "Storyset",
-    publishedAt: "2025-07-24T10:00:00Z",
-    formattedDate: "6 days ago",
-    category: "freeDesignAssets",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── FREE MOCKUPS ──
   {
@@ -490,40 +320,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
-  },
-  {
-    id: "cur-mockup-2",
-    title: "LS Graphics — Premium Free Device Mockups",
-    slug: "ls-graphics-free-mockups",
-    resourceType: "freeMockups",
-    description: "High-resolution Clay & Metallic device mockups for iPhone, iPad, Pro Display XDR, and Apple Watch.",
-    benefitSummary: "LS Graphics",
-    link: "https://www.ls.graphics/free-mockups",
-    sourceName: "LS Graphics",
-    publishedAt: "2025-07-24T08:00:00Z",
-    formattedDate: "6 days ago",
-    category: "freeMockups",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
-  {
-    id: "cur-mockup-3",
-    title: "Unblast — Curated Design Resources & PSD Mockups",
-    slug: "unblast-curated-mockups",
-    resourceType: "freeMockups",
-    description: "Selection of free high quality mockups, fonts, templates, graphics, 3D models, and vectors.",
-    benefitSummary: "Unblast",
-    link: "https://unblast.com/mockups/",
-    sourceName: "Unblast",
-    publishedAt: "2025-07-22T14:00:00Z",
-    formattedDate: "Last week",
-    category: "freeMockups",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
   },
 
   // ── FREE FONTS ──
@@ -546,23 +342,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isTrending: true,
     isFeatured: true,
   },
-  {
-    id: "cur-font-2",
-    title: "Google Fonts — Open Source Font Catalog",
-    slug: "google-fonts-catalog",
-    resourceType: "freeFonts",
-    description: "Over 1,500 open-source font families ready for commercial web and mobile integration.",
-    benefitSummary: "Google Fonts",
-    link: "https://fonts.google.com/",
-    sourceName: "Google Fonts",
-    publishedAt: "2025-07-20T10:00:00Z",
-    formattedDate: "Last week",
-    category: "freeFonts",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── FREE ICONS ──
   {
@@ -583,23 +362,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isRss: false,
     isTrending: true,
   },
-  {
-    id: "cur-icon-2",
-    title: "Phosphor Icons — Flexible Icon Family for React & Figma",
-    slug: "phosphor-icons-family",
-    resourceType: "freeIcons",
-    description: "Flexible icon family for interfaces, diagrams, and presentations. Available in 6 weights.",
-    benefitSummary: "Phosphor Icons",
-    link: "https://phosphoricons.com/",
-    sourceName: "Phosphor Icons",
-    publishedAt: "2025-07-22T09:00:00Z",
-    formattedDate: "Last week",
-    category: "freeIcons",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── FREE UI KITS ──
   {
@@ -619,23 +381,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
-  },
-  {
-    id: "cur-uikit-2",
-    title: "Preline UI — Open Source Tailwind CSS Components",
-    slug: "preline-ui-tailwind",
-    resourceType: "freeUIKits",
-    description: "Pre-crafted UI components for Tailwind CSS including headers, heroes, dashboard stats, and navigation bars.",
-    benefitSummary: "Preline",
-    link: "https://preline.co/",
-    sourceName: "Preline UI",
-    publishedAt: "2025-07-21T10:00:00Z",
-    formattedDate: "Last week",
-    category: "freeUIKits",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
   },
 
   // ── AI TOOLS ──
@@ -658,23 +403,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isTrending: true,
     isFeatured: true,
   },
-  {
-    id: "cur-ai-2",
-    title: "Spline AI — 3D Scene Generation & Animation",
-    slug: "spline-ai-3d-generation",
-    resourceType: "aiTools",
-    description: "Generate 3D objects, textures, and interactive animations in real-time using natural language prompts.",
-    benefitSummary: "Spline Studio",
-    link: "https://spline.design/ai",
-    sourceName: "Spline AI",
-    publishedAt: "2025-07-25T16:00:00Z",
-    formattedDate: "5 days ago",
-    category: "aiTools",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── LEARNING ──
   {
@@ -695,23 +423,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isRss: false,
     isTrending: true,
   },
-  {
-    id: "cur-learn-2",
-    title: "freeCodeCamp — Full-Stack Developer & Designer Certification",
-    slug: "freecodecamp-fullstack-certification",
-    resourceType: "learning",
-    description: "Comprehensive 3,000+ hour curriculum covering HTML5, CSS3, JavaScript ES6+, React, Node.js, and Responsive Design.",
-    benefitSummary: "freeCodeCamp",
-    link: "https://www.freecodecamp.org/",
-    sourceName: "freeCodeCamp",
-    publishedAt: "2025-07-22T14:00:00Z",
-    formattedDate: "Last week",
-    category: "learning",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
 
   // ── PODCASTS ──
   {
@@ -731,23 +442,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
-  },
-  {
-    id: "cur-pod-2",
-    title: "Syntax FM — Tasty Web Development Treats",
-    slug: "syntax-fm-podcast",
-    resourceType: "podcasts",
-    description: "Full-stack web development podcast hosted by Wes Bos and Scott Tolinski covering React, TypeScript, CSS, Node, and tooling.",
-    benefitSummary: "Syntax FM",
-    link: "https://syntax.fm/",
-    sourceName: "Syntax FM",
-    publishedAt: "2025-07-24T10:00:00Z",
-    formattedDate: "6 days ago",
-    category: "podcasts",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
   },
 
   // ── TOOLS ──
@@ -845,7 +539,7 @@ function cleanText(html: string): string {
 
 async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedResource[]> {
   const ttl = CACHE_TTL_MAP[feed.refreshInterval] || CACHE_TTL_MAP["hourly"];
-  const cacheKey = `rss_cache_v6_${feed._id}`;
+  const cacheKey = `rss_cache_v7_${feed._id}`;
 
   try {
     const cachedStr = localStorage.getItem(cacheKey);
@@ -968,9 +662,9 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
 
 /**
  * Aggregate all News feeds (Design / AI / Frontend / Dev / Marketing / Motion)
- * Merges live RSS items with CURATED_NEWS_CATALOG so pages NEVER show 0 articles!
+ * Merges Sanity news documents + live RSS items + CURATED_NEWS_CATALOG so pages NEVER show 0 articles!
  */
-export async function aggregateNewsFeeds(): Promise<NormalizedResource[]> {
+export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<NormalizedResource[]> {
   const feedResults = await Promise.allSettled(
     NEWS_RSS_FEEDS.filter((f) => f.enabled !== false).map((feed) => fetchAndParseSingleFeed(feed))
   );
@@ -982,6 +676,31 @@ export async function aggregateNewsFeeds(): Promise<NormalizedResource[]> {
     }
   });
 
+  const mappedCms: NormalizedResource[] = (cmsNews || []).map((item) => {
+    const slugStr = item.slug?.current || item.slug || item._id;
+    const pubIso = parsePubDate(item.publishedAt || item._createdAt);
+    return {
+      id: item._id,
+      title: item.title,
+      slug: slugStr,
+      resourceType: "news",
+      description: item.excerpt || item.title,
+      benefitSummary: "Studio Announcement",
+      link: `/news/${slugStr}`,
+      sourceName: "Rvan Studio",
+      publishedAt: pubIso,
+      formattedDate: formatPublicationTimestamp(pubIso),
+      category: item.category === "Announcements" || item.category === "Milestone" ? "announcements" : "designNews",
+      country: "Global",
+      workType: "na",
+      isFree: true,
+      isRss: false,
+      analyticsId: item._id,
+      isTrending: true,
+      isFeatured: true,
+    };
+  });
+
   const dedupedMap = new Map<string, NormalizedResource>();
 
   // 1. Add curated news baseline catalog (instant load guarantee)
@@ -990,7 +709,13 @@ export async function aggregateNewsFeeds(): Promise<NormalizedResource[]> {
     dedupedMap.set(key, item);
   });
 
-  // 2. Add live RSS items (overrides or appends fresh items)
+  // 2. Add Sanity CMS news documents
+  mappedCms.forEach((item) => {
+    const key = (item.title + item.link).toLowerCase();
+    dedupedMap.set(key, item);
+  });
+
+  // 3. Add live RSS items (overrides or appends fresh items)
   rssItems.forEach((item) => {
     const key = (item.title + item.link).toLowerCase();
     dedupedMap.set(key, item);

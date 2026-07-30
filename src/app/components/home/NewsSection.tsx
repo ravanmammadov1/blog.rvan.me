@@ -15,27 +15,21 @@ const fadeUp = {
   }),
 };
 
+import { aggregateNewsFeeds, NormalizedResource } from "../../../lib/rssAggregator";
+import { fetchNews } from "../../../lib/sanityQueries";
+
 export default function NewsSection() {
-  const [newsList, setNewsList] = useState<any[]>([]);
+  const [newsList, setNewsList] = useState<NormalizedResource[]>([]);
 
   useEffect(() => {
-    // Fetch News (latest 3)
-    client
-      .fetch(`
-        *[_type == "news"] | order(publishedAt desc)[0...3]{
-          _id,
-          title,
-          "slug": slug.current,
-          coverImage,
-          excerpt,
-          publishedAt,
-          category
-        }
-      `)
-      .then((data) => {
-        setNewsList(data || []);
+    fetchNews()
+      .then((cmsNews) => aggregateNewsFeeds(cmsNews || []))
+      .then((items) => {
+        setNewsList((items || []).slice(0, 3));
       })
-      .catch(console.error);
+      .catch(() => {
+        aggregateNewsFeeds([]).then((items) => setNewsList((items || []).slice(0, 3)));
+      });
   }, []);
 
   return (
@@ -77,20 +71,11 @@ export default function NewsSection() {
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {newsList.map((item, index) => {
-              const newsSlug = item.slug || item._id;
-              let formattedDate = "";
-              if (item.publishedAt) {
-                try {
-                  formattedDate = format(new Date(item.publishedAt), "MMM d, yyyy");
-                } catch (e) {
-                  formattedDate = "";
-                }
-              }
-              const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
+              const isInternal = item.link.startsWith("/news/");
 
               return (
                 <motion.article
-                  key={item._id}
+                  key={item.id || index}
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
@@ -99,35 +84,35 @@ export default function NewsSection() {
                   className="group p-6 aurora-card flex flex-col justify-between relative"
                 >
                   <div className="relative z-10">
-                    <Link to={`/news/${newsSlug}`}>
-                      {imgUrl && (
-                        <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background border border-white/5">
-                          <img
-                            src={imgUrl}
-                            alt={item.title}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
-                          />
-                        </div>
+                    <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
+                      <span className="text-primary">{item.sourceName}</span>
+                      <span>{item.formattedDate}</span>
+                    </div>
+                    <h3 className="text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3 line-clamp-2">
+                      {isInternal ? (
+                        <Link to={item.link}>{item.title}</Link>
+                      ) : (
+                        <a href={item.link} target="_blank" rel="noopener noreferrer">
+                          {item.title}
+                        </a>
                       )}
-                      <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
-                        {item.category && <span className="text-primary">{item.category}</span>}
-                        {formattedDate && <span>{formattedDate}</span>}
-                      </div>
-                      <h3 className="text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3 line-clamp-2">
-                        {item.title}
-                      </h3>
-                      {item.excerpt && (
-                        <p className="text-xs leading-relaxed text-muted-foreground/75 line-clamp-3 mb-6 font-medium">
-                          {item.excerpt}
-                        </p>
-                      )}
-                    </Link>
+                    </h3>
+                    <p className="text-xs leading-relaxed text-muted-foreground/75 line-clamp-3 mb-6 font-medium">
+                      {item.description}
+                    </p>
                   </div>
                   <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
-                    <Link to={`/news/${newsSlug}`} className="inline-flex items-center gap-2 hover:text-white transition-colors duration-300">
-                      <span>READ FULL ARTICLE</span>
-                      <ArrowUpRight size={14} />
-                    </Link>
+                    {isInternal ? (
+                      <Link to={item.link} className="inline-flex items-center gap-2 hover:text-white transition-colors duration-300">
+                        <span>READ ARTICLE</span>
+                        <ArrowUpRight size={14} />
+                      </Link>
+                    ) : (
+                      <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-white transition-colors duration-300">
+                        <span>VISIT SOURCE</span>
+                        <ArrowUpRight size={14} />
+                      </a>
+                    )}
                   </div>
                 </motion.article>
               );
