@@ -36,11 +36,13 @@ export default function ResourcesSection() {
 
   useEffect(() => {
     // Load both RSS feeds and CMS resource documents
-    aggregateAllResources([])
+    client
+      .fetch(`*[_type == "resource" && status == "published"] | order(sortPriority asc, featuredScore desc, _createdAt desc)`)
+      .then((cmsItems) => aggregateAllResources(cmsItems || []))
       .then((items) => {
         setAllResources(items || []);
       })
-      .catch((err) => console.error("Error aggregating resources for homepage:", err))
+      .catch(() => aggregateAllResources([]).then(setAllResources))
       .finally(() => setLoading(false));
   }, []);
 

@@ -121,9 +121,8 @@ export async function fetchProjectBySlug(slug: string): Promise<ProjectItem | nu
 
 export async function fetchNews(): Promise<NewsItem[]> {
   try {
-    const cutoffDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const data = await client.fetch(`
-      *[_type == "news" && publishedAt >= $cutoffDate] | order(publishedAt desc){
+      *[_type == "news"] | order(publishedAt desc){
         _id,
         title,
         slug,
@@ -133,7 +132,7 @@ export async function fetchNews(): Promise<NewsItem[]> {
         publishedAt,
         category
       }
-    `, { cutoffDate });
+    `);
     return data || [];
   } catch (error) {
     console.error("Error fetching news from Sanity:", error);
