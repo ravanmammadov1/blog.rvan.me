@@ -199,23 +199,8 @@ export default function NewsArchive() {
               </span>
             </h1>
             <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed">
-              Real-time coverage across <span className="text-foreground font-medium">Design</span>, <span className="text-foreground font-medium">AI</span>, <span className="text-foreground font-medium">Frontend</span>, <span className="text-foreground font-medium">Marketing</span>, and <span className="text-foreground font-medium">Motion</span>. Aggregated automatically from 40+ trusted publishers with accurate UTC publication dates.
+              Real-time coverage across <span className="text-foreground font-medium">Design</span>, <span className="text-foreground font-medium">AI</span>, <span className="text-foreground font-medium">Frontend</span>, <span className="text-foreground font-medium">Marketing</span>, and <span className="text-foreground font-medium">Motion</span>. Aggregated automatically with accurate UTC publication dates.
             </p>
-          </motion.div>
-
-          {/* Stats bar */}
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.15} className="mt-10 flex flex-wrap gap-6 border-t border-white/10 pt-8">
-            {[
-              { label: "Live Sources", value: "40+" },
-              { label: "Categories", value: "7" },
-              { label: "Refresh Rate", value: "Every 15m" },
-              { label: "Strict UTC Dates", value: "✓" },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col">
-                <span className="text-2xl font-bold text-foreground tracking-tight">{stat.value}</span>
-                <span className="text-[10px] font-semibold text-muted-foreground mono uppercase tracking-wider">{stat.label}</span>
-              </div>
-            ))}
           </motion.div>
         </div>
       </section>
