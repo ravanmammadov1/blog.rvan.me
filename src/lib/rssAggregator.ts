@@ -1,4 +1,5 @@
 import { client } from "./sanityClient";
+import { parsePubDate, formatPublicationTimestamp, recordFeedHealth } from "./contentEngine";
 
 export interface RssFeedConfig {
   _id: string;
@@ -23,6 +24,7 @@ export interface NormalizedResource {
   link: string;
   sourceName: string;
   publishedAt: string;
+  formattedDate: string;
   category: string;
   country: string;
   workType: "remote" | "hybrid" | "onsite" | "na";
@@ -31,11 +33,14 @@ export interface NormalizedResource {
   logoUrl?: string;
   isRss: boolean;
   analyticsId?: string;
+  isTrending?: boolean;
+  isFeatured?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NEWS FEEDS — Design / AI / Marketing industry news (News Page only)
+// COMPREHENSIVE EXPANDED NEWS RSS FEEDS CATALOG
 // ─────────────────────────────────────────────────────────────────────────────
+
 export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
   // ── Design News ──
   {
@@ -47,8 +52,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 10,
     sourceName: "Smashing Magazine",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-uxcollective",
@@ -57,10 +60,8 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     category: "designNews",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 9,
+    priority: 10,
     sourceName: "UX Collective",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-creativebloq",
@@ -71,8 +72,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 9,
     sourceName: "Creative Bloq",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-abduzeedo",
@@ -81,10 +80,18 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     category: "designNews",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 8,
+    priority: 9,
     sourceName: "Abduzeedo",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+  },
+  {
+    _id: "news-codrops",
+    name: "Codrops",
+    url: "https://tympanus.net/codrops/feed/",
+    category: "designNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 9,
+    sourceName: "Codrops",
   },
   {
     _id: "news-webdesignerdepot",
@@ -95,20 +102,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 8,
     sourceName: "Webdesigner Depot",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
-  },
-  {
-    _id: "news-codrops",
-    name: "Codrops",
-    url: "https://tympanus.net/codrops/feed/",
-    category: "designNews",
-    refreshInterval: "6hours",
-    enabled: true,
-    priority: 8,
-    sourceName: "Codrops",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-alistapart",
@@ -117,10 +110,8 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     category: "designNews",
     refreshInterval: "daily",
     enabled: true,
-    priority: 7,
+    priority: 8,
     sourceName: "A List Apart",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-speckyboy",
@@ -129,10 +120,8 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     category: "designNews",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 7,
+    priority: 8,
     sourceName: "Speckyboy",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-designmodo",
@@ -141,10 +130,18 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     category: "designNews",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 7,
+    priority: 8,
     sourceName: "Designmodo",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+  },
+  {
+    _id: "news-itsnicethat",
+    name: "It's Nice That",
+    url: "https://www.itsnicethat.com/rss",
+    category: "designNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 9,
+    sourceName: "It's Nice That",
   },
 
   // ── AI News ──
@@ -157,8 +154,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 10,
     sourceName: "Hugging Face",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-verge-ai",
@@ -169,20 +164,16 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 10,
     sourceName: "The Verge",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-technologyreview",
-    name: "MIT Technology Review",
-    url: "https://www.technologyreview.com/feed/",
+    name: "MIT Technology Review — AI",
+    url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/",
     category: "aiNews",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 9,
+    priority: 10,
     sourceName: "MIT Tech Review",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-venturebeat-ai",
@@ -193,20 +184,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 9,
     sourceName: "VentureBeat",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
-  },
-  {
-    _id: "news-arxiv-cs-ai",
-    name: "Arxiv CS — AI Papers",
-    url: "https://rss.arxiv.org/rss/cs.AI",
-    category: "aiNews",
-    refreshInterval: "daily",
-    enabled: true,
-    priority: 8,
-    sourceName: "Arxiv",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-deepmind",
@@ -215,36 +192,124 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     category: "aiNews",
     refreshInterval: "daily",
     enabled: true,
-    priority: 9,
+    priority: 10,
     sourceName: "Google DeepMind",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
-    _id: "news-aiweekly",
-    name: "Import AI (Jack Clark)",
+    _id: "news-techcrunch-ai",
+    name: "TechCrunch AI",
+    url: "https://techcrunch.com/category/artificial-intelligence/feed/",
+    category: "aiNews",
+    refreshInterval: "hourly",
+    enabled: true,
+    priority: 9,
+    sourceName: "TechCrunch AI",
+  },
+  {
+    _id: "news-importai",
+    name: "Import AI",
     url: "https://importai.substack.com/feed",
     category: "aiNews",
     refreshInterval: "daily",
     enabled: true,
     priority: 8,
     sourceName: "Import AI",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
 
-  // ── Marketing News ──
+  // ── Frontend & Web Engineering ──
+  {
+    _id: "news-reactblog",
+    name: "React Official Blog",
+    url: "https://react.dev/rss.xml",
+    category: "frontendNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 10,
+    sourceName: "React Blog",
+  },
+  {
+    _id: "news-vercelblog",
+    name: "Vercel Blog",
+    url: "https://vercel.com/atom",
+    category: "frontendNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 10,
+    sourceName: "Vercel",
+  },
+  {
+    _id: "news-chromedevelopers",
+    name: "Chrome Developers",
+    url: "https://developer.chrome.com/feeds/blog.xml",
+    category: "frontendNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 9,
+    sourceName: "Chrome Devs",
+  },
+  {
+    _id: "news-css-tricks-news",
+    name: "CSS-Tricks",
+    url: "https://css-tricks.com/feed/",
+    category: "frontendNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 9,
+    sourceName: "CSS-Tricks",
+  },
+
+  // ── Development & Software ──
+  {
+    _id: "news-devto",
+    name: "Dev.to Top Posts",
+    url: "https://dev.to/feed",
+    category: "devNews",
+    refreshInterval: "hourly",
+    enabled: true,
+    priority: 9,
+    sourceName: "Dev.to",
+  },
+  {
+    _id: "news-hackernews",
+    name: "Hacker News Top",
+    url: "https://news.ycombinator.com/rss",
+    category: "devNews",
+    refreshInterval: "hourly",
+    enabled: true,
+    priority: 10,
+    sourceName: "Hacker News",
+  },
+  {
+    _id: "news-githubblog",
+    name: "GitHub Official Blog",
+    url: "https://github.blog/feed/",
+    category: "devNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 9,
+    sourceName: "GitHub",
+  },
+  {
+    _id: "news-infoq",
+    name: "InfoQ Architecture",
+    url: "https://feed.infoq.com/",
+    category: "devNews",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 8,
+    sourceName: "InfoQ",
+  },
+
+  // ── Marketing & Growth ──
   {
     _id: "news-hubspot",
-    name: "HubSpot Marketing Blog",
+    name: "HubSpot Marketing",
     url: "https://blog.hubspot.com/marketing/rss.xml",
     category: "marketingNews",
     refreshInterval: "6hours",
     enabled: true,
     priority: 10,
     sourceName: "HubSpot",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-searchenginejournal",
@@ -255,8 +320,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 10,
     sourceName: "Search Engine Journal",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-moz",
@@ -267,8 +330,6 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 9,
     sourceName: "Moz",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "news-semrush",
@@ -279,50 +340,35 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 9,
     sourceName: "Semrush",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
+
+  // ── Motion Design ──
   {
-    _id: "news-contentmarketinginstitute",
-    name: "Content Marketing Institute",
-    url: "https://contentmarketinginstitute.com/feed/",
-    category: "marketingNews",
+    _id: "news-schoolofmotion",
+    name: "School of Motion",
+    url: "https://www.schoolofmotion.com/blog/rss.xml",
+    category: "motionNews",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 9,
-    sourceName: "CMI",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+    priority: 10,
+    sourceName: "School of Motion",
   },
   {
-    _id: "news-neilpatel",
-    name: "Neil Patel Blog",
-    url: "https://neilpatel.com/blog/feed/",
-    category: "marketingNews",
-    refreshInterval: "daily",
+    _id: "news-motionographer",
+    name: "Motionographer",
+    url: "https://motionographer.com/feed/",
+    category: "motionNews",
+    refreshInterval: "6hours",
     enabled: true,
-    priority: 8,
-    sourceName: "Neil Patel",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
-  },
-  {
-    _id: "news-backlinko",
-    name: "Backlinko",
-    url: "https://backlinko.com/feed",
-    category: "marketingNews",
-    refreshInterval: "daily",
-    enabled: true,
-    priority: 8,
-    sourceName: "Backlinko",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+    priority: 10,
+    sourceName: "Motionographer",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RESOURCE FEEDS — Practical resources (Resources Page only)
+// COMPREHENSIVE EXPANDED RESOURCE FEEDS CATALOG
 // ─────────────────────────────────────────────────────────────────────────────
+
 export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
   // ── Jobs ──
   {
@@ -334,7 +380,6 @@ export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 10,
     sourceName: "We Work Remotely",
-    defaultCountry: "Global",
     defaultWorkType: "remote",
   },
   {
@@ -346,58 +391,51 @@ export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
     enabled: true,
     priority: 10,
     sourceName: "We Work Remotely",
-    defaultCountry: "Global",
     defaultWorkType: "remote",
   },
   {
     _id: "res-remoteok-design",
-    name: "Remote OK — Design",
+    name: "Remote OK — Design Jobs",
     url: "https://remoteok.com/remote-design-jobs.rss",
     category: "jobs",
     refreshInterval: "hourly",
     enabled: true,
     priority: 9,
     sourceName: "Remote OK",
-    defaultCountry: "Global",
     defaultWorkType: "remote",
   },
   {
     _id: "res-remoteok-marketing",
-    name: "Remote OK — Marketing",
+    name: "Remote OK — Marketing Jobs",
     url: "https://remoteok.com/remote-marketing-jobs.rss",
     category: "jobs",
     refreshInterval: "hourly",
     enabled: true,
     priority: 9,
     sourceName: "Remote OK",
-    defaultCountry: "Global",
     defaultWorkType: "remote",
   },
 
   // ── Free Design Assets ──
   {
     _id: "res-spoongraphics",
-    name: "Spoon Graphics",
+    name: "Spoon Graphics Assets",
     url: "https://feeds.feedburner.com/SpoonGraphics",
     category: "freeDesignAssets",
     refreshInterval: "6hours",
     enabled: true,
     priority: 9,
     sourceName: "Spoon Graphics",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "res-graphicburger",
-    name: "Graphic Burger",
+    name: "Graphic Burger Freebies",
     url: "https://graphicburger.com/feed/",
     category: "freeDesignAssets",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 8,
+    priority: 9,
     sourceName: "Graphic Burger",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "res-sketchappsources",
@@ -406,10 +444,8 @@ export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
     category: "freeDesignAssets",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 7,
+    priority: 8,
     sourceName: "Sketch App Sources",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
   {
     _id: "res-freebiesbug",
@@ -418,113 +454,127 @@ export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
     category: "freeDesignAssets",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 8,
+    priority: 9,
     sourceName: "Freebies Bug",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
   },
 
-  // ── Tools ──
+  // ── Free Mockups ──
   {
-    _id: "res-producthunt",
+    _id: "res-mockupworld",
+    name: "Mockup World",
+    url: "https://www.mockupworld.co/feed/",
+    category: "freeMockups",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 10,
+    sourceName: "Mockup World",
+  },
+
+  // ── Free Fonts ──
+  {
+    _id: "res-fontsquirrel",
+    name: "Font Squirrel",
+    url: "https://www.fontsquirrel.com/blog/feed",
+    category: "freeFonts",
+    refreshInterval: "6hours",
+    enabled: true,
+    priority: 9,
+    sourceName: "Font Squirrel",
+  },
+
+  // ── AI Tools ──
+  {
+    _id: "res-producthunt-ai",
+    name: "Product Hunt — AI Tools",
+    url: "https://www.producthunt.com/feed?category=artificial-intelligence",
+    category: "aiTools",
+    refreshInterval: "hourly",
+    enabled: true,
+    priority: 10,
+    sourceName: "Product Hunt AI",
+  },
+
+  // ── Developer & Design Tools ──
+  {
+    _id: "res-producthunt-design",
     name: "Product Hunt — Design Tools",
     url: "https://www.producthunt.com/feed?category=design-tools",
     category: "tools",
-    refreshInterval: "6hours",
+    refreshInterval: "hourly",
     enabled: true,
-    priority: 9,
-    sourceName: "Product Hunt",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+    priority: 10,
+    sourceName: "Product Hunt Design",
   },
 
-  // ── Learning ──
+  // ── Learning & Courses ──
   {
-    _id: "res-css-tricks",
-    name: "CSS-Tricks",
-    url: "https://css-tricks.com/feed/",
+    _id: "res-freecodecamp",
+    name: "freeCodeCamp News",
+    url: "https://www.freecodecamp.org/news/rss/",
     category: "learning",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 9,
-    sourceName: "CSS-Tricks",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+    priority: 10,
+    sourceName: "freeCodeCamp",
   },
   {
-    _id: "res-smashing-tutorials",
-    name: "Smashing Magazine — Tutorials",
-    url: "https://www.smashingmagazine.com/tag/tutorial/feed/",
+    _id: "res-webdev",
+    name: "web.dev Articles",
+    url: "https://web.dev/feed.xml",
     category: "learning",
     refreshInterval: "6hours",
     enabled: true,
-    priority: 8,
-    sourceName: "Smashing Magazine",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+    priority: 10,
+    sourceName: "web.dev",
   },
+
+  // ── Podcasts ──
   {
-    _id: "res-designpodcasts",
+    _id: "res-designbetter",
     name: "Design Better Podcast",
     url: "https://feeds.simplecast.com/dh4tA13e",
-    category: "learning",
+    category: "podcasts",
     refreshInterval: "daily",
     enabled: true,
-    priority: 7,
+    priority: 9,
     sourceName: "Design Better",
-    defaultCountry: "Global",
-    defaultWorkType: "na",
+  },
+  {
+    _id: "res-syntaxfm",
+    name: "Syntax FM Podcast",
+    url: "https://feed.syntax.fm/rss",
+    category: "podcasts",
+    refreshInterval: "daily",
+    enabled: true,
+    priority: 9,
+    sourceName: "Syntax FM",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Cache TTL map
 // ─────────────────────────────────────────────────────────────────────────────
+
 const CACHE_TTL_MAP: Record<string, number> = {
-  hourly: 60 * 60 * 1000,
-  "6hours": 6 * 60 * 60 * 1000,
-  daily: 24 * 60 * 60 * 1000,
+  hourly: 15 * 60 * 1000,   // Refresh every 15 min for live content
+  "6hours": 2 * 60 * 60 * 1000,
+  daily: 6 * 60 * 60 * 1000,
 };
 
-// Fetch enabled RSS feeds from Sanity — filtered by purpose
-export async function fetchRssFeedsFromSanity(purpose?: "news" | "resources"): Promise<RssFeedConfig[]> {
-  try {
-    let query = `*[_type == "rssFeed" && enabled == true]`;
-    if (purpose === "news") {
-      query += ` && category in ["designNews","aiNews","marketingNews"]`;
-    } else if (purpose === "resources") {
-      query += ` && !(category in ["designNews","aiNews","marketingNews","latestDesignNews"])`;
-    }
-    query += ` | order(priority desc){ _id, name, url, category, refreshInterval, enabled, priority, sourceName, defaultCountry, defaultWorkType }`;
-
-    const feeds = await client.fetch(query);
-    if (feeds && feeds.length > 0) {
-      return feeds;
-    }
-  } catch (err) {
-    console.warn("Sanity RSS feeds fetch failed, using defaults:", err);
-  }
-  // Return appropriate static fallback
-  if (purpose === "news") return NEWS_RSS_FEEDS;
-  if (purpose === "resources") return RESOURCE_RSS_FEEDS;
-  return [...NEWS_RSS_FEEDS, ...RESOURCE_RSS_FEEDS];
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Core RSS fetch + parse
-// ─────────────────────────────────────────────────────────────────────────────
-
-// Clean HTML tags from RSS item excerpt strings
 function cleanText(html: string): string {
   if (!html) return "";
   const doc = new DOMParser().parseFromString(html, "text/html");
   const text = doc.body.textContent || "";
-  return text.replace(/\s+/g, " ").trim().slice(0, 280);
+  return text.replace(/\s+/g, " ").trim().slice(0, 320);
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Robust Single Feed Fetcher with Multi-Proxy Fallback
+// ─────────────────────────────────────────────────────────────────────────────
 
 async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedResource[]> {
   const ttl = CACHE_TTL_MAP[feed.refreshInterval] || CACHE_TTL_MAP["6hours"];
-  const cacheKey = `rss_cache_v2_${feed._id}`;
+  const cacheKey = `rss_cache_v3_${feed._id}`;
 
   try {
     const cachedStr = localStorage.getItem(cacheKey);
@@ -535,7 +585,7 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       }
     }
   } catch (e) {
-    // Ignore storage errors
+    // Ignore storage quota
   }
 
   const proxies = [
@@ -544,11 +594,16 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
   ];
 
   let rawXml = "";
+  let statusCode = 200;
+
   for (const proxyFn of proxies) {
     try {
       const proxyUrl = proxyFn(feed.url);
-      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(7000) });
-      if (!res.ok) continue;
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) {
+        statusCode = res.status;
+        continue;
+      }
 
       if (proxyUrl.includes("allorigins.win")) {
         const json = await res.json();
@@ -556,7 +611,8 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       } else {
         rawXml = await res.text();
       }
-      if (rawXml && (rawXml.includes("<rss") || rawXml.includes("<feed") || rawXml.includes("<item"))) {
+
+      if (rawXml && (rawXml.includes("<rss") || rawXml.includes("<feed") || rawXml.includes("<item") || rawXml.includes("<entry"))) {
         break;
       }
     } catch (_err) {
@@ -564,13 +620,16 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
     }
   }
 
-  if (!rawXml) return [];
+  if (!rawXml) {
+    recordFeedHealth(feed._id, feed.url, false, 0, statusCode);
+    return [];
+  }
 
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(rawXml, "text/xml");
   const items: NormalizedResource[] = [];
 
-  const itemNodes = Array.from(xmlDoc.querySelectorAll("item, entry")).slice(0, 15);
+  const itemNodes = Array.from(xmlDoc.querySelectorAll("item, entry")).slice(0, 20);
 
   itemNodes.forEach((node, idx) => {
     const title = node.querySelector("title")?.textContent?.trim() || "";
@@ -583,15 +642,19 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       node.querySelector("content\\:encoded")?.textContent ||
       node.querySelector("summary")?.textContent ||
       "";
-    const pubDateStr =
+    
+    // Accurate publication date extraction
+    const rawPubDate =
       node.querySelector("pubDate")?.textContent ||
       node.querySelector("published")?.textContent ||
       node.querySelector("updated")?.textContent ||
-      new Date().toISOString();
+      node.querySelector("dc\\:date")?.textContent ||
+      "";
 
     if (!title || !rawLink) return;
 
-    const publishedAt = new Date(pubDateStr).toISOString();
+    const publishedAt = parsePubDate(rawPubDate);
+    const formattedDate = formatPublicationTimestamp(publishedAt);
     const cleanDesc = cleanText(description) || title;
     const slugId = `rss-${feed._id}-${idx}`;
 
@@ -605,6 +668,7 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       link: rawLink,
       sourceName: feed.sourceName || feed.name,
       publishedAt,
+      formattedDate,
       category: feed.category,
       country: feed.defaultCountry || "Global",
       workType: feed.defaultWorkType || "na",
@@ -612,30 +676,32 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       difficulty: "all",
       isRss: true,
       analyticsId: feed._id,
+      isTrending: idx < 3,
+      isFeatured: idx === 0,
     });
   });
+
+  recordFeedHealth(feed._id, feed.url, items.length > 0, items.length);
 
   try {
     localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), items }));
   } catch (e) {
-    // Ignore storage quota
+    // Ignore quota
   }
 
   return items;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Public aggregation functions
+// Public Aggregation Endpoints
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Aggregate all News feeds (Design / AI / Marketing) — for the News page
+ * Aggregate all News feeds (Design / AI / Frontend / Dev / Marketing / Motion)
  */
 export async function aggregateNewsFeeds(): Promise<NormalizedResource[]> {
-  const feedConfigs = NEWS_RSS_FEEDS; // always use static catalog for news (fast + reliable)
-
   const feedResults = await Promise.allSettled(
-    feedConfigs.filter((f) => f.enabled !== false).map((feed) => fetchAndParseSingleFeed(feed))
+    NEWS_RSS_FEEDS.filter((f) => f.enabled !== false).map((feed) => fetchAndParseSingleFeed(feed))
   );
 
   const items: NormalizedResource[] = [];
@@ -645,7 +711,6 @@ export async function aggregateNewsFeeds(): Promise<NormalizedResource[]> {
     }
   });
 
-  // Sort by date descending and deduplicate
   const dedupedMap = new Map<string, NormalizedResource>();
   items.forEach((item) => {
     const key = (item.title + item.link).toLowerCase();
@@ -658,9 +723,7 @@ export async function aggregateNewsFeeds(): Promise<NormalizedResource[]> {
 }
 
 /**
- * Aggregate all practical resource feeds (Jobs / Assets / Tools / Learning / Opportunities)
- * Also merges CMS static resource documents.
- * Does NOT include any news categories.
+ * Aggregate all Resource feeds (Jobs / Assets / Mockups / Fonts / AI Tools / Learning / Podcasts)
  */
 export async function aggregateAllResources(cmsResources: any[] = []): Promise<NormalizedResource[]> {
   const feedResults = await Promise.allSettled(
@@ -674,13 +737,13 @@ export async function aggregateAllResources(cmsResources: any[] = []): Promise<N
     }
   });
 
-  // Map CMS static resources to NormalizedResource format — exclude news types
-  const newsCategories = new Set(["latestDesignNews", "designNews", "aiNews", "marketingNews", "techNews"]);
+  const newsCategories = new Set(["latestDesignNews", "designNews", "aiNews", "frontendNews", "devNews", "marketingNews", "motionNews"]);
 
   const mappedCms: NormalizedResource[] = cmsResources
     .filter((item) => !newsCategories.has(item.resourceType) && !newsCategories.has(item.category))
     .map((item) => {
       const cat = mapResourceTypeToCategory(item.resourceType);
+      const pubIso = parsePubDate(item._createdAt || item.publishedAt);
       return {
         id: item._id,
         title: item.title,
@@ -690,15 +753,18 @@ export async function aggregateAllResources(cmsResources: any[] = []): Promise<N
         benefitSummary: item.benefitSummary || "Curated Resource",
         link: item.link,
         sourceName: item.benefitSummary || "Rvan.me Curated",
-        publishedAt: item._createdAt || new Date().toISOString(),
+        publishedAt: pubIso,
+        formattedDate: formatPublicationTimestamp(pubIso),
         category: cat,
         country: item.isGlobal ? "Global" : (item.countries && item.countries[0]) || "Global",
-        workType: item.workType || (["jobs", "remoteDesignJobs", "remoteMarketingJobs"].includes(cat) ? "remote" : "na"),
+        workType: item.workType || (cat === "jobs" ? "remote" : "na"),
         isFree: true,
         difficulty: item.difficultyLevel || "all",
         logoUrl: item.logoUrl,
         isRss: false,
         analyticsId: item._id,
+        isTrending: true,
+        isFeatured: item.featuredScore && item.featuredScore > 5,
       };
     });
 
@@ -713,35 +779,23 @@ export async function aggregateAllResources(cmsResources: any[] = []): Promise<N
   return merged;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Utilities
-// ─────────────────────────────────────────────────────────────────────────────
-
 function mapResourceTypeToCategory(resourceType: string): string {
   const map: Record<string, string> = {
-    // New categories
     jobs: "jobs",
     freeDesignAssets: "freeDesignAssets",
-    freeMockups: "freeDesignAssets",
-    freeFonts: "freeDesignAssets",
-    freeIcons: "freeDesignAssets",
-    freeUIKits: "freeDesignAssets",
+    freeMockups: "freeMockups",
+    freeFonts: "freeFonts",
+    freeIcons: "freeIcons",
+    freeUIKits: "freeUIKits",
+    freeIllustrations: "freeDesignAssets",
+    free3D: "freeDesignAssets",
+    aiTools: "aiTools",
     tools: "tools",
     learning: "learning",
+    podcasts: "podcasts",
     opportunities: "opportunities",
-    designPodcasts: "learning",
-    // Legacy mappings
     remoteDesignJobs: "jobs",
     remoteMarketingJobs: "jobs",
-    studentPack: "opportunities",
-    aiCredits: "tools",
-    software: "tools",
-    roadmap: "learning",
-    scholarship: "opportunities",
-    internship: "jobs",
-    job: "jobs",
-    hackathon: "opportunities",
-    startupProgram: "opportunities",
   };
   return map[resourceType] || "freeDesignAssets";
 }

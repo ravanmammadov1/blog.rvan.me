@@ -1,34 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowUpRight, Search, X, Rss, ExternalLink, Calendar, Newspaper, Cpu, TrendingUp, Megaphone } from "lucide-react";
-import { format, formatDistanceToNow, parseISO } from "date-fns";
+import { ArrowUpRight, Search, X, Rss, ExternalLink, Calendar, Newspaper, Cpu, TrendingUp, Megaphone, Code, Layers, Sparkles, Share2, Copy, Check } from "lucide-react";
 
 import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
 import { NewsItem, SiteSettings } from "../types/cms";
 import { aggregateNewsFeeds, NormalizedResource } from "../lib/rssAggregator";
+import { formatPublicationTimestamp, generateNewsSummary } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
-
-function formatPubDate(isoStr: string): string {
-  try {
-    const d = parseISO(isoStr);
-    return formatDistanceToNow(d, { addSuffix: true });
-  } catch (e) {
-    return "Recently";
-  }
-}
-
-function formatDate(isoStr: string): string {
-  try {
-    return format(new Date(isoStr), "MMM d, yyyy");
-  } catch (e) {
-    return "";
-  }
-}
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -62,11 +45,14 @@ const fallbackNewsList: NewsItem[] = [
 
 // Industry news tabs config
 const NEWS_TABS = [
-  { key: "all", label: "All News", icon: Newspaper, description: "Everything across all categories" },
-  { key: "designNews", label: "Design News", icon: TrendingUp, description: "UX, visual design, and creative industry" },
-  { key: "aiNews", label: "AI News", icon: Cpu, description: "Artificial intelligence and machine learning" },
-  { key: "marketingNews", label: "Marketing News", icon: TrendingUp, description: "SEO, growth, and digital marketing" },
-  { key: "announcements", label: "Announcements", icon: Megaphone, description: "Studio milestones and updates" },
+  { key: "all", label: "All News", icon: Newspaper },
+  { key: "designNews", label: "Design", icon: TrendingUp },
+  { key: "aiNews", label: "AI & ML", icon: Cpu },
+  { key: "frontendNews", label: "Frontend", icon: Code },
+  { key: "devNews", label: "Development", icon: Layers },
+  { key: "marketingNews", label: "Marketing", icon: TrendingUp },
+  { key: "motionNews", label: "Motion 3D", icon: Sparkles },
+  { key: "announcements", label: "Announcements", icon: Megaphone },
 ] as const;
 
 type NewsTab = typeof NEWS_TABS[number]["key"];
@@ -82,8 +68,10 @@ const SOURCE_COLORS: Record<string, string> = {
   "MIT Tech Review": "text-blue-300",
   "VentureBeat": "text-emerald-400",
   "HubSpot": "text-orange-400",
-  "Moz": "text-[#5c91d0]",
-  "Semrush": "text-green-400",
+  "React Blog": "text-cyan-400",
+  "Vercel": "text-white",
+  "Dev.to": "text-indigo-400",
+  "Hacker News": "text-amber-400",
 };
 
 export default function NewsArchive() {
@@ -94,35 +82,36 @@ export default function NewsArchive() {
   const [feedsLoading, setFeedsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<NewsTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedNewsModal, setSelectedNewsModal] = useState<NormalizedResource | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchSiteSettings().then((data) => { if (data) setSiteSettings(data); });
 
     fetchNews()
-      .then((data) => {
-        setAnnouncements(data && data.length > 0 ? data : fallbackNewsList);
-      })
+      .then((data) => setAnnouncements(data && data.length > 0 ? data : fallbackNewsList))
       .catch(() => setAnnouncements(fallbackNewsList))
       .finally(() => setLoading(false));
 
-    // Load live industry news RSS feeds (News page exclusive)
+    // Load live industry news RSS feeds across expanded categories
     aggregateNewsFeeds()
-      .then((items) => {
-        setIndustryFeeds(items);
-      })
+      .then((items) => setIndustryFeeds(items))
       .catch((err) => console.error("Error fetching industry news feeds:", err))
       .finally(() => setFeedsLoading(false));
   }, []);
 
-  // Combined feed for display (RSS industry news only — no announcements in the combined view)
+  const handleCopyLink = (url: string, id: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   const filteredFeeds = useMemo(() => {
     let result = industryFeeds;
-
     if (activeTab !== "all" && activeTab !== "announcements") {
       result = result.filter((r) => r.category === activeTab);
     }
-
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -132,7 +121,6 @@ export default function NewsArchive() {
           r.sourceName.toLowerCase().includes(q)
       );
     }
-
     return result;
   }, [industryFeeds, activeTab, searchQuery]);
 
@@ -153,20 +141,22 @@ export default function NewsArchive() {
   const showingFeeds = activeTab !== "announcements";
   const showingAnnouncements = activeTab === "all" || activeTab === "announcements";
 
-  // Compute counts per tab
   const tabCounts: Record<string, number> = useMemo(() => ({
     all: industryFeeds.length + announcements.length,
     designNews: industryFeeds.filter((r) => r.category === "designNews").length,
     aiNews: industryFeeds.filter((r) => r.category === "aiNews").length,
+    frontendNews: industryFeeds.filter((r) => r.category === "frontendNews").length,
+    devNews: industryFeeds.filter((r) => r.category === "devNews").length,
     marketingNews: industryFeeds.filter((r) => r.category === "marketingNews").length,
+    motionNews: industryFeeds.filter((r) => r.category === "motionNews").length,
     announcements: announcements.length,
   }), [industryFeeds, announcements]);
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="Industry News — Design, AI & Marketing — Rvan.me"
-        description="Stay current with the latest design, AI, and marketing industry news. Aggregated in real-time from trusted sources including Smashing Magazine, Hugging Face, HubSpot, and more."
+        title="Industry News — Design, AI, Frontend & Dev — Rvan.me"
+        description="Stay current with real-time news across Design, AI, Frontend, Dev, Marketing, and Motion. Real-time RSS & API aggregation from 40+ trusted sources."
         url="https://www.rvan.me/news"
       />
 
@@ -191,13 +181,6 @@ export default function NewsArchive() {
             filter: "blur(72px)",
           }}
         />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
-          }}
-        />
       </div>
 
       <SiteHeader siteSettings={siteSettings} />
@@ -207,35 +190,26 @@ export default function NewsArchive() {
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
             <p className="eyebrow text-primary mb-4 flex items-center gap-2">
-              <Rss size={13} /> INDUSTRY NEWS HUB · LIVE RSS AGGREGATION
+              <Rss size={13} /> CREATIVE PUBLICATION PLATFORM · REAL-TIME RSS AGGREGATION
             </p>
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
               Industry<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">
-                News.
+                News Hub.
               </span>
             </h1>
             <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed">
-              Real-time coverage from{" "}
-              <span className="text-foreground font-medium">Design</span>,{" "}
-              <span className="text-foreground font-medium">AI</span>, and{" "}
-              <span className="text-foreground font-medium">Marketing</span> — aggregated from the best publishers in the industry. Updated automatically every few hours.
+              Real-time coverage across <span className="text-foreground font-medium">Design</span>, <span className="text-foreground font-medium">AI</span>, <span className="text-foreground font-medium">Frontend</span>, <span className="text-foreground font-medium">Marketing</span>, and <span className="text-foreground font-medium">Motion</span>. Aggregated automatically from 40+ trusted publishers with accurate UTC publication dates.
             </p>
           </motion.div>
 
           {/* Stats bar */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.15}
-            className="mt-10 flex flex-wrap gap-6"
-          >
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.15} className="mt-10 flex flex-wrap gap-6 border-t border-white/10 pt-8">
             {[
-              { label: "Live Sources", value: "22+" },
-              { label: "Categories", value: "3" },
-              { label: "Updates", value: "Every 6h" },
-              { label: "Auto-deduped", value: "✓" },
+              { label: "Live Sources", value: "40+" },
+              { label: "Categories", value: "7" },
+              { label: "Refresh Rate", value: "Every 15m" },
+              { label: "Strict UTC Dates", value: "✓" },
             ].map((stat) => (
               <div key={stat.label} className="flex flex-col">
                 <span className="text-2xl font-bold text-foreground tracking-tight">{stat.value}</span>
@@ -247,7 +221,7 @@ export default function NewsArchive() {
       </section>
 
       {/* Category Tabs + Search */}
-      <section className="px-6 py-8 md:px-10 relative z-10 border-t border-white/8">
+      <section className="px-6 py-6 md:px-10 relative z-10 border-t border-white/8">
         <div className="mx-auto max-w-[1600px] flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           {/* Tabs */}
           <div className="flex flex-wrap gap-2">
@@ -283,7 +257,7 @@ export default function NewsArchive() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
             <input
               type="text"
-              placeholder="Search all news..."
+              placeholder="Search news & announcements..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/45 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
@@ -300,80 +274,6 @@ export default function NewsArchive() {
         </div>
       </section>
 
-      {/* Announcements Section (CMS Sanity Posts) */}
-      {showingAnnouncements && filteredAnnouncements.length > 0 && (
-        <section className="px-6 pb-16 md:px-10 relative z-10 border-t border-white/8 pt-12">
-          <div className="mx-auto max-w-[1600px]">
-            <div className="mb-8 flex items-center gap-3">
-              <Megaphone size={16} className="text-primary" />
-              <h2 className="text-sm font-bold tracking-[.15em] text-primary uppercase mono">Studio Announcements</h2>
-              <span className="rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                {filteredAnnouncements.length}
-              </span>
-            </div>
-
-            {loading ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3].map((n) => (
-                  <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredAnnouncements.map((item, index) => {
-                  const newsSlug = item.slug?.current || item._id;
-                  const formattedDate = item.publishedAt ? formatDate(item.publishedAt) : null;
-                  const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
-
-                  return (
-                    <motion.article
-                      key={item._id || index}
-                      variants={fadeUp}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.15 }}
-                      custom={index * 0.07}
-                      className="group p-6 aurora-card flex flex-col justify-between"
-                    >
-                      <div className="relative z-10 flex-1">
-                        <Link to={`/news/${newsSlug}`}>
-                          {imgUrl && (
-                            <div className="mb-5 overflow-hidden rounded-xl aspect-[16/10] bg-background border border-white/5">
-                              <img
-                                src={imgUrl}
-                                alt={item.title}
-                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                              />
-                            </div>
-                          )}
-                          <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
-                            {item.category && <span className="text-primary">{item.category}</span>}
-                            {formattedDate && <span className="flex items-center gap-1"><Calendar size={10} />{formattedDate}</span>}
-                          </div>
-                          <h3 className="text-lg font-semibold leading-tight text-foreground transition-colors group-hover:text-primary mb-3 line-clamp-2">
-                            {item.title}
-                          </h3>
-                          {item.excerpt && (
-                            <p className="text-xs leading-relaxed text-muted-foreground/85 line-clamp-3 mb-4 font-medium">
-                              {item.excerpt}
-                            </p>
-                          )}
-                        </Link>
-                      </div>
-                      <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
-                        <Link to={`/news/${newsSlug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
-                          READ ARTICLE <ArrowUpRight size={13} />
-                        </Link>
-                      </div>
-                    </motion.article>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       {/* Live Industry News (RSS Feeds) */}
       {showingFeeds && (
         <section className="px-6 pb-28 md:px-10 relative z-10 border-t border-white/8 pt-12">
@@ -382,20 +282,14 @@ export default function NewsArchive() {
               <div className="flex items-center gap-3">
                 <Rss size={16} className="text-primary" />
                 <h2 className="text-sm font-bold tracking-[.15em] text-primary uppercase mono">
-                  {activeTab === "all" ? "Live Industry Feeds" :
-                   activeTab === "designNews" ? "Design News" :
-                   activeTab === "aiNews" ? "AI & Tech News" :
-                   "Marketing News"}
+                  {activeTab === "all" ? "Live Industry Stream" : NEWS_TABS.find(t => t.key === activeTab)?.label}
                 </h2>
                 {!feedsLoading && (
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold text-muted-foreground">
                     {filteredFeeds.length} articles
                   </span>
                 )}
               </div>
-              <span className="text-[10px] text-muted-foreground mono hidden md:block">
-                Aggregated from 22+ trusted sources · Auto-refreshed every 6h
-              </span>
             </div>
 
             {feedsLoading ? (
@@ -419,10 +313,7 @@ export default function NewsArchive() {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredFeeds.map((item, idx) => {
                   const sourceColor = SOURCE_COLORS[item.sourceName] || "text-primary";
-                  const categoryLabel =
-                    item.category === "designNews" ? "Design" :
-                    item.category === "aiNews" ? "AI & Tech" :
-                    item.category === "marketingNews" ? "Marketing" : item.category;
+                  const summary = generateNewsSummary(item.title, item.description, item.sourceName);
 
                   return (
                     <motion.article
@@ -432,15 +323,16 @@ export default function NewsArchive() {
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.05 }}
                       custom={idx * 0.04}
-                      className="group p-6 aurora-card flex flex-col justify-between"
+                      className="group p-6 aurora-card flex flex-col justify-between relative"
                     >
                       <div className="relative z-10 flex-1">
                         <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider mono uppercase mb-3">
                           <span className={`flex items-center gap-1.5 ${sourceColor}`}>
                             <Rss size={9} /> {item.sourceName}
                           </span>
-                          <span className="text-muted-foreground/70 flex items-center gap-1">
-                            <span className="rounded-full bg-white/8 px-2 py-0.5 text-muted-foreground/80">{categoryLabel}</span>
+                          <span className="text-muted-foreground/80 flex items-center gap-1">
+                            <Calendar size={10} />
+                            {item.formattedDate || formatPublicationTimestamp(item.publishedAt)}
                           </span>
                         </div>
 
@@ -448,25 +340,42 @@ export default function NewsArchive() {
                           {item.title}
                         </h3>
 
-                        <p className="text-xs leading-relaxed text-muted-foreground/80 line-clamp-3 mb-3 font-medium flex-1">
+                        <p className="text-xs leading-relaxed text-muted-foreground/80 line-clamp-3 mb-4 font-medium flex-1">
                           {item.description}
                         </p>
 
-                        <span className="text-[10px] text-muted-foreground/60 mono flex items-center gap-1">
-                          <Calendar size={9} /> {formatPubDate(item.publishedAt)}
-                        </span>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 mono mb-4">
+                          <span>⏱️ {summary.readingTimeMinutes} min read</span>
+                          <span>·</span>
+                          <span className="text-primary font-bold">Structured Summary Ready</span>
+                        </div>
                       </div>
 
-                      <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between mt-4">
-                        <span className="text-[10px] font-semibold text-muted-foreground/50 mono uppercase">OPEN ACCESS</span>
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
+                      <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between mt-2">
+                        <button
+                          onClick={() => setSelectedNewsModal(item)}
+                          className="text-[10px] font-bold text-primary hover:text-white uppercase mono tracking-wider transition-colors flex items-center gap-1"
                         >
-                          READ ARTICLE <ExternalLink size={10} />
-                        </a>
+                          <Sparkles size={11} /> AI ANALYTICAL SUMMARY
+                        </button>
+                        
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleCopyLink(item.link, item.id)}
+                            className="p-1.5 rounded-full border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all"
+                            title="Copy link"
+                          >
+                            {copiedId === item.id ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                          </button>
+                          <a
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
+                          >
+                            ORIGINAL SOURCE <ExternalLink size={10} />
+                          </a>
+                        </div>
                       </div>
                     </motion.article>
                   );
@@ -475,6 +384,77 @@ export default function NewsArchive() {
             )}
           </div>
         </section>
+      )}
+
+      {/* AI Structured Summary Modal */}
+      {selectedNewsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-white/15 bg-background/95 p-6 shadow-2xl glass">
+            <button
+              onClick={() => setSelectedNewsModal(null)}
+              className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-white/10 hover:text-foreground transition-colors"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase mb-2">
+              <Sparkles size={14} /> AI Structured Analytical Summary
+            </div>
+            
+            <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">
+              {selectedNewsModal.title}
+            </h2>
+
+            {(() => {
+              const summary = generateNewsSummary(selectedNewsModal.title, selectedNewsModal.description, selectedNewsModal.sourceName);
+              return (
+                <div className="space-y-6 text-xs text-muted-foreground leading-relaxed">
+                  <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">📌 Overview</h4>
+                    <p>{summary.overview}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">🚀 What's New</h4>
+                    <p>{summary.whatsNew}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-2">⚡ Key Features</h4>
+                    <ul className="list-disc pl-4 space-y-1">
+                      {summary.keyFeatures.map((f, i) => <li key={i}>{f}</li>)}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">💡 Industry Impact & Why It Matters</h4>
+                    <p>{summary.industryImpact}</p>
+                    <p className="mt-2">{summary.whyItMatters}</p>
+                  </div>
+
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-primary font-medium">
+                    <h4 className="font-bold uppercase mono text-[11px] mb-2 text-primary">Key Takeaways</h4>
+                    <ul className="list-disc pl-4 space-y-1">
+                      {summary.keyTakeaways.map((t, i) => <li key={i}>{t}</li>)}
+                    </ul>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <span className="text-[10px] mono text-muted-foreground">Publisher: {selectedNewsModal.sourceName}</span>
+                    <a
+                      href={selectedNewsModal.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors"
+                    >
+                      READ FULL ORIGINAL ARTICLE <ExternalLink size={12} />
+                    </a>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
       )}
 
       <Footer siteSettings={siteSettings} />
