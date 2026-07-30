@@ -2,10 +2,10 @@ import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-// Increased particle grid from 90x75 (6,750) to 110x95 (10,450) -> +54.8% density increase
-const COLS = 110;
-const ROWS = 95;
-const PARTICLE_COUNT = COLS * ROWS; // 10,450 particles
+// Ultra-dense particle grid: 150x125 = 18,750 micro-particles
+const COLS = 150;
+const ROWS = 125;
+const PARTICLE_COUNT = COLS * ROWS; // 18,750 particles
 
 // Premium branding color palette (cyan, blue, purple with luminous variations)
 const PALETTE = [
@@ -16,7 +16,7 @@ const PALETTE = [
   new THREE.Color('#22d3ee'), // Bright Cyan
 ];
 
-const REVEAL_RADIUS_PX = 250; // Screen-space reveal radius around cursor
+const REVEAL_RADIUS_PX = 260; // Screen-space reveal radius around cursor
 const FADE_SPEED = 0.12; // Smooth fade-in / fade-out speed
 const LERP_POSITION = 0.05; // Soft anti-gravity movement lerp speed
 
@@ -199,7 +199,7 @@ export default function ParticleField({ mouseRef }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.075}
+        size={0.042}
         vertexColors
         transparent
         opacity={1}
