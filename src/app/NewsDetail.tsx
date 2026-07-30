@@ -1,95 +1,38 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion } from "motion/react";
-import { ArrowLeft, Calendar, Tag, Clock } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Calendar, Tag, Clock, ExternalLink, Sparkles, Share2, Check, Bookmark, ArrowUpRight } from "lucide-react";
 import { format } from "date-fns";
 import { PortableText } from "@portabletext/react";
 
-import { fetchNewsBySlug, fetchSiteSettings } from "../lib/sanityQueries";
+import { fetchNewsBySlug, fetchSiteSettings, fetchNews } from "../lib/sanityQueries";
 import { urlFor, client } from "../lib/sanityClient";
-import { NewsItem, SiteSettings } from "../types/cms";
+import { SiteSettings } from "../types/cms";
+import { aggregateNewsFeeds, NormalizedResource } from "../lib/rssAggregator";
+import { generateDetailedEditorial, getArticleCoverImage, DetailedEditorial } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import CommentSection from "./components/CommentSection";
 import Footer from "./components/Footer";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 28 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: EASE },
+    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
   }),
 };
-
-const portableTextComponents = {
-  types: {
-    image: ({ value }: any) => {
-      if (!value?.asset?._ref) return null;
-      const imgUrl = urlFor(value)?.url();
-      return (
-        <figure className="my-8 overflow-hidden rounded-lg border border-border">
-          <img
-            src={imgUrl}
-            alt={value.alt || "News image"}
-            className="w-full max-h-[500px] object-cover"
-          />
-          {value.caption && (
-            <figcaption className="p-3 text-center text-xs text-muted-foreground mono border-t border-border bg-surface">
-              {value.caption}
-            </figcaption>
-          )}
-        </figure>
-      );
-    },
-  },
-  block: {
-    h1: ({ children }: any) => (
-      <h1 className="mt-8 mb-4 text-3xl font-semibold tracking-tight text-foreground">{children}</h1>
-    ),
-    h2: ({ children }: any) => (
-      <h2 className="mt-6 mb-3 text-2xl font-semibold tracking-tight text-foreground">{children}</h2>
-    ),
-    h3: ({ children }: any) => (
-      <h3 className="mt-4 mb-2 text-xl font-semibold tracking-tight text-foreground">{children}</h3>
-    ),
-    normal: ({ children }: any) => (
-      <p className="mb-4 text-base leading-relaxed text-muted-foreground">{children}</p>
-    ),
-    blockquote: ({ children }: any) => (
-      <blockquote className="my-6 border-l-2 border-primary pl-4 text-lg italic text-foreground bg-surface/50 py-2 pr-4 rounded-r">
-        {children}
-      </blockquote>
-    ),
-  },
-};
-
-function getReadingTime(body: any[] | undefined): number {
-  if (!body || !Array.isArray(body)) return 1;
-  let textContent = "";
-  for (const block of body) {
-    if (block._type === "block" && block.children) {
-      for (const child of block.children) {
-        if (child.text) {
-          textContent += child.text + " ";
-        }
-      }
-    }
-  }
-  const words = textContent.trim().split(/\s+/).length;
-  const readingTime = Math.ceil(words / 200);
-  return Math.max(1, readingTime);
-}
 
 export default function NewsDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [news, setNews] = useState<NewsItem | null>(null);
-  const [relatedArticles, setRelatedArticles] = useState<NewsItem[]>([]);
+  const [article, setArticle] = useState<NormalizedResource | null>(null);
+  const [sanityBody, setSanityBody] = useState<any[] | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<NormalizedResource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -99,236 +42,331 @@ export default function NewsDetail() {
   }, []);
 
   useEffect(() => {
-    if (slug) {
-      setLoading(true);
-      fetchNewsBySlug(slug)
-        .then(async (data) => {
-          setNews(data);
-          if (data) {
-            // Fetch related articles prioritizing matching category, then most recent news
-            const related = await client.fetch<NewsItem[]>(
-              `*[_type == "news" && _id != $currentId] | order(category == $category desc, publishedAt desc)[0...3]{
-                _id,
-                title,
-                slug,
-                coverImage,
-                excerpt,
-                publishedAt,
-                category
-              }`,
-              { currentId: data._id, category: data.category || "" }
-            );
-            setRelatedArticles(related || []);
+    if (!slug) return;
+    setLoading(true);
+
+    async function loadArticleData() {
+      try {
+        // 1. First check Sanity CMS
+        const sanityDoc = await fetchNewsBySlug(slug!);
+        if (sanityDoc) {
+          const pubIso = sanityDoc.publishedAt || new Date().toISOString();
+          const cover = sanityDoc.coverImage ? urlFor(sanityDoc.coverImage)?.url() : getArticleCoverImage(sanityDoc.category, sanityDoc.title);
+          
+          setArticle({
+            id: sanityDoc._id,
+            title: sanityDoc.title,
+            slug: sanityDoc.slug?.current || sanityDoc._id,
+            resourceType: "news",
+            description: sanityDoc.excerpt || sanityDoc.title,
+            benefitSummary: "Studio Announcement",
+            link: `/news/${sanityDoc.slug?.current || sanityDoc._id}`,
+            sourceName: "Rvan Studio",
+            publishedAt: pubIso,
+            formattedDate: format(new Date(pubIso), "MMMM d, yyyy"),
+            category: sanityDoc.category || "Announcements",
+            country: "Global",
+            workType: "na",
+            isFree: true,
+            logoUrl: cover,
+            isRss: false,
+          });
+          setSanityBody(sanityDoc.body || null);
+        } else {
+          // 2. Fetch from aggregated news stream (Sanity + RSS + Curated Baseline)
+          const cmsNews = await fetchNews();
+          const allItems = await aggregateNewsFeeds(cmsNews || []);
+          const matched = allItems.find(
+            (item) => item.slug === slug || item.id === slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug
+          );
+
+          if (matched) {
+            if (!matched.logoUrl) {
+              matched.logoUrl = getArticleCoverImage(matched.category, matched.title);
+            }
+            setArticle(matched);
+          } else if (allItems.length > 0) {
+            // Fallback to first article if not found
+            setArticle(allItems[0]);
           }
-        })
-        .catch((err) => {
-          console.error("Error fetching news details:", err);
-        })
-        .finally(() => setLoading(false));
+        }
+
+        // Fetch related items
+        const allFeeds = await aggregateNewsFeeds();
+        setRelatedArticles(allFeeds.filter((a) => a.slug !== slug && a.id !== slug).slice(0, 3));
+      } catch (err) {
+        console.error("Error loading article detail:", err);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    loadArticleData();
   }, [slug]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        navigate("/news");
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [navigate]);
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background text-foreground grid place-items-center">
-        <p className="text-sm font-semibold tracking-widest text-muted-foreground mono animate-pulse">
-          LOADING ARTICLE...
-        </p>
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <p className="text-xs font-semibold tracking-widest text-muted-foreground mono">
+            LOADING EDITORIAL...
+          </p>
+        </div>
       </div>
     );
   }
 
-  if (!news) {
+  if (!article) {
     return (
       <main className="min-h-screen bg-background text-foreground px-6 py-32">
-        <SEO title="Article Not Found — Ravan Mammadov" />
+        <SEO title="Article Not Found — Rvan.me" />
         <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-4xl font-semibold mb-4">News Article Not Found</h1>
-          <p className="text-muted-foreground mb-8">The requested article could not be found or has been moved.</p>
+          <h1 className="text-4xl font-semibold mb-4">Article Not Found</h1>
+          <p className="text-muted-foreground mb-8">The requested publication could not be located.</p>
           <Link
             to="/news"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-xs font-bold tracking-widest text-primary hover:bg-primary hover:text-primary-foreground transition-all mono"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3 text-xs font-bold tracking-widest text-primary hover:bg-primary hover:text-black transition-all mono"
           >
-            <ArrowLeft size={16} /> BACK TO NEWS
+            <ArrowLeft size={16} /> BACK TO NEWS HUB
           </Link>
         </div>
       </main>
     );
   }
 
-  const coverUrl = news.coverImage ? urlFor(news.coverImage)?.url() : null;
-  let formattedDate: string | null = null;
-  if (news.publishedAt) {
-    try {
-      const d = new Date(news.publishedAt);
-      if (!isNaN(d.getTime())) {
-        formattedDate = format(d, "MMMM d, yyyy");
-      }
-    } catch (e) {
-      formattedDate = null;
-    }
-  }
+  const editorial: DetailedEditorial = generateDetailedEditorial(
+    article.title,
+    article.description,
+    article.sourceName,
+    article.category
+  );
 
-  const readingTime = getReadingTime(news.body);
+  const coverImage = article.logoUrl || getArticleCoverImage(article.category, article.title);
   const siteDomain = siteSettings?.seo?.canonicalUrl || "https://www.rvan.me";
-  const articleUrl = `${siteDomain}/news/${news.slug?.current || slug}`;
-
-  // Structured NewsArticle JSON-LD
-  const newsArticleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: news.title,
-    description: news.excerpt || news.title,
-    image: coverUrl ? [coverUrl] : [],
-    datePublished: news.publishedAt,
-    dateModified: news.publishedAt,
-    url: articleUrl,
-    author: {
-      "@type": "Person",
-      name: siteSettings?.seo?.author || "Ravan Mammadov",
-      url: siteDomain,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: siteSettings?.seo?.siteName || "Ravan Mammadov",
-      logo: {
-        "@type": "ImageObject",
-        url: siteSettings?.logo ? urlFor(siteSettings.logo)?.url() : `${siteDomain}/logo.png`,
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": articleUrl,
-    },
-  };
+  const articleUrl = `${siteDomain}/news/${article.slug}`;
 
   return (
-    <main
-      className="min-h-screen bg-background text-foreground"
-      style={{ fontFamily: "'Geist', sans-serif" }}
-    >
+    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${news.title} — Premium Editorial`}
-        description={news.excerpt || news.title}
-        image={coverUrl || undefined}
+        title={`${article.title} — Premium Editorial`}
+        description={article.description}
+        image={coverImage}
         url={articleUrl}
         type="article"
-        publishDate={news.publishedAt}
-        jsonLd={newsArticleJsonLd}
-        favicon={siteSettings?.favicon}
+        publishDate={article.publishedAt}
       />
 
-      {/* ── Aurora background blobs ── */}
-      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
-        <div className="absolute inset-0 bg-background" />
-        
-        {/* Blob 1 — emerald / teal, top-left */}
+      {/* Aurora Ambient Blob */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden opacity-30">
         <div
-          className="aurora-blob-1 absolute"
+          className="absolute -top-[20%] left-[25%] h-[600px] w-[600px] rounded-full"
           style={{
-            top: "-15%", left: "-10%",
-            width: "60%", height: "70%",
-            background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.06) 0%, rgba(6,182,212,0.03) 45%, transparent 72%)",
-            filter: "blur(64px)",
-          }}
-        />
-
-        {/* Blob 2 — violet / blue, top-right */}
-        <div
-          className="aurora-blob-2 absolute"
-          style={{
-            top: "0%", right: "-12%",
-            width: "55%", height: "65%",
-            background: "radial-gradient(ellipse at 65% 30%, rgba(139,92,246,0.05) 0%, rgba(59,130,246,0.03) 50%, transparent 78%)",
-            filter: "blur(72px)",
-          }}
-        />
-
-        {/* Micro grid overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
+            background: "radial-gradient(circle at 50% 50%, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.04) 50%, transparent 75%)",
+            filter: "blur(90px)",
           }}
         />
       </div>
 
-      {/* Global Unified Header */}
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Header section */}
+      {/* Main Article Container */}
       <article className="px-6 pt-16 pb-28 md:px-10 md:pt-24 relative z-10">
         <div className="mx-auto max-w-4xl">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
-            <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground mono mb-6">
-              {news.category && (
-                <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-primary glass-sm">
-                  <Tag size={12} />
-                  {news.category}
-                </span>
-              )}
-              {formattedDate && (
-                <span className="flex items-center gap-1">
-                  <Calendar size={12} />
-                  {formattedDate}
-                </span>
-              )}
-              <span className="flex items-center gap-1">
+          {/* Back button & Action controls */}
+          <div className="mb-8 flex items-center justify-between">
+            <Link
+              to="/news"
+              className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase"
+            >
+              <ArrowLeft size={14} /> BACK TO NEWS
+            </Link>
+
+            <button
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-all glass-sm mono"
+            >
+              {copied ? <Check size={14} className="text-emerald-400" /> : <Share2 size={14} />}
+              {copied ? "COPIED" : "SHARE"}
+            </button>
+          </div>
+
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
+            {/* Badges */}
+            <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-muted-foreground mono mb-6">
+              <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-primary font-bold">
+                {article.sourceName}
+              </span>
+              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                <Tag size={12} className="text-muted-foreground" />
+                {article.category}
+              </span>
+              <span className="flex items-center gap-1 text-muted-foreground/70">
+                <Calendar size={12} />
+                {article.formattedDate}
+              </span>
+              <span className="flex items-center gap-1 text-muted-foreground/70">
                 <Clock size={12} />
-                {readingTime} MIN READ
+                {editorial.estimatedReadingTimeMinutes} MIN READ
               </span>
             </div>
 
-            <h1 className="text-4xl font-semibold tracking-tight md:text-6xl text-foreground leading-tight">
-              {news.title}
+            {/* Title */}
+            <h1 className="text-3xl font-semibold tracking-tight md:text-5xl lg:text-6xl text-foreground leading-[1.1]">
+              {article.title}
             </h1>
 
-            {news.excerpt && (
-              <p className="mt-6 text-xl leading-relaxed text-muted-foreground">
-                {news.excerpt}
-              </p>
-            )}
+            {/* Lead Excerpt */}
+            <p className="mt-6 text-lg leading-relaxed text-muted-foreground/90 font-normal">
+              {article.description}
+            </p>
           </motion.div>
 
-          {coverUrl && (
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-              custom={0.3}
-              className="mt-10 overflow-hidden rounded-xl border border-white/10"
-            >
-              <img
-                src={coverUrl}
-                alt={news.title}
-                className="w-full max-h-[600px] object-cover"
-              />
-            </motion.div>
-          )}
+          {/* Article Cover Image */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={0.2}
+            className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 aspect-[16/9] shadow-2xl relative"
+          >
+            <img
+              src={coverImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
+          </motion.div>
 
-          {/* Body PortableText */}
-          {news.body && (
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-              custom={0.4}
-              className="mt-12 border-t border-white/10 pt-10 font-sans"
-            >
-              <PortableText value={news.body} components={portableTextComponents} />
-            </motion.div>
-          )}
+          {/* ─────────────────────────────────────────────────────────────────────────────
+              COMPREHENSIVE 500-1000 WORD AI EDITORIAL SUMMARY
+          ───────────────────────────────────────────────────────────────────────────── */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={0.3}
+            className="mt-12 space-y-10 text-foreground leading-relaxed font-sans"
+          >
+            {/* Header Tag */}
+            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs font-bold text-primary mono uppercase">
+              <Sparkles size={16} /> Extended AI Editorial & Technical Breakdown ({editorial.wordCount} Words)
+            </div>
+
+            {/* 1. Overview */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 glass">
+              <h2 className="text-xl font-bold tracking-tight text-foreground mb-3 flex items-center gap-2">
+                <span>📌</span> Executive Overview
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.overview}
+              </p>
+            </section>
+
+            {/* 2. What's New */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>🚀</span> What's New & Core Innovations
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.whatsNew}
+              </p>
+            </section>
+
+            {/* 3. Key Features */}
+            <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 glass">
+              <h2 className="text-xl font-bold tracking-tight text-foreground mb-4 flex items-center gap-2">
+                <span>⚡</span> Key Capabilities & Highlights
+              </h2>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                {editorial.keyFeatures.map((feat, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <span className="mt-1 h-2 w-2 rounded-full bg-primary shrink-0" />
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* 4. Technical Breakdown */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>⚙️</span> Technical & Architecture Deep-Dive
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.technicalBreakdown}
+              </p>
+            </section>
+
+            {/* 5. Industry Impact */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>💡</span> Industry & Market Impact
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.industryImpact}
+              </p>
+            </section>
+
+            {/* 6. Why It Matters */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>🎯</span> Strategic Value & Why It Matters
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.whyItMatters}
+              </p>
+            </section>
+
+            {/* 7. Key Takeaways */}
+            <section className="rounded-2xl border border-primary/20 bg-primary/5 p-6 md:p-8 text-foreground">
+              <h2 className="text-xl font-bold tracking-tight text-primary mb-4 flex items-center gap-2 uppercase mono">
+                Key Takeaways & Actionable Guidance
+              </h2>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                {editorial.keyTakeaways.map((takeaway, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <span className="mt-1 text-primary font-bold">0{idx + 1}.</span>
+                    <span className="text-foreground">{takeaway}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* Optional Sanity PortableText if available */}
+            {sanityBody && (
+              <div className="pt-8 border-t border-white/10">
+                <h3 className="text-lg font-bold text-foreground mb-4">Original PortableText Body</h3>
+                <PortableText value={sanityBody} />
+              </div>
+            )}
+
+            {/* ─────────────────────────────────────────────────────────────────────────────
+                READ FULL ORIGINAL ARTICLE BUTTON (PLACED AFTER THE ENTIRE AI SUMMARY)
+            ───────────────────────────────────────────────────────────────────────────── */}
+            <div className="mt-16 pt-10 border-t border-white/10 flex flex-col items-center justify-center text-center gap-4">
+              <p className="text-xs text-muted-foreground mono">
+                Article curated from original publisher <span className="text-foreground font-bold">{article.sourceName}</span>.
+              </p>
+              {article.link && article.link.startsWith("http") && (
+                <a
+                  href={article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-8 py-4 text-xs font-bold text-black uppercase tracking-widest hover:bg-white hover:shadow-[0_0_25px_rgba(232,253,82,0.4)] transition-all duration-300 mono"
+                >
+                  <span>READ FULL ORIGINAL ARTICLE AT {article.sourceName.toUpperCase()}</span>
+                  <ExternalLink size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
+              )}
+            </div>
+          </motion.div>
 
           {/* Related Articles Section */}
           {relatedArticles.length > 0 && (
@@ -337,33 +375,31 @@ export default function NewsDetail() {
                 Related Articles
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article) => {
-                  const relatedCover = article.coverImage ? urlFor(article.coverImage)?.url() : null;
+                {relatedArticles.map((rel) => {
+                  const relCover = rel.logoUrl || getArticleCoverImage(rel.category, rel.title);
                   return (
                     <Link
-                      key={article._id}
-                      to={`/news/${article.slug?.current}`}
-                      className="group flex flex-col justify-between p-4 rounded-lg border border-white/10 bg-white/5 hover:border-primary/50 hover:bg-white/10 transition-all duration-300 glass"
+                      key={rel.id}
+                      to={`/news/${rel.slug}`}
+                      className="group flex flex-col justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:border-primary/50 hover:bg-white/10 transition-all duration-300 glass"
                     >
                       <div>
-                        {relatedCover && (
-                          <div className="aspect-video w-full overflow-hidden rounded mb-4 border border-white/10">
-                            <img
-                              src={relatedCover}
-                              alt={article.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                          </div>
-                        )}
-                        <span className="text-[10px] font-bold tracking-wider mono text-muted-foreground uppercase">
-                          {article.category}
+                        <div className="aspect-video w-full overflow-hidden rounded-lg mb-4 border border-white/10 bg-background">
+                          <img
+                            src={relCover}
+                            alt={rel.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                        <span className="text-[10px] font-bold tracking-wider mono text-primary uppercase">
+                          {rel.sourceName}
                         </span>
-                        <h4 className="mt-2 text-sm font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                          {article.title}
+                        <h4 className="mt-1 text-sm font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                          {rel.title}
                         </h4>
                       </div>
                       <span className="mt-4 text-[10px] font-semibold text-muted-foreground mono">
-                        {article.publishedAt ? format(new Date(article.publishedAt), "MMM d, yyyy") : ""}
+                        {rel.formattedDate}
                       </span>
                     </Link>
                   );
@@ -372,13 +408,13 @@ export default function NewsDetail() {
             </div>
           )}
 
+          {/* Comments */}
           <div className="mt-16">
-            <CommentSection postId={news._id} postTitle={news.title} />
+            <CommentSection postId={article.id} postTitle={article.title} />
           </div>
         </div>
       </article>
 
-      {/* Footer */}
       <Footer siteSettings={siteSettings} />
     </main>
   );
