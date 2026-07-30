@@ -1,280 +1,204 @@
 import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { curlNoise2D, cursorDisturbance } from './MouseRepulsion.js';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Particle grid
-// ─────────────────────────────────────────────────────────────────────────────
-const COLS           = 88;
-const ROWS           = 72;
-const PARTICLE_COUNT = COLS * ROWS;   // 6 336
+// Increased particle grid from 88x72 (6,336) to 110x95 (10,450) -> +64.9% density increase
+const COLS = 110;
+const ROWS = 95;
+const PARTICLE_COUNT = COLS * ROWS; // 10,450 particles
 
-const SPREAD_X = 24;   // world units, horizontal
-const SPREAD_Y = 16;   // world units, vertical
+const PALETTE = [
+  new THREE.Color('#06b6d4'), // Cyan
+  new THREE.Color('#3b82f6'), // Blue
+  new THREE.Color('#8b5cf6'), // Purple
+  new THREE.Color('#60a5fa'), // Light Blue
+  new THREE.Color('#22d3ee'), // Bright Cyan
+];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Physics — flow-field model (not force/spring)
-//
-// Instead of computing forces and integrating acceleration → velocity → pos,
-// we compute a TARGET VELOCITY from three sources and smoothly blend toward it.
-// This gives the fluid, organic feel of modern WebGL demos.
-// ─────────────────────────────────────────────────────────────────────────────
+const REVEAL_RADIUS_PX = 250; // Screen-space reveal radius around cursor
+const FADE_SPEED = 0.12; // Smooth fade-in / fade-out speed
+const LERP_POSITION = 0.05; // Soft anti-gravity movement lerp speed
 
-// Global curl-noise field (idle animation — always evolving)
-const CURL_SCALE     = 0.13;   // spatial frequency: lower = larger vortices
-const CURL_SPEED     = 1.0;    // time evolution rate
-const CURL_AMPLITUDE = 0.015;  // world units/frame added by curl field
-
-// Spring — extremely gentle, purely to prevent unbounded drift
-const SPRING_K       = 0.0018; // acceleration toward origin per unit displacement
-
-// Cursor influence zone (in screen pixels — converted per-frame to world units)
-const INFLUENCE_PX   = 240;    // outer radius
-const INNER_RATIO    = 0.18;   // innerR = INFLUENCE_PX * INNER_RATIO (≈43 px)
-
-// Cursor disturbance amplitudes
-const STATIC_PUSH    = 0.010;  // world-units/frame push when cursor is stationary
-const FLOW_STR       = 0.14;   // Rankine flow amplitude multiplier
-
-// Velocity smoothing — exponential moving average toward target each frame
-// Lower = more inertia (laggy, fluid)  Higher = snappier
-const VEL_SMOOTHING  = 0.055;
-
-// Global damping — very gentle, particles keep moving long after disturbance
-const DAMPING        = 0.975;
-
-// Hard speed cap to prevent rare runaway accumulation
-const MAX_SPEED      = 0.55;   // world units/frame
-
-// Visual
-const PARTICLE_SIZE    = 0.11;
-const PARTICLE_COLOR   = '#3B82F6';
-const PARTICLE_OPACITY = 0.90;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Glow texture
-// ─────────────────────────────────────────────────────────────────────────────
-function createGlowTexture() {
-  const S  = 64;
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = S;
-  const ctx = cv.getContext('2d');
-  const cx  = S / 2;
-
-  const g = ctx.createRadialGradient(cx, cx, 0, cx, cx, cx);
-  g.addColorStop(0.00, 'rgba(255,255,255,1.00)');
-  g.addColorStop(0.20, 'rgba(255,255,255,0.90)');
-  g.addColorStop(0.48, 'rgba(255,255,255,0.45)');
-  g.addColorStop(0.75, 'rgba(255,255,255,0.12)');
-  g.addColorStop(1.00, 'rgba(255,255,255,0.00)');
-
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, S, S);
-  return new THREE.CanvasTexture(cv);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────────────────────────────────────
 export default function ParticleField({ mouseRef }) {
   const pointsRef = useRef(null);
   const { camera, size } = useThree();
 
-  // Typed arrays — allocated once, mutated every frame
-  const origX  = useRef(null);
-  const origY  = useRef(null);
-  const velX   = useRef(null);
-  const velY   = useRef(null);
-  const posArr = useRef(null);
+  const visH = 2 * Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
+  const visW = visH * (size.width / size.height);
 
-  // ── Geometry (built once) ────────────────────────────────────────────────
-  const geometry = useMemo(() => {
-    const N   = PARTICLE_COUNT;
-    const pos = new Float32Array(N * 3);
-    const ox  = new Float32Array(N);
-    const oy  = new Float32Array(N);
-    const vx  = new Float32Array(N);
-    const vy  = new Float32Array(N);
+  const SPREAD_X = visW * 1.25;
+  const SPREAD_Y = visH * 1.25;
+
+  const { positions, baseColors, displayColors, origX, origY, currX, currY, alphaArr, orbitPhases } = useMemo(() => {
+    const pos = new Float32Array(PARTICLE_COUNT * 3);
+    const baseCols = new Float32Array(PARTICLE_COUNT * 3);
+    const dispCols = new Float32Array(PARTICLE_COUNT * 3);
+    const ox = new Float32Array(PARTICLE_COUNT);
+    const oy = new Float32Array(PARTICLE_COUNT);
+    const cx = new Float32Array(PARTICLE_COUNT);
+    const cy = new Float32Array(PARTICLE_COUNT);
+    const alphas = new Float32Array(PARTICLE_COUNT);
+    const phases = new Float32Array(PARTICLE_COUNT);
 
     let i = 0;
-    for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) {
-        const x = (col / (COLS - 1) - 0.5) * SPREAD_X;
-        const y = (row / (ROWS - 1) - 0.5) * SPREAD_Y;
-        pos[i * 3]     = x;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const nx = (c / (COLS - 1) - 0.5) * 2;
+        const ny = (r / (ROWS - 1) - 0.5) * 2;
+        const distFromCenter = Math.sqrt(nx * nx + ny * ny);
+
+        // Center-weighted smooth density modulation: ~25% higher particle density near hero center without clustering
+        const compress = 1.0 - 0.22 * Math.exp(-distFromCenter * distFromCenter * 1.6);
+
+        const jitterX = (Math.random() - 0.5) * (SPREAD_X / COLS) * 0.75;
+        const jitterY = (Math.random() - 0.5) * (SPREAD_Y / ROWS) * 0.75;
+
+        const x = (nx * 0.5 * SPREAD_X * compress) + jitterX;
+        const y = (ny * 0.5 * SPREAD_Y * compress) + jitterY;
+
+        pos[i * 3] = x;
         pos[i * 3 + 1] = y;
         pos[i * 3 + 2] = 0;
+
         ox[i] = x;
         oy[i] = y;
+        cx[i] = x;
+        cy[i] = y;
+        alphas[i] = 0; // Default completely invisible (idle state)
+        phases[i] = Math.random() * Math.PI * 2;
+
+        const color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+        baseCols[i * 3] = color.r;
+        baseCols[i * 3 + 1] = color.g;
+        baseCols[i * 3 + 2] = color.b;
+
+        dispCols[i * 3] = 0;
+        dispCols[i * 3 + 1] = 0;
+        dispCols[i * 3 + 2] = 0;
+
         i++;
       }
     }
 
-    origX.current  = ox;
-    origY.current  = oy;
-    velX.current   = vx;
-    velY.current   = vy;
-    posArr.current = pos;
+    return {
+      positions: pos,
+      baseColors: baseCols,
+      displayColors: dispCols,
+      origX: ox,
+      origY: oy,
+      currX: cx,
+      currY: cy,
+      alphaArr: alphas,
+      orbitPhases: phases,
+    };
+  }, [SPREAD_X, SPREAD_Y]);
 
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    return geo;
-  }, []);
-
-  // ── Material ─────────────────────────────────────────────────────────────
-  const material = useMemo(() => {
-    const tex = createGlowTexture();
-    return new THREE.PointsMaterial({
-      color:           new THREE.Color(PARTICLE_COLOR),
-      size:            PARTICLE_SIZE,
-      sizeAttenuation: true,
-      transparent:     true,
-      opacity:         PARTICLE_OPACITY,
-      blending:        THREE.AdditiveBlending,
-      depthWrite:      false,
-      depthTest:       false,
-      map:             tex,
-      alphaMap:        tex,
-      alphaTest:       0.001,
-    });
-  }, []);
-
-  // ── Frame state (mutable, no re-render) ──────────────────────────────────
-  let clock     = 0;
-  let prevMxW   = 0;
-  let prevMyW   = 0;
-  let smoothCvx = 0;  // smoothed cursor world velocity x
-  let smoothCvy = 0;  // smoothed cursor world velocity y
-  let mouseWasActive = false;
-
-  // ── Animation loop ───────────────────────────────────────────────────────
-  useFrame((_state, delta) => {
+  useFrame((state) => {
     if (!pointsRef.current) return;
 
-    const dt = Math.min(delta, 0.05);
-    clock += dt;
-
-    const pos = posArr.current;
-    const ox  = origX.current;
-    const oy  = origY.current;
-    const vx  = velX.current;
-    const vy  = velY.current;
-
-    // ── World-space mouse position ────────────────────────────────────────
-    // Camera is perspective at z=14, fov=60.
-    // visibleHeight = 2 * tan(30°) * 14 ≈ 16.17 world units
-    const fovRad    = (camera.fov * Math.PI) / 180;
-    const visH      = 2 * Math.tan(fovRad / 2) * camera.position.z;
-    const visW      = visH * (size.width / size.height);
+    const time = state.clock.getElapsedTime();
     const pxToWorld = visH / size.height;
+    const radiusW = REVEAL_RADIUS_PX * pxToWorld;
 
-    const mouse = mouseRef.current;
-    let mxW  = prevMxW;
-    let myW  = prevMyW;
+    const mouse = mouseRef?.current;
+    let mxW = 99999;
+    let myW = 99999;
     let mouseActive = false;
 
     if (mouse && mouse.x > -9000) {
-      mxW  = (mouse.x / size.width  - 0.5) * visW;
-      myW  = (0.5 - mouse.y / size.height) * visH;
+      mxW = (mouse.x / size.width - 0.5) * visW;
+      myW = (0.5 - mouse.y / size.height) * visH;
       mouseActive = true;
     }
 
-    // ── Smoothed cursor velocity (world units / frame) ────────────────────
-    const rawCvx = mouseActive ? (mxW - prevMxW) : 0;
-    const rawCvy = mouseActive ? (myW - prevMyW) : 0;
+    let needsColorUpdate = false;
+    let needsPositionUpdate = false;
 
-    // Exponential smoothing kills high-frequency mouse jitter
-    const velSmooth = 0.25;
-    smoothCvx = smoothCvx + (rawCvx - smoothCvx) * velSmooth;
-    smoothCvy = smoothCvy + (rawCvy - smoothCvy) * velSmooth;
-
-    prevMxW = mxW;
-    prevMyW = myW;
-    mouseWasActive = mouseActive;
-
-    // Cursor speed and direction
-    const cSpeed   = Math.sqrt(smoothCvx * smoothCvx + smoothCvy * smoothCvy);
-    const invCSpeed = cSpeed > 1e-5 ? 1 / cSpeed : 0;
-    const cdx      = smoothCvx * invCSpeed;  // normalized direction, (0,0) when still
-    const cdy      = smoothCvy * invCSpeed;
-
-    // Convert influence radius from screen pixels to world units
-    const outerR = INFLUENCE_PX * pxToWorld;
-    const innerR = outerR * INNER_RATIO;
-
-    // ── Per-particle loop ─────────────────────────────────────────────────
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const i3 = i * 3;
-      const px = pos[i3];
-      const py = pos[i3 + 1];
 
-      // 1. Global curl-noise field sampled at ORIGIN position.
-      //    Using the resting position (not current position) avoids feedback
-      //    loops where drift changes the noise sample → more drift.
-      const noiseX = ox[i] * CURL_SCALE;
-      const noiseY = oy[i] * CURL_SCALE;
-      const curl = curlNoise2D(noiseX, noiseY, clock * CURL_SPEED);
+      const dx = currX[i] - mxW;
+      const dy = currY[i] - myW;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // 2. Gentle spring toward origin (just enough to prevent runaway drift)
-      const springVx = (ox[i] - px) * SPRING_K;
-      const springVy = (oy[i] - py) * SPRING_K;
-
-      // 3. Cursor disturbance: Rankine cylinder flow + soft static push
-      let distVx = 0, distVy = 0;
-      if (mouseActive) {
-        const dx   = px - mxW;
-        const dy   = py - myW;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const { vx: dvx, vy: dvy } = cursorDisturbance(
-          dx, dy, dist,
-          cdx, cdy, cSpeed,
-          innerR, outerR,
-          STATIC_PUSH, FLOW_STR
-        );
-        distVx = dvx;
-        distVy = dvy;
+      let targetAlpha = 0;
+      if (mouseActive && dist < radiusW) {
+        const normDist = dist / radiusW;
+        targetAlpha = (1 - normDist) * (1 - normDist) * (3 - 2 * (1 - normDist));
       }
 
-      // 4. Target velocity = sum of all contributions
-      const targetVx = curl.x * CURL_AMPLITUDE + springVx + distVx;
-      const targetVy = curl.y * CURL_AMPLITUDE + springVy + distVy;
+      const prevAlpha = alphaArr[i];
+      alphaArr[i] += (targetAlpha - alphaArr[i]) * FADE_SPEED;
 
-      // 5. Smooth integration: exponential blend toward target.
-      //    This is the key difference from a force-based system:
-      //    velocity FOLLOWS the flow field rather than being accelerated by it.
-      //    Gives the impression of a fluid carrying particles.
-      vx[i] += (targetVx - vx[i]) * VEL_SMOOTHING;
-      vy[i] += (targetVy - vy[i]) * VEL_SMOOTHING;
-
-      // 6. Gentle global damping
-      vx[i] *= DAMPING;
-      vy[i] *= DAMPING;
-
-      // 7. Speed clamp (rare — prevents occasional numerical blow-up)
-      const spd = Math.sqrt(vx[i] * vx[i] + vy[i] * vy[i]);
-      if (spd > MAX_SPEED) {
-        const inv = MAX_SPEED / spd;
-        vx[i] *= inv;
-        vy[i] *= inv;
+      if (Math.abs(alphaArr[i] - prevAlpha) > 0.001 || targetAlpha > 0 || alphaArr[i] > 0.001) {
+        const a = alphaArr[i];
+        displayColors[i3] = baseColors[i3] * a;
+        displayColors[i3 + 1] = baseColors[i3 + 1] * a;
+        displayColors[i3 + 2] = baseColors[i3 + 2] * a;
+        needsColorUpdate = true;
       }
 
-      // 8. Integrate position
-      pos[i3]     += vx[i];
-      pos[i3 + 1] += vy[i];
+      if (alphaArr[i] > 0.001) {
+        const idleX = origX[i] + Math.sin(time * 0.75 + orbitPhases[i]) * 0.14;
+        const idleY = origY[i] + Math.cos(time * 0.75 + orbitPhases[i]) * 0.14;
+
+        let targetX = idleX;
+        let targetY = idleY;
+
+        if (mouseActive && dist < radiusW && dist > 0.001) {
+          const angle = Math.atan2(dy, dx) + 0.42;
+          const pushForce = (1 - dist / radiusW) * 0.38;
+
+          const orbitX = Math.cos(angle) * pushForce;
+          const orbitY = Math.sin(angle) * pushForce;
+
+          targetX = currX[i] + orbitX + (dx / dist) * pushForce * 0.22;
+          targetY = currY[i] + orbitY + (dy / dist) * pushForce * 0.22;
+        }
+
+        currX[i] += (targetX - currX[i]) * LERP_POSITION;
+        currY[i] += (targetY - currY[i]) * LERP_POSITION;
+
+        positions[i3] = currX[i];
+        positions[i3 + 1] = currY[i];
+        needsPositionUpdate = true;
+      } else {
+        currX[i] += (origX[i] - currX[i]) * 0.02;
+        currY[i] += (origY[i] - currY[i]) * 0.02;
+        positions[i3] = currX[i];
+        positions[i3 + 1] = currY[i];
+      }
     }
 
-    // Mark GPU buffer for upload
-    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    if (needsColorUpdate) {
+      pointsRef.current.geometry.attributes.color.needsUpdate = true;
+    }
+    if (needsPositionUpdate) {
+      pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    }
   });
 
   return (
-    <points
-      ref={pointsRef}
-      geometry={geometry}
-      material={material}
-      frustumCulled={false}
-    />
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[positions, 3]}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          args={[displayColors, 3]}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.075}
+        vertexColors
+        transparent
+        opacity={1}
+        blending={THREE.AdditiveBlending}
+        sizeAttenuation
+        depthWrite={false}
+      />
+    </points>
   );
 }

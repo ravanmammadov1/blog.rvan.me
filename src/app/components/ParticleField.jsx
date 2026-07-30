@@ -1,12 +1,13 @@
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const COLS = 90;
-const ROWS = 75;
-const PARTICLE_COUNT = COLS * ROWS; // 6,750 particles for high density around reveal area
+// Increased particle grid from 90x75 (6,750) to 110x95 (10,450) -> +54.8% density increase
+const COLS = 110;
+const ROWS = 95;
+const PARTICLE_COUNT = COLS * ROWS; // 10,450 particles
 
-// Premium branding color palette (low-saturation cyan, blue, purple)
+// Premium branding color palette (cyan, blue, purple with luminous variations)
 const PALETTE = [
   new THREE.Color('#06b6d4'), // Cyan
   new THREE.Color('#3b82f6'), // Blue
@@ -15,7 +16,7 @@ const PALETTE = [
   new THREE.Color('#22d3ee'), // Bright Cyan
 ];
 
-const REVEAL_RADIUS_PX = 240; // Screen-space reveal radius around cursor
+const REVEAL_RADIUS_PX = 250; // Screen-space reveal radius around cursor
 const FADE_SPEED = 0.12; // Smooth fade-in / fade-out speed
 const LERP_POSITION = 0.05; // Soft anti-gravity movement lerp speed
 
@@ -23,11 +24,11 @@ export default function ParticleField({ mouseRef }) {
   const pointsRef = useRef(null);
   const { camera, size } = useThree();
 
-  // Dynamically compute spread based on visible world dimensions
+  // Dynamically compute visible dimensions at camera depth
   const visH = 2 * Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
   const visW = visH * (size.width / size.height);
 
-  const SPREAD_X = visW * 1.25; // 25% padding so particles cover full screen edge-to-edge
+  const SPREAD_X = visW * 1.25; // 25% padding for seamless edge-to-edge coverage
   const SPREAD_Y = visH * 1.25;
 
   const { positions, baseColors, displayColors, origX, origY, currX, currY, alphaArr, orbitPhases } = useMemo(() => {
@@ -44,12 +45,19 @@ export default function ParticleField({ mouseRef }) {
     let i = 0;
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        // Uniform grid with slight organic jitter
-        const jitterX = (Math.random() - 0.5) * (SPREAD_X / COLS) * 0.8;
-        const jitterY = (Math.random() - 0.5) * (SPREAD_Y / ROWS) * 0.8;
+        // Normalized coordinates (-1 to 1)
+        const nx = (c / (COLS - 1) - 0.5) * 2;
+        const ny = (r / (ROWS - 1) - 0.5) * 2;
+        const distFromCenter = Math.sqrt(nx * nx + ny * ny);
 
-        const x = (c / (COLS - 1) - 0.5) * SPREAD_X + jitterX;
-        const y = (r / (ROWS - 1) - 0.5) * SPREAD_Y + jitterY;
+        // Center-weighted smooth density modulation: ~25% higher particle density near hero center without clustering
+        const compress = 1.0 - 0.22 * Math.exp(-distFromCenter * distFromCenter * 1.6);
+
+        const jitterX = (Math.random() - 0.5) * (SPREAD_X / COLS) * 0.75;
+        const jitterY = (Math.random() - 0.5) * (SPREAD_Y / ROWS) * 0.75;
+
+        const x = (nx * 0.5 * SPREAD_X * compress) + jitterX;
+        const y = (ny * 0.5 * SPREAD_Y * compress) + jitterY;
 
         pos[i * 3] = x;
         pos[i * 3 + 1] = y;
@@ -59,16 +67,14 @@ export default function ParticleField({ mouseRef }) {
         oy[i] = y;
         cx[i] = x;
         cy[i] = y;
-        alphas[i] = 0; // Default completely invisible
+        alphas[i] = 0; // Default completely invisible (idle state)
         phases[i] = Math.random() * Math.PI * 2;
 
-        // Pick random color from palette
         const color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
         baseCols[i * 3] = color.r;
         baseCols[i * 3 + 1] = color.g;
         baseCols[i * 3 + 2] = color.b;
 
-        // Start display color at 0,0,0 (invisible)
         dispCols[i * 3] = 0;
         dispCols[i * 3 + 1] = 0;
         dispCols[i * 3 + 2] = 0;
@@ -97,7 +103,7 @@ export default function ParticleField({ mouseRef }) {
     const pxToWorld = visH / size.height;
     const radiusW = REVEAL_RADIUS_PX * pxToWorld;
 
-    const mouse = mouseRef.current;
+    const mouse = mouseRef?.current;
     let mxW = 99999;
     let myW = 99999;
     let mouseActive = false;
@@ -114,24 +120,22 @@ export default function ParticleField({ mouseRef }) {
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const i3 = i * 3;
 
-      // Distance to mouse
       const dx = currX[i] - mxW;
       const dy = currY[i] - myW;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Target alpha based on distance to cursor with smooth radial falloff
+      // Target alpha based on distance to cursor with smoothstep radial falloff
       let targetAlpha = 0;
       if (mouseActive && dist < radiusW) {
         const normDist = dist / radiusW; // 0 at center, 1 at edge
-        // Smoothstep falloff for zero hard edges
         targetAlpha = (1 - normDist) * (1 - normDist) * (3 - 2 * (1 - normDist));
       }
 
-      // Smooth alpha transition
+      // Smooth alpha fade-in / fade-out
       const prevAlpha = alphaArr[i];
       alphaArr[i] += (targetAlpha - alphaArr[i]) * FADE_SPEED;
 
-      // Update color brightness based on alpha
+      // Color updates only when alpha changes meaningfully
       if (Math.abs(alphaArr[i] - prevAlpha) > 0.001 || targetAlpha > 0 || alphaArr[i] > 0.001) {
         const a = alphaArr[i];
         displayColors[i3] = baseColors[i3] * a;
@@ -140,28 +144,25 @@ export default function ParticleField({ mouseRef }) {
         needsColorUpdate = true;
       }
 
-      // Only calculate anti-gravity motion if particle is visible
+      // Anti-gravity motion physics when particle is visible
       if (alphaArr[i] > 0.001) {
-        // Idle gentle float
-        const idleX = origX[i] + Math.sin(time * 0.7 + orbitPhases[i]) * 0.15;
-        const idleY = origY[i] + Math.cos(time * 0.7 + orbitPhases[i]) * 0.15;
+        const idleX = origX[i] + Math.sin(time * 0.75 + orbitPhases[i]) * 0.14;
+        const idleY = origY[i] + Math.cos(time * 0.75 + orbitPhases[i]) * 0.14;
 
         let targetX = idleX;
         let targetY = idleY;
 
         if (mouseActive && dist < radiusW && dist > 0.001) {
-          // Soft anti-gravity orbital drift + subtle magnetic push
-          const angle = Math.atan2(dy, dx) + 0.4; // Perpendicular orbit angle
-          const pushForce = (1 - dist / radiusW) * 0.35;
+          const angle = Math.atan2(dy, dx) + 0.42; // Soft perpendicular orbit angle
+          const pushForce = (1 - dist / radiusW) * 0.38;
 
           const orbitX = Math.cos(angle) * pushForce;
           const orbitY = Math.sin(angle) * pushForce;
 
-          targetX = currX[i] + orbitX + (dx / dist) * pushForce * 0.2;
-          targetY = currY[i] + orbitY + (dy / dist) * pushForce * 0.2;
+          targetX = currX[i] + orbitX + (dx / dist) * pushForce * 0.22;
+          targetY = currY[i] + orbitY + (dy / dist) * pushForce * 0.22;
         }
 
-        // Fluid position lerp
         currX[i] += (targetX - currX[i]) * LERP_POSITION;
         currY[i] += (targetY - currY[i]) * LERP_POSITION;
 
@@ -169,7 +170,7 @@ export default function ParticleField({ mouseRef }) {
         positions[i3 + 1] = currY[i];
         needsPositionUpdate = true;
       } else {
-        // Slowly drift back to rest position while invisible
+        // Return smoothly to rest position while invisible
         currX[i] += (origX[i] - currX[i]) * 0.02;
         currY[i] += (origY[i] - currY[i]) * 0.02;
         positions[i3] = currX[i];
@@ -198,7 +199,7 @@ export default function ParticleField({ mouseRef }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.08}
+        size={0.075}
         vertexColors
         transparent
         opacity={1}
