@@ -21,8 +21,8 @@ export default function HeroParticles({ mouseRef, style = {} }) {
         position:      'absolute',
         inset:         0,
         overflow:      'hidden',
-        pointerEvents: 'none',   // ← pass ALL events (including cursor) to parent
-        zIndex:        0,
+        pointerEvents: 'none',
+        zIndex:        1,
         ...style,
       }}
     >
