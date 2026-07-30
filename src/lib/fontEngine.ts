@@ -19,6 +19,80 @@ export interface FontItem {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// DIRECT DOWNLOAD URL RESOLVER
+// Resolves GitHub, Google Fonts, and Foundry URLs directly to ZIP release files
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function resolveDirectFontDownloadUrl(font: FontItem): string {
+  const url = font.downloadUrl || font.officialUrl || "";
+  const familyEnc = encodeURIComponent(font.family);
+
+  // 1. Google Fonts Direct ZIP Download Endpoint
+  if (font.foundry === "Google Fonts" || url.includes("fonts.google.com")) {
+    return `https://fonts.google.com/download?family=${familyEnc}`;
+  }
+
+  // 2. GitHub Repositories & Releases -> Direct ZIP Release / Source Archive
+  if (url.includes("github.com")) {
+    const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+    if (match) {
+      const owner = match[1];
+      const repo = match[2].replace(/\.git$/, "").replace(/\/.*$/, "");
+
+      if (owner === "rsms" && repo === "inter") {
+        return "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip";
+      }
+      if (owner === "vercel" && repo === "geist-font") {
+        return "https://github.com/vercel/geist-font/archive/refs/heads/main.zip";
+      }
+      if (owner === "floriankarsten" && repo === "space-grotesk") {
+        return "https://github.com/floriankarsten/space-grotesk/archive/refs/heads/master.zip";
+      }
+      if (owner === "tokotype" && repo === "Plus-Jakarta-Sans") {
+        return "https://github.com/tokotype/Plus-Jakarta-Sans/archive/refs/heads/master.zip";
+      }
+      if (owner === "instrument" && repo === "instrument-serif") {
+        return "https://github.com/instrument/instrument-serif/archive/refs/heads/main.zip";
+      }
+      if (owner === "bonjour-monde" && repo === "syne-font") {
+        return "https://github.com/bonjour-monde/syne-font/archive/refs/heads/master.zip";
+      }
+      if (owner === "undercasetype" && repo === "Fraunces") {
+        return "https://github.com/undercasetype/Fraunces/archive/refs/heads/master.zip";
+      }
+      if (owner === "mathieutriay" && repo === "bricolage-grotesk") {
+        return "https://github.com/mathieutriay/bricolage-grotesk/archive/refs/heads/main.zip";
+      }
+
+      // Default GitHub source ZIP archive for any repository
+      return `https://github.com/${owner}/${repo}/archive/refs/heads/main.zip`;
+    }
+  }
+
+  // 3. Fontshare Direct API Download Endpoint
+  if (url.includes("fontshare.com/fonts/")) {
+    const slug = url.split("/fonts/")[1]?.replace(/\/.*$/, "");
+    if (slug) {
+      return `https://api.fontshare.com/v2/fonts/download/${slug}`;
+    }
+  }
+
+  return url;
+}
+
+export function triggerDirectFontDownload(font: FontItem) {
+  const directUrl = resolveDirectFontDownloadUrl(font);
+  const link = document.createElement("a");
+  link.href = directUrl;
+  link.setAttribute("download", `${font.family}.zip`);
+  link.setAttribute("target", "_blank");
+  link.setAttribute("rel", "noopener noreferrer");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // TOP POPULAR CURATED OPEN SOURCE & COMMERCIAL FREE FONT DATABASE
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -34,7 +108,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 18,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/vercel/geist-font/releases",
+    downloadUrl: "https://github.com/vercel/geist-font/archive/refs/heads/main.zip",
     officialUrl: "https://vercel.com/font",
     useCases: ["UI/UX", "Developer Tools", "Branding", "Editorial"],
     sampleText: "Design systems engineered for precision & readability.",
@@ -53,7 +127,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 36,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/rsms/inter/releases",
+    downloadUrl: "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip",
     officialUrl: "https://rsms.me/inter/",
     useCases: ["UI/UX", "Mobile Apps", "Design Systems", "Web Products"],
     sampleText: "The gold standard variable typeface for digital interfaces.",
@@ -72,7 +146,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 12,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://www.fontshare.com/fonts/general-sans",
+    downloadUrl: "https://api.fontshare.com/v2/fonts/download/general-sans",
     officialUrl: "https://www.fontshare.com/fonts/general-sans",
     useCases: ["Branding", "UI/UX", "Editorial", "Websites"],
     sampleText: "Clean geometric proportions with Neo-Grotesque elegance.",
@@ -91,7 +165,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 10,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://www.fontshare.com/fonts/satoshi",
+    downloadUrl: "https://api.fontshare.com/v2/fonts/download/satoshi",
     officialUrl: "https://www.fontshare.com/fonts/satoshi",
     useCases: ["Branding", "UI Design", "Logos", "Headlines"],
     sampleText: "Sleek geometric sans with distinct modernist stroke contrast.",
@@ -110,7 +184,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 5,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/floriankarsten/space-grotesk",
+    downloadUrl: "https://github.com/floriankarsten/space-grotesk/archive/refs/heads/master.zip",
     officialUrl: "https://fonts.google.com/specimen/Space+Grotesk",
     useCases: ["Headlines", "Posters", "Branding", "Creative Tech"],
     sampleText: "Proportional tech sans derived from Space Mono geometry.",
@@ -129,7 +203,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 8,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://www.fontshare.com/fonts/cabinet-grotesk",
+    downloadUrl: "https://api.fontshare.com/v2/fonts/download/cabinet-grotesk",
     officialUrl: "https://www.fontshare.com/fonts/cabinet-grotesk",
     useCases: ["Display", "Editorial", "Posters", "High-Impact Headlines"],
     sampleText: "Bold, expressive display grotesque with dramatic ink traps.",
@@ -148,7 +222,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 6,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://www.fontshare.com/fonts/clash-display",
+    downloadUrl: "https://api.fontshare.com/v2/fonts/download/clash-display",
     officialUrl: "https://www.fontshare.com/fonts/clash-display",
     useCases: ["Branding", "Hero Headers", "Posters", "Magazines"],
     sampleText: "Unapologetically bold display sans with high visual drama.",
@@ -167,7 +241,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 16,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/tokotype/Plus-Jakarta-Sans",
+    downloadUrl: "https://github.com/tokotype/Plus-Jakarta-Sans/archive/refs/heads/master.zip",
     officialUrl: "https://fonts.google.com/specimen/Plus+Jakarta+Sans",
     useCases: ["UI/UX", "Dashboard", "Landing Pages", "Brand Systems"],
     sampleText: "Warm humanist geometric sans for modern web applications.",
@@ -186,7 +260,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 18,
     isVariable: false,
     isCommercialFree: true,
-    downloadUrl: "https://fonts.google.com/specimen/Poppins",
+    downloadUrl: "https://fonts.google.com/download?family=Poppins",
     officialUrl: "https://fonts.google.com/specimen/Poppins",
     useCases: ["Websites", "Mobile Apps", "Corporate Branding"],
     sampleText: "Geometric sans-serif with pure circular curves & balance.",
@@ -205,7 +279,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 2,
     isVariable: false,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/instrument/instrument-serif",
+    downloadUrl: "https://github.com/instrument/instrument-serif/archive/refs/heads/main.zip",
     officialUrl: "https://fonts.google.com/specimen/Instrument+Serif",
     useCases: ["Editorial", "Luxury Branding", "Headlines", "Posters"],
     sampleText: "Graceful high-contrast serif with timeless editorial warmth.",
@@ -224,7 +298,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 16,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://www.jetbrains.com/lp/mono/",
+    downloadUrl: "https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip",
     officialUrl: "https://www.jetbrains.com/lp/mono/",
     useCases: ["Code Editors", "Technical Docs", "Developer Websites"],
     sampleText: "const font = 'Engineered for developers & code clarity';",
@@ -243,7 +317,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 5,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/bonjour-monde/syne-font",
+    downloadUrl: "https://github.com/bonjour-monde/syne-font/archive/refs/heads/master.zip",
     officialUrl: "https://fonts.google.com/specimen/Syne",
     useCases: ["Art Direction", "Posters", "Fashion", "Avant-Garde Design"],
     sampleText: "Avant-garde display font ranging from tight to ultra-wide.",
@@ -262,7 +336,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 72,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/undercasetype/Fraunces",
+    downloadUrl: "https://github.com/undercasetype/Fraunces/archive/refs/heads/master.zip",
     officialUrl: "https://fraunces.undercasetype.com/",
     useCases: ["Editorial", "Packaging", "Branding", "Websites"],
     sampleText: "Wonky, expressive variable serif with optical size axes.",
@@ -281,7 +355,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
     stylesCount: 48,
     isVariable: true,
     isCommercialFree: true,
-    downloadUrl: "https://github.com/mathieutriay/bricolage-grotesk",
+    downloadUrl: "https://github.com/mathieutriay/bricolage-grotesk/archive/refs/heads/main.zip",
     officialUrl: "https://fonts.google.com/specimen/Bricolage+Grotesk",
     useCases: ["Headlines", "Posters", "Logos", "Interactive Websites"],
     sampleText: "Quirky collision of French grotesque and British eccentricities.",
@@ -296,7 +370,7 @@ export const TOP_CURATED_FONTS: FontItem[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function fetchLiveFontCatalog(): Promise<FontItem[]> {
-  const cacheKey = "font_catalog_cache_v1";
+  const cacheKey = "font_catalog_cache_v2";
 
   try {
     const cachedStr = localStorage.getItem(cacheKey);
@@ -337,6 +411,7 @@ export async function fetchLiveFontCatalog(): Promise<FontItem[]> {
 
           const isVar = Boolean(meta.axes && meta.axes.length > 0);
           const designers = meta.designers ? meta.designers.join(", ") : "Google Fonts Contributor";
+          const directZipUrl = `https://fonts.google.com/download?family=${encodeURIComponent(name)}`;
 
           catalogMap.set(key, {
             id: `gf-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
@@ -349,7 +424,7 @@ export async function fetchLiveFontCatalog(): Promise<FontItem[]> {
             stylesCount: meta.fonts ? Object.keys(meta.fonts).length : 6,
             isVariable: isVar,
             isCommercialFree: true,
-            downloadUrl: `https://fonts.google.com/specimen/${encodeURIComponent(name)}`,
+            downloadUrl: directZipUrl,
             officialUrl: `https://fonts.google.com/specimen/${encodeURIComponent(name)}`,
             useCases: [cat, "Web Design", "UI/UX", "Typography"],
             sampleText: "Grumpy wizards make toxic brew for the evil Queen and Jack.",

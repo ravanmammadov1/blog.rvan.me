@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, ArrowUpRight, Globe, MapPin,
-  BadgeCheck, Users, Award, ExternalLink,
+  BadgeCheck, Users, Award, ExternalLink, Download,
   Clock, Sparkles, Filter, ChevronDown, Flame, Rocket, Star, Gem, Gift, Bot, Copy, Check, Briefcase, DollarSign, Type, Sliders
 } from "lucide-react";
 
@@ -12,7 +12,7 @@ import { urlFor } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
 import { aggregateAllResources, NormalizedResource } from "../lib/rssAggregator";
 import { formatPublicationTimestamp, generateResourceSummary, generateAIJobSummary } from "../lib/contentEngine";
-import { fetchLiveFontCatalog, FontItem } from "../lib/fontEngine";
+import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl } from "../lib/fontEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -462,12 +462,13 @@ export default function ResourcesArchive() {
                         <BadgeCheck size={12} /> {font.license}
                       </span>
                       <a
-                        href={font.downloadUrl}
+                        href={resolveDirectFontDownloadUrl(font)}
+                        download={`${font.family}.zip`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer"
                       >
-                        DOWNLOAD FONT <ExternalLink size={12} />
+                        DOWNLOAD ZIP <Download size={12} />
                       </a>
                     </div>
                   </motion.article>
