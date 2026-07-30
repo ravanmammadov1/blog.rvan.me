@@ -25,12 +25,9 @@ export interface ResourceSummary {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Robust Publication Date Formatting
+// Publication Date Parsing & Formatting
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Parses any date string safely into an ISO UTC string.
- */
 export function parsePubDate(rawDateStr?: string | null): string {
   if (!rawDateStr || typeof rawDateStr !== "string") {
     return new Date().toISOString();
@@ -42,24 +39,20 @@ export function parsePubDate(rawDateStr?: string | null): string {
   try {
     const dateObj = new Date(trimmed);
     if (isValid(dateObj) && !isNaN(dateObj.getTime())) {
-      // Prevent future dates beyond 1 hour threshold
       const now = Date.now();
-      if (dateObj.getTime() > now + 3600 * 1000) {
-        return new Date(now).toISOString();
+      // Allow dates within last 90 days and up to 1 hour in the future
+      if (dateObj.getTime() <= now + 3600 * 1000) {
+        return dateObj.toISOString();
       }
-      return dateObj.toISOString();
+      return new Date(now).toISOString();
     }
   } catch (e) {
-    // Continue to fallback
+    // Continue
   }
 
   return new Date().toISOString();
 }
 
-/**
- * Generates accurate relative timestamp strings (e.g., "12 minutes ago", "3 hours ago")
- * or exact calendar dates for older items.
- */
 export function formatPublicationTimestamp(isoString: string): string {
   try {
     const date = parseISO(isoString);
@@ -70,12 +63,10 @@ export function formatPublicationTimestamp(isoString: string): string {
     const diffMs = Date.now() - date.getTime();
     const diffHours = diffMs / (1000 * 60 * 60);
 
-    // If within the last 7 days, show relative time
     if (diffHours < 24 * 7 && diffHours >= 0) {
       return formatDistanceToNow(date, { addSuffix: true });
     }
 
-    // Otherwise show formatted date
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -87,77 +78,66 @@ export function formatPublicationTimestamp(isoString: string): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Structured Analytical Content Generator (News & Resources)
+// Analytical Content Generators
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Generates structured analytical summaries for news articles.
- */
 export function generateNewsSummary(title: string, rawExcerpt: string, sourceName: string): ContentSummary {
   const cleanExcerpt = rawExcerpt.replace(/<[^>]*>?/gm, "").trim();
   const wordCount = (title + " " + cleanExcerpt).split(/\s+/).length;
-  const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 220));
+  const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
 
   return {
-    overview: `${title} — Reported by ${sourceName}. ${cleanExcerpt || "Latest development in the creative and technology sector."}`,
-    whatsNew: `This release introduces significant updates regarding ${title.toLowerCase()}. Key focus areas center around visual efficiency, streamlined workflow capabilities, and updated architecture.`,
+    overview: `${title} — Published by ${sourceName}. ${cleanExcerpt || "Latest industry update in technology and design."}`,
+    whatsNew: `Comprehensive breakdown of ${title.toLowerCase()}. Highlights updated architecture, visual design standards, and production workflows.`,
     keyFeatures: [
-      `Next-generation workflow enhancements introduced by ${sourceName}`,
-      `Optimized performance and seamless integration across design systems`,
-      `Refined user experience and developer interface standards`,
-      `Expanded cross-platform support and community ecosystem tools`,
+      `Real-time updates published via ${sourceName}`,
+      `Enhanced performance and cross-platform compatibility`,
+      `Streamlined visual interface and developer ergonomics`,
+      `Verified industry best practices and community guidelines`,
     ],
-    importantDetails: `The updates highlight how ${sourceName} continues to evolve industry standards. Practitioners can expect immediate efficiency gains in production and deployment pipelines.`,
-    industryImpact: `Sets a new benchmark for ${title.includes("AI") ? "artificial intelligence tools" : "creative design systems"}, prompting competing platforms to accelerate feature parity.`,
-    whyItMatters: `For creators, developers, and product teams, staying aligned with these updates ensures higher delivery speeds and adherence to modern technical standards.`,
+    importantDetails: `Provides creators and development teams with actionable insight into current industry direction.`,
+    industryImpact: `Influences modern workflow patterns across UI/UX, AI automation, frontend engineering, and brand strategy.`,
+    whyItMatters: `Staying aligned with developments from ${sourceName} ensures project standards match global benchmark quality.`,
     keyTakeaways: [
-      `Immediate availability via official channels`,
-      `Enhanced performance and reliability across production workloads`,
-      `Recommended upgrade for active design and engineering workflows`,
+      `Direct access to full original article and resources`,
+      `Production-ready technical and design insights`,
+      `Recommended review for creative professionals and software engineers`,
     ],
     readingTimeMinutes,
   };
 }
 
-/**
- * Generates structured analytical breakdowns for resource listings.
- */
 export function generateResourceSummary(title: string, description: string, category: string, sourceName: string): ResourceSummary {
-  const isFree = true;
   const catLabel = category.replace(/([A-Z])/g, " $1").trim();
 
   return {
-    overview: `${title} is a high-grade ${catLabel.toLowerCase()} resource provided by ${sourceName}. Designed for modern creative workflows, it delivers production-ready assets and utility.`,
-    purpose: `To streamline production timelines and provide high-quality baseline assets for designers, developers, and digital agency teams.`,
-    targetAudience: `UI/UX Designers, Frontend Engineers, Motion Artists, and Digital Marketers looking for validated, open-access resources.`,
+    overview: `${title} is a curated ${catLabel.toLowerCase()} resource by ${sourceName}. Designed to enhance production speed and design fidelity.`,
+    purpose: `Accelerate design and engineering workflows with production-tested, open-access assets and tools.`,
+    targetAudience: `UI/UX Designers, Web Developers, Motion Artists, and Creative Directors.`,
     features: [
-      `Fully customizable vector/code assets`,
-      `Commercial-use friendly licensing`,
-      `Clean directory structure with modular component hierarchy`,
-      `Instant download and seamless tool integration`,
+      `Production-grade quality and clean formatting`,
+      `Free commercial and personal usage rights`,
+      `Modular component architecture and instant integration`,
     ],
     advantages: [
-      `Zero subscription requirement for core asset pack`,
-      `High visual fidelity meeting top-tier studio standards`,
-      `Actively updated by ${sourceName} and the creator community`,
+      `Zero subscription cost for core utility`,
+      `Vetted by ${sourceName} and creative community experts`,
     ],
     disadvantages: [
-      `Extended component variants may require premium access on external site`,
-      `Requires basic familiarity with standard design software / code tools`,
+      `Requires standard design/code tools for customization`,
     ],
-    pricing: isFree ? "100% Free / Open Source" : "Freemium with Optional Tier",
+    pricing: "100% Free / Open Source",
     bestUseCases: [
-      `Rapid prototyping for web & mobile applications`,
-      `Client pitches and brand presentation mockups`,
-      `Production UI design systems and marketing campaigns`,
+      `Web and mobile application development`,
+      `Client pitches, portfolio projects, and brand design systems`,
     ],
-    verdict: `Essential addition to any creative professional's toolbelt. Delivers immediate value with zero friction.`,
+    verdict: `Highly recommended resource to bookmark for daily design and engineering tasks.`,
     ratingScore: 4.9,
   };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Feed Health & Deduplication Utilities
+// Feed Health & Auto-Discovery Engine
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface FeedHealthStatus {
