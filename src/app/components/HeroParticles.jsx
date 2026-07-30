@@ -5,14 +5,8 @@ import ParticleField from './ParticleField.jsx';
 /**
  * HeroParticles
  *
- * Pure WebGL canvas — pointer-events: none so the cursor and all DOM
- * interactions pass straight through to the parent hero section.
- * Mouse tracking lives in the parent (Hero.jsx) and is forwarded here
- * via the mouseRef prop.
- *
- * Props:
- *   mouseRef  – { x, y } in canvas-relative pixels (from Hero.jsx)
- *   style     – optional extra inline styles for the wrapper div
+ * Decorative WebGL particle background.
+ * Rendered with alpha transparency behind Hero content (-z-10).
  */
 export default function HeroParticles({ mouseRef, style = {} }) {
   return (
@@ -22,7 +16,7 @@ export default function HeroParticles({ mouseRef, style = {} }) {
         inset:         0,
         overflow:      'hidden',
         pointerEvents: 'none',
-        zIndex:        1,
+        zIndex:        -10,
         ...style,
       }}
     >
@@ -30,7 +24,7 @@ export default function HeroParticles({ mouseRef, style = {} }) {
         dpr={[1, 2]}
         gl={{
           antialias:       false,
-          alpha:           false,
+          alpha:           true,
           powerPreference: 'high-performance',
           stencil:         false,
           depth:           false,
@@ -42,14 +36,12 @@ export default function HeroParticles({ mouseRef, style = {} }) {
           position: [0, 0, 14],
         }}
         style={{
-          display: 'block',
-          width:   '100%',
-          height:  '100%',
-          // Canvas itself must also not steal the cursor
+          display:       'block',
+          width:         '100%',
+          height:        '100%',
           pointerEvents: 'none',
         }}
       >
-        <color attach="background" args={['#050505']} />
         <ParticleField mouseRef={mouseRef} />
       </Canvas>
     </div>

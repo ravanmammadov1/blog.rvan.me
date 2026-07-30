@@ -328,13 +328,9 @@ export default function HomePage() {
           className="relative isolate min-h-screen overflow-hidden flex items-center"
           style={{ paddingTop: "5rem" }}
         >
-          {/* Interactive WebGL Hero Particles */}
-          <Suspense fallback={null}>
-            <HeroParticles mouseRef={mouseRef} />
-          </Suspense>
-          {/* ══ Premium Deep-Black Hero Background (Apple & Vercel Aesthetic) ══ */}
+          {/* ══ 1. Premium Deep-Black Hero Background ══ */}
           <div 
-            className="pointer-events-none absolute inset-0 -z-10 bg-[#050506] transform-gpu" 
+            className="pointer-events-none absolute inset-0 -z-20 bg-[#050506] transform-gpu" 
             aria-hidden="true"
             style={{
               backgroundImage: `
@@ -345,13 +341,18 @@ export default function HomePage() {
             }}
           />
 
+          {/* ══ 2. Decorative WebGL Particle Background ══ */}
+          <Suspense fallback={null}>
+            <HeroParticles mouseRef={mouseRef} />
+          </Suspense>
+
           {/* Geo label */}
-          <div className="absolute left-8 bottom-10 hidden text-[9px] tracking-[.22em] text-muted-foreground/40 font-mono md:block">
+          <div className="absolute left-8 bottom-10 hidden text-[9px] tracking-[.22em] text-muted-foreground/40 font-mono md:block z-10">
             40.40° N &nbsp;·&nbsp; 49.86° E
           </div>
 
-          {/* ══ Content grid ══ */}
-          <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 py-24 lg:py-0">
+          {/* ══ 3. Original Hero Content Grid ══ */}
+          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 py-24 lg:py-0">
             <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-8 min-h-[calc(100vh-5rem)]">
 
               {/* Left — text */}
