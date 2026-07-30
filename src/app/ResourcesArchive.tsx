@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, ArrowUpRight, Globe, MapPin,
   BadgeCheck, Users, Award, ExternalLink,
-  Clock, Sparkles, Filter, ChevronDown, Flame, Rocket, Star, Gem, Gift, Bot, Copy, Check, Briefcase, DollarSign
+  Clock, Sparkles, Filter, ChevronDown, Flame, Rocket, Star, Gem, Gift, Bot, Copy, Check, Briefcase, DollarSign, Type, Sliders
 } from "lucide-react";
 
 import { fetchResources, fetchSiteSettings } from "../lib/sanityQueries";
@@ -12,6 +12,7 @@ import { urlFor } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
 import { aggregateAllResources, NormalizedResource } from "../lib/rssAggregator";
 import { formatPublicationTimestamp, generateResourceSummary, generateAIJobSummary } from "../lib/contentEngine";
+import { fetchLiveFontCatalog, FontItem } from "../lib/fontEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -27,11 +28,11 @@ const fadeUp = {
 };
 
 export const CATEGORY_MAP: Record<string, { label: string; icon: string; description: string }> = {
-  all: { label: "All Directory", icon: "⚡", description: "Every practical resource and job in one view" },
+  all: { label: "All Directory", icon: "⚡", description: "Every practical resource, font, and job in one view" },
+  freeFonts: { label: "Free Fonts Library", icon: "🔤", description: "1,000+ open-source & free commercial font families" },
   jobs: { label: "Remote Jobs", icon: "💼", description: "100% curated remote design, AI, frontend & marketing jobs" },
   freeDesignAssets: { label: "Free Assets", icon: "🎁", description: "Fonts, icons, mockups, UI kits, templates" },
   freeMockups: { label: "Free Mockups", icon: "📐", description: "High-resolution device & product mockups" },
-  freeFonts: { label: "Free Fonts", icon: "🔤", description: "Open source & free commercial typography" },
   freeIcons: { label: "Free Icons", icon: "⭐", description: "SVG icon sets and vector libraries" },
   freeUIKits: { label: "Free UI Kits", icon: "📱", description: "Figma UI kits and design systems" },
   aiTools: { label: "AI Tools", icon: "🤖", description: "Curated AI design, dev, & productivity utilities" },
@@ -43,11 +44,11 @@ export const CATEGORY_MAP: Record<string, { label: string; icon: string; descrip
 function ResourceCard({ resource, index, isFeatured = false, onSelectModal }: { resource: NormalizedResource; index: number; isFeatured?: boolean; onSelectModal: (r: NormalizedResource) => void }) {
   const isJob = resource.category === "jobs";
   const catConfig = CATEGORY_MAP[resource.category] || { label: resource.category, icon: "📦" };
-  const officialSources = ["We Work Remotely", "Remote OK", "Himalayas", "Authentic Jobs", "AIJobs.net", "Smashing Magazine", "Product Hunt AI"];
+  const officialSources = ["We Work Remotely", "Remote OK", "Himalayas", "Authentic Jobs", "AIJobs.net", "Smashing Magazine", "Product Hunt AI", "Google Fonts", "Fontshare"];
   const isOfficial = officialSources.includes(resource.sourceName);
   const isVerified = !resource.isRss;
 
-  const badgeText = isOfficial ? "Verified Board" : isVerified ? "Curated" : "Community";
+  const badgeText = isOfficial ? "Verified Source" : isVerified ? "Curated" : "Community";
   const badgeColor = isOfficial 
     ? "text-blue-400 border-blue-500/30 bg-blue-500/5" 
     : isVerified 
@@ -99,7 +100,7 @@ function ResourceCard({ resource, index, isFeatured = false, onSelectModal }: { 
           {resource.description}
         </p>
 
-        {/* Job specifics (Salary & employment type) */}
+        {/* Job specifics */}
         {isJob && (
           <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-2 text-[11px] mono">
             <span className="text-primary font-bold flex items-center gap-1">
@@ -156,8 +157,14 @@ export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [allResources, setAllResources] = useState<NormalizedResource[]>([]);
+  const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedResourceModal, setSelectedResourceModal] = useState<NormalizedResource | null>(null);
+
+  // Interactive Font Specimen controls
+  const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
+  const [fontSizePx, setFontSizePx] = useState(28);
+  const [fontCategorySubfilter, setFontCategorySubfilter] = useState("all");
 
   const activeCategory = searchParams.get("category") || "all";
   const searchQuery = searchParams.get("q") || "";
@@ -169,12 +176,16 @@ export default function ResourcesArchive() {
       if (data) setSiteSettings(data);
     });
 
-    fetchResources()
-      .then((cmsItems) => aggregateAllResources(cmsItems || []))
-      .then((items) => {
-        setAllResources(items || []);
+    // Load general resources & live font catalog
+    Promise.all([
+      fetchResources().then((cmsItems) => aggregateAllResources(cmsItems || [])),
+      fetchLiveFontCatalog(),
+    ])
+      .then(([resItems, fontItems]) => {
+        setAllResources(resItems || []);
+        setFontCatalog(fontItems || []);
       })
-      .catch(() => aggregateAllResources([]).then(setAllResources))
+      .catch((err) => console.error("Error loading resources & font catalog:", err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -209,31 +220,46 @@ export default function ResourcesArchive() {
     return list;
   }, [allResources, activeCategory, searchQuery]);
 
-  const trendingResources = useMemo(() => {
-    return allResources.filter((r) => r.isTrending || r.isFeatured).slice(0, 3);
-  }, [allResources]);
+  const filteredFonts = useMemo(() => {
+    let list = fontCatalog;
 
-  const aiToolsResources = useMemo(() => {
-    return allResources.filter((r) => r.category === "aiTools").slice(0, 3);
-  }, [allResources]);
+    if (fontCategorySubfilter !== "all") {
+      if (fontCategorySubfilter === "Variable") {
+        list = list.filter((f) => f.isVariable);
+      } else {
+        list = list.filter((f) => f.category === fontCategorySubfilter);
+      }
+    }
 
-  const jobResources = useMemo(() => {
-    return allResources.filter((r) => r.category === "jobs");
-  }, [allResources]);
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(
+        (f) =>
+          f.name.toLowerCase().includes(q) ||
+          f.family.toLowerCase().includes(q) ||
+          f.designer.toLowerCase().includes(q) ||
+          f.foundry.toLowerCase().includes(q) ||
+          f.useCases.some((u) => u.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  }, [fontCatalog, fontCategorySubfilter, searchQuery]);
 
   const counts: Record<string, number> = useMemo(() => {
     const map: Record<string, number> = { all: allResources.length };
     allResources.forEach((r) => {
       map[r.category] = (map[r.category] || 0) + 1;
     });
+    map["freeFonts"] = fontCatalog.length;
     return map;
-  }, [allResources]);
+  }, [allResources, fontCatalog]);
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="Directory & Remote Jobs Hub — Rvan.me"
-        description="Curated collection of 100% remote jobs in design, AI, frontend & marketing, free assets, fonts, icons, mockups, and AI software tools."
+        title="1,000+ Free Fonts & Remote Jobs Directory — Rvan.me"
+        description="Explore 1,000+ free commercial font families (Geist, Inter, Satoshi, Poppins), remote jobs, vector assets, mockups, and AI software tools."
         url="https://www.rvan.me/resources"
       />
 
@@ -255,16 +281,16 @@ export default function ResourcesArchive() {
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
             <p className="eyebrow text-primary mb-4 flex items-center gap-2">
-              <Globe size={13} /> CURATED DIRECTORY & REAL-TIME REMOTE JOBS
+              <Globe size={13} /> CURATED DIRECTORY · 1,000+ FREE FONTS & REMOTE JOBS
             </p>
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
               Creative Hub & <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
-                Remote Job Board.
+                Typography Library.
               </span>
             </h1>
             <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed">
-              Discover verified free assets, open-source typography, device mockups, AI utilities, and 100% remote job opportunities for designers, developers, and marketers. Updated every hour.
+              Discover over 1,000+ SIL Open Source and commercial-free font families (Geist, Inter, Satoshi, Space Grotesk), remote jobs, vector icons, mockups, and AI software utilities. Updated daily.
             </p>
           </motion.div>
         </div>
@@ -300,56 +326,210 @@ export default function ResourcesArchive() {
         </div>
       </section>
 
-      {/* Main Directory List */}
-      <section className="px-6 py-12 md:px-10 relative z-10">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="relative w-full lg:w-96">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
-              <input
-                type="text"
-                placeholder="Search remote jobs, design assets, fonts, AI tools…"
-                value={searchQuery}
-                onChange={(e) => setParam("q", e.target.value)}
-                className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-              />
-              {searchQuery && (
-                <button onClick={() => setParam("q", "")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  <X size={13} />
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          1,000+ FREE FONTS INTERACTIVE SPECIMEN GALLERY (WHEN freeFonts IS ACTIVE)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {activeCategory === "freeFonts" ? (
+        <section className="px-6 py-12 md:px-10 relative z-10">
+          <div className="mx-auto max-w-[1600px]">
+            {/* Interactive Type Tester Controls */}
+            <div className="mb-10 p-6 rounded-2xl border border-white/10 bg-white/5 glass space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
+                  <Type size={16} /> Interactive Font Specimen Controls
+                </div>
+
+                {/* Sub-category Filters */}
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {["all", "Sans Serif", "Serif", "Display", "Monospace", "Variable", "Handwriting"].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setFontCategorySubfilter(cat)}
+                      className={`px-3 py-1 rounded-full border transition-all ${
+                        fontCategorySubfilter === cat
+                          ? "border-primary bg-primary/10 text-primary font-bold"
+                          : "border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {cat === "all" ? "All Categories" : cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Live Preview Text Input & Slider */}
+              <div className="grid gap-4 md:grid-cols-12 items-center">
+                <div className="md:col-span-8 relative">
+                  <input
+                    type="text"
+                    value={previewText}
+                    onChange={(e) => setPreviewText(e.target.value)}
+                    placeholder="Type custom preview text..."
+                    className="w-full rounded-xl border border-white/10 bg-background/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm"
+                  />
+                </div>
+                <div className="md:col-span-4 flex items-center gap-3">
+                  <Sliders size={14} className="text-muted-foreground shrink-0" />
+                  <input
+                    type="range"
+                    min="16"
+                    max="64"
+                    value={fontSizePx}
+                    onChange={(e) => setFontSizePx(Number(e.target.value))}
+                    className="w-full accent-primary"
+                  />
+                  <span className="text-xs font-bold mono text-muted-foreground w-12 text-right">{fontSizePx}px</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Font Grid */}
+            {loading ? (
+              <div className="grid gap-6 sm:grid-cols-2">
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
+                ))}
+              </div>
+            ) : filteredFonts.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
+                <p className="text-muted-foreground">No font families found matching your criteria.</p>
+                <button
+                  onClick={() => { setFontCategorySubfilter("all"); setParam("q", ""); }}
+                  className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                >
+                  RESET FONT FILTERS
                 </button>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="grid gap-8 sm:grid-cols-2">
+                {filteredFonts.map((font, idx) => (
+                  <motion.article
+                    key={font.id || idx}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.05 }}
+                    custom={idx * 0.03}
+                    className="group p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.1)]"
+                  >
+                    <div>
+                      {/* Metadata header */}
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono">
+                          {font.category}
+                        </span>
+                        <div className="flex items-center gap-2 text-[10px] font-semibold text-muted-foreground mono">
+                          {font.isVariable && <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-0.5 text-cyan-400">VARIABLE</span>}
+                          <span>{font.stylesCount} Styles</span>
+                        </div>
+                      </div>
 
-            <span className="text-xs text-muted-foreground mono">
-              Showing {filteredResources.length} curated listings
-            </span>
+                      {/* Font Family Name & Designer */}
+                      <h3 className="text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                        {font.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mono mt-1">
+                        Designed by <span className="text-foreground/90 font-semibold">{font.designer}</span> · {font.foundry}
+                      </p>
+
+                      {/* Specimen Live Preview */}
+                      <div className="my-6 p-4 rounded-xl border border-white/5 bg-background/60 overflow-hidden">
+                        <p
+                          style={{
+                            fontFamily: `"${font.family}", system-ui, sans-serif`,
+                            fontSize: `${fontSizePx}px`,
+                            lineHeight: 1.25,
+                          }}
+                          className="text-foreground transition-all duration-300 break-words line-clamp-3"
+                        >
+                          {previewText || font.sampleText}
+                        </p>
+                      </div>
+
+                      {/* Use cases & License */}
+                      <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                        {font.useCases.map((uc) => (
+                          <span key={uc} className="text-[9px] font-semibold text-muted-foreground/80 border border-white/10 bg-white/5 rounded-full px-2.5 py-0.5">
+                            {uc}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bottom CTA */}
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
+                      <span className="text-[10px] text-emerald-400 flex items-center gap-1">
+                        <BadgeCheck size={12} /> {font.license}
+                      </span>
+                      <a
+                        href={font.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors"
+                      >
+                        DOWNLOAD FONT <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </motion.article>
+                ))}
+              </div>
+            )}
           </div>
+        </section>
+      ) : (
+        /* ─────────────────────────────────────────────────────────────────────────────
+            MAIN GENERAL DIRECTORY LIST (JOBS, ASSETS, MOCKUPS, ICONS, AI TOOLS)
+        ───────────────────────────────────────────────────────────────────────────── */
+        <section className="px-6 py-12 md:px-10 relative z-10">
+          <div className="mx-auto max-w-[1600px]">
+            <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="relative w-full lg:w-96">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
+                <input
+                  type="text"
+                  placeholder="Search remote jobs, design assets, fonts, AI tools…"
+                  value={searchQuery}
+                  onChange={(e) => setParam("q", e.target.value)}
+                  className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
+                />
+                {searchQuery && (
+                  <button onClick={() => setParam("q", "")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
 
-          {loading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map((n) => (
-                <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
-              ))}
+              <span className="text-xs text-muted-foreground mono">
+                Showing {filteredResources.length} curated listings
+              </span>
             </div>
-          ) : filteredResources.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
-              <p className="text-muted-foreground">No resources found matching your filter.</p>
-              <button
-                onClick={() => { setParam("category", "all"); setParam("q", ""); }}
-                className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
-              >
-                RESET FILTERS
-              </button>
-            </div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredResources.map((resItem, idx) => (
-                <ResourceCard key={resItem.id || idx} resource={resItem} index={idx} onSelectModal={setSelectedResourceModal} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+
+            {loading ? (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
+                ))}
+              </div>
+            ) : filteredResources.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
+                <p className="text-muted-foreground">No resources found matching your filter.</p>
+                <button
+                  onClick={() => { setParam("category", "all"); setParam("q", ""); }}
+                  className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                >
+                  RESET FILTERS
+                </button>
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredResources.map((resItem, idx) => (
+                  <ResourceCard key={resItem.id || idx} resource={resItem} index={idx} onSelectModal={setSelectedResourceModal} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* AI Breakdown & Job Analysis Modal */}
       {selectedResourceModal && (
