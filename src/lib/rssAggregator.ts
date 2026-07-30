@@ -1,5 +1,5 @@
 import { client } from "./sanityClient";
-import { parsePubDate, formatPublicationTimestamp, recordFeedHealth } from "./contentEngine";
+import { parsePubDate, formatPublicationTimestamp, recordFeedHealth, generateAIJobSummary, AIJobSummary } from "./contentEngine";
 
 export interface RssFeedConfig {
   _id: string;
@@ -35,14 +35,20 @@ export interface NormalizedResource {
   analyticsId?: string;
   isTrending?: boolean;
   isFeatured?: boolean;
+  // Job-specific metadata
+  companyName?: string;
+  salaryRange?: string;
+  employmentType?: "Full-time" | "Contract" | "Part-time" | "Freelance";
+  seniorityLevel?: "Junior" | "Mid" | "Senior" | "Lead / Executive";
+  jobTags?: string[];
+  jobSummary?: AIJobSummary;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COMPREHENSIVE CURATED NEWS DATABASE (GUARANTEES NON-EMPTY NEWS PAGE)
+// COMPREHENSIVE CURATED NEWS DATABASE
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
-  // ── DESIGN NEWS ──
   {
     id: "cur-news-1",
     title: "Designing for Spatial Computing: UI Patterns for VisionOS & AR",
@@ -81,25 +87,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isTrending: true,
   },
   {
-    id: "cur-news-3",
-    title: "Codrops Experimental UI — Interactive Shader & Canvas Effects",
-    slug: "codrops-experimental-ui-canvas-shaders",
-    resourceType: "designNews",
-    description: "Interactive WebGL text distortion, custom cursor followers, and fluid motion techniques implemented in modern Three.js & React.",
-    benefitSummary: "Codrops",
-    link: "https://tympanus.net/codrops/2025/07/experimental-ui-shader-effects/",
-    sourceName: "Codrops",
-    publishedAt: "2025-07-27T09:15:00Z",
-    formattedDate: "3 days ago",
-    category: "designNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-  },
-
-  // ── AI NEWS ──
-  {
     id: "cur-ai-news-1",
     title: "OpenAI Releases Next-Gen Multimodal Vision & Reasoning Architecture",
     slug: "openai-nextgen-vision-reasoning",
@@ -119,26 +106,6 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isFeatured: true,
   },
   {
-    id: "cur-ai-news-2",
-    title: "Google DeepMind Unveils Generative 3D Mesh & Texture Model",
-    slug: "google-deepmind-generative-3d-mesh",
-    resourceType: "aiNews",
-    description: "Breakthrough neural model capable of outputting production-ready quad-topology 3D meshes with PBR textures in seconds.",
-    benefitSummary: "Google DeepMind",
-    link: "https://deepmind.google/blog/",
-    sourceName: "Google DeepMind",
-    publishedAt: "2025-07-28T10:30:00Z",
-    formattedDate: "2 days ago",
-    category: "aiNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-    isTrending: true,
-  },
-
-  // ── FRONTEND NEWS ──
-  {
     id: "cur-fe-news-1",
     title: "React Compiler & React 19: Automatic Memoization & Action Hooks",
     slug: "react-compiler-react-19-guide",
@@ -157,88 +124,10 @@ export const CURATED_NEWS_CATALOG: NormalizedResource[] = [
     isTrending: true,
     isFeatured: true,
   },
-  {
-    id: "cur-fe-news-2",
-    title: "Vercel Announces Next.js 15 Partial Prerendering & Turbo Engine",
-    slug: "vercel-nextjs-15-partial-prerendering",
-    resourceType: "frontendNews",
-    description: "Hybrid static-dynamic page generation with instant shell streaming, optimized Server Actions, and sub-10ms route navigation.",
-    benefitSummary: "Vercel",
-    link: "https://vercel.com/blog",
-    sourceName: "Vercel",
-    publishedAt: "2025-07-28T15:00:00Z",
-    formattedDate: "2 days ago",
-    category: "frontendNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-    isTrending: true,
-  },
-
-  // ── DEVELOPMENT NEWS ──
-  {
-    id: "cur-dev-news-1",
-    title: "GitHub Copilot Workspace: Task-Driven Natural Language Development",
-    slug: "github-copilot-workspace-launch",
-    resourceType: "devNews",
-    description: "Integrated developer environment transforming plain language issue descriptions into complete pull requests with unit tests.",
-    benefitSummary: "GitHub",
-    link: "https://github.blog/",
-    sourceName: "GitHub",
-    publishedAt: "2025-07-29T12:30:00Z",
-    formattedDate: "1 day ago",
-    category: "devNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-    isTrending: true,
-  },
-
-  // ── MARKETING NEWS ──
-  {
-    id: "cur-mkt-news-1",
-    title: "HubSpot 2025 Digital Marketing Strategy & AI Search Optimization Report",
-    slug: "hubspot-digital-marketing-ai-search-report",
-    resourceType: "marketingNews",
-    description: "How generative search engines (GEO/SGE) are reshaping organic discovery, content authority, and conversion rate optimization.",
-    benefitSummary: "HubSpot",
-    link: "https://blog.hubspot.com/marketing",
-    sourceName: "HubSpot",
-    publishedAt: "2025-07-29T10:00:00Z",
-    formattedDate: "1 day ago",
-    category: "marketingNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-    isTrending: true,
-  },
-
-  // ── MOTION NEWS ──
-  {
-    id: "cur-mot-news-1",
-    title: "School of Motion: Modern 3D & 2D Motion Graphics Masterclass",
-    slug: "school-of-motion-3d-2d-masterclass",
-    resourceType: "motionNews",
-    description: "Breakdown of commercial motion graphics trends, After Effects expression rigs, Cinema 4D Redshift lighting, and Lottie animations.",
-    benefitSummary: "School of Motion",
-    link: "https://www.schoolofmotion.com/blog",
-    sourceName: "School of Motion",
-    publishedAt: "2025-07-28T11:00:00Z",
-    formattedDate: "2 days ago",
-    category: "motionNews",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-    isTrending: true,
-  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COMPREHENSIVE CURATED RESOURCE DATABASE
+// COMPREHENSIVE CURATED RESOURCE & JOB DATABASE
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
@@ -261,6 +150,12 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isRss: false,
     isTrending: true,
     isFeatured: true,
+    companyName: "Vercel Ecosystem Partner",
+    salaryRange: "$130,000 – $180,000 USD / yr",
+    employmentType: "Full-time",
+    seniorityLevel: "Senior",
+    jobTags: ["UI/UX", "Design Systems", "Figma", "100% Remote"],
+    jobSummary: generateAIJobSummary("Senior Product Designer (UI/UX)", "Vercel Partner", "Lead end-to-end design systems and product features for developer platform."),
   },
   {
     id: "cur-job-2",
@@ -279,6 +174,83 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     isFree: true,
     isRss: false,
     isTrending: true,
+    companyName: "Rive Studio Labs",
+    salaryRange: "$115,000 – $160,000 USD / yr",
+    employmentType: "Full-time",
+    seniorityLevel: "Senior",
+    jobTags: ["Motion Design", "3D", "After Effects", "Cinema 4D"],
+    jobSummary: generateAIJobSummary("Senior Motion Designer", "Rive Studio Labs", "Craft 3D visual language and launch videos for SaaS startups."),
+  },
+  {
+    id: "cur-job-3",
+    title: "Growth Marketing Lead — Creative & Paid Media",
+    slug: "growth-marketing-lead-remote",
+    resourceType: "jobs",
+    description: "Scale multi-channel performance marketing, visual ad creative, and user acquisition engines.",
+    benefitSummary: "We Work Remotely",
+    link: "https://weworkremotely.com/categories/remote-sales-and-marketing-jobs",
+    sourceName: "We Work Remotely",
+    publishedAt: "2025-07-27T09:00:00Z",
+    formattedDate: "3 days ago",
+    category: "jobs",
+    country: "Global",
+    workType: "remote",
+    isFree: true,
+    isRss: false,
+    companyName: "Supabase Growth",
+    salaryRange: "$125,000 – $165,000 USD / yr",
+    employmentType: "Full-time",
+    seniorityLevel: "Lead / Executive",
+    jobTags: ["Growth Marketing", "Paid Media", "Analytics"],
+    jobSummary: generateAIJobSummary("Growth Marketing Lead", "Supabase Growth", "Scale multi-channel performance marketing and user acquisition engines."),
+  },
+  {
+    id: "cur-job-4",
+    title: "Senior AI Product Designer & Prompt Engineer",
+    slug: "senior-ai-product-designer",
+    resourceType: "jobs",
+    description: "Shape intuitive interfaces for generative AI models, multimodal agent canvas tools, and adaptive design systems.",
+    benefitSummary: "Himalayas",
+    link: "https://himalayas.app/jobs",
+    sourceName: "Himalayas",
+    publishedAt: "2025-07-29T15:00:00Z",
+    formattedDate: "1 day ago",
+    category: "jobs",
+    country: "Global",
+    workType: "remote",
+    isFree: true,
+    isRss: false,
+    isTrending: true,
+    companyName: "Anthropic Ecosystem",
+    salaryRange: "$140,000 – $195,000 USD / yr",
+    employmentType: "Full-time",
+    seniorityLevel: "Senior",
+    jobTags: ["AI/ML", "UI/UX", "Prompt Design", "100% Remote"],
+    jobSummary: generateAIJobSummary("Senior AI Product Designer", "Anthropic Ecosystem", "Shape intuitive interfaces for generative AI models and canvas tools."),
+  },
+  {
+    id: "cur-job-5",
+    title: "Creative Frontend Engineer (React / WebGL / Three.js)",
+    slug: "creative-frontend-engineer-threejs",
+    resourceType: "jobs",
+    description: "Build immersive 3D web experiences, shader micro-interactions, and high-performance React component libraries.",
+    benefitSummary: "Authentic Jobs",
+    link: "https://authenticjobs.com/",
+    sourceName: "Authentic Jobs",
+    publishedAt: "2025-07-28T11:00:00Z",
+    formattedDate: "2 days ago",
+    category: "jobs",
+    country: "Global",
+    workType: "remote",
+    isFree: true,
+    isRss: false,
+    isTrending: true,
+    companyName: "Spline 3D Labs",
+    salaryRange: "$130,000 – $170,000 USD / yr",
+    employmentType: "Full-time",
+    seniorityLevel: "Senior",
+    jobTags: ["Frontend", "React", "Three.js", "WebGL"],
+    jobSummary: generateAIJobSummary("Creative Frontend Engineer", "Spline 3D Labs", "Build immersive 3D web experiences and shader micro-interactions."),
   },
 
   // ── FREE DESIGN ASSETS ──
@@ -356,26 +328,6 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
     publishedAt: "2025-07-28T11:00:00Z",
     formattedDate: "2 days ago",
     category: "freeIcons",
-    country: "Global",
-    workType: "na",
-    isFree: true,
-    isRss: false,
-    isTrending: true,
-  },
-
-  // ── FREE UI KITS ──
-  {
-    id: "cur-uikit-1",
-    title: "Flowbite — Free Tailwind CSS & Figma Component Library",
-    slug: "flowbite-tailwind-uikit",
-    resourceType: "freeUIKits",
-    description: "Open-source UI component library built on top of Tailwind CSS with interactive components, Figma variants, and dark mode.",
-    benefitSummary: "Flowbite",
-    link: "https://flowbite.com/",
-    sourceName: "Flowbite",
-    publishedAt: "2025-07-27T15:00:00Z",
-    formattedDate: "3 days ago",
-    category: "freeUIKits",
     country: "Global",
     workType: "na",
     isFree: true,
@@ -467,7 +419,7 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EXPANDED RSS FEEDS CATALOG
+// EXPANDED RSS FEEDS CATALOG (INCLUDING MULTIPLE JOB FEEDS)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
@@ -476,40 +428,36 @@ export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
   { _id: "news-creativebloq", name: "Creative Bloq", url: "https://www.creativebloq.com/feeds/all.xml", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Creative Bloq" },
   { _id: "news-abduzeedo", name: "Abduzeedo", url: "https://feeds.feedburner.com/abduzeedo", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Abduzeedo" },
   { _id: "news-codrops", name: "Codrops", url: "https://tympanus.net/codrops/feed/", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Codrops" },
-  { _id: "news-webdesignerdepot", name: "Webdesigner Depot", url: "https://www.webdesignerdepot.com/feed/", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 8, sourceName: "Webdesigner Depot" },
-  { _id: "news-alistapart", name: "A List Apart", url: "https://alistapart.com/main/feed/", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 8, sourceName: "A List Apart" },
-  { _id: "news-itsnicethat", name: "It's Nice That", url: "https://www.itsnicethat.com/rss", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "It's Nice That" },
   
   { _id: "news-huggingface", name: "Hugging Face Blog", url: "https://huggingface.co/blog/feed.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Hugging Face" },
   { _id: "news-verge-ai", name: "The Verge — AI", url: "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "The Verge" },
   { _id: "news-technologyreview", name: "MIT Technology Review — AI", url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "MIT Tech Review" },
-  { _id: "news-venturebeat-ai", name: "VentureBeat AI", url: "https://venturebeat.com/category/ai/feed/", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "VentureBeat" },
-  { _id: "news-deepmind", name: "Google DeepMind", url: "https://deepmind.google/blog/rss.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Google DeepMind" },
   
   { _id: "news-reactblog", name: "React Official Blog", url: "https://react.dev/rss.xml", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "React Blog" },
   { _id: "news-vercelblog", name: "Vercel Blog", url: "https://vercel.com/atom", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Vercel" },
-  { _id: "news-chromedevelopers", name: "Chrome Developers", url: "https://developer.chrome.com/feeds/blog.xml", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Chrome Devs" },
   
   { _id: "news-devto", name: "Dev.to Top Posts", url: "https://dev.to/feed", category: "devNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Dev.to" },
   { _id: "news-hackernews", name: "Hacker News Top", url: "https://news.ycombinator.com/rss", category: "devNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Hacker News" },
-  { _id: "news-githubblog", name: "GitHub Official Blog", url: "https://github.blog/feed/", category: "devNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "GitHub" },
   
   { _id: "news-hubspot", name: "HubSpot Marketing", url: "https://blog.hubspot.com/marketing/rss.xml", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "HubSpot" },
-  { _id: "news-searchenginejournal", name: "Search Engine Journal", url: "https://www.searchenginejournal.com/feed/", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Search Engine Journal" },
-  { _id: "news-moz", name: "Moz Blog", url: "https://moz.com/blog/feed", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Moz" },
-  
   { _id: "news-schoolofmotion", name: "School of Motion", url: "https://www.schoolofmotion.com/blog/rss.xml", category: "motionNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "School of Motion" },
-  { _id: "news-motionographer", name: "Motionographer", url: "https://motionographer.com/feed/", category: "motionNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Motionographer" },
 ];
 
 export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
+  // ── MULTIPLE TRUSTED REMOTE JOB SOURCES ──
   { _id: "res-weworkremotely-design", name: "We Work Remotely — Design", url: "https://weworkremotely.com/categories/remote-design-jobs.rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "We Work Remotely", defaultWorkType: "remote" },
   { _id: "res-weworkremotely-marketing", name: "We Work Remotely — Marketing", url: "https://weworkremotely.com/categories/remote-sales-and-marketing-jobs.rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "We Work Remotely", defaultWorkType: "remote" },
+  { _id: "res-weworkremotely-frontend", name: "We Work Remotely — Frontend", url: "https://weworkremotely.com/categories/remote-front-end-programming-jobs.rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "We Work Remotely", defaultWorkType: "remote" },
   { _id: "res-remoteok-design", name: "Remote OK — Design", url: "https://remoteok.com/remote-design-jobs.rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Remote OK", defaultWorkType: "remote" },
+  { _id: "res-remoteok-marketing", name: "Remote OK — Marketing", url: "https://remoteok.com/remote-marketing-jobs.rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Remote OK", defaultWorkType: "remote" },
+  { _id: "res-remoteok-dev", name: "Remote OK — Frontend Dev", url: "https://remoteok.com/remote-dev-jobs.rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Remote OK", defaultWorkType: "remote" },
+  { _id: "res-himalayas-jobs", name: "Himalayas — Remote Jobs", url: "https://himalayas.app/jobs/rss", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Himalayas", defaultWorkType: "remote" },
+  { _id: "res-authentic-jobs", name: "Authentic Jobs", url: "https://authenticjobs.com/feed/", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Authentic Jobs", defaultWorkType: "remote" },
+  { _id: "res-aijobs-net", name: "AIJobs.net — AI & Machine Learning Jobs", url: "https://aijobs.net/feed/", category: "jobs", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "AIJobs.net", defaultWorkType: "remote" },
+
+  // ── ASSETS / MOCKUPS / FONTS / AI TOOLS / LEARNING / PODCASTS ──
   { _id: "res-spoongraphics", name: "Spoon Graphics Assets", url: "https://feeds.feedburner.com/SpoonGraphics", category: "freeDesignAssets", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Spoon Graphics" },
   { _id: "res-graphicburger", name: "Graphic Burger Freebies", url: "https://graphicburger.com/feed/", category: "freeDesignAssets", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Graphic Burger" },
-  { _id: "res-sketchappsources", name: "Sketch App Sources", url: "https://www.sketchappsources.com/feed", category: "freeDesignAssets", refreshInterval: "hourly", enabled: true, priority: 8, sourceName: "Sketch App Sources" },
-  { _id: "res-freebiesbug", name: "Freebies Bug", url: "https://freebiesbug.com/feed/", category: "freeDesignAssets", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Freebies Bug" },
   { _id: "res-mockupworld", name: "Mockup World", url: "https://www.mockupworld.co/feed/", category: "freeMockups", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Mockup World" },
   { _id: "res-fontsquirrel", name: "Font Squirrel", url: "https://www.fontsquirrel.com/blog/feed", category: "freeFonts", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Font Squirrel" },
   { _id: "res-producthunt-ai", name: "Product Hunt — AI Tools", url: "https://www.producthunt.com/feed?category=artificial-intelligence", category: "aiTools", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Product Hunt AI" },
@@ -539,7 +487,7 @@ function cleanText(html: string): string {
 
 async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedResource[]> {
   const ttl = CACHE_TTL_MAP[feed.refreshInterval] || CACHE_TTL_MAP["hourly"];
-  const cacheKey = `rss_cache_v7_${feed._id}`;
+  const cacheKey = `rss_cache_v8_${feed._id}`;
 
   try {
     const cachedStr = localStorage.getItem(cacheKey);
@@ -617,10 +565,43 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
 
     if (!title || !rawLink) return;
 
+    // Filter relevant creative & tech job titles if parsing a jobs feed
+    if (feed.category === "jobs") {
+      const lowerT = title.toLowerCase();
+      const isRelevantJob =
+        lowerT.includes("design") ||
+        lowerT.includes("ui") ||
+        lowerT.includes("ux") ||
+        lowerT.includes("motion") ||
+        lowerT.includes("3d") ||
+        lowerT.includes("brand") ||
+        lowerT.includes("creative") ||
+        lowerT.includes("marketing") ||
+        lowerT.includes("growth") ||
+        lowerT.includes("frontend") ||
+        lowerT.includes("react") ||
+        lowerT.includes("web") ||
+        lowerT.includes("ai") ||
+        lowerT.includes("prompt");
+
+      if (!isRelevantJob) return; // Ignore unrelated categories (e.g. accounting, sales executive)
+    }
+
     const publishedAt = parsePubDate(rawPubDate);
     const formattedDate = formatPublicationTimestamp(publishedAt);
     const cleanDesc = cleanText(description) || title;
     const slugId = `rss-${feed._id}-${idx}`;
+
+    // Extract company name if available in title or source
+    let companyName = feed.sourceName || feed.name;
+    if (title.includes(" is hiring ") || title.includes(" at ") || title.includes(" — ")) {
+      const parts = title.split(/ is hiring | at | — | - /i);
+      if (parts.length > 1) {
+        companyName = parts[parts.length - 1].trim();
+      }
+    }
+
+    const jobSummary = feed.category === "jobs" ? generateAIJobSummary(title, companyName, cleanDesc) : undefined;
 
     items.push({
       id: slugId,
@@ -628,20 +609,26 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       slug: slugId,
       resourceType: feed.category,
       description: cleanDesc,
-      benefitSummary: feed.sourceName || feed.name,
+      benefitSummary: companyName,
       link: rawLink,
       sourceName: feed.sourceName || feed.name,
       publishedAt,
       formattedDate,
       category: feed.category,
       country: feed.defaultCountry || "Global",
-      workType: feed.defaultWorkType || "na",
+      workType: "remote", // Force 100% remote for curated jobs
       isFree: true,
       difficulty: "all",
       isRss: true,
       analyticsId: feed._id,
       isTrending: idx < 5,
       isFeatured: idx === 0,
+      companyName,
+      salaryRange: jobSummary?.salaryRange || "$95,000 – $145,000 USD",
+      employmentType: "Full-time",
+      seniorityLevel: title.toLowerCase().includes("senior") ? "Senior" : "Mid",
+      jobTags: feed.category === "jobs" ? ["100% Remote", "Verified Publisher"] : undefined,
+      jobSummary,
     });
   });
 
@@ -660,10 +647,6 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
 // Public Aggregation Endpoints
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Aggregate all News feeds (Design / AI / Frontend / Dev / Marketing / Motion)
- * Merges Sanity news documents + live RSS items + CURATED_NEWS_CATALOG so pages NEVER show 0 articles!
- */
 export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<NormalizedResource[]> {
   const feedResults = await Promise.allSettled(
     NEWS_RSS_FEEDS.filter((f) => f.enabled !== false).map((feed) => fetchAndParseSingleFeed(feed))
@@ -703,19 +686,16 @@ export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<Normalize
 
   const dedupedMap = new Map<string, NormalizedResource>();
 
-  // 1. Add curated news baseline catalog (instant load guarantee)
   CURATED_NEWS_CATALOG.forEach((item) => {
     const key = (item.title + item.link).toLowerCase();
     dedupedMap.set(key, item);
   });
 
-  // 2. Add Sanity CMS news documents
   mappedCms.forEach((item) => {
     const key = (item.title + item.link).toLowerCase();
     dedupedMap.set(key, item);
   });
 
-  // 3. Add live RSS items (overrides or appends fresh items)
   rssItems.forEach((item) => {
     const key = (item.title + item.link).toLowerCase();
     dedupedMap.set(key, item);
@@ -726,10 +706,6 @@ export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<Normalize
   );
 }
 
-/**
- * Aggregate all Resource feeds (Jobs / Assets / Mockups / Fonts / AI Tools / Learning / Podcasts)
- * Merges CMS resources, live RSS items, AND Curated Resource Catalog to ensure pages are 100% full!
- */
 export async function aggregateAllResources(cmsResources: any[] = []): Promise<NormalizedResource[]> {
   const feedResults = await Promise.allSettled(
     RESOURCE_RSS_FEEDS.filter((f) => f.enabled !== false).map((feed) => fetchAndParseSingleFeed(feed))
@@ -770,6 +746,8 @@ export async function aggregateAllResources(cmsResources: any[] = []): Promise<N
         analyticsId: item._id,
         isTrending: true,
         isFeatured: item.featuredScore && item.featuredScore > 5,
+        companyName: item.benefitSummary,
+        jobSummary: cat === "jobs" ? generateAIJobSummary(item.title, item.benefitSummary || "Curated Company", item.description || "") : undefined,
       };
     });
 

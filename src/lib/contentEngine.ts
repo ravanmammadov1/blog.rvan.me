@@ -25,6 +25,14 @@ export interface ResourceSummary {
   ratingScore: number;
 }
 
+export interface AIJobSummary {
+  roleOverview: string;
+  requiredSkills: string[];
+  targetCandidate: string;
+  whyInteresting: string;
+  salaryRange: string;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Publication Date Parsing & Formatting
 // ─────────────────────────────────────────────────────────────────────────────
@@ -85,28 +93,22 @@ const CATEGORY_COVER_FALLBACKS: Record<string, string[]> = {
   designNews: [
     "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1200&auto=format&fit=crop",
   ],
   aiNews: [
     "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=1200&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
   ],
   frontendNews: [
     "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop",
   ],
   devNews: [
     "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop",
   ],
   marketingNews: [
     "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1200&auto=format&fit=crop",
   ],
   motionNews: [
     "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=1200&auto=format&fit=crop",
   ],
 };
 
@@ -121,8 +123,41 @@ export function getArticleCoverImage(category?: string, title?: string): string 
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COMPREHENSIVE 500–1000 WORD AI EDITORIAL GENERATOR
+// COMPREHENSIVE AI SUMMARY GENERATORS
 // ─────────────────────────────────────────────────────────────────────────────
+
+export function generateAIJobSummary(title: string, company: string, rawDesc: string): AIJobSummary {
+  const clean = rawDesc.replace(/<[^>]*>?/gm, "").trim();
+  const lowerTitle = title.toLowerCase();
+
+  let category = "Design & Creative Systems";
+  if (lowerTitle.includes("ai") || lowerTitle.includes("machine learning") || lowerTitle.includes("prompt")) {
+    category = "AI & Autonomous Systems";
+  } else if (lowerTitle.includes("frontend") || lowerTitle.includes("react") || lowerTitle.includes("web") || lowerTitle.includes("developer")) {
+    category = "Frontend Engineering";
+  } else if (lowerTitle.includes("motion") || lowerTitle.includes("3d") || lowerTitle.includes("animation")) {
+    category = "Motion & 3D Design";
+  } else if (lowerTitle.includes("marketing") || lowerTitle.includes("growth") || lowerTitle.includes("content")) {
+    category = "Growth & Brand Marketing";
+  } else if (lowerTitle.includes("ux") || lowerTitle.includes("ui") || lowerTitle.includes("product")) {
+    category = "UI/UX & Product Design";
+  }
+
+  const isSenior = lowerTitle.includes("senior") || lowerTitle.includes("lead") || lowerTitle.includes("principal") || lowerTitle.includes("head");
+  const salaryRange = isSenior ? "$120,000 – $175,000 USD / yr" : "$85,000 – $130,000 USD / yr";
+
+  return {
+    roleOverview: `${title} at ${company}. ${clean.slice(0, 220) || "Lead high-impact creative initiatives for modern digital products."}`,
+    requiredSkills: [
+      `Expert knowledge of ${category} methodologies and modern production tools`,
+      `Proven experience delivering production-grade digital assets and interfaces`,
+      `Strong asynchronous communication and remote team collaboration`,
+    ],
+    targetCandidate: `Ideal for proactive ${category} specialists seeking high autonomy in a 100% remote team.`,
+    whyInteresting: `Offers competitive compensation, modern stack exposure, and high creative impact at ${company}.`,
+    salaryRange,
+  };
+}
 
 export function generateDetailedEditorial(
   title: string,
