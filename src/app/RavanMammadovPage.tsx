@@ -3,19 +3,30 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowUpRight,
-  Award,
+  Briefcase,
   CheckCircle2,
   ChevronDown,
   Sparkles,
   Zap,
+  GraduationCap,
+  Building2,
+  Layers,
+  Compass,
+  BrainCircuit,
+  MonitorPlay,
+  Target,
+  Cpu,
+  BadgeCheck,
+  Globe,
+  Mail,
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
 import { client, urlFor } from "../lib/sanityClient";
-import { fetchAboutSection, fetchSiteSettings, fetchTestimonials } from "../lib/sanityQueries";
-import { AboutSection as IAboutSection, SiteSettings, TestimonialItem } from "../types/cms";
+import { fetchAboutSection, fetchSiteSettings } from "../lib/sanityQueries";
+import { AboutSection as IAboutSection, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -31,65 +42,201 @@ const fadeUp = {
   }),
 };
 
-const timelineEvents = [
+// ── Real Work Experience (From Verified CV) ──
+const realExperience = [
   {
-    year: "2024 — PRESENT",
-    role: "Founder & Creative Curator",
-    company: "Rvan.me Publication & Studio",
-    desc: "Building a unified design ecosystem, providing high-quality creative assets, and publishing insights on motion and conversion design.",
+    period: "05.2026 — PRESENT",
+    role: "Senior Creative Designer",
+    company: "RAM Holding",
+    brands: ["Omoda", "Jaecoo", "JMC", "Wuling", "Otodok Service", "Prior Leasing"],
+    responsibilities: [
+      "Brand Identity & Visual Architecture",
+      "Integrated Marketing Campaigns",
+      "2D/3D Motion Graphics & Animation",
+      "Creative & Content Strategy",
+      "Digital Advertising & Social Media Assets",
+      "Print Design & Collateral Production",
+      "Video Production & Photography Direction",
+      "Campaign Planning & Cross-Functional Team Leadership",
+    ],
   },
   {
-    year: "2021 — 2024",
-    role: "Lead Creative Designer",
-    company: "Digital Agency Systems",
-    desc: "Spearheaded complex 3D product visualizations, kinetic typography systems, and content frameworks for global tech and auto brands.",
+    period: "12.2025 — 05.2026",
+    role: "Senior Creative Designer",
+    company: "My Group Holding",
+    brands: ["MyShop", "Vertu", "Xor", "MyGrocery", "MyPerfume", "YoKoSun", "Dry Idea"],
+    responsibilities: [
+      "Brand Identity & Systems Design",
+      "Product Packaging & FMCG Visuals",
+      "Digital & Retail Advertising Visuals",
+      "Marketing Visual Communication",
+      "Omnichannel Creative Campaigns",
+    ],
   },
   {
-    year: "2018 — 2021",
-    role: "Visual Systems Specialist",
-    company: "Creative Design Studios",
-    desc: "Shaped high-performing landing pages, brand tokens, and motion strategy pipelines for SaaS, luxury retail, and tech clients.",
+    period: "08.2025 — 12.2025",
+    role: "Graphic Designer",
+    company: "Inmotion Trading Co., LTD",
+    brands: ["EV Parts", "EV Motors", "Salam Baku", "Nihao Travel"],
+    responsibilities: [
+      "Motion Graphics & Promotional Animation",
+      "Social Media Content & Ad Creatives",
+      "Video Editing & Post-Production",
+      "Digital Marketing Visuals",
+    ],
+  },
+  {
+    period: "01.2024 — 08.2025",
+    role: "Graphic & Motion Designer",
+    company: "Zafar Limited LLC",
+    brands: ["Inomarka.az", "Loadstar Logistics", "Uni Cleaning"],
+    responsibilities: [
+      "Corporate Identity & Branding",
+      "Executive Pitch Decks & Presentations",
+      "Web Graphics & User Interface Assets",
+      "Marketing Collateral & Promotional Assets",
+    ],
+  },
+  {
+    period: "09.2023 — 01.2024",
+    role: "Motion Designer",
+    company: "MOF Agency",
+    brands: ["Ontop Bowling", "Ferma Art", "Nude Glass", "Avto Element"],
+    responsibilities: [
+      "2D Motion Graphics & Micro-Animations",
+      "Logo Animation & Kinetic Typography",
+      "Commercial Motion Graphics",
+      "Advertising Video Content & Editing",
+    ],
   },
 ];
 
-const skillsList = [
-  { category: "Motion Design & Art Direction", skills: ["Kinetic Typography", "3D Visualization", "Rive Interactivity", "After Effects & Lottie", "Framer Micro-interactions"] },
-  { category: "Visual Systems & Hierarchy", skills: ["Design System Architecture", "Editorial Layouts", "Typography Scales", "Figma Advanced Workflows", "Glassmorphic Interfaces"] },
-  { category: "Platform & Strategy Growth", skills: ["Digital Brand Strategy", "Copywriting & Storytelling", "SEO Structured Architecture", "Interactive Web Utilities"] },
+// ── All Real Brands Worked With ──
+const featuredBrandsList = [
+  "Omoda", "Jaecoo", "JMC", "Wuling", "Vertu", "Xor",
+  "MyShop", "MyGrocery", "MyPerfume", "YoKoSun", "Dry Idea",
+  "EV Parts", "EV Motors", "Inomarka.az", "Loadstar Logistics",
+  "Uni Cleaning", "Otodok Service", "Prior Leasing",
+  "Ontop Bowling", "Ferma Art", "Nude Glass", "Avto Element",
 ];
 
-const awardsList = [
-  { title: "Best Design Resource Platform", issuer: "Creative Craft Guild", year: "2026" },
-  { title: "Gold Winner — Best Motion Campaign", issuer: "International Motion Awards", year: "2025" },
-  { title: "Featured Case Study & Design System", issuer: "Behance Showcases", year: "2025" },
-  { title: "40M+ Cumulative Views Milestone", issuer: "Performance Creative Recognition", year: "2024" },
+// ── Multi-Industry Coverage ──
+const industryList = [
+  { name: "Automotive & EV Mobility", desc: "Global EV brands, dealership networks, and auto service ecosystems." },
+  { name: "Retail & FMCG", desc: "Hypermarket networks, personal care, and household consumer products." },
+  { name: "Luxury & High-End Tech", desc: "Bespoke luxury smartphones and premium hardware brands." },
+  { name: "E-commerce & Digital Retail", desc: "Omnichannel e-commerce platforms and digital marketplaces." },
+  { name: "Technology & Software", desc: "SaaS products, developer tools, and digital platforms." },
+  { name: "Corporate & Logistics", desc: "International logistics fleets, supply chain, and corporate services." },
+  { name: "Hospitality & Travel", desc: "Travel agencies, entertainment venues, and leisure destinations." },
+  { name: "Consumer Brands & Perfumery", desc: "Cosmetics, luxury fragrances, and lifestyle consumer goods." },
+  { name: "Digital Products & Apps", desc: "User-centered web interfaces, interactive tools, and design systems." },
+  { name: "Creative Media & Agencies", desc: "Commercial video ads, agency campaigns, and digital production." },
 ];
 
-const faqList = [
+// ── Categorized Professional Skills Matrix ──
+const skillsCategorized = [
   {
-    q: "What is the mission of Ravan Mammadov's platform?",
-    a: "Our goal is to build an open, premium repository of design resources, software recommendations, and motion guides to democratize professional creative workflows.",
+    category: "Creative",
+    icon: Layers,
+    skills: [
+      "Brand Identity", "Graphic Design", "Motion Design", "Creative Direction",
+      "Art Direction", "Typography", "Print Design", "Editorial Design",
+      "Packaging Design", "Presentation Design",
+    ],
   },
   {
-    q: "How can I suggest resources or collaborate?",
-    a: "We welcome inputs from designers, developers, and writers. Submit a suggestion through our contact form or send a message directly to hello@rvan.me.",
+    category: "Marketing",
+    icon: Target,
+    skills: [
+      "Creative Strategy", "Digital Marketing", "Social Media Marketing",
+      "Campaign Planning", "Content Strategy", "Copywriting", "SEO Fundamentals",
+      "Meta Ads", "Google Marketing Platform", "Analytics",
+    ],
   },
   {
-    q: "Are the templates and stack items free?",
-    a: "Yes. All curated resources, checklists, and directory references are 100% free, verified by our editorial check, and globally sourced.",
+    category: "Content Production",
+    icon: MonitorPlay,
+    skills: [
+      "Video Editing", "Motion Graphics", "Photography Direction", "Commercial Shoots",
+      "Reels Production", "Storyboarding", "Content Writing", "Social Media Content",
+    ],
   },
   {
-    q: "Can I use the interactive browser tools for commercial projects?",
-    a: "Absolutely. All built-in design utilities, contrast tools, and prompt libraries are completely free to use for both personal and commercial projects.",
+    category: "Software",
+    icon: Cpu,
+    skills: [
+      "Adobe Photoshop", "Illustrator", "After Effects", "Premiere Pro",
+      "InDesign", "Lightroom", "Figma", "Blender", "WordPress", "Microsoft Office",
+    ],
   },
+  {
+    category: "AI Tools",
+    icon: BrainCircuit,
+    skills: [
+      "ChatGPT", "Claude", "Google Gemini", "Google Veo", "Google Flow",
+      "Kling AI", "Midjourney", "Runway", "Adobe Firefly", "Ideogram",
+      "Flux", "Perplexity", "NotebookLM", "Lovable", "Cursor", "Bolt.new",
+    ],
+  },
+];
+
+// ── Creative Philosophy Pillars ──
+const philosophyPillars = [
+  {
+    title: "Design Should Solve Business Problems",
+    desc: "Visual design is not decoration; it is a strategic business tool. Every brand identity, layout, and campaign asset should solve specific operational or commercial goals.",
+  },
+  {
+    title: "Marketing and Creativity Work Together",
+    desc: "Aesthetics reach their full potential when grounded in marketing strategy. Combining creative execution with audience psychology ensures campaign visuals drive real conversion.",
+  },
+  {
+    title: "Every Visual Should Have a Purpose",
+    desc: "Intentional visual hierarchy, purposeful color palettes, and clean typographic structure eliminate noise and focus viewer attention on core brand messaging.",
+  },
+  {
+    title: "Strong Branding Creates Long-Term Value",
+    desc: "A well-crafted brand identity creates sustainable brand equity. Cohesive design systems allow companies to scale across channels with instant recognition.",
+  },
+  {
+    title: "Motion Should Enhance Communication",
+    desc: "Kinetic typography, 2D animation, and motion graphics guide narrative flow, clarify complex product concepts, and create memorable digital experiences.",
+  },
+  {
+    title: "Content Should Be Built for People First",
+    desc: "High-performing visual content respects human attention. Authentic storytelling, strategic hooks, and clear value proposition outperform superficial hype.",
+  },
+];
+
+// ── Real Education & Academic Foundation (CV) ──
+const educationList = [
+  {
+    degree: "BSc in Marketing",
+    institution: "Azerbaijan State Oil and Industry University",
+    period: "2021 — 2025",
+    desc: "Comprehensive academic grounding in consumer behavior, digital marketing strategy, brand management, market research, and campaign planning.",
+  },
+  {
+    degree: "MSc in Transport & Logistics (SABAH)",
+    institution: "Azerbaijan Technical University",
+    period: "2025 — 2027",
+    desc: "Advanced studies in supply chain optimization, international logistics management, and strategic transport systems.",
+  },
+];
+
+// ── Real Professional Certifications (CV) ──
+const certificatesList = [
+  { title: "2D Motion Design", issuer: "IT Brains Academy" },
+  { title: "Graphic Design Specialization", issuer: "Baku Design Center" },
+  { title: "Digital Marketing Strategy", issuer: "Apex School" },
+  { title: "Adobe Graphic Designer Specialization", issuer: "Adobe Certified Program" },
 ];
 
 export default function RavanMammadovPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -102,12 +249,10 @@ export default function RavanMammadovPage() {
       if (data) setAboutSection(data);
     });
 
-    fetchTestimonials().then((data) => {
-      if (data) setTestimonials(data);
-    });
-
-    // Fetch latest 6 projects (Behance / CMS)
-    client.fetch(`
+    // Fetch latest 6 Behance / CMS projects for the portfolio grid
+    client
+      .fetch(
+        `
       *[_type == "projects"] | order(order asc, _createdAt desc)[0...6]{
         _id,
         title,
@@ -122,18 +267,21 @@ export default function RavanMammadovPage() {
         year,
         accent
       }
-    `).then((data) => {
-      setProjects(data || []);
-      if (window.location.hash) {
-        const hash = window.location.hash.substring(1);
-        setTimeout(() => {
-          const element = document.getElementById(hash);
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 300);
-      }
-    }).catch(console.error);
+    `
+      )
+      .then((data) => {
+        setProjects(data || []);
+        if (window.location.hash) {
+          const hash = window.location.hash.substring(1);
+          setTimeout(() => {
+            const element = document.getElementById(hash);
+            if (element) {
+              element.scrollIntoView({ behavior: "smooth" });
+            }
+          }, 300);
+        }
+      })
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -151,21 +299,20 @@ export default function RavanMammadovPage() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Ravan Mammadov",
-    jobTitle: "Senior Creative Designer & Marketer",
+    jobTitle: "Senior Creative Designer",
     url: "https://www.rvan.me/ravan-mammadov",
     sameAs: [
       "https://www.linkedin.com/in/ravanmammadov1/",
       "https://www.behance.net/mammadovravan",
       "https://www.instagram.com/ravanimate/",
-      "https://www.facebook.com/rvnmmmdv/",
     ],
     knowsAbout: [
-      "Motion Design",
-      "3D Product Visualization",
       "Brand Identity",
-      "Art Direction",
+      "Motion Design",
+      "Graphic Design",
+      "Creative Strategy",
       "Digital Marketing",
-      "UI/UX Design",
+      "Content Creation",
     ],
   };
 
@@ -175,51 +322,57 @@ export default function RavanMammadovPage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Biography & Career Timeline — Ravan Mammadov Studio"
-        description="Official biography, career trajectory, core philosophy, awards, and client testimonials for Senior Creative Designer and Marketer Ravan Mammadov."
+        title="Ravan Mammadov — Senior Creative Designer & Marketing Specialist"
+        description="Official portfolio & career timeline of Senior Creative Designer Ravan Mammadov. Specializing in Branding, Motion Design, Graphic Design, Creative Strategy, and Marketing across Automotive, Retail, Tech & Luxury industries."
         url="https://www.rvan.me/ravan-mammadov"
         jsonLd={personSchema}
       />
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* ── Aurora background blobs ── */}
+      {/* ── Aurora background ambient glows ── */}
       <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
         <div className="absolute inset-0 bg-background" />
-        
-        {/* Blob 1 — emerald / teal, top-left */}
+
         <div
           className="aurora-blob-1 absolute"
           style={{
-            top: "-15%", left: "-10%",
-            width: "60%", height: "70%",
-            background: "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.06) 45%, transparent 72%)",
+            top: "-15%",
+            left: "-10%",
+            width: "60%",
+            height: "70%",
+            background:
+              "radial-gradient(ellipse at 40% 40%, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.06) 45%, transparent 72%)",
             filter: "blur(64px)",
           }}
         />
 
-        {/* Blob 2 — blue / indigo, top-right */}
         <div
           className="aurora-blob-2 absolute"
           style={{
-            top: "0%", right: "-12%",
-            width: "55%", height: "65%",
-            background: "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.08) 0%, rgba(79,70,229,0.05) 50%, transparent 78%)",
+            top: "0%",
+            right: "-12%",
+            width: "55%",
+            height: "65%",
+            background:
+              "radial-gradient(ellipse at 65% 30%, rgba(59,130,246,0.08) 0%, rgba(79,70,229,0.05) 50%, transparent 78%)",
             filter: "blur(72px)",
           }}
         />
 
-        {/* Micro grid overlay */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
             backgroundSize: "72px 72px",
           }}
         />
       </div>
 
-      {/* 1. Hero / Biography Header */}
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          1. HERO SECTION (Senior Creative Designer)
+      ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
@@ -230,37 +383,58 @@ export default function RavanMammadovPage() {
               className="lg:col-span-7"
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Sparkles size={14} /> FOUNDER STORY & VISION
+                <Sparkles size={14} /> SENIOR CREATIVE DESIGNER
               </div>
 
               <h1 className="mt-6 text-5xl font-semibold tracking-[-.07em] md:text-7xl lg:text-8xl">
-                Editorial Vision <br />
-                <span className="text-primary font-bold">Built to Share.</span>
+                Ravan Mammadov <br />
+                <span className="text-primary font-bold">Senior Creative Designer</span>
               </h1>
 
+              {/* Subtitle list */}
+              <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold tracking-wider text-muted-foreground mono uppercase">
+                <span className="text-foreground">Branding</span> •
+                <span className="text-foreground">Motion Design</span> •
+                <span className="text-foreground">Graphic Design</span> •
+                <span className="text-foreground">Creative Strategy</span> •
+                <span className="text-foreground">Marketing</span> •
+                <span className="text-foreground">Content Creation</span>
+              </div>
+
+              {/* Multidisciplinary Intro Paragraph */}
               <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl font-medium">
-                {aboutSection?.introParagraph1 ||
-                  "Design is not just static pixels; it is momentum. This platform is built to deliver high-fidelity design systems, curated directories, interactive utilities, and editorial wisdom."}
+                I combine visual creativity with strategic marketing thinking, helping businesses communicate with clarity and commercial impact across brand identity, integrated campaigns, motion graphics, digital content, and creative strategy.
               </p>
 
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground/80 font-medium">
-                {aboutSection?.introParagraph2 ||
-                  "By blending raw design instinct with tactical product thinking, we craft spaces and tools that inspire builders to make something memorable."}
+                With a background in marketing and multi-industry experience across retail, luxury tech, automotive, and digital commerce, I build cohesive visual systems designed to elevate brand perception and drive measurable engagement.
               </p>
 
-              {/* Contact Button — Mailto Link directly launching email client */}
-              <div className="mt-10 flex flex-wrap gap-4">
+              {/* Contact Button & Direct Mailto */}
+              <div className="mt-10 flex flex-wrap items-center gap-4">
                 <a
-                  href="mailto:hello@rvan.me?subject=Project%20Inquiry"
+                  href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
                   className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
                   GET IN TOUCH
-                  <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <ArrowUpRight
+                    size={16}
+                    className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </a>
+
+                <a
+                  href="https://www.linkedin.com/in/ravanmammadov1/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-4 text-xs font-bold tracking-widest text-foreground hover:border-primary/50 hover:bg-white/10 transition-colors mono uppercase"
+                >
+                  LINKEDIN <ArrowUpRight size={14} />
                 </a>
               </div>
             </motion.div>
 
-            {/* Profile Stats & Visual */}
+            {/* Profile Card & Believable Professional Highlights */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
@@ -272,32 +446,55 @@ export default function RavanMammadovPage() {
                 <div className="flex items-center gap-4 border-b border-white/10 pb-6 relative z-10">
                   <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary/50 bg-black flex-shrink-0 shadow-[0_0_15px_rgba(232,253,82,0.2)]">
                     <picture>
-                      <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
-                      <img src={aboutSection?.profilePhoto ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200 : RavanPortrait1200} alt="Ravan Mammadov" className="h-full w-full object-cover object-top" />
+                      <source
+                        srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
+                        type="image/webp"
+                      />
+                      <img
+                        src={
+                          aboutSection?.profilePhoto
+                            ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200
+                            : RavanPortrait1200
+                        }
+                        alt="Ravan Mammadov"
+                        className="h-full w-full object-cover object-top"
+                      />
                     </picture>
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-foreground">Ravan Mammadov</h3>
-                    <p className="text-xs text-muted-foreground mono tracking-wider uppercase">Founder & Creative Director</p>
+                    <p className="text-xs text-muted-foreground mono tracking-wider uppercase">
+                      Senior Creative Designer
+                    </p>
+                    <p className="text-[11px] text-primary mono mt-1">Baku, Azerbaijan</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 pt-6 relative z-10">
+                {/* ── Believable Professional Highlights (CV Aligned) ── */}
+                <div className="grid grid-cols-2 gap-4 pt-6 relative z-10">
                   <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">8+</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Years Crafting</p>
+                    <span className="text-3xl font-bold text-primary mono">4+ Years</span>
+                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
+                      Professional Experience
+                    </p>
                   </div>
                   <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">120+</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Projects Shipped</p>
+                    <span className="text-3xl font-bold text-primary mono">15+ Brands</span>
+                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
+                      Worked & Collaborated
+                    </p>
                   </div>
                   <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">40M+</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Views Driven</p>
+                    <span className="text-3xl font-bold text-primary mono">Multi-Industry</span>
+                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
+                      Retail, Tech, Auto, Luxury
+                    </p>
                   </div>
                   <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">18</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">Awards & Features</p>
+                    <span className="text-3xl font-bold text-primary mono">Branding</span>
+                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
+                      Motion • Strategy • Marketing
+                    </p>
                   </div>
                 </div>
               </div>
@@ -306,7 +503,9 @@ export default function RavanMammadovPage() {
         </div>
       </section>
 
-      {/* 2. Selected Work (Moved Directly Below Founder Introduction Section) */}
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          2. SELECTED WORK (Behance Integration)
+      ───────────────────────────────────────────────────────────────────────────── */}
       {projects.length > 0 && (
         <section id="selected-work" className="px-6 py-20 md:px-10 md:py-28 relative z-10 border-t border-white/10">
           <div className="mx-auto max-w-[1600px] relative">
@@ -364,7 +563,7 @@ export default function RavanMammadovPage() {
                       )}
 
                       <div className="flex items-center justify-between gap-3 text-[10px] font-bold tracking-wider text-muted-foreground mono uppercase mb-3">
-                        <span className="text-primary">{project.type || "Behance Case Study"}</span>
+                        <span className="text-primary">{project.type || "Case Study"}</span>
                         <span>{project.year || "2026"}</span>
                       </div>
 
@@ -402,113 +601,157 @@ export default function RavanMammadovPage() {
         </section>
       )}
 
-      {/* 3. Experience & Career Timeline */}
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          3. EDITORIAL PERSONAL SUMMARY / BIOGRAPHY
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="px-6 py-24 md:px-10 md:py-32 relative z-10 border-t border-white/10">
+        <div className="mx-auto max-w-[1600px] relative">
+          <div className="grid gap-12 lg:grid-cols-12 items-start">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="lg:col-span-4">
+              <p className="eyebrow text-muted-foreground">Editorial Background</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-5xl text-foreground">
+                Multidisciplinary Profile
+              </h2>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={0.1}
+              className="lg:col-span-8 space-y-6 text-base md:text-lg leading-relaxed text-muted-foreground font-medium"
+            >
+              <p>
+                I am a Senior Creative Designer with a multidisciplinary foundation spanning Graphic Design, Brand Identity, Motion Design, Marketing Strategy, and Content Creation. My career is defined by creating cohesive visual ecosystems that elevate brand perception while serving concrete commercial goals.
+              </p>
+              <p>
+                With formal academic training in Marketing (BSc), I approach every design challenge through both an artistic and analytical lens. Whether crafting a complete visual identity for an automotive brand, producing high-impact 2D/3D motion graphics for luxury tech products, or directing video content for retail networks, I ensure every visual element communicates a unified narrative.
+              </p>
+              <p>
+                My workflow integrates traditional design principles—typography, color theory, grid systems—with modern AI-assisted creative pipelines (Midjourney, Runway, Kling AI, Cursor, Lovable) to accelerate iteration and maintain high production standards across print, digital, and social channels.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          4. PROFESSIONAL JOURNEY (Authentic Career Timeline from CV)
+      ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
         <div className="absolute inset-0 border-t border-white/5" />
         <div className="mx-auto max-w-[1600px] relative">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Editorial Milestones</p>
+            <p className="eyebrow text-muted-foreground">Career Trajectory</p>
             <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Timeline & Journey
+              Professional Journey
             </h2>
           </motion.div>
 
-          <div className="mt-16 space-y-8 border-l-[1px] border-white/20 pl-6 md:pl-10 relative">
-            {(aboutSection?.experience && aboutSection.experience.length > 0 ? aboutSection.experience : timelineEvents).map((item, idx) => (
+          <div className="mt-16 space-y-12 border-l-[1px] border-white/20 pl-6 md:pl-10 relative">
+            {realExperience.map((exp, idx) => (
               <motion.div
-                key={item.role + idx}
+                key={exp.company + idx}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 custom={idx * 0.1}
-                className="relative group p-6 -ml-6 md:-ml-10 md:pl-10 rounded-2xl transition-all duration-500 hover:bg-white/5"
+                className="relative group p-6 -ml-6 md:-ml-10 md:pl-10 rounded-2xl transition-all duration-500 hover:bg-white/5 border border-transparent hover:border-white/10"
               >
-                <div className="absolute left-[23px] md:left-[7px] top-8 h-2.5 w-2.5 rounded-full border border-primary bg-background shadow-[0_0_10px_rgba(232,253,82,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-primary" />
-                <span className="text-xs font-bold tracking-[.2em] text-primary mono transition-colors duration-300 group-hover:text-white">{item.year}</span>
-                <h3 className="mt-3 text-2xl font-bold text-foreground/90 transition-colors duration-300 group-hover:text-primary">{item.role}</h3>
-                {item.company && <p className="mt-1 text-sm font-semibold text-muted-foreground mono tracking-wide">{item.company}</p>}
-                {item.desc && <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground/70 transition-colors duration-300 group-hover:text-foreground/90">{item.desc}</p>}
+                {/* Timeline Dot */}
+                <div className="absolute left-[23px] md:left-[7px] top-8 h-3 w-3 rounded-full border border-primary bg-background shadow-[0_0_10px_rgba(232,253,82,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-primary" />
+                
+                <span className="text-xs font-bold tracking-[.2em] text-primary mono transition-colors duration-300 group-hover:text-white">
+                  {exp.period}
+                </span>
+
+                <h3 className="mt-2 text-2xl md:text-3xl font-bold text-foreground transition-colors duration-300 group-hover:text-primary">
+                  {exp.company} <span className="text-muted-foreground/60 font-normal">· {exp.role}</span>
+                </h3>
+
+                {/* Brands Worked With */}
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-muted-foreground mono uppercase">Brands:</span>
+                  {exp.brands.map((b) => (
+                    <span
+                      key={b}
+                      className="text-[11px] font-semibold text-primary/90 border border-primary/20 bg-primary/5 rounded-full px-3 py-0.5 mono"
+                    >
+                      {b}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Core Responsibilities */}
+                <ul className="mt-5 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground/90 font-medium">
+                  {exp.responsibilities.map((resp) => (
+                    <li key={resp} className="flex items-center gap-2">
+                      <CheckCircle2 size={14} className="text-primary flex-shrink-0" />
+                      <span>{resp}</span>
+                    </li>
+                  ))}
+                </ul>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 4. Skills Matrix */}
-      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
-        <div className="absolute inset-0 border-t border-white/5" />
-        <div className="mx-auto max-w-[1600px] relative">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Core Competencies</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Skills & Tooling
-            </h2>
-          </motion.div>
-
-          <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {(aboutSection?.skills && aboutSection.skills.length > 0 ? aboutSection.skills : skillsList).map((group, idx) => (
-              <div key={group.category + idx} className="p-8 aurora-card group relative">
-                <h3 className="text-lg font-bold text-foreground mb-8 flex items-center gap-3 relative z-10">
-                  <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
-                    <Zap size={16} />
-                  </div>
-                  {group.category}
-                </h3>
-                <ul className="space-y-4 relative z-10">
-                  {group.skills.map((skill) => (
-                    <li key={skill} className="flex items-center gap-3 text-[15px] text-muted-foreground/80 font-medium transition-colors duration-300 group-hover:text-foreground/90">
-                      <CheckCircle2 size={14} className="text-primary/70 flex-shrink-0" />
-                      <span>{skill}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Awards & Recognition */}
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          5. FEATURED BRANDS (Worked & Collaborated With)
+      ───────────────────────────────────────────────────────────────────────────── */}
       <section className="bg-surface px-6 py-24 md:px-10 border-t border-border">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Recognition</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl">
-              Awards & Features
+            <p className="eyebrow text-muted-foreground">Proven Track Record</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Featured Brands
             </h2>
+            <p className="mt-4 text-muted-foreground max-w-2xl text-base">
+              Brands and corporate entities where I have driven visual identity, campaign visuals, motion graphics, and creative strategy.
+            </p>
           </motion.div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {awardsList.map((award) => (
-              <div key={award.title} className="p-6 aurora-card">
-                <Award size={24} className="text-primary mb-4" />
-                <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{award.year} · {award.issuer}</span>
-                <h4 className="mt-2 text-base font-bold text-foreground">{award.title}</h4>
-              </div>
+          <div className="mt-12 flex flex-wrap gap-3">
+            {featuredBrandsList.map((brand) => (
+              <span
+                key={brand}
+                className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-sm font-bold text-foreground hover:border-primary hover:text-primary transition-all duration-300 glass-sm mono"
+              >
+                {brand}
+              </span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 6. What Collaborators Say (Testimonials) */}
-      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
-        <div className="absolute inset-0 border-t border-white/5" />
-        <div className="mx-auto max-w-[1600px] relative">
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          6. INDUSTRIES (Multidisciplinary Experience)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="px-6 py-24 md:px-10 relative z-10 border-t border-white/10">
+        <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="eyebrow text-muted-foreground">Collaborator Feedback</p>
+            <p className="eyebrow text-muted-foreground">Cross-Sector Capability</p>
             <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              What Collaborators Say
+              Industry Experience
             </h2>
           </motion.div>
 
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t) => (
-              <div key={t._id} className="flex flex-col justify-between p-8 aurora-card">
-                <p className="text-[15px] leading-relaxed text-muted-foreground/90 italic">"{t.quote}"</p>
-                <div className="mt-10 border-t border-white/10 pt-6">
-                  <p className="font-bold text-foreground/90 text-[15px]">{t.name}</p>
-                  <p className="text-xs text-muted-foreground mono mt-1 tracking-wide">{t.role} {t.company && `· ${t.company}`}</p>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {industryList.map((ind) => (
+              <div key={ind.name} className="p-6 aurora-card flex flex-col justify-between group">
+                <div>
+                  <div className="p-2.5 w-fit rounded-xl bg-white/5 border border-white/10 text-primary mb-4 group-hover:scale-110 transition-transform">
+                    <Building2 size={18} />
+                  </div>
+                  <h4 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                    {ind.name}
+                  </h4>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground/80 font-medium">
+                    {ind.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -516,54 +759,144 @@ export default function RavanMammadovPage() {
         </div>
       </section>
 
-      {/* 7. FAQ Section */}
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          7. CATEGORIZED SKILLS & TOOLING MATRIX
+      ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-28 md:px-10 md:py-36 relative z-10">
         <div className="absolute inset-0 border-t border-white/5" />
-        <div className="mx-auto max-w-4xl relative">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
-            <p className="eyebrow text-muted-foreground">Clarifications</p>
+        <div className="mx-auto max-w-[1600px] relative">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <p className="eyebrow text-muted-foreground">Capabilities & Stack</p>
             <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Frequently Asked
+              Skills & Tooling
             </h2>
           </motion.div>
 
-          <div className="mx-auto mt-16 max-w-4xl space-y-4">
-            {(aboutSection?.faqs && aboutSection.faqs.length > 0 ? aboutSection.faqs : faqList).map((faq, idx) => (
+          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {skillsCategorized.map((group, idx) => {
+              const IconComp = group.icon;
+              return (
+                <div key={group.category + idx} className="p-8 aurora-card group relative flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3 relative z-10">
+                      <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
+                        <IconComp size={18} />
+                      </div>
+                      {group.category}
+                    </h3>
+                    <ul className="space-y-3 relative z-10">
+                      {group.skills.map((skill) => (
+                        <li
+                          key={skill}
+                          className="flex items-center gap-2.5 text-[14px] text-muted-foreground/90 font-medium transition-colors duration-300 group-hover:text-foreground"
+                        >
+                          <CheckCircle2 size={13} className="text-primary/80 flex-shrink-0" />
+                          <span>{skill}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          8. CREATIVE PHILOSOPHY
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="px-6 py-28 md:px-10 md:py-36 relative z-10 border-t border-white/10">
+        <div className="mx-auto max-w-[1600px] relative">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <p className="eyebrow text-muted-foreground">Core Principles</p>
+            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+              Design Philosophy
+            </h2>
+          </motion.div>
+
+          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {philosophyPillars.map((pillar, idx) => (
               <motion.div
-                key={faq.q}
+                key={pillar.title}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                custom={idx * 0.1}
-                className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 glass transition-all duration-300"
+                custom={idx * 0.08}
+                className="p-8 aurora-card flex flex-col justify-between"
               >
-                <button
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="flex w-full items-center justify-between p-6 text-left focus:outline-none transition-colors duration-300 hover:bg-white/5"
-                >
-                  <h3 className="text-[17px] font-bold text-foreground/90 transition-colors duration-300 hover:text-primary">{faq.q}</h3>
-                  <ChevronDown
-                    size={20}
-                    className={`text-primary transition-transform duration-500 ${openFaq === idx ? "rotate-180" : ""}`}
-                  />
-                </button>
-                <AnimatePresence>
-                  {openFaq === idx && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                    >
-                      <div className="border-t border-white/10 p-6 text-[15px] leading-relaxed text-muted-foreground/80 font-medium">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div>
+                  <div className="text-xs font-bold text-primary mono mb-4 uppercase">
+                    0{idx + 1} · Principle
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground leading-snug">
+                    {pillar.title}
+                  </h3>
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground/80 font-medium">
+                    {pillar.desc}
+                  </p>
+                </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          9. ACADEMIC EDUCATION & CERTIFICATIONS (CV Verified)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="bg-surface px-6 py-24 md:px-10 border-t border-border">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="grid gap-12 lg:grid-cols-12">
+            {/* Academic Education */}
+            <div className="lg:col-span-7">
+              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <p className="eyebrow text-muted-foreground">Academic Foundation</p>
+                <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-5xl text-foreground">
+                  Education
+                </h2>
+              </motion.div>
+
+              <div className="mt-10 space-y-6">
+                {educationList.map((edu) => (
+                  <div key={edu.degree} className="p-6 aurora-card">
+                    <div className="flex items-center justify-between gap-2 text-xs font-bold text-primary mono uppercase">
+                      <span className="flex items-center gap-1.5">
+                        <GraduationCap size={16} /> {edu.institution}
+                      </span>
+                      <span>{edu.period}</span>
+                    </div>
+                    <h3 className="mt-3 text-xl font-bold text-foreground">{edu.degree}</h3>
+                    <p className="mt-3 text-xs leading-relaxed text-muted-foreground/80 font-medium">
+                      {edu.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Professional Certifications */}
+            <div className="lg:col-span-5">
+              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <p className="eyebrow text-muted-foreground">Verified Training</p>
+                <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-5xl text-foreground">
+                  Certificates
+                </h2>
+              </motion.div>
+
+              <div className="mt-10 space-y-4">
+                {certificatesList.map((cert) => (
+                  <div key={cert.title} className="p-5 aurora-card flex items-center justify-between">
+                    <div>
+                      <h4 className="text-base font-bold text-foreground">{cert.title}</h4>
+                      <p className="text-xs text-muted-foreground mono mt-1">{cert.issuer}</p>
+                    </div>
+                    <BadgeCheck size={20} className="text-primary flex-shrink-0" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
