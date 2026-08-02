@@ -18,11 +18,12 @@ const fadeUp = {
 
 export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
   all: { label: "All Directory", icon: "⚡" },
-  jobs: { label: "Jobs", icon: "💼" },
+  freeFonts: { label: "Free Fonts", icon: "🔤" },
   freeDesignAssets: { label: "Free Assets", icon: "🎁" },
-  tools: { label: "Tools", icon: "🛠️" },
+  freeMockups: { label: "Free Mockups", icon: "📐" },
+  freeIcons: { label: "Free Icons", icon: "⭐" },
+  freeUIKits: { label: "Free UI Kits", icon: "📱" },
   learning: { label: "Learning", icon: "📚" },
-  opportunities: { label: "Opportunities", icon: "🚀" },
 };
 
 function cn(...classes: any[]) {
@@ -47,8 +48,11 @@ export default function ResourcesSection() {
   }, []);
 
   const filteredResources = useMemo(() => {
-    if (activeCategory === "all") return allResources;
-    return allResources.filter((r) => r.category === activeCategory);
+    const validResources = allResources.filter(
+      (r) => r && r.category !== "jobs" && r.category !== "tools" && r.category !== "aiTools" && r.category !== "podcasts"
+    );
+    if (activeCategory === "all") return validResources;
+    return validResources.filter((r) => r && r.category === activeCategory);
   }, [allResources, activeCategory]);
 
   return (
@@ -133,8 +137,8 @@ export default function ResourcesSection() {
                 >
                   <div className="relative z-10 flex-1 flex flex-col">
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[9px] font-semibold text-primary mono">
-                        {catConfig.icon} {catConfig.label.slice(0, 14)}...
+                      <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[9px] font-semibold text-primary mono">
+                        {catConfig.icon} {catConfig.label}
                       </span>
                       {resource.isRss && (
                         <span className="text-[9px] text-muted-foreground/60 flex items-center gap-1 mono">
@@ -168,7 +172,7 @@ export default function ResourcesSection() {
 
                   <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between">
                     <span className="text-[9px] font-semibold text-muted-foreground/50 mono">
-                      OPPORTUNITY
+                      FREE RESOURCE
                     </span>
                     <a
                       href={resource.link}
