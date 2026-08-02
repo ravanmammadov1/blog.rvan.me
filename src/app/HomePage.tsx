@@ -12,6 +12,11 @@ import {
   ArrowUpRight,
   MoveUpRight,
   Zap,
+  Layers,
+  Sparkles,
+  Newspaper,
+  BookOpen,
+  ArrowRight,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -145,11 +150,43 @@ const services = [
   },
 ];
 
-const stats = [
-  { value: "8+", label: "Years crafting" },
-  { value: "120+", label: "Projects shipped" },
-  { value: "40M+", label: "Views driven" },
-  { value: "18", label: "Awards & features" },
+const platformModules = [
+  {
+    id: "resources",
+    badge: "CARD 01",
+    title: "Design Resources",
+    desc: "Curated templates, fonts, mockups, UI kits and creative assets for modern designers.",
+    cta: "Explore Collection",
+    link: "/resources",
+    icon: Layers,
+  },
+  {
+    id: "ai",
+    badge: "CARD 02",
+    title: "AI Discoveries",
+    desc: "Explore powerful AI tools, prompt engineering, creative workflows and automation.",
+    cta: "Browse AI Tools",
+    link: "/tools",
+    icon: Sparkles,
+  },
+  {
+    id: "news",
+    badge: "CARD 03",
+    title: "Industry News",
+    desc: "Stay updated with branding, design, technology and creative industry insights.",
+    cta: "Read Latest Stories",
+    link: "/news",
+    icon: Newspaper,
+  },
+  {
+    id: "learning",
+    badge: "CARD 04",
+    title: "Learning Hub",
+    desc: "Learn through tutorials, case studies, software guides and curated educational content.",
+    cta: "Start Learning",
+    link: "/blog",
+    icon: BookOpen,
+  },
 ];
 
 function Eyebrow({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -425,25 +462,57 @@ export default function HomePage() {
                   </a>
                 </motion.div>
 
-                {/* Glass stats grid */}
+                {/* ── Four Core Area Editorial Navigation Modules ── */}
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 1.0, ease: EASE }}
-                  className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-4"
+                  transition={{ duration: 1, delay: 0.9, ease: EASE }}
+                  className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-4"
                 >
-                  {stats.map((s, i) => (
-                    <motion.div
-                      key={s.label}
-                      className="glass-stat rounded-xl px-4 py-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 1.05 + i * 0.07, ease: EASE }}
-                    >
-                      <p className="text-2xl font-bold tracking-[-0.04em] text-primary mono">{s.value}</p>
-                      <p className="mt-1 text-[9px] font-bold uppercase tracking-[.14em] text-muted-foreground/60 mono">{s.label}</p>
-                    </motion.div>
-                  ))}
+                  {platformModules.map((module, i) => {
+                    const IconComp = module.icon;
+                    return (
+                      <motion.div
+                        key={module.id}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.95 + i * 0.08, ease: EASE }}
+                      >
+                        <Link
+                          to={module.link}
+                          className="group p-6 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl hover:border-primary/40 hover:bg-white/[0.07] hover:shadow-[0_0_30px_rgba(232,253,82,0.12)] transition-all duration-300 flex flex-col justify-between h-full"
+                        >
+                          <div>
+                            {/* Card badge & monochrome icon */}
+                            <div className="flex items-center justify-between gap-2 mb-4">
+                              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-foreground/90 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300">
+                                <IconComp size={18} />
+                              </div>
+                              <span className="text-[10px] font-bold tracking-[.2em] text-muted-foreground/70 uppercase mono">
+                                {module.badge}
+                              </span>
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                              {module.title}
+                            </h3>
+
+                            {/* Description */}
+                            <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground/80 font-medium">
+                              {module.desc}
+                            </p>
+                          </div>
+
+                          {/* Editorial CTA */}
+                          <div className="mt-6 pt-3 border-t border-white/5 flex items-center gap-1 text-[11px] font-bold tracking-widest text-primary uppercase mono group-hover:translate-x-1 transition-transform">
+                            <span>{module.cta}</span>
+                            <ArrowRight size={13} />
+                          </div>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
                 </motion.div>
               </div>
 
