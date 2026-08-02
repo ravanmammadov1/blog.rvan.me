@@ -449,16 +449,16 @@ export default function HomePage() {
                   </Link>
 
                   {/* Secondary CTA — glass */}
-                  <a
-                    href="#work"
+                  <Link
+                    to="/ravan-mammadov"
                     className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-foreground/80 transition-all duration-300 hover:text-foreground mono uppercase glass-sm"
                   >
-                    SELECTED WORK
+                    ABOUT ME
                     <ArrowUpRight size={13} />
-                  </a>
+                  </Link>
                 </motion.div>
 
-                {/* ── Refined Compact Editorial Navigation Panels ── */}
+                {/* ── Minimal Editorial Navigation Panels ── */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -480,7 +480,7 @@ export default function HomePage() {
                         >
                           <div>
                             {/* Inline Icon + Title Header */}
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="flex items-center gap-2">
                               <div className="p-1 rounded-md bg-white/5 border border-white/10 text-foreground/80 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300 flex-shrink-0">
                                 <IconComp size={13} />
                               </div>
@@ -488,11 +488,6 @@ export default function HomePage() {
                                 {module.title}
                               </h3>
                             </div>
-
-                            {/* Description — short max 2 lines */}
-                            <p className="text-[11px] leading-snug text-muted-foreground/80 font-medium line-clamp-2 pl-0.5">
-                              {module.desc}
-                            </p>
                           </div>
 
                           {/* Subtle CTA link */}
