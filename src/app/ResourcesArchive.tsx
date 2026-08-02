@@ -28,17 +28,13 @@ const fadeUp = {
 };
 
 export const CATEGORY_MAP: Record<string, { label: string; icon: string; description: string }> = {
-  all: { label: "All Directory", icon: "⚡", description: "Every practical resource, font, and job in one view" },
+  all: { label: "All Directory", icon: "⚡", description: "Every free font family and creative asset in one view" },
   freeFonts: { label: "Free Fonts Library", icon: "🔤", description: "1,000+ open-source & free commercial font families" },
-  jobs: { label: "Remote Jobs", icon: "💼", description: "100% curated remote design, AI, frontend & marketing jobs" },
   freeDesignAssets: { label: "Free Assets", icon: "🎁", description: "Fonts, icons, mockups, UI kits, templates" },
   freeMockups: { label: "Free Mockups", icon: "📐", description: "High-resolution device & product mockups" },
   freeIcons: { label: "Free Icons", icon: "⭐", description: "SVG icon sets and vector libraries" },
   freeUIKits: { label: "Free UI Kits", icon: "📱", description: "Figma UI kits and design systems" },
-  aiTools: { label: "AI Tools", icon: "🤖", description: "Curated AI design, dev, & productivity utilities" },
-  tools: { label: "Tools", icon: "🛠️", description: "Design, dev, and productivity software" },
   learning: { label: "Learning", icon: "📚", description: "Courses, tutorials, and case studies" },
-  podcasts: { label: "Podcasts", icon: "🎙️", description: "Top design & technology podcasts" },
 };
 
 function ResourceCard({ resource, index, isFeatured = false, onSelectModal }: { resource: NormalizedResource; index: number; isFeatured?: boolean; onSelectModal: (r: NormalizedResource) => void }) {
@@ -296,7 +292,7 @@ export default function ResourcesArchive() {
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
             <p className="eyebrow text-primary mb-4 flex items-center gap-2">
-              <Globe size={13} /> CURATED DIRECTORY · 1,000+ FREE FONTS & REMOTE JOBS
+              <Globe size={13} /> CURATED DIRECTORY · 1,000+ FREE FONTS & CREATIVE ASSETS
             </p>
             <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
               Creative Hub & <br />
@@ -305,7 +301,7 @@ export default function ResourcesArchive() {
               </span>
             </h1>
             <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed">
-              Discover over 1,000+ SIL Open Source and commercial-free font families (Geist, Inter, Satoshi, Space Grotesk), remote jobs, vector icons, mockups, and AI software utilities. Updated daily.
+              Discover over 1,000+ SIL Open Source and commercial-free font families (Geist, Inter, Satoshi, Space Grotesk), vector icons, device mockups, and UI kits. Updated daily.
             </p>
           </motion.div>
         </div>
@@ -341,9 +337,26 @@ export default function ResourcesArchive() {
       {activeCategory === "freeFonts" ? (
         <section className="px-6 py-12 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Interactive Type Tester Controls */}
+            {/* Interactive Type Tester & Font Search Controls */}
             <div className="mb-10 p-6 rounded-2xl border border-white/10 bg-white/5 glass space-y-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Font Search Engine Input */}
+              <div className="relative w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={16} />
+                <input
+                  type="text"
+                  placeholder="Search 1,000+ free font families by name, designer, or category (e.g. Geist, Inter, Satoshi, Serif)..."
+                  value={searchQuery}
+                  onChange={(e) => setParam("q", e.target.value)}
+                  className="w-full rounded-xl border border-white/10 bg-background/90 pl-11 pr-10 py-3.5 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
+                />
+                {searchQuery && (
+                  <button onClick={() => setParam("q", "")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <X size={15} />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2 border-t border-white/5">
                 <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
                   <Type size={16} /> Interactive Font Specimen Controls
                 </div>
@@ -511,7 +524,7 @@ export default function ResourcesArchive() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
                 <input
                   type="text"
-                  placeholder="Search remote jobs, design assets, fonts, AI tools…"
+                  placeholder="Search free fonts, vector assets, mockups, UI kits…"
                   value={searchQuery}
                   onChange={(e) => setParam("q", e.target.value)}
                   className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
