@@ -168,8 +168,7 @@ export default function NewsArchive() {
         <div className="mx-auto max-w-[1600px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-            {NEWS_TABS.map((tab) => {
-              const count = tabCounts[tab.key] || 0;
+            {NEWS_TABS.filter((tab) => tab.key === "all" || (tabCounts[tab.key] || 0) > 0).map((tab) => {
               return (
                 <button
                   key={tab.key}
@@ -182,13 +181,6 @@ export default function NewsArchive() {
                 >
                   <span>{tab.icon}</span>
                   {tab.label}
-                  {count > 0 && (
-                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                      activeTab === tab.key ? "bg-black/20 text-black" : "bg-white/10 text-muted-foreground"
-                    }`}>
-                      {count}
-                    </span>
-                  )}
                 </button>
               );
             })}

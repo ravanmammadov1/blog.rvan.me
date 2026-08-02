@@ -157,8 +157,8 @@ export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [allResources, setAllResources] = useState<NormalizedResource[]>(() => getCachedAllResources());
-  const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(() => getCachedAllResources().length === 0);
+  const [fontCatalog, setFontCatalog] = useState<FontItem[]>(() => STATIC_FONT_CATALOG);
+  const [loading, setLoading] = useState<boolean>(() => allResources.length === 0 && fontCatalog.length === 0);
   const [selectedResourceModal, setSelectedResourceModal] = useState<NormalizedResource | null>(null);
 
   // Interactive Font Specimen controls
@@ -178,19 +178,25 @@ export default function ResourcesArchive() {
       if (data) setSiteSettings(data);
     });
 
-    // Load general resources & live font catalog
-    Promise.all([
-      fetchResources().then((cmsItems) => aggregateAllResources(cmsItems || [])),
-      fetchLiveFontCatalog(),
-    ])
-      .then(([resItems, fontItems]) => {
+    // Non-blocking background revalidation of resources
+    fetchResources()
+      .then((cmsItems) => aggregateAllResources(cmsItems || []))
+      .then((resItems) => {
         if (Array.isArray(resItems) && resItems.length > 0) {
-          setAllResources(resItems || []);
-          setCachedAllResources(resItems || []);
+          setAllResources(resItems);
+          setCachedAllResources(resItems);
         }
-        setFontCatalog(fontItems || []);
       })
-      .catch((err) => console.error("Error loading resources & font catalog:", err))
+      .catch((err) => console.error("Error loading resources:", err));
+
+    // Non-blocking sync of live Google fonts
+    fetchLiveFontCatalog()
+      .then((fontItems) => {
+        if (Array.isArray(fontItems) && fontItems.length > 0) {
+          setFontCatalog(fontItems);
+        }
+      })
+      .catch((err) => console.error("Error syncing live fonts:", err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -240,16 +246,15 @@ export default function ResourcesArchive() {
       const q = deferredSearch.toLowerCase();
       list = list.filter(
         (f) =>
-          f.name.toLowerCase().includes(q) ||
-          f.family.toLowerCase().includes(q) ||
-          f.designer.toLowerCase().includes(q) ||
-          f.foundry.toLowerCase().includes(q) ||
-          f.useCases.some((u) => u.toLowerCase().includes(q))
+          (f.family && f.family.toLowerCase().includes(q)) ||
+          (f.name && f.name.toLowerCase().includes(q)) ||
+          (f.designer && f.designer.toLowerCase().includes(q)) ||
+          (f.foundry && f.foundry.toLowerCase().includes(q))
       );
     }
 
     return list;
-  }, [fontCatalog, fontCategorySubfilter, searchQuery]);
+  }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
 
   const counts: Record<string, number> = useMemo(() => {
     const map: Record<string, number> = { all: allResources.length };
@@ -304,30 +309,24 @@ export default function ResourcesArchive() {
       {/* Category Tabs */}
       <section className="sticky top-20 z-30 px-6 py-4 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">
         <div className="mx-auto max-w-[1600px] flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-          {Object.entries(CATEGORY_MAP).map(([key, config]) => {
-            const count = counts[key] || 0;
-            return (
-              <button
-                key={key}
-                onClick={() => setParam("category", key)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
-                  activeCategory === key
-                    ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)]"
-                    : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                }`}
-              >
-                <span>{config.icon}</span>
-                {config.label}
-                {count > 0 && (
-                  <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                    activeCategory === key ? "bg-black/20 text-black" : "bg-white/10 text-muted-foreground"
-                  }`}>
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {Object.entries(CATEGORY_MAP)
+            .filter(([key]) => key === "all" || (counts[key] || 0) > 0)
+            .map(([key, config]) => {
+              return (
+                <button
+                  key={key}
+                  onClick={() => setParam("category", key)}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
+                    activeCategory === key
+                      ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)]"
+                      : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
+                  }`}
+                >
+                  <span>{config.icon}</span>
+                  {config.label}
+                </button>
+              );
+            })}
         </div>
       </section>
 
