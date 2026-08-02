@@ -71,7 +71,13 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     { label: "CONTACT",   target: "/contact" },
   ];
 
-  const navItems = baseNavItems;
+  // Hide HOME when on the Home page; show HOME only when on other pages
+  const navItems = baseNavItems.filter((item) => {
+    if (item.target === "/") {
+      return !isHomePage;
+    }
+    return true;
+  });
 
   const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
 
@@ -110,7 +116,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-1.5 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex">
+          <nav className="hidden items-center gap-2 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex">
             {navItems.map((item) => {
               const isActive =
                 item.target === "/"
@@ -122,32 +128,18 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.target)}
-                  className={`relative px-3.5 py-1.5 rounded-lg transition-all duration-300 ${
+                  className={`relative px-3 py-1.5 transition-colors duration-300 ${
                     isActive
-                      ? "text-primary font-bold"
-                      : "text-foreground/70 hover:text-foreground"
+                      ? "text-white font-bold"
+                      : "text-foreground/70 hover:text-white"
                   }`}
                 >
-                  {/* Glow effect behind active item */}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-aurora-bg"
-                      className="absolute inset-0 rounded-lg shadow-[0_0_20px_rgba(232,253,82,0.25)]"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(232,253,82,0.18) 0%, rgba(6,182,212,0.12) 100%)",
-                        backdropFilter: "blur(8px)",
-                        border: "1px solid rgba(232,253,82,0.4)",
-                      }}
-                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                    />
-                  )}
-                  {/* Glowing indicator line */}
+                  {/* Clean white underline indicator */}
                   {isActive && (
                     <motion.span
                       layoutId="nav-indicator"
-                      className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-3/4 rounded-full bg-primary shadow-[0_0_8px_rgba(232,253,82,0.8)]"
-                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-white rounded-full"
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
