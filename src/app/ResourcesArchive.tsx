@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useDeferredValue } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -10,7 +10,7 @@ import {
 import { fetchResources, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
-import { aggregateAllResources, NormalizedResource } from "../lib/rssAggregator";
+import { aggregateAllResources, NormalizedResource, getCachedAllResources, setCachedAllResources } from "../lib/rssAggregator";
 import { formatPublicationTimestamp, generateResourceSummary, generateAIJobSummary } from "../lib/contentEngine";
 import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl } from "../lib/fontEngine";
 import SEO from "./components/SEO";
