@@ -458,12 +458,12 @@ export default function HomePage() {
                   </Link>
                 </motion.div>
 
-                {/* ── Minimal Editorial Navigation Panels ── */}
+                {/* ── Premium Editorial Navigation Tiles ── */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 0.9, ease: EASE }}
-                  className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5"
                 >
                   {platformModules.map((module, i) => {
                     const IconComp = module.icon;
@@ -476,25 +476,14 @@ export default function HomePage() {
                       >
                         <Link
                           to={module.link}
-                          className="group py-2.5 px-3.5 sm:py-3 sm:px-4 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.06] hover:shadow-[0_0_18px_rgba(232,253,82,0.08)] transition-all duration-300 flex flex-col justify-between h-full"
+                          className="group p-4 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.06] hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(232,253,82,0.1)] transition-all duration-300 flex items-center gap-3 cursor-pointer"
                         >
-                          <div>
-                            {/* Inline Icon + Title Header */}
-                            <div className="flex items-center gap-2">
-                              <div className="p-1 rounded-md bg-white/5 border border-white/10 text-foreground/80 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300 flex-shrink-0">
-                                <IconComp size={13} />
-                              </div>
-                              <h3 className="text-sm font-extrabold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                                {module.title}
-                              </h3>
-                            </div>
+                          <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-foreground/80 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300 flex-shrink-0">
+                            <IconComp size={16} />
                           </div>
-
-                          {/* Subtle CTA link */}
-                          <div className="mt-2 pt-1 border-t border-white/5 flex items-center gap-1 text-[10px] font-bold tracking-wider text-primary uppercase mono group-hover:translate-x-1 transition-transform">
-                            <span>{module.cta}</span>
-                            <ArrowRight size={10} />
-                          </div>
+                          <h3 className="text-sm sm:text-base font-extrabold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                            {module.title}
+                          </h3>
                         </Link>
                       </motion.div>
                     );
