@@ -12,7 +12,7 @@ import { urlFor } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
 import { aggregateAllResources, NormalizedResource, getCachedAllResources, setCachedAllResources } from "../lib/rssAggregator";
 import { formatPublicationTimestamp, generateResourceSummary, generateAIJobSummary } from "../lib/contentEngine";
-import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl } from "../lib/fontEngine";
+import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl, STATIC_FONT_CATALOG } from "../lib/fontEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
