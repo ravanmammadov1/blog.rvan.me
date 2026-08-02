@@ -19,6 +19,8 @@ import {
   BadgeCheck,
   Globe,
   Mail,
+  MapPin,
+  ExternalLink,
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
@@ -41,6 +43,19 @@ const fadeUp = {
     transition: { duration: 0.9, delay, ease: EASE },
   }),
 };
+
+// SVG Behance Logo Component
+const BehanceIcon = ({ size = 15, className = "" }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-4.726 3-3.105 0-5-2.28-5-5 0-2.887 1.854-5 4.821-5 3.007 0 4.679 2.051 4.679 4.792 0 .343-.031.708-.063.868h-7.371c.134 1.302 1.155 2.116 2.502 2.116 1.13 0 1.944-.45 2.378-1.206h2.78zm-4.793-4.887c-1.12 0-1.897.674-2.072 1.637h4.095c-.097-.932-.871-1.637-2.023-1.637zm-10.933 7.887h-8v-14h8.315c2.99 0 4.685 1.549 4.685 3.738 0 1.523-.811 2.766-2.148 3.328 1.748.513 2.648 1.91 2.648 3.784 0 2.531-1.993 3.15-5.5 3.15zm-4.5-8.5h4.15c1.229 0 2.15-.472 2.15-1.579 0-1.14-.863-1.421-2.15-1.421h-4.15v3zm0 6h4.383c1.385 0 2.417-.468 2.417-1.741 0-1.258-1.032-1.759-2.417-1.759h-4.383v3.5z" />
+  </svg>
+);
 
 // ── Real Work Experience (From Verified CV) ──
 const realExperience = [
@@ -249,7 +264,6 @@ export default function RavanMammadovPage() {
       if (data) setAboutSection(data);
     });
 
-    // Fetch latest 6 Behance / CMS projects for the portfolio grid
     client
       .fetch(
         `
@@ -371,11 +385,12 @@ export default function RavanMammadovPage() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          1. HERO SECTION (Senior Creative Designer)
+          1. HERO SECTION (Senior Creative Designer & Redesigned Profile Card)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
+            {/* Left Hero Column */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
@@ -410,13 +425,13 @@ export default function RavanMammadovPage() {
                 With a background in marketing and multi-industry experience across retail, luxury tech, automotive, and digital commerce, I build cohesive visual systems designed to elevate brand perception and drive measurable engagement.
               </p>
 
-              {/* Contact Button & Direct Mailto */}
+              {/* Contact Button & View Behance Button */}
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <a
                   href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
                   className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
-                  GET IN TOUCH
+                  Get in Touch
                   <ArrowUpRight
                     size={16}
                     className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -424,17 +439,19 @@ export default function RavanMammadovPage() {
                 </a>
 
                 <a
-                  href="https://www.linkedin.com/in/ravanmammadov1/"
+                  href="https://www.behance.net/mammadovravan"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-4 text-xs font-bold tracking-widest text-foreground hover:border-primary/50 hover:bg-white/10 transition-colors mono uppercase"
+                  className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-xs font-bold tracking-widest text-foreground hover:border-primary/50 hover:bg-white/10 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
                 >
-                  LINKEDIN <ArrowUpRight size={14} />
+                  <BehanceIcon size={15} />
+                  View Behance
+                  <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 opacity-60" />
                 </a>
               </div>
             </motion.div>
 
-            {/* Profile Card & Believable Professional Highlights */}
+            {/* ── REDESIGNED LUXURIOUS PROFILE CARD (Right Hero Column) ── */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
@@ -442,60 +459,107 @@ export default function RavanMammadovPage() {
               custom={0.2}
               className="lg:col-span-5"
             >
-              <div className="p-8 aurora-card shadow-2xl relative">
-                <div className="flex items-center gap-4 border-b border-white/10 pb-6 relative z-10">
-                  <div className="h-16 w-16 overflow-hidden rounded-2xl border-2 border-primary/50 bg-black flex-shrink-0 shadow-[0_0_15px_rgba(232,253,82,0.2)]">
-                    <picture>
-                      <source
-                        srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
-                        type="image/webp"
-                      />
-                      <img
-                        src={
-                          aboutSection?.profilePhoto
-                            ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200
-                            : RavanPortrait1200
-                        }
-                        alt="Ravan Mammadov"
-                        className="h-full w-full object-cover object-top"
-                      />
-                    </picture>
+              <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-white/15 bg-white/5 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_25px_70px_rgba(232,253,82,0.12)] transition-all duration-500 overflow-hidden">
+                
+                {/* Glowing subtle top accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-primary to-purple-500 opacity-80 group-hover/profile:opacity-100 transition-opacity duration-500" />
+
+                {/* 1. Photo (45% Larger) + Spaced Typography */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-white/10 pb-8 relative z-10">
+                  {/* Portrait photo - 45% larger with subtle border & soft glow */}
+                  <div className="relative group/avatar flex-shrink-0">
+                    <div className="h-24 w-24 md:h-28 md:w-28 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1 shadow-[0_0_25px_rgba(232,253,82,0.22)] group-hover/profile:border-primary group-hover/profile:shadow-[0_0_35px_rgba(232,253,82,0.35)] transition-all duration-500">
+                      <picture>
+                        <source
+                          srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
+                          type="image/webp"
+                        />
+                        <img
+                          src={
+                            aboutSection?.profilePhoto
+                              ? urlFor(aboutSection.profilePhoto)?.url() || RavanPortrait1200
+                              : RavanPortrait1200
+                          }
+                          alt="Ravan Mammadov"
+                          className="h-full w-full object-cover object-top rounded-2xl group-hover/profile:scale-102 transition-transform duration-500"
+                        />
+                      </picture>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground">Ravan Mammadov</h3>
-                    <p className="text-xs text-muted-foreground mono tracking-wider uppercase">
+
+                  {/* Typography Hierarchy & Spacing */}
+                  <div className="space-y-1.5">
+                    <h3 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight group-hover/profile:text-primary transition-colors duration-300">
+                      Ravan Mammadov
+                    </h3>
+                    <p className="text-xs md:text-sm font-bold text-primary tracking-widest uppercase mono">
                       Senior Creative Designer
                     </p>
-                    <p className="text-[11px] text-primary mono mt-1">Baku, Azerbaijan</p>
+                    <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
+                      <MapPin size={13} className="text-primary/70" /> Baku, Azerbaijan
+                    </p>
                   </div>
                 </div>
 
-                {/* ── Believable Professional Highlights (CV Aligned) ── */}
-                <div className="grid grid-cols-2 gap-4 pt-6 relative z-10">
-                  <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">4+ Years</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
-                      Professional Experience
+                {/* 2. Four Visually Stronger Statistics Cards */}
+                <div className="grid grid-cols-2 gap-4 py-8 relative z-10 border-b border-white/10">
+                  <div className="p-5 aurora-card rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md group/stat hover:border-primary/40 hover:bg-white/10 transition-all duration-300">
+                    <div className="text-3xl md:text-4xl font-extrabold text-primary mono tracking-tight group-hover/stat:scale-105 transition-transform duration-300">
+                      4+
+                    </div>
+                    <p className="text-[11px] font-bold text-foreground uppercase mono tracking-wider mt-1.5">
+                      Years Experience
                     </p>
                   </div>
-                  <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">15+ Brands</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
-                      Worked & Collaborated
+
+                  <div className="p-5 aurora-card rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md group/stat hover:border-primary/40 hover:bg-white/10 transition-all duration-300">
+                    <div className="text-3xl md:text-4xl font-extrabold text-primary mono tracking-tight group-hover/stat:scale-105 transition-transform duration-300">
+                      15+
+                    </div>
+                    <p className="text-[11px] font-bold text-foreground uppercase mono tracking-wider mt-1.5">
+                      Brands Worked With
                     </p>
                   </div>
-                  <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">Multi-Industry</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
-                      Retail, Tech, Auto, Luxury
+
+                  <div className="p-5 aurora-card rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md group/stat hover:border-primary/40 hover:bg-white/10 transition-all duration-300">
+                    <div className="text-xl md:text-2xl font-extrabold text-primary mono tracking-tight group-hover/stat:scale-105 transition-transform duration-300">
+                      Multi-Industry
+                    </div>
+                    <p className="text-[10px] font-semibold text-muted-foreground tracking-normal mt-1.5 leading-snug">
+                      Automotive • Retail • Luxury • Tech
                     </p>
                   </div>
-                  <div className="p-4 aurora-card transition-colors duration-300">
-                    <span className="text-3xl font-bold text-primary mono">Branding</span>
-                    <p className="text-[11px] font-bold text-muted-foreground mono uppercase mt-1">
-                      Motion • Strategy • Marketing
+
+                  <div className="p-5 aurora-card rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md group/stat hover:border-primary/40 hover:bg-white/10 transition-all duration-300">
+                    <div className="text-xl md:text-2xl font-extrabold text-primary mono tracking-tight group-hover/stat:scale-105 transition-transform duration-300">
+                      Branding
+                    </div>
+                    <p className="text-[10px] font-semibold text-muted-foreground tracking-normal mt-1.5 leading-snug">
+                      Motion • Marketing • Creative Strategy
                     </p>
                   </div>
+                </div>
+
+                {/* 3. Action Buttons Inside Profile Card: Get in Touch & View Behance */}
+                <div className="pt-8 flex flex-col sm:flex-row items-center gap-3 relative z-10">
+                  <a
+                    href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
+                    className="w-full sm:w-1/2 group/btn flex items-center justify-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-5 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                  >
+                    Get in Touch
+                    <ArrowUpRight size={14} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                  </a>
+
+                  <a
+                    href="https://www.behance.net/mammadovravan"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-1/2 group/btn flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3.5 text-xs font-bold tracking-[.15em] text-foreground hover:border-primary/50 hover:bg-white/10 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+                  >
+                    <BehanceIcon size={14} />
+                    View Behance
+                    <ArrowUpRight size={12} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 opacity-60" />
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -530,6 +594,7 @@ export default function RavanMammadovPage() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2.5 rounded-full border border-primary/50 bg-primary/10 px-6 py-3 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
                 >
+                  <BehanceIcon size={14} />
                   VIEW FULL BEHANCE
                   <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
