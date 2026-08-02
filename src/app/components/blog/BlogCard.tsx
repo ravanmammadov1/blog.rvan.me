@@ -57,18 +57,45 @@ export default function BlogCard({
         className="p-7 min-h-[360px] flex flex-col justify-between"
       >
         <div>
-          {coverUrl && (
-            <div className="mb-6 h-52 w-full overflow-hidden rounded-xl border border-white/10 relative">
-              <img
-                src={coverUrl}
-                alt={post.title || "Blog cover"}
-                loading="lazy"
-                className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+        <div className="mb-6 h-48 w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={post.title || "Blog cover"}
+              loading="lazy"
+              className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+            />
+          ) : (
+            <div className="h-full w-full relative overflow-hidden bg-gradient-to-br from-neutral-950 via-neutral-900 to-black p-5 flex flex-col justify-between border-b border-white/5">
+              <div
+                className="absolute inset-0 opacity-25 pointer-events-none"
+                style={{
+                  backgroundImage:
+                    post.category === "Design"
+                      ? "radial-gradient(circle at 80% 20%, rgba(232,253,82,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(16,185,129,0.25) 0%, transparent 65%)"
+                      : post.category === "AI"
+                      ? "radial-gradient(circle at 80% 20%, rgba(6,182,212,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(147,51,234,0.25) 0%, transparent 65%)"
+                      : "radial-gradient(circle at 80% 20%, rgba(255,118,75,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(244,63,94,0.25) 0%, transparent 65%)",
+                }}
               />
-              {/* Dynamic visual overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
+              <div className="flex items-center justify-between z-10">
+                <span className="text-[10px] font-extrabold tracking-[.2em] mono uppercase px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white/80">
+                  {post.category || "GUIDE"}
+                </span>
+                <span className="text-[10px] font-bold mono text-white/40 uppercase">
+                  EDITORIAL
+                </span>
+              </div>
+              <div className="z-10 mt-auto">
+                <p className="text-sm font-bold tracking-tight text-white/90 line-clamp-2 leading-snug">
+                  {post.title}
+                </p>
+              </div>
             </div>
           )}
+          {/* Dynamic visual overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
+        </div>
 
           <div className="mb-5 flex items-center justify-between">
             <span
