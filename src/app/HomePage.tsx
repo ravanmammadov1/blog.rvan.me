@@ -153,39 +153,35 @@ const services = [
 const platformModules = [
   {
     id: "resources",
-    badge: "CARD 01",
     title: "Design Resources",
-    desc: "Curated templates, fonts, mockups, UI kits and creative assets for modern designers.",
-    cta: "Explore Collection",
+    desc: "Curated templates, fonts, mockups, UI kits and creative assets.",
+    cta: "Explore Resources",
     link: "/resources",
     icon: Layers,
   },
   {
-    id: "ai",
-    badge: "CARD 02",
-    title: "AI Discoveries",
-    desc: "Explore powerful AI tools, prompt engineering, creative workflows and automation.",
-    cta: "Browse AI Tools",
-    link: "/tools",
-    icon: Sparkles,
-  },
-  {
     id: "news",
-    badge: "CARD 03",
     title: "Industry News",
-    desc: "Stay updated with branding, design, technology and creative industry insights.",
-    cta: "Read Latest Stories",
+    desc: "Latest branding, technology, automotive and creative industry news.",
+    cta: "Read News",
     link: "/news",
     icon: Newspaper,
   },
   {
-    id: "learning",
-    badge: "CARD 04",
-    title: "Learning Hub",
-    desc: "Learn through tutorials, case studies, software guides and curated educational content.",
-    cta: "Start Learning",
+    id: "blog",
+    title: "Blog",
+    desc: "Articles, tutorials, case studies and creative insights.",
+    cta: "Read Blog",
     link: "/blog",
     icon: BookOpen,
+  },
+  {
+    id: "tools",
+    title: "Tools",
+    desc: "Discover AI tools, software recommendations and productivity resources.",
+    cta: "Explore Tools",
+    link: "/tools",
+    icon: Sparkles,
   },
 ];
 
@@ -462,12 +458,12 @@ export default function HomePage() {
                   </a>
                 </motion.div>
 
-                {/* ── Four Core Area Editorial Navigation Modules ── */}
+                {/* ── Refined Editorial Navigation Panels ── */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 0.9, ease: EASE }}
-                  className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-5"
                 >
                   {platformModules.map((module, i) => {
                     const IconComp = module.icon;
@@ -480,34 +476,29 @@ export default function HomePage() {
                       >
                         <Link
                           to={module.link}
-                          className="group p-6 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl hover:border-primary/40 hover:bg-white/[0.07] hover:shadow-[0_0_30px_rgba(232,253,82,0.12)] transition-all duration-300 flex flex-col justify-between h-full"
+                          className="group p-4.5 sm:p-5 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.06] hover:shadow-[0_0_20px_rgba(232,253,82,0.08)] transition-all duration-300 flex flex-col justify-between h-full"
                         >
                           <div>
-                            {/* Card badge & monochrome icon */}
-                            <div className="flex items-center justify-between gap-2 mb-4">
-                              <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-foreground/90 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300">
-                                <IconComp size={18} />
-                              </div>
-                              <span className="text-[10px] font-bold tracking-[.2em] text-muted-foreground/70 uppercase mono">
-                                {module.badge}
-                              </span>
+                            {/* Monochrome compact icon */}
+                            <div className="mb-3 p-1.5 w-fit rounded-lg bg-white/5 border border-white/10 text-foreground/80 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300">
+                              <IconComp size={14} />
                             </div>
 
-                            {/* Title */}
-                            <h3 className="text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                            {/* Title — increased font weight */}
+                            <h3 className="text-base font-extrabold tracking-tight text-foreground group-hover:text-primary transition-colors">
                               {module.title}
                             </h3>
 
-                            {/* Description */}
-                            <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground/80 font-medium">
+                            {/* Description — short max 2 lines */}
+                            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground/80 font-medium line-clamp-2">
                               {module.desc}
                             </p>
                           </div>
 
-                          {/* Editorial CTA */}
-                          <div className="mt-6 pt-3 border-t border-white/5 flex items-center gap-1 text-[11px] font-bold tracking-widest text-primary uppercase mono group-hover:translate-x-1 transition-transform">
+                          {/* Subtle CTA link */}
+                          <div className="mt-4 pt-2.5 border-t border-white/5 flex items-center gap-1 text-[10.5px] font-bold tracking-wider text-primary uppercase mono group-hover:translate-x-1 transition-transform">
                             <span>{module.cta}</span>
-                            <ArrowRight size={13} />
+                            <ArrowRight size={11} />
                           </div>
                         </Link>
                       </motion.div>
