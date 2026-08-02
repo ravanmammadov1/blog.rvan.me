@@ -71,18 +71,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     { label: "CONTACT",   target: "/contact" },
   ];
 
-  // Dynamic Navigation Rule:
-  // 1. The current page should NOT appear in the navigation.
-  // 2. Home should always be the first item if the user is NOT on the Home page.
-  const navItems = baseNavItems.filter((item) => {
-    if (item.target === "/") {
-      // Hide HOME if we are on the Home page
-      return !isHomePage;
-    }
-    // For other pages, hide if the current pathname matches or starts with it (e.g. /blog/post-1)
-    const isCurrentPage = location.pathname === item.target || location.pathname.startsWith(item.target + "/");
-    return !isCurrentPage;
-  });
+  const navItems = baseNavItems;
 
   const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
 
@@ -119,7 +108,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               MAMMADOV
             </span>
           </button>
- 
+
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-1.5 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex">
             {navItems.map((item) => {
@@ -128,36 +117,36 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                   ? location.pathname === "/"
                   : location.pathname === item.target ||
                     location.pathname.startsWith(item.target + "/");
- 
+
               return (
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.target)}
-                  className={`relative px-3 py-1.5 rounded-lg transition-all duration-300 ${
+                  className={`relative px-3.5 py-1.5 rounded-lg transition-all duration-300 ${
                     isActive
-                      ? "text-primary"
-                      : "text-foreground/60 hover:text-foreground"
+                      ? "text-primary font-bold"
+                      : "text-foreground/70 hover:text-foreground"
                   }`}
                 >
-                   {/* Aurora glow behind active item */}
+                  {/* Glow effect behind active item */}
                   {isActive && (
                     <motion.span
                       layoutId="nav-aurora-bg"
-                      className="absolute inset-0 rounded-lg"
+                      className="absolute inset-0 rounded-lg shadow-[0_0_20px_rgba(232,253,82,0.25)]"
                       style={{
                         background:
-                          "radial-gradient(ellipse at 50% 50%, rgba(232,253,82,0.1) 0%, rgba(59,130,246,0.06) 50%, transparent 80%)",
-                        backdropFilter: "blur(6px)",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                          "linear-gradient(135deg, rgba(232,253,82,0.18) 0%, rgba(6,182,212,0.12) 100%)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(232,253,82,0.4)",
                       }}
                       transition={{ type: "spring", stiffness: 350, damping: 25 }}
                     />
                   )}
-                  {/* Animated underline indicator */}
+                  {/* Glowing indicator line */}
                   {isActive && (
                     <motion.span
                       layoutId="nav-indicator"
-                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[1px] w-1/2 rounded-full bg-primary"
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-3/4 rounded-full bg-primary shadow-[0_0_8px_rgba(232,253,82,0.8)]"
                       transition={{ type: "spring", stiffness: 350, damping: 25 }}
                     />
                   )}
