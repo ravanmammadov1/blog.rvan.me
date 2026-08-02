@@ -156,9 +156,9 @@ function ResourceCard({ resource, index, isFeatured = false, onSelectModal }: { 
 export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [allResources, setAllResources] = useState<NormalizedResource[]>([]);
+  const [allResources, setAllResources] = useState<NormalizedResource[]>(() => getCachedAllResources());
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(() => getCachedAllResources().length === 0);
   const [selectedResourceModal, setSelectedResourceModal] = useState<NormalizedResource | null>(null);
 
   // Interactive Font Specimen controls
@@ -169,6 +169,7 @@ export default function ResourcesArchive() {
 
   const activeCategory = searchParams.get("category") || "all";
   const searchQuery = searchParams.get("q") || "";
+  const deferredSearch = useDeferredValue(searchQuery);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -183,7 +184,10 @@ export default function ResourcesArchive() {
       fetchLiveFontCatalog(),
     ])
       .then(([resItems, fontItems]) => {
-        setAllResources(resItems || []);
+        if (Array.isArray(resItems) && resItems.length > 0) {
+          setAllResources(resItems || []);
+          setCachedAllResources(resItems || []);
+        }
         setFontCatalog(fontItems || []);
       })
       .catch((err) => console.error("Error loading resources & font catalog:", err))
@@ -207,8 +211,8 @@ export default function ResourcesArchive() {
       list = list.filter((r) => r.category === activeCategory);
     }
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.toLowerCase();
       list = list.filter(
         (r) =>
           r.title.toLowerCase().includes(q) ||
@@ -219,7 +223,7 @@ export default function ResourcesArchive() {
     }
 
     return list;
-  }, [allResources, activeCategory, searchQuery]);
+  }, [allResources, activeCategory, deferredSearch]);
 
   const filteredFonts = useMemo(() => {
     let list = fontCatalog;
@@ -232,8 +236,8 @@ export default function ResourcesArchive() {
       }
     }
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.toLowerCase();
       list = list.filter(
         (f) =>
           f.name.toLowerCase().includes(q) ||

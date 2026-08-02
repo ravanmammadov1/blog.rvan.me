@@ -795,3 +795,60 @@ function mapResourceTypeToCategory(resourceType: string): string {
   };
   return map[resourceType] || "freeDesignAssets";
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STALE-WHILE-REVALIDATE CACHING ENGINE FOR INSTANT PERCEIVED PERFORMANCE
+// ─────────────────────────────────────────────────────────────────────────────
+
+const NEWS_CACHE_KEY = "rvan_news_cache_v2";
+const RESOURCE_CACHE_KEY = "rvan_resources_cache_v2";
+
+export function getCachedNewsFeeds(): NormalizedResource[] {
+  try {
+    const cached = localStorage.getItem(NEWS_CACHE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // Ignore storage issues
+  }
+  return CURATED_NEWS_CATALOG;
+}
+
+export function setCachedNewsFeeds(items: NormalizedResource[]) {
+  try {
+    if (Array.isArray(items) && items.length > 0) {
+      localStorage.setItem(NEWS_CACHE_KEY, JSON.stringify(items.slice(0, 150)));
+    }
+  } catch (e) {
+    // Storage quota fallback
+  }
+}
+
+export function getCachedAllResources(): NormalizedResource[] {
+  try {
+    const cached = localStorage.getItem(RESOURCE_CACHE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    // Ignore storage issues
+  }
+  return CURATED_RESOURCE_CATALOG;
+}
+
+export function setCachedAllResources(items: NormalizedResource[]) {
+  try {
+    if (Array.isArray(items) && items.length > 0) {
+      localStorage.setItem(RESOURCE_CACHE_KEY, JSON.stringify(items.slice(0, 150)));
+    }
+  } catch (e) {
+    // Storage quota fallback
+  }
+}

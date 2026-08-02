@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useDeferredValue } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings, NewsItem } from "../types/cms";
-import { aggregateNewsFeeds, NormalizedResource } from "../lib/rssAggregator";
+import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds } from "../lib/rssAggregator";
 import { generateNewsSummary } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -61,10 +61,11 @@ export const SOURCE_COLORS: Record<string, string> = {
 
 export default function NewsArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [newsFeeds, setNewsFeeds] = useState<NormalizedResource[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [newsFeeds, setNewsFeeds] = useState<NormalizedResource[]>(() => getCachedNewsFeeds());
+  const [loading, setLoading] = useState<boolean>(() => newsFeeds.length === 0);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const deferredSearch = useDeferredValue(searchQuery);
   const [selectedNewsModal, setSelectedNewsModal] = useState<NormalizedResource | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -72,15 +73,17 @@ export default function NewsArchive() {
     window.scrollTo(0, 0);
     fetchSiteSettings().then((data) => { if (data) setSiteSettings(data); });
 
-    // Load Sanity CMS news & RSS feeds & Curated baseline into single unified stream
+    // Non-blocking background revalidation of Sanity CMS news & RSS feeds
     fetchNews()
       .then((cmsNews) => aggregateNewsFeeds(cmsNews || []))
       .then((items) => {
-        setNewsFeeds(items || []);
+        if (Array.isArray(items) && items.length > 0) {
+          setNewsFeeds(items);
+          setCachedNewsFeeds(items);
+        }
       })
       .catch((err) => {
         console.error("Error fetching news feeds:", err);
-        aggregateNewsFeeds([]).then(setNewsFeeds);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -96,8 +99,8 @@ export default function NewsArchive() {
     if (activeTab !== "all") {
       result = result.filter((r) => r.category === activeTab);
     }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.toLowerCase();
       result = result.filter(
         (r) =>
           r.title.toLowerCase().includes(q) ||
@@ -106,7 +109,7 @@ export default function NewsArchive() {
       );
     }
     return result;
-  }, [newsFeeds, activeTab, searchQuery]);
+  }, [newsFeeds, activeTab, deferredSearch]);
 
   const tabCounts: Record<string, number> = useMemo(() => ({
     all: newsFeeds.length,
