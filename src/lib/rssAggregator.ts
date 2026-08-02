@@ -1,4 +1,4 @@
-import { client } from "./sanityClient";
+import { client, urlFor } from "./sanityClient";
 import { parsePubDate, formatPublicationTimestamp, recordFeedHealth, generateAIJobSummary, AIJobSummary } from "./contentEngine";
 
 export interface RssFeedConfig {
@@ -31,6 +31,7 @@ export interface NormalizedResource {
   isFree: boolean;
   difficulty?: string;
   logoUrl?: string;
+  imageUrl?: string;
   isRss: boolean;
   analyticsId?: string;
   isTrending?: boolean;
@@ -677,6 +678,7 @@ export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<Normalize
       country: "Global",
       workType: "na",
       isFree: true,
+      imageUrl: item.coverImage ? urlFor(item.coverImage)?.url() : item.imageUrl || item.logoUrl,
       isRss: false,
       analyticsId: item._id,
       isTrending: true,
