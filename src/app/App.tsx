@@ -32,7 +32,7 @@ function AppContent() {
   return (
     <>
       <GlobalNoiseBackdrop />
-      <Suspense fallback={<div />}> 
+      <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/work" element={<Navigate to="/ravan-mammadov#selected-work" replace />} />

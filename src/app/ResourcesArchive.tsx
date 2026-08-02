@@ -211,20 +211,21 @@ export default function ResourcesArchive() {
   };
 
   const filteredResources = useMemo(() => {
-    let list = allResources;
+    let list = allResources || [];
 
     if (activeCategory !== "all") {
-      list = list.filter((r) => r.category === activeCategory);
+      list = list.filter((r) => r && r.category === activeCategory);
     }
 
     if (deferredSearch.trim()) {
       const q = deferredSearch.toLowerCase();
       list = list.filter(
         (r) =>
-          r.title.toLowerCase().includes(q) ||
-          r.description.toLowerCase().includes(q) ||
-          r.sourceName.toLowerCase().includes(q) ||
-          (r.companyName && r.companyName.toLowerCase().includes(q))
+          r &&
+          ((r.title && r.title.toLowerCase().includes(q)) ||
+            (r.description && r.description.toLowerCase().includes(q)) ||
+            (r.sourceName && r.sourceName.toLowerCase().includes(q)) ||
+            (r.companyName && r.companyName.toLowerCase().includes(q)))
       );
     }
 
@@ -232,13 +233,13 @@ export default function ResourcesArchive() {
   }, [allResources, activeCategory, deferredSearch]);
 
   const filteredFonts = useMemo(() => {
-    let list = fontCatalog;
+    let list = fontCatalog || [];
 
     if (fontCategorySubfilter !== "all") {
       if (fontCategorySubfilter === "Variable") {
-        list = list.filter((f) => f.isVariable);
+        list = list.filter((f) => f && f.isVariable);
       } else {
-        list = list.filter((f) => f.category === fontCategorySubfilter);
+        list = list.filter((f) => f && f.category === fontCategorySubfilter);
       }
     }
 
@@ -246,10 +247,12 @@ export default function ResourcesArchive() {
       const q = deferredSearch.toLowerCase();
       list = list.filter(
         (f) =>
-          (f.family && f.family.toLowerCase().includes(q)) ||
-          (f.name && f.name.toLowerCase().includes(q)) ||
-          (f.designer && f.designer.toLowerCase().includes(q)) ||
-          (f.foundry && f.foundry.toLowerCase().includes(q))
+          f &&
+          ((f.family && f.family.toLowerCase().includes(q)) ||
+            (f.name && f.name.toLowerCase().includes(q)) ||
+            (f.designer && f.designer.toLowerCase().includes(q)) ||
+            (f.foundry && f.foundry.toLowerCase().includes(q)) ||
+            (Array.isArray(f.useCases) && f.useCases.some((u) => u && u.toLowerCase().includes(q))))
       );
     }
 
@@ -257,11 +260,13 @@ export default function ResourcesArchive() {
   }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
 
   const counts: Record<string, number> = useMemo(() => {
-    const map: Record<string, number> = { all: allResources.length };
-    allResources.forEach((r) => {
-      map[r.category] = (map[r.category] || 0) + 1;
+    const map: Record<string, number> = { all: (allResources || []).length };
+    (allResources || []).forEach((r) => {
+      if (r && r.category) {
+        map[r.category] = (map[r.category] || 0) + 1;
+      }
     });
-    map["freeFonts"] = fontCatalog.length;
+    map["freeFonts"] = (fontCatalog || []).length;
     return map;
   }, [allResources, fontCatalog]);
 
@@ -453,7 +458,7 @@ export default function ResourcesArchive() {
 
                         {/* Use cases & License */}
                         <div className="flex flex-wrap items-center gap-1.5 mb-4">
-                          {font.useCases.map((uc) => (
+                          {(font.useCases || []).map((uc) => (
                             <span key={uc} className="text-[9px] font-semibold text-muted-foreground/80 border border-white/10 bg-white/5 rounded-full px-2.5 py-0.5">
                               {uc}
                             </span>
