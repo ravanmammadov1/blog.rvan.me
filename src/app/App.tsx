@@ -20,6 +20,8 @@ const ResourcesArchive = lazy(() => import("./ResourcesArchive"));
 const ResourceDetail = lazy(() => import("./ResourceDetail"));
 const WorkArchive = lazy(() => import("./WorkArchive"));
 const ProjectDetail = lazy(() => import("./ProjectDetail"));
+const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
+const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
@@ -52,6 +54,9 @@ function AppContent() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/resources" element={<ResourcesArchive />} />
           <Route path="/resources/:slug" element={<ResourceDetail />} />
+          <Route path="/ai-tools" element={<AiToolArchivePage />} />
+          <Route path="/opportunities" element={<OpportunityArchivePage />} />
+
 
           <Route path="*" element={<NotFound />} />
         </Routes>

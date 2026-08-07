@@ -47,6 +47,8 @@ const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const WorkSection = lazy(() => import("./components/home/WorkSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
 const AmbientStars = lazy(() => import("./components/home/AmbientStars"));
+const KnowledgeHubSection = lazy(() => import("./components/home/KnowledgeHubSection").then(m => ({ default: m.KnowledgeHubSection })));
+
 
 
 // Modular Section Enable/Disable Toggles
@@ -858,8 +860,14 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* ── Daily Curated Knowledge & Opportunities Feed ── */}
+      <Suspense fallback={<div className="h-96" />}>
+        <KnowledgeHubSection />
+      </Suspense>
+
       {/* ── 6. Selected Work ── */}
       {CONFIG_SHOW_WORK && (
+
         <section id="work" className="px-6 py-28 md:px-10 md:py-40 border-t border-border">
           <div className="mx-auto max-w-[1600px]">
             <motion.div
