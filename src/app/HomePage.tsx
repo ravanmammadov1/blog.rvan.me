@@ -209,7 +209,7 @@ export default function HomePage() {
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
   const [loadHeroParticles, setLoadHeroParticles] = useState(false);
 
-  // Mouse tracking for Hero particles
+  // Mouse & touch tracking for Hero particles
   const mouseRef = useRef({ x: -99999, y: -99999 });
 
   const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -221,6 +221,20 @@ export default function HomePage() {
   }, []);
 
   const handleHeroMouseLeave = useCallback(() => {
+    mouseRef.current = { x: -99999, y: -99999 };
+  }, []);
+
+  const handleHeroTouchMove = useCallback((e: React.TouchEvent<HTMLElement>) => {
+    if (e.touches.length > 0) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      mouseRef.current = {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      };
+    }
+  }, []);
+
+  const handleHeroTouchEnd = useCallback(() => {
     mouseRef.current = { x: -99999, y: -99999 };
   }, []);
 
@@ -386,6 +400,8 @@ export default function HomePage() {
           id="top"
           onMouseMove={handleHeroMouseMove}
           onMouseLeave={handleHeroMouseLeave}
+          onTouchMove={handleHeroTouchMove}
+          onTouchEnd={handleHeroTouchEnd}
           className="relative isolate min-h-screen overflow-hidden flex items-center"
           style={{ paddingTop: "5rem" }}
         >
@@ -411,13 +427,13 @@ export default function HomePage() {
 
 
           {/* ══ 3. Original Hero Content Grid ══ */}
-          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 py-24 lg:py-0">
-            <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-8 min-h-[calc(100vh-5rem)]">
+          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-6 md:px-10 py-16 sm:py-20 lg:py-0">
+            <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8 min-h-[calc(100vh-5rem)]">
 
               {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
 
-                <p className="mb-5 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
+                <p className="mb-4 sm:mb-5 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
                   Ravan Mammadov · Senior Creative Designer · Baku, Azerbaijan
                 </p>
 
@@ -426,7 +442,7 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 14, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
-                  className="mb-9 inline-flex w-fit items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge"
+                  className="mb-6 sm:mb-8 md:mb-9 inline-flex w-fit items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-primary badge-pulse-dot" />
                   {availabilityStatus}
@@ -442,7 +458,7 @@ export default function HomePage() {
                       style={{ marginRight: "0.16em" }}
                     >
                       <motion.span
-                        className={`inline-block text-[13vw] font-bold leading-[0.86] tracking-[-0.07em] sm:text-[10vw] lg:text-[7.2vw] xl:text-[6.2vw] ${word.includes('MOVE') ? 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 aurora-text-animate' : 'text-foreground'}`}
+                        className={`inline-block text-[11vw] font-bold leading-[0.88] tracking-[-0.07em] sm:text-[8.5vw] md:text-[7vw] lg:text-[7.2vw] xl:text-[6.2vw] ${word.includes('MOVE') ? 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 aurora-text-animate' : 'text-foreground'}`}
                         initial={{ y: "112%" }}
                         animate={{ y: "0%" }}
                         transition={{ duration: 1.05, delay: 0.15 + i * 0.1, ease: EASE }}
@@ -458,7 +474,7 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.9, delay: 0.6, ease: EASE }}
-                  className="mt-8 max-w-[500px] text-[15px] leading-[1.75] text-muted-foreground font-medium lg:text-[15.5px]"
+                  className="mt-6 sm:mt-8 max-w-[500px] text-sm sm:text-base md:text-[15.5px] leading-[1.75] text-muted-foreground font-medium"
                 >
                   {heroSubtitle}
                 </motion.p>
@@ -468,12 +484,12 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.76, ease: EASE }}
-                  className="mt-10 flex flex-wrap items-center gap-3"
+                  className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
                 >
                   {/* Primary CTA */}
                   <Link
                     to="/resources"
-                    className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(216,255,68,0.30)] mono uppercase"
+                    className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-black transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(216,255,68,0.30)] mono uppercase text-center"
                   >
                     EXPLORE DIRECTORY
                     <ArrowDownRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
@@ -482,11 +498,23 @@ export default function HomePage() {
                   {/* Secondary CTA — glass */}
                   <Link
                     to="/ravan-mammadov"
-                    className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-foreground/80 transition-all duration-300 hover:text-foreground mono uppercase glass-sm"
+                    className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-foreground/80 transition-all duration-300 hover:text-foreground mono uppercase glass-sm text-center"
                   >
                     ABOUT ME
                     <ArrowUpRight size={13} />
                   </Link>
+                </motion.div>
+
+                {/* ── MOBILE & TABLET LOGO ── */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.85, ease: EASE }}
+                  className="block lg:hidden my-8 sm:my-10 w-full max-w-[260px] sm:max-w-[320px] mx-auto"
+                >
+                  <Suspense fallback={<div className="h-44" aria-hidden="true" />}>
+                    <HeroPortrait />
+                  </Suspense>
                 </motion.div>
 
                 {/* ── Premium Editorial Navigation Tiles ── */}
@@ -494,7 +522,7 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 0.9, ease: EASE }}
-                  className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5"
+                  className="mt-2 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5"
                 >
                   {platformModules.map((module, i) => {
                     const IconComp = module.icon;
@@ -522,12 +550,12 @@ export default function HomePage() {
                 </motion.div>
               </div>
 
-              {/* Right — SVG logo focal point */}
+              {/* Right column — DESKTOP LOGO */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.85, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-                className="flex items-center justify-center lg:col-span-6 xl:col-span-5 lg:h-[calc(100vh-5rem)] lg:max-h-[820px]"
+                className="hidden lg:flex items-center justify-center lg:col-span-6 xl:col-span-5 lg:h-[calc(100vh-5rem)] lg:max-h-[820px]"
               >
                 <Suspense fallback={<div style={{ height: 400 }} aria-hidden="true" />}>
                   <HeroPortrait />
