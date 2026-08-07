@@ -30,7 +30,7 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -188,9 +188,11 @@ export default function NewsArchive() {
 
           {/* Search Input */}
           <div className="relative w-full md:w-80">
+            <label htmlFor="news-search" className="sr-only">Search news and articles</label>
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
             <input
-              type="text"
+              id="news-search"
+              type="search"
               placeholder="Search news & articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -200,6 +202,7 @@ export default function NewsArchive() {
               <button
                 onClick={() => setSearchQuery("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Clear news search"
               >
                 <X size={14} />
               </button>
@@ -265,8 +268,11 @@ export default function NewsArchive() {
                           <img
                             src={item.imageUrl || item.logoUrl}
                             alt={item.title}
+                            width={1200}
+                            height={800}
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
                             loading="lazy"
+                            decoding="async"
                           />
                         ) : (
                           <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex items-center justify-center overflow-hidden">

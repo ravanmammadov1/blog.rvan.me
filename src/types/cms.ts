@@ -189,7 +189,7 @@ export interface ResourceCategory {
 export interface ResourceItem {
   _id: string;
   title: string;
-  slug?: string;
+  slug?: string | { current?: string };
   resourceType:
     | "studentPack"
     | "aiCredits"
@@ -239,4 +239,3 @@ export interface ResourceItem {
     noIndex?: boolean;
   };
 }
-

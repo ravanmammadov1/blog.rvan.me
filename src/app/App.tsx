@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
@@ -18,11 +18,14 @@ const CookiePolicyPage = lazy(() => import("./CookiePolicyPage"));
 const TermsPage = lazy(() => import("./TermsPage"));
 const ResourcesArchive = lazy(() => import("./ResourcesArchive"));
 const ResourceDetail = lazy(() => import("./ResourceDetail"));
+const WorkArchive = lazy(() => import("./WorkArchive"));
+const ProjectDetail = lazy(() => import("./ProjectDetail"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import CookiePreferencesModal from "./components/CookiePreferencesModal";
+import GoogleTagManager from "./components/GoogleTagManager";
 import { GlobalNoiseBackdrop } from "@/components/ui/noise-background";
 
 function AppContent() {
@@ -35,8 +38,8 @@ function AppContent() {
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/work" element={<Navigate to="/ravan-mammadov#selected-work" replace />} />
-          <Route path="/work/:slug" element={<Navigate to="/ravan-mammadov#selected-work" replace />} />
+          <Route path="/work" element={<WorkArchive />} />
+          <Route path="/work/:slug" element={<ProjectDetail />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogArchive />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
@@ -47,13 +50,8 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/cookie-policy" element={<CookiePolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
-          <Route path="/terms-of-service" element={<Navigate to="/terms" replace />} />
           <Route path="/resources" element={<ResourcesArchive />} />
           <Route path="/resources/:slug" element={<ResourceDetail />} />
-
-          {/* 301 Redirects & legacy route alias compatibility */}
-          <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
-          <Route path="/about" element={<Navigate to="/ravan-mammadov" replace />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -61,6 +59,7 @@ function AppContent() {
 
       <CookieConsentBanner />
       <CookiePreferencesModal />
+      <GoogleTagManager />
 
       {consent?.analytics && (
         <>

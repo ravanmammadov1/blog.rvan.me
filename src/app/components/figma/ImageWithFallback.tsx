@@ -33,12 +33,12 @@ export function ImageWithFallback(props: ImageWithFallbackProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Generate optimized URL if src is a Sanity image object
-  const optimizedSrc = typeof src === "object" && src !== null 
-    ? getOptimizedImageUrl(src, width, height, { fit, format, quality })
+  const optimizedSrc: string | undefined = typeof src === "object" && src !== null 
+    ? getOptimizedImageUrl(src, width, height, { fit, format, quality }) || undefined
     : src;
 
-  const optimizedFallback = typeof fallbackSrc === "object" && fallbackSrc !== null
-    ? getOptimizedImageUrl(fallbackSrc, width, height, { fit, format, quality })
+  const optimizedFallback: string | undefined = typeof fallbackSrc === "object" && fallbackSrc !== null
+    ? getOptimizedImageUrl(fallbackSrc, width, height, { fit, format, quality }) || undefined
     : fallbackSrc;
 
   const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {

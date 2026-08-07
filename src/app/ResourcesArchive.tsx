@@ -12,7 +12,7 @@ import { urlFor } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
 import { aggregateAllResources, NormalizedResource, getCachedAllResources, setCachedAllResources } from "../lib/rssAggregator";
 import { formatPublicationTimestamp, generateResourceSummary, generateAIJobSummary } from "../lib/contentEngine";
-import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl, STATIC_FONT_CATALOG } from "../lib/fontEngine";
+import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl } from "../lib/fontEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -153,8 +153,8 @@ export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [allResources, setAllResources] = useState<NormalizedResource[]>(() => getCachedAllResources());
-  const [fontCatalog, setFontCatalog] = useState<FontItem[]>(() => STATIC_FONT_CATALOG);
-  const [loading, setLoading] = useState<boolean>(() => allResources.length === 0 && fontCatalog.length === 0);
+  const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [selectedResourceModal, setSelectedResourceModal] = useState<NormalizedResource | null>(null);
 
   // Interactive Font Specimen controls
@@ -341,16 +341,18 @@ export default function ResourcesArchive() {
             <div className="mb-10 p-6 rounded-2xl border border-white/10 bg-white/5 glass space-y-6">
               {/* Font Search Engine Input */}
               <div className="relative w-full">
+                <label htmlFor="font-search" className="sr-only">Search fonts</label>
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={16} />
                 <input
-                  type="text"
+                  id="font-search"
+                  type="search"
                   placeholder="Search 1,000+ free font families by name, designer, or category (e.g. Geist, Inter, Satoshi, Serif)..."
                   value={searchQuery}
                   onChange={(e) => setParam("q", e.target.value)}
                   className="w-full rounded-xl border border-white/10 bg-background/90 pl-11 pr-10 py-3.5 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
                 />
                 {searchQuery && (
-                  <button onClick={() => setParam("q", "")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <button onClick={() => setParam("q", "")} aria-label="Clear font search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X size={15} />
                   </button>
                 )}
@@ -521,16 +523,18 @@ export default function ResourcesArchive() {
           <div className="mx-auto max-w-[1600px]">
             <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div className="relative w-full lg:w-96">
+                <label htmlFor="resource-search" className="sr-only">Search resources</label>
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
                 <input
-                  type="text"
+                  id="resource-search"
+                  type="search"
                   placeholder="Search free fonts, vector assets, mockups, UI kits…"
                   value={searchQuery}
                   onChange={(e) => setParam("q", e.target.value)}
                   className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
                 />
                 {searchQuery && (
-                  <button onClick={() => setParam("q", "")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <button onClick={() => setParam("q", "")} aria-label="Clear resource search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X size={13} />
                   </button>
                 )}

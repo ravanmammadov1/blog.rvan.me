@@ -11,7 +11,7 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -90,8 +90,11 @@ export default function NewsSection() {
                         <img
                           src={item.imageUrl || item.logoUrl}
                           alt={item.title}
+                          width={1200}
+                          height={700}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
                           loading="lazy"
+                          decoding="async"
                         />
                       ) : (
                         <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex items-center justify-center overflow-hidden">

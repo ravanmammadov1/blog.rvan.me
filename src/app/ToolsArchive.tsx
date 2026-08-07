@@ -261,6 +261,10 @@ export default function ToolsArchive() {
                                 <img
                                   src={iconUrl}
                                   alt={tool.name}
+                                  width={48}
+                                  height={48}
+                                  loading="lazy"
+                                  decoding="async"
                                   className="h-12 w-12 rounded-lg object-contain bg-background border border-white/10 p-2"
                                 />
                               ) : (

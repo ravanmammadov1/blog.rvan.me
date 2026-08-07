@@ -51,6 +51,10 @@ export default function RelatedPosts({
                     <img
                       src={imgUrl}
                       alt={post.title}
+                      width={800}
+                      height={500}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>

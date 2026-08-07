@@ -57,6 +57,17 @@ export default defineConfig({
     // Custom manualChunks can split React hooks across unsafe boundaries.
     // Enable brotli size reports for CI visibility
     brotliSize: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          if (id.includes("three") || id.includes("@react-three")) return "three-vendor";
+          if (id.includes("framer-motion") || id.includes("motion")) return "motion-vendor";
+          if (id.includes("@sanity") || id.includes("sanity")) return "sanity-vendor";
+          if (id.includes("lucide-react")) return "icons-vendor";
+        },
+      },
+    },
   },
 })
 

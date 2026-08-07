@@ -11,6 +11,7 @@ import ParticleField from './ParticleField.jsx';
 export default function HeroParticles({ mouseRef, style = {} }) {
   return (
     <div
+      aria-hidden="true"
       style={{
         position:      'absolute',
         inset:         0,

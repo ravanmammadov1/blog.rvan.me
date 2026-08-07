@@ -9,7 +9,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: process.env.NODE_ENV === "production",
+  useCdn: import.meta.env.PROD,
 });
 
 const builder = createImageUrlBuilder({ projectId, dataset });
@@ -51,7 +51,7 @@ export function getResponsiveImageUrls(source: any, options: {
 
   const avifUrls = widths.map(w => {
     const h = Math.round(w / aspectRatio);
-    return `${image.width(w).height(h).fit(fit).format("avif").auto("format").url()} ${w}w`;
+    return `${image.width(w).height(h).fit(fit).format("avif" as any).auto("format").url()} ${w}w`;
   }).join(", ");
 
   const fallbackUrl = image.width(widths[1]).height(Math.round(widths[1] / aspectRatio)).fit(fit).url();
@@ -83,7 +83,7 @@ export function getOptimizedImageUrl(source: any, width: number, height?: number
   urlBuilder = urlBuilder.fit(fit).quality(quality);
   
   if (format !== "auto") {
-    urlBuilder = urlBuilder.format(format);
+    urlBuilder = urlBuilder.format(format as any);
   } else {
     urlBuilder = urlBuilder.auto("format");
   }

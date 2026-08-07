@@ -62,7 +62,10 @@ export default function BlogCard({
             <img
               src={coverUrl}
               alt={post.title || "Blog cover"}
+              width={800}
+              height={520}
               loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
             />
           ) : (

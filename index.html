@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
   <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TX3NCK38');</script>
-    <!-- End Google Tag Manager -->
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap" />
     
     <!-- Primary Meta Tags -->
     <title>Ravan Mammadov — Senior Creative Designer & Art Director</title>
     <meta name="title" content="Ravan Mammadov — Senior Creative Designer & Art Director" />
     <meta name="description" content="Senior Creative Designer based in Baku, blending motion design, brand worlds, and performance creative into high-impact digital experiences." />
-    <meta name="keywords" content="Ravan Mammadov, Creative Designer, Motion Design, Art Direction, Brand Identity, 3D Design, Baku, Portfolio" />
     <meta name="author" content="Ravan Mammadov" />
     <meta name="robots" content="index, follow" />
     <!-- Favicon and browser icons -->
@@ -51,31 +46,46 @@
     <meta name="twitter:title" content="Ravan Mammadov — Senior Creative Designer & Art Director" />
     <meta name="twitter:description" content="Senior Creative Designer blending motion design, brand worlds, and performance creative into work that commands attention." />
     <meta name="twitter:image" content="https://www.rvan.me/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Ravan Mammadov — Senior Creative Designer & Art Director" />
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://www.rvan.me/" />
 
     <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
+    <script id="seo-json-ld" type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Ravan Mammadov",
-        "jobTitle": "Senior Creative Designer & Art Director",
-        "url": "https://www.rvan.me",
-        "sameAs": [
-          "https://www.behance.net/mammadovravan",
-          "https://www.linkedin.com/in/ravanmammadov1/"
-        ],
-        "knowsAbout": ["Motion Design", "Art Direction", "Brand Identity", "3D Design", "Performance Creative"]
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Ravan Mammadov Portfolio",
-        "url": "https://www.rvan.me"
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://www.rvan.me/#person",
+            "name": "Ravan Mammadov",
+            "jobTitle": "Senior Creative Designer & Art Director",
+            "url": "https://www.rvan.me/ravan-mammadov",
+            "image": "https://www.rvan.me/og-image.jpg",
+            "sameAs": [
+              "https://www.behance.net/mammadovravan",
+              "https://www.linkedin.com/in/ravanmammadov1/",
+              "https://www.instagram.com/ravanimate/"
+            ],
+            "knowsAbout": ["Motion Design", "Graphic Design", "Brand Identity", "Art Direction", "Digital Marketing"]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.rvan.me/#website",
+            "name": "Ravan Mammadov Portfolio",
+            "url": "https://www.rvan.me/",
+            "publisher": { "@id": "https://www.rvan.me/#person" }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://www.rvan.me/#webpage",
+            "name": "Ravan Mammadov — Senior Creative Designer & Art Director",
+            "url": "https://www.rvan.me/",
+            "isPartOf": { "@id": "https://www.rvan.me/#website" },
+            "about": { "@id": "https://www.rvan.me/#person" }
+          }
+        ]
       }
     </script>
 
@@ -83,10 +93,6 @@
   </head>
 
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX3NCK38"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

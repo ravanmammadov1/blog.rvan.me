@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { urlFor } from "../../lib/sanityClient";
@@ -15,7 +15,6 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isHomePage = location.pathname === "/";
 
@@ -28,41 +27,26 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleNavClick = (target: string | undefined) => {
-    setMenuOpen(false);
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
 
-    if (!target) {
-      navigate("/");
-      return;
-    }
-
-    if (typeof target === "string" && target.startsWith("/")) {
-      navigate(target);
-      return;
-    }
-
-    if (target === "work" || target === "Work") { navigate("/ravan-mammadov#selected-work"); return; }
-    if (target === "contact" || target === "Contact") { navigate("/contact"); return; }
-    if (target === "about" || target === "About") { navigate("/ravan-mammadov"); return; }
-    if (target === "news" || target === "News") { navigate("/news"); return; }
-    if (target === "tools" || target === "Tools") { navigate("/tools"); return; }
-    if (target === "blog" || target === "Blog") { navigate("/blog"); return; }
-    if (target === "resources" || target === "Resources") { navigate("/resources"); return; }
-
-    if (target === "top") {
-      if (isHomePage) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        navigate("/");
-      }
-      return;
-    }
-
-    navigate(`/${target}`);
+  const getNavHref = (target: string) => {
+    if (target.startsWith("/")) return target;
+    const normalized = target.toLowerCase();
+    if (normalized === "top" || normalized === "home") return "/";
+    if (normalized === "about") return "/ravan-mammadov";
+    if (normalized === "work") return "/work";
+    return `/${normalized}`;
   };
 
   const baseNavItems = [
     { label: "HOME",      target: "/" },
+    { label: "WORK",      target: "/work" },
     { label: "NEWS",      target: "/news" },
     { label: "RESOURCES", target: "/resources" },
     { label: "TOOLS",     target: "/tools" },
@@ -92,9 +76,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       >
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 md:px-10">
           {/* Logo & Brand */}
-          <button
-            onClick={() => handleNavClick("top")}
-            className="group flex items-center gap-3 text-left focus:outline-none"
+          <Link
+            to="/"
+            className="group flex items-center gap-3 rounded-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label="Ravan Mammadov Home"
           >
             {siteSettings?.logo ? (
@@ -113,7 +97,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               <br />
               MAMMADOV
             </span>
-          </button>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-2 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex">
@@ -125,14 +109,14 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                     location.pathname.startsWith(item.target + "/");
 
               return (
-                <button
+                <Link
                   key={item.label}
-                  onClick={() => handleNavClick(item.target)}
+                  to={getNavHref(item.target)}
                   className={`relative px-3 py-1.5 transition-colors duration-300 ${
                     isActive
                       ? "text-white font-bold"
                       : "text-foreground/70 hover:text-white"
-                  }`}
+                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm`}
                 >
                   {/* Clean white underline indicator */}
                   {isActive && (
@@ -143,25 +127,27 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
-                </button>
+                </Link>
               );
             })}
           </nav>
  
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => handleNavClick("/contact")}
-              className="hidden items-center gap-2 rounded-full border border-white/20 px-4.5 py-2 text-[10px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black sm:flex glass-sm"
+            <Link
+              to="/contact"
+              className="hidden items-center gap-2 rounded-full border border-white/20 px-4.5 py-2 text-[10px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black sm:flex glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               {letsTalkLabel} <ArrowUpRight size={13} />
-            </button>
+            </Link>
 
             {/* Mobile Menu Toggle */}
             <button
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/30 md:hidden text-foreground hover:border-primary transition-colors glass-sm"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/30 md:hidden text-foreground hover:border-primary transition-colors glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -189,7 +175,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               }}
             />
 
-            <div className="space-y-1 relative z-10">
+            <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 relative z-10">
               {navItems.map((item, i) => {
                 const isActive =
                   item.target === "/"
@@ -198,36 +184,38 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                       location.pathname.startsWith(item.target + "/");
 
                 return (
-                  <motion.button
+                  <motion.div
                     key={item.label}
                     initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.04, duration: 0.25 }}
-                    onClick={() => handleNavClick(item.target)}
-                    className={`flex w-full items-baseline gap-4 border-b border-border/30 py-4 text-left text-2xl font-semibold uppercase tracking-tight transition-all duration-300 hover:text-primary ${
-                      isActive ? "text-primary" : "text-foreground/80"
-                    }`}
+                    className="border-b border-border/30"
                   >
-                    <span className="mono text-xs text-muted-foreground/50">
-                      0{i + 1}
-                    </span>
-                    {item.label}
-                    {isActive && (
-                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
-                    )}
-                  </motion.button>
+                    <Link
+                      to={getNavHref(item.target)}
+                      onClick={() => setMenuOpen(false)}
+                      className={`flex w-full items-baseline gap-4 py-4 text-left text-2xl font-semibold uppercase tracking-tight transition-all duration-300 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        isActive ? "text-primary" : "text-foreground/80"
+                      }`}
+                    >
+                      <span className="mono text-xs text-muted-foreground/50">0{i + 1}</span>
+                      {item.label}
+                      {isActive && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />}
+                    </Link>
+                  </motion.div>
                 );
               })}
-            </div>
+            </nav>
 
             <div className="mt-8 pt-6 border-t border-border/30 flex justify-between items-center text-xs mono text-muted-foreground relative z-10">
               <span>CREATIVE PLATFORM & PUBLICATION</span>
-              <button
-                onClick={() => handleNavClick("/contact")}
-                className="text-primary font-bold hover:underline"
+              <Link
+                to="/contact"
+                onClick={() => setMenuOpen(false)}
+                className="text-primary font-bold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 COLLABORATE →
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}

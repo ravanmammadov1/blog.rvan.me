@@ -49,7 +49,7 @@ export default function Footer({ siteSettings }: FooterProps) {
           <a
             href={siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan"}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="transition-colors hover:text-primary"
           >
             BEHANCE
@@ -57,7 +57,7 @@ export default function Footer({ siteSettings }: FooterProps) {
           <a
             href={siteSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/"}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="transition-colors hover:text-primary"
           >
             LINKEDIN
@@ -65,7 +65,7 @@ export default function Footer({ siteSettings }: FooterProps) {
           <a
             href={siteSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/"}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="transition-colors hover:text-primary"
           >
             INSTAGRAM

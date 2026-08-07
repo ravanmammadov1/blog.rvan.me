@@ -10,7 +10,7 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -55,7 +55,7 @@ export default function WorkSection() {
     // Fetch Projects
     client
       .fetch(`
-        *[_type == "projects"] | order(order asc, _createdAt desc){
+        *[_type == "projects" && (status == "published" || !defined(status)) && defined(slug.current)] | order(order asc, _createdAt desc){
           _id,
           title,
           slug,
@@ -85,7 +85,7 @@ export default function WorkSection() {
         title: p.title,
         slug: p.slug?.current || p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         type: p.type || (p.tags && p.tags.length > 0 ? p.tags.join(" · ") : "Creative Project"),
-        image: p.coverImage ? urlFor(p.coverImage)?.url() || fallbackProjects[index % fallbackProjects.length].image : fallbackProjects[index % fallbackProjects.length].image,
+        image: p.coverImage ? urlFor(p.coverImage)?.width(1200).format("webp").auto("format").url() || fallbackProjects[index % fallbackProjects.length].image : fallbackProjects[index % fallbackProjects.length].image,
         accent: p.accent || "#e8fd52",
         year: p.year || "2025",
         liveUrl: p.liveUrl,
@@ -155,6 +155,11 @@ export default function WorkSection() {
                       <img
                         src={project.image.large}
                         alt={project.title}
+                        width={1200}
+                        height={900}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        fetchPriority={index === 0 ? "high" : "auto"}
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
                       />
                     </picture>
@@ -162,6 +167,11 @@ export default function WorkSection() {
                     <img
                       src={project.image as string}
                       alt={project.title}
+                      width={1200}
+                      height={900}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : "auto"}
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
                     />
                   )}

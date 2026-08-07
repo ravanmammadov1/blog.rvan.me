@@ -52,20 +52,20 @@ function ColorContrastTool() {
     <div className="rounded-xl border border-border bg-surface p-6 space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Background</label>
+          <label htmlFor="contrast-background-color" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Background</label>
           <div className="flex items-center gap-3">
-            <input type="color" value={bg} onChange={(e) => setBg(e.target.value)}
+            <input id="contrast-background-color" type="color" value={bg} onChange={(e) => setBg(e.target.value)} aria-label="Background color" 
               className="h-10 w-16 cursor-pointer rounded-md border border-border bg-transparent" />
-            <input type="text" value={bg} onChange={(e) => setBg(e.target.value)}
+            <input id="contrast-background-hex" type="text" value={bg} onChange={(e) => setBg(e.target.value)} aria-label="Background hex value"
               className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono text-foreground focus:border-primary focus:outline-none" />
           </div>
         </div>
         <div className="flex-1">
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Foreground</label>
+          <label htmlFor="contrast-foreground-color" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Foreground</label>
           <div className="flex items-center gap-3">
-            <input type="color" value={fg} onChange={(e) => setFg(e.target.value)}
+            <input id="contrast-foreground-color" type="color" value={fg} onChange={(e) => setFg(e.target.value)} aria-label="Foreground color"
               className="h-10 w-16 cursor-pointer rounded-md border border-border bg-transparent" />
-            <input type="text" value={fg} onChange={(e) => setFg(e.target.value)}
+            <input id="contrast-foreground-hex" type="text" value={fg} onChange={(e) => setFg(e.target.value)} aria-label="Foreground hex value"
               className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono text-foreground focus:border-primary focus:outline-none" />
           </div>
         </div>
@@ -83,7 +83,7 @@ function ColorContrastTool() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-3xl font-bold mono text-foreground">{ratioFixed}:1</span>
-          <button onClick={copyRatio} className="text-muted-foreground hover:text-primary transition-colors">
+          <button onClick={copyRatio} aria-label="Copy contrast ratio" className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
             {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
           </button>
         </div>
@@ -136,13 +136,13 @@ function TypographyScaleTool() {
     <div className="rounded-xl border border-border bg-surface p-6 space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div>
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Base Size (px)</label>
-          <input type="number" value={baseSize} onChange={(e) => setBaseSize(Number(e.target.value))} min={8} max={32} step={1}
+          <label htmlFor="type-base-size" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Base Size (px)</label>
+          <input id="type-base-size" type="number" value={baseSize} onChange={(e) => setBaseSize(Number(e.target.value))} min={8} max={32} step={1}
             className="w-28 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono text-foreground focus:border-primary focus:outline-none" />
         </div>
         <div className="flex-1">
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Scale Ratio</label>
-          <select value={ratio} onChange={(e) => setRatio(Number(e.target.value))}
+          <label htmlFor="type-scale-ratio" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Scale Ratio</label>
+          <select id="type-scale-ratio" value={ratio} onChange={(e) => setRatio(Number(e.target.value))}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none">
             {scales.map((s) => (
               <option key={s.name} value={s.value}>{s.name} ({s.value})</option>
@@ -158,7 +158,7 @@ function TypographyScaleTool() {
             </span>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-xs mono text-muted-foreground">{size}px</span>
-              <button onClick={() => copyValue(size)} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary">
+              <button onClick={() => copyValue(size)} aria-label={`Copy ${label} font size`} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary">
                 {copied === size ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
               </button>
             </div>
@@ -207,20 +207,20 @@ function GradientGenerator() {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[{ val: color1, set: setColor1, label: "Color 1" }, { val: color2, set: setColor2, label: "Color 2" }].map(({ val, set, label }) => (
           <div key={label}>
-            <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">{label}</label>
+            <label htmlFor={`gradient-${label.toLowerCase().replace(/\s+/g, "-")}`} className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">{label}</label>
             <div className="flex items-center gap-2">
-              <input type="color" value={val} onChange={(e) => set(e.target.value)} className="h-8 w-10 cursor-pointer rounded border border-border bg-transparent" />
-              <input type="text" value={val} onChange={(e) => set(e.target.value)} className="flex-1 min-w-0 rounded border border-border bg-background px-2 py-1 text-xs font-mono text-foreground focus:border-primary focus:outline-none" />
+              <input type="color" value={val} onChange={(e) => set(e.target.value)} aria-label={`${label} color picker`} className="h-8 w-10 cursor-pointer rounded border border-border bg-transparent" />
+              <input id={`gradient-${label.toLowerCase().replace(/\s+/g, "-")}`} type="text" value={val} onChange={(e) => set(e.target.value)} aria-label={`${label} hex value`} className="flex-1 min-w-0 rounded border border-border bg-background px-2 py-1 text-xs font-mono text-foreground focus:border-primary focus:outline-none" />
             </div>
           </div>
         ))}
 
         {useThird && (
           <div>
-            <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">Color 3</label>
+            <label htmlFor="gradient-color-3" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">Color 3</label>
             <div className="flex items-center gap-2">
-              <input type="color" value={color3} onChange={(e) => setColor3(e.target.value)} className="h-8 w-10 cursor-pointer rounded border border-border bg-transparent" />
-              <input type="text" value={color3} onChange={(e) => setColor3(e.target.value)} className="flex-1 min-w-0 rounded border border-border bg-background px-2 py-1 text-xs font-mono text-foreground focus:border-primary focus:outline-none" />
+              <input type="color" value={color3} onChange={(e) => setColor3(e.target.value)} aria-label="Color 3 color picker" className="h-8 w-10 cursor-pointer rounded border border-border bg-transparent" />
+              <input id="gradient-color-3" type="text" value={color3} onChange={(e) => setColor3(e.target.value)} aria-label="Color 3 hex value" className="flex-1 min-w-0 rounded border border-border bg-background px-2 py-1 text-xs font-mono text-foreground focus:border-primary focus:outline-none" />
             </div>
           </div>
         )}
@@ -229,8 +229,8 @@ function GradientGenerator() {
       <div className="flex flex-wrap items-center gap-4">
         {type === "linear" && (
           <div className="flex items-center gap-3">
-            <label className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Angle</label>
-            <input type="range" min={0} max={360} value={angle} onChange={(e) => setAngle(Number(e.target.value))} className="w-32" />
+            <label htmlFor="gradient-angle" className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Angle</label>
+            <input id="gradient-angle" type="range" min={0} max={360} value={angle} onChange={(e) => setAngle(Number(e.target.value))} aria-label="Gradient angle" className="w-32" />
             <span className="text-xs mono text-foreground">{angle}°</span>
           </div>
         )}
@@ -241,7 +241,7 @@ function GradientGenerator() {
 
       <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background p-3">
         <code className="text-xs font-mono text-muted-foreground truncate">{cssString}</code>
-        <button onClick={copy} className="flex-shrink-0 text-muted-foreground hover:text-primary transition-colors">
+        <button onClick={copy} aria-label="Copy gradient CSS" className="flex-shrink-0 text-muted-foreground hover:text-primary transition-colors">
           {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
         </button>
       </div>
@@ -341,11 +341,11 @@ function SpacingScaleTool() {
     <div className="rounded-xl border border-border bg-surface p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <label className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Base unit (px)</label>
-          <input type="number" value={base} onChange={(e) => setBase(Number(e.target.value))} min={2} max={16} step={1}
+          <label htmlFor="spacing-base-unit" className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Base unit (px)</label>
+          <input id="spacing-base-unit" type="number" value={base} onChange={(e) => setBase(Number(e.target.value))} min={2} max={16} step={1}
             className="w-20 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono text-foreground focus:border-primary focus:outline-none" />
         </div>
-        <button onClick={copyAll} className="flex items-center gap-1 text-xs font-bold text-primary hover:underline mono">
+        <button onClick={copyAll} aria-label="Copy all spacing CSS" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline mono">
           {copied === -1 ? <><Check size={12} className="text-green-500" /> Copied!</> : <><Copy size={12} /> Copy all CSS</>}
         </button>
       </div>
@@ -379,22 +379,22 @@ function SeoMetaPreview() {
     <div className="rounded-xl border border-border bg-surface p-6 space-y-4">
       <div className="space-y-3">
         <div>
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">
+          <label htmlFor="seo-preview-title" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">
             Page Title <span className={`ml-2 ${titleLen > 60 ? "text-red-400" : titleLen > 50 ? "text-yellow-400" : "text-green-400"}`}>{titleLen}/60</span>
           </label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+          <input id="seo-preview-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none" />
         </div>
         <div>
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">
+          <label htmlFor="seo-preview-description" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">
             Meta Description <span className={`ml-2 ${descLen > 160 ? "text-red-400" : descLen > 140 ? "text-yellow-400" : "text-green-400"}`}>{descLen}/160</span>
           </label>
-          <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows={3}
+          <textarea id="seo-preview-description" value={desc} onChange={(e) => setDesc(e.target.value)} rows={3}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none resize-none" />
         </div>
         <div>
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">URL</label>
-          <input type="text" value={url} onChange={(e) => setUrl(e.target.value)}
+          <label htmlFor="seo-preview-url" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">URL</label>
+          <input id="seo-preview-url" type="url" value={url} onChange={(e) => setUrl(e.target.value)}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none" />
         </div>
       </div>
@@ -468,7 +468,7 @@ function ShadowGenerator() {
             <label className="flex justify-between text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">
               <span>{label}</span><span>{val}px</span>
             </label>
-            <input type="range" min={min} max={max} value={val} onChange={(e) => set(Number(e.target.value))} className="w-full" />
+            <input id={`shadow-${label.toLowerCase().replace(/\s+/g, "-")}`} type="range" min={min} max={max} value={val} onChange={(e) => set(Number(e.target.value))} aria-label={label} className="w-full" />
           </div>
         ))}
       </div>
@@ -476,21 +476,21 @@ function ShadowGenerator() {
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
           <label className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Color</label>
-          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-8 w-12 cursor-pointer rounded border border-border bg-transparent" />
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} aria-label="Shadow color" className="h-8 w-12 cursor-pointer rounded border border-border bg-transparent" />
         </div>
         <div className="flex items-center gap-2">
           <label className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Opacity {opacity}%</label>
-          <input type="range" min={0} max={100} value={opacity} onChange={(e) => setOpacity(Number(e.target.value))} className="w-24" />
+          <input id="shadow-opacity" type="range" min={0} max={100} value={opacity} onChange={(e) => setOpacity(Number(e.target.value))} aria-label="Shadow opacity" className="w-24" />
         </div>
         <label className="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" checked={inset} onChange={(e) => setInset(e.target.checked)} className="accent-primary" />
+          <input id="shadow-inset" type="checkbox" checked={inset} onChange={(e) => setInset(e.target.checked)} className="accent-primary" />
           <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">Inset</span>
         </label>
       </div>
 
       <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background p-3">
         <code className="text-xs font-mono text-muted-foreground truncate">box-shadow: {shadowCss};</code>
-        <button onClick={copy} className="flex-shrink-0 text-muted-foreground hover:text-primary">
+        <button onClick={copy} aria-label="Copy box shadow CSS" className="flex-shrink-0 text-muted-foreground hover:text-primary">
           {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
         </button>
       </div>
@@ -570,13 +570,13 @@ function UnitConverter() {
     <div className="rounded-xl border border-border bg-surface p-6 space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div>
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Pixel value</label>
-          <input type="number" value={px} onChange={(e) => setPx(Number(e.target.value))} min={1} max={500} step={0.5}
+          <label htmlFor="conversion-pixels" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Pixel value</label>
+          <input id="conversion-pixels" type="number" value={px} onChange={(e) => setPx(Number(e.target.value))} min={1} max={500} step={0.5}
             className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono text-foreground focus:border-primary focus:outline-none" />
         </div>
         <div>
-          <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Root font size (px)</label>
-          <input type="number" value={remBase} onChange={(e) => setRemBase(Number(e.target.value))} min={8} max={24}
+          <label htmlFor="conversion-root-size" className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-2">Root font size (px)</label>
+          <input id="conversion-root-size" type="number" value={remBase} onChange={(e) => setRemBase(Number(e.target.value))} min={8} max={24}
             className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono text-foreground focus:border-primary focus:outline-none" />
         </div>
       </div>

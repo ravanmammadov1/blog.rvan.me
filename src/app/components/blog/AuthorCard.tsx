@@ -26,8 +26,8 @@ export default function AuthorCard({ post }: AuthorCardProps) {
   // Priority 3: Fallback image asset
   const authorPhotoObj = post?.authorPhoto || aboutSection?.profilePhoto;
   const authorPhotoUrl = authorPhotoObj
-    ? urlFor(authorPhotoObj)?.url() || RavanPortrait
-    : RavanPortrait;
+    ? urlFor(authorPhotoObj)?.url() || RavanPortrait1200
+    : RavanPortrait1200;
 
   // Priority 1: Blog post author name from Sanity
   // Priority 2: Fallback name
@@ -49,7 +49,7 @@ export default function AuthorCard({ post }: AuthorCardProps) {
       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-2 border-primary/60 bg-black">
         <picture>
           <source srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`} type="image/webp" />
-          <img src={authorPhotoUrl} alt={authorName} className="h-full w-full object-cover object-top" />
+          <img src={authorPhotoUrl} alt={authorName} width={120} height={120} loading="lazy" decoding="async" className="h-full w-full object-cover object-top" />
         </picture>
       </div>
 

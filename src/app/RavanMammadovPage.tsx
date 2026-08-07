@@ -32,6 +32,7 @@ import { AboutSection as IAboutSection, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import { PORTFOLIO_FALLBACK_PROJECTS } from "../lib/portfolioFallback";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -267,7 +268,7 @@ export default function RavanMammadovPage() {
     client
       .fetch(
         `
-      *[_type == "projects"] | order(order asc, _createdAt desc)[0...6]{
+      *[_type == "projects" && (status == "published" || !defined(status)) && defined(slug.current)] | order(order asc, _createdAt desc)[0...6]{
         _id,
         title,
         "slug": slug.current,
@@ -311,24 +312,62 @@ export default function RavanMammadovPage() {
 
   const personSchema = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Ravan Mammadov",
-    jobTitle: "Senior Creative Designer",
-    url: "https://www.rvan.me/ravan-mammadov",
-    sameAs: [
-      "https://www.linkedin.com/in/ravanmammadov1/",
-      "https://www.behance.net/mammadovravan",
-      "https://www.instagram.com/ravanimate/",
-    ],
-    knowsAbout: [
-      "Brand Identity",
-      "Motion Design",
-      "Graphic Design",
-      "Creative Strategy",
-      "Digital Marketing",
-      "Content Creation",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.rvan.me/#person",
+        name: "Ravan Mammadov",
+        jobTitle: "Senior Creative Designer",
+        url: "https://www.rvan.me/ravan-mammadov",
+        image: "https://www.rvan.me/og-image.jpg",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Baku",
+          addressCountry: "AZ",
+        },
+        sameAs: [
+          "https://www.linkedin.com/in/ravanmammadov1/",
+          "https://www.behance.net/mammadovravan",
+          "https://www.instagram.com/ravanimate/",
+        ],
+        knowsAbout: [
+          "Brand Identity",
+          "Motion Design",
+          "Graphic Design",
+          "Creative Strategy",
+          "Digital Marketing",
+          "Content Creation",
+        ],
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": "https://www.rvan.me/ravan-mammadov#profilepage",
+        name: "Ravan Mammadov — Senior Creative Designer",
+        url: "https://www.rvan.me/ravan-mammadov",
+        mainEntity: { "@id": "https://www.rvan.me/#person" },
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.rvan.me/#website",
+        name: "Ravan Mammadov Portfolio",
+        url: "https://www.rvan.me/",
+        publisher: { "@id": "https://www.rvan.me/#person" },
+      },
     ],
   };
+
+  const displayProjects = projects.length > 0
+    ? projects
+    : PORTFOLIO_FALLBACK_PROJECTS.map((project) => ({
+        _id: project.slug,
+        title: project.title,
+        slug: { current: project.slug },
+        type: project.type,
+        description: project.description,
+        tags: project.tags,
+        year: project.year,
+        behanceCoverUrl: project.image,
+      }));
 
   return (
     <main
@@ -481,6 +520,10 @@ export default function RavanMammadovPage() {
                               : RavanPortrait1200
                           }
                           alt="Ravan Mammadov"
+                          width={1200}
+                          height={1200}
+                          loading="eager"
+                          decoding="async"
                           className="h-full w-full object-cover object-top rounded-2xl group-hover/profile:scale-102 transition-transform duration-500"
                         />
                       </picture>
@@ -570,7 +613,7 @@ export default function RavanMammadovPage() {
       {/* ─────────────────────────────────────────────────────────────────────────────
           2. SELECTED WORK (Behance Integration)
       ───────────────────────────────────────────────────────────────────────────── */}
-      {projects.length > 0 && (
+      {displayProjects.length > 0 && (
         <section id="selected-work" className="px-6 py-20 md:px-10 md:py-28 relative z-10 border-t border-white/10">
           <div className="mx-auto max-w-[1600px] relative">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
@@ -602,8 +645,9 @@ export default function RavanMammadovPage() {
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project, idx) => {
-                const coverSrc = project.behanceCoverUrl || (project.coverImage ? urlFor(project.coverImage)?.url() : null);
+              {displayProjects.map((project, idx) => {
+                const coverSrc = project.behanceCoverUrl || (project.coverImage ? urlFor(project.coverImage)?.width(1200).format("webp").auto("format").url() : null);
+                const projectSlug = typeof project.slug === "string" ? project.slug : project.slug?.current;
 
                 return (
                   <motion.article
@@ -621,8 +665,11 @@ export default function RavanMammadovPage() {
                           <img
                             src={coverSrc}
                             alt={project.title}
+                            width={1200}
+                            height={750}
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
                             loading="lazy"
+                            decoding="async"
                           />
                         </div>
                       )}
@@ -649,6 +696,14 @@ export default function RavanMammadovPage() {
                           </span>
                         ))}
                       </div>
+                      {projectSlug && (
+                        <Link
+                          to={`/work/${projectSlug}`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary hover:border-primary hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
+                        >
+                          READ CASE STUDY <ArrowUpRight size={12} />
+                        </Link>
+                      )}
                       <a
                         href={project.liveUrl || `https://www.behance.net/mammadovravan`}
                         target="_blank"

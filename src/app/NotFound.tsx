@@ -9,7 +9,11 @@ export default function NotFound() {
       className="min-h-screen bg-background text-foreground grid place-items-center px-6 py-24"
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
-      <SEO title="Page Not Found — Ravan Mammadov" />
+      <SEO
+        title="Page Not Found — Ravan Mammadov"
+        description="The requested page could not be found. Return to Ravan Mammadov's portfolio."
+        noIndex
+      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

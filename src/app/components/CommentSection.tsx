@@ -113,7 +113,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
           <a
             href={twitterUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="grid h-9 w-9 place-items-center rounded-full border border-border bg-surface text-foreground hover:border-primary hover:text-primary transition-colors"
             aria-label="Share on X"
           >
@@ -123,7 +123,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
           <a
             href={linkedinUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="grid h-9 w-9 place-items-center rounded-full border border-border bg-surface text-foreground hover:border-primary hover:text-primary transition-colors"
             aria-label="Share on LinkedIn"
           >

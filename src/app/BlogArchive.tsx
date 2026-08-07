@@ -25,22 +25,6 @@ const fadeUp = {
   }),
 };
 
-const fallbackBlogPosts: BlogPost[] = [
-  {
-    _id: "fb1",
-    title: "The 3-Second Rule: First Frames That Retain Attention",
-    slug: { current: "the-3-second-rule" },
-    excerpt: "If your creative doesn't capture visual attention within three seconds, it never will. Here is how to structure opening frames for maximum impact.",
-    category: "Marketing",
-    tags: ["Hook", "Motion", "Performance Creative"],
-    featured: true,
-    publishDate: "2025-06-15",
-    readTime: "4 min read",
-    body: [],
-    coverImage: null,
-  },
-];
-
 export default function BlogArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -59,7 +43,7 @@ export default function BlogArchive() {
     client
       .fetch(
         `
-        *[_type == "blog"] | order(featured desc, publishDate desc){
+        *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current) && (!defined(publishDate) || publishDate <= now())] | order(featured desc, publishDate desc){
           _id,
           title,
           slug,
@@ -78,12 +62,12 @@ export default function BlogArchive() {
         if (data && data.length > 0) {
           setPosts(data);
         } else {
-          setPosts(fallbackBlogPosts);
+          setPosts([]);
         }
       })
       .catch((err) => {
         console.error("Error fetching blog archive from Sanity:", err);
-        setPosts(fallbackBlogPosts);
+        setPosts([]);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -201,12 +185,14 @@ export default function BlogArchive() {
         >
           {/* Search */}
           <div className="relative max-w-md">
+            <label htmlFor="blog-search" className="sr-only">Search articles</label>
             <Search
               size={16}
               className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60"
             />
             <input
-              type="text"
+              id="blog-search"
+              type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search articles..."

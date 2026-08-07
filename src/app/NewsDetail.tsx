@@ -20,7 +20,7 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -85,9 +85,6 @@ export default function NewsDetail() {
               matched.logoUrl = getArticleCoverImage(matched.category, matched.title);
             }
             setArticle(matched);
-          } else if (allItems.length > 0) {
-            // Fallback to first article if not found
-            setArticle(allItems[0]);
           }
         }
 
@@ -127,6 +124,7 @@ export default function NewsDetail() {
     return (
       <main className="min-h-screen bg-background text-foreground px-6 py-32">
         <SEO title="Article Not Found — Rvan.me" />
+        <SEO noIndex />
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-4xl font-semibold mb-4">Article Not Found</h1>
           <p className="text-muted-foreground mb-8">The requested publication could not be located.</p>
@@ -160,6 +158,7 @@ export default function NewsDetail() {
         image={coverImage}
         url={articleUrl}
         type="article"
+        articleSchemaType="NewsArticle"
         publishDate={article.publishedAt}
       />
 
@@ -239,6 +238,10 @@ export default function NewsDetail() {
             <img
               src={coverImage}
               alt={article.title}
+              width={1600}
+              height={900}
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
@@ -388,6 +391,10 @@ export default function NewsDetail() {
                           <img
                             src={relCover}
                             alt={rel.title}
+                            width={800}
+                            height={450}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>

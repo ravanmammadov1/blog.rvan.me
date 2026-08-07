@@ -204,13 +204,13 @@ export default function CookiePolicyPage() {
               In addition to our on-site privacy controls, you can block or delete cookies directly through your web browser preferences. Most modern browsers allow you to decline all cookies or remove stored cookies under Privacy & Security settings:
             </p>
             <div className="flex flex-wrap gap-4 pt-2 text-xs font-bold mono uppercase">
-              <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+              <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 Google Chrome →
               </a>
-              <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+              <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 Apple Safari →
               </a>
-              <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+              <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 Mozilla Firefox →
               </a>
             </div>

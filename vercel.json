@@ -18,6 +18,11 @@
       "permanent": true
     },
     {
+      "source": "/terms-of-service",
+      "destination": "/terms",
+      "permanent": true
+    },
+    {
       "source": "/blog/agency-grade-portfolio-blueprints-5-figure-clients",
       "destination": "/blog/portfolio-client-blueprint",
       "permanent": true
@@ -203,8 +208,64 @@
       "destination": "/api/rss"
     },
     {
-      "source": "/((?!api/|assets/|.*\\.[a-zA-Z0-9]+$).*)",
-      "destination": "/"
+      "source": "/contact",
+      "destination": "/contact/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog/index.html"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/blog/:slug/index.html"
+    },
+    {
+      "source": "/news",
+      "destination": "/news/index.html"
+    },
+    {
+      "source": "/news/:slug",
+      "destination": "/news/:slug/index.html"
+    },
+    {
+      "source": "/tools",
+      "destination": "/tools/index.html"
+    },
+    {
+      "source": "/work",
+      "destination": "/work/index.html"
+    },
+    {
+      "source": "/work/:slug",
+      "destination": "/work/:slug/index.html"
+    },
+    {
+      "source": "/ravan-mammadov",
+      "destination": "/ravan-mammadov/index.html"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy/index.html"
+    },
+    {
+      "source": "/cookie-policy",
+      "destination": "/cookie-policy/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms/index.html"
+    },
+    {
+      "source": "/resources",
+      "destination": "/resources/index.html"
+    },
+    {
+      "source": "/resources/:slug",
+      "destination": "/resources/:slug/index.html"
+    },
+    {
+      "source": "/((?!api/|assets/|models/|imports/|.*\\.[a-zA-Z0-9]+$).*)",
+      "destination": "/api/not-found"
     }
   ],
   "headers": [

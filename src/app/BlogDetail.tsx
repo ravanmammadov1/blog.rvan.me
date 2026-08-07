@@ -50,12 +50,10 @@ export default function BlogDetail() {
         setError(null);
 
         const slugClean = slug.toLowerCase().trim();
-        const slugPattern = `*${slugClean.replace(/-/g, "*")}*`;
-
         const [article, all] = await Promise.all([
           client.fetch(
             `
-            *[_type == "blog" && (slug.current == $slug || _id == $slug || lower(title) match $slugPattern)][0]{
+            *[_type == "blog" && (status == "published" || !defined(status)) && defined(publishDate) && publishDate <= now() && slug.current == $slug][0]{
               _id,
               title,
               slug,
@@ -73,11 +71,11 @@ export default function BlogDetail() {
               authorBio
             }
             `,
-            { slug: slugClean, slugPattern }
+            { slug: slugClean }
           ),
           client.fetch(
             `
-            *[_type == "blog"] | order(publishDate desc){
+            *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current) && (!defined(publishDate) || publishDate <= now())] | order(publishDate desc){
               _id,
               title,
               slug,
@@ -104,23 +102,6 @@ export default function BlogDetail() {
         if (article) {
           setPost(article);
           const related = allList.filter((p: BlogPost) => p._id !== article._id).slice(0, 3);
-          setRelatedPosts(related);
-        } else if (allList.length > 0) {
-          // Fallback match from all published posts
-          const matched = allList.find((p: BlogPost) => {
-            const pSlug = p.slug?.current?.toLowerCase() || "";
-            const pTitle = p.title?.toLowerCase() || "";
-            return (
-              pSlug === slugClean ||
-              p._id === slugClean ||
-              pSlug.includes(slugClean) ||
-              slugClean.includes(pSlug) ||
-              pTitle.includes(slugClean.replace(/-/g, " "))
-            );
-          }) || allList[0];
-
-          setPost(matched);
-          const related = allList.filter((p: BlogPost) => p._id !== matched._id).slice(0, 3);
           setRelatedPosts(related);
         } else {
           setPost(null);
@@ -172,7 +153,7 @@ export default function BlogDetail() {
   if (error || !post) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-foreground">
-        <SEO title="Article Not Found — Ravan Mammadov" />
+        <SEO title="Article Not Found — Ravan Mammadov" noIndex />
         <div className="text-center">
           <h1 className="text-4xl font-bold">Article Not Found</h1>
           <p className="mt-4 text-muted-foreground">

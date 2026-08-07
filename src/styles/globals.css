@@ -121,6 +121,12 @@ html {
   outline-offset: 2px;
 }
 
+/* Keep keyboard focus visible even when a component uses focus:outline-none. */
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════════
    PREMIUM AURORA + GLASSMORPHISM SYSTEM
    GPU-friendly transforms only. Respects prefers-reduced-motion.
@@ -293,4 +299,3 @@ html {
 .aurora-card:hover::before {
   opacity: 1;
 }
-

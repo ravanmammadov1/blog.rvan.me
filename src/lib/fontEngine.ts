@@ -1,5 +1,3 @@
-import googleFontsCatalogJson from "./googleFontsCatalog.json";
-
 export interface FontItem {
   id: string;
   name: string;
@@ -20,8 +18,19 @@ export interface FontItem {
   createdAt: string;
 }
 
-// Static guaranteed dataset containing 2,000+ verified open source font families
-export const STATIC_FONT_CATALOG: FontItem[] = googleFontsCatalogJson as FontItem[];
+// Load the large catalog only when the Resources route is opened. Keeping it
+// out of the route's initial JavaScript improves the homepage and core routes.
+export const STATIC_FONT_CATALOG: FontItem[] = [];
+let staticCatalogPromise: Promise<FontItem[]> | null = null;
+
+export function loadStaticFontCatalog(): Promise<FontItem[]> {
+  if (!staticCatalogPromise) {
+    staticCatalogPromise = import("./googleFontsCatalog.json").then(
+      (module) => module.default as FontItem[]
+    );
+  }
+  return staticCatalogPromise;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DIRECT DOWNLOAD URL RESOLVER
@@ -104,8 +113,9 @@ export function triggerDirectFontDownload(font: FontItem) {
 export async function fetchLiveFontCatalog(): Promise<FontItem[]> {
   const catalogMap = new Map<string, FontItem>();
 
-  // 1. Seed immediately with full static catalog (2,009 font families)
-  STATIC_FONT_CATALOG.forEach((f) => catalogMap.set(f.family.toLowerCase().trim(), f));
+  // 1. Seed with the full catalog after the Resources route requests it.
+  const staticCatalog = await loadStaticFontCatalog();
+  staticCatalog.forEach((f) => catalogMap.set(f.family.toLowerCase().trim(), f));
 
   // 2. Background sync live Google Fonts Metadata feed for newly added families
   try {

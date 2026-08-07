@@ -113,6 +113,10 @@ export default function HeroPortrait() {
           <img
             src={ravanLogo}
             alt="Ravan Mammadov"
+            width={440}
+            height={440}
+            fetchPriority="high"
+            decoding="async"
             className="hero-logo-img h-auto w-full max-w-[300px] select-none lg:max-w-[380px] xl:max-w-[440px]"
             draggable={false}
           />

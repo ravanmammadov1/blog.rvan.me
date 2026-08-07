@@ -55,7 +55,7 @@ const CONFIG_SHOW_NEWS = true;
 const CONFIG_SHOW_BLOG = true;
 const CONFIG_SHOW_RESOURCES = true;
 const CONFIG_SHOW_TOOLS = true;
-const CONFIG_SHOW_WORK = false;
+const CONFIG_SHOW_WORK = true;
 const CONFIG_SHOW_CONTACT = true;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -126,6 +126,15 @@ const fallbackProjects = [
     liveUrl: undefined as string | undefined,
   },
 ];
+
+function imageSource(image: unknown): string | undefined {
+  if (typeof image === "string") return image;
+  if (image && typeof image === "object") {
+    const candidate = image as { medium?: string; large?: string };
+    return candidate.medium || candidate.large;
+  }
+  return undefined;
+}
 
 const services = [
   {
@@ -198,6 +207,7 @@ export default function HomePage() {
   const [resourcesList, setResourcesList] = useState<any[]>([]);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
+  const [loadHeroParticles, setLoadHeroParticles] = useState(false);
 
   // Mouse tracking for Hero particles
   const mouseRef = useRef({ x: -99999, y: -99999 });
@@ -226,7 +236,7 @@ export default function HomePage() {
     // Fetch Blogs
     client
       .fetch(`
-        *[_type == "blog"] | order(featured desc, publishDate desc){
+        *[_type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())] | order(featured desc, publishDate desc){
           _id,
           title,
           slug,
@@ -248,7 +258,7 @@ export default function HomePage() {
     // Fetch News (latest 3)
     client
       .fetch(`
-        *[_type == "news"] | order(publishedAt desc)[0...3]{
+        *[_type == "news" && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc)[0...3]{
           _id,
           title,
           "slug": slug.current,
@@ -306,6 +316,24 @@ export default function HomePage() {
       })
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const startParticles = () => setLoadHeroParticles(true);
+    const idleHandle = idleWindow.requestIdleCallback
+      ? idleWindow.requestIdleCallback(startParticles, { timeout: 1800 })
+      : undefined;
+    const timeoutHandle = idleHandle === undefined ? window.setTimeout(startParticles, 1200) : undefined;
+
+    return () => {
+      if (idleHandle !== undefined) idleWindow.cancelIdleCallback?.(idleHandle);
+      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle);
+    };
+  }, []);
   const displayProjects = useMemo(() => {
     if (sanityProjects.length > 0) {
       return sanityProjects.map((p, index) => ({
@@ -313,7 +341,7 @@ export default function HomePage() {
         title: p.title,
         slug: p.slug?.current || p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         type: p.type || (p.tags && p.tags.length > 0 ? p.tags.join(" · ") : "Creative Project"),
-        image: p.coverImage ? urlFor(p.coverImage)?.url() || fallbackProjects[index % fallbackProjects.length].image : fallbackProjects[index % fallbackProjects.length].image,
+        image: p.coverImage ? urlFor(p.coverImage)?.width(1200).format("webp").auto("format").url() || fallbackProjects[index % fallbackProjects.length].image : fallbackProjects[index % fallbackProjects.length].image,
         accent: p.accent || "#e8fd52",
         year: p.year || "2025",
         liveUrl: p.liveUrl,
@@ -330,7 +358,7 @@ export default function HomePage() {
   }, [displayProjects]);
 
   const heroTitle = siteSettings?.heroTitle || "MOVE THE NEEDLE.";
-  const heroSubtitle = siteSettings?.heroSubtitle || "Senior creative designer blending motion, brand worlds and high-performing digital ideas into work that earns attention.";
+  const heroSubtitle = siteSettings?.heroSubtitle || "Senior creative designer in Baku, Azerbaijan, blending motion design, brand identity, graphic design, and high-performing digital ideas into work that earns attention.";
   const availabilityStatus = siteSettings?.availabilityStatus || "AVAILABLE FOR SELECT WORK · Q3 2025";
 
   return (
@@ -375,9 +403,11 @@ export default function HomePage() {
           />
 
           {/* ══ 2. Decorative WebGL Particle Background ══ */}
-          <Suspense fallback={null}>
-            <HeroParticles mouseRef={mouseRef} />
-          </Suspense>
+          {loadHeroParticles && (
+            <Suspense fallback={null}>
+              <HeroParticles mouseRef={mouseRef} />
+            </Suspense>
+          )}
 
           {/* Geo label */}
           <div className="absolute left-8 bottom-10 hidden text-[9px] tracking-[.22em] text-muted-foreground/40 font-mono md:block z-10">
@@ -390,6 +420,10 @@ export default function HomePage() {
 
               {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
+
+                <p className="mb-5 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
+                  Ravan Mammadov · Senior Creative Designer · Baku, Azerbaijan
+                </p>
 
                 {/* Glass availability badge */}
                 <motion.div
@@ -404,6 +438,7 @@ export default function HomePage() {
 
                 {/* Headline — word-by-word reveal */}
                 <h1 className="mb-0">
+                  <span className="sr-only">Ravan Mammadov — Motion, Brand & Graphic Designer in Baku</span>
                   {heroTitle.split(" ").map((word, i) => (
                     <span
                       key={i}
@@ -558,7 +593,7 @@ export default function HomePage() {
                       formattedDate = "";
                     }
                   }
-                  const imgUrl = item.coverImage ? urlFor(item.coverImage)?.url() : null;
+                  const imgUrl = item.coverImage ? urlFor(item.coverImage)?.width(1200).format("webp").auto("format").url() : null;
 
                   return (
                     <motion.article
@@ -576,6 +611,10 @@ export default function HomePage() {
                             <img
                               src={imgUrl}
                               alt={item.title}
+                              width={1200}
+                              height={750}
+                              loading="lazy"
+                              decoding="async"
                               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                           </div>
@@ -742,6 +781,10 @@ export default function HomePage() {
                               <img
                                 src={iconUrl}
                                 alt={tool.name}
+                                width={40}
+                                height={40}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-10 w-10 rounded-lg object-contain bg-background border border-border p-2"
                               />
                             ) : (
@@ -834,8 +877,8 @@ export default function HomePage() {
                     <Link to={`/work/${project.slug}`} className="block overflow-hidden rounded-2xl border border-border bg-surface">
                       <div className="project-art relative aspect-[16/10] overflow-hidden">
                         <ImageWithFallback
-                          src={typeof project.image === "string" ? project.image : (project.image?.medium || project.image?.large || fallbackProjects[index % fallbackProjects.length].image)}
-                          fallbackSrc={typeof fallbackProjects[index % fallbackProjects.length].image === "string" ? (fallbackProjects[index % fallbackProjects.length].image as any) : fallbackProjects[index % fallbackProjects.length].image?.medium}
+                          src={imageSource(project.image) || imageSource(fallbackProjects[index % fallbackProjects.length].image)}
+                          fallbackSrc={imageSource(fallbackProjects[index % fallbackProjects.length].image)}
                           alt={project.title}
                           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                         />
@@ -867,7 +910,7 @@ export default function HomePage() {
                         <a
                           href={project.liveUrl}
                           target="_blank"
-                          rel="noreferrer"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase"
                         >
                           LIVE SITE <ArrowUpRight size={12} />

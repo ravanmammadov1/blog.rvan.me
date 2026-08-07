@@ -21,6 +21,10 @@ export default function BlogHero({ post }: BlogHeroProps) {
         <img
           src={coverUrl}
           alt={post.title || "Blog cover"}
+          width={1800}
+          height={1000}
+          fetchPriority="high"
+          decoding="async"
           className="h-[560px] w-full object-cover"
         />
       ) : (

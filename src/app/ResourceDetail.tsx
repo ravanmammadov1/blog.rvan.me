@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { PortableText } from "@portabletext/react";
 import {
@@ -96,7 +96,7 @@ const portableComponents = {
 
 function RelatedCard({ resource }: { resource: ResourceItem }) {
   const logoUrl = resource.logo ? urlFor(resource.logo)?.width(60).url() : null;
-  const slug = resource.slug?.current || resource._id;
+  const slug = typeof resource.slug === "string" ? resource.slug : resource.slug?.current || resource._id;
   return (
     <Link
       to={`/resources/${slug}`}
@@ -134,7 +134,6 @@ function RelatedCard({ resource }: { resource: ResourceItem }) {
 
 export default function ResourceDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [resource, setResource] = useState<ResourceItem | null>(null);
   const [allResources, setAllResources] = useState<ResourceItem[]>([]);
@@ -146,15 +145,11 @@ export default function ResourceDetail() {
     fetchResources()
       .then((data: ResourceItem[]) => {
         setAllResources(data);
-        const found = data.find((r: ResourceItem) => (r.slug?.current || r._id) === slug);
-        if (!found) {
-          navigate("/resources", { replace: true });
-        } else {
-          setResource(found);
-        }
+        const found = data.find((r: ResourceItem) => (typeof r.slug === "string" ? r.slug : r.slug?.current || r._id) === slug);
+        setResource(found || null);
       })
       .finally(() => setLoading(false));
-  }, [slug, navigate]);
+  }, [slug]);
 
   // Related resources: same type or shared tags, excluding self
   const related = useMemo(() => {
@@ -186,7 +181,20 @@ export default function ResourceDetail() {
     );
   }
 
-  if (!resource) return null;
+  if (!resource) {
+    return (
+      <main className="min-h-screen bg-background px-6 py-32 text-foreground">
+        <SEO title="Resource Not Found — Ravan Mammadov" noIndex />
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-4xl font-semibold">Resource not found</h1>
+          <p className="mt-4 text-muted-foreground">The requested resource is unavailable or has been removed.</p>
+          <Link to="/resources" className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-black mono">
+            <ArrowLeft size={15} /> Back to resources
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   const logoUrl = resource.logo ? urlFor(resource.logo)?.width(120).url() : null;
   const ogImgUrl = resource.seo?.ogImage ? urlFor(resource.seo.ogImage)?.width(1200).url() : logoUrl ?? undefined;
@@ -197,15 +205,20 @@ export default function ResourceDetail() {
 
   const seoTitle = resource.seo?.metaTitle || `${resource.title} — Free Resource`;
   const seoDesc = resource.seo?.metaDescription || resource.description;
-  const canonicalUrl = resource.seo?.canonicalUrl || `https://www.rvan.me/resources/${resource.slug?.current || resource._id}`;
+  const resourceSlug = typeof resource.slug === "string" ? resource.slug : resource.slug?.current || resource._id;
+  const canonicalUrl = resource.seo?.canonicalUrl || `https://www.rvan.me/resources/${resourceSlug}`;
 
   const resourceJsonLd: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${canonicalUrl}#webpage`,
     name: seoTitle,
     description: seoDesc,
     url: canonicalUrl,
-    publisher: { "@type": "Person", name: "Ravan Mammadov", url: "https://www.rvan.me" },
+    image: ogImgUrl ? [ogImgUrl] : [],
+    isPartOf: { "@id": "https://www.rvan.me/#website" },
+    about: { "@id": "https://www.rvan.me/#person" },
+    publisher: { "@id": "https://www.rvan.me/#person" },
   };
 
   return (
@@ -293,6 +306,9 @@ export default function ResourceDetail() {
                     <img
                       src={logoUrl}
                       alt={resource.title}
+                      width={80}
+                      height={80}
+                      decoding="async"
                       className="h-20 w-20 rounded-2xl object-contain border border-white/10 bg-background p-3"
                     />
                   ) : (

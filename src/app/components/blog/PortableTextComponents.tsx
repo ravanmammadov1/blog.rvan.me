@@ -62,7 +62,9 @@ const portableTextComponents = {
         <figure className="my-10">
           <img
             src={src}
-            alt={value.alt || "Article image"}
+             alt={value.alt || value.caption || "Editorial illustration"}
+             width={1400}
+             height={900}
             loading="lazy"
             className="w-full rounded-2xl object-cover shadow-2xl"
           />
@@ -81,9 +83,9 @@ const portableTextComponents = {
     h1: ({ children }: any) => {
       const id = generateId(children);
       return (
-        <h1 id={id} className="mt-14 mb-6 text-4xl font-black md:text-5xl scroll-mt-28">
+        <h2 id={id} className="mt-14 mb-6 text-4xl font-black md:text-5xl scroll-mt-28">
           {children}
-        </h1>
+        </h2>
       );
     },
 

@@ -3,12 +3,16 @@ import { urlFor } from "../../lib/sanityClient";
 import { fetchSiteSettings } from "../../lib/sanityQueries";
 import { SiteSettings } from "../../types/cms";
 
+type SeoType = "website" | "article" | "profile";
+type ArticleSchemaType = "BlogPosting" | "NewsArticle";
+
 interface SEOProps {
   title?: string;
   description?: string;
   image?: string;
   url?: string;
-  type?: "website" | "article" | "profile";
+  type?: SeoType;
+  articleSchemaType?: ArticleSchemaType;
   publishDate?: string;
   modifiedDate?: string;
   authorName?: string;
@@ -18,7 +22,27 @@ interface SEOProps {
   siteSettings?: SiteSettings | null;
 }
 
-const DEFAULT_SITE_DOMAIN = "https://www.rvan.me";
+export const DEFAULT_SITE_DOMAIN = "https://www.rvan.me";
+
+function getSiteOrigin(value: string): string {
+  try {
+    return new URL(value, DEFAULT_SITE_DOMAIN).origin.replace(/\/$/, "");
+  } catch {
+    return DEFAULT_SITE_DOMAIN;
+  }
+}
+
+/** Canonical URLs never contain tracking parameters, searches, or fragments. */
+function normalizeCanonicalUrl(value: string, siteDomain: string): string {
+  try {
+    const parsed = new URL(value, siteDomain);
+    const origin = getSiteOrigin(siteDomain);
+    const pathname = parsed.pathname === "/" ? "/" : parsed.pathname.replace(/\/+$/, "");
+    return `${origin}${pathname}`;
+  } catch {
+    return `${getSiteOrigin(siteDomain)}/`;
+  }
+}
 
 export default function SEO({
   title,
@@ -26,6 +50,7 @@ export default function SEO({
   image,
   url,
   type = "website",
+  articleSchemaType = "BlogPosting",
   publishDate,
   modifiedDate,
   authorName,
@@ -46,36 +71,29 @@ export default function SEO({
 
   const activeSettings = siteSettingsProp || fetchedSettings;
   const seoConfig = activeSettings?.seo;
-
-  // Resolve defaults from Sanity CMS Site Settings
-  const siteDomain = seoConfig?.canonicalUrl || DEFAULT_SITE_DOMAIN;
+  const siteDomain = getSiteOrigin(seoConfig?.canonicalUrl || DEFAULT_SITE_DOMAIN);
   const resolvedTitle = title || seoConfig?.metaTitle || "Ravan Mammadov — Senior Creative Designer & Art Director";
   const resolvedDescription =
     description ||
     seoConfig?.metaDescription ||
-    "Senior Creative Designer blending 3D motion design, brand worlds, and high-performing digital marketing ideas into work that commands attention.";
+    "Senior Creative Designer based in Baku, Azerbaijan, specializing in motion design, brand identity, graphic design, and performance creative.";
   const resolvedAuthor = authorName || seoConfig?.author || "Ravan Mammadov";
   const resolvedSiteName = seoConfig?.siteName || "Ravan Mammadov";
   const resolvedTwitterHandle = seoConfig?.twitterHandle || "@ravanimate";
-  const defaultKeywords =
-    seoConfig?.defaultKeywords ||
-    "Ravan Mammadov, Creative Designer, Motion Design, Art Direction, Brand Identity, 3D Design, Baku, Portfolio";
 
-  // OG & Twitter Images from Sanity or fallback
   const sanityOgImageUrl = seoConfig?.ogImage ? urlFor(seoConfig.ogImage)?.url() : null;
   const sanityTwitterImageUrl = seoConfig?.twitterImage ? urlFor(seoConfig.twitterImage)?.url() : null;
   const resolvedOgImage = image || sanityOgImageUrl || `${siteDomain}/og-image.jpg`;
   const resolvedTwitterImage = image || sanityTwitterImageUrl || sanityOgImageUrl || `${siteDomain}/og-image.jpg`;
-
   const rawUrl = url || (typeof window !== "undefined" ? window.location.href : siteDomain);
-  const resolvedUrl = rawUrl.replace(/^https?:\/\/(www\.)?rvan\.me/i, "https://www.rvan.me");
+  const resolvedUrl = normalizeCanonicalUrl(rawUrl, siteDomain);
+  const personId = `${siteDomain}/#person`;
+  const websiteId = `${siteDomain}/#website`;
 
   useEffect(() => {
-    // Document Title
     document.title = resolvedTitle;
 
-    // Helper for updating or creating meta tags
-    const updateMeta = (selector: string, content: string, attrName = "content") => {
+    const updateMeta = (selector: string, content: string) => {
       let element = document.querySelector(selector);
       if (!element) {
         const meta = document.createElement("meta");
@@ -87,51 +105,49 @@ export default function SEO({
         document.head.appendChild(meta);
         element = meta;
       }
-      element.setAttribute(attrName, content);
+      element.setAttribute("content", content);
     };
 
-    // Robots & Rich Directives
-    updateMeta('meta[name="robots"]', noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
-
-    // Core meta
+    // The keywords meta tag has no ranking value and is deliberately removed.
+    document.querySelector('meta[name="keywords"]')?.remove();
+    updateMeta(
+      'meta[name="robots"]',
+      noIndex
+        ? "noindex, nofollow"
+        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    );
     updateMeta('meta[name="description"]', resolvedDescription);
     updateMeta('meta[name="author"]', resolvedAuthor);
-    updateMeta('meta[name="keywords"]', defaultKeywords);
 
-    // Open Graph
     updateMeta('meta[property="og:title"]', resolvedTitle);
     updateMeta('meta[property="og:description"]', resolvedDescription);
     updateMeta('meta[property="og:url"]', resolvedUrl);
-    updateMeta('meta[property="og:type"]', type);
+    updateMeta('meta[property="og:type"]', type === "profile" ? "profile" : type);
     updateMeta('meta[property="og:site_name"]', resolvedSiteName);
     updateMeta('meta[property="og:locale"]', "en_US");
 
-    // Twitter/X Card
     updateMeta('meta[name="twitter:card"]', "summary_large_image");
     updateMeta('meta[name="twitter:title"]', resolvedTitle);
     updateMeta('meta[name="twitter:description"]', resolvedDescription);
     updateMeta('meta[name="twitter:url"]', resolvedUrl);
     updateMeta('meta[name="twitter:creator"]', resolvedTwitterHandle);
     updateMeta('meta[name="twitter:site"]', resolvedTwitterHandle);
+    updateMeta('meta[name="twitter:image"]', resolvedTwitterImage);
     updateMeta('meta[name="twitter:image:alt"]', resolvedTitle);
 
-    // Images
     updateMeta('meta[property="og:image"]', resolvedOgImage);
     updateMeta('meta[property="og:image:secure_url"]', resolvedOgImage);
     updateMeta('meta[property="og:image:type"]', "image/jpeg");
     updateMeta('meta[property="og:image:width"]', "1200");
     updateMeta('meta[property="og:image:height"]', "630");
     updateMeta('meta[property="og:image:alt"]', resolvedTitle);
-    updateMeta('meta[name="twitter:image"]', resolvedTwitterImage);
 
-    // Article-specific
     if (type === "article") {
       if (publishDate) updateMeta('meta[property="article:published_time"]', publishDate);
       if (modifiedDate) updateMeta('meta[property="article:modified_time"]', modifiedDate);
       updateMeta('meta[property="article:author"]', resolvedAuthor);
     }
 
-    // Canonical URL
     let canonical: HTMLLinkElement | null = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement("link");
@@ -140,9 +156,10 @@ export default function SEO({
     }
     canonical.href = resolvedUrl;
 
-    // Favicon — keep the shared browser asset links consistent for all pages
-    const sanityFaviconUrl = (favicon || activeSettings?.favicon) ? urlFor(favicon || activeSettings?.favicon)?.url() : null;
-    const ensureLink = (rel: string, href: string, type?: string, sizes?: string) => {
+    const sanityFaviconUrl = (favicon || activeSettings?.favicon)
+      ? urlFor(favicon || activeSettings?.favicon)?.url()
+      : null;
+    const ensureLink = (rel: string, href: string, linkType?: string, sizes?: string) => {
       let link: HTMLLinkElement | null = document.querySelector(`link[rel="${rel}"]`);
       if (!link) {
         link = document.createElement("link");
@@ -150,21 +167,73 @@ export default function SEO({
         document.head.appendChild(link);
       }
       link.href = href;
-      if (type) link.type = type;
+      if (linkType) link.type = linkType;
       if (sizes) link.sizes = sizes;
     };
 
     ensureLink("icon", sanityFaviconUrl || "/favicon.ico", sanityFaviconUrl ? "image/webp" : "image/x-icon", sanityFaviconUrl ? "" : "any");
     ensureLink("apple-touch-icon", "/apple-touch-icon.png", "image/png", "180x180");
-    const manifestLink = document.querySelector('link[rel="manifest"]');
-    if (!manifestLink) {
+    if (!document.querySelector('link[rel="manifest"]')) {
       const manifest = document.createElement("link");
       manifest.rel = "manifest";
       manifest.href = "/site.webmanifest";
       document.head.appendChild(manifest);
     }
 
-    // JSON-LD Structured Data
+    const baseGraph: Record<string, any>[] = [
+      {
+        "@type": "Person",
+        "@id": personId,
+        name: resolvedAuthor,
+        url: `${siteDomain}/ravan-mammadov`,
+        jobTitle: "Senior Creative Designer & Art Director",
+        image: `${siteDomain}/og-image.jpg`,
+        sameAs: [
+          activeSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan",
+          activeSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/",
+          activeSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/",
+        ],
+        knowsAbout: ["Motion Design", "Graphic Design", "Brand Identity", "Art Direction", "Digital Marketing"],
+      },
+      {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: `${siteDomain}/`,
+        name: resolvedSiteName,
+        publisher: { "@id": personId },
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${resolvedUrl}#webpage`,
+        url: resolvedUrl,
+        name: resolvedTitle,
+        description: resolvedDescription,
+        isPartOf: { "@id": websiteId },
+        about: { "@id": personId },
+      },
+    ];
+
+    if (type === "article") {
+      baseGraph.push({
+        "@type": articleSchemaType,
+        "@id": `${resolvedUrl}#article`,
+        headline: resolvedTitle,
+        description: resolvedDescription,
+        image: resolvedOgImage ? [resolvedOgImage] : [],
+        datePublished: publishDate,
+        dateModified: modifiedDate || publishDate,
+        url: resolvedUrl,
+        mainEntityOfPage: { "@id": `${resolvedUrl}#webpage` },
+        author: { "@id": personId },
+        publisher: { "@id": personId },
+      });
+    }
+
+    const structuredData = jsonLd || {
+      "@context": "https://schema.org",
+      "@graph": baseGraph,
+    };
+
     let scriptElement: HTMLScriptElement | null = document.querySelector("#seo-json-ld");
     if (!scriptElement) {
       scriptElement = document.createElement("script");
@@ -172,47 +241,7 @@ export default function SEO({
       scriptElement.type = "application/ld+json";
       document.head.appendChild(scriptElement);
     }
-
-    const defaultJsonLd =
-      jsonLd ||
-      (type === "article"
-        ? {
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: resolvedTitle,
-            description: resolvedDescription,
-            image: resolvedOgImage ? [resolvedOgImage] : [],
-            datePublished: publishDate,
-            dateModified: modifiedDate || publishDate,
-            url: resolvedUrl,
-            author: {
-              "@type": "Person",
-              name: resolvedAuthor,
-              jobTitle: "Senior Creative Designer & Art Director",
-              url: siteDomain,
-            },
-            publisher: {
-              "@type": "Person",
-              name: resolvedAuthor,
-              url: siteDomain,
-            },
-          }
-        : {
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: resolvedAuthor,
-            url: siteDomain,
-            jobTitle: "Senior Creative Designer & Art Director",
-            description: resolvedDescription,
-            sameAs: [
-              activeSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan",
-              activeSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/",
-              activeSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/",
-            ],
-            knowsAbout: ["Motion Design", "Art Direction", "Brand Identity", "3D Design", "Performance Creative"],
-          });
-
-    scriptElement.text = JSON.stringify(defaultJsonLd, null, 0);
+    scriptElement.text = JSON.stringify(structuredData);
   }, [
     resolvedTitle,
     resolvedDescription,
@@ -220,17 +249,19 @@ export default function SEO({
     resolvedTwitterImage,
     resolvedUrl,
     type,
+    articleSchemaType,
     publishDate,
     modifiedDate,
     resolvedAuthor,
     resolvedSiteName,
     resolvedTwitterHandle,
-    defaultKeywords,
     noIndex,
     jsonLd,
     activeSettings,
     favicon,
     siteDomain,
+    personId,
+    websiteId,
   ]);
 
   return null;

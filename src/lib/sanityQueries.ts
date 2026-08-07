@@ -65,7 +65,7 @@ export async function fetchAboutSection(): Promise<AboutSection | null> {
 export async function fetchProjects(): Promise<ProjectItem[]> {
   try {
     const data = await client.fetch(`
-      *[_type == "projects"] | order(order asc, _createdAt desc){
+      *[_type == "projects" && defined(slug.current) && (status == "published" || !defined(status))] | order(order asc, _createdAt desc){
         _id,
         title,
         slug,
@@ -93,7 +93,7 @@ export async function fetchProjectBySlug(slug: string): Promise<ProjectItem | nu
   try {
     const data = await client.fetch(
       `
-      *[_type == "projects" && slug.current == $slug][0]{
+      *[_type == "projects" && slug.current == $slug && (status == "published" || !defined(status))][0]{
         _id,
         title,
         slug,
@@ -122,7 +122,7 @@ export async function fetchProjectBySlug(slug: string): Promise<ProjectItem | nu
 export async function fetchNews(): Promise<NewsItem[]> {
   try {
     const data = await client.fetch(`
-      *[_type == "news"] | order(publishedAt desc){
+      *[_type == "news" && defined(slug.current) && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc){
         _id,
         title,
         slug,
@@ -142,10 +142,9 @@ export async function fetchNews(): Promise<NewsItem[]> {
 
 export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
   try {
-    const slugClean = (slug || "").toLowerCase().trim();
     const data = await client.fetch(
       `
-      *[_type == "news" && (slug.current == $slug || _id == $slug || lower(slug.current) == $slugClean)][0]{
+      *[_type == "news" && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now()) && slug.current == $slug][0]{
         _id,
         title,
         slug,
@@ -156,7 +155,7 @@ export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
         category
       }
     `,
-      { slug, slugClean }
+      { slug }
     );
     return data || null;
   } catch (error) {

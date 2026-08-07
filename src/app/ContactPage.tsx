@@ -68,16 +68,37 @@ export default function ContactPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ContactPage",
-    name: "Contact Ravan Mammadov",
-    description: "Get in touch with Ravan Mammadov for 3D motion design, brand identity systems, or digital campaign inquiries.",
-    url: "https://www.rvan.me/contact",
-    mainEntity: {
-      "@type": "Person",
-      name: "Ravan Mammadov",
-      email: siteSettings?.socialLinks?.email || "mammadovravan1@gmail.com",
-      url: "https://www.rvan.me",
-    },
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.rvan.me/#person",
+        name: "Ravan Mammadov",
+        email: siteSettings?.socialLinks?.email || "mammadovravan1@gmail.com",
+        url: "https://www.rvan.me/ravan-mammadov",
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.rvan.me/#website",
+        name: "Ravan Mammadov Portfolio",
+        url: "https://www.rvan.me/",
+        publisher: { "@id": "https://www.rvan.me/#person" },
+      },
+      {
+        "@type": "ContactPage",
+        "@id": "https://www.rvan.me/contact#webpage",
+        name: "Contact Ravan Mammadov",
+        description: "Get in touch with Ravan Mammadov for motion design, brand identity systems, or digital campaign inquiries.",
+        url: "https://www.rvan.me/contact",
+        mainEntity: { "@id": "https://www.rvan.me/#person" },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://www.rvan.me/" },
+          { "@type": "ListItem", position: 2, name: "Contact", item: "https://www.rvan.me/contact" },
+        ],
+      },
+    ],
   };
 
   return (
@@ -203,7 +224,7 @@ export default function ContactPage() {
                       key={social.label}
                       href={social.href}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono hover:-translate-y-0.5 shadow-sm"
                     >
                       {social.label} <ArrowUpRight size={12} className="opacity-70 group-hover:opacity-100" />
@@ -257,11 +278,13 @@ export default function ContactPage() {
 
                   <div className="grid gap-6 sm:grid-cols-2">
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
+                      <label htmlFor="contact-name" className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
                         Your Name *
                       </label>
                       <input
                         type="text"
+                        id="contact-name"
+                        name="name"
                         required
                         placeholder="Alex Morgan"
                         value={formData.name}
@@ -271,11 +294,13 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
+                      <label htmlFor="contact-email" className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
                         Your Email *
                       </label>
                       <input
                         type="email"
+                        id="contact-email"
+                        name="email"
                         required
                         placeholder="alex@company.com"
                         value={formData.email}
@@ -286,11 +311,13 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
+                    <label htmlFor="contact-project-details" className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
                       Project Details & Message *
                     </label>
                     <textarea
                       required
+                      id="contact-project-details"
+                      name="projectDetails"
                       rows={5}
                       placeholder="Tell us how we can collaborate, suggest a tool, or share your feedback..."
                       value={formData.projectDetails}
