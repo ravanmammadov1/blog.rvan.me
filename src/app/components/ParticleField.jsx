@@ -17,8 +17,52 @@ const PALETTE = [
 ];
 
 const REVEAL_RADIUS_PX = 260; // Screen-space reveal radius around cursor
-const FADE_SPEED = 0.12; // Smooth fade-in / fade-out speed
+const FADE_SPEED = 0.10; // Smooth fade-in / fade-out interpolation speed
 const LERP_POSITION = 0.05; // Soft anti-gravity movement lerp speed
+
+// Custom ShaderMaterial for per-vertex alpha, distance-based reveal & zero idle pixel rendering
+const particleShaderMaterial = {
+  uniforms: {
+    uPointScale: { value: 30.0 },
+  },
+  vertexShader: `
+    attribute vec3 customColor;
+    attribute float customAlpha;
+
+    varying vec3 vColor;
+    varying float vAlpha;
+
+    void main() {
+      vColor = customColor;
+      vAlpha = customAlpha;
+
+      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = (30.0 / -mvPosition.z);
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vColor;
+    varying float vAlpha;
+
+    void main() {
+      // Discard immediately if particle alpha is 0 — zero black dots or background artifacts!
+      if (vAlpha <= 0.001) discard;
+
+      // Calculate radial distance from point center for smooth circular anti-aliasing
+      vec2 coord = gl_PointCoord - vec2(0.5);
+      float distSq = dot(coord, coord);
+      if (distSq > 0.25) discard;
+
+      float circleAlpha = smoothstep(0.5, 0.0, sqrt(distSq));
+      float finalAlpha = vAlpha * circleAlpha;
+
+      if (finalAlpha <= 0.001) discard;
+
+      gl_FragColor = vec4(vColor * finalAlpha, finalAlpha);
+    }
+  `,
+};
 
 export default function ParticleField({ mouseRef }) {
   const pointsRef = useRef(null);
@@ -31,10 +75,9 @@ export default function ParticleField({ mouseRef }) {
   const SPREAD_X = visW * 1.25; // 25% padding for seamless edge-to-edge coverage
   const SPREAD_Y = visH * 1.25;
 
-  const { positions, baseColors, displayColors, origX, origY, currX, currY, alphaArr, orbitPhases } = useMemo(() => {
+  const { positions, baseColors, origX, origY, currX, currY, alphaArr, orbitPhases } = useMemo(() => {
     const pos = new Float32Array(PARTICLE_COUNT * 3);
     const baseCols = new Float32Array(PARTICLE_COUNT * 3);
-    const dispCols = new Float32Array(PARTICLE_COUNT * 3);
     const ox = new Float32Array(PARTICLE_COUNT);
     const oy = new Float32Array(PARTICLE_COUNT);
     const cx = new Float32Array(PARTICLE_COUNT);
@@ -50,7 +93,7 @@ export default function ParticleField({ mouseRef }) {
         const ny = (r / (ROWS - 1) - 0.5) * 2;
         const distFromCenter = Math.sqrt(nx * nx + ny * ny);
 
-        // Center-weighted smooth density modulation: ~25% higher particle density near hero center without clustering
+        // Center-weighted smooth density modulation
         const compress = 1.0 - 0.22 * Math.exp(-distFromCenter * distFromCenter * 1.6);
 
         const jitterX = (Math.random() - 0.5) * (SPREAD_X / COLS) * 0.75;
@@ -75,10 +118,6 @@ export default function ParticleField({ mouseRef }) {
         baseCols[i * 3 + 1] = color.g;
         baseCols[i * 3 + 2] = color.b;
 
-        dispCols[i * 3] = 0;
-        dispCols[i * 3 + 1] = 0;
-        dispCols[i * 3 + 2] = 0;
-
         i++;
       }
     }
@@ -86,7 +125,6 @@ export default function ParticleField({ mouseRef }) {
     return {
       positions: pos,
       baseColors: baseCols,
-      displayColors: dispCols,
       origX: ox,
       origY: oy,
       currX: cx,
@@ -108,13 +146,13 @@ export default function ParticleField({ mouseRef }) {
     let myW = 99999;
     let mouseActive = false;
 
-    if (mouse && mouse.x > -9000) {
+    if (mouse && mouse.x > -9000 && mouse.x < 9000 && mouse.y > -9000 && mouse.y < 9000) {
       mxW = (mouse.x / size.width - 0.5) * visW;
       myW = (0.5 - mouse.y / size.height) * visH;
       mouseActive = true;
     }
 
-    let needsColorUpdate = false;
+    let needsAlphaUpdate = false;
     let needsPositionUpdate = false;
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -128,24 +166,26 @@ export default function ParticleField({ mouseRef }) {
       let targetAlpha = 0;
       if (mouseActive && dist < radiusW) {
         const normDist = dist / radiusW; // 0 at center, 1 at edge
-        targetAlpha = (1 - normDist) * (1 - normDist) * (3 - 2 * (1 - normDist));
+        const falloff = 1 - normDist;
+        // Smoothstep cubic interpolation: 1 at cursor center, 0 at edge with zero slope
+        targetAlpha = falloff * falloff * (3.0 - 2.0 * falloff) * 0.95;
       }
 
-      // Smooth alpha fade-in / fade-out
+      // Smooth alpha fade-in / fade-out interpolation
       const prevAlpha = alphaArr[i];
       alphaArr[i] += (targetAlpha - alphaArr[i]) * FADE_SPEED;
 
-      // Color updates only when alpha changes meaningfully
-      if (Math.abs(alphaArr[i] - prevAlpha) > 0.001 || targetAlpha > 0 || alphaArr[i] > 0.001) {
-        const a = alphaArr[i];
-        displayColors[i3] = baseColors[i3] * a;
-        displayColors[i3 + 1] = baseColors[i3 + 1] * a;
-        displayColors[i3 + 2] = baseColors[i3 + 2] * a;
-        needsColorUpdate = true;
+      // Snap micro alphas to 0 for crisp zero-idle performance
+      if (alphaArr[i] < 0.001) {
+        alphaArr[i] = 0;
       }
 
-      // Anti-gravity motion physics when particle is visible
-      if (alphaArr[i] > 0.001) {
+      if (alphaArr[i] !== prevAlpha) {
+        needsAlphaUpdate = true;
+      }
+
+      // Anti-gravity motion physics when particle is visible or returning
+      if (alphaArr[i] > 0) {
         const idleX = origX[i] + Math.sin(time * 0.75 + orbitPhases[i]) * 0.14;
         const idleY = origY[i] + Math.cos(time * 0.75 + orbitPhases[i]) * 0.14;
 
@@ -171,17 +211,20 @@ export default function ParticleField({ mouseRef }) {
         needsPositionUpdate = true;
       } else {
         // Return smoothly to rest position while invisible
-        currX[i] += (origX[i] - currX[i]) * 0.02;
-        currY[i] += (origY[i] - currY[i]) * 0.02;
-        positions[i3] = currX[i];
-        positions[i3 + 1] = currY[i];
+        if (Math.abs(currX[i] - origX[i]) > 0.001 || Math.abs(currY[i] - origY[i]) > 0.001) {
+          currX[i] += (origX[i] - currX[i]) * 0.05;
+          currY[i] += (origY[i] - currY[i]) * 0.05;
+          positions[i3] = currX[i];
+          positions[i3 + 1] = currY[i];
+          needsPositionUpdate = true;
+        }
       }
     }
 
-    if (needsColorUpdate) {
-      pointsRef.current.geometry.attributes.color.needsUpdate = true;
+    if (needsAlphaUpdate && pointsRef.current.geometry.attributes.customAlpha) {
+      pointsRef.current.geometry.attributes.customAlpha.needsUpdate = true;
     }
-    if (needsPositionUpdate) {
+    if (needsPositionUpdate && pointsRef.current.geometry.attributes.position) {
       pointsRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
@@ -194,18 +237,19 @@ export default function ParticleField({ mouseRef }) {
           args={[positions, 3]}
         />
         <bufferAttribute
-          attach="attributes-color"
-          args={[displayColors, 3]}
+          attach="attributes-customColor"
+          args={[baseColors, 3]}
+        />
+        <bufferAttribute
+          attach="attributes-customAlpha"
+          args={[alphaArr, 1]}
         />
       </bufferGeometry>
-      <pointsMaterial
-        size={0.042}
-        vertexColors
+      <shaderMaterial
+        args={[particleShaderMaterial]}
         transparent
-        opacity={1}
-        blending={THREE.AdditiveBlending}
-        sizeAttenuation
         depthWrite={false}
+        blending={THREE.AdditiveBlending}
       />
     </points>
   );

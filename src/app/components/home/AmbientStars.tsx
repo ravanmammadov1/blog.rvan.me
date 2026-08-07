@@ -151,6 +151,24 @@ function StarNode({
     return 0;
   });
 
+  // Proximity-based opacity: 0 by default when idle or away, smooth falloff when cursor gets close
+  const opacity = useTransform([mouseX, mouseY], ([mx, my]) => {
+    if (isMobile || prefersReducedMotion || mx < -900 || my < -900) return 0;
+    const starAbsX = (star.xPct / 100) * width;
+    const diffX = mx - starAbsX;
+    const starAbsY = (star.yPct / 100) * height;
+    const diffY = my - starAbsY;
+    const dist = Math.hypot(diffX, diffY);
+
+    const radius = 200; // Interaction radius
+    if (dist < radius) {
+      const norm = (radius - dist) / radius; // 1 at center, 0 at edge
+      const falloff = norm * norm * (3 - 2 * norm); // smoothstep
+      return falloff * 0.45; // Smooth fade in up to 0.45 opacity
+    }
+    return 0;
+  });
+
   return (
     <motion.div
       style={{
@@ -166,7 +184,7 @@ function StarNode({
         style={{
           width: star.size,
           height: star.size,
-          opacity: star.opacity,
+          opacity,
         }}
         animate={
           prefersReducedMotion
