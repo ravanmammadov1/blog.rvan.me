@@ -186,6 +186,52 @@ export interface ResourceCategory {
 }
 
 
+export type UniversalContentType =
+  | "resource"
+  | "aiTool"
+  | "scholarship"
+  | "remoteJob"
+  | "competition"
+  | "freeCourse"
+  | "githubProject"
+  | "designAsset"
+  | "template"
+  | "marketingResource"
+  | "industryNews";
+
+export interface UniversalContentItem {
+  _id: string;
+  _createdAt?: string;
+  title: string;
+  slug: { current: string } | string;
+  contentType: UniversalContentType;
+  summary: string;
+  whyItMatters?: string;
+  whoShouldUseIt?: string;
+  link: string;
+  coverImage?: any;
+  logo?: any;
+  qualityScore: number;
+  trendingScore: number;
+  publishedAt?: string;
+  status: "draft" | "review" | "published" | "archived";
+  verificationStatus?: "official" | "verified" | "community";
+  sourceName?: string;
+  category?: { name: string; slug: { current: string }; icon?: string };
+  tags?: Array<{ name: string; slug: { current: string } }>;
+
+  // Polymorphic Metadata Extensions
+  jobDetails?: { company?: string; locationType?: string; salaryRange?: string; countryEligibility?: string[] };
+  scholarshipDetails?: { fundingAmount?: string; eligibilityCriteria?: string; deadline?: string };
+  aiToolDetails?: { pricingModel?: "free" | "freemium" | "paid"; platforms?: string[] };
+  githubDetails?: { repoUrl?: string; starsCount?: number; primaryLanguage?: string; license?: string };
+  courseDetails?: { provider?: string; duration?: string; certificateIncluded?: boolean };
+  competitionDetails?: { prizePool?: string; deadline?: string; organizer?: string };
+
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
 export interface ResourceItem {
   _id: string;
   title: string;
@@ -239,3 +285,4 @@ export interface ResourceItem {
     noIndex?: boolean;
   };
 }
+

@@ -374,3 +374,58 @@ export async function fetchRssFeeds() {
     return [];
   }
 }
+
+export async function fetchUniversalContentItems(contentType?: string) {
+  try {
+    const filter = contentType
+      ? `*[_type == "contentItem" && status == "published" && contentType == $contentType]`
+      : `*[_type == "contentItem" && status == "published"]`;
+
+    const data = await client.fetch(
+      `
+      ${filter} | order(trendingScore desc, publishedAt desc)[0...50]{
+        _id,
+        _createdAt,
+        title,
+        "slug": slug.current,
+        contentType,
+        summary,
+        whyItMatters,
+        whoShouldUseIt,
+        link,
+        coverImage,
+        logo,
+        qualityScore,
+        trendingScore,
+        publishedAt,
+        status,
+        verificationStatus,
+        sourceName,
+        category->{
+          name,
+          "slug": slug.current,
+          icon
+        },
+        tags[]->{
+          name,
+          "slug": slug.current
+        },
+        jobDetails,
+        scholarshipDetails,
+        aiToolDetails,
+        githubDetails,
+        courseDetails,
+        competitionDetails,
+        seoTitle,
+        seoDescription
+      }
+    `,
+      contentType ? { contentType } : {}
+    );
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching universal content items from Sanity:", error);
+    return [];
+  }
+}
+
