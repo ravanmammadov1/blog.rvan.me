@@ -409,10 +409,6 @@ export default function HomePage() {
             </Suspense>
           )}
 
-          {/* Geo label */}
-          <div className="absolute left-8 bottom-10 hidden text-[9px] tracking-[.22em] text-muted-foreground/40 font-mono md:block z-10">
-            40.40° N &nbsp;·&nbsp; 49.86° E
-          </div>
 
           {/* ══ 3. Original Hero Content Grid ══ */}
           <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 py-24 lg:py-0">
