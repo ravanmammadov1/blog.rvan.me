@@ -509,7 +509,7 @@ export default function HomePage() {
           {/* Bottom fade */}
           <div
             className="pointer-events-none absolute bottom-0 inset-x-0 h-40"
-            style={{ background: "linear-gradient(to bottom, transparent, #101010)" }}
+            style={{ background: "linear-gradient(to bottom, transparent, #050506)" }}
           />
         </section>
       )}

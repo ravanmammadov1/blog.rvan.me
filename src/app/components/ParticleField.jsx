@@ -17,13 +17,13 @@ const PALETTE = [
 ];
 
 const REVEAL_RADIUS_PX = 260; // Screen-space reveal radius around cursor
-const FADE_SPEED = 0.10; // Smooth fade-in / fade-out interpolation speed
+const FADE_SPEED = 0.14; // Fast & smooth fade-in / fade-out interpolation speed
 const LERP_POSITION = 0.05; // Soft anti-gravity movement lerp speed
 
-// Custom ShaderMaterial for per-vertex alpha, distance-based reveal & zero idle pixel rendering
+// Custom ShaderMaterial for per-vertex alpha, full luminous brightness & zero idle pixel rendering
 const particleShaderMaterial = {
   uniforms: {
-    uPointScale: { value: 30.0 },
+    uPointScale: { value: 36.0 },
   },
   vertexShader: `
     attribute vec3 customColor;
@@ -37,7 +37,7 @@ const particleShaderMaterial = {
       vAlpha = customAlpha;
 
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = (30.0 / -mvPosition.z);
+      gl_PointSize = (36.0 / -mvPosition.z);
       gl_Position = projectionMatrix * mvPosition;
     }
   `,
@@ -46,7 +46,7 @@ const particleShaderMaterial = {
     varying float vAlpha;
 
     void main() {
-      // Discard immediately if particle alpha is 0 — zero black dots or background artifacts!
+      // Discard immediately if particle alpha is 0 — zero black dots or background artifacts when idle!
       if (vAlpha <= 0.001) discard;
 
       // Calculate radial distance from point center for smooth circular anti-aliasing
@@ -54,12 +54,13 @@ const particleShaderMaterial = {
       float distSq = dot(coord, coord);
       if (distSq > 0.25) discard;
 
-      float circleAlpha = smoothstep(0.5, 0.0, sqrt(distSq));
+      float circleAlpha = smoothstep(0.5, 0.06, sqrt(distSq));
       float finalAlpha = vAlpha * circleAlpha;
 
       if (finalAlpha <= 0.001) discard;
 
-      gl_FragColor = vec4(vColor * finalAlpha, finalAlpha);
+      // Pass un-premultiplied vColor for AdditiveBlending (produces full original luminous glow)
+      gl_FragColor = vec4(vColor, finalAlpha);
     }
   `,
 };
@@ -162,13 +163,13 @@ export default function ParticleField({ mouseRef }) {
       const dy = currY[i] - myW;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Target alpha based on distance to cursor with smoothstep radial falloff
+      // Target alpha based on distance to cursor with full 1.0 peak brightness & smooth cubic falloff
       let targetAlpha = 0;
       if (mouseActive && dist < radiusW) {
         const normDist = dist / radiusW; // 0 at center, 1 at edge
         const falloff = 1 - normDist;
-        // Smoothstep cubic interpolation: 1 at cursor center, 0 at edge with zero slope
-        targetAlpha = falloff * falloff * (3.0 - 2.0 * falloff) * 0.95;
+        // Smoothstep cubic interpolation: 1.0 peak at cursor center, 0 at edge
+        targetAlpha = falloff * falloff * (3.0 - 2.0 * falloff);
       }
 
       // Smooth alpha fade-in / fade-out interpolation

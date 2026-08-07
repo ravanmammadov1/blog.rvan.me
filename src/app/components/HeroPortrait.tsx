@@ -63,31 +63,42 @@ export default function HeroPortrait() {
   return (
     <div
       ref={containerRef}
-      className="relative flex h-full w-full items-center justify-center transform-gpu"
+      className="relative flex h-full w-full items-center justify-center overflow-visible"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-hidden="true"
     >
-      {/* Layer 1 — deep emerald/teal vector radial light field */}
+      {/* Layer 1 — deep emerald/teal vector radial light field (full container, zero vertical seams) */}
       <motion.div
-        className="pointer-events-none absolute w-full h-full transform-gpu"
+        className="pointer-events-none absolute inset-0 w-full h-full"
         style={{
           background:
-            "radial-gradient(circle at center, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.08) 25%, rgba(6,182,212,0.04) 50%, rgba(79,102,182,0.01) 75%, transparent 100%)",
+            "radial-gradient(circle at center, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.06) 30%, rgba(6,182,212,0.03) 60%, transparent 100%)",
         }}
         animate={reduced ? {} : { opacity: [0.55, 0.85, 0.55] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Layer 2 — violet vector radial light field */}
+      {/* Layer 2 — violet vector radial light field (full container, zero vertical seams) */}
       <motion.div
-        className="pointer-events-none absolute w-[80%] h-[80%] transform-gpu"
+        className="pointer-events-none absolute inset-0 w-full h-full"
         style={{
           background:
-            "radial-gradient(circle at center, rgba(139,92,246,0.07) 0%, rgba(139,92,246,0.04) 30%, rgba(59,130,246,0.02) 60%, transparent 100%)",
+            "radial-gradient(circle at center, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.04) 35%, rgba(59,130,246,0.02) 65%, transparent 100%)",
         }}
         animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
         transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+      />
+
+      {/* Layer 3 — bottom teal vector radial ground light */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 w-full h-full"
+        style={{
+          background:
+            "radial-gradient(ellipse at center 85%, rgba(16,185,129,0.10) 0%, rgba(6,182,212,0.03) 50%, transparent 100%)",
+        }}
+        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
       />
 
       {/* Floating + parallax wrapper */}
@@ -99,39 +110,14 @@ export default function HeroPortrait() {
       >
         {/* Floating keyframe wrapper */}
         <div className={reduced ? "" : "hero-logo-float"}>
-          {/* Gradient animated wrapper for the SVG */}
-          <div className={`relative ${reduced ? "" : "hero-logo-float"}`}>
-            <img
-              src={ravanLogo}
-              alt="Ravan Mammadov"
-              className="hero-logo-img h-auto w-full max-w-[300px] select-none lg:max-w-[380px] xl:max-w-[440px]"
-              draggable={false}
-            />
-            {/* Glass shine overlay on the logo */}
-            {!reduced && (
-              <div
-                className="pointer-events-none absolute inset-0 rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(255,255,255,0.03) 100%)",
-                  mixBlendMode: "screen",
-                }}
-              />
-            )}
-          </div>
+          <img
+            src={ravanLogo}
+            alt="Ravan Mammadov"
+            className="hero-logo-img h-auto w-full max-w-[300px] select-none lg:max-w-[380px] xl:max-w-[440px]"
+            draggable={false}
+          />
         </div>
       </motion.div>
-
-      {/* Layer 3 — bottom teal vector radial ground light */}
-      <motion.div
-        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[40%] transform-gpu"
-        style={{
-          background:
-            "radial-gradient(ellipse at bottom, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.04) 45%, transparent 100%)",
-        }}
-        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-      />
     </div>
   );
 }
