@@ -429,3 +429,186 @@ export async function fetchUniversalContentItems(contentType?: string) {
   }
 }
 
+export const getAllContentItemsQuery = `
+  *[_type == "contentItem" && status == "published"] | order(trendingScore desc, publishedAt desc)[$start..$end] {
+    _id,
+    _createdAt,
+    title,
+    "slug": slug.current,
+    contentType,
+    summary,
+    whyItMatters,
+    whoShouldUseIt,
+    link,
+    coverImage,
+    logo,
+    qualityScore,
+    trendingScore,
+    publishedAt,
+    verificationStatus,
+    sourceName,
+    category->{ name, "slug": slug.current, icon },
+    tags[]->{ name, "slug": slug.current },
+    jobDetails,
+    scholarshipDetails,
+    aiToolDetails,
+    githubDetails,
+    courseDetails,
+    competitionDetails
+  }
+`;
+
+export const getContentItemsByVerticalQuery = `
+  *[_type == "contentItem" && status == "published" && contentType == $contentType] | order(trendingScore desc, publishedAt desc)[$start..$end] {
+    _id,
+    _createdAt,
+    title,
+    "slug": slug.current,
+    contentType,
+    summary,
+    whyItMatters,
+    whoShouldUseIt,
+    link,
+    coverImage,
+    logo,
+    qualityScore,
+    trendingScore,
+    publishedAt,
+    verificationStatus,
+    sourceName,
+    category->{ name, "slug": slug.current, icon },
+    tags[]->{ name, "slug": slug.current },
+    jobDetails,
+    scholarshipDetails,
+    aiToolDetails,
+    githubDetails,
+    courseDetails,
+    competitionDetails
+  }
+`;
+
+export const getContentItemsByCategoryQuery = `
+  *[_type == "contentItem" && status == "published" && category->slug.current == $categorySlug] | order(trendingScore desc, publishedAt desc)[$start..$end] {
+    _id,
+    _createdAt,
+    title,
+    "slug": slug.current,
+    contentType,
+    summary,
+    whyItMatters,
+    whoShouldUseIt,
+    link,
+    coverImage,
+    logo,
+    qualityScore,
+    trendingScore,
+    publishedAt,
+    category->{ name, "slug": slug.current, icon },
+    tags[]->{ name, "slug": slug.current },
+    jobDetails,
+    scholarshipDetails,
+    aiToolDetails,
+    githubDetails,
+    courseDetails,
+    competitionDetails
+  }
+`;
+
+export const getContentItemsByTagQuery = `
+  *[_type == "contentItem" && status == "published" && $tagSlug in tags[]->slug.current] | order(trendingScore desc, publishedAt desc)[$start..$end] {
+    _id,
+    _createdAt,
+    title,
+    "slug": slug.current,
+    contentType,
+    summary,
+    whyItMatters,
+    whoShouldUseIt,
+    link,
+    coverImage,
+    logo,
+    qualityScore,
+    trendingScore,
+    publishedAt,
+    category->{ name, "slug": slug.current, icon },
+    tags[]->{ name, "slug": slug.current },
+    jobDetails,
+    scholarshipDetails,
+    aiToolDetails,
+    githubDetails,
+    courseDetails,
+    competitionDetails
+  }
+`;
+
+export const getSingleContentItemBySlugQuery = `
+  *[_type == "contentItem" && (slug.current == $slug || _id == $slug)][0] {
+    _id,
+    _createdAt,
+    title,
+    "slug": slug.current,
+    contentType,
+    summary,
+    whyItMatters,
+    whoShouldUseIt,
+    link,
+    coverImage,
+    logo,
+    qualityScore,
+    trendingScore,
+    publishedAt,
+    status,
+    verificationStatus,
+    sourceName,
+    category->{ name, "slug": slug.current, icon },
+    tags[]->{ name, "slug": slug.current },
+    jobDetails,
+    scholarshipDetails,
+    aiToolDetails,
+    githubDetails,
+    courseDetails,
+    competitionDetails,
+    seoTitle,
+    seoDescription
+  }
+`;
+
+export const getRelatedContentItemsQuery = `
+  *[_type == "contentItem" && status == "published" && _id != $currentId && (contentType == $contentType || category._ref == $categoryId)] | order(qualityScore desc, publishedAt desc)[0...4] {
+    _id,
+    title,
+    "slug": slug.current,
+    contentType,
+    summary,
+    whyItMatters,
+    link,
+    qualityScore,
+    category->{ name, "slug": slug.current, icon }
+  }
+`;
+
+export async function fetchSingleContentItemBySlug(slug: string) {
+  try {
+    const data = await client.fetch(getSingleContentItemBySlugQuery, { slug });
+    return data || null;
+  } catch (error) {
+    console.error(`Error fetching content item by slug '${slug}':`, error);
+    return null;
+  }
+}
+
+export async function fetchRelatedContentItems(currentId: string, contentType: string, categoryId?: string) {
+  try {
+    const data = await client.fetch(getRelatedContentItemsQuery, {
+      currentId,
+      contentType,
+      categoryId: categoryId || ""
+    });
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching related content items:", error);
+    return [];
+  }
+}
+
+

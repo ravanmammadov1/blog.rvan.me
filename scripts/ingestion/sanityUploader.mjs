@@ -1,5 +1,17 @@
 import { createClient } from '@sanity/client';
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function retryWithBackoff(fn, retries = 3, delay = 500) {
+  try {
+    return await fn();
+  } catch (err) {
+    if (retries <= 0) throw err;
+    await sleep(delay);
+    return retryWithBackoff(fn, retries - 1, delay * 2);
+  }
+}
+
 /**
  * Uploads enriched items to Sanity CMS dataset after de-duplication checks.
  * @param {Array<object>} enrichedItems 
@@ -22,13 +34,19 @@ export async function uploadToSanity(enrichedItems = [], options = {}) {
 
   let uploadedCount = 0;
   let skippedCount = 0;
+  let errorCount = 0;
 
   for (const item of enrichedItems) {
     try {
-      // 1. Check if document already exists by link or slug
-      const existing = await client.fetch(
-        `*[_type == "contentItem" && (link == $link || slug.current == $slug)][0]{ _id }`,
-        { link: item.rawLink, slug: item.slug }
+      // Rate limit throttling
+      await sleep(150);
+
+      // 1. Check if document already exists by link, slug, or sourceHash
+      const existing = await retryWithBackoff(() =>
+        client.fetch(
+          `*[_type == "contentItem" && (link == $link || slug.current == $slug || sourceHash == $hash)][0]{ _id }`,
+          { link: item.rawLink, slug: item.slug, hash: item.sourceHash || '' }
+        )
       );
 
       if (existing) {
@@ -36,13 +54,17 @@ export async function uploadToSanity(enrichedItems = [], options = {}) {
         continue;
       }
 
-      // 2. Determine publication status based on Quality Score
-      const status = item.qualityScore >= 85 ? 'published' : 'review';
+      // 2. Determine publication status & document ID
+      const isAutoPublish = (item.qualityScore || 85) >= 85;
+      const status = isAutoPublish ? 'published' : 'review';
+      const docId = isAutoPublish
+        ? `content-${item.slug}-${Date.now().toString(36)}`
+        : `drafts.content-${item.slug}-${Date.now().toString(36)}`;
 
       // 3. Construct Sanity Document
       const doc = {
         _type: 'contentItem',
-        _id: `content-${item.slug}-${Date.now().toString(36)}`,
+        _id: docId,
         title: item.title,
         slug: { _type: 'slug', current: item.slug },
         contentType: item.contentType || 'resource',
@@ -50,6 +72,7 @@ export async function uploadToSanity(enrichedItems = [], options = {}) {
         whyItMatters: item.whyItMatters,
         whoShouldUseIt: item.whoShouldUseIt,
         link: item.rawLink,
+        sourceHash: item.sourceHash,
         sourceName: item.sourceName || 'Curated Feed',
         qualityScore: item.qualityScore || 85,
         trendingScore: (item.qualityScore || 85) + 10,
@@ -62,18 +85,19 @@ export async function uploadToSanity(enrichedItems = [], options = {}) {
       };
 
       if (token) {
-        await client.create(doc);
-        console.log(`[Sanity Uploader] Created document: ${doc.title} (${status})`);
+        await retryWithBackoff(() => client.create(doc));
+        console.log(`[Sanity Uploader] Created document: ${doc.title} (ID: ${doc._id}, Status: ${status})`);
         uploadedCount++;
       } else {
-        console.log(`[Sanity Uploader Dry Run] Prepared document: ${doc.title} (Score: ${doc.qualityScore})`);
+        console.log(`[Sanity Uploader Dry Run] Prepared document: ${doc.title} (ID: ${doc._id}, Score: ${doc.qualityScore})`);
         uploadedCount++;
       }
     } catch (err) {
       console.warn(`[Sanity Uploader Warning] Failed to upload "${item.title}": ${err.message}`);
+      errorCount++;
     }
   }
 
-  console.log(`[Sanity Uploader] Complete! Created: ${uploadedCount}, Skipped duplicates: ${skippedCount}.`);
-  return { uploadedCount, skippedCount };
+  console.log(`[Sanity Uploader] Summary — Created/Prepared: ${uploadedCount}, Skipped duplicates: ${skippedCount}, Errors: ${errorCount}.`);
+  return { uploadedCount, skippedCount, errorCount };
 }
