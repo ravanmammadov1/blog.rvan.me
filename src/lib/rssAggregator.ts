@@ -504,8 +504,9 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
 
   const proxies = [
     (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-    (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   ];
+
 
   let rawXml = "";
   let statusCode = 200;
