@@ -417,7 +417,7 @@ export default function NewsDetail() {
 
           {/* Comments */}
           <div className="mt-16">
-            <CommentSection postId={article.id} postTitle={article.title} />
+            <CommentSection postId={article.slug || article.id} postTitle={article.title} />
           </div>
         </div>
       </article>

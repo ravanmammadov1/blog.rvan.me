@@ -18,7 +18,7 @@ import { Comment, CreateCommentInput, UpdateCommentInput } from "../types/commen
 const COMMENTS_COLLECTION = "comments";
 
 /**
- * Subscribe to real-time comments for a specific blog post.
+ * Subscribe to real-time comments for a specific blog post or news article.
  * Returns unsubscribe function to clean up listener on component unmount.
  */
 export function subscribeToComments(
@@ -26,8 +26,7 @@ export function subscribeToComments(
   onCommentsUpdate: (comments: Comment[]) => void,
   onError?: (error: Error) => void
 ): Unsubscribe {
-  if (!db) {
-    console.warn("[Firestore] Database instance not available.");
+  if (!db || !postId) {
     onCommentsUpdate([]);
     return () => {};
   }
@@ -42,28 +41,34 @@ export function subscribeToComments(
   return onSnapshot(
     q,
     (snapshot) => {
-      const items: Comment[] = snapshot.docs.map((docSnap) => {
-        const data = docSnap.data();
-        return {
-          id: docSnap.id,
-          postId: data.postId,
-          authorId: data.authorId || data.author?.uid,
-          author: {
-            uid: data.author?.uid || data.authorId,
-            displayName: data.author?.displayName || "Anonymous Creator",
-            photoURL: data.author?.photoURL || null,
-            email: data.author?.email || null,
-          },
-          text: data.text || "",
-          createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : data.createdAt || new Date(),
-          updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : data.updatedAt || null,
-          isEdited: data.isEdited || false,
-          parentId: data.parentId || null,
-          likesCount: data.likesCount || 0,
-          likedBy: data.likedBy || [],
-          status: data.status || "approved",
-        };
-      });
+      const items: Comment[] = snapshot.docs
+        .map((docSnap) => {
+          const data = docSnap.data();
+          // Data isolation verification: Ensure the comment belongs strictly to this postId
+          if (!data.postId || data.postId !== postId) return null;
+
+          return {
+            id: docSnap.id,
+            postId: data.postId,
+            authorId: data.authorId || data.author?.uid,
+            author: {
+              uid: data.author?.uid || data.authorId,
+              displayName: data.author?.displayName || "Anonymous Creator",
+              photoURL: data.author?.photoURL || null,
+              email: data.author?.email || null,
+            },
+            text: data.text || "",
+            createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : data.createdAt || new Date(),
+            updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : data.updatedAt || null,
+            isEdited: data.isEdited || false,
+            parentId: data.parentId || null,
+            likesCount: data.likesCount || 0,
+            likedBy: data.likedBy || [],
+            status: data.status || "approved",
+          };
+        })
+        .filter((c): c is Comment => c !== null);
+
       onCommentsUpdate(items);
     },
     (err) => {
@@ -74,10 +79,11 @@ export function subscribeToComments(
 }
 
 /**
- * Add a new comment to Firestore using serverTimestamp.
+ * Add a new comment or reply to Firestore bound to a specific postId.
  */
 export async function addComment(input: CreateCommentInput): Promise<string> {
   if (!db) throw new Error("Firestore instance not initialized.");
+  if (!input.postId) throw new Error("postId is required to create a comment.");
 
   const commentsRef = collection(db, COMMENTS_COLLECTION);
   const docRef = await addDoc(commentsRef, {

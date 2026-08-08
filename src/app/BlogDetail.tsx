@@ -269,7 +269,7 @@ export default function BlogDetail() {
 
             <AuthorCard post={post} />
 
-            <CommentSection postId={post._id} postTitle={post.title} />
+            <CommentSection postId={post.slug?.current || post._id} postTitle={post.title} />
 
             {/* Previous / Next Article Navigation */}
             {(prevPost || nextPost) && (

@@ -11,36 +11,6 @@ interface CommentSectionProps {
   postTitle: string;
 }
 
-// High-quality discussion seed comments for testing & instant feedback before first user comment
-const MOCK_SEED_COMMENTS: Comment[] = [
-  {
-    id: "seed-1",
-    postId: "default",
-    authorId: "seed-user-1",
-    author: {
-      uid: "seed-user-1",
-      displayName: "Alex Morgan",
-      photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    },
-    text: "The transition curves and keyframe easing breakdown in this article really changed how I approach micro-interactions in my Webflow and Framer builds.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
-    parentId: null,
-  },
-  {
-    id: "seed-2",
-    postId: "default",
-    authorId: "seed-user-2",
-    author: {
-      uid: "seed-user-2",
-      displayName: "Elena Vance",
-      photoURL: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80",
-    },
-    text: "Completely agree! Specially the 60fps performance tip — keeping transforms GPU-accelerated with translate3d is crucial for mobile devices.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 20), // 20 minutes ago
-    parentId: "seed-1",
-  },
-];
-
 export default function CommentSection({ postId, postTitle }: CommentSectionProps) {
   const { user } = useAuth();
   const [firestoreComments, setFirestoreComments] = useState<Comment[]>([]);
@@ -67,7 +37,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     return () => observer.disconnect();
   }, []);
 
-  // Real-time Firestore Listener
+  // Real-time Firestore Listener strictly filtered by postId
   useEffect(() => {
     if (!postId || !isVisible) return;
 
@@ -84,32 +54,31 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     return () => unsubscribe();
   }, [postId, isVisible]);
 
-  // Combine Firestore comments with seed comments if Firestore has 0 items
-  const activeComments = useMemo(() => {
-    if (firestoreComments.length > 0) return firestoreComments;
-    return MOCK_SEED_COMMENTS.map((c) => ({ ...c, postId }));
-  }, [firestoreComments, postId]);
-
-  // Separate top-level comments and nested replies
-  const { topLevelComments, repliesMap } = useMemo(() => {
+  // Separate top-level comments and nested replies for this specific article/post
+  const { topLevelComments, repliesMap, totalCount } = useMemo(() => {
     const topLevel: Comment[] = [];
     const replies: Record<string, Comment[]> = {};
+    let count = 0;
 
-    activeComments.forEach((c) => {
-      if (c.parentId) {
-        if (!replies[c.parentId]) replies[c.parentId] = [];
-        replies[c.parentId].push(c);
-      } else {
-        topLevel.push(c);
+    firestoreComments.forEach((c) => {
+      // Data isolation check: Ensure comment belongs to current postId
+      if (c.postId === postId) {
+        count++;
+        if (c.parentId) {
+          if (!replies[c.parentId]) replies[c.parentId] = [];
+          replies[c.parentId].push(c);
+        } else {
+          topLevel.push(c);
+        }
       }
     });
 
-    return { topLevelComments: topLevel, repliesMap: replies };
-  }, [activeComments]);
+    return { topLevelComments: topLevel, repliesMap: replies, totalCount: count };
+  }, [firestoreComments, postId]);
 
   // Add Comment (Top Level)
   const handleAddComment = async (text: string) => {
-    if (!user) return;
+    if (!user || !postId) return;
     setSubmitting(true);
     setError(null);
 
@@ -149,7 +118,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
 
   // Reply to a Comment (Threaded)
   const handleReplyComment = async (parentId: string, text: string) => {
-    if (!user) return;
+    if (!user || !postId) return;
     setError(null);
 
     const optimisticReply: Comment = {
@@ -274,7 +243,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
         <div className="flex items-center gap-2.5">
           <MessageSquare size={18} className="text-primary" />
           <h2 className="text-lg font-bold tracking-tight text-foreground">
-            Discussion ({activeComments.length})
+            Discussion ({totalCount})
           </h2>
         </div>
       </div>
@@ -285,18 +254,26 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       </div>
 
       {/* Comments & Threaded Replies List */}
-      <div className="space-y-4">
-        {topLevelComments.map((comment) => (
-          <CommentItemComponent
-            key={comment.id}
-            comment={comment}
-            replies={repliesMap[comment.id] || []}
-            onUpdate={handleUpdateComment}
-            onDelete={handleDeleteComment}
-            onReply={handleReplyComment}
-          />
-        ))}
-      </div>
+      {topLevelComments.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center backdrop-blur-xl">
+          <MessageSquare size={24} className="mx-auto text-muted-foreground/40 mb-3" />
+          <p className="text-sm font-semibold text-foreground">No comments yet</p>
+          <p className="text-xs text-muted-foreground mt-1">Be the first to start the discussion on this article.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {topLevelComments.map((comment) => (
+            <CommentItemComponent
+              key={comment.id}
+              comment={comment}
+              replies={repliesMap[comment.id] || []}
+              onUpdate={handleUpdateComment}
+              onDelete={handleDeleteComment}
+              onReply={handleReplyComment}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
