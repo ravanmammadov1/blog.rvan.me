@@ -1,6 +1,13 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/__/auth/:path*",
+      "destination": "https://rvan-2796c.firebaseapp.com/__/auth/:path*"
+    }
+  ],
   "crons": [
+
     {
       "path": "/api/ingest-news",
       "schedule": "0 0 * * *"
