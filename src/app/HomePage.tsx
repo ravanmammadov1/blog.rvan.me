@@ -353,8 +353,7 @@ export default function HomePage() {
           onMouseLeave={handleHeroMouseLeave}
           onTouchMove={handleHeroTouchMove}
           onTouchEnd={handleHeroTouchEnd}
-          className="relative isolate min-h-screen overflow-hidden flex items-center"
-          style={{ paddingTop: "5rem" }}
+          className="relative isolate min-h-0 lg:min-h-screen overflow-hidden flex items-center pt-20 pb-8 sm:pt-24 sm:pb-12 lg:py-0"
         >
           {/* ══ 1. Premium Deep-Black Hero Background ══ */}
           <div 
@@ -378,8 +377,8 @@ export default function HomePage() {
 
 
           {/* ══ 3. Original Hero Content Grid ══ */}
-          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-6 md:px-10 py-16 sm:py-20 lg:py-0">
-            <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8 min-h-[calc(100vh-5rem)]">
+          <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-6 md:px-10 py-4 sm:py-8 lg:py-0">
+            <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-8 min-h-0 lg:min-h-[calc(100vh-5rem)]">
 
               {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
@@ -389,15 +388,15 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 14, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
-                  className="mb-6 sm:mb-8 flex flex-col items-start gap-4 lg:hidden"
+                  className="mb-5 sm:mb-6 flex flex-wrap items-center gap-3.5 lg:hidden"
                 >
-                  <div className="h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-2xl border border-white/15 bg-white/5 p-2 backdrop-blur-xl shadow-xl flex items-center justify-center">
-                    <Suspense fallback={<div className="h-10 w-10" aria-hidden="true" />}>
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-2xl border border-white/15 bg-white/5 p-1.5 backdrop-blur-xl shadow-xl flex items-center justify-center">
+                    <Suspense fallback={<div className="h-8 w-8" aria-hidden="true" />}>
                       <HeroPortrait />
                     </Suspense>
                   </div>
 
-                  <div className="inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge">
+                  <div className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[9.5px] sm:text-[10px] font-bold tracking-[.2em] text-primary mono uppercase glass-badge">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary badge-pulse-dot" />
                     {availabilityStatus}
                   </div>
@@ -494,7 +493,7 @@ export default function HomePage() {
 
           {/* Bottom fade */}
           <div
-            className="pointer-events-none absolute bottom-0 inset-x-0 h-40"
+            className="pointer-events-none absolute bottom-0 inset-x-0 h-12 lg:h-40"
             style={{ background: "linear-gradient(to bottom, transparent, #050506)" }}
           />
         </section>
