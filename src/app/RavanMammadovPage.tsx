@@ -318,7 +318,7 @@ export default function RavanMammadovPage() {
         "@id": "https://www.rvan.me/#person",
         name: "Ravan Mammadov",
         jobTitle: "Senior Creative Designer",
-        url: "https://www.rvan.me/ravan-mammadov",
+        url: "https://www.rvan.me/about",
         image: "https://www.rvan.me/og-image.jpg",
         address: {
           "@type": "PostalAddress",
@@ -341,15 +341,15 @@ export default function RavanMammadovPage() {
       },
       {
         "@type": "ProfilePage",
-        "@id": "https://www.rvan.me/ravan-mammadov#profilepage",
-        name: "Ravan Mammadov — Senior Creative Designer",
-        url: "https://www.rvan.me/ravan-mammadov",
+        "@id": "https://www.rvan.me/about#profilepage",
+        name: "About Rvan.me — Creative Ecosystem & Studio Vision by Ravan Mammadov",
+        url: "https://www.rvan.me/about",
         mainEntity: { "@id": "https://www.rvan.me/#person" },
       },
       {
         "@type": "WebSite",
         "@id": "https://www.rvan.me/#website",
-        name: "Ravan Mammadov Portfolio",
+        name: "Rvan.me — Creative Ecosystem & Studio Platform",
         url: "https://www.rvan.me/",
         publisher: { "@id": "https://www.rvan.me/#person" },
       },
@@ -375,11 +375,12 @@ export default function RavanMammadovPage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Senior Creative Designer & Marketing Specialist"
-        description="Official portfolio & career timeline of Senior Creative Designer Ravan Mammadov. Specializing in Branding, Motion Design, Graphic Design, Creative Strategy, and Marketing across Automotive, Retail, Tech & Luxury industries."
-        url="https://www.rvan.me/ravan-mammadov"
+        title="About Rvan.me — Creative Ecosystem & Studio Vision by Ravan Mammadov"
+        description="Learn about Rvan.me, a curated creative ecosystem for designers, marketers and developers. Discover our studio vision, career timeline, and selected work."
+        url="https://www.rvan.me/about"
         jsonLd={personSchema}
       />
+
 
       <SiteHeader siteSettings={siteSettings} />
 

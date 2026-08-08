@@ -44,11 +44,12 @@ const staticPages = [
     type: "website",
   },
   {
-    path: "/ravan-mammadov",
-    title: "Ravan Mammadov — Motion, Brand & Graphic Designer in Baku",
-    description: "Professional profile, experience, skills, and selected work of senior creative designer Ravan Mammadov in Baku, Azerbaijan.",
+    path: "/about",
+    title: "About Rvan.me — Creative Ecosystem & Studio Vision by Ravan Mammadov",
+    description: "Learn about Rvan.me, a curated creative ecosystem for designers, marketers and developers. Discover our studio vision, career timeline, and selected work.",
     type: "profile",
   },
+
   {
     path: "/resources",
     title: "Free Design Resources, Fonts & Creative Tools — Ravan Mammadov",

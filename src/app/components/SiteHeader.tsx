@@ -157,21 +157,20 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     if (target.startsWith("/")) return target;
     const normalized = target.toLowerCase();
     if (normalized === "top" || normalized === "home") return "/";
-    if (normalized === "about") return "/ravan-mammadov";
-    if (normalized === "work") return "/work";
+    if (normalized === "about") return "/about";
     return `/${normalized}`;
   };
 
   const baseNavItems = [
     { label: "HOME",      target: "/" },
-    { label: "WORK",      target: "/work" },
-    { label: "NEWS",      target: "/news" },
     { label: "RESOURCES", target: "/resources" },
+    { label: "NEWS",      target: "/news" },
     { label: "TOOLS",     target: "/tools" },
     { label: "BLOG",      target: "/blog" },
-    { label: "ABOUT",     target: "/ravan-mammadov" },
+    { label: "ABOUT",     target: "/about" },
     { label: "CONTACT",   target: "/contact" },
   ];
+
 
   // Hide HOME when on the Home page; show HOME only when on other pages
   const navItems = baseNavItems.filter((item) => {

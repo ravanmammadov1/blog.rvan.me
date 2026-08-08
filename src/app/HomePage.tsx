@@ -383,9 +383,8 @@ export default function HomePage() {
 
               {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
-
                 <p className="mb-4 sm:mb-5 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
-                  Rvan.me · Ravan Mammadov · Senior Creative Designer · Baku, Azerbaijan
+                  Rvan.me · Curated Creative Ecosystem & Studio Platform
                 </p>
 
 
@@ -402,7 +401,7 @@ export default function HomePage() {
 
                 {/* Headline — word-by-word reveal */}
                 <h1 className="mb-0">
-                  <span className="sr-only">Ravan Mammadov — Motion, Brand & Graphic Designer in Baku</span>
+                  <span className="sr-only">Rvan.me — Creative Ecosystem & Studio Platform</span>
                   {heroTitle.split(" ").map((word, i) => (
                     <span
                       key={i}
@@ -449,13 +448,14 @@ export default function HomePage() {
 
                   {/* Secondary CTA — glass */}
                   <Link
-                    to="/ravan-mammadov"
+                    to="/about"
                     className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[11px] font-bold tracking-[.18em] text-foreground/80 transition-all duration-300 hover:text-foreground mono uppercase glass-sm text-center"
                   >
-                    ABOUT ME
+                    ABOUT PLATFORM
                     <ArrowUpRight size={13} />
                   </Link>
                 </motion.div>
+
 
 
                 {/* ── MOBILE & TABLET LOGO ── */}

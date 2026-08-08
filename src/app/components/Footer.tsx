@@ -25,6 +25,25 @@ export default function Footer({ siteSettings }: FooterProps) {
 
         
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link to="/resources" className="transition-colors hover:text-primary">
+            RESOURCES
+          </Link>
+          <Link to="/news" className="transition-colors hover:text-primary">
+            NEWS
+          </Link>
+          <Link to="/tools" className="transition-colors hover:text-primary">
+            TOOLS
+          </Link>
+          <Link to="/blog" className="transition-colors hover:text-primary">
+            BLOG
+          </Link>
+          <Link to="/about" className="transition-colors hover:text-primary">
+            ABOUT
+          </Link>
+          <Link to="/contact" className="transition-colors hover:text-primary">
+            CONTACT
+          </Link>
+          <span className="text-border">·</span>
           <Link to="/privacy-policy" className="transition-colors hover:text-primary">
             PRIVACY POLICY
           </Link>
@@ -32,18 +51,16 @@ export default function Footer({ siteSettings }: FooterProps) {
             COOKIE POLICY
           </Link>
           <Link to="/terms" className="transition-colors hover:text-primary">
-            TERMS OF SERVICE
-          </Link>
-          <Link to="/resources" className="transition-colors hover:text-primary">
-            RESOURCES
+            TERMS
           </Link>
           <button
             onClick={openPreferences}
             type="button"
             className="p-0 border-none bg-transparent text-[10px] font-bold tracking-[.18em] text-muted-foreground hover:text-primary transition-colors mono uppercase cursor-pointer"
           >
-            COOKIE PREFERENCES
+            COOKIES
           </button>
+
           
           <span className="text-border">·</span>
 

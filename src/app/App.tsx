@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
@@ -18,7 +18,6 @@ const CookiePolicyPage = lazy(() => import("./CookiePolicyPage"));
 const TermsPage = lazy(() => import("./TermsPage"));
 const ResourcesArchive = lazy(() => import("./ResourcesArchive"));
 const ResourceDetail = lazy(() => import("./ResourceDetail"));
-const WorkArchive = lazy(() => import("./WorkArchive"));
 const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
@@ -41,7 +40,9 @@ function AppContent() {
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/work" element={<WorkArchive />} />
+          <Route path="/about" element={<RavanMammadovPage />} />
+          <Route path="/ravan-mammadov" element={<Navigate to="/about" replace />} />
+          <Route path="/work" element={<Navigate to="/about#selected-work" replace />} />
           <Route path="/work/:slug" element={<ProjectDetail />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogArchive />} />
@@ -50,7 +51,6 @@ function AppContent() {
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/tools" element={<ToolsArchive />} />
           <Route path="/tools/:toolId" element={<ToolDetailPage />} />
-          <Route path="/ravan-mammadov" element={<RavanMammadovPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/cookie-policy" element={<CookiePolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
@@ -58,6 +58,7 @@ function AppContent() {
           <Route path="/resources/:slug" element={<ResourceDetail />} />
           <Route path="/ai-tools" element={<AiToolArchivePage />} />
           <Route path="/opportunities" element={<OpportunityArchivePage />} />
+
 
 
 
