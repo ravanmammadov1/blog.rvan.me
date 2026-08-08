@@ -19,26 +19,9 @@ export default function Footer({ siteSettings }: FooterProps) {
           filter: "blur(40px)",
         }}
       />
-      <div className="relative z-10 mx-auto max-w-[1600px] mb-8 pb-8 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-1 max-w-xl">
-          <span className="text-xs font-bold text-foreground tracking-widest mono uppercase">Rvan.me</span>
-          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-            Sign in with Google to save resources, bookmarks and personalize your experience.
-          </p>
-        </div>
-        <div className="flex items-center gap-4 text-[10px] font-bold tracking-[.18em] mono">
-          <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors uppercase">
-            Privacy Policy
-          </Link>
-          <span className="text-white/20">·</span>
-          <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors uppercase">
-            Terms of Service
-          </Link>
-        </div>
-      </div>
-
       <div className="relative z-10 mx-auto flex max-w-[1600px] flex-col justify-between gap-6 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono sm:flex-row sm:items-center">
         <span>© {new Date().getFullYear()} Rvan.me · Ravan Mammadov Studio</span>
+
 
         
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
