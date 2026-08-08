@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth, isKeyConfigured } from "../lib/firebase";
 import { signInWithGoogle, logout } from "../services/auth";
 
 export interface AuthContextType {
@@ -24,6 +24,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!auth || !isKeyConfigured) {
+      setLoading(false);
+      return;
+    }
+
     // Listen for persistent Firebase Auth state changes
     const unsubscribe = onAuthStateChanged(
       auth,

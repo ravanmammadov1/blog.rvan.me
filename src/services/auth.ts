@@ -1,5 +1,5 @@
 import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, User } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth, isKeyConfigured } from "../lib/firebase";
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
@@ -13,6 +13,11 @@ export interface AuthError {
  * Executes Google Sign-In via popup with comprehensive error mapping.
  */
 export async function signInWithGoogle(): Promise<User | null> {
+  if (!auth || !isKeyConfigured) {
+    console.warn("[Auth Warning] Cannot sign in: VITE_FIREBASE_API_KEY is not configured in .env file.");
+    throw new Error("Google Authentication is not configured yet. Please supply a valid VITE_FIREBASE_API_KEY in your .env file.");
+  }
+
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
@@ -25,14 +30,19 @@ export async function signInWithGoogle(): Promise<User | null> {
       return null;
     }
 
+    if (code === "auth/invalid-api-key") {
+      console.error("[Auth Error] Invalid API Key provided in .env.");
+      throw new Error("Invalid Firebase API Key in .env. Please update VITE_FIREBASE_API_KEY in your environment configuration.");
+    }
+
     if (code === "auth/unauthorized-domain") {
-      console.error("[Auth Error] This domain is not authorized in Firebase Console -> Auth -> Settings -> Authorized Domains.");
-      throw new Error("This domain is not authorized for Google Sign-In. Please add it to Firebase Console.");
+      console.error("[Auth Error] Domain not authorized in Firebase Console -> Auth -> Settings -> Authorized Domains.");
+      throw new Error("This domain is not authorized for Google Sign-In. Add localhost or rvan.me to Firebase Console.");
     }
 
     if (code === "auth/network-request-failed") {
-      console.error("[Auth Error] Network request failed. Check internet connection.");
-      throw new Error("Network error during sign in. Please check your connection and try again.");
+      console.error("[Auth Error] Network request failed.");
+      throw new Error("Network error during sign in. Check your connection.");
     }
 
     console.error(`[Auth Error] ${code}: ${error?.message}`);
@@ -44,6 +54,7 @@ export async function signInWithGoogle(): Promise<User | null> {
  * Signs out the currently authenticated user.
  */
 export async function logout(): Promise<void> {
+  if (!auth) return;
   try {
     await firebaseSignOut(auth);
   } catch (error: any) {
