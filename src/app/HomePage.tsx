@@ -384,12 +384,31 @@ export default function HomePage() {
               {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
 
-                {/* Glass availability badge */}
+                {/* Mobile Header: Compact Logo Emblem + Status Badge */}
                 <motion.div
                   initial={{ opacity: 0, y: 14, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
-                  className="mb-6 sm:mb-8 md:mb-9 inline-flex w-fit items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge"
+                  className="mb-6 sm:mb-8 flex flex-col items-start gap-4 lg:hidden"
+                >
+                  <div className="h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-2xl border border-white/15 bg-white/5 p-2 backdrop-blur-xl shadow-xl flex items-center justify-center">
+                    <Suspense fallback={<div className="h-10 w-10" aria-hidden="true" />}>
+                      <HeroPortrait />
+                    </Suspense>
+                  </div>
+
+                  <div className="inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary badge-pulse-dot" />
+                    {availabilityStatus}
+                  </div>
+                </motion.div>
+
+                {/* Desktop Glass availability badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
+                  className="mb-6 sm:mb-8 md:mb-9 hidden lg:inline-flex w-fit items-center gap-2.5 rounded-full px-4 py-2 text-[10px] font-bold tracking-[.22em] text-primary mono uppercase glass-badge"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-primary badge-pulse-dot" />
                   {availabilityStatus}
@@ -452,17 +471,7 @@ export default function HomePage() {
                   </Link>
                 </motion.div>
 
-                {/* ── MOBILE & TABLET LOGO ── */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, delay: 0.85, ease: EASE }}
-                  className="block lg:hidden my-8 sm:my-10 w-full max-w-[260px] sm:max-w-[320px] mx-auto"
-                >
-                  <Suspense fallback={<div className="h-44" aria-hidden="true" />}>
-                    <HeroPortrait />
-                  </Suspense>
-                </motion.div>
+
               </div>
 
 
