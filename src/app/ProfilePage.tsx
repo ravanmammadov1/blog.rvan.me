@@ -48,10 +48,9 @@ const BehanceIcon = ({ size = 15, className = "" }: { size?: number; className?:
   </svg>
 );
 
-// ── Verified Career Experience ──
+// ── Verified Career Experience (Timeless — No dates) ──
 const realExperience = [
   {
-    period: "05.2026 — PRESENT",
     role: "Senior Creative Designer",
     company: "RAM Holding",
     brands: ["Omoda", "Jaecoo", "JMC", "Wuling", "Otodok Service", "Prior Leasing"],
@@ -67,7 +66,6 @@ const realExperience = [
     ],
   },
   {
-    period: "12.2025 — 05.2026",
     role: "Senior Creative Designer",
     company: "My Group Holding",
     brands: ["MyShop", "Vertu", "Xor", "MyGrocery", "MyPerfume", "YoKoSun", "Dry Idea"],
@@ -80,7 +78,6 @@ const realExperience = [
     ],
   },
   {
-    period: "08.2025 — 12.2025",
     role: "Graphic Designer",
     company: "Inmotion Trading Co., LTD",
     brands: ["EV Parts", "EV Motors", "Salam Baku", "Nihao Travel"],
@@ -92,7 +89,6 @@ const realExperience = [
     ],
   },
   {
-    period: "01.2024 — 08.2025",
     role: "Graphic & Motion Designer",
     company: "Zafar Limited LLC",
     brands: ["Inomarka.az", "Loadstar Logistics", "Uni Cleaning"],
@@ -104,7 +100,6 @@ const realExperience = [
     ],
   },
   {
-    period: "09.2023 — 01.2024",
     role: "Motion Designer",
     company: "MOF Agency",
     brands: ["Ontop Bowling", "Ferma Art", "Nude Glass", "Avto Element"],
@@ -302,7 +297,7 @@ export default function ProfilePage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          2. CAREER TIMELINE & EXPERIENCE
+          2. CAREER TIMELINE & EXPERIENCE (Timeless Layout — No Dates)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
@@ -313,30 +308,34 @@ export default function ProfilePage() {
             </h2>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             {realExperience.map((exp, idx) => (
               <div
                 key={idx}
-                className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card transition-all duration-300 hover:border-primary/40"
+                className="p-6 md:p-7 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card transition-all duration-300 hover:border-primary/40"
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-white/10 pb-5 mb-5">
                   <div>
-                    <span className="text-xs font-bold text-primary mono tracking-widest uppercase">{exp.period}</span>
-                    <h3 className="text-xl md:text-2xl font-bold text-foreground mt-1">{exp.role}</h3>
-                    <p className="text-sm font-semibold text-muted-foreground flex items-center gap-2 mt-0.5">
-                      <Building2 size={14} className="text-primary/70" /> {exp.company}
+                    <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
+                      {exp.role}
+                    </h3>
+                    <p className="text-sm font-semibold text-primary flex items-center gap-2 mt-1">
+                      <Building2 size={15} className="text-primary" /> {exp.company}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {exp.brands.map((b) => (
-                      <span key={b} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-semibold text-foreground/80 mono">
+                      <span
+                        key={b}
+                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold text-foreground/80 mono uppercase"
+                      >
                         {b}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 text-xs text-muted-foreground font-medium">
+                <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 text-xs text-muted-foreground font-medium">
                   {exp.responsibilities.map((resp, rIdx) => (
                     <div key={rIdx} className="flex items-center gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
