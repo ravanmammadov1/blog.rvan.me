@@ -9,18 +9,31 @@ interface CommentFormProps {
   error?: string | null;
 }
 
-export default function CommentForm({ onSubmit, submitting, error }: CommentFormProps) {
+export default function CommentForm({ onSubmit, submitting: externalSubmitting, error }: CommentFormProps) {
   const { user } = useAuth();
   const [text, setText] = useState("");
+  const [localSubmitting, setLocalSubmitting] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const isPosting = localSubmitting || externalSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || submitting) return;
+    if (!text.trim() || isPosting) return;
 
-    await onSubmit(text);
+    const submittedText = text;
     setText("");
+    setLocalSubmitting(true);
+
+    try {
+      await onSubmit(submittedText);
+    } catch (err) {
+      console.error("Error submitting form:", err);
+    } finally {
+      setLocalSubmitting(false);
+    }
   };
+
 
   if (!user) {
     return (
@@ -107,10 +120,10 @@ export default function CommentForm({ onSubmit, submitting, error }: CommentForm
           <div className="mt-3 flex items-center justify-end">
             <button
               type="submit"
-              disabled={!text.trim() || submitting}
+              disabled={!text.trim() || isPosting}
               className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(216,255,68,0.25)] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 mono uppercase"
             >
-              {submitting ? (
+              {isPosting ? (
                 <>
                   <Loader2 size={13} className="animate-spin" />
                   <span>Posting...</span>
@@ -122,6 +135,7 @@ export default function CommentForm({ onSubmit, submitting, error }: CommentForm
                 </>
               )}
             </button>
+
           </div>
         </div>
       </div>

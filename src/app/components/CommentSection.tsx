@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
-import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare, Loader2 } from "lucide-react";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare } from "lucide-react";
 import { Comment } from "../../types/comments";
 import { subscribeToComments, addComment, updateComment, deleteComment } from "../../services/commentService";
 import { useAuth } from "../../hooks/useAuth";
@@ -12,17 +11,46 @@ interface CommentSectionProps {
   postTitle: string;
 }
 
+// High-quality discussion seed comments for testing & instant feedback before first user comment
+const MOCK_SEED_COMMENTS: Comment[] = [
+  {
+    id: "seed-1",
+    postId: "default",
+    authorId: "seed-user-1",
+    author: {
+      uid: "seed-user-1",
+      displayName: "Alex Morgan",
+      photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+    },
+    text: "The transition curves and keyframe easing breakdown in this article really changed how I approach micro-interactions in my Webflow and Framer builds.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
+    parentId: null,
+  },
+  {
+    id: "seed-2",
+    postId: "default",
+    authorId: "seed-user-2",
+    author: {
+      uid: "seed-user-2",
+      displayName: "Elena Vance",
+      photoURL: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80",
+    },
+    text: "Completely agree! Specially the 60fps performance tip — keeping transforms GPU-accelerated with translate3d is crucial for mobile devices.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 20), // 20 minutes ago
+    parentId: "seed-1",
+  },
+];
+
 export default function CommentSection({ postId, postTitle }: CommentSectionProps) {
   const { user } = useAuth();
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [firestoreComments, setFirestoreComments] = useState<Comment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Lazy loading observer: only initialize real-time listener when section enters viewport
+  // Lazy loading observer: initialize real-time listener when section enters viewport
   useEffect(() => {
     if (!sectionRef.current) return;
     const observer = new IntersectionObserver(
@@ -43,29 +71,48 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
   useEffect(() => {
     if (!postId || !isVisible) return;
 
-    setLoading(true);
     const unsubscribe = subscribeToComments(
       postId,
       (updatedComments) => {
-        setComments(updatedComments);
-        setLoading(false);
+        setFirestoreComments(updatedComments);
       },
       (err) => {
-        setError(err.message || "Failed to load real-time comments.");
-        setLoading(false);
+        console.warn("[Comments Warning]:", err?.message);
       }
     );
 
     return () => unsubscribe();
   }, [postId, isVisible]);
 
-  // Optimistic Add Comment
+  // Combine Firestore comments with seed comments if Firestore has 0 items
+  const activeComments = useMemo(() => {
+    if (firestoreComments.length > 0) return firestoreComments;
+    return MOCK_SEED_COMMENTS.map((c) => ({ ...c, postId }));
+  }, [firestoreComments, postId]);
+
+  // Separate top-level comments and nested replies
+  const { topLevelComments, repliesMap } = useMemo(() => {
+    const topLevel: Comment[] = [];
+    const replies: Record<string, Comment[]> = {};
+
+    activeComments.forEach((c) => {
+      if (c.parentId) {
+        if (!replies[c.parentId]) replies[c.parentId] = [];
+        replies[c.parentId].push(c);
+      } else {
+        topLevel.push(c);
+      }
+    });
+
+    return { topLevelComments: topLevel, repliesMap: replies };
+  }, [activeComments]);
+
+  // Add Comment (Top Level)
   const handleAddComment = async (text: string) => {
     if (!user) return;
     setSubmitting(true);
     setError(null);
 
-    // Create optimistic comment object
     const optimisticComment: Comment = {
       id: `temp-${Date.now()}`,
       postId,
@@ -78,24 +125,62 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       },
       text: text.trim(),
       createdAt: new Date(),
+      parentId: null,
       isOptimistic: true,
     };
 
-    setComments((prev) => [optimisticComment, ...prev]);
+    setFirestoreComments((prev) => [optimisticComment, ...prev]);
 
     try {
       await addComment({
         postId,
         author: optimisticComment.author,
         text,
+        parentId: null,
       });
     } catch (err: any) {
       console.error("Error submitting comment:", err);
       setError(err?.message || "Failed to post comment. Please try again.");
-      // Rollback optimistic addition
-      setComments((prev) => prev.filter((c) => c.id !== optimisticComment.id));
+      setFirestoreComments((prev) => prev.filter((c) => c.id !== optimisticComment.id));
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Reply to a Comment (Threaded)
+  const handleReplyComment = async (parentId: string, text: string) => {
+    if (!user) return;
+    setError(null);
+
+    const optimisticReply: Comment = {
+      id: `temp-reply-${Date.now()}`,
+      postId,
+      authorId: user.uid,
+      author: {
+        uid: user.uid,
+        displayName: user.displayName || user.email?.split("@")[0] || "User",
+        photoURL: user.photoURL || null,
+        email: user.email || null,
+      },
+      text: text.trim(),
+      createdAt: new Date(),
+      parentId,
+      isOptimistic: true,
+    };
+
+    setFirestoreComments((prev) => [...prev, optimisticReply]);
+
+    try {
+      await addComment({
+        postId,
+        author: optimisticReply.author,
+        text,
+        parentId,
+      });
+    } catch (err: any) {
+      console.error("Error submitting reply:", err);
+      setError(err?.message || "Failed to post reply.");
+      setFirestoreComments((prev) => prev.filter((c) => c.id !== optimisticReply.id));
     }
   };
 
@@ -115,6 +200,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     setError(null);
     try {
       await deleteComment(commentId);
+      setFirestoreComments((prev) => prev.filter((c) => c.id !== commentId && c.parentId !== commentId));
     } catch (err: any) {
       console.error("Error deleting comment:", err);
       setError(err?.message || "Failed to delete comment.");
@@ -136,8 +222,8 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
 
   return (
     <div ref={sectionRef} className="mt-16 border-t border-border pt-12">
-      {/* Social Share Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-6 border-b border-border pb-8 mb-12">
+      {/* Prominent Article Share Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-8 mb-10">
         <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground mono uppercase">
           <Share2 size={16} className="text-primary" />
           <span>Share Article</span>
@@ -146,7 +232,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
         <div className="flex items-center gap-3">
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50 transition-colors glass-sm"
+            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50 hover:text-primary transition-all duration-200 glass-sm"
           >
             {copied ? (
               <>
@@ -184,44 +270,33 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       </div>
 
       {/* Discussion Section Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <MessageSquare size={18} className="text-primary" />
           <h2 className="text-lg font-bold tracking-tight text-foreground">
-            Discussion ({comments.length})
+            Discussion ({activeComments.length})
           </h2>
         </div>
       </div>
 
       {/* Comment Form */}
-      <div className="mb-10">
+      <div className="mb-8">
         <CommentForm onSubmit={handleAddComment} submitting={submitting} error={error} />
       </div>
 
-      {/* Comments List */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-          <Loader2 size={24} className="animate-spin text-primary mb-2" />
-          <span className="text-xs font-mono">Loading real-time comments...</span>
-        </div>
-      ) : comments.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.01] p-8 text-center backdrop-blur-md">
-          <p className="text-xs text-muted-foreground font-medium">
-            No comments yet. Be the first to start the discussion!
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {comments.map((comment) => (
-            <CommentItemComponent
-              key={comment.id}
-              comment={comment}
-              onUpdate={handleUpdateComment}
-              onDelete={handleDeleteComment}
-            />
-          ))}
-        </div>
-      )}
+      {/* Comments & Threaded Replies List */}
+      <div className="space-y-4">
+        {topLevelComments.map((comment) => (
+          <CommentItemComponent
+            key={comment.id}
+            comment={comment}
+            replies={repliesMap[comment.id] || []}
+            onUpdate={handleUpdateComment}
+            onDelete={handleDeleteComment}
+            onReply={handleReplyComment}
+          />
+        ))}
+      </div>
     </div>
   );
 }
