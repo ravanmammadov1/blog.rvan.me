@@ -383,10 +383,6 @@ export default function HomePage() {
 
               {/* Left — text */}
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
-                <p className="mb-4 sm:mb-5 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
-                  Rvan.me · Curated Creative Ecosystem & Studio Platform
-                </p>
-
 
                 {/* Glass availability badge */}
                 <motion.div
@@ -456,8 +452,6 @@ export default function HomePage() {
                   </Link>
                 </motion.div>
 
-
-
                 {/* ── MOBILE & TABLET LOGO ── */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -469,39 +463,8 @@ export default function HomePage() {
                     <HeroPortrait />
                   </Suspense>
                 </motion.div>
-
-                {/* ── Premium Editorial Navigation Tiles ── */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.9, ease: EASE }}
-                  className="mt-2 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5"
-                >
-                  {platformModules.map((module, i) => {
-                    const IconComp = module.icon;
-                    return (
-                      <motion.div
-                        key={module.id}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.95 + i * 0.08, ease: EASE }}
-                      >
-                        <Link
-                          to={module.link}
-                          className="group p-4 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.06] hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(232,253,82,0.1)] transition-all duration-300 flex items-center gap-3 cursor-pointer"
-                        >
-                          <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-foreground/80 group-hover:text-primary group-hover:border-primary/40 transition-all duration-300 flex-shrink-0">
-                            <IconComp size={16} />
-                          </div>
-                          <h3 className="text-sm sm:text-base font-extrabold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                            {module.title}
-                          </h3>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
               </div>
+
 
 
 
