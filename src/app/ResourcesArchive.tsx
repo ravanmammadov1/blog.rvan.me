@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useDeferredValue } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Search, X, Globe, Download, Type, Sliders, Sparkles, BadgeCheck
+  Search, X, Download, Type, Sliders, BadgeCheck
 } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
@@ -14,28 +14,27 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { useContentItems } from "./hooks/useContentItems";
 import { useSearchFilter } from "./hooks/useSearchFilter";
-import { ContentCard } from "./components/content/ContentCard";
+import { ContentCard, formatHumanTitle } from "./components/content/ContentCard";
 import { ToolCard } from "./components/content/ToolCard";
 import { JobCard } from "./components/content/JobCard";
 import { ScholarshipCard } from "./components/content/ScholarshipCard";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.8, delay, ease: EASE },
+    transition: { duration: 0.7, delay, ease: EASE },
   }),
 };
 
-export const CATEGORY_MAP: Record<string, { label: string; icon: string; description: string }> = {
-  all: { label: "All Directory", icon: "⚡", description: "Every free font family and creative asset in one view" },
-  freeFonts: { label: "Free Fonts Library", icon: "🔤", description: "1,000+ open-source & free commercial font families" },
-  freeDesignAssets: { label: "Free Assets", icon: "🎁", description: "Fonts, icons, mockups, UI kits, templates" },
-  freeMockups: { label: "Free Mockups", icon: "📐", description: "High-resolution device & product mockups" },
-  freeIcons: { label: "Free Icons", icon: "⭐", description: "SVG icon sets and vector libraries" },
-  freeUIKits: { label: "Free UI Kits", icon: "📱", description: "Figma UI kits and design systems" },
-  learning: { label: "Learning", icon: "📚", description: "Courses, tutorials, and case studies" },
+export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
+  all: { label: "All Resources", icon: "⚡" },
+  fonts: { label: "Fonts", icon: "🔤" },
+  tools: { label: "Tools", icon: "🛠️" },
+  assets: { label: "Assets", icon: "🎁" },
+  learning: { label: "Learning", icon: "📚" },
+  inspiration: { label: "Inspiration", icon: "✨" },
 };
 
 export default function ResourcesArchive() {
@@ -44,7 +43,7 @@ export default function ResourcesArchive() {
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
   const [fontsLoading, setFontsLoading] = useState<boolean>(true);
 
-  // Unified Sanity Polymorphic Content Store
+  // Unified Content Store
   const { items: rawContentItems, loading: contentLoading } = useContentItems();
 
   // Interactive Font Specimen controls
@@ -57,7 +56,7 @@ export default function ResourcesArchive() {
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
 
-  // Connect FlexSearch filter hook to universal items
+  // Search filter hook
   const {
     query,
     setQuery,
@@ -71,7 +70,6 @@ export default function ResourcesArchive() {
       if (data) setSiteSettings(data);
     });
 
-    // Non-blocking sync of live Google fonts
     fetchLiveFontCatalog()
       .then((fontItems) => {
         if (Array.isArray(fontItems) && fontItems.length > 0) {
@@ -92,7 +90,6 @@ export default function ResourcesArchive() {
     setSearchParams(newParams);
   };
 
-  // Synchronize URL search parameter with FlexSearch hook state
   useEffect(() => {
     if (searchQuery !== query) {
       setQuery(searchQuery);
@@ -104,17 +101,34 @@ export default function ResourcesArchive() {
     setParam("q", newQuery);
   };
 
-  // Filter content items by category selection
+  // Broad consolidated category filtering
   const displayedContentItems = useMemo(() => {
     if (activeCategory === "all") return flexFilteredItems;
     
     return flexFilteredItems.filter((item) => {
       const catSlug = typeof item.category?.slug === "string" ? item.category.slug : item.category?.slug?.current;
-      if (activeCategory === "freeDesignAssets") return item.contentType === "designAsset" || item.contentType === "resource" || catSlug === "freeDesignAssets";
-      if (activeCategory === "freeMockups") return catSlug === "freeMockups" || item.contentType === "template";
-      if (activeCategory === "freeIcons") return catSlug === "freeIcons";
-      if (activeCategory === "freeUIKits") return catSlug === "freeUIKits" || item.contentType === "template";
-      if (activeCategory === "learning") return item.contentType === "freeCourse" || catSlug === "learning";
+      const catName = typeof item.category?.name === "string" ? item.category.name.toLowerCase() : "";
+
+      if (activeCategory === "tools") {
+        return item.contentType === "aiTool" || catSlug === "tools" || catName.includes("tool");
+      }
+      if (activeCategory === "assets") {
+        return (
+          item.contentType === "designAsset" ||
+          item.contentType === "resource" ||
+          item.contentType === "template" ||
+          catSlug === "freeDesignAssets" ||
+          catSlug === "freeMockups" ||
+          catSlug === "freeIcons" ||
+          catSlug === "freeUIKits"
+        );
+      }
+      if (activeCategory === "learning") {
+        return item.contentType === "freeCourse" || catSlug === "learning" || catName.includes("learn") || catName.includes("course");
+      }
+      if (activeCategory === "inspiration") {
+        return catSlug === "inspiration" || catName.includes("inspiration") || catName.includes("gallery");
+      }
       return catSlug === activeCategory;
     });
   }, [flexFilteredItems, activeCategory]);
@@ -147,18 +161,19 @@ export default function ResourcesArchive() {
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
+      {/* Tab Title: Never begin browser titles with numbers */}
       <SEO
-        title="1,000+ Free Fonts & Curated Knowledge Directory — Rvan.me"
-        description="Explore 1,000+ free commercial font families (Geist, Inter, Satoshi, Poppins), AI tools, vector assets, mockups, and UI kits."
+        title="Creative Resources — Rvan.me"
+        description="Discover open-source font families, developer tools, vector assets, mockups, and UI kits."
         url="https://www.rvan.me/resources"
       />
 
       {/* Ambient background blob */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden opacity-30">
         <div
-          className="absolute -top-[20%] left-[20%] h-[700px] w-[700px] rounded-full"
+          className="absolute -top-[20%] left-[20%] h-[600px] w-[600px] rounded-full"
           style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.04) 50%, transparent 75%)",
+            background: "radial-gradient(circle at 50% 50%, rgba(6,182,212,0.06) 0%, rgba(59,130,246,0.03) 50%, transparent 75%)",
             filter: "blur(90px)",
           }}
         />
@@ -166,36 +181,34 @@ export default function ResourcesArchive() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Header */}
-      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28 relative z-10">
+      {/* Hero Header — 25% reduced visual dominance */}
+      <section className="px-6 pt-20 pb-8 md:px-10 md:pt-24 relative z-10">
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
-            <p className="eyebrow text-primary mb-4 flex items-center gap-2">
-              <Globe size={13} /> CURATED DIRECTORY · 1,000+ FREE FONTS & CREATIVE ASSETS
-            </p>
-            <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
-              Creative Hub & <br />
+            <h1 className="text-3xl font-bold tracking-tight md:text-5xl lg:text-6xl max-w-3xl leading-tight">
+              Creative Resources & <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
-                Typography Library.
+                Developer Toolkit.
               </span>
             </h1>
-            <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed font-medium">
-              Discover over 1,000+ SIL Open Source and commercial-free font families (Geist, Inter, Satoshi, Space Grotesk), AI tools, vector icons, device mockups, and UI kits.
+            <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl leading-relaxed font-medium">
+              Explore open-source font families, developer tools, vector icons, device mockups, and UI kits.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Category Tabs */}
-      <section className="sticky top-20 z-30 px-6 py-4 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">
+      {/* Consolidated Category Navigation (5 Broad Categories) */}
+      <section className="sticky top-20 z-30 px-6 py-3.5 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">
         <div className="mx-auto max-w-[1600px] flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
           {Object.entries(CATEGORY_MAP).map(([key, config]) => {
+            const isActive = activeCategory === key;
             return (
               <button
                 key={key}
                 onClick={() => setParam("category", key)}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
-                  activeCategory === key
+                  isActive
                     ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)] font-bold"
                     : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
                 }`}
@@ -209,24 +222,24 @@ export default function ResourcesArchive() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          1,000+ FREE FONTS INTERACTIVE SPECIMEN GALLERY (WHEN freeFonts IS ACTIVE)
+          1. FONTS CATEGORY (OPEN-SOURCE & FREE COMMERCIAL FONT CATALOG)
       ───────────────────────────────────────────────────────────────────────────── */}
-      {activeCategory === "freeFonts" ? (
-        <section className="px-6 py-12 md:px-10 relative z-10">
+      {activeCategory === "fonts" ? (
+        <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Interactive Type Tester & Font Search Controls */}
-            <div className="mb-10 p-6 rounded-2xl border border-white/10 bg-white/5 glass space-y-6">
-              {/* Font Search Engine Input */}
+            {/* Type Tester Controls */}
+            <div className="mb-8 p-5 rounded-2xl border border-white/10 bg-white/5 glass space-y-5">
+              {/* Search Input */}
               <div className="relative w-full">
                 <label htmlFor="font-search" className="sr-only">Search fonts</label>
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={16} />
                 <input
                   id="font-search"
                   type="search"
-                  placeholder="Search 1,000+ free font families by name, designer, or category (e.g. Geist, Inter, Satoshi, Serif)..."
+                  placeholder="Search font families by name or designer (e.g. Geist, Inter, Satoshi)..."
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-background/90 pl-11 pr-10 py-3.5 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
+                  className="w-full rounded-xl border border-white/10 bg-background/90 pl-11 pr-10 py-3 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
                 />
                 {searchQuery && (
                   <button onClick={() => handleSearchChange("")} aria-label="Clear font search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -237,12 +250,12 @@ export default function ResourcesArchive() {
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2 border-t border-white/5">
                 <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
-                  <Type size={16} /> Interactive Font Specimen Controls
+                  <Type size={16} /> Specimen Controls
                 </div>
 
                 {/* Sub-category Filters */}
                 <div className="flex flex-wrap gap-2 text-xs">
-                  {["all", "Sans Serif", "Serif", "Display", "Monospace", "Variable", "Handwriting"].map((cat) => (
+                  {["all", "Sans Serif", "Serif", "Display", "Monospace", "Variable"].map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setFontCategorySubfilter(cat)}
@@ -258,7 +271,7 @@ export default function ResourcesArchive() {
                 </div>
               </div>
 
-              {/* Live Preview Text Input & Slider */}
+              {/* Preview Text & Slider */}
               <div className="grid gap-4 md:grid-cols-12 items-center">
                 <div className="md:col-span-8 relative">
                   <input
@@ -266,7 +279,7 @@ export default function ResourcesArchive() {
                     value={previewText}
                     onChange={(e) => setPreviewText(e.target.value)}
                     placeholder="Type custom preview text..."
-                    className="w-full rounded-xl border border-white/10 bg-background/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm"
+                    className="w-full rounded-xl border border-white/10 bg-background/80 px-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm"
                   />
                 </div>
                 <div className="md:col-span-4 flex items-center gap-3">
@@ -288,22 +301,22 @@ export default function ResourcesArchive() {
             {fontsLoading ? (
               <div className="grid gap-6 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((n) => (
-                  <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
+                  <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
                 ))}
               </div>
             ) : filteredFonts.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
-                <p className="text-muted-foreground">No font families found matching your criteria.</p>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
+                <p className="text-muted-foreground text-xs">No font families found matching your search.</p>
                 <button
                   onClick={() => { setFontCategorySubfilter("all"); handleSearchChange(""); }}
-                  className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
-                  RESET FONT FILTERS
+                  RESET FILTERS
                 </button>
               </div>
             ) : (
               <>
-                <div className="grid gap-8 sm:grid-cols-2">
+                <div className="grid gap-6 sm:grid-cols-2">
                   {filteredFonts.slice(0, visibleFontLimit).map((font, idx) => (
                     <motion.article
                       key={font.id || idx}
@@ -312,12 +325,12 @@ export default function ResourcesArchive() {
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.05 }}
                       custom={(idx % 20) * 0.02}
-                      className="group p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.1)]"
+                      className="group p-5 rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.1)]"
                     >
                       <div>
-                        {/* Metadata header */}
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono">
+                        {/* Header */}
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                          <span className="flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase text-primary mono">
                             {font.category}
                           </span>
                           <div className="flex items-center gap-2 text-[10px] font-semibold text-muted-foreground mono">
@@ -326,23 +339,23 @@ export default function ResourcesArchive() {
                           </div>
                         </div>
 
-                        {/* Font Family Name & Designer */}
-                        <h3 className="text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                        {/* Font Family Name */}
+                        <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
                           {font.name}
                         </h3>
-                        <p className="text-xs text-muted-foreground mono mt-1">
+                        <p className="text-xs text-muted-foreground mono mt-0.5">
                           Designed by <span className="text-foreground/90 font-semibold">{font.designer}</span> · {font.foundry}
                         </p>
 
                         {/* Specimen Live Preview */}
-                        <div className="my-6 p-4 rounded-xl border border-white/5 bg-background/60 overflow-hidden">
+                        <div className="my-4 p-3.5 rounded-xl border border-white/5 bg-background/60 overflow-hidden">
                           <p
                             style={{
                               fontFamily: `"${font.family}", system-ui, sans-serif`,
                               fontSize: `${fontSizePx}px`,
                               lineHeight: 1.25,
                             }}
-                            className="text-foreground transition-all duration-300 break-words line-clamp-3"
+                            className="text-foreground transition-all duration-300 break-words line-clamp-2"
                           >
                             {previewText || font.sampleText}
                           </p>
@@ -350,7 +363,7 @@ export default function ResourcesArchive() {
                       </div>
 
                       {/* Bottom CTA */}
-                      <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
+                      <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                         <span className="text-[10px] text-emerald-400 flex items-center gap-1">
                           <BadgeCheck size={12} /> {font.license}
                         </span>
@@ -359,9 +372,9 @@ export default function ResourcesArchive() {
                           download={`${font.family}.zip`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer"
                         >
-                          DOWNLOAD ZIP <Download size={12} />
+                          DOWNLOAD ZIP <Download size={11} />
                         </a>
                       </div>
                     </motion.article>
@@ -370,12 +383,12 @@ export default function ResourcesArchive() {
 
                 {/* Load More Button */}
                 {visibleFontLimit < filteredFonts.length && (
-                  <div className="mt-12 text-center">
+                  <div className="mt-10 text-center">
                     <button
                       onClick={() => setVisibleFontLimit((prev) => prev + 40)}
-                      className="inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                      className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-7 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm"
                     >
-                      LOAD MORE FONTS (SHOWING {Math.min(visibleFontLimit, filteredFonts.length)} OF {filteredFonts.length})
+                      LOAD MORE FONTS ({filteredFonts.length - visibleFontLimit} REMAINING)
                     </button>
                   </div>
                 )}
@@ -385,46 +398,41 @@ export default function ResourcesArchive() {
         </section>
       ) : (
         /* ─────────────────────────────────────────────────────────────────────────────
-            POLYMORPHIC UNIFIED DIRECTORY GRID (DESIGN ASSETS, MOCKUPS, ICONS, AI TOOLS)
+            2. UNIFIED RESOURCE GRID (TOOLS, ASSETS, LEARNING, INSPIRATION, ALL)
         ───────────────────────────────────────────────────────────────────────────── */
-        <section className="px-6 py-12 md:px-10 relative z-10">
+        <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="relative w-full md:w-96">
-                <label htmlFor="resource-search" className="sr-only">Search resources</label>
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
-                <input
-                  id="resource-search"
-                  type="search"
-                  placeholder="Instant FlexSearch (<10ms) across all curated resources..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-                />
-                {searchQuery && (
-                  <button onClick={() => handleSearchChange("")} aria-label="Clear resource search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    <X size={13} />
-                  </button>
-                )}
-              </div>
-
-              <span className="text-xs text-muted-foreground mono flex items-center gap-1">
-                <Sparkles size={12} className="text-primary" /> Showing {displayedContentItems.length} curated polymorphic items
-              </span>
+            {/* Search Input */}
+            <div className="mb-8 relative max-w-md">
+              <label htmlFor="resource-search" className="sr-only">Search resources</label>
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
+              <input
+                id="resource-search"
+                type="search"
+                placeholder="Search fonts, tools, mockups & assets..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
+              />
+              {searchQuery && (
+                <button onClick={() => handleSearchChange("")} aria-label="Clear resource search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X size={13} />
+                </button>
+              )}
             </div>
 
             {contentLoading ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
+                  <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
                 ))}
               </div>
             ) : displayedContentItems.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
-                <p className="text-muted-foreground">No resources found matching your filter.</p>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center my-6 glass">
+                <p className="text-muted-foreground text-xs font-medium">No resources found matching your search.</p>
                 <button
                   onClick={() => { setParam("category", "all"); handleSearchChange(""); }}
-                  className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
                   RESET FILTERS
                 </button>

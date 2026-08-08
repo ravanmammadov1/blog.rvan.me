@@ -1,79 +1,71 @@
 import React from "react";
-import { ExternalLink, Sparkles, Tag, CheckCircle2 } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { UniversalContentItem } from "../../../types/cms";
 
 interface ContentCardProps {
   item: UniversalContentItem;
 }
 
+export function formatHumanTitle(rawTitle: string): string {
+  if (!rawTitle) return "Creative Resource";
+  const trimmed = rawTitle.trim();
+
+  const KNOWN_MAP: Record<string, string> = {
+    "Javis603/token-monitor": "AI Token Monitor",
+    "h0x91b/dev-3.0": "Dev 3 Workflow Manager",
+    "Caplet1989/Brokies-AI-Foundry": "AI Developer Toolkit",
+  };
+
+  if (KNOWN_MAP[trimmed]) return KNOWN_MAP[trimmed];
+
+  if (trimmed.includes("/") && !trimmed.includes(" ")) {
+    const parts = trimmed.split("/");
+    const repoName = parts[parts.length - 1];
+    return repoName
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  return trimmed;
+}
+
 export const ContentCard: React.FC<ContentCardProps> = ({ item }) => {
   const categoryLabel = typeof item.category?.name === "string" ? item.category.name : "Resource";
-  const categoryIcon = item.category?.icon || "⚡";
+  const displayTitle = formatHumanTitle(item.title);
 
   return (
-    <article className="group p-5 aurora-card flex flex-col justify-between relative min-h-[300px] border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 rounded-2xl">
+    <article className="group p-5 aurora-card flex flex-col justify-between relative min-h-[220px] border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 rounded-2xl">
       <div className="relative z-10 flex-1 flex flex-col">
-        {/* Header Badges */}
+        {/* Category Tag */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[9.5px] font-semibold text-primary mono uppercase">
-            <span>{categoryIcon}</span>
-            <span>{categoryLabel}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono">
+            {categoryLabel}
           </span>
-
-          {item.qualityScore && item.qualityScore >= 80 && (
-            <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full mono">
-              <CheckCircle2 size={10} /> {item.qualityScore} SCORE
-            </span>
-          )}
         </div>
 
-        {/* Title */}
-        <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
-          {item.title}
+        {/* Display Title */}
+        <h3 className="text-base font-bold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2">
+          {displayTitle}
         </h3>
 
-        {/* Summary */}
-        <p className="text-xs leading-relaxed text-muted-foreground/80 line-clamp-3 mb-4 font-medium flex-1">
-          {item.summary}
+        {/* Human Description (max 2 short lines) */}
+        <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2 mb-4 font-medium flex-1">
+          {item.summary || item.whoShouldUseIt || "Explore this creative resource to streamline your design and development workflow."}
         </p>
-
-        {/* Why It Matters Badge */}
-        {item.whyItMatters && (
-          <div className="mb-4 p-2.5 rounded-xl bg-primary/5 border border-primary/20 text-[11px] leading-relaxed text-foreground/90 font-medium">
-            <span className="font-bold text-primary flex items-center gap-1 mb-0.5 mono text-[9.5px] uppercase">
-              <Sparkles size={10} /> Why It Matters
-            </span>
-            {item.whyItMatters}
-          </div>
-        )}
-
-        {/* Tags */}
-        {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-semibold text-muted-foreground/75 mb-4">
-            {item.tags.slice(0, 3).map((tag, idx) => {
-              const tagLabel = typeof tag.name === "string" ? tag.name : "";
-              return (
-                <span key={idx} className="flex items-center gap-0.5 rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-foreground/70">
-                  <Tag size={8} /> #{tagLabel}
-                </span>
-              );
-            })}
-          </div>
-        )}
       </div>
 
-      {/* Footer CTA */}
+      {/* Footer Explore CTA */}
       <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between mt-auto">
-        <span className="text-[9px] font-bold text-muted-foreground/50 mono uppercase">
-          {item.sourceName || "VERIFIED RESOURCE"}
+        <span className="text-[10px] font-bold text-muted-foreground/60 mono uppercase truncate max-w-[150px]">
+          {item.sourceName || "Resource"}
         </span>
         <a
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
+          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer shrink-0"
         >
-          EXPLORE <ExternalLink size={10} />
+          EXPLORE <ExternalLink size={11} />
         </a>
       </div>
     </article>

@@ -52,10 +52,11 @@ const staticPages = [
 
   {
     path: "/resources",
-    title: "Free Design Resources, Fonts & Creative Tools — Ravan Mammadov",
-    description: "A curated directory of free fonts, design assets, creative tools, and useful resources for designers.",
+    title: "Creative Resources — Rvan.me",
+    description: "Discover open-source font families, developer tools, vector assets, mockups, and UI kits.",
     type: "website",
   },
+
   {
     path: "/ai-tools",
     title: "AI Tools & Automation Directory — Ravan Mammadov",
