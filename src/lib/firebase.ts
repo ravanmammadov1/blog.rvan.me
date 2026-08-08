@@ -8,12 +8,7 @@ const storageBucket = (import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "rvan-279
 const messagingSenderId = (import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "").trim();
 const appId = (import.meta.env.VITE_FIREBASE_APP_ID || "").trim();
 
-// Check if API key is a valid non-placeholder value
-const isKeyConfigured = Boolean(
-  apiKey &&
-  !apiKey.includes("YOUR_FIREBASE_API_KEY") &&
-  !apiKey.includes("your_firebase_api_key")
-);
+const isKeyConfigured = Boolean(apiKey);
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
@@ -34,10 +29,6 @@ if (isKeyConfigured) {
   } catch (err: any) {
     console.warn("[Firebase Auth] Error initializing Firebase SDK:", err?.message || err);
   }
-} else {
-  console.warn(
-    "[Firebase Auth Warning] VITE_FIREBASE_API_KEY is missing or contains placeholder in .env. Authentication running in graceful fallback mode to prevent app crash."
-  );
 }
 
 export { app, auth, isKeyConfigured };
