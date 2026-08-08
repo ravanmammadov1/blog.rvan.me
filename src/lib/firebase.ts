@@ -10,6 +10,24 @@ const appId = (import.meta.env.VITE_FIREBASE_APP_ID || "").trim();
 
 const isKeyConfigured = Boolean(apiKey);
 
+// Helper to safely mask secrets for console verification
+const maskSecret = (val: string) => {
+  if (!val) return "UNDEFINED / MISSING";
+  if (val.length <= 8) return `${val.substring(0, 2)}***${val.substring(val.length - 2)}`;
+  return `${val.substring(0, 6)}...${val.substring(val.length - 4)}`;
+};
+
+if (typeof window !== "undefined") {
+  console.log("[Firebase Runtime Env Check]:", {
+    VITE_FIREBASE_API_KEY: maskSecret(apiKey),
+    VITE_FIREBASE_AUTH_DOMAIN: maskSecret(authDomain),
+    VITE_FIREBASE_PROJECT_ID: maskSecret(projectId),
+    VITE_FIREBASE_STORAGE_BUCKET: maskSecret(storageBucket),
+    VITE_FIREBASE_MESSAGING_SENDER_ID: maskSecret(messagingSenderId),
+    VITE_FIREBASE_APP_ID: maskSecret(appId),
+  });
+}
+
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 
