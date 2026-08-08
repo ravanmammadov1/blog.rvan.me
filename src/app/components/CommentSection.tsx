@@ -3,6 +3,7 @@ import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare } from "lucide-re
 import { Comment } from "../../types/comments";
 import { subscribeToComments, addComment, updateComment, deleteComment } from "../../services/commentService";
 import { useAuth } from "../../hooks/useAuth";
+import { getSeedCommentsForPost } from "../../lib/seedCommentsRegistry";
 import CommentForm from "./comments/CommentForm";
 import CommentItemComponent from "./comments/CommentItem";
 
@@ -54,14 +55,29 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     return () => unsubscribe();
   }, [postId, isVisible]);
 
+  // Retrieve article-specific seed discussion comments
+  const initialSeedComments = useMemo(() => {
+    return getSeedCommentsForPost(postId);
+  }, [postId]);
+
+  // Combine Firestore user comments with article-specific initial seed comments
+  const activeComments = useMemo(() => {
+    if (firestoreComments.length > 0) {
+      const existingIds = new Set(firestoreComments.map((c) => c.id));
+      const uniqueSeeds = initialSeedComments.filter((c) => !existingIds.has(c.id));
+      return [...firestoreComments, ...uniqueSeeds];
+    }
+    return initialSeedComments;
+  }, [firestoreComments, initialSeedComments]);
+
   // Separate top-level comments and nested replies for this specific article/post
   const { topLevelComments, repliesMap, totalCount } = useMemo(() => {
     const topLevel: Comment[] = [];
     const replies: Record<string, Comment[]> = {};
     let count = 0;
 
-    firestoreComments.forEach((c) => {
-      // Data isolation check: Ensure comment belongs to current postId
+    activeComments.forEach((c) => {
+      // Data isolation check: Ensure comment belongs strictly to current postId
       if (c.postId === postId) {
         count++;
         if (c.parentId) {
@@ -74,7 +90,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     });
 
     return { topLevelComments: topLevel, repliesMap: replies, totalCount: count };
-  }, [firestoreComments, postId]);
+  }, [activeComments, postId]);
 
   // Add Comment (Top Level)
   const handleAddComment = async (text: string) => {
