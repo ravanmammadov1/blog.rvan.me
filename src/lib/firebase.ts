@@ -2,14 +2,13 @@ import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 
-const apiKey = (import.meta.env.VITE_FIREBASE_API_KEY || "").trim();
+// Fallback constants ensure production builds always have valid Firebase credentials embedded
+const apiKey = (import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDF4OYeWUMtc_odsXetUolhoKuPYxQnHhk").trim();
 const authDomain = (import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "rvan-2796c.firebaseapp.com").trim();
 const projectId = (import.meta.env.VITE_FIREBASE_PROJECT_ID || "rvan-2796c").trim();
-
-
 const storageBucket = (import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "rvan-2796c.firebasestorage.app").trim();
 const messagingSenderId = (import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "613710474824").trim();
-const appId = (import.meta.env.VITE_FIREBASE_APP_ID || "").trim();
+const appId = (import.meta.env.VITE_FIREBASE_APP_ID || "1:613710474824:web:a447c5825d22b56a90b27d").trim();
 const measurementId = (import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-G4SWCE6CMT").trim();
 
 const isKeyConfigured = Boolean(apiKey);
