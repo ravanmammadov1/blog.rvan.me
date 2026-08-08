@@ -203,11 +203,12 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 R
               </span>
             )}
-            <span className="hidden text-[10px] font-medium leading-tight tracking-[.16em] sm:block uppercase">
-              RAVAN
+            <span className="hidden text-[10px] font-bold leading-tight tracking-[.16em] sm:block uppercase">
+              RVAN.ME
               <br />
-              MAMMADOV
+              <span className="text-[9px] font-medium text-muted-foreground">STUDIO</span>
             </span>
+
           </Link>
 
           {/* Desktop Navigation */}

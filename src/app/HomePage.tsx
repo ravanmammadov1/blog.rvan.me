@@ -385,8 +385,9 @@ export default function HomePage() {
               <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center">
 
                 <p className="mb-4 sm:mb-5 text-[10px] font-bold tracking-[.18em] text-muted-foreground mono uppercase">
-                  Ravan Mammadov · Senior Creative Designer · Baku, Azerbaijan
+                  Rvan.me · Ravan Mammadov · Senior Creative Designer · Baku, Azerbaijan
                 </p>
+
 
                 {/* Glass availability badge */}
                 <motion.div
@@ -499,7 +500,26 @@ export default function HomePage() {
                     );
                   })}
                 </motion.div>
+
+
+
+                {/* ── Google OAuth Verification Statement & Application Purpose ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 1.05, ease: EASE }}
+                  className="mt-4 p-4 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-md"
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <h2 className="text-[11px] font-bold tracking-[.14em] text-foreground mono uppercase">About Rvan.me & Account Features</h2>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                    <strong className="text-foreground">Rvan.me</strong> is a curated digital hub for design thinking, creative resources, developer tools, and industry insights. Users can sign in with Google to save resources, bookmark tools, personalize their experience, and access member features. View our <Link to="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-primary hover:underline">Terms of Service</Link>.
+                  </p>
+                </motion.div>
               </div>
+
 
               {/* Right column — DESKTOP LOGO */}
               <motion.div

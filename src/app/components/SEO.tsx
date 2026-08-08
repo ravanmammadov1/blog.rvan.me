@@ -72,13 +72,14 @@ export default function SEO({
   const activeSettings = siteSettingsProp || fetchedSettings;
   const seoConfig = activeSettings?.seo;
   const siteDomain = getSiteOrigin(seoConfig?.canonicalUrl || DEFAULT_SITE_DOMAIN);
-  const resolvedTitle = title || seoConfig?.metaTitle || "Ravan Mammadov — Senior Creative Designer & Art Director";
+  const resolvedTitle = title || seoConfig?.metaTitle || "Rvan.me — Creative Studio, Design Resources & Tools";
   const resolvedDescription =
     description ||
     seoConfig?.metaDescription ||
-    "Senior Creative Designer based in Baku, Azerbaijan, specializing in motion design, brand identity, graphic design, and performance creative.";
+    "Rvan.me is a curated creative hub by Ravan Mammadov for design thinking, resources, developer tools, and industry insights.";
   const resolvedAuthor = authorName || seoConfig?.author || "Ravan Mammadov";
-  const resolvedSiteName = seoConfig?.siteName || "Ravan Mammadov";
+  const resolvedSiteName = seoConfig?.siteName || "Rvan.me";
+
   const resolvedTwitterHandle = seoConfig?.twitterHandle || "@ravanimate";
 
   const sanityOgImageUrl = seoConfig?.ogImage ? urlFor(seoConfig.ogImage)?.url() : null;
