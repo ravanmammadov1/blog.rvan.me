@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, ArrowLeft, ArrowUpRight, CheckCircle2, Sliders, BarChart3, Lock, Cookie } from "lucide-react";
+import { ArrowLeft, Cookie } from "lucide-react";
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
@@ -36,7 +36,7 @@ export default function CookiePolicyPage() {
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title="Cookie Policy — Rvan.me"
-        description="Official Cookie Policy for Rvan.me. Learn about the cookies we use, why we use them, and how you can manage your preferences."
+        description="Official Cookie Policy for Rvan.me. Learn about essential, analytics, functional, and future marketing cookie categories."
         url="https://www.rvan.me/cookie-policy"
       />
 
@@ -62,7 +62,7 @@ export default function CookiePolicyPage() {
             </h1>
 
             <p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed font-medium">
-              This Cookie Policy discloses how Rvan.me uses cookies and browser storage technologies to maintain secure authentication and analyze website traffic.
+              This Cookie Policy explains how Rvan.me uses cookies and browser storage technologies to maintain secure user authentication and measure site performance.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-6 text-xs text-muted-foreground mono">
@@ -88,17 +88,17 @@ export default function CookiePolicyPage() {
               <span className="text-primary mono text-base">01.</span> What Are Cookies?
             </h2>
             <p>
-              Cookies are small text files placed on your device by your browser when you visit websites. They allow websites to store session state, remember user preferences, and collect anonymous telemetry data.
+              Cookies and local browser storage are standard web technologies that allow websites to store session state, remember user settings, and collect aggregate performance metrics.
             </p>
           </div>
 
           {/* 2. Categorization */}
           <div className="space-y-6 pt-6 border-t border-white/10">
             <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
-              <span className="text-primary mono text-base">02.</span> How We Categorize Cookies
+              <span className="text-primary mono text-base">02.</span> Cookie Categories
             </h2>
 
-            <div className="grid gap-6 sm:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {/* Category 1 */}
               <div className="p-5 rounded-2xl border border-white/10 bg-white/5 space-y-2">
                 <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider block">
@@ -106,7 +106,7 @@ export default function CookiePolicyPage() {
                 </span>
                 <h3 className="text-base font-bold text-foreground">Strictly Necessary</h3>
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  Essential for secure Google OAuth session tokens, CSRF protection, and storing your consent preferences.
+                  Essential for secure user authentication, account sessions, and persisting your cookie privacy choices.
                 </p>
               </div>
 
@@ -115,9 +115,9 @@ export default function CookiePolicyPage() {
                 <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider block">
                   CATEGORY 02 · OPTIONAL
                 </span>
-                <h3 className="text-base font-bold text-foreground">Analytics & Performance</h3>
+                <h3 className="text-base font-bold text-foreground">Functional</h3>
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  Enables Google Analytics 4, Microsoft Clarity, and Vercel Speed Insights to aggregate anonymous metrics to optimize site speed.
+                  Remembers font specimen preview settings, UI layout preferences, and interactive sandbox states.
                 </p>
               </div>
 
@@ -126,83 +126,32 @@ export default function CookiePolicyPage() {
                 <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider block">
                   CATEGORY 03 · OPTIONAL
                 </span>
-                <h3 className="text-base font-bold text-foreground">Functional & Customization</h3>
+                <h3 className="text-base font-bold text-foreground">Analytics</h3>
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  Remembers custom font specimen preview text, type sizes, and interactive sandbox states.
+                  Allows aggregate, anonymized traffic measurement (e.g., page load speeds and error monitoring) to improve directory responsiveness.
+                </p>
+              </div>
+
+              {/* Category 4 */}
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 space-y-2">
+                <span className="text-[10px] font-bold text-amber-400 mono uppercase tracking-wider block">
+                  CATEGORY 04 · INACTIVE
+                </span>
+                <h3 className="text-base font-bold text-foreground">Marketing & Ads</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Marketing and advertising technologies are currently inactive on Rvan.me. They may be introduced in the future with explicit user consent controls.
                 </p>
               </div>
             </div>
-
-            <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-xs text-emerald-400 font-mono">
-              ✓ <strong>Zero Marketing Cookies:</strong> Rvan.me does NOT use marketing, advertising, cross-site tracking, or behavioral profiling cookies.
-            </div>
           </div>
 
-          {/* 3. Detailed Inventory */}
+          {/* 3. Managing Preferences */}
           <div className="space-y-4 pt-6 border-t border-white/10">
             <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
-              <span className="text-primary mono text-base">03.</span> Cookie Inventory & Service Providers
-            </h2>
-
-            <div className="overflow-x-auto rounded-2xl border border-white/10">
-              <table className="w-full text-left text-xs text-muted-foreground">
-                <thead className="bg-white/5 text-foreground mono uppercase text-[10px]">
-                  <tr>
-                    <th className="p-3.5 border-b border-white/10">Provider</th>
-                    <th className="p-3.5 border-b border-white/10">Cookie Name</th>
-                    <th className="p-3.5 border-b border-white/10">Category</th>
-                    <th className="p-3.5 border-b border-white/10">Purpose</th>
-                    <th className="p-3.5 border-b border-white/10">Retention</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5 font-mono text-[11px]">
-                  <tr>
-                    <td className="p-3.5 font-bold text-foreground">Rvan.me System</td>
-                    <td className="p-3.5 text-primary">rvan_cookie_consent</td>
-                    <td className="p-3.5">Necessary</td>
-                    <td className="p-3.5">Stores your cookie consent selection.</td>
-                    <td className="p-3.5">1 Year</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3.5 font-bold text-foreground">Google Firebase</td>
-                    <td className="p-3.5 text-primary">__session / firebase:authUser</td>
-                    <td className="p-3.5">Necessary</td>
-                    <td className="p-3.5">Authenticates Google Sign-In user session.</td>
-                    <td className="p-3.5">Session</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3.5 font-bold text-foreground">Google Analytics</td>
-                    <td className="p-3.5 text-primary">_ga / _ga_*</td>
-                    <td className="p-3.5">Analytics</td>
-                    <td className="p-3.5">Calculates aggregate visitor telemetry.</td>
-                    <td className="p-3.5">2 Years</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3.5 font-bold text-foreground">Microsoft Clarity</td>
-                    <td className="p-3.5 text-primary">_clck / _clsk</td>
-                    <td className="p-3.5">Analytics</td>
-                    <td className="p-3.5">Diagnoses UI bottlenecks via heatmap telemetry.</td>
-                    <td className="p-3.5">1 Year</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3.5 font-bold text-foreground">Vercel Analytics</td>
-                    <td className="p-3.5 text-primary">va_speed_insights</td>
-                    <td className="p-3.5">Analytics</td>
-                    <td className="p-3.5">Measures Web Vitals edge performance.</td>
-                    <td className="p-3.5">Session</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* 4. Managing Preferences */}
-          <div className="space-y-4 pt-6 border-t border-white/10">
-            <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
-              <span className="text-primary mono text-base">04.</span> Managing Your Preferences
+              <span className="text-primary mono text-base">03.</span> Managing Your Preferences
             </h2>
             <p>
-              You can adjust your consent choices at any time by clicking the button below, or by modifying your browser settings to block cookies.
+              You can modify or withdraw your consent choices at any time through our privacy preferences panel or through your web browser settings.
             </p>
             <button
               onClick={openPreferences}

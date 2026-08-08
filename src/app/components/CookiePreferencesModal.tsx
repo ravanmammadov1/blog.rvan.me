@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShieldCheck, BarChart3, Sliders, Check } from "lucide-react";
+import { X, ShieldCheck, BarChart3, Sliders, Check, Megaphone } from "lucide-react";
 import { useCookieConsent } from "../context/CookieConsentContext";
 
 export default function CookiePreferencesModal() {
@@ -13,16 +13,19 @@ export default function CookiePreferencesModal() {
     rejectNonEssential,
   } = useCookieConsent();
 
-  const [analytics, setAnalytics] = useState<boolean>(false);
   const [functional, setFunctional] = useState<boolean>(false);
+  const [analytics, setAnalytics] = useState<boolean>(false);
+  const [marketing, setMarketing] = useState<boolean>(false);
 
   useEffect(() => {
     if (consent) {
-      setAnalytics(consent.analytics);
       setFunctional(consent.functional);
+      setAnalytics(consent.analytics);
+      setMarketing(consent.marketing);
     } else {
-      setAnalytics(false);
       setFunctional(false);
+      setAnalytics(false);
+      setMarketing(false);
     }
   }, [consent, showPreferencesModal]);
 
@@ -85,11 +88,11 @@ export default function CookiePreferencesModal() {
           </div>
 
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground font-medium">
-            Rvan.me uses essential cookies to ensure site security and optional performance cookies to measure aggregate traffic speed. Customize your choices below.
+            Rvan.me uses essential cookies to ensure secure user authentication and optional performance cookies to measure aggregate traffic speed. Customize your choices below.
           </p>
 
           {/* Categories List */}
-          <div className="mt-6 space-y-4 max-h-[45vh] overflow-y-auto pr-1">
+          <div className="mt-6 space-y-4 max-h-[48vh] overflow-y-auto pr-1">
             {/* 1. Essential Cookies */}
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-2">
               <div className="flex items-center justify-between gap-4">
@@ -110,48 +113,11 @@ export default function CookiePreferencesModal() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed pt-1">
-                Required for core Google OAuth authentication, session routing, and remembering your privacy choices.
+                Required for core authentication, session security, and persisting your cookie preferences.
               </p>
             </div>
 
-            {/* 2. Analytics Cookies */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-2">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
-                    <BarChart3 size={18} />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-foreground">Analytics & Performance</h3>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mono mt-0.5">
-                      OPTIONAL
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={analytics}
-                  onClick={() => setAnalytics(!analytics)}
-                  className={`flex h-6 w-11 items-center rounded-full p-0.5 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 cursor-pointer ${
-                    analytics ? "bg-primary" : "bg-white/20"
-                  }`}
-                  aria-label="Toggle Analytics & Performance Cookies"
-                >
-                  <div
-                    className={`h-5 w-5 rounded-full bg-black shadow transition-transform duration-200 ${
-                      analytics ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed pt-1">
-                Enables Google Analytics 4, Microsoft Clarity, and Vercel Speed Insights to aggregate anonymous metrics to optimize site speed.
-              </p>
-            </div>
-
-            {/* 3. Functional Cookies */}
+            {/* 2. Functional Cookies */}
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-2">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -184,7 +150,81 @@ export default function CookiePreferencesModal() {
                 </button>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed pt-1">
-                Remembers custom font specimen preview text, type sizes, and interactive sandbox states.
+                Remembers font specimen preview settings, UI layout preferences, and interactive sandbox states.
+              </p>
+            </div>
+
+            {/* 3. Analytics Cookies */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-2">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
+                    <BarChart3 size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground">Analytics & Performance</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mono mt-0.5">
+                      OPTIONAL
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={analytics}
+                  onClick={() => setAnalytics(!analytics)}
+                  className={`flex h-6 w-11 items-center rounded-full p-0.5 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 cursor-pointer ${
+                    analytics ? "bg-primary" : "bg-white/20"
+                  }`}
+                  aria-label="Toggle Analytics & Performance Cookies"
+                >
+                  <div
+                    className={`h-5 w-5 rounded-full bg-black shadow transition-transform duration-200 ${
+                      analytics ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed pt-1">
+                Allows aggregate, anonymized traffic measurement (e.g. Google Analytics, Microsoft Clarity, Vercel Speed Insights) to optimize page load speed.
+              </p>
+            </div>
+
+            {/* 4. Marketing & Advertising Cookies (Currently Inactive) */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-2">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
+                    <Megaphone size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground">Marketing & Advertising</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400/90 mono mt-0.5">
+                      CURRENTLY INACTIVE / OPTIONAL
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={marketing}
+                  onClick={() => setMarketing(!marketing)}
+                  className={`flex h-6 w-11 items-center rounded-full p-0.5 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 cursor-pointer ${
+                    marketing ? "bg-primary" : "bg-white/20"
+                  }`}
+                  aria-label="Toggle Marketing & Advertising Cookies"
+                >
+                  <div
+                    className={`h-5 w-5 rounded-full bg-black shadow transition-transform duration-200 ${
+                      marketing ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed pt-1">
+                Rvan.me does not currently use advertising or remarketing tags. This category is provided so you can pre-configure your consent should marketing technologies be enabled in the future.
               </p>
             </div>
           </div>
@@ -208,7 +248,7 @@ export default function CookiePreferencesModal() {
 
             {/* Single Primary Action */}
             <button
-              onClick={() => savePreferences({ analytics, functional })}
+              onClick={() => savePreferences({ functional, analytics, marketing })}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-[10.5px] font-bold uppercase tracking-[.14em] text-black hover:bg-white transition-all mono shadow-lg cursor-pointer"
             >
               <Check size={14} /> SAVE PREFERENCES

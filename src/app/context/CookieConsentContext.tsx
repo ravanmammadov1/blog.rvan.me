@@ -2,8 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 export interface ConsentPreferences {
   essential: boolean; // Always true
+  functional: boolean; // 3D WebGL / UI preferences
   analytics: boolean; // GA4, Clarity, Vercel Analytics & Speed Insights
-  functional: boolean; // 3D WebGL / UX animation preferences
+  marketing: boolean; // Marketing & Advertising (Currently inactive / modular for future expansion)
 }
 
 export interface CookieConsentContextType {
@@ -23,8 +24,9 @@ const COOKIE_NAME = "ravan_cookie_consent";
 
 const DEFAULT_PREFERENCES: ConsentPreferences = {
   essential: true,
-  analytics: false,
   functional: false,
+  analytics: false,
+  marketing: false,
 };
 
 const CookieConsentContext = createContext<CookieConsentContextType | undefined>(undefined);
@@ -38,8 +40,9 @@ function getStoredConsent(): ConsentPreferences | null {
       if (typeof parsed === "object" && parsed !== null && "essential" in parsed) {
         return {
           essential: true,
-          analytics: Boolean(parsed.analytics),
           functional: Boolean(parsed.functional),
+          analytics: Boolean(parsed.analytics),
+          marketing: Boolean(parsed.marketing),
         };
       }
     }
@@ -64,11 +67,10 @@ export const CookieConsentProvider: React.FC<{ children: React.ReactNode }> = ({
   const [showPreferencesModal, setShowPreferencesModal] = useState<boolean>(false);
 
   useEffect(() => {
-    // Show banner only if the user hasn't made a decision yet
     if (!hasDecided) {
       const timer = setTimeout(() => {
         setShowBanner(true);
-      }, 600); // Gentle 600ms delay to avoid blocking initial page load
+      }, 600);
       return () => clearTimeout(timer);
     }
   }, [hasDecided]);
@@ -88,24 +90,27 @@ export const CookieConsentProvider: React.FC<{ children: React.ReactNode }> = ({
   const acceptAll = () => {
     persistConsent({
       essential: true,
-      analytics: true,
       functional: true,
+      analytics: true,
+      marketing: true,
     });
   };
 
   const rejectNonEssential = () => {
     persistConsent({
       essential: true,
-      analytics: false,
       functional: false,
+      analytics: false,
+      marketing: false,
     });
   };
 
   const savePreferences = (prefs: Partial<ConsentPreferences>) => {
     persistConsent({
       essential: true,
-      analytics: Boolean(prefs.analytics),
       functional: Boolean(prefs.functional),
+      analytics: Boolean(prefs.analytics),
+      marketing: Boolean(prefs.marketing),
     });
     setShowPreferencesModal(false);
   };
