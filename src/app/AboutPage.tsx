@@ -13,7 +13,8 @@ import {
   CheckCircle2,
   UserCheck,
   Compass,
-  ArrowRight
+  ArrowRight,
+  MapPin
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
@@ -292,14 +293,14 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          4. BEHIND RVAN.ME — MEET THE FOUNDER SECTION (NATURAL CREATOR INTRODUCTION)
+          4. BEHIND RVAN.ME — MEET THE FOUNDER SECTION (LARGE PORTRAIT & FOUNDER CREATOR CARDS)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-20 md:px-10 md:py-28 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
           <div className="p-8 md:p-12 rounded-3xl border border-white/15 bg-white/[0.02] backdrop-blur-2xl aurora-card">
             <div className="grid gap-10 lg:grid-cols-12 items-center">
               {/* Left Founder Info */}
-              <div className="lg:col-span-8 space-y-6">
+              <div className="lg:col-span-7 space-y-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-wider text-primary mono uppercase">
                   <UserCheck size={14} /> BEHIND RVAN.ME
                 </div>
@@ -309,11 +310,11 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="text-base leading-relaxed text-muted-foreground font-medium max-w-2xl">
-                  Rvan.me was conceived, engineered, and curated by Ravan Mammadov — a Senior Creative Designer specializing in brand identity architecture, motion design, FMCG packaging, and digital strategy.
+                  Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and AI products.
                 </p>
 
                 <p className="text-xs md:text-sm leading-relaxed text-muted-foreground/80 font-medium max-w-2xl">
-                  With multi-industry experience across RAM Holding, My Group Holding, automotive brands (Omoda, Jaecoo), and luxury retail, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics.
+                  Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics.
                 </p>
 
                 <div className="pt-2">
@@ -327,10 +328,10 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Right Founder Photo & Badge */}
-              <div className="lg:col-span-4 flex justify-center lg:justify-end">
+              {/* Right Founder Photo — Prominent Large Size */}
+              <div className="lg:col-span-5 flex justify-center lg:justify-end">
                 <div className="relative group/founder">
-                  <div className="h-44 w-44 md:h-52 md:w-52 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1 shadow-[0_0_30px_rgba(232,253,82,0.2)] group-hover/founder:border-primary group-hover/founder:shadow-[0_0_40px_rgba(232,253,82,0.35)] transition-all duration-500">
+                  <div className="h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80 lg:h-96 lg:w-96 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1.5 shadow-[0_0_35px_rgba(232,253,82,0.25)] group-hover/founder:border-primary group-hover/founder:shadow-[0_0_50px_rgba(232,253,82,0.4)] transition-all duration-500">
                     <picture>
                       <source
                         srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
@@ -341,11 +342,11 @@ export default function AboutPage() {
                         alt="Ravan Mammadov — Founder of Rvan.me"
                         width={1200}
                         height={1200}
-                        className="h-full w-full object-cover object-top rounded-2xl group-hover/founder:scale-105 transition-transform duration-500"
+                        className="h-full w-full object-cover object-center rounded-2xl group-hover/founder:scale-105 transition-transform duration-500"
                       />
                     </picture>
                   </div>
-                  <div className="absolute -bottom-3 -right-3 rounded-2xl border border-white/20 bg-background/90 px-3.5 py-1.5 text-[10px] font-bold text-primary mono uppercase backdrop-blur-md shadow-lg">
+                  <div className="absolute -bottom-3 -right-3 rounded-2xl border border-white/20 bg-background/90 px-4 py-2 text-xs font-bold text-primary mono uppercase backdrop-blur-md shadow-lg">
                     FOUNDER
                   </div>
                 </div>

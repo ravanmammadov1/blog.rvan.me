@@ -5,16 +5,17 @@ import {
   ArrowUpRight,
   Briefcase,
   Sparkles,
-  GraduationCap,
   Building2,
-  Layers,
   MapPin,
+  Compass,
+  Cpu,
+  Layers,
+  Globe
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
-import { urlFor } from "../lib/sanityClient";
 import { fetchAboutSection, fetchSiteSettings } from "../lib/sanityQueries";
 import { AboutSection as IAboutSection, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
@@ -47,7 +48,7 @@ const BehanceIcon = ({ size = 15, className = "" }: { size?: number; className?:
   </svg>
 );
 
-// ── Verified Career Timeline ──
+// ── Verified Career Experience ──
 const realExperience = [
   {
     period: "05.2026 — PRESENT",
@@ -117,15 +118,11 @@ const realExperience = [
 
 export default function ProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [aboutSection, setAboutSection] = useState<IAboutSection | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
-    });
-    fetchAboutSection().then((data) => {
-      if (data) setAboutSection(data);
     });
   }, []);
 
@@ -146,8 +143,8 @@ export default function ProfilePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Founder & Senior Creative Designer"
-        description="Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov."
+        title="Ravan Mammadov — Founder & Creative Director"
+        description="Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."
         url="https://www.rvan.me/profile"
       />
 
@@ -165,7 +162,7 @@ export default function ProfilePage() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          1. HERO & PROFILE CARD
+          1. HERO & FOUNDER PROFILE CARD
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
         <div className="mx-auto max-w-[1600px]">
@@ -178,7 +175,7 @@ export default function ProfilePage() {
               className="lg:col-span-7"
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Sparkles size={14} /> FOUNDER & SENIOR CREATIVE DESIGNER
+                <Sparkles size={14} /> FOUNDER & CREATIVE DIRECTOR
               </div>
 
               <h1 className="mt-6 text-4xl font-extrabold tracking-[-.06em] md:text-6xl lg:text-7xl leading-none">
@@ -187,11 +184,11 @@ export default function ProfilePage() {
               </h1>
 
               <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold tracking-wider text-muted-foreground mono uppercase">
-                <span className="text-foreground">Brand Identity</span> •
+                <span className="text-foreground">Brand Architecture</span> •
                 <span className="text-foreground">Motion Graphics</span> •
-                <span className="text-foreground">FMCG Packaging</span> •
                 <span className="text-foreground">Creative Strategy</span> •
-                <span className="text-foreground">Digital Campaigns</span>
+                <span className="text-foreground">AI Products</span> •
+                <span className="text-foreground">FMCG Packaging</span>
               </div>
 
               <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg font-medium">
@@ -220,7 +217,7 @@ export default function ProfilePage() {
               </div>
             </motion.div>
 
-            {/* Right Profile Card */}
+            {/* Right Founder Profile Card with Timeless Product Builder Focus */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
@@ -229,8 +226,9 @@ export default function ProfilePage() {
               className="lg:col-span-5"
             >
               <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-white/15 bg-white/5 backdrop-blur-2xl shadow-2xl transition-all duration-500 overflow-hidden aurora-card">
+                {/* Header: Photo & Name */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-white/10 pb-8">
-                  <div className="h-24 w-24 md:h-28 md:w-28 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1 shadow-[0_0_25px_rgba(232,253,82,0.22)] shrink-0">
+                  <div className="h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1 shadow-[0_0_30px_rgba(232,253,82,0.25)] shrink-0">
                     <picture>
                       <source
                         srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
@@ -238,20 +236,20 @@ export default function ProfilePage() {
                       />
                       <img
                         src={RavanPortrait1200}
-                        alt="Ravan Mammadov"
+                        alt="Ravan Mammadov — Founder of Rvan.me"
                         width={1200}
                         height={1200}
-                        className="h-full w-full object-cover object-top rounded-2xl"
+                        className="h-full w-full object-cover object-center rounded-2xl"
                       />
                     </picture>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     <h3 className="text-2xl font-extrabold text-foreground tracking-tight">
                       Ravan Mammadov
                     </h3>
                     <p className="text-xs font-bold text-primary tracking-widest uppercase mono">
-                      Founder & Senior Creative Designer
+                      Founder & Creative Director
                     </p>
                     <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
                       <MapPin size={13} className="text-primary/70" /> Baku, Azerbaijan
@@ -259,14 +257,42 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 py-8 border-b border-white/10">
+                {/* Founder Grid: Product Builder Focus Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-8 border-b border-white/10">
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
-                    <div className="text-3xl font-extrabold text-primary mono">4+</div>
-                    <p className="text-[10px] font-bold text-foreground uppercase mono tracking-wider mt-1">Years Experience</p>
+                    <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
+                      CURRENTLY BUILDING
+                    </span>
+                    <p className="text-sm font-extrabold text-foreground tracking-tight">
+                      Rvan.me Ecosystem
+                    </p>
                   </div>
+
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
-                    <div className="text-3xl font-extrabold text-primary mono">15+</div>
-                    <p className="text-[10px] font-bold text-foreground uppercase mono tracking-wider mt-1">Brands Built</p>
+                    <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
+                      FOCUS & STRATEGY
+                    </span>
+                    <p className="text-xs font-bold text-foreground leading-snug">
+                      Brand Identity · Motion Design · AI Products
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+                    <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
+                      KEY INDUSTRIES
+                    </span>
+                    <p className="text-xs font-bold text-foreground leading-snug">
+                      Automotive · Luxury Retail · Technology
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+                    <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
+                      LOCATION
+                    </span>
+                    <p className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
+                      <MapPin size={13} className="text-primary" /> Baku, Azerbaijan
+                    </p>
                   </div>
                 </div>
               </div>
