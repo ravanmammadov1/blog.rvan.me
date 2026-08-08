@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
-import { Shield, Lock, Eye, Mail, ArrowLeft, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Shield, ArrowLeft, ArrowUpRight, CheckCircle2, Lock, Eye, Mail, Server } from "lucide-react";
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
@@ -13,11 +13,11 @@ import { useCookieConsent } from "./context/CookieConsentContext";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: EASE },
+    transition: { duration: 0.7, delay, ease: EASE },
   }),
 };
 
@@ -33,22 +33,19 @@ export default function PrivacyPolicyPage() {
   }, []);
 
   return (
-    <main
-      className="min-h-screen bg-background text-foreground"
-      style={{ fontFamily: "'Geist', sans-serif" }}
-    >
+    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="Privacy Policy — Ravan Mammadov Studio"
-        description="Official Privacy Policy for Ravan Mammadov Studio. Learn how we handle data protection, cookies, analytics, and your rights under GDPR and international privacy standards."
+        title="Privacy Policy — Rvan.me"
+        description="Official Privacy Policy for Rvan.me. Learn how we collect, process, and protect your personal information under GDPR and international privacy standards."
         url="https://www.rvan.me/privacy-policy"
       />
 
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Header Section */}
-      <section className="px-6 pt-24 pb-12 md:px-10 md:pt-32 border-b border-border">
+      <section className="px-6 pt-24 pb-12 md:px-10 md:pt-32 border-b border-white/10 relative z-10">
         <div className="mx-auto max-w-[1200px]">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
             <Link
               to="/"
               className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase mb-6"
@@ -57,211 +54,163 @@ export default function PrivacyPolicyPage() {
             </Link>
 
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-widest text-primary mono uppercase">
-              <Shield size={14} /> LEGAL & GOVERNANCE
+              <Shield size={14} /> DATA PROTECTION & PRIVACY
             </div>
 
-            <h1 className="mt-6 text-4xl font-semibold tracking-[-.06em] md:text-7xl">
+            <h1 className="mt-6 text-4xl font-extrabold tracking-tight md:text-6xl text-foreground">
               Privacy Policy.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-              Ravan Mammadov Studio ("we", "us", or "our") respects your privacy and is committed to protecting your personal data in accordance with GDPR and applicable international data protection standards.
+            <p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed font-medium">
+              This Privacy Policy explains how Rvan.me ("we", "us", or "our") collects, uses, and discloses information about you when you access our creative platform, tools, and services.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-6 text-xs text-muted-foreground mono">
-              <span>LAST UPDATED: JULY 2026</span>
+              <span>LAST REVISED: AUGUST 2026</span>
               <span>·</span>
-              <span>EFFECTIVE DATE: IMMEDIATE</span>
+              <span>COMPLIANCE: GDPR, CCPA & PECR</span>
               <span>·</span>
               <button
                 onClick={openPreferences}
-                className="text-primary font-bold hover:underline mono uppercase"
+                className="text-primary font-bold hover:underline mono uppercase cursor-pointer"
               >
-                MANAGE COOKIE CONSENT →
+                MANAGE COOKIES →
               </button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Policy Content */}
-      <section className="px-6 py-16 md:px-10 md:py-24">
+      {/* Content Body */}
+      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10">
         <div className="mx-auto max-w-[1200px] grid gap-12 lg:grid-cols-12">
-          {/* Navigation Sidebar */}
+          {/* Sidebar Navigation */}
           <div className="hidden lg:block lg:col-span-4 space-y-3 sticky top-32 h-fit">
-            <div className="rounded-2xl border border-border bg-surface p-6">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">
               <p className="text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
-                CONTENTS OVERVIEW
+                SECTIONS
               </p>
-              <ul className="space-y-2.5 text-xs font-medium text-muted-foreground">
-                <li>
-                  <a href="#data-controller" className="hover:text-foreground transition-colors">
-                    1. Data Controller
-                  </a>
-                </li>
-                <li>
-                  <a href="#data-collection" className="hover:text-foreground transition-colors">
-                    2. Information We Collect
-                  </a>
-                </li>
-                <li>
-                  <a href="#legal-basis" className="hover:text-foreground transition-colors">
-                    3. Legal Basis for Processing
-                  </a>
-                </li>
-                <li>
-                  <a href="#third-parties" className="hover:text-foreground transition-colors">
-                    4. Third-Party Analytics & Services
-                  </a>
-                </li>
-                <li>
-                  <a href="#user-rights" className="hover:text-foreground transition-colors">
-                    5. Your Data Rights (GDPR)
-                  </a>
-                </li>
-                <li>
-                  <a href="#contact-privacy" className="hover:text-foreground transition-colors">
-                    6. Privacy Contact
-                  </a>
-                </li>
+              <ul className="space-y-2 text-xs font-medium text-muted-foreground">
+                <li><a href="#data-controller" className="hover:text-primary transition-colors">1. Data Controller</a></li>
+                <li><a href="#information-collected" className="hover:text-primary transition-colors">2. Information We Collect</a></li>
+                <li><a href="#how-we-use-data" className="hover:text-primary transition-colors">3. How We Use Information</a></li>
+                <li><a href="#third-party-services" className="hover:text-primary transition-colors">4. Third-Party Services</a></li>
+                <li><a href="#data-retention" className="hover:text-primary transition-colors">5. Data Retention</a></li>
+                <li><a href="#user-rights" className="hover:text-primary transition-colors">6. Your Privacy Rights</a></li>
+                <li><a href="#contact" className="hover:text-primary transition-colors">7. Contact Information</a></li>
               </ul>
             </div>
           </div>
 
           {/* Policy Text */}
-          <div className="lg:col-span-8 space-y-12 leading-relaxed text-muted-foreground">
-            {/* Section 1 */}
-            <div id="data-controller" className="scroll-mt-32 space-y-4">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                1. Data Controller Information
+          <div className="lg:col-span-8 space-y-12 text-sm leading-relaxed text-muted-foreground font-medium">
+            {/* 1. Data Controller */}
+            <div id="data-controller" className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">01.</span> Data Controller
               </h2>
-              <p className="text-sm leading-relaxed">
-                The data controller responsible for processing personal information gathered on{" "}
-                <strong className="text-foreground">www.rvan.me</strong> is:
+              <p>
+                Rvan.me is operated by Ravan Mammadov Studio, located in Baku, Azerbaijan. For the purposes of the General Data Protection Regulation (GDPR) and applicable data privacy laws, Rvan.me acts as the Data Controller for personal data processed through our website.
               </p>
-              <div className="rounded-xl border border-border bg-surface p-6 text-xs mono text-foreground space-y-1">
-                <p className="font-bold text-primary">RAVAN MAMMADOV STUDIO</p>
-                <p>Senior Creative Designer & Art Director</p>
-                <p>Location: Baku, Azerbaijan</p>
-                <p>Contact Email: mammadovravan1@gmail.com</p>
+            </div>
+
+            {/* 2. Information We Collect */}
+            <div id="information-collected" className="space-y-4 pt-6 border-t border-white/10">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">02.</span> Information We Collect
+              </h2>
+              <p>We collect information only when necessary to provide and improve our creative directory services:</p>
+              <div className="space-y-3 pl-4 border-l-2 border-primary/40">
+                <div>
+                  <h3 className="font-bold text-foreground text-sm">Account & Auth Data (Voluntary)</h3>
+                  <p className="text-xs">When you sign in using Google OAuth, we collect your name, email address, and profile avatar URL to authenticate your session and enable member features (such as saving bookmarks).</p>
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground text-sm">Technical & Telemetry Data (Automatic)</h3>
+                  <p className="text-xs">We automatically log anonymized technical details including IP address hash, browser type, operating system, referring URL, and page request timestamps to maintain edge performance and infrastructure security.</p>
+                </div>
               </div>
             </div>
 
-            {/* Section 2 */}
-            <div id="data-collection" className="scroll-mt-32 space-y-4 border-t border-border pt-10">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                2. Information We Collect
+            {/* 3. How We Use Information */}
+            <div id="how-we-use-data" className="space-y-4 pt-6 border-t border-white/10">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">03.</span> How We Use Information
               </h2>
-              <p className="text-sm leading-relaxed">
-                We collect personal information through two main channels:
-              </p>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 size={16} className="text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <strong className="text-foreground">Voluntary Contact Details:</strong> Name, email address, project scope, and message contents when you submit our contact form or send email inquiries directly.
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 size={16} className="text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <strong className="text-foreground">Automated Usage & Technical Data:</strong> Anonymized IP addresses, browser type, device resolution, referrer URLs, and interactive event data collected via cookies if you grant analytics consent.
-                  </div>
-                </li>
+              <p>We process your personal data strictly for legitimate operational purposes:</p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs">
+                <li>To authenticate user accounts and persist personal resource bookmarks.</li>
+                <li>To optimize edge delivery speed and monitor sub-second search index performance.</li>
+                <li>To diagnose technical errors and protect against automated scraping or malicious bot traffic.</li>
+                <li>We do <strong>never</strong> sell, rent, or trade your personal data to third parties for marketing purposes.</li>
               </ul>
             </div>
 
-            {/* Section 3 */}
-            <div id="legal-basis" className="scroll-mt-32 space-y-4 border-t border-border pt-10">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                3. Legal Basis for Processing
+            {/* 4. Third-Party Services */}
+            <div id="third-party-services" className="space-y-4 pt-6 border-t border-white/10">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">04.</span> Third-Party Service Providers
               </h2>
-              <p className="text-sm leading-relaxed">
-                We process your personal data under the following legal bases pursuant to Article 6 of the General Data Protection Regulation (GDPR):
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-2">
-                  <span className="text-[10px] font-bold tracking-widest text-primary mono uppercase">GDPR ART. 6(1)(A)</span>
-                  <h3 className="font-bold text-foreground text-sm">Explicit Consent</h3>
-                  <p className="text-xs">Applied when you grant permission for analytics cookies or subscribe to field notes.</p>
+              <p>We rely on trusted infrastructure providers to operate the platform safely:</p>
+              <div className="grid gap-4 sm:grid-cols-2 pt-2">
+                <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+                  <h4 className="font-bold text-foreground text-xs mb-1">Google Firebase</h4>
+                  <p className="text-[11px]">Handles Google OAuth authentication and Firestore database storage for comments and bookmarks.</p>
                 </div>
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-2">
-                  <span className="text-[10px] font-bold tracking-widest text-primary mono uppercase">GDPR ART. 6(1)(F)</span>
-                  <h3 className="font-bold text-foreground text-sm">Legitimate Interest</h3>
-                  <p className="text-xs">Applied when processing project inquiries and protecting website security.</p>
+                <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+                  <h4 className="font-bold text-foreground text-xs mb-1">Vercel Web Analytics</h4>
+                  <p className="text-[11px]">Provides privacy-first, cookieless aggregate traffic measurement and Speed Insights performance metrics.</p>
+                </div>
+                <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+                  <h4 className="font-bold text-foreground text-xs mb-1">Google Analytics (GTAG)</h4>
+                  <p className="text-[11px]">Measures aggregate usage patterns with IP anonymization enabled by default.</p>
+                </div>
+                <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+                  <h4 className="font-bold text-foreground text-xs mb-1">Microsoft Clarity</h4>
+                  <p className="text-[11px]">Analyzes user interaction session heatmaps to diagnose navigation bottlenecks.</p>
                 </div>
               </div>
             </div>
 
-            {/* Section 4 */}
-            <div id="third-parties" className="scroll-mt-32 space-y-4 border-t border-border pt-10">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                4. Third-Party Analytics & Infrastructure
+            {/* 5. Data Retention */}
+            <div id="data-retention" className="space-y-4 pt-6 border-t border-white/10">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">05.</span> Data Retention
               </h2>
-              <p className="text-sm leading-relaxed">
-                We partner with trusted performance infrastructure and analytics providers to ensure zero downtime and optimal user experiences:
+              <p>
+                We retain your account authentication data only for as long as your account remains active. Anonymized analytics and server telemetry logs are automatically purged after 14 months.
               </p>
-              <ul className="space-y-3 text-sm">
-                <li className="border-b border-border/50 pb-3">
-                  <strong className="text-foreground">Vercel Inc.:</strong> Hosting platform, Speed Insights, and edge deployment (USA/EU).
-                </li>
-                <li className="border-b border-border/50 pb-3">
-                  <strong className="text-foreground">Google Analytics 4:</strong> Anonymized web traffic and audience measurement (Google LLC).
-                </li>
-                <li className="border-b border-border/50 pb-3">
-                  <strong className="text-foreground">Microsoft Clarity:</strong> Session recording and UX visual heatmaps (Microsoft Corp.).
-                </li>
-                <li>
-                  <strong className="text-foreground">Sanity.io:</strong> Headless content management platform (Sanity AS, Norway).
-                </li>
+            </div>
+
+            {/* 6. Your Privacy Rights */}
+            <div id="user-rights" className="space-y-4 pt-6 border-t border-white/10">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">06.</span> Your Privacy Rights (GDPR & CCPA)
+              </h2>
+              <p>Depending on your jurisdiction, you hold the following rights regarding your personal data:</p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs">
+                <li><strong>Right to Access & Portability:</strong> Request a copy of all personal data associated with your profile.</li>
+                <li><strong>Right to Erasure ("Right to be Forgotten"):</strong> Request complete deletion of your account and saved comments.</li>
+                <li><strong>Right to Revoke Consent:</strong> Update or withdraw cookie consent preferences at any time.</li>
               </ul>
             </div>
 
-            {/* Section 5 */}
-            <div id="user-rights" className="scroll-mt-32 space-y-4 border-t border-border pt-10">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                5. Your Data Rights (GDPR & CCPA)
+            {/* 7. Contact Information */}
+            <div id="contact" className="space-y-4 pt-6 border-t border-white/10">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
+                <span className="text-primary mono text-base">07.</span> Contact Information
               </h2>
-              <p className="text-sm leading-relaxed">
-                As a user, you hold full authority over your personal data. You are entitled to:
+              <p>
+                For privacy enquiries, data deletion requests, or GDPR rights execution, contact us directly:
               </p>
-              <div className="grid gap-3 text-sm">
-                <div className="flex items-center gap-3 rounded-lg border border-border bg-surface p-4">
-                  <Lock size={16} className="text-primary flex-shrink-0" />
-                  <span>Right to access, retrieve, or correct your personal data records.</span>
+              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3">
+                <Mail size={18} className="text-primary shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-foreground">Privacy Officer — Rvan.me</p>
+                  <a href="mailto:mammadovravan1@gmail.com" className="text-xs text-primary font-mono hover:underline">
+                    mammadovravan1@gmail.com
+                  </a>
                 </div>
-                <div className="flex items-center gap-3 rounded-lg border border-border bg-surface p-4">
-                  <Eye size={16} className="text-primary flex-shrink-0" />
-                  <span>Right to request erasure ("Right to be forgotten") of your data.</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-lg border border-border bg-surface p-4">
-                  <Shield size={16} className="text-primary flex-shrink-0" />
-                  <span>Right to withdraw consent at any time without affecting prior lawfulness.</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 6 */}
-            <div id="contact-privacy" className="scroll-mt-32 space-y-4 border-t border-border pt-10">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                6. Privacy Inquiries & Data Requests
-              </h2>
-              <p className="text-sm leading-relaxed">
-                If you have questions regarding this Privacy Policy or wish to exercise your data rights, please email us directly:
-              </p>
-              <div className="mt-4 flex flex-wrap gap-4 items-center">
-                <a
-                  href="mailto:mammadovravan1@gmail.com"
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold tracking-widest text-black uppercase hover:bg-white transition-colors mono"
-                >
-                  <Mail size={14} /> EMAIL PRIVACY OFFICER
-                </a>
-                <Link
-                  to="/cookie-policy"
-                  className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-xs font-bold tracking-widest text-foreground hover:border-primary transition-colors mono uppercase"
-                >
-                  VIEW COOKIE POLICY <ArrowUpRight size={14} />
-                </Link>
               </div>
             </div>
           </div>
