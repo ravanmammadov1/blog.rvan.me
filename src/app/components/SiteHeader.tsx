@@ -23,14 +23,14 @@ function UserAuthMenu() {
   }, []);
 
   if (loading) {
-    return <div className="h-[38px] w-24 rounded-full bg-white/5 border border-white/10 animate-pulse shrink-0" />;
+    return <div className="h-[38px] w-24 rounded-full bg-white/5 border border-white/10 animate-pulse shrink-0 self-center" />;
   }
 
   if (!user) {
     return (
       <button
         onClick={signIn}
-        className="inline-flex h-[38px] items-center gap-2 rounded-full border border-white/20 px-4 text-[10.5px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0"
+        className="inline-flex h-[38px] items-center gap-2 rounded-full border border-white/20 px-4 text-[10.5px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 self-center"
       >
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
           <path
@@ -58,10 +58,10 @@ function UserAuthMenu() {
   const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="relative inline-block user-auth-menu shrink-0">
+    <div className="relative flex items-center justify-center h-[38px] user-auth-menu shrink-0 self-center">
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex h-[38px] items-center gap-2.5 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none"
+        className="flex h-[38px] items-center gap-2.5 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center"
       >
         {user.photoURL ? (
           <img
@@ -116,7 +116,6 @@ function UserAuthMenu() {
     </div>
   );
 }
-
 
 
 interface SiteHeaderProps {
@@ -182,15 +181,15 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       <header
         className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
           scrolled || !isHomePage
-            ? "bg-background/88 backdrop-blur-md border-b border-border/60 shadow-lg shadow-black/20 py-3 md:py-4"
-            : "bg-background/10 backdrop-blur-sm border-b border-transparent py-4 md:py-5"
+            ? "bg-background/88 backdrop-blur-md border-b border-border/60 shadow-lg shadow-black/20 py-2 md:py-3"
+            : "bg-background/10 backdrop-blur-sm border-b border-transparent py-3 md:py-4"
         }`}
       >
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 md:px-10">
+        <div className="mx-auto flex h-11 md:h-12 max-w-[1600px] items-center justify-between px-6 md:px-10">
           {/* Logo & Brand */}
           <Link
             to="/"
-            className="group flex items-center gap-3 rounded-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="group flex items-center gap-3 rounded-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background shrink-0 self-center"
             aria-label="Ravan Mammadov Home"
           >
             {siteSettings?.logo ? (
@@ -212,7 +211,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-2 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex">
+          <nav className="hidden items-center gap-2 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex shrink-0 self-center">
             {navItems.map((item) => {
               const isActive =
                 item.target === "/"
@@ -245,7 +244,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </nav>
  
           {/* Action Buttons & Authentication */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 self-center">
             {/* Auth Button / Profile Dropdown */}
             <UserAuthMenu />
 
@@ -255,13 +254,14 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation"
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/30 md:hidden text-foreground hover:border-primary transition-colors glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/30 md:hidden text-foreground hover:border-primary transition-colors glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center"
             >
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
       </header>
+
 
 
 
