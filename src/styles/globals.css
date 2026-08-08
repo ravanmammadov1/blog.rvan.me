@@ -258,9 +258,9 @@ html {
 
 /* ─── Hero logo image ─── */
 .hero-logo-img {
-  filter: drop-shadow(0 24px 48px rgba(0,0,0,0.4));
   will-change: transform;
 }
+
 
 /* ─── Uniform Aurora Design System Card Utility ─── */
 .aurora-card {

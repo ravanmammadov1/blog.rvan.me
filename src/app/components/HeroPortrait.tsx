@@ -1,13 +1,12 @@
 /**
- * HeroPortrait — Premium SVG focal centrepiece
+ * HeroPortrait — Pure SVG focal centrepiece
  *
- * - Animated SVG gradient shift (filter hue-rotate loop)
+ * - Pure vector rendering with 100% transparent background
  * - Gentle floating 7px / 11s ease-in-out loop
  * - Mouse parallax max 5px, spring-smoothed, desktop only
- * - Aurora-reactive multi-layer glow behind the logo
+ * - Zero radial gradients, zero filters, zero drop-shadows, zero background layers
  * - Hover: scale 1.015 only
  * - prefers-reduced-motion: all animations disabled
- * - Zero Three.js / Canvas / WebGL
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
@@ -63,53 +62,20 @@ export default function HeroPortrait() {
   return (
     <div
       ref={containerRef}
-      className="relative flex h-full w-full items-center justify-center overflow-visible"
+      className="relative flex h-full w-full items-center justify-center bg-transparent pointer-events-auto"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-hidden="true"
     >
-      {/* Layer 1 — deep emerald/teal vector radial light field (full container, zero vertical seams) */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 w-full h-full"
-        style={{
-          background:
-            "radial-gradient(circle at center, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.06) 30%, rgba(6,182,212,0.03) 60%, transparent 100%)",
-        }}
-        animate={reduced ? {} : { opacity: [0.55, 0.85, 0.55] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* Layer 2 — violet vector radial light field (full container, zero vertical seams) */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 w-full h-full"
-        style={{
-          background:
-            "radial-gradient(circle at center, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.04) 35%, rgba(59,130,246,0.02) 65%, transparent 100%)",
-        }}
-        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-      />
-
-      {/* Layer 3 — bottom teal vector radial ground light */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 w-full h-full"
-        style={{
-          background:
-            "radial-gradient(ellipse at center 85%, rgba(16,185,129,0.10) 0%, rgba(6,182,212,0.03) 50%, transparent 100%)",
-        }}
-        animate={reduced ? {} : { opacity: [0.35, 0.65, 0.35] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-      />
-
       {/* Floating + parallax wrapper */}
       <motion.div
-        className="relative z-10"
+        className="relative z-10 bg-transparent"
         style={reduced ? {} : { x: logoX, y: logoY }}
         whileHover={reduced ? {} : { scale: 1.015 }}
         transition={{ type: "spring", stiffness: 200, damping: 30 }}
       >
         {/* Floating keyframe wrapper */}
-        <div className={reduced ? "" : "hero-logo-float"}>
+        <div className={reduced ? "bg-transparent" : "hero-logo-float bg-transparent"}>
           <img
             src={ravanLogo}
             alt="Ravan Mammadov"
@@ -117,7 +83,7 @@ export default function HeroPortrait() {
             height={440}
             fetchPriority="high"
             decoding="async"
-            className="hero-logo-img h-auto w-full max-w-[300px] select-none lg:max-w-[380px] xl:max-w-[440px]"
+            className="hero-logo-img h-auto w-full max-w-[300px] select-none lg:max-w-[380px] xl:max-w-[440px] bg-transparent"
             draggable={false}
           />
         </div>
