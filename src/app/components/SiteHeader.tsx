@@ -23,14 +23,14 @@ function UserAuthMenu() {
   }, []);
 
   if (loading) {
-    return <div className="h-8 w-20 rounded-full bg-white/5 border border-white/10 animate-pulse" />;
+    return <div className="h-[38px] w-24 rounded-full bg-white/5 border border-white/10 animate-pulse shrink-0" />;
   }
 
   if (!user) {
     return (
       <button
         onClick={signIn}
-        className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-[10px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
+        className="inline-flex h-[38px] items-center gap-2 rounded-full border border-white/20 px-4 text-[10.5px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0"
       >
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
           <path
@@ -58,40 +58,40 @@ function UserAuthMenu() {
   const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="relative user-auth-menu">
+    <div className="relative inline-block user-auth-menu shrink-0">
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 py-1 text-[10px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="flex h-[38px] items-center gap-2.5 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none"
       >
         {user.photoURL ? (
           <img
             src={user.photoURL}
             alt={user.displayName || "User"}
-            className="h-6 w-6 rounded-full object-cover border border-white/20"
+            className="h-6 w-6 rounded-full object-cover border border-white/20 shrink-0"
           />
         ) : (
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-black font-bold text-xs">
+          <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-black font-bold text-xs shrink-0">
             {userInitial}
           </span>
         )}
-        <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[100px] text-foreground">
+        <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[120px] text-foreground">
           {user.displayName || user.email?.split("@")[0]}
         </span>
-        <ChevronDown size={12} className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={14} className={`transition-transform duration-200 shrink-0 ${dropdownOpen ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
         {dropdownOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            initial={{ opacity: 0, y: 6, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.95 }}
+            exit={{ opacity: 0, y: 6, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-56 rounded-2xl border border-white/10 bg-background/95 p-2 backdrop-blur-2xl shadow-2xl z-50 aurora-card"
+            className="absolute right-0 top-[calc(100%+8px)] w-60 rounded-2xl border border-white/10 bg-background/95 p-3 backdrop-blur-2xl shadow-2xl z-50 aurora-card"
           >
-            <div className="px-3 py-2 border-b border-white/10 mb-1">
-              <p className="text-xs font-semibold text-foreground truncate">{user.displayName || "User"}</p>
-              <p className="text-[10px] text-muted-foreground truncate mono">{user.email}</p>
+            <div className="px-3 py-2 border-b border-white/10 mb-1.5">
+              <p className="text-xs font-bold text-foreground truncate">{user.displayName || "User"}</p>
+              <p className="text-[10px] text-muted-foreground truncate mono mt-0.5">{user.email}</p>
             </div>
 
             <button
@@ -116,6 +116,7 @@ function UserAuthMenu() {
     </div>
   );
 }
+
 
 
 interface SiteHeaderProps {
@@ -244,16 +245,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </nav>
  
           {/* Action Buttons & Authentication */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             {/* Auth Button / Profile Dropdown */}
             <UserAuthMenu />
-
-            <Link
-              to="/contact"
-              className="hidden items-center gap-2 rounded-full border border-white/20 px-4.5 py-2 text-[10px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black sm:flex glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              {letsTalkLabel} <ArrowUpRight size={13} />
-            </Link>
 
             {/* Mobile Menu Toggle */}
             <button
@@ -261,13 +255,14 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/30 md:hidden text-foreground hover:border-primary transition-colors glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/30 md:hidden text-foreground hover:border-primary transition-colors glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
             >
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
       </header>
+
 
 
       {/* Mobile Slide-Over Menu */}
