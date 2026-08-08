@@ -1,22 +1,23 @@
 import { useEffect, useState, useMemo, useDeferredValue } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  Search, X, ArrowUpRight, Globe, MapPin,
-  BadgeCheck, Users, Award, ExternalLink, Download,
-  Clock, Sparkles, Filter, ChevronDown, Flame, Rocket, Star, Gem, Gift, Bot, Copy, Check, Briefcase, DollarSign, Type, Sliders
+  Search, X, Globe, Download, Type, Sliders, Sparkles, BadgeCheck
 } from "lucide-react";
 
-import { fetchResources, fetchSiteSettings } from "../lib/sanityQueries";
-import { urlFor } from "../lib/sanityClient";
-import { SiteSettings } from "../types/cms";
-import { aggregateAllResources, NormalizedResource, getCachedAllResources, setCachedAllResources } from "../lib/rssAggregator";
-import { formatPublicationTimestamp, generateResourceSummary, generateAIJobSummary } from "../lib/contentEngine";
+import { fetchSiteSettings } from "../lib/sanityQueries";
+import { SiteSettings, UniversalContentItem } from "../types/cms";
 import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl } from "../lib/fontEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { useContentItems } from "./hooks/useContentItems";
+import { useSearchFilter } from "./hooks/useSearchFilter";
+import { ContentCard } from "./components/content/ContentCard";
+import { ToolCard } from "./components/content/ToolCard";
+import { JobCard } from "./components/content/JobCard";
+import { ScholarshipCard } from "./components/content/ScholarshipCard";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
@@ -37,125 +38,14 @@ export const CATEGORY_MAP: Record<string, { label: string; icon: string; descrip
   learning: { label: "Learning", icon: "📚", description: "Courses, tutorials, and case studies" },
 };
 
-function ResourceCard({ resource, index, isFeatured = false, onSelectModal }: { resource: NormalizedResource; index: number; isFeatured?: boolean; onSelectModal: (r: NormalizedResource) => void }) {
-  const isJob = resource.category === "jobs";
-  const catConfig = CATEGORY_MAP[resource.category] || { label: resource.category, icon: "📦" };
-  const officialSources = ["We Work Remotely", "Remote OK", "Himalayas", "Authentic Jobs", "AIJobs.net", "Smashing Magazine", "Product Hunt AI", "Google Fonts", "Fontshare"];
-  const isOfficial = officialSources.includes(resource.sourceName);
-  const isVerified = !resource.isRss;
-
-  const badgeText = isOfficial ? "Verified Source" : isVerified ? "Curated" : "Community";
-  const badgeColor = isOfficial 
-    ? "text-blue-400 border-blue-500/30 bg-blue-500/5" 
-    : isVerified 
-      ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/5" 
-      : "text-muted-foreground border-white/10 bg-white/5";
-  const BadgeIcon = isOfficial ? BadgeCheck : isVerified ? Award : Users;
-
-  const company = resource.companyName || resource.benefitSummary || "Remote Company";
-  const salary = resource.salaryRange || "$95,000 – $145,000 USD";
-
-  return (
-    <motion.article
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.05 }}
-      custom={index * 0.04}
-      className={`group relative flex flex-col p-6 aurora-card min-h-[340px] ${
-        isFeatured ? "border-primary/40 shadow-[0_0_25px_rgba(232,253,82,0.03)]" : ""
-      }`}
-    >
-      <div className="relative z-10 flex-1 flex flex-col">
-        {/* Card Header metadata */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono glass-sm">
-            <span className="text-sm">{catConfig.icon}</span>
-            {isJob ? "Remote Job" : catConfig.label}
-          </span>
-
-          <span className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground/80 mono">
-            <Clock size={11} />
-            {resource.formattedDate || formatPublicationTimestamp(resource.publishedAt)}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h3 className="mt-1 text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2">
-          {resource.title}
-        </h3>
-
-        {/* Company / Source */}
-        <div className="mt-2 flex items-center gap-2 text-[11px] font-bold text-muted-foreground mono">
-          <span className="text-foreground/90">{isJob ? company : resource.sourceName}</span>
-          {isJob && <span className="text-emerald-400 border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[9px]">100% Remote</span>}
-        </div>
-
-        {/* Snippet Description */}
-        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground/80 line-clamp-3 flex-1 font-medium">
-          {resource.description}
-        </p>
-
-        {/* Job specifics */}
-        {isJob && (
-          <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-2 text-[11px] mono">
-            <span className="text-primary font-bold flex items-center gap-1">
-              <DollarSign size={12} /> {salary}
-            </span>
-            <span className="text-muted-foreground/70">{resource.employmentType || "Full-time"}</span>
-          </div>
-        )}
-
-        {/* Meta / badging row */}
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-muted-foreground">
-          <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 ${badgeColor}`}>
-            <BadgeIcon size={11} />
-            {badgeText}
-          </span>
-
-          {resource.sourceName && !isJob && (
-            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-muted-foreground">
-              {resource.sourceName}
-            </span>
-          )}
-
-          {!isJob && (
-            <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-primary font-bold">
-              FREE
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* CTA bottom row */}
-      <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 mt-5">
-        <button
-          onClick={() => onSelectModal(resource)}
-          className="text-[10px] font-bold text-primary hover:text-white uppercase mono tracking-wider transition-colors flex items-center gap-1"
-        >
-          <Sparkles size={11} /> {isJob ? "AI JOB ANALYSIS" : "AI BREAKDOWN"}
-        </button>
-        
-        <a
-          href={resource.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground hover:border-primary/50 hover:bg-primary hover:text-black transition-all duration-300 glass-sm"
-        >
-          <ExternalLink size={11} /> {isJob ? "APPLY JOB" : "OPEN RESOURCE"}
-        </a>
-      </div>
-    </motion.article>
-  );
-}
-
 export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [allResources, setAllResources] = useState<NormalizedResource[]>(() => getCachedAllResources());
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedResourceModal, setSelectedResourceModal] = useState<NormalizedResource | null>(null);
+  const [fontsLoading, setFontsLoading] = useState<boolean>(true);
+
+  // Unified Sanity Polymorphic Content Store
+  const { items: rawContentItems, loading: contentLoading } = useContentItems();
 
   // Interactive Font Specimen controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
@@ -167,23 +57,19 @@ export default function ResourcesArchive() {
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
 
+  // Connect FlexSearch filter hook to universal items
+  const {
+    query,
+    setQuery,
+    filteredItems: flexFilteredItems,
+  } = useSearchFilter(rawContentItems);
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
     });
-
-    // Non-blocking background revalidation of resources
-    fetchResources()
-      .then((cmsItems) => aggregateAllResources(cmsItems || []))
-      .then((resItems) => {
-        if (Array.isArray(resItems) && resItems.length > 0) {
-          setAllResources(resItems);
-          setCachedAllResources(resItems);
-        }
-      })
-      .catch((err) => console.error("Error loading resources:", err));
 
     // Non-blocking sync of live Google fonts
     fetchLiveFontCatalog()
@@ -193,7 +79,7 @@ export default function ResourcesArchive() {
         }
       })
       .catch((err) => console.error("Error syncing live fonts:", err))
-      .finally(() => setLoading(false));
+      .finally(() => setFontsLoading(false));
   }, []);
 
   const setParam = (key: string, val: string) => {
@@ -206,27 +92,32 @@ export default function ResourcesArchive() {
     setSearchParams(newParams);
   };
 
-  const filteredResources = useMemo(() => {
-    let list = allResources || [];
-
-    if (activeCategory !== "all") {
-      list = list.filter((r) => r && r.category === activeCategory);
+  // Synchronize URL search parameter with FlexSearch hook state
+  useEffect(() => {
+    if (searchQuery !== query) {
+      setQuery(searchQuery);
     }
+  }, [searchQuery]);
 
-    if (deferredSearch.trim()) {
-      const q = deferredSearch.toLowerCase();
-      list = list.filter(
-        (r) =>
-          r &&
-          ((r.title && r.title.toLowerCase().includes(q)) ||
-            (r.description && r.description.toLowerCase().includes(q)) ||
-            (r.sourceName && r.sourceName.toLowerCase().includes(q)) ||
-            (r.companyName && r.companyName.toLowerCase().includes(q)))
-      );
-    }
+  const handleSearchChange = (newQuery: string) => {
+    setQuery(newQuery);
+    setParam("q", newQuery);
+  };
 
-    return list;
-  }, [allResources, activeCategory, deferredSearch]);
+  // Filter content items by category selection
+  const displayedContentItems = useMemo(() => {
+    if (activeCategory === "all") return flexFilteredItems;
+    
+    return flexFilteredItems.filter((item) => {
+      const catSlug = typeof item.category?.slug === "string" ? item.category.slug : item.category?.slug?.current;
+      if (activeCategory === "freeDesignAssets") return item.contentType === "designAsset" || item.contentType === "resource" || catSlug === "freeDesignAssets";
+      if (activeCategory === "freeMockups") return catSlug === "freeMockups" || item.contentType === "template";
+      if (activeCategory === "freeIcons") return catSlug === "freeIcons";
+      if (activeCategory === "freeUIKits") return catSlug === "freeUIKits" || item.contentType === "template";
+      if (activeCategory === "learning") return item.contentType === "freeCourse" || catSlug === "learning";
+      return catSlug === activeCategory;
+    });
+  }, [flexFilteredItems, activeCategory]);
 
   const filteredFonts = useMemo(() => {
     let list = fontCatalog || [];
@@ -247,30 +138,18 @@ export default function ResourcesArchive() {
           ((f.family && f.family.toLowerCase().includes(q)) ||
             (f.name && f.name.toLowerCase().includes(q)) ||
             (f.designer && f.designer.toLowerCase().includes(q)) ||
-            (f.foundry && f.foundry.toLowerCase().includes(q)) ||
-            (Array.isArray(f.useCases) && f.useCases.some((u) => u && u.toLowerCase().includes(q))))
+            (f.foundry && f.foundry.toLowerCase().includes(q)))
       );
     }
 
     return list;
   }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
 
-  const counts: Record<string, number> = useMemo(() => {
-    const map: Record<string, number> = { all: (allResources || []).length };
-    (allResources || []).forEach((r) => {
-      if (r && r.category) {
-        map[r.category] = (map[r.category] || 0) + 1;
-      }
-    });
-    map["freeFonts"] = (fontCatalog || []).length;
-    return map;
-  }, [allResources, fontCatalog]);
-
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="1,000+ Free Fonts & Remote Jobs Directory — Rvan.me"
-        description="Explore 1,000+ free commercial font families (Geist, Inter, Satoshi, Poppins), remote jobs, vector assets, mockups, and AI software tools."
+        title="1,000+ Free Fonts & Curated Knowledge Directory — Rvan.me"
+        description="Explore 1,000+ free commercial font families (Geist, Inter, Satoshi, Poppins), AI tools, vector assets, mockups, and UI kits."
         url="https://www.rvan.me/resources"
       />
 
@@ -300,8 +179,8 @@ export default function ResourcesArchive() {
                 Typography Library.
               </span>
             </h1>
-            <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed">
-              Discover over 1,000+ SIL Open Source and commercial-free font families (Geist, Inter, Satoshi, Space Grotesk), vector icons, device mockups, and UI kits. Updated daily.
+            <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed font-medium">
+              Discover over 1,000+ SIL Open Source and commercial-free font families (Geist, Inter, Satoshi, Space Grotesk), AI tools, vector icons, device mockups, and UI kits.
             </p>
           </motion.div>
         </div>
@@ -310,24 +189,22 @@ export default function ResourcesArchive() {
       {/* Category Tabs */}
       <section className="sticky top-20 z-30 px-6 py-4 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">
         <div className="mx-auto max-w-[1600px] flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-          {Object.entries(CATEGORY_MAP)
-            .filter(([key]) => key === "all" || (counts[key] || 0) > 0)
-            .map(([key, config]) => {
-              return (
-                <button
-                  key={key}
-                  onClick={() => setParam("category", key)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
-                    activeCategory === key
-                      ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)]"
-                      : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                  }`}
-                >
-                  <span>{config.icon}</span>
-                  {config.label}
-                </button>
-              );
-            })}
+          {Object.entries(CATEGORY_MAP).map(([key, config]) => {
+            return (
+              <button
+                key={key}
+                onClick={() => setParam("category", key)}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
+                  activeCategory === key
+                    ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)] font-bold"
+                    : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
+                }`}
+              >
+                <span>{config.icon}</span>
+                {config.label}
+              </button>
+            );
+          })}
         </div>
       </section>
 
@@ -348,11 +225,11 @@ export default function ResourcesArchive() {
                   type="search"
                   placeholder="Search 1,000+ free font families by name, designer, or category (e.g. Geist, Inter, Satoshi, Serif)..."
                   value={searchQuery}
-                  onChange={(e) => setParam("q", e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="w-full rounded-xl border border-white/10 bg-background/90 pl-11 pr-10 py-3.5 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
                 />
                 {searchQuery && (
-                  <button onClick={() => setParam("q", "")} aria-label="Clear font search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <button onClick={() => handleSearchChange("")} aria-label="Clear font search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X size={15} />
                   </button>
                 )}
@@ -408,7 +285,7 @@ export default function ResourcesArchive() {
             </div>
 
             {/* Font Grid */}
-            {loading ? (
+            {fontsLoading ? (
               <div className="grid gap-6 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((n) => (
                   <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
@@ -418,7 +295,7 @@ export default function ResourcesArchive() {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
                 <p className="text-muted-foreground">No font families found matching your criteria.</p>
                 <button
-                  onClick={() => { setFontCategorySubfilter("all"); setParam("q", ""); }}
+                  onClick={() => { setFontCategorySubfilter("all"); handleSearchChange(""); }}
                   className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
                   RESET FONT FILTERS
@@ -470,15 +347,6 @@ export default function ResourcesArchive() {
                             {previewText || font.sampleText}
                           </p>
                         </div>
-
-                        {/* Use cases & License */}
-                        <div className="flex flex-wrap items-center gap-1.5 mb-4">
-                          {(font.useCases || []).map((uc) => (
-                            <span key={uc} className="text-[9px] font-semibold text-muted-foreground/80 border border-white/10 bg-white/5 rounded-full px-2.5 py-0.5">
-                              {uc}
-                            </span>
-                          ))}
-                        </div>
                       </div>
 
                       {/* Bottom CTA */}
@@ -517,45 +385,45 @@ export default function ResourcesArchive() {
         </section>
       ) : (
         /* ─────────────────────────────────────────────────────────────────────────────
-            MAIN GENERAL DIRECTORY LIST (JOBS, ASSETS, MOCKUPS, ICONS, AI TOOLS)
+            POLYMORPHIC UNIFIED DIRECTORY GRID (DESIGN ASSETS, MOCKUPS, ICONS, AI TOOLS)
         ───────────────────────────────────────────────────────────────────────────── */
         <section className="px-6 py-12 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div className="relative w-full lg:w-96">
+            <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="relative w-full md:w-96">
                 <label htmlFor="resource-search" className="sr-only">Search resources</label>
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
                 <input
                   id="resource-search"
                   type="search"
-                  placeholder="Search free fonts, vector assets, mockups, UI kits…"
+                  placeholder="Instant FlexSearch (<10ms) across all curated resources..."
                   value={searchQuery}
-                  onChange={(e) => setParam("q", e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
                 />
                 {searchQuery && (
-                  <button onClick={() => setParam("q", "")} aria-label="Clear resource search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <button onClick={() => handleSearchChange("")} aria-label="Clear resource search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X size={13} />
                   </button>
                 )}
               </div>
 
-              <span className="text-xs text-muted-foreground mono">
-                Showing {filteredResources.length} curated listings
+              <span className="text-xs text-muted-foreground mono flex items-center gap-1">
+                <Sparkles size={12} className="text-primary" /> Showing {displayedContentItems.length} curated polymorphic items
               </span>
             </div>
 
-            {loading ? (
+            {contentLoading ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((n) => (
                   <div key={n} className="h-64 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
                 ))}
               </div>
-            ) : filteredResources.length === 0 ? (
+            ) : displayedContentItems.length === 0 ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center my-8 glass">
                 <p className="text-muted-foreground">No resources found matching your filter.</p>
                 <button
-                  onClick={() => { setParam("category", "all"); setParam("q", ""); }}
+                  onClick={() => { setParam("category", "all"); handleSearchChange(""); }}
                   className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
                   RESET FILTERS
@@ -563,125 +431,22 @@ export default function ResourcesArchive() {
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredResources.map((resItem, idx) => (
-                  <ResourceCard key={resItem.id || idx} resource={resItem} index={idx} onSelectModal={setSelectedResourceModal} />
-                ))}
+                {displayedContentItems.map((item: UniversalContentItem) => {
+                  if (item.contentType === "aiTool") {
+                    return <ToolCard key={item._id} item={item} />;
+                  }
+                  if (item.contentType === "remoteJob") {
+                    return <JobCard key={item._id} item={item} />;
+                  }
+                  if (item.contentType === "scholarship") {
+                    return <ScholarshipCard key={item._id} item={item} />;
+                  }
+                  return <ContentCard key={item._id} item={item} />;
+                })}
               </div>
             )}
           </div>
         </section>
-      )}
-
-      {/* AI Breakdown & Job Analysis Modal */}
-      {selectedResourceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-white/15 bg-background/95 p-6 shadow-2xl glass">
-            <button
-              onClick={() => setSelectedResourceModal(null)}
-              className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-white/10 hover:text-foreground transition-colors"
-            >
-              <X size={18} />
-            </button>
-
-            <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase mb-2">
-              <Sparkles size={14} /> {selectedResourceModal.category === "jobs" ? "AI Job Role Analysis" : "AI Analytical Resource Breakdown"}
-            </div>
-            
-            <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">
-              {selectedResourceModal.title}
-            </h2>
-
-            {selectedResourceModal.category === "jobs" ? (
-              (() => {
-                const company = selectedResourceModal.companyName || selectedResourceModal.benefitSummary || "Remote Studio";
-                const jobSummary = selectedResourceModal.jobSummary || generateAIJobSummary(selectedResourceModal.title, company, selectedResourceModal.description);
-
-                return (
-                  <div className="space-y-6 text-xs text-muted-foreground leading-relaxed">
-                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-foreground">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-primary text-sm">{company}</span>
-                        <span className="text-xs font-bold text-emerald-400 mono">{jobSummary.salaryRange}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{jobSummary.roleOverview}</p>
-                    </div>
-
-                    <div>
-                      <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-2">⚡ Required Skills & Expertise</h4>
-                      <ul className="list-disc pl-4 space-y-1">
-                        {jobSummary.requiredSkills.map((sk, i) => <li key={i}>{sk}</li>)}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">🎯 Target Candidate Profile</h4>
-                      <p>{jobSummary.targetCandidate}</p>
-                    </div>
-
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                      <h4 className="font-bold uppercase mono text-[11px] mb-1 text-foreground">💡 Why This Position Is Interesting</h4>
-                      <p>{jobSummary.whyInteresting}</p>
-                    </div>
-
-                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                      <span className="text-[10px] mono text-muted-foreground">100% Remote · Verified Listing</span>
-                      <a
-                        href={selectedResourceModal.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors"
-                      >
-                        APPLY FOR THIS JOB <ExternalLink size={12} />
-                      </a>
-                    </div>
-                  </div>
-                );
-              })()
-            ) : (
-              (() => {
-                const summary = generateResourceSummary(selectedResourceModal.title, selectedResourceModal.description, selectedResourceModal.category, selectedResourceModal.sourceName);
-                return (
-                  <div className="space-y-6 text-xs text-muted-foreground leading-relaxed">
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                      <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">📌 Overview & Purpose</h4>
-                      <p>{summary.overview}</p>
-                      <p className="mt-2">{summary.purpose}</p>
-                    </div>
-
-                    <div>
-                      <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">🎯 Target Audience</h4>
-                      <p>{summary.targetAudience}</p>
-                    </div>
-
-                    <div>
-                      <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-2">⚡ Key Advantages</h4>
-                      <ul className="list-disc pl-4 space-y-1">
-                        {summary.advantages.map((a, i) => <li key={i}>{a}</li>)}
-                      </ul>
-                    </div>
-
-                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-primary font-medium">
-                      <h4 className="font-bold uppercase mono text-[11px] mb-1 text-primary">Verdict</h4>
-                      <p>{summary.verdict}</p>
-                    </div>
-
-                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                      <span className="text-[10px] mono text-muted-foreground">Pricing: {summary.pricing}</span>
-                      <a
-                        href={selectedResourceModal.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors"
-                      >
-                        OPEN RESOURCE <ExternalLink size={12} />
-                      </a>
-                    </div>
-                  </div>
-                );
-              })()
-            )}
-          </div>
-        </div>
       )}
 
       <Footer siteSettings={siteSettings} />
