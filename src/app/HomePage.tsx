@@ -48,6 +48,8 @@ const WorkSection = lazy(() => import("./components/home/WorkSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
 const AmbientStars = lazy(() => import("./components/home/AmbientStars"));
 const KnowledgeHubSection = lazy(() => import("./components/home/KnowledgeHubSection").then(m => ({ default: m.KnowledgeHubSection })));
+const FeaturedInteractiveTools = lazy(() => import("./components/home/FeaturedInteractiveTools").then(m => ({ default: m.FeaturedInteractiveTools })));
+
 
 
 
@@ -860,10 +862,16 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* ── Featured Interactive Developer & Designer Tools ── */}
+      <Suspense fallback={<div className="h-96" />}>
+        <FeaturedInteractiveTools />
+      </Suspense>
+
       {/* ── Daily Curated Knowledge & Opportunities Feed ── */}
       <Suspense fallback={<div className="h-96" />}>
         <KnowledgeHubSection />
       </Suspense>
+
 
       {/* ── 6. Selected Work ── */}
       {CONFIG_SHOW_WORK && (

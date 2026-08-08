@@ -22,6 +22,7 @@ const WorkArchive = lazy(() => import("./WorkArchive"));
 const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
+const ToolDetailPage = lazy(() => import("./pages/ToolDetailPage"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
@@ -48,6 +49,7 @@ function AppContent() {
           <Route path="/news" element={<NewsArchive />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/tools" element={<ToolsArchive />} />
+          <Route path="/tools/:toolId" element={<ToolDetailPage />} />
           <Route path="/ravan-mammadov" element={<RavanMammadovPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/cookie-policy" element={<CookiePolicyPage />} />
@@ -56,6 +58,7 @@ function AppContent() {
           <Route path="/resources/:slug" element={<ResourceDetail />} />
           <Route path="/ai-tools" element={<AiToolArchivePage />} />
           <Route path="/opportunities" element={<OpportunityArchivePage />} />
+
 
 
           <Route path="*" element={<NotFound />} />

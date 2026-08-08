@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
-import { Search, X, ExternalLink, Wrench, Zap } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, X, Zap, ArrowUpRight, Sparkles } from "lucide-react";
 
 import { fetchTools, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
@@ -9,8 +9,10 @@ import { ToolItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
-import { lazy, Suspense } from "react";
+import { INTERACTIVE_TOOLS } from "./lib/toolsRegistry";
+
 const DesignerToolsPanel = lazy(() => import("./components/DesignerToolsPanel"));
+const FeaturedInteractiveTools = lazy(() => import("./components/home/FeaturedInteractiveTools").then(m => ({ default: m.FeaturedInteractiveTools })));
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -40,34 +42,24 @@ export default function ToolsArchive() {
       .finally(() => setLoading(false));
   }, []);
 
-  const categories = useMemo(() => {
-    const validCategories = toolsList
-      .map((t) => t.category)
-      .filter((value): value is string => typeof value === "string" && value.trim() !== "");
+  const toolCategories = ["All", "Color", "Typography", "Spacing & Grid", "SVG & Code", "Shadows", "SEO"];
 
-    const list = [...new Set(validCategories)];
-    return ["All", ...list];
-  }, [toolsList]);
-
-  const filteredTools = useMemo(() => {
-    let result = toolsList;
-
+  const filteredInteractiveTools = useMemo(() => {
+    let result = INTERACTIVE_TOOLS;
     if (activeCategory !== "All") {
       result = result.filter((t) => t.category === activeCategory);
     }
-
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (t) =>
-          t.name?.toLowerCase().includes(q) ||
-          t.description?.toLowerCase().includes(q) ||
-          t.category?.toLowerCase().includes(q)
+          t.name.toLowerCase().includes(q) ||
+          t.description.toLowerCase().includes(q) ||
+          t.tags.some((tag) => tag.toLowerCase().includes(q))
       );
     }
-
     return result;
-  }, [toolsList, activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery]);
 
   return (
     <main
@@ -75,242 +67,117 @@ export default function ToolsArchive() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Interactive Designer Utilities & Daily Stack — Ravan Mammadov"
-        description="Free in-browser tools for designers and marketers: color contrast checker, typography scale builder, SVG minifier, CSS shadow generator, and AI prompts."
+        title="Free Interactive Developer & Designer Tools Hub — Rvan.me"
+        description="Free in-browser developer utilities: CSS Grid generator, SVG wave generator, fluid typography clamp generator, multi-layer smooth box shadow builder, color contrast checker, and SEO meta tag generator."
         url="https://www.rvan.me/tools"
       />
 
       {/* Global Unified Header */}
-      {/* ── Aurora background blobs ── */}
-      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
-        <div className="absolute inset-0 bg-background" />
-        
-        {/* Blob 1 — gold / amber, top-left */}
-        <div
-          className="aurora-blob-1 absolute"
-          style={{
-            top: "-15%", left: "-10%",
-            width: "60%", height: "70%",
-            background: "radial-gradient(ellipse at 40% 40%, rgba(232,253,82,0.06) 0%, rgba(245,158,11,0.04) 45%, transparent 72%)",
-            filter: "blur(64px)",
-          }}
-        />
-
-        {/* Blob 2 — violet / blue, top-right */}
-        <div
-          className="aurora-blob-2 absolute"
-          style={{
-            top: "0%", right: "-12%",
-            width: "55%", height: "65%",
-            background: "radial-gradient(ellipse at 65% 30%, rgba(139,92,246,0.05) 0%, rgba(59,130,246,0.03) 50%, transparent 78%)",
-            filter: "blur(72px)",
-          }}
-        />
-
-        {/* Micro grid overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
-          }}
-        />
-      </div>
-
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Hero section */}
-      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28 relative z-10">
+      <section className="px-6 pt-28 pb-12 md:px-10 md:pt-36 relative z-10">
         <div className="mx-auto max-w-[1600px]">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.1}
-          >
-            <p className="eyebrow text-primary mb-4">CREATIVE ARSENAL & DESIGN UTILITIES</p>
-            <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-4xl">
-              Tools & Stack.
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
+            <p className="eyebrow text-primary mb-4 flex items-center gap-2">
+              <Zap size={14} /> FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES
+            </p>
+            <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
+              Tools & <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-primary to-emerald-400">
+                Interactive Toolkit.
+              </span>
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Interactive utilities for designers and marketers — built right into the browser. No sign-up, no downloads. Plus the software stack powering this practice.
+            <p className="mt-8 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed font-medium">
+              Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly for CSS Grid, SVG Waves, Fluid Clamp(), Box Shadows, and SEO metadata.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── Interactive Designer Tools Panel ─── */}
-      <section className="px-6 pb-16 md:px-10">
+      {/* Interactive Tools Showcase Grid */}
+      <section className="px-6 py-12 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px]">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.2}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5">
-                <Zap size={14} className="text-primary" />
-                <span className="text-[10px] font-bold tracking-widest mono uppercase text-primary">Interactive Tools</span>
-              </div>
-              <span className="text-xs text-muted-foreground">Works in your browser · No installation needed</span>
+          {/* Search & Filter Bar */}
+          <div className="mb-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-border pb-6">
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
+              <input
+                type="search"
+                placeholder="Search tools (e.g. CSS Grid, SVG Wave, clamp, box shadow)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X size={13} />
+                </button>
+              )}
             </div>
-            <Suspense fallback={<div className="h-40" aria-hidden="true" />}>
-              <DesignerToolsPanel />
-            </Suspense>
-          </motion.div>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap gap-2">
+              {toolCategories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${
+                    activeCategory === cat
+                      ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.3)] font-bold"
+                      : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Interactive Tools Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {filteredInteractiveTools.map((tool) => (
+              <motion.article
+                key={tool.id}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="text-2xl">{tool.icon}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
+                      {tool.category}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2">
+                    {tool.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-4">
+                    {tool.description}
+                  </p>
+                </div>
+
+                <Link
+                  to={tool.path}
+                  className="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-primary uppercase tracking-wider mono group-hover:text-white transition-colors"
+                >
+                  <span>LAUNCH UTILITY PAGE</span>
+                  <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              </motion.article>
+            ))}
+          </div>
+
+          {/* Embedded Live Tool Studio */}
+          <Suspense fallback={<div className="h-96 rounded-2xl border border-white/10 bg-white/5 animate-pulse" />}>
+            <FeaturedInteractiveTools />
+          </Suspense>
         </div>
       </section>
 
-      {/* ─── Sanity-Managed Tools Grid ─── */}
-      {(loading || toolsList.length > 0) && (
-        <section className="px-6 pb-16 md:px-10">
-          <div className="mx-auto max-w-[1600px]">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between border-t border-border pt-12"
-            >
-              <div>
-                <p className="eyebrow text-muted-foreground">MY DAILY STACK</p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-[-.04em]">Software & Resources</h2>
-              </div>
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                {/* Category tabs */}
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
-                      className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${
-                        activeCategory === cat
-                          ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.25)]"
-                          : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Search Input */}
-                <div className="relative w-full sm:w-64">
-                  <Search
-                    size={16}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search tools..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-10 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Grid */}
-            {loading ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="h-44 rounded-lg border border-white/10 bg-white/5 animate-pulse glass" />
-                ))}
-              </div>
-            ) : filteredTools.length === 0 ? (
-              <div className="py-16 text-center border border-white/10 rounded-lg bg-white/5 glass">
-                <p className="text-muted-foreground">No tools found matching your criteria.</p>
-              </div>
-            ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredTools.map((tool, index) => {
-                  const iconUrl = tool.icon ? urlFor(tool.icon)?.url() : null;
-                  const CardElement = tool.link ? "a" : "div";
-                  const cardProps = tool.link
-                    ? { href: tool.link, target: "_blank", rel: "noreferrer" }
-                    : {};
-
-                  return (
-                    <motion.div
-                      key={tool._id}
-                      variants={fadeUp}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.1 }}
-                      custom={index * 0.05}
-                    >
-                      <CardElement
-                        {...cardProps}
-                        className="group flex h-full flex-col justify-between p-6 aurora-card cursor-pointer relative"
-                      >
-                        <div className="relative z-10">
-                          <div className="flex items-start justify-between gap-4 mb-4">
-                            <div className="flex items-center gap-4">
-                              {iconUrl ? (
-                                <img
-                                  src={iconUrl}
-                                  alt={tool.name}
-                                  width={48}
-                                  height={48}
-                                  loading="lazy"
-                                  decoding="async"
-                                  className="h-12 w-12 rounded-lg object-contain bg-background border border-white/10 p-2"
-                                />
-                              ) : (
-                                <div className="grid h-12 w-12 place-items-center rounded-lg border border-white/10 bg-background text-primary">
-                                  <Wrench size={20} />
-                                </div>
-                              )}
-                              <div>
-                                <h2 className="text-lg font-semibold tracking-tight transition-colors group-hover:text-primary">
-                                  {tool.name}
-                                </h2>
-                                {tool.category && (
-                                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mono">
-                                    {tool.category}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            {tool.link && (
-                              <div
-                                className="grid h-8 w-8 place-items-center rounded-full border border-white/10 text-muted-foreground transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
-                                aria-label={`Visit ${tool.name}`}
-                              >
-                                <ExternalLink size={14} />
-                              </div>
-                            )}
-                          </div>
-
-                          {tool.description && (
-                            <p className="text-xs leading-relaxed text-muted-foreground mt-2 font-medium">
-                              {tool.description}
-                            </p>
-                          )}
-                        </div>
-                      </CardElement>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* Footer */}
       <Footer siteSettings={siteSettings} />
     </main>
   );
