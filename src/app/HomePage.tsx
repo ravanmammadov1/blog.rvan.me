@@ -457,6 +457,23 @@ export default function HomePage() {
                   </Link>
                 </motion.div>
 
+                {/* ── About Rvan.me Section ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.82, ease: EASE }}
+                  className="mt-6 p-4 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-md"
+                >
+                  <h2 className="text-xs font-bold tracking-[.14em] text-foreground mono uppercase mb-1.5 flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    About Rvan.me
+                  </h2>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                    Rvan.me is a creative platform for designers, marketers and developers. Users can sign in with Google to save resources, bookmark tools, personalize their experience and access member features.
+                  </p>
+                </motion.div>
+
+
                 {/* ── MOBILE & TABLET LOGO ── */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
