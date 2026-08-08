@@ -45,10 +45,17 @@ const staticPages = [
   },
   {
     path: "/about",
-    title: "About Rvan.me — Creative Ecosystem & Studio Vision by Ravan Mammadov",
-    description: "Learn about Rvan.me, a curated creative ecosystem for designers, marketers and developers. Discover our studio vision, career timeline, and selected work.",
+    title: "About Rvan.me — Creative Ecosystem & Platform Vision",
+    description: "Learn about Rvan.me, a curated creative ecosystem for designers, marketers and developers. Discover our mission, core pillars, and studio vision.",
+    type: "website",
+  },
+  {
+    path: "/profile",
+    title: "Ravan Mammadov — Founder & Senior Creative Designer",
+    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
     type: "profile",
   },
+
 
   {
     path: "/resources",

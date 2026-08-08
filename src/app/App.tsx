@@ -12,7 +12,8 @@ const BlogDetail = lazy(() => import("./BlogDetail"));
 const NewsArchive = lazy(() => import("./NewsArchive"));
 const NewsDetail = lazy(() => import("./NewsDetail"));
 const ToolsArchive = lazy(() => import("./ToolsArchive"));
-const RavanMammadovPage = lazy(() => import("./RavanMammadovPage"));
+const AboutPage = lazy(() => import("./AboutPage"));
+const ProfilePage = lazy(() => import("./ProfilePage"));
 const PrivacyPolicyPage = lazy(() => import("./PrivacyPolicyPage"));
 const CookiePolicyPage = lazy(() => import("./CookiePolicyPage"));
 const TermsPage = lazy(() => import("./TermsPage"));
@@ -40,9 +41,10 @@ function AppContent() {
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<RavanMammadovPage />} />
-          <Route path="/ravan-mammadov" element={<Navigate to="/about" replace />} />
-          <Route path="/work" element={<Navigate to="/about#selected-work" replace />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/ravan-mammadov" element={<ProfilePage />} />
+          <Route path="/work" element={<Navigate to="/profile" replace />} />
           <Route path="/work/:slug" element={<ProjectDetail />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogArchive />} />
@@ -58,6 +60,7 @@ function AppContent() {
           <Route path="/resources/:slug" element={<ResourceDetail />} />
           <Route path="/ai-tools" element={<AiToolArchivePage />} />
           <Route path="/opportunities" element={<OpportunityArchivePage />} />
+
 
 
 
