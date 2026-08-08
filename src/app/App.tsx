@@ -79,10 +79,15 @@ function AppContent() {
   );
 }
 
+import { AuthProvider } from "../context/AuthContext";
+
 export default function App() {
   return (
-    <CookieConsentProvider>
-      <AppContent />
-    </CookieConsentProvider>
+    <AuthProvider>
+      <CookieConsentProvider>
+        <AppContent />
+      </CookieConsentProvider>
+    </AuthProvider>
   );
 }
+
