@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown } from "lucide-react";
@@ -13,16 +13,29 @@ function UserAuthMenu() {
   const { user, loading, signOut } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest(".user-auth-menu")) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     };
-    window.addEventListener("click", handleOutsideClick);
-    return () => window.removeEventListener("click", handleOutsideClick);
-  }, []);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setDropdownOpen(false);
+      }
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [dropdownOpen]);
 
   if (loading) {
     return <div className="h-[38px] w-24 rounded-full bg-white/5 border border-white/10 animate-pulse shrink-0 self-center" />;
@@ -61,13 +74,12 @@ function UserAuthMenu() {
     );
   }
 
-
   const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="relative flex items-center justify-center h-[38px] user-auth-menu shrink-0 self-center">
+    <div ref={menuRef} className="relative inline-block text-left shrink-0 self-center user-auth-menu">
       <button
-        onClick={() => setDropdownOpen(!dropdownOpen)}
+        onClick={() => setDropdownOpen((prev) => !prev)}
         className="flex h-[38px] items-center gap-2.5 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center"
       >
         {user.photoURL ? (
@@ -90,30 +102,31 @@ function UserAuthMenu() {
       <AnimatePresence>
         {dropdownOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 6, scale: 0.96 }}
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.96 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 top-[calc(100%+8px)] w-60 rounded-2xl border border-white/10 bg-background/95 p-3 backdrop-blur-2xl shadow-2xl z-50 aurora-card"
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-white/15 bg-[#09090b]/95 p-3.5 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] z-50 pointer-events-auto"
           >
-            <div className="px-3 py-2 border-b border-white/10 mb-1.5">
+            <div className="px-3 py-2 border-b border-white/10 mb-2">
               <p className="text-xs font-bold text-foreground truncate">{user.displayName || "User"}</p>
               <p className="text-[10px] text-muted-foreground truncate mono mt-0.5">{user.email}</p>
             </div>
 
-            <button
-              disabled
-              className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground/60 cursor-not-allowed text-left font-mono"
+            <Link
+              to="/profile"
+              onClick={() => setDropdownOpen(false)}
+              className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-foreground/90 hover:bg-white/10 hover:text-white transition-colors text-left mono"
             >
-              <UserIcon size={14} /> Profile (Placeholder)
-            </button>
+              <UserIcon size={14} className="text-primary" /> View Profile
+            </Link>
 
             <button
               onClick={() => {
                 setDropdownOpen(false);
                 signOut();
               }}
-              className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors text-left font-mono"
+              className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors text-left mono mt-1"
             >
               <LogOut size={14} /> Sign out
             </button>
@@ -123,6 +136,7 @@ function UserAuthMenu() {
     </div>
   );
 }
+
 
 
 interface SiteHeaderProps {
