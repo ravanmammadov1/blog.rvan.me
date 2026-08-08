@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 
 // Fallback constants ensure production builds always have valid Firebase credentials embedded
@@ -15,6 +16,7 @@ const isKeyConfigured = Boolean(apiKey);
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let db: Firestore | null = null;
 let analytics: Analytics | null = null;
 
 if (isKeyConfigured) {
@@ -31,6 +33,7 @@ if (isKeyConfigured) {
 
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     auth = getAuth(app);
+    db = getFirestore(app);
 
     // Initialize Analytics conditionally in browser if supported
     if (typeof window !== "undefined") {
@@ -41,9 +44,9 @@ if (isKeyConfigured) {
       });
     }
   } catch (err: any) {
-    console.warn("[Firebase Auth] Error initializing Firebase SDK:", err?.message || err);
+    console.warn("[Firebase Auth/Firestore] Error initializing Firebase SDK:", err?.message || err);
   }
 }
 
-export { app, auth, analytics, isKeyConfigured };
+export { app, auth, db, analytics, isKeyConfigured };
 export default app;

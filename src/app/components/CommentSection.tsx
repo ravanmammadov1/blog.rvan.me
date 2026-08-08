@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { ThumbsUp, ThumbsDown, MessageSquare, Share2, Check, Copy, Twitter, Linkedin } from "lucide-react";
-import { format } from "date-fns";
-
-import { fetchApprovedComments, submitComment, voteComment } from "../../lib/sanityQueries";
-import { CommentItem } from "../../types/cms";
+import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
+import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare, Loader2 } from "lucide-react";
+import { Comment } from "../../types/comments";
+import { subscribeToComments, addComment, updateComment, deleteComment } from "../../services/commentService";
+import { useAuth } from "../../hooks/useAuth";
+import CommentForm from "./comments/CommentForm";
+import CommentItemComponent from "./comments/CommentItem";
 
 interface CommentSectionProps {
   postId: string;
@@ -12,109 +13,159 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ postId, postTitle }: CommentSectionProps) {
-  const [comments, setComments] = useState<CommentItem[]>([]);
+  const { user } = useAuth();
+  const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [votedComments, setVotedComments] = useState<string[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
+  // Lazy loading observer: only initialize real-time listener when section enters viewport
   useEffect(() => {
-    // Load voted comment IDs from localStorage
-    const saved = localStorage.getItem("voted_comments");
-    if (saved) {
-      try {
-        setVotedComments(JSON.parse(saved));
-      } catch (e) {}
-    }
+    if (!sectionRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sectionRef.current);
 
-    if (postId) {
-      fetchApprovedComments(postId)
-        .then((data) => setComments(data))
-        .finally(() => setLoading(false));
-    }
-  }, [postId]);
+    return () => observer.disconnect();
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !email.trim() || !text.trim() || submitting) return;
+  // Real-time Firestore Listener
+  useEffect(() => {
+    if (!postId || !isVisible) return;
 
+    setLoading(true);
+    const unsubscribe = subscribeToComments(
+      postId,
+      (updatedComments) => {
+        setComments(updatedComments);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err.message || "Failed to load real-time comments.");
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [postId, isVisible]);
+
+  // Optimistic Add Comment
+  const handleAddComment = async (text: string) => {
+    if (!user) return;
     setSubmitting(true);
+    setError(null);
+
+    // Create optimistic comment object
+    const optimisticComment: Comment = {
+      id: `temp-${Date.now()}`,
+      postId,
+      authorId: user.uid,
+      author: {
+        uid: user.uid,
+        displayName: user.displayName || user.email?.split("@")[0] || "User",
+        photoURL: user.photoURL || null,
+        email: user.email || null,
+      },
+      text: text.trim(),
+      createdAt: new Date(),
+      isOptimistic: true,
+    };
+
+    setComments((prev) => [optimisticComment, ...prev]);
+
     try {
-      await submitComment(postId, name, email, text);
-      setSubmitted(true);
-      setName("");
-      setEmail("");
-      setText("");
+      await addComment({
+        postId,
+        author: optimisticComment.author,
+        text,
+      });
     } catch (err: any) {
-      alert(`Failed to submit comment: ${err.message || "Please try again."}`);
+      console.error("Error submitting comment:", err);
+      setError(err?.message || "Failed to post comment. Please try again.");
+      // Rollback optimistic addition
+      setComments((prev) => prev.filter((c) => c.id !== optimisticComment.id));
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleVote = async (commentId: string, type: "like" | "dislike") => {
-    if (votedComments.includes(commentId)) return;
-
+  // Update Comment
+  const handleUpdateComment = async (commentId: string, newText: string) => {
+    setError(null);
     try {
-      await voteComment(commentId, type);
-      const updatedVotes = [...votedComments, commentId];
-      setVotedComments(updatedVotes);
-      localStorage.setItem("voted_comments", JSON.stringify(updatedVotes));
-
-      setComments((prev) =>
-        prev.map((c) =>
-          c._id === commentId
-            ? {
-                ...c,
-                likes: type === "like" ? (c.likes || 0) + 1 : c.likes,
-                dislikes: type === "dislike" ? (c.dislikes || 0) + 1 : c.dislikes,
-              }
-            : c
-        )
-      );
-    } catch (err) {
-      console.error("Vote failed:", err);
+      await updateComment({ commentId, postId, text: newText });
+    } catch (err: any) {
+      console.error("Error updating comment:", err);
+      setError(err?.message || "Failed to edit comment.");
     }
   };
 
-  const currentUrl = window.location.href;
+  // Delete Comment
+  const handleDeleteComment = async (commentId: string) => {
+    setError(null);
+    try {
+      await deleteComment(commentId);
+    } catch (err: any) {
+      console.error("Error deleting comment:", err);
+      setError(err?.message || "Failed to delete comment.");
+    }
+  };
+
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(currentUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof navigator !== "undefined") {
+      navigator.clipboard.writeText(currentUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postTitle)}&url=${encodeURIComponent(currentUrl)}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
 
   return (
-    <div className="mt-16 border-t border-border pt-12">
-      {/* Share Section */}
+    <div ref={sectionRef} className="mt-16 border-t border-border pt-12">
+      {/* Social Share Bar */}
       <div className="flex flex-wrap items-center justify-between gap-6 border-b border-border pb-8 mb-12">
         <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground mono uppercase">
           <Share2 size={16} className="text-primary" />
-          <span>SHARE THIS ESSAY</span>
+          <span>Share Article</span>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs font-medium text-foreground hover:border-primary transition-colors"
+            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50 transition-colors glass-sm"
           >
-            {copied ? <Check size={14} className="text-primary" /> : <Copy size={14} />}
-            <span>{copied ? "COPIED" : "COPY LINK"}</span>
+            {copied ? (
+              <>
+                <Check size={14} className="text-primary" />
+                <span className="text-primary font-bold">Copied Link!</span>
+              </>
+            ) : (
+              <>
+                <Copy size={14} />
+                <span>Copy Link</span>
+              </>
+            )}
           </button>
 
           <a
             href={twitterUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="grid h-9 w-9 place-items-center rounded-full border border-border bg-surface text-foreground hover:border-primary hover:text-primary transition-colors"
+            className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 text-foreground hover:border-primary/50 hover:text-primary transition-colors glass-sm"
             aria-label="Share on X"
           >
             <Twitter size={15} />
@@ -124,7 +175,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
             href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="grid h-9 w-9 place-items-center rounded-full border border-border bg-surface text-foreground hover:border-primary hover:text-primary transition-colors"
+            className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 text-foreground hover:border-primary/50 hover:text-primary transition-colors glass-sm"
             aria-label="Share on LinkedIn"
           >
             <Linkedin size={15} />
@@ -132,155 +183,43 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
         </div>
       </div>
 
-      {/* Discussion Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <MessageSquare className="text-primary" size={20} />
-        <h2 className="text-2xl font-semibold tracking-tight">Discussion ({comments.length})</h2>
+      {/* Discussion Section Header */}
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <MessageSquare size={18} className="text-primary" />
+          <h2 className="text-lg font-bold tracking-tight text-foreground">
+            Discussion ({comments.length})
+          </h2>
+        </div>
       </div>
 
       {/* Comment Form */}
-      <div className="rounded-xl border border-border bg-surface p-6 mb-12">
-        <h3 className="text-lg font-semibold mb-2">Leave a thought</h3>
-        <p className="text-xs text-muted-foreground mb-6">
-          Your email address is kept private for moderation purposes only.
-        </p>
-
-        {submitted ? (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg border border-primary/40 bg-primary/10 p-4 text-xs font-semibold text-primary mono"
-          >
-            ✓ Thank you! Your comment has been submitted and is pending review before appearing live.
-          </motion.div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">
-                  NAME
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">
-                  EMAIL (PRIVATE)
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase mb-1">
-                COMMENT
-              </label>
-              <textarea
-                required
-                rows={4}
-                placeholder="Share your perspective or experience..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="rounded-full bg-primary px-6 py-3 text-xs font-bold tracking-widest text-primary-foreground hover:bg-primary/90 transition-colors uppercase mono disabled:opacity-50"
-            >
-              {submitting ? "SUBMITTING..." : "POST COMMENT"}
-            </button>
-          </form>
-        )}
+      <div className="mb-10">
+        <CommentForm onSubmit={handleAddComment} submitting={submitting} error={error} />
       </div>
 
-      {/* Approved Comments List */}
+      {/* Comments List */}
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2].map((n) => (
-            <div key={n} className="h-28 rounded-lg border border-border bg-surface animate-pulse" />
-          ))}
+        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+          <Loader2 size={24} className="animate-spin text-primary mb-2" />
+          <span className="text-xs font-mono">Loading real-time comments...</span>
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-sm text-muted-foreground italic py-6">
-          No approved comments yet. Be the first to start the conversation!
-        </p>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.01] p-8 text-center backdrop-blur-md">
+          <p className="text-xs text-muted-foreground font-medium">
+            No comments yet. Be the first to start the discussion!
+          </p>
+        </div>
       ) : (
-        <div className="space-y-6">
-          {comments.map((comment) => {
-            const hasVoted = votedComments.includes(comment._id);
-            const formattedTime = comment.createdAt
-              ? format(new Date(comment.createdAt), "MMM d, yyyy · h:mm a")
-              : "";
-
-            return (
-              <div
-                key={comment._id}
-                className="rounded-lg border border-border bg-surface/60 p-6 transition-all"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="grid h-8 w-8 place-items-center rounded-full border border-border bg-background text-xs font-bold text-primary">
-                      {comment.authorName.charAt(0)}
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">{comment.authorName}</h4>
-                      <p className="text-[10px] text-muted-foreground mono">{formattedTime}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-xs leading-relaxed text-muted-foreground mb-4 pl-11">
-                  {comment.commentText}
-                </p>
-
-                {/* Vote buttons */}
-                <div className="flex items-center gap-4 pl-11">
-                  <button
-                    onClick={() => handleVote(comment._id, "like")}
-                    disabled={hasVoted}
-                    className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
-                      hasVoted
-                        ? "text-muted-foreground cursor-not-allowed"
-                        : "text-muted-foreground hover:text-primary"
-                    }`}
-                  >
-                    <ThumbsUp size={14} />
-                    <span>{comment.likes || 0}</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleVote(comment._id, "dislike")}
-                    disabled={hasVoted}
-                    className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${
-                      hasVoted
-                        ? "text-muted-foreground cursor-not-allowed"
-                        : "text-muted-foreground hover:text-destructive"
-                    }`}
-                  >
-                    <ThumbsDown size={14} />
-                    <span>{comment.dislikes || 0}</span>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="space-y-4">
+          {comments.map((comment) => (
+            <CommentItemComponent
+              key={comment.id}
+              comment={comment}
+              onUpdate={handleUpdateComment}
+              onDelete={handleDeleteComment}
+            />
+          ))}
         </div>
       )}
     </div>
