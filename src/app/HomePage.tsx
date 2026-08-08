@@ -243,97 +243,44 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    fetchSiteSettings().then((data) => {
-      if (data) setSiteSettings(data);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const blogQuery = `*[_type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())] | order(featured desc, publishDate desc){
+      _id, title, slug, excerpt, category, tags, featured, publishDate, readTime, coverImage, body
+    }`;
+
+    const newsQuery = `*[_type == "news" && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc)[0...3]{
+      _id, title, "slug": slug.current, coverImage, excerpt, publishedAt, category
+    }`;
+
+    const toolsQuery = `*[_type == "tools"] | order(category asc, name asc)[0...4]{
+      _id, name, description, icon, link, category
+    }`;
+
+    const resourcesQuery = `*[_type == "resource" && status == "published"] | order(sortPriority asc, featuredScore desc, _createdAt desc)[0...4]{
+      _id, title, "slug": slug.current, resourceType, description, benefitSummary, link, logo, status, verificationStatus, isGlobal, countries, difficultyLevel, completionTime, badges
+    }`;
+
+    Promise.allSettled([
+      fetchSiteSettings().then((data) => data && setSiteSettings(data)),
+      fetchProjects().then((data) => data && data.length > 0 && setSanityProjects(data)),
+      client.fetch(blogQuery).then((data) => setBlogPosts(data || [])),
+      client.fetch(newsQuery).then((data) => setNewsList(data || [])),
+      client.fetch(toolsQuery).then((data) => setToolsList(data || [])),
+      client.fetch(resourcesQuery).then((data) => setResourcesList(data || [])),
+    ]).catch(() => {
+      // Silently catch to prevent unhandled promise rejection
+    }).finally(() => {
+      clearTimeout(timeoutId);
     });
 
-    fetchProjects().then((data) => {
-      if (data && data.length > 0) setSanityProjects(data);
-    });
-
-    // Fetch Blogs
-    client
-      .fetch(`
-        *[_type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())] | order(featured desc, publishDate desc){
-          _id,
-          title,
-          slug,
-          excerpt,
-          category,
-          tags,
-          featured,
-          publishDate,
-          readTime,
-          coverImage,
-          body
-        }
-      `)
-      .then((data) => {
-        setBlogPosts(data || []);
-      })
-      .catch(console.error);
-
-    // Fetch News (latest 3)
-    client
-      .fetch(`
-        *[_type == "news" && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc)[0...3]{
-          _id,
-          title,
-          "slug": slug.current,
-          coverImage,
-          excerpt,
-          publishedAt,
-          category
-        }
-      `)
-      .then((data) => {
-        setNewsList(data || []);
-      })
-      .catch(console.error);
-
-    // Fetch Tools (latest 4)
-    client
-      .fetch(`
-        *[_type == "tools"] | order(category asc, name asc)[0...4]{
-          _id,
-          name,
-          description,
-          icon,
-          link,
-          category
-        }
-      `)
-      .then((data) => {
-        setToolsList(data || []);
-      })
-      .catch(console.error);
-
-    // Fetch Resources (published, sortPriority, featuredScore)
-    client
-      .fetch(`
-        *[_type == "resource" && status == "published"] | order(sortPriority asc, featuredScore desc, _createdAt desc)[0...4]{
-          _id,
-          title,
-          "slug": slug.current,
-          resourceType,
-          description,
-          benefitSummary,
-          link,
-          logo,
-          status,
-          verificationStatus,
-          isGlobal,
-          countries,
-          difficultyLevel,
-          completionTime,
-          badges
-        }
-      `)
-      .then((data) => {
-        setResourcesList(data || []);
-      })
-      .catch(console.error);
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
   }, []);
+
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

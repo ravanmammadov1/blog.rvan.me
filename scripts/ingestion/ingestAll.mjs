@@ -3,14 +3,21 @@ import { fetchGitHubProjects } from './githubFetcher.mjs';
 import { enrichItemWithAI } from './aiEnricher.mjs';
 import { uploadToSanity } from './sanityUploader.mjs';
 
-// Default curated RSS feed sources
+// Default curated official RSS feed sources
 const DEFAULT_RSS_SOURCES = [
   { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed/', defaultContentType: 'resource' },
-  { name: 'UX Collective', url: 'https://uxdesign.cc/feed', defaultContentType: 'resource' },
-  { name: 'We Work Remotely - Design', url: 'https://weworkremotely.com/categories/remote-design-jobs.rss', defaultContentType: 'remoteJob' },
-  { name: 'Abduzeedo', url: 'https://abduzeedo.com/feed.xml', defaultContentType: 'designAsset' },
-  { name: 'Product Hunt', url: 'https://www.producthunt.com/feed', defaultContentType: 'aiTool' }
+  { name: 'CSS-Tricks', url: 'https://css-tricks.com/feed/', defaultContentType: 'resource' },
+  { name: 'Google Design', url: 'https://design.google/rss.xml', defaultContentType: 'resource' },
+  { name: 'Web.dev', url: 'https://web.dev/feed.xml', defaultContentType: 'resource' },
+  { name: 'Chrome Developers', url: 'https://developer.chrome.com/feeds/blog.xml', defaultContentType: 'resource' },
+  { name: 'Awwwards Blog', url: 'https://www.awwwards.com/blog/feed/', defaultContentType: 'designAsset' },
+  { name: 'Motionographer', url: 'https://motionographer.com/feed/', defaultContentType: 'resource' },
+  { name: 'Codrops', url: 'https://tympanus.net/codrops/feed/', defaultContentType: 'template' },
+  { name: 'Vercel Blog', url: 'https://vercel.com/atom', defaultContentType: 'resource' },
+  { name: 'OpenAI News', url: 'https://openai.com/news/rss.xml', defaultContentType: 'aiTool' },
+  { name: 'Linear Blog', url: 'https://linear.app/blog/rss.xml', defaultContentType: 'resource' }
 ];
+
 
 export async function runFullIngestionPipeline() {
   console.log('====================================================');
