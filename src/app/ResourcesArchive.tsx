@@ -52,7 +52,7 @@ export default function ResourcesArchive() {
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
   const [fontSizePx, setFontSizePx] = useState(28);
   const [fontCategorySubfilter, setFontCategorySubfilter] = useState("all");
-  const [visibleFontLimit, setVisibleFontLimit] = useState(40);
+  const [visibleFontLimit, setVisibleFontLimit] = useState(10);
 
   const activeCategory = searchParams.get("category") || "all";
   const searchQuery = searchParams.get("q") || "";
@@ -327,7 +327,7 @@ export default function ResourcesArchive() {
                 {visibleFontLimit < filteredFonts.length && (
                   <div className="mt-10 text-center">
                     <button
-                      onClick={() => setVisibleFontLimit((prev) => prev + 40)}
+                      onClick={() => setVisibleFontLimit((prev) => prev + 16)}
                       className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-7 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm"
                     >
                       LOAD MORE FONTS ({filteredFonts.length - visibleFontLimit} REMAINING)

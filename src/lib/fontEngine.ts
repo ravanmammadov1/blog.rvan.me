@@ -32,6 +32,26 @@ export function loadStaticFontCatalog(): Promise<FontItem[]> {
   return staticCatalogPromise;
 }
 
+export function getFontSlug(font: FontItem): string {
+  if (!font || !font.family) return "";
+  return font.family
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function findFontBySlug(slug: string, catalog: FontItem[]): FontItem | undefined {
+  if (!slug || !Array.isArray(catalog)) return undefined;
+  const cleanSlug = slug.toLowerCase().trim();
+
+  return catalog.find((font) => {
+    const s = getFontSlug(font);
+    const idSlug = font.id?.toLowerCase().replace(/^(font-|gf-)/, "");
+    return s === cleanSlug || idSlug === cleanSlug || font.family.toLowerCase().replace(/[^a-z0-9]+/g, "-") === cleanSlug;
+  });
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // DIRECT DOWNLOAD URL RESOLVER
 // Resolves GitHub, Google Fonts, and Foundry URLs directly to ZIP release files

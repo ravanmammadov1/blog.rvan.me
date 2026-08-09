@@ -23,6 +23,7 @@ const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const ToolDetailPage = lazy(() => import("./pages/ToolDetailPage"));
+const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
@@ -60,6 +61,8 @@ function AppContent() {
           <Route path="/resources/:slug" element={<ResourceDetail />} />
           <Route path="/ai-tools" element={<AiToolArchivePage />} />
           <Route path="/opportunities" element={<OpportunityArchivePage />} />
+          <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
+          <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
 
 
 

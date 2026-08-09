@@ -250,8 +250,34 @@ async function fetchDynamicPages() {
   }
 }
 
+async function fetchFontPages() {
+  try {
+    const catalogPath = path.join(projectRoot, "src", "lib", "googleFontsCatalog.json");
+    const raw = await fs.readFile(catalogPath, "utf8");
+    const catalog = JSON.parse(raw);
+    return catalog.map((font) => {
+      const slug = font.family
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      return {
+        path: `/fonts/${slug}`,
+        title: `${font.family} Font Family — Free Download & Specimen | Rvan.me`,
+        description: font.description || `${font.family} is a ${font.category?.toLowerCase() || "typography"} typeface family designed by ${font.designer || "Open Source Foundry"}. Explore live specimen previews, styles, license details, and free download.`,
+        type: "website",
+      };
+    });
+  } catch (error) {
+    console.warn("SEO prerender skipped font pages:", error?.message || error);
+    return [];
+  }
+}
+
 const template = await fs.readFile(path.join(distRoot, "index.html"), "utf8");
-const pages = [...staticPages, ...(await fetchDynamicPages())];
+const fontPages = await fetchFontPages();
+const cmsPages = await fetchDynamicPages();
+const pages = [...staticPages, ...cmsPages, ...fontPages];
 
 for (const page of pages) {
   const pageDirectory = page.path === "/" ? distRoot : path.join(distRoot, ...page.path.split("/").filter(Boolean));
@@ -260,3 +286,18 @@ for (const page of pages) {
 }
 
 console.log(`Generated SEO-ready HTML for ${pages.length} routes.`);
+
+// Generate dist/sitemap.xml automatically
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${pages
+  .map((p) => {
+    const url = `${domain}${p.path === "/" ? "/" : p.path.replace(/\/+$/, "")}`;
+    return `  <url>\n    <loc>${url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${p.path === "/" ? "1.0" : p.path.startsWith("/fonts/") ? "0.7" : "0.8"}</priority>\n  </url>`;
+  })
+  .join("\n")}
+</urlset>`;
+
+await fs.writeFile(path.join(distRoot, "sitemap.xml"), sitemapXml.trim(), "utf8");
+console.log(`Generated sitemap.xml with ${pages.length} URLs.`);
+

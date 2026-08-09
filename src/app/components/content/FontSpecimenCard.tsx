@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BadgeCheck, Download } from "lucide-react";
-import { FontItem, resolveDirectFontDownloadUrl } from "../../../lib/fontEngine";
+import { FontItem, getFontSlug, resolveDirectFontDownloadUrl } from "../../../lib/fontEngine";
 import { loadFontOnDemand } from "../../../lib/fontLoader";
 
 interface FontSpecimenCardProps {
@@ -67,9 +68,11 @@ export function FontSpecimenCard({
           </div>
         </div>
 
-        {/* Font Family Name */}
+        {/* Font Family Name with Crawlable Link */}
         <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-          {font.name}
+          <Link to={`/fonts/${getFontSlug(font)}`} className="hover:underline">
+            {font.name}
+          </Link>
         </h3>
         <p className="text-xs text-muted-foreground mono mt-0.5">
           Designed by <span className="text-foreground/90 font-semibold">{font.designer}</span> · {font.foundry}
@@ -92,17 +95,20 @@ export function FontSpecimenCard({
 
       {/* Bottom CTA */}
       <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
-        <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-          <BadgeCheck size={12} /> {font.license}
-        </span>
+        <Link
+          to={`/fonts/${getFontSlug(font)}`}
+          className="text-[11px] text-primary hover:text-white uppercase tracking-wider transition-colors flex items-center gap-1"
+        >
+          SPECIMEN & DETAILS →
+        </Link>
         <a
           href={resolveDirectFontDownloadUrl(font)}
           download={`${font.family}.zip`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer"
         >
-          DOWNLOAD ZIP <Download size={11} />
+          ZIP <Download size={11} />
         </a>
       </div>
     </motion.article>
