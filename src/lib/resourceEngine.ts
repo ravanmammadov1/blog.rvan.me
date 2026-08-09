@@ -483,6 +483,114 @@ export const CURATED_LEARNING_RESOURCES: SharedResourceItem[] = [
   }
 ];
 
+export const HOME_SHOWCASE_FONTS: SharedResourceItem[] = [
+  {
+    id: "font-inter",
+    title: "Inter",
+    description: "Inter is a variable font family carefully crafted & designed for computer screens.",
+    category: "fonts",
+    type: "Sans Serif",
+    source: "Google Fonts",
+    url: "/fonts/inter",
+    fontSlug: "inter",
+    isFont: true,
+    authorName: "Rasmus Andersson",
+    publishedAt: "2026-01-01T00:00:00Z",
+    qualityScore: 100,
+    trendingScore: 99,
+  },
+  {
+    id: "font-space-grotesk",
+    title: "Space Grotesk",
+    description: "Space Grotesk is a proportional sans-serif typeface family based on Space Mono.",
+    category: "fonts",
+    type: "Display",
+    source: "Google Fonts",
+    url: "/fonts/space-grotesk",
+    fontSlug: "space-grotesk",
+    isFont: true,
+    authorName: "Florian Karsten",
+    publishedAt: "2026-01-01T00:00:00Z",
+    qualityScore: 98,
+    trendingScore: 97,
+  },
+  {
+    id: "font-geist",
+    title: "Geist",
+    description: "Geist is a font family created by Vercel for developers and designers.",
+    category: "fonts",
+    type: "Sans Serif",
+    source: "Vercel",
+    url: "/fonts/geist",
+    fontSlug: "geist",
+    isFont: true,
+    authorName: "Vercel",
+    publishedAt: "2026-01-01T00:00:00Z",
+    qualityScore: 99,
+    trendingScore: 98,
+  },
+  {
+    id: "font-syne",
+    title: "Syne",
+    description: "Syne is an expressive display font family designed for art centers and design studios.",
+    category: "fonts",
+    type: "Display",
+    source: "Bonjour Monde",
+    url: "/fonts/syne",
+    fontSlug: "syne",
+    isFont: true,
+    authorName: "Bonjour Monde",
+    publishedAt: "2026-01-01T00:00:00Z",
+    qualityScore: 96,
+    trendingScore: 95,
+  },
+  {
+    id: "font-plus-jakarta-sans",
+    title: "Plus Jakarta Sans",
+    description: "A fresh take on neo-grotesque sans serif with friendly open apertures.",
+    category: "fonts",
+    type: "Sans Serif",
+    source: "Tokyo Type",
+    url: "/fonts/plus-jakarta-sans",
+    fontSlug: "plus-jakarta-sans",
+    isFont: true,
+    authorName: "Gethin Levien",
+    publishedAt: "2026-01-01T00:00:00Z",
+    qualityScore: 97,
+    trendingScore: 96,
+  },
+  {
+    id: "font-outfit",
+    title: "Outfit",
+    description: "Outfit is a geometric sans-serif typeface designed for modern digital products.",
+    category: "fonts",
+    type: "Geometric Sans",
+    source: "Outfit Type",
+    url: "/fonts/outfit",
+    fontSlug: "outfit",
+    isFont: true,
+    authorName: "Outfit",
+    publishedAt: "2026-01-01T00:00:00Z",
+    qualityScore: 96,
+    trendingScore: 94,
+  },
+];
+
+/**
+ * Lightweight instant showcase endpoint for Home page (0ms initial render)
+ * Returns the 6 showcase items needed per category without parsing 2,009 font files or fetching RSS feeds.
+ */
+export async function fetchHomeShowcaseResources(): Promise<SharedResourceItem[]> {
+  const showcase: SharedResourceItem[] = [
+    ...HOME_SHOWCASE_FONTS,
+    ...CURATED_GITHUB_REPOS,
+    ...CURATED_INSPIRATION_RESOURCES,
+    ...CURATED_ASSETS_RESOURCES,
+    ...CURATED_LEARNING_RESOURCES,
+  ];
+  return showcase;
+}
+
 let cachedUnifiedResources: SharedResourceItem[] | null = null;
 let unifiedResourcesPromise: Promise<SharedResourceItem[]> | null = null;
 

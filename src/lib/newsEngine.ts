@@ -363,9 +363,32 @@ export async function fetchCuratedNewsEngine(cmsNews: any[] = []): Promise<Curat
     return persisted;
   }
 
-  const { articles } = await runNewsPipelineAudit(cmsNews);
-  savePipelineCache(articles);
-  return articles;
+  // Fast baseline fallback for 0ms initial render: map CURATED_NEWS_CATALOG
+  const baselineArticles: CuratedArticle[] = CURATED_NEWS_CATALOG.map((item) => ({
+    ...item,
+    relevanceScore: 85,
+    scoreBreakdown: {
+      audienceRelevance: 20,
+      sourceAuthority: 18,
+      topicDepth: 15,
+      freshness: 15,
+      contentDepth: 10,
+      originality: 10,
+      keywordSignal: 5,
+      promotionalPenalty: 0,
+      finalScore: 85,
+    },
+  }));
+
+  cachedNewsPipeline = baselineArticles;
+
+  // Background revalidation without blocking initial render!
+  runNewsPipelineAudit(cmsNews).then(({ articles }) => {
+    cachedNewsPipeline = articles;
+    savePipelineCache(articles);
+  }).catch(() => {});
+
+  return baselineArticles;
 }
 
 /**

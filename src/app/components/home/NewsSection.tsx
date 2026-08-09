@@ -20,11 +20,21 @@ export default function NewsSection() {
   const [newsList, setNewsList] = useState<CuratedArticle[]>([]);
 
   useEffect(() => {
+    // 1. Instant 0ms initial render from cache/baseline
+    fetchHomeNewsEngine([]).then((items) => {
+      if (items && items.length > 0) {
+        setNewsList(items.slice(0, 3));
+      }
+    });
+
+    // 2. Parallel background revalidation with Sanity CMS news
     fetchNews().then((cmsData) => {
       fetchHomeNewsEngine(cmsData || []).then((items) => {
-        setNewsList((items || []).slice(0, 3));
+        if (items && items.length > 0) {
+          setNewsList(items.slice(0, 3));
+        }
       });
-    });
+    }).catch(() => {});
   }, []);
 
   if (newsList.length === 0) return null;

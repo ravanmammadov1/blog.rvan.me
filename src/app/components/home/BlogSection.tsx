@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { client, urlFor } from "../../../lib/sanityClient";
+import { client } from "../../../lib/sanityClient";
 import BlogCard from "../blog/BlogCard";
 import { Eyebrow } from "../Eyebrow";
 
@@ -11,16 +11,46 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-      transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
+const FALLBACK_BLOGS = [
+  {
+    _id: "blog-1",
+    title: "Designing for Spatial Computing: UI Patterns for VisionOS & AR",
+    slug: { current: "3d-product-visualization-guide" },
+    excerpt: "Deep dive into 3D spatial interfaces, glassmorphism UI depth tokens, and eye-tracking gesture targets for modern AR environments.",
+    category: "Design",
+    publishDate: "2026-08-01T10:00:00Z",
+    readTime: "6 min read",
+  },
+  {
+    _id: "blog-2",
+    title: "State of UX 2026: AI Co-Pilots, Micro-Interactions & Adaptive Systems",
+    slug: { current: "motion-design-micro-interactions" },
+    excerpt: "Annual report exploring generative layout engines, hyper-personalized interfaces, and modern design ethics.",
+    category: "Motion",
+    publishDate: "2026-07-28T10:00:00Z",
+    readTime: "8 min read",
+  },
+  {
+    _id: "blog-3",
+    title: "The Death of Generic Performance Ads: Why High-Concept Creative Rules 2026",
+    slug: { current: "performance-ad-creative-playbook" },
+    excerpt: "Why story-first video creative outperforms algorithmic micro-targeting across major platforms.",
+    category: "Marketing",
+    publishDate: "2026-07-25T10:00:00Z",
+    readTime: "5 min read",
+  },
+];
+
 export default function BlogSection() {
-  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [blogPosts, setBlogPosts] = useState<any[]>(FALLBACK_BLOGS);
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch Blogs
+    // Fetch Blogs in background without blocking initial render
     client
       .fetch(`
         *[_type == "blog"] | order(featured desc, publishDate desc){
@@ -38,7 +68,9 @@ export default function BlogSection() {
         }
       `)
       .then((data) => {
-        setBlogPosts(data || []);
+        if (data && data.length > 0) {
+          setBlogPosts(data);
+        }
       })
       .catch(console.error);
   }, []);
@@ -61,7 +93,7 @@ export default function BlogSection() {
           className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">03 / Insights & Ideas</Eyebrow>
+            <Eyebrow className="text-muted-foreground">03 / Insights &amp; Ideas</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               Thinking out loud.
             </h2>

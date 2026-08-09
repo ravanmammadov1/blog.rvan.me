@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ExternalLink, Star, Type, Code, Box, BookOpen, Sparkles } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
-import { fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
+import { fetchUnifiedResources, fetchHomeShowcaseResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -31,8 +31,22 @@ export default function ResourcesSection() {
   const [activeCategory, setActiveCategory] = useState<ResourceCategoryKey>("fonts");
 
   useEffect(() => {
+    // 1. Instant 0ms initial render from lightweight showcase catalog
+    fetchHomeShowcaseResources().then((items) => {
+      if (items && items.length > 0) {
+        setResources(items);
+        setLoading(false);
+      }
+    });
+
+    // 2. Parallel background revalidation with full unified resources
     fetchUnifiedResources()
-      .then((items) => setResources(items || []))
+      .then((items) => {
+        if (items && items.length > 0) {
+          setResources(items);
+        }
+      })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
