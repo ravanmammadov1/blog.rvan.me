@@ -16,6 +16,7 @@ interface LinkedInTokenDoc {
 }
 
 const SINGLETON_ID = "linkedinTokenSingleton";
+const PENDING_SINGLETON_ID = "linkedinPendingPostSingleton";
 
 function verifyAdminAuth(req: VercelRequest): boolean {
   const envSecret = process.env.LINKEDIN_ADMIN_SECRET;
@@ -25,32 +26,30 @@ function verifyAdminAuth(req: VercelRequest): boolean {
   return false;
 }
 
-async function getStoredLinkedInToken(): Promise<LinkedInTokenDoc | null> {
+async function getSanityData(queryStr: string) {
   try {
     const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg";
     const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
     const token = process.env.SANITY_API_WRITE_TOKEN;
 
-    const query = encodeURIComponent(`*[_id == "${SINGLETON_ID}"][0]`);
+    const query = encodeURIComponent(queryStr);
     const url = `https://${projectId}.api.sanity.io/v2025-01-01/data/query/${dataset}?query=${query}`;
 
     const headers: Record<string, string> = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
+    if (token) headers["Authorization"] = `Bearer ${token}`;
 
     const res = await fetch(url, { headers });
-    if (!res.ok) {
-      console.error("[linkedin/status] Sanity query failed status:", res.status);
-      return null;
-    }
-
+    if (!res.ok) return null;
     const data = await res.json();
-    return data.result || null;
-  } catch (error) {
-    console.error("[linkedin/status] Error reading token from Sanity:", error);
+    return data.result;
+  } catch (err) {
+    console.error("[linkedin/status] Error fetching Sanity query:", err);
     return null;
   }
+}
+
+async function getStoredLinkedInToken(): Promise<LinkedInTokenDoc | null> {
+  return await getSanityData(`*[_id == "${SINGLETON_ID}"][0]`);
 }
 
 async function saveLinkedInToken(data: {
@@ -64,14 +63,11 @@ async function saveLinkedInToken(data: {
   memberPicture?: string;
   scope?: string;
 }): Promise<LinkedInTokenDoc> {
-  const SINGLETON_ID = "linkedinTokenSingleton";
   const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg";
   const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
   const token = process.env.SANITY_API_WRITE_TOKEN;
 
-  if (!token) {
-    throw new Error("SANITY_API_WRITE_TOKEN environment variable is missing.");
-  }
+  if (!token) throw new Error("SANITY_API_WRITE_TOKEN environment variable is missing.");
 
   const now = Date.now();
   const expiresAt = now + data.expiresInSeconds * 1000;
@@ -101,9 +97,7 @@ async function saveLinkedInToken(data: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      mutations: [{ createOrReplace: doc }],
-    }),
+    body: JSON.stringify({ mutations: [{ createOrReplace: doc }] }),
   });
 
   if (!res.ok) {
@@ -200,11 +194,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { activeToken, refreshed } = await refreshLinkedInTokenIfNeeded();
 
+    // Fetch pending post and published history
+    const pendingPost = await getSanityData(`*[_id == "${PENDING_SINGLETON_ID}"][0]`);
+    const historyList = (await getSanityData(`*[_type == "linkedinPublishHistory"] | order(publishedAt desc)[0..10]`)) || [];
+
     if (!activeToken || !activeToken.accessToken) {
       return res.status(200).json({
         connected: false,
         reconnectRequired: true,
         message: "No active LinkedIn authorization found. Please connect your account.",
+        pendingPost: pendingPost || null,
+        historyList,
       });
     }
 
@@ -234,6 +234,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       autoRefreshMechanism: Boolean(activeToken.refreshToken) ? "AUTOMATIC (REQUEST-TIME)" : "MANUAL RE-AUTH (EVERY 60 DAYS)",
       updatedAt: activeToken.updatedAt,
       scope: activeToken.scope,
+      pendingPost: pendingPost || null,
+      historyList,
     });
   } catch (error: any) {
     console.error("[linkedin/status] Error checking connection status:", error);

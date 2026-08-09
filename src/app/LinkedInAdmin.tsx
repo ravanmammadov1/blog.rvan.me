@@ -1,10 +1,33 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, RefreshCw, Send, ShieldCheck, UserCheck, ExternalLink, Lock, LogOut, Key } from "lucide-react";
+import { CheckCircle2, AlertTriangle, RefreshCw, Send, ShieldCheck, UserCheck, ExternalLink, Lock, LogOut, Key, Sparkles, Check, X, Clock, FileText, History } from "lucide-react";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+
+interface PendingPost {
+  _id: string;
+  headline: string;
+  sourceName: string;
+  sourceUrl: string;
+  category: string;
+  generatedPost: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  scheduledTime?: string;
+  postId?: string;
+}
+
+interface PublishHistoryItem {
+  _id: string;
+  headline: string;
+  sourceUrl: string;
+  sourceName?: string;
+  category?: string;
+  postId: string;
+  publishedAt: string;
+}
 
 interface StatusResponse {
   connected: boolean;
@@ -21,6 +44,8 @@ interface StatusResponse {
   autoRefreshMechanism?: string;
   message?: string;
   error?: string;
+  pendingPost?: PendingPost | null;
+  historyList?: PublishHistoryItem[];
 }
 
 export default function LinkedInAdmin() {
@@ -38,6 +63,11 @@ export default function LinkedInAdmin() {
   // Status & Form State
   const [status, setStatus] = useState<StatusResponse | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
+
+  // Pipeline approval action states
+  const [actionLoading, setActionLoading] = useState(false);
+  const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
 
   // Manual publishing form state
   const [commentary, setCommentary] = useState("🚀 Testing LinkedIn automation on my personal profile via Rvan.me!");
@@ -108,6 +138,84 @@ export default function LinkedInAdmin() {
     window.location.href = "/api/linkedin/auth";
   };
 
+  // Trigger manual pipeline run
+  const handleTriggerPipeline = async () => {
+    if (!adminSecret) return;
+    setActionLoading(true);
+    setPipelineMessage(null);
+    setPipelineError(null);
+
+    try {
+      const res = await fetch("/api/linkedin/pipeline", {
+        method: "POST",
+        headers: { "x-admin-secret": adminSecret },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setPipelineError(data.error || "Failed to trigger pipeline.");
+      } else {
+        setPipelineMessage("Pipeline executed! Generated new candidate post for review.");
+        checkStatusWithSecret(adminSecret);
+      }
+    } catch (err: any) {
+      setPipelineError(err.message || "Pipeline trigger error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Approve pending candidate
+  const handleApprovePendingPost = async () => {
+    if (!adminSecret) return;
+    setActionLoading(true);
+    setPipelineMessage(null);
+    setPipelineError(null);
+
+    try {
+      const res = await fetch("/api/linkedin/approve-post", {
+        method: "POST",
+        headers: { "x-admin-secret": adminSecret },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setPipelineError(data.error || "Failed to approve post.");
+      } else {
+        setPipelineMessage(`🎉 Approved & Published to LinkedIn! (Post ID: ${data.postId})`);
+        checkStatusWithSecret(adminSecret);
+      }
+    } catch (err: any) {
+      setPipelineError(err.message || "Approval error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Reject pending candidate
+  const handleRejectPendingPost = async () => {
+    if (!adminSecret) return;
+    setActionLoading(true);
+    setPipelineMessage(null);
+    setPipelineError(null);
+
+    try {
+      const res = await fetch("/api/linkedin/reject-post", {
+        method: "POST",
+        headers: { "x-admin-secret": adminSecret },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setPipelineError(data.error || "Failed to reject draft.");
+      } else {
+        setPipelineMessage("Pending draft candidate rejected.");
+        checkStatusWithSecret(adminSecret);
+      }
+    } catch (err: any) {
+      setPipelineError(err.message || "Rejection error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handlePublishTestPost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentary.trim() || !adminSecret) return;
@@ -148,6 +256,8 @@ export default function LinkedInAdmin() {
       setPublishing(false);
     }
   };
+
+  const pendingCandidate = status?.pendingPost && status.pendingPost.status === "pending" ? status.pendingPost : null;
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
@@ -190,7 +300,7 @@ export default function LinkedInAdmin() {
             Personal Member Publishing.
           </h1>
           <p className="mt-3 text-sm text-muted-foreground max-w-2xl leading-relaxed">
-            Securely authenticate your personal LinkedIn profile using OAuth 2.0 (`w_member_social`). Server-side APIs and admin endpoints are protected with secret authorization gates.
+            Manage daily Automated Content Pipelines with **Approval Mode**. Review, approve, or reject generated LinkedIn posts before publishing directly to your feed.
           </p>
         </div>
 
@@ -261,6 +371,94 @@ export default function LinkedInAdmin() {
                 </div>
               </div>
             )}
+
+            {/* PIPELINE APPROVAL SECTION */}
+            <div className="mb-10 rounded-3xl border border-primary/30 bg-primary/5 p-6 md:p-8 glass relative overflow-hidden">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5 mb-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider mb-1">
+                    <Sparkles size={14} /> Automated Daily Content Pipeline
+                  </div>
+                  <h2 className="text-xl font-bold text-foreground">APPROVAL MODE: ON (Manual Review Required)</h2>
+                  <p className="text-xs text-muted-foreground mt-1">Daily AI/Tech news candidates are held here for manual review. Posts are NEVER published automatically without your click.</p>
+                </div>
+                <button
+                  onClick={handleTriggerPipeline}
+                  disabled={actionLoading}
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-primary hover:bg-primary hover:text-black transition-all mono glass-sm"
+                >
+                  <Sparkles size={14} className={actionLoading ? "animate-spin" : ""} /> Generate New Draft Candidate
+                </button>
+              </div>
+
+              {pipelineMessage && (
+                <div className="mb-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium flex items-center gap-2.5 glass">
+                  <CheckCircle2 size={16} className="shrink-0" />
+                  <span>{pipelineMessage}</span>
+                </div>
+              )}
+
+              {pipelineError && (
+                <div className="mb-6 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400 text-xs font-medium flex items-center gap-2.5 glass">
+                  <AlertTriangle size={16} className="shrink-0" />
+                  <span>{pipelineError}</span>
+                </div>
+              )}
+
+              {pendingCandidate ? (
+                <div className="rounded-2xl border border-white/10 bg-background/80 p-6 glass-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[10px] font-bold text-amber-400 uppercase mono">
+                      <Clock size={12} /> Pending Approval Candidate
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground">
+                      Generated: {new Date(pendingCandidate.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-widest mono block">{pendingCandidate.sourceName} | {pendingCandidate.category}</span>
+                    <h3 className="text-base font-bold text-foreground mt-1">{pendingCandidate.headline}</h3>
+                    <a
+                      href={pendingCandidate.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 mt-1 font-mono break-all"
+                    >
+                      <ExternalLink size={12} /> {pendingCandidate.sourceUrl}
+                    </a>
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-white/10 bg-black/40 text-xs leading-relaxed text-foreground whitespace-pre-wrap font-sans">
+                    {pendingCandidate.generatedPost}
+                  </div>
+
+                  <div className="flex items-center gap-4 pt-2">
+                    <button
+                      onClick={handleApprovePendingPost}
+                      disabled={actionLoading || !status?.connected}
+                      className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-xs font-bold tracking-[.1em] text-black uppercase transition-all hover:bg-emerald-400 disabled:opacity-40 mono shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                    >
+                      <Check size={16} /> APPROVE & PUBLISH TO LINKEDIN
+                    </button>
+
+                    <button
+                      onClick={handleRejectPendingPost}
+                      disabled={actionLoading}
+                      className="inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-500/10 px-6 py-3 text-xs font-bold tracking-[.1em] text-rose-400 uppercase transition-all hover:bg-rose-500 hover:text-white disabled:opacity-40 mono"
+                    >
+                      <X size={16} /> REJECT DRAFT
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  <FileText size={32} className="mx-auto mb-2 opacity-50 text-primary" />
+                  <p className="text-sm font-semibold text-foreground">No Pending Draft Candidate</p>
+                  <p className="text-xs text-muted-foreground mt-1">The daily scheduler will generate the next candidate, or click "Generate New Draft Candidate" above to trigger now.</p>
+                </div>
+              )}
+            </div>
 
             <div className="grid gap-8 md:grid-cols-12">
               {/* Connection Status Card */}
@@ -352,91 +550,125 @@ export default function LinkedInAdmin() {
                 </div>
               </div>
 
-              {/* Test Post Publisher */}
-              <div className="md:col-span-7 rounded-2xl border border-white/10 bg-white/5 p-6 glass">
-                <div className="border-b border-white/10 pb-4 mb-5">
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mono">Manual Test Post Publisher</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Publish ONE manual post directly to your personal LinkedIn profile feed (`w_member_social`).</p>
+              {/* Test Post Publisher & History */}
+              <div className="md:col-span-7 space-y-8">
+                {/* Test Post Publisher */}
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">
+                  <div className="border-b border-white/10 pb-4 mb-5">
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mono">Manual Test Post Publisher</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">Publish ONE manual post directly to your personal LinkedIn profile feed (`w_member_social`).</p>
+                  </div>
+
+                  <form onSubmit={handlePublishTestPost} className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mono block mb-1.5">
+                        Post Commentary Text *
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={commentary}
+                        onChange={(e) => setCommentary(e.target.value)}
+                        placeholder="Type commentary text to share on your personal LinkedIn feed..."
+                        className="w-full rounded-xl border border-white/10 bg-background/80 p-3.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm font-medium leading-relaxed"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mono block mb-1.5">
+                        Attached Article Link (Optional)
+                      </label>
+                      <input
+                        type="url"
+                        value={linkUrl}
+                        onChange={(e) => setLinkUrl(e.target.value)}
+                        placeholder="https://www.rvan.me/news/..."
+                        className="w-full rounded-xl border border-white/10 bg-background/80 p-3 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm font-mono"
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={publishing || !status?.connected}
+                        className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.15em] text-black uppercase transition-all duration-300 hover:bg-primary/90 disabled:opacity-40 mono shadow-[0_0_20px_rgba(232,253,82,0.2)]"
+                      >
+                        {publishing ? (
+                          <>
+                            <div className="h-4 w-4 rounded-full border-2 border-black border-t-transparent animate-spin" />
+                            PUBLISHING TO LINKEDIN...
+                          </>
+                        ) : (
+                          <>
+                            <Send size={14} />
+                            PUBLISH TEST POST TO PERSONAL FEED
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+
+                  {publishResult && (
+                    <div className="mt-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs space-y-2 glass">
+                      <div className="flex items-center gap-2 font-bold text-sm">
+                        <CheckCircle2 size={16} /> {publishResult.message || "Successfully published!"}
+                      </div>
+                      <div className="font-mono text-[11px] bg-black/40 p-2.5 rounded-lg border border-white/5 space-y-1">
+                        <p><strong>Post ID:</strong> {publishResult.postId}</p>
+                        <p><strong>Author Member URN:</strong> {publishResult.authorUrn}</p>
+                        <p><strong>Timestamp:</strong> {publishResult.publishedAt}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {publishError && (
+                    <div className="mt-6 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400 text-xs space-y-2 glass">
+                      <div className="flex items-center gap-2 font-bold text-sm">
+                        <AlertTriangle size={16} /> Publication Failed
+                      </div>
+                      <p className="font-mono text-[11px] bg-black/40 p-2.5 rounded-lg border border-white/5 break-all">
+                        {publishError}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                <form onSubmit={handlePublishTestPost} className="space-y-4">
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mono block mb-1.5">
-                      Post Commentary Text *
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={commentary}
-                      onChange={(e) => setCommentary(e.target.value)}
-                      placeholder="Type commentary text to share on your personal LinkedIn feed..."
-                      className="w-full rounded-xl border border-white/10 bg-background/80 p-3.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm font-medium leading-relaxed"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mono block mb-1.5">
-                      Attached Article Link (Optional)
-                    </label>
-                    <input
-                      type="url"
-                      value={linkUrl}
-                      onChange={(e) => setLinkUrl(e.target.value)}
-                      placeholder="https://www.rvan.me/news/..."
-                      className="w-full rounded-xl border border-white/10 bg-background/80 p-3 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm font-mono"
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={publishing || !status?.connected}
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.15em] text-black uppercase transition-all duration-300 hover:bg-primary/90 disabled:opacity-40 mono shadow-[0_0_20px_rgba(232,253,82,0.2)]"
-                    >
-                      {publishing ? (
-                        <>
-                          <div className="h-4 w-4 rounded-full border-2 border-black border-t-transparent animate-spin" />
-                          PUBLISHING TO LINKEDIN...
-                        </>
-                      ) : (
-                        <>
-                          <Send size={14} />
-                          PUBLISH TEST POST TO PERSONAL FEED
-                        </>
-                      )}
-                    </button>
-                    {!status?.connected && (
-                      <p className="text-[11px] text-amber-400 mt-2 font-medium">
-                        ⚠️ You must connect your LinkedIn account above before publishing test posts.
-                      </p>
-                    )}
-                  </div>
-                </form>
-
-                {/* Publishing Results */}
-                {publishResult && (
-                  <div className="mt-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs space-y-2 glass">
-                    <div className="flex items-center gap-2 font-bold text-sm">
-                      <CheckCircle2 size={16} /> {publishResult.message || "Successfully published!"}
-                    </div>
-                    <div className="font-mono text-[11px] bg-black/40 p-2.5 rounded-lg border border-white/5 space-y-1">
-                      <p><strong>Post ID:</strong> {publishResult.postId}</p>
-                      <p><strong>Author Member URN:</strong> {publishResult.authorUrn}</p>
-                      <p><strong>Timestamp:</strong> {publishResult.publishedAt}</p>
+                {/* Published History Log */}
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">
+                  <div className="border-b border-white/10 pb-4 mb-5 flex items-center justify-between">
+                    <div>
+                      <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mono flex items-center gap-2">
+                        <History size={16} /> Published Story History
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Stories published to LinkedIn to prevent duplicates.</p>
                     </div>
                   </div>
-                )}
 
-                {publishError && (
-                  <div className="mt-6 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400 text-xs space-y-2 glass">
-                    <div className="flex items-center gap-2 font-bold text-sm">
-                      <AlertTriangle size={16} /> Publication Failed
+                  {status?.historyList && status.historyList.length > 0 ? (
+                    <div className="space-y-3">
+                      {status.historyList.map((item) => (
+                        <div key={item._id} className="p-3.5 rounded-xl border border-white/10 bg-black/30 text-xs space-y-1">
+                          <div className="flex items-center justify-between font-bold text-foreground">
+                            <span className="truncate max-w-md">{item.headline}</span>
+                            <span className="text-[10px] text-muted-foreground font-mono">{new Date(item.publishedAt).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+                            <span className="text-primary/80">ID: {item.postId}</span>
+                            {item.sourceUrl && (
+                              <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                                Source <ExternalLink size={10} />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <p className="font-mono text-[11px] bg-black/40 p-2.5 rounded-lg border border-white/5 break-all">
-                      {publishError}
-                    </p>
-                  </div>
-                )}
+                  ) : (
+                    <div className="py-6 text-center text-xs text-muted-foreground mono">
+                      No publication history recorded yet.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </>

@@ -7,10 +7,13 @@
     }
   ],
   "crons": [
-
     {
       "path": "/api/ingest-news",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/linkedin/pipeline",
+      "schedule": "0 9 * * *"
     }
   ],
   "redirects": [
