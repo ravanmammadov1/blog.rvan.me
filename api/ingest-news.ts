@@ -226,12 +226,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Trigger daily LinkedIn candidate post generation (Approval Mode)
+    // Pipeline selects ONE article from the Rvan.me news dataset just ingested
     try {
-      const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "rvan.me";
+      const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "www.rvan.me";
       const protocol = (req.headers["x-forwarded-proto"] as string) || "https";
+      const adminSecret = process.env.LINKEDIN_ADMIN_SECRET || "ravan_admin_2026_secret";
       await fetch(`${protocol}://${host}/api/linkedin/pipeline`, {
         method: "POST",
-        headers: { "x-admin-secret": "ravan_admin_2026_secret" },
+        headers: { "x-admin-secret": adminSecret },
       });
       console.log("LinkedIn daily pipeline candidate successfully triggered via ingest-news.");
     } catch (pipelineErr) {

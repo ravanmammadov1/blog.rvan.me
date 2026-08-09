@@ -1,5 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+/**
+ * LinkedIn Approve & Publish Endpoint
+ *
+ * Reads the pending draft from Sanity, publishes to LinkedIn API,
+ * records article slug + post ID in linkedinPublishHistory for dedup,
+ * and links the post to the Rvan.me article URL (NOT the original publisher).
+ */
+
 const PENDING_SINGLETON_ID = "linkedinPendingPostSingleton";
 const TOKEN_SINGLETON_ID = "linkedinTokenSingleton";
 
@@ -79,9 +87,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ error: "LinkedIn account is not connected. Please connect via Admin Panel." });
     }
 
-    console.log(`[linkedin/approve-post] Approving and publishing candidate: "${pendingDoc.headline}"`);
+    console.log(`[linkedin/approve-post] Approving and publishing: "${pendingDoc.headline}"`);
 
-    // 3. Publish to LinkedIn API (/v2/posts)
+    // 3. Build LinkedIn API payload
+    // sourceUrl should be the Rvan.me article URL, NOT the original publisher
+    const rvanUrl = pendingDoc.sourceUrl; // Already set to rvan.me/az/news/{slug} by pipeline
+
     const postPayload: Record<string, any> = {
       author: tokenDoc.memberUrn,
       commentary: pendingDoc.generatedPost.trim(),
@@ -95,15 +106,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       isReshareDisabledByAuthor: false,
     };
 
-    if (pendingDoc.sourceUrl) {
+    // Attach article link — this is the Rvan.me URL that appears as a link preview card
+    if (rvanUrl) {
       postPayload.content = {
         article: {
-          source: pendingDoc.sourceUrl,
-          title: pendingDoc.headline || pendingDoc.sourceName || "Article Link",
+          source: rvanUrl,
+          title: pendingDoc.headline || "Rvan.me",
         },
       };
     }
 
+    // 4. Publish to LinkedIn API (/v2/posts)
     const response = await fetch("https://api.linkedin.com/v2/posts", {
       method: "POST",
       headers: {
@@ -126,19 +139,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const postId = response.headers.get("x-restli-id") || "published";
     const nowIso = new Date().toISOString();
 
-    // 4. Save to Published History in Sanity
+    // 5. Save to Published History in Sanity (with articleSlug for deduplication)
     const historyDoc = {
       _id: `linkedinHistory_${Date.now()}`,
       _type: "linkedinPublishHistory",
       headline: pendingDoc.headline,
-      sourceUrl: pendingDoc.sourceUrl,
+      articleSlug: pendingDoc.articleSlug || null,
+      articleId: pendingDoc.articleId || null,
+      sourceUrl: pendingDoc.sourceUrl, // Rvan.me URL
+      originalSourceUrl: pendingDoc.originalSourceUrl || null,
       sourceName: pendingDoc.sourceName,
       category: pendingDoc.category,
       postId,
       publishedAt: nowIso,
     };
 
-    // 5. Update pending doc status to approved
+    // 6. Update pending doc status to approved
     const updatedPendingDoc = {
       ...pendingDoc,
       status: "approved",
@@ -151,14 +167,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       { createOrReplace: updatedPendingDoc },
     ]);
 
-    console.log(`[linkedin/approve-post] Post successfully published! Post ID: ${postId}`);
+    console.log(`[linkedin/approve-post] Post published! Post ID: ${postId}, Rvan.me URL: ${rvanUrl}`);
 
     return res.status(200).json({
       success: true,
       postId,
       headline: pendingDoc.headline,
+      rvanUrl,
       publishedAt: nowIso,
-      message: "Post approved and successfully published to your personal LinkedIn profile feed!",
+      message: "Post approved and successfully published to your personal LinkedIn profile!",
     });
   } catch (err: any) {
     console.error("[linkedin/approve-post] Exception during approval:", err);

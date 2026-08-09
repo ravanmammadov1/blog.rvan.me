@@ -11,8 +11,13 @@ interface PendingPost {
   headline: string;
   sourceName: string;
   sourceUrl: string;
+  originalSourceUrl?: string;
+  articleSlug?: string;
   category: string;
   generatedPost: string;
+  coverImageUrl?: string | null;
+  coverImageAlt?: string;
+  pipelineScore?: number;
   status: "pending" | "approved" | "rejected";
   createdAt: string;
   scheduledTime?: string;
@@ -23,6 +28,8 @@ interface PublishHistoryItem {
   _id: string;
   headline: string;
   sourceUrl: string;
+  originalSourceUrl?: string;
+  articleSlug?: string;
   sourceName?: string;
   category?: string;
   postId: string;
@@ -380,7 +387,7 @@ export default function LinkedInAdmin() {
                     <Sparkles size={14} /> Automated Daily Content Pipeline
                   </div>
                   <h2 className="text-xl font-bold text-foreground">APPROVAL MODE: ON (Manual Review Required)</h2>
-                  <p className="text-xs text-muted-foreground mt-1">Daily AI/Tech news candidates are held here for manual review. Posts are NEVER published automatically without your click.</p>
+                  <p className="text-xs text-muted-foreground mt-1">Selects the best article from the existing Rvan.me News Engine dataset. Posts link to rvan.me/az/news/. Posts are NEVER published automatically without your approval.</p>
                 </div>
                 <button
                   onClick={handleTriggerPipeline}
@@ -411,26 +418,65 @@ export default function LinkedInAdmin() {
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[10px] font-bold text-amber-400 uppercase mono">
                       <Clock size={12} /> Pending Approval Candidate
                     </span>
-                    <span className="text-[11px] font-mono text-muted-foreground">
-                      Generated: {new Date(pendingCandidate.createdAt).toLocaleString()}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      {pendingCandidate.pipelineScore && (
+                        <span className="text-[10px] font-mono text-primary/80 bg-primary/10 border border-primary/20 rounded-full px-2 py-0.5">
+                          Score: {pendingCandidate.pipelineScore}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-mono text-muted-foreground">
+                        Generated: {new Date(pendingCandidate.createdAt).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Cover Image Preview */}
+                  {pendingCandidate.coverImageUrl && (
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-black/20">
+                      <img
+                        src={pendingCandidate.coverImageUrl}
+                        alt={pendingCandidate.coverImageAlt || pendingCandidate.headline}
+                        className="w-full h-48 object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                      <div className="px-3 py-1.5 text-[10px] font-mono text-muted-foreground bg-black/40">
+                        LinkedIn Image Preview — Sanity CDN
+                      </div>
+                    </div>
+                  )}
 
                   <div>
                     <span className="text-[10px] font-bold text-primary uppercase tracking-widest mono block">{pendingCandidate.sourceName} | {pendingCandidate.category}</span>
                     <h3 className="text-base font-bold text-foreground mt-1">{pendingCandidate.headline}</h3>
+
+                    {/* Rvan.me Article URL */}
                     <a
                       href={pendingCandidate.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 mt-1 font-mono break-all"
+                      className="text-xs text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 mt-1.5 font-mono break-all"
                     >
                       <ExternalLink size={12} /> {pendingCandidate.sourceUrl}
                     </a>
+
+                    {/* Original Source (for reference only) */}
+                    {pendingCandidate.originalSourceUrl && (
+                      <div className="mt-1">
+                        <span className="text-[10px] text-muted-foreground/60 font-mono">
+                          Original: {pendingCandidate.originalSourceUrl}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="p-4 rounded-xl border border-white/10 bg-black/40 text-xs leading-relaxed text-foreground whitespace-pre-wrap font-sans">
-                    {pendingCandidate.generatedPost}
+                  {/* AI-Generated Azerbaijani Post Preview */}
+                  <div>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mono block mb-2">
+                      AI-Generated Azerbaijani LinkedIn Post
+                    </span>
+                    <div className="p-4 rounded-xl border border-white/10 bg-black/40 text-xs leading-relaxed text-foreground whitespace-pre-wrap font-sans">
+                      {pendingCandidate.generatedPost}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-4 pt-2">
