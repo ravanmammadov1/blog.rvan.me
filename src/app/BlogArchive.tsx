@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -109,6 +110,18 @@ export default function BlogArchive() {
 
     return result;
   }, [posts, activeCategory, searchQuery]);
+
+  const {
+    visibleItems: visiblePosts,
+    hasMore,
+    remainingCount,
+    loadMore,
+    isLoadingMore,
+  } = useProgressiveRendering(filteredPosts, {
+    initialBatchSize: 6,
+    stepBatchSize: 6,
+    resetDependencies: [activeCategory, searchQuery],
+  });
 
   return (
     <main
@@ -228,23 +241,38 @@ export default function BlogArchive() {
             )}
           </motion.div>
         ) : (
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.3}
-            className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {filteredPosts.map((post) => (
-              <BlogCard
-                key={post._id}
-                post={post}
-                hovered={hoveredBlog === post._id}
-                onHoverStart={() => setHoveredBlog(post._id)}
-                onHoverEnd={() => setHoveredBlog(null)}
-              />
-            ))}
-          </motion.div>
+          <>
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={0.3}
+              className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {visiblePosts.map((post) => (
+                <BlogCard
+                  key={post._id}
+                  post={post}
+                  hovered={hoveredBlog === post._id}
+                  onHoverStart={() => setHoveredBlog(post._id)}
+                  onHoverEnd={() => setHoveredBlog(null)}
+                />
+              ))}
+            </motion.div>
+
+            {/* Load More Pagination */}
+            {hasMore && (
+              <div className="mt-12 text-center">
+                <button
+                  onClick={loadMore}
+                  disabled={isLoadingMore}
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
+                >
+                  {isLoadingMore ? "LOADING BATCH..." : `LOAD MORE ARTICLES (${remainingCount} REMAINING)`}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

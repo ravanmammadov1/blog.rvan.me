@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings, NewsItem } from "../types/cms";
+import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { fetchCuratedNewsEngine, CuratedArticle } from "../lib/newsEngine";
@@ -95,8 +96,6 @@ export default function NewsArchive() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const [visibleLimit, setVisibleLimit] = useState(18);
-
   const filteredFeeds = useMemo(() => {
     let result = newsFeeds;
     if (activeTab !== "all") {
@@ -113,6 +112,18 @@ export default function NewsArchive() {
     }
     return result;
   }, [newsFeeds, activeTab, deferredSearch]);
+
+  const {
+    visibleItems: visibleFeeds,
+    hasMore,
+    remainingCount,
+    loadMore,
+    isLoadingMore,
+  } = useProgressiveRendering(filteredFeeds, {
+    initialBatchSize: 6,
+    stepBatchSize: 6,
+    resetDependencies: [activeTab, deferredSearch],
+  });
 
   const tabCounts: Record<string, number> = useMemo(() => ({
     all: newsFeeds.length,
@@ -215,7 +226,7 @@ export default function NewsArchive() {
           ) : (
             <>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredFeeds.slice(0, visibleLimit).map((item, idx) => {
+                {visibleFeeds.map((item, idx) => {
                   const sourceBadgeClass = SOURCE_COLORS[item.sourceName] || "text-primary border-primary/30 bg-primary/10";
                   const isInternal = item.link.startsWith("/news/");
 
@@ -339,13 +350,14 @@ export default function NewsArchive() {
               </div>
 
               {/* Load More Pagination */}
-              {visibleLimit < filteredFeeds.length && (
+              {hasMore && (
                 <div className="mt-12 text-center">
                   <button
-                    onClick={() => setVisibleLimit((prev) => prev + 18)}
-                    className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm"
+                    onClick={loadMore}
+                    disabled={isLoadingMore}
+                    className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
                   >
-                    LOAD MORE ARTICLES ({filteredFeeds.length - visibleLimit} REMAINING)
+                    {isLoadingMore ? "LOADING BATCH..." : `LOAD MORE ARTICLES (${remainingCount} REMAINING)`}
                   </button>
                 </div>
               )}

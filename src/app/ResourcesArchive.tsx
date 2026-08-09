@@ -15,6 +15,7 @@ import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { fetchLiveFontCatalog, FontItem } from "../lib/fontEngine";
 import { fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../lib/resourceEngine";
+import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -133,6 +134,18 @@ export default function ResourcesArchive() {
 
     return list;
   }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
+
+  const {
+    visibleItems: visibleCategoryItems,
+    hasMore: hasMoreCategoryItems,
+    remainingCount: remainingCategoryCount,
+    loadMore: loadMoreCategoryItems,
+    isLoadingMore: isLoadingMoreCategory,
+  } = useProgressiveRendering(filteredCategoryItems, {
+    initialBatchSize: 12,
+    stepBatchSize: 12,
+    resetDependencies: [activeCategory, deferredSearch],
+  });
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
@@ -309,57 +322,72 @@ export default function ResourcesArchive() {
                 </button>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredCategoryItems.map((item) => (
-                  <motion.article
-                    key={item.id}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <span className="text-xs font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
-                          {item.type}
-                        </span>
-                        {item.starsCount && (
-                          <span className="text-xs font-bold text-amber-400 flex items-center gap-1 mono">
-                            <Star size={12} className="fill-amber-400" /> {item.starsCount.toLocaleString()}
+              <>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {visibleCategoryItems.map((item) => (
+                    <motion.article
+                      key={item.id}
+                      variants={fadeUp}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <span className="text-xs font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
+                            {item.type}
                           </span>
-                        )}
+                          {item.starsCount && (
+                            <span className="text-xs font-bold text-amber-400 flex items-center gap-1 mono">
+                              <Star size={12} className="fill-amber-400" /> {item.starsCount.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+                          {item.title}
+                        </h3>
+
+                        <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-4">
+                          {item.description}
+                        </p>
                       </div>
 
-                      <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                        {item.title}
-                      </h3>
+                      <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
+                        <span className="text-muted-foreground">{item.source} {item.language ? `· ${item.language}` : ""}</span>
+                        {item.url.startsWith("/") ? (
+                          <Link to={item.url} className="text-primary hover:text-white flex items-center gap-1">
+                            VIEW <ArrowUpRight size={13} />
+                          </Link>
+                        ) : (
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:text-white flex items-center gap-1"
+                          >
+                            VISIT <ExternalLink size={13} />
+                          </a>
+                        )}
+                      </div>
+                    </motion.article>
+                  ))}
+                </div>
 
-                      <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-4">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
-                      <span className="text-muted-foreground">{item.source} {item.language ? `· ${item.language}` : ""}</span>
-                      {item.url.startsWith("/") ? (
-                        <Link to={item.url} className="text-primary hover:text-white flex items-center gap-1">
-                          VIEW <ArrowUpRight size={13} />
-                        </Link>
-                      ) : (
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-white flex items-center gap-1"
-                        >
-                          VISIT <ExternalLink size={13} />
-                        </a>
-                      )}
-                    </div>
-                  </motion.article>
-                ))}
-              </div>
+                {/* Load More Pagination */}
+                {hasMoreCategoryItems && (
+                  <div className="mt-12 text-center">
+                    <button
+                      onClick={loadMoreCategoryItems}
+                      disabled={isLoadingMoreCategory}
+                      className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
+                    >
+                      {isLoadingMoreCategory ? "LOADING BATCH..." : `LOAD MORE ITEMS (${remainingCategoryCount} REMAINING)`}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </section>
