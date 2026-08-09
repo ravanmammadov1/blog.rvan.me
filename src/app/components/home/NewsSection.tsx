@@ -22,7 +22,7 @@ export default function NewsSection() {
   useEffect(() => {
     fetchNews().then((cmsData) => {
       fetchHomeNewsEngine(cmsData || []).then((items) => {
-        setNewsList(items || []);
+        setNewsList((items || []).slice(0, 3));
       });
     });
   }, []);
