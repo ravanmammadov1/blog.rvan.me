@@ -1,7 +1,19 @@
 import { aggregateNewsFeeds, NormalizedResource } from "./rssAggregator";
 
+export interface ScoreFactorBreakdown {
+  sourceAuthority: number;
+  topicRelevance: number;
+  freshness: number;
+  contentQuality: number;
+  originality: number;
+  keywordMatch: number;
+  promotionalPenalty: number;
+  finalScore: number;
+}
+
 export interface CuratedArticle extends NormalizedResource {
   relevanceScore: number;
+  scoreBreakdown?: ScoreFactorBreakdown;
   sourceReferences?: string[];
   isPrimaryStory?: boolean;
 }
@@ -16,12 +28,16 @@ export interface NewsPipelineAuditResult {
   topSources: { source: string; count: number }[];
 }
 
-const HIGH_IMPACT_KEYWORDS = [
+const TOPIC_DEPTH_KEYWORDS = [
+  "architecture", "design system", "micro-interaction", "multimodal", "webgl",
+  "css grid", "compiler", "vfx", "motion design", "brand strategy", "framework",
+  "performance", "accessibility", "usability", "spatial computing", "vector",
+  "baseline", "edge runtime", "state management", "type safety", "typography"
+];
+
+const BRAND_KEYWORD_SIGNALS = [
   "figma", "adobe", "openai", "deepmind", "gemini", "gpt", "sora", "react", "next.js",
-  "vercel", "css", "webgpu", "visionos", "rive", "motion", "blender", "three.js",
-  "design system", "typography", "launch", "model", "architecture", "ai agent",
-  "brand campaign", "ux", "ui", "framework", "baseline", "vector", "web design",
-  "creative", "marketing", "developer", "animation", "vfx", "component", "interface"
+  "vercel", "css", "webgpu", "visionos", "rive", "motion", "blender", "three.js"
 ];
 
 const REJECT_PR_SPAM_KEYWORDS = [
@@ -30,7 +46,7 @@ const REJECT_PR_SPAM_KEYWORDS = [
   "top 10 cheap", "unbelievable secret", "affiliate link", "buy now"
 ];
 
-const TIER_ONE_SOURCES = [
+const TIER_ONE_AUTHORITY = [
   "Smashing Magazine", "UX Collective", "OpenAI", "Google DeepMind",
   "Hugging Face", "React Blog", "Vercel", "Codrops", "Motionographer",
   "Blender Dev", "Stash Magazine", "MIT Tech Review", "web.dev", "Sidebar.io"
@@ -58,36 +74,81 @@ export function passesQualityGate(article: NormalizedResource): boolean {
 }
 
 /**
- * Calculates a dynamic relevance score for an article (0 - 100+)
+ * Multi-Factor Balanced Scoring Formula
  */
-export function calculateRelevanceScore(article: NormalizedResource): number {
-  let score = 55;
-
+export function evaluateArticleScore(article: NormalizedResource): ScoreFactorBreakdown {
   const text = `${article.title} ${article.description || ""}`.toLowerCase();
 
-  // 1. High Impact Keyword Hits (+30 pts max)
-  let hits = 0;
-  HIGH_IMPACT_KEYWORDS.forEach((kw) => {
-    if (text.includes(kw)) hits++;
-  });
-  score += Math.min(hits * 7, 30);
-
-  // 2. Publisher Tier Bonus (+20 pts)
-  if (TIER_ONE_SOURCES.some((src) => article.sourceName?.toLowerCase().includes(src.toLowerCase()))) {
-    score += 20;
+  // 1. Source Authority (0 - 25 pts)
+  let sourceAuthority = 12;
+  if (TIER_ONE_AUTHORITY.some((src) => article.sourceName?.toLowerCase().includes(src.toLowerCase()))) {
+    sourceAuthority = 25;
   }
 
-  // 3. Freshness Scoring
+  // 2. Topic Depth & Relevance (0 - 20 pts)
+  let topicHits = 0;
+  TOPIC_DEPTH_KEYWORDS.forEach((kw) => {
+    if (text.includes(kw)) topicHits++;
+  });
+  const topicRelevance = Math.min(topicHits * 5 + 5, 20);
+
+  // 3. Freshness Scoring (0 - 20 pts)
+  let freshness = 0;
   const ageHours = (Date.now() - new Date(article.publishedAt).getTime()) / (1000 * 60 * 60);
   if (ageHours <= 24) {
-    score += 20;
+    freshness = 20;
   } else if (ageHours <= 48) {
-    score += 10;
-  } else if (ageHours > 168) {
-    score -= 15;
+    freshness = 12;
+  } else if (ageHours <= 168) {
+    freshness = 5;
+  } else {
+    freshness = -10;
   }
 
-  return Math.max(score, 0);
+  // 4. Content Quality / Depth (0 - 15 pts)
+  let contentQuality = 5;
+  const descLen = (article.description || "").trim().length;
+  if (descLen >= 200) {
+    contentQuality = 15;
+  } else if (descLen >= 80) {
+    contentQuality = 10;
+  }
+
+  // 5. Originality Bonus (0 - 10 pts)
+  const originality = article.isRss ? 10 : 8;
+
+  // 6. Keyword Brand Signal (CAPPED at max 10 pts)
+  let brandHits = 0;
+  BRAND_KEYWORD_SIGNALS.forEach((kw) => {
+    if (text.includes(kw)) brandHits++;
+  });
+  const keywordMatch = Math.min(brandHits * 3, 10);
+
+  // 7. Promotional / PR Penalty (0 to -30 pts)
+  let promotionalPenalty = 0;
+  if (text.includes("announces") || text.includes("launches new partner") || text.includes("sponsored")) {
+    promotionalPenalty = -15;
+  }
+
+  const finalScore = Math.max(
+    sourceAuthority + topicRelevance + freshness + contentQuality + originality + keywordMatch + promotionalPenalty,
+    0
+  );
+
+  return {
+    sourceAuthority,
+    topicRelevance,
+    freshness,
+    contentQuality,
+    originality,
+    keywordMatch,
+    promotionalPenalty,
+    finalScore,
+  };
+}
+
+export function calculateRelevanceScore(article: NormalizedResource): number {
+  return evaluateArticleScore(article).finalScore;
 }
 
 /**
@@ -127,7 +188,7 @@ export function deduplicateStories(articles: CuratedArticle[]): CuratedArticle[]
       existing.sourceReferences = refs;
 
       if (art.relevanceScore > existing.relevanceScore) {
-        map.set(existingKey, { ...art, sourceReferences: refs });
+        map.set(existingKey, { ...art, scoreBreakdown: art.scoreBreakdown, sourceReferences: refs });
       }
     } else {
       map.set(cleanTitle, { ...art, sourceReferences: [art.sourceName] });
@@ -171,11 +232,15 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
   const qualityItems = rawItems.filter(passesQualityGate);
   const afterQualityGate = qualityItems.length;
 
-  // 2. Score Articles
-  const scoredItems: CuratedArticle[] = qualityItems.map((item) => ({
-    ...item,
-    relevanceScore: calculateRelevanceScore(item),
-  }));
+  // 2. Score Articles with Multi-Factor Formula
+  const scoredItems: CuratedArticle[] = qualityItems.map((item) => {
+    const scoreBreakdown = evaluateArticleScore(item);
+    return {
+      ...item,
+      relevanceScore: scoreBreakdown.finalScore,
+      scoreBreakdown,
+    };
+  });
 
   // 3. De-duplicate Stories
   const dedupedItems = deduplicateStories(scoredItems);
@@ -245,7 +310,6 @@ export async function fetchHomeNewsEngine(cmsNews: any[] = []): Promise<CuratedA
   const all = await fetchCuratedNewsEngine(cmsNews);
   const homeEligible = all.filter((item) => item.relevanceScore >= 80);
 
-  // Ensure 1 article per publisher and diverse categories
   const seenSources = new Set<string>();
   const result: CuratedArticle[] = [];
 
