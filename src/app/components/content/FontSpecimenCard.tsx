@@ -79,7 +79,7 @@ export function FontSpecimenCard({
         <div className="my-4 p-4 rounded-xl border border-white/5 bg-background/60 overflow-hidden min-h-[96px] flex items-center">
           <p
             style={{
-              fontFamily: `"${font.family}", system-ui, -apple-system, sans-serif`,
+              fontFamily: `"${font.family}", "${font.family.replace(/\s+(Pro|Display|Extra|Variable|Math|Code|Sans|Mono|Serif)$/i, "").trim()}", system-ui, -apple-system, sans-serif`,
               fontSize: `${fontSizePx}px`,
               lineHeight: 1.25,
             }}
