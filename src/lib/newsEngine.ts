@@ -295,7 +295,7 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
   const dedupedItems = deduplicateStories(scoredItems);
   const afterDeduplication = dedupedItems.length;
 
-  const newsThresholdItems = dedupedItems.filter((i) => i.relevanceScore >= 60);
+  const newsThresholdItems = dedupedItems.filter((i) => i.relevanceScore >= 20 || passesQualityGate(i));
 
   // HARD HOME QUALITY GATE: Score >= 80 AND Audience Relevance >= 15
   const homeThresholdItems = dedupedItems.filter(

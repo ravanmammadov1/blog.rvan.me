@@ -8,7 +8,7 @@ import { PortableText } from "@portabletext/react";
 import { fetchNewsBySlug, fetchSiteSettings, fetchNews } from "../lib/sanityQueries";
 import { urlFor, client } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
-import { aggregateNewsFeeds, NormalizedResource } from "../lib/rssAggregator";
+import { aggregateNewsFeeds, NormalizedResource, CURATED_NEWS_CATALOG, getCachedNewsFeeds } from "../lib/rssAggregator";
 import { generateDetailedEditorial, getArticleCoverImage, DetailedEditorial } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -46,8 +46,29 @@ export default function NewsDetail() {
     setLoading(true);
 
     async function loadArticleData() {
+      if (!slug) return;
+      
+      // 0. Synchronous instant lookup pool (0ms render, NEVER show "Article Not Found" for catalog items!)
+      const cacheFeeds = getCachedNewsFeeds() || [];
+      const combinedPool = [...cacheFeeds, ...CURATED_NEWS_CATALOG];
+      
+      const instantMatch = combinedPool.find(
+        (item) =>
+          item.slug === slug ||
+          item.id === slug ||
+          item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug ||
+          slug.includes(item.slug || "") ||
+          (item.slug || "").includes(slug)
+      );
+
+      if (instantMatch) {
+        const cover = instantMatch.imageUrl || instantMatch.logoUrl || getArticleCoverImage(instantMatch.category, instantMatch.title);
+        setArticle({ ...instantMatch, logoUrl: cover });
+        setLoading(false); // Instant render!
+      }
+
       try {
-        // 1. First check Sanity CMS
+        // 1. Check Sanity CMS
         const sanityDoc = await fetchNewsBySlug(slug!);
         if (sanityDoc) {
           const pubIso = sanityDoc.publishedAt || new Date().toISOString();
@@ -72,33 +93,30 @@ export default function NewsDetail() {
             isRss: false,
           });
           setSanityBody(sanityDoc.body || null);
-          setLoading(false); // Show Sanity content immediately
+          setLoading(false);
         }
 
-        // 2. Single aggregateNewsFeeds call (reused for article lookup AND related)
+        // 2. Fetch aggregated feeds with background update
         const cmsNews = await fetchNews();
-        const feedPromise = aggregateNewsFeeds(cmsNews || []);
-        const timeoutPromise = new Promise<NormalizedResource[]>((resolve) =>
-          setTimeout(() => resolve([]), 3000)
-        );
-        const allItems = await Promise.race([feedPromise, timeoutPromise]);
+        const allItems = await aggregateNewsFeeds(cmsNews || []);
 
-        if (!sanityDoc && allItems.length > 0) {
+        if (allItems.length > 0) {
           const matched = allItems.find(
-            (item) => item.slug === slug || item.id === slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug
+            (item) =>
+              item.slug === slug ||
+              item.id === slug ||
+              item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug ||
+              slug.includes(item.slug || "")
           );
 
           if (matched) {
-            if (!matched.logoUrl && !matched.imageUrl) {
-              matched.logoUrl = getArticleCoverImage(matched.category, matched.title);
-            }
-            setArticle(matched);
+            const cover = matched.imageUrl || matched.logoUrl || getArticleCoverImage(matched.category, matched.title);
+            setArticle({ ...matched, logoUrl: cover });
           }
-        }
 
-        // Reuse same allItems for related articles (no second network call!)
-        if (allItems.length > 0) {
           setRelatedArticles(allItems.filter((a) => a.slug !== slug && a.id !== slug).slice(0, 3));
+        } else if (instantMatch) {
+          setRelatedArticles(combinedPool.filter((a) => a.slug !== slug && a.id !== slug).slice(0, 3));
         }
       } catch (err) {
         console.error("Error loading article detail:", err);
