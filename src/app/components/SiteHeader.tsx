@@ -6,6 +6,7 @@ import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
 import AuthModal from "./AuthModal";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

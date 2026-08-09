@@ -4,6 +4,7 @@ import { ArrowLeft, CheckCircle2, AlertTriangle, RefreshCw, Send, ShieldCheck, U
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 interface StatusResponse {
   connected: boolean;
@@ -23,6 +24,7 @@ export default function LinkedInAdmin() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<StatusResponse | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
+  const { getLocalizedPath } = useLanguage();
 
   // Manual publishing form state
   const [commentary, setCommentary] = useState("🚀 Testing LinkedIn automation on my personal profile via Rvan.me!");
@@ -103,7 +105,7 @@ export default function LinkedInAdmin() {
         {/* Header Breadcrumb */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase tracking-widest">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+            <Link to={getLocalizedPath("/")} className="hover:text-primary transition-colors">Home</Link>
             <span>/</span>
             <span className="text-foreground">LinkedIn OAuth & Member Publishing</span>
           </div>
