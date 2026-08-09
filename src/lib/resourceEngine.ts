@@ -3,6 +3,7 @@ import { loadStaticFontCatalog, FontItem, getFontSlug } from "./fontEngine";
 import { aggregateAllResources, NormalizedResource } from "./rssAggregator";
 import { fetchUniversalContentItems } from "./sanityQueries";
 import { INTERACTIVE_TOOLS } from "../app/lib/toolsRegistry";
+import { APPROVED_DISCOVERY_REPOS } from "./githubDiscoveryEngine";
 import { UniversalContentItem } from "../types/cms";
 
 export type ResourceCategoryKey =
@@ -205,8 +206,11 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
         });
       });
 
-      // 2. Add Curated GitHub Repositories
+      // 2. Add Curated & Approved Discovery GitHub Repositories (125 Curated + 18 Discovery)
       CURATED_GITHUB_REPOS.forEach((repo) => {
+        list.push(repo);
+      });
+      APPROVED_DISCOVERY_REPOS.forEach((repo) => {
         list.push(repo);
       });
 
