@@ -274,8 +274,38 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
         });
       });
 
-      cachedUnifiedResources = list;
-      return list;
+      // 6. Canonical URL & Title Deduplication Mapping
+      const dedupedMap = new Map<string, SharedResourceItem>();
+
+      list.forEach((item) => {
+        // Normalize URL key (strip trailing slashes & utm query parameters)
+        const cleanUrl = (item.url || "")
+          .toLowerCase()
+          .replace(/\/+$/, "")
+          .replace(/\?utm_[^&]+(&utm_[^&]+)*/g, "")
+          .trim();
+
+        // Normalize Title key
+        const cleanTitle = (item.title || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "")
+          .trim();
+
+        const canonicalKey = cleanUrl || cleanTitle || item.id;
+
+        if (!dedupedMap.has(canonicalKey)) {
+          dedupedMap.set(canonicalKey, item);
+        } else {
+          // If existing entry has fewer details (e.g. missing stars or icon), enrich it
+          const existing = dedupedMap.get(canonicalKey)!;
+          if (!existing.starsCount && item.starsCount) existing.starsCount = item.starsCount;
+          if (!existing.image && item.image) existing.image = item.image;
+        }
+      });
+
+      const finalUnifiedList = Array.from(dedupedMap.values());
+      cachedUnifiedResources = finalUnifiedList;
+      return finalUnifiedList;
     } catch (err) {
       console.error("Error in fetchUnifiedResources:", err);
       return [];
