@@ -20,6 +20,7 @@ import { JobCard } from "./components/content/JobCard";
 import { ScholarshipCard } from "./components/content/ScholarshipCard";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import PageHero from "./components/PageHero";
+import PageFilterBar from "./components/PageFilterBar";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
@@ -192,28 +193,20 @@ export default function ResourcesArchive() {
         description="Explore open-source font families, developer tools, vector icons, device mockups, and UI kits."
       />
 
-      {/* Consolidated Category Navigation (5 Broad Categories) */}
-      <section className="sticky top-20 z-30 px-6 py-3.5 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">
-        <div className="mx-auto max-w-[1600px] flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-          {Object.entries(CATEGORY_MAP).map(([key, config]) => {
-            const isActive = activeCategory === key;
-            return (
-              <button
-                key={key}
-                onClick={() => setParam("category", key)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
-                  isActive
-                    ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)] font-bold"
-                    : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                }`}
-              >
-                <span>{config.icon}</span>
-                {config.label}
-              </button>
-            );
-          })}
-        </div>
-      </section>
+      {/* Master Page Filter Bar & Search */}
+      <PageFilterBar
+        categories={Object.entries(CATEGORY_MAP).map(([key, config]) => ({
+          key,
+          label: config.label,
+          icon: config.icon,
+        }))}
+        activeCategory={activeCategory}
+        onSelectCategory={(key) => setParam("category", key)}
+        searchQuery={searchQuery}
+        onSearchChange={(q) => handleSearchChange(q)}
+        searchPlaceholder="Search fonts, tools, mockups & assets..."
+        searchId="resource-search"
+      />
 
       {/* ─────────────────────────────────────────────────────────────────────────────
           1. FONTS CATEGORY (OPEN-SOURCE & FREE COMMERCIAL FONT CATALOG)
@@ -222,25 +215,7 @@ export default function ResourcesArchive() {
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
             {/* Type Tester Controls */}
-            <div className="mb-8 p-5 rounded-2xl border border-white/10 bg-white/5 glass space-y-5">
-              {/* Search Input */}
-              <div className="relative w-full">
-                <label htmlFor="font-search" className="sr-only">Search fonts</label>
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={16} />
-                <input
-                  id="font-search"
-                  type="search"
-                  placeholder="Search font families by name or designer (e.g. Geist, Inter, Satoshi)..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-background/90 pl-11 pr-10 py-3 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-                />
-                {searchQuery && (
-                  <button onClick={() => handleSearchChange("")} aria-label="Clear font search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    <X size={15} />
-                  </button>
-                )}
-              </div>
+            <div className="mb-8 p-5 rounded-2xl border border-white/10 bg-white/5 glass space-y-4">
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2 border-t border-white/5">
                 <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
@@ -344,24 +319,6 @@ export default function ResourcesArchive() {
         ───────────────────────────────────────────────────────────────────────────── */
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Search Input */}
-            <div className="mb-8 relative max-w-md">
-              <label htmlFor="resource-search" className="sr-only">Search resources</label>
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
-              <input
-                id="resource-search"
-                type="search"
-                placeholder="Search fonts, tools, mockups & assets..."
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-              />
-              {searchQuery && (
-                <button onClick={() => handleSearchChange("")} aria-label="Clear resource search" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  <X size={13} />
-                </button>
-              )}
-            </div>
 
             {contentLoading ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

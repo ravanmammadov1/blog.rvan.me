@@ -19,6 +19,7 @@ import {
 import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings, NewsItem } from "../types/cms";
 import PageHero from "./components/PageHero";
+import PageFilterBar from "./components/PageFilterBar";
 import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds } from "../lib/rssAggregator";
 import { generateNewsSummary } from "../lib/contentEngine";
 import SEO from "./components/SEO";
@@ -161,53 +162,20 @@ export default function NewsArchive() {
         }
       />
 
-      {/* Sticky Tab Bar & Search */}
-      <section className="sticky top-20 z-30 px-6 py-4 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">
-        <div className="mx-auto max-w-[1600px] flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-            {NEWS_TABS.filter((tab) => tab.key === "all" || (tabCounts[tab.key] || 0) > 0).map((tab) => {
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap ${
-                    activeTab === tab.key
-                      ? "bg-primary text-black shadow-[0_0_16px_rgba(232,253,82,0.3)]"
-                      : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                  }`}
-                >
-                  <span>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Search Input */}
-          <div className="relative w-full md:w-80">
-            <label htmlFor="news-search" className="sr-only">Search news and articles</label>
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
-            <input
-              id="news-search"
-              type="search"
-              placeholder="Search news & articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/45 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Clear news search"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
+      {/* Master Page Filter Bar & Search */}
+      <PageFilterBar
+        categories={NEWS_TABS.filter((tab) => tab.key === "all" || (tabCounts[tab.key] || 0) > 0).map((tab) => ({
+          key: tab.key,
+          label: tab.label,
+          icon: tab.icon,
+        }))}
+        activeCategory={activeTab}
+        onSelectCategory={setActiveTab}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search news & articles..."
+        searchId="news-search"
+      />
 
       {/* Main News Stream Grid */}
       <section className="px-6 pb-28 md:px-10 relative z-10 pt-12">

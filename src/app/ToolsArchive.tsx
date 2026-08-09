@@ -10,6 +10,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
+import PageFilterBar from "./components/PageFilterBar";
 import { INTERACTIVE_TOOLS } from "./lib/toolsRegistry";
 
 const DesignerToolsPanel = lazy(() => import("./components/DesignerToolsPanel"));
@@ -88,46 +89,23 @@ export default function ToolsArchive() {
         gradientVariant="primary"
         description="Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly for CSS Grid, SVG Waves, Fluid Clamp(), Box Shadows, and SEO metadata."
       />
+      {/* Master Page Filter Bar & Search */}
+      <PageFilterBar
+        categories={toolCategories.map((cat) => ({
+          key: cat,
+          label: cat,
+        }))}
+        activeCategory={activeCategory}
+        onSelectCategory={setActiveCategory}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search tools (e.g. CSS Grid, SVG Wave, clamp)..."
+        searchId="tools-search"
+      />
 
       {/* Interactive Tools Showcase Grid */}
       <section className="px-6 py-12 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px]">
-          {/* Search & Filter Bar */}
-          <div className="mb-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-border pb-6">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60" size={15} />
-              <input
-                type="search"
-                placeholder="Search tools (e.g. CSS Grid, SVG Wave, clamp, box shadow)..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-white/10 bg-white/5 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  <X size={13} />
-                </button>
-              )}
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap gap-2">
-              {toolCategories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${
-                    activeCategory === cat
-                      ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.3)] font-bold"
-                      : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Interactive Tools Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {filteredInteractiveTools.map((tool) => (

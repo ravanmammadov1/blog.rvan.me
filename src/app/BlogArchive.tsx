@@ -13,6 +13,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
+import PageFilterBar from "./components/PageFilterBar";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -167,50 +168,22 @@ export default function BlogArchive() {
         description="Thoughts on design systems, motion craft, creative strategy, and building brands that move people."
       />
 
+      {/* Master Page Filter Bar & Search */}
+      <PageFilterBar
+        categories={categories.map((cat) => ({
+          key: cat,
+          label: cat,
+          count: categoryCounts[cat],
+        }))}
+        activeCategory={activeCategory}
+        onSelectCategory={setActiveCategory}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search articles..."
+        searchId="blog-search"
+      />
+
       <div className="mx-auto max-w-[1600px] px-6 py-6 md:px-10 relative z-10">
-
-        {/* Search & Filter bar */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          custom={0.15}
-          className="mt-14 space-y-6 border-b border-white/10 pb-8"
-        >
-          {/* Search */}
-          <div className="relative max-w-md">
-            <label htmlFor="blog-search" className="sr-only">Search articles</label>
-            <Search
-              size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60"
-            />
-            <input
-              id="blog-search"
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search articles..."
-              className="w-full rounded-full border border-white/10 bg-white/5 py-3 pl-11 pr-10 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition hover:text-foreground"
-                aria-label="Clear search"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-
-          {/* Categories */}
-          <CategoryFilter
-            categories={categories}
-            activeCategory={activeCategory}
-            onChange={setActiveCategory}
-            counts={categoryCounts}
-          />
-        </motion.div>
 
         {/* Results info */}
         <motion.div
