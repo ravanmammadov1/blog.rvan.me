@@ -37,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (error: any) {
     console.error("[linkedin/status] Error checking connection status:", error);
-    return res.status(500).json({
+    return res.status(200).json({
       connected: false,
       reconnectRequired: true,
       error: error.message || "Failed to inspect LinkedIn connection status",
