@@ -69,11 +69,12 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-.05em] leading-[1.02] text-foreground mb-8">
-                Visual energy for Refused Brands.
+                Design that moves. <br className="hidden sm:inline" />
+                Ideas that matter.
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground/90 font-medium max-w-2xl leading-relaxed mb-10">
-                Crafting motion design, brand systems, in-browser developer utilities, and industry intelligence for modern digital experiences.
+                A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
