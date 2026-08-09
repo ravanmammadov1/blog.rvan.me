@@ -225,6 +225,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
+    // Trigger daily LinkedIn candidate post generation (Approval Mode)
+    try {
+      const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "rvan.me";
+      const protocol = (req.headers["x-forwarded-proto"] as string) || "https";
+      await fetch(`${protocol}://${host}/api/linkedin/pipeline`, {
+        method: "POST",
+        headers: { "x-admin-secret": "ravan_admin_2026_secret" },
+      });
+      console.log("LinkedIn daily pipeline candidate successfully triggered via ingest-news.");
+    } catch (pipelineErr) {
+      console.error("Failed to trigger LinkedIn daily pipeline from ingest-news:", pipelineErr);
+    }
+
     return res.status(200).json({ success: true, results });
   } catch (globalErr: any) {
     console.error("Global Ingestion Error:", globalErr);
