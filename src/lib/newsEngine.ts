@@ -1,4 +1,4 @@
-import { aggregateNewsFeeds, NormalizedResource } from "./rssAggregator";
+import { aggregateNewsFeeds, NormalizedResource, CURATED_NEWS_CATALOG } from "./rssAggregator";
 
 export interface ScoreFactorBreakdown {
   audienceRelevance: number;  // max 25 (Primary Factor!)
