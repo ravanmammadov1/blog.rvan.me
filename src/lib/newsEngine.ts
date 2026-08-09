@@ -1,13 +1,14 @@
 import { aggregateNewsFeeds, NormalizedResource } from "./rssAggregator";
 
 export interface ScoreFactorBreakdown {
-  sourceAuthority: number;
-  topicRelevance: number;
-  freshness: number;
-  contentQuality: number;
-  originality: number;
-  keywordMatch: number;
-  promotionalPenalty: number;
+  audienceRelevance: number;  // max 25 (Primary Factor!)
+  sourceAuthority: number;    // max 20
+  topicDepth: number;         // max 15
+  freshness: number;          // max 15
+  contentDepth: number;       // max 10
+  originality: number;        // max 10
+  keywordSignal: number;      // max 5
+  promotionalPenalty: number; // penalty up to -30
   finalScore: number;
 }
 
@@ -23,21 +24,21 @@ export interface NewsPipelineAuditResult {
   afterDeduplication: number;
   afterQualityGate: number;
   newsThresholdCount: number; // Score >= 60
-  homeThresholdCount: number; // Score >= 80
+  homeThresholdCount: number; // Score >= 80 & Audience Relevance >= 15
   categoryCounts: Record<string, number>;
   topSources: { source: string; count: number }[];
 }
 
-const TOPIC_DEPTH_KEYWORDS = [
-  "architecture", "design system", "micro-interaction", "multimodal", "webgl",
-  "css grid", "compiler", "vfx", "motion design", "brand strategy", "framework",
-  "performance", "accessibility", "usability", "spatial computing", "vector",
-  "baseline", "edge runtime", "state management", "type safety", "typography"
-];
+const DESIGN_KEYWORDS = ["ui", "ux", "figma", "typography", "design system", "visual identity", "branding", "graphic design", "layout", "color", "design tokens", "user experience", "user interface", "spatial computing", "visionos"];
+const MARKETING_KEYWORDS = ["marketing campaign", "brand strategy", "ad creative", "social media", "growth strategy", "creator economy", "advertising", "brand story", "copywriting", "campaign"];
+const DEVELOPER_KEYWORDS = ["react", "next.js", "vercel", "css", "webgl", "webgpu", "javascript", "typescript", "performance", "browser", "frontend", "api", "compiler", "baseline", "edge runtime"];
+const MOTION_KEYWORDS = ["motion graphics", "3d rendering", "blender", "cinema 4d", "after effects", "rive", "vfx", "animation", "video production", "motion design", "spatial computing"];
+const CREATIVE_AI_KEYWORDS = ["creative ai", "generative design", "ai model", "multimodal", "prompt engineering", "ai design tools", "ai agent", "vision model", "llm agent"];
 
-const BRAND_KEYWORD_SIGNALS = [
-  "figma", "adobe", "openai", "deepmind", "gemini", "gpt", "sora", "react", "next.js",
-  "vercel", "css", "webgpu", "visionos", "rive", "motion", "blender", "three.js"
+const CORPORATE_PR_FINANCE_KEYWORDS = [
+  "merger", "acquisition", "paramount", "nielsen", "sec filing", "stock price",
+  "earnings call", "investor", "ceo transition", "fined $", "ftc lawsuit",
+  "ad network merger", "ticker:", "doubleverify", "wbd", "merger delay"
 ];
 
 const REJECT_PR_SPAM_KEYWORDS = [
@@ -53,19 +54,44 @@ const TIER_ONE_AUTHORITY = [
 ];
 
 /**
- * Hard Quality Gate: Rejects stubs, explicit spam PRs, and clickbait
+ * Calculates Audience Relevance (0 - 25 pts) for Rvan.me Personas
+ */
+export function calculateAudienceRelevance(article: NormalizedResource): number {
+  const text = `${article.title} ${article.description || ""}`.toLowerCase();
+
+  // Hard penalty for corporate finance / legal mergers / stock tickers
+  if (CORPORATE_PR_FINANCE_KEYWORDS.some((kw) => text.includes(kw))) {
+    return 3; // Corporate noise gets near zero relevance!
+  }
+
+  let personaHits = 0;
+  [DESIGN_KEYWORDS, MARKETING_KEYWORDS, DEVELOPER_KEYWORDS, MOTION_KEYWORDS, CREATIVE_AI_KEYWORDS].forEach((keywordGroup) => {
+    if (keywordGroup.some((kw) => text.includes(kw))) {
+      personaHits += 6;
+    }
+  });
+
+  // Source alignment (high relevance publishers)
+  const category = article.category;
+  if (category === "designNews" || category === "motionNews" || category === "frontendNews") {
+    personaHits += 7;
+  }
+
+  return Math.min(Math.max(personaHits, 0), 25);
+}
+
+/**
+ * Hard Quality Gate: Rejects stubs, explicit spam PRs, clickbait, and corporate finance noise
  */
 export function passesQualityGate(article: NormalizedResource): boolean {
   if (!article.title || article.title.trim().length < 8) return false;
 
   const text = `${article.title} ${article.description || ""}`.toLowerCase();
 
-  // Reject explicit PR spam / affiliate clickbait
   if (REJECT_PR_SPAM_KEYWORDS.some((kw) => text.includes(kw))) {
     return false;
   }
 
-  // Reject stubs without description or title length
   if (!article.description || article.description.trim().length < 15) {
     return false;
   }
@@ -74,74 +100,78 @@ export function passesQualityGate(article: NormalizedResource): boolean {
 }
 
 /**
- * Multi-Factor Balanced Scoring Formula
+ * New Weighted Scoring Formula
  */
 export function evaluateArticleScore(article: NormalizedResource): ScoreFactorBreakdown {
   const text = `${article.title} ${article.description || ""}`.toLowerCase();
 
-  // 1. Source Authority (0 - 25 pts)
-  let sourceAuthority = 12;
+  // 1. Audience Relevance (0 - 25 pts - PRIMARY FACTOR!)
+  const audienceRelevance = calculateAudienceRelevance(article);
+
+  // 2. Source Authority (0 - 20 pts)
+  let sourceAuthority = 10;
   if (TIER_ONE_AUTHORITY.some((src) => article.sourceName?.toLowerCase().includes(src.toLowerCase()))) {
-    sourceAuthority = 25;
+    sourceAuthority = 20;
   }
 
-  // 2. Topic Depth & Relevance (0 - 20 pts)
-  let topicHits = 0;
-  TOPIC_DEPTH_KEYWORDS.forEach((kw) => {
-    if (text.includes(kw)) topicHits++;
-  });
-  const topicRelevance = Math.min(topicHits * 5 + 5, 20);
+  // 3. Topic Depth (0 - 15 pts)
+  let topicDepth = 5;
+  if (text.includes("architecture") || text.includes("design system") || text.includes("micro-interaction") || text.includes("multimodal") || text.includes("webgl") || text.includes("compiler")) {
+    topicDepth = 15;
+  } else if (text.includes("guide") || text.includes("deep dive") || text.includes("workflow") || text.includes("update")) {
+    topicDepth = 10;
+  }
 
-  // 3. Freshness Scoring (0 - 20 pts)
+  // 4. Freshness Scoring (0 - 15 pts)
   let freshness = 0;
   const ageHours = (Date.now() - new Date(article.publishedAt).getTime()) / (1000 * 60 * 60);
   if (ageHours <= 24) {
-    freshness = 20;
+    freshness = 15;
   } else if (ageHours <= 48) {
-    freshness = 12;
+    freshness = 10;
   } else if (ageHours <= 168) {
     freshness = 5;
   } else {
     freshness = -10;
   }
 
-  // 4. Content Quality / Depth (0 - 15 pts)
-  let contentQuality = 5;
+  // 5. Content Depth (0 - 10 pts)
+  let contentDepth = 4;
   const descLen = (article.description || "").trim().length;
   if (descLen >= 200) {
-    contentQuality = 15;
+    contentDepth = 10;
   } else if (descLen >= 80) {
-    contentQuality = 10;
+    contentDepth = 7;
   }
 
-  // 5. Originality Bonus (0 - 10 pts)
+  // 6. Originality Bonus (0 - 10 pts)
   const originality = article.isRss ? 10 : 8;
 
-  // 6. Keyword Brand Signal (CAPPED at max 10 pts)
-  let brandHits = 0;
-  BRAND_KEYWORD_SIGNALS.forEach((kw) => {
-    if (text.includes(kw)) brandHits++;
-  });
-  const keywordMatch = Math.min(brandHits * 3, 10);
+  // 7. Keyword Brand Signal (CAPPED at max 5 pts)
+  let keywordSignal = 0;
+  if (text.includes("figma") || text.includes("adobe") || text.includes("openai") || text.includes("react") || text.includes("vercel")) {
+    keywordSignal = 5;
+  }
 
-  // 7. Promotional / PR Penalty (0 to -30 pts)
+  // 8. PR / Promo Penalty (0 to -30 pts)
   let promotionalPenalty = 0;
-  if (text.includes("announces") || text.includes("launches new partner") || text.includes("sponsored")) {
-    promotionalPenalty = -15;
+  if (text.includes("announces") || text.includes("sponsored") || text.includes("merger")) {
+    promotionalPenalty = -20;
   }
 
   const finalScore = Math.max(
-    sourceAuthority + topicRelevance + freshness + contentQuality + originality + keywordMatch + promotionalPenalty,
+    audienceRelevance + sourceAuthority + topicDepth + freshness + contentDepth + originality + keywordSignal + promotionalPenalty,
     0
   );
 
   return {
+    audienceRelevance,
     sourceAuthority,
-    topicRelevance,
+    topicDepth,
     freshness,
-    contentQuality,
+    contentDepth,
     originality,
-    keywordMatch,
+    keywordSignal,
     promotionalPenalty,
     finalScore,
   };
@@ -228,11 +258,9 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
   const rawItems = await aggregateNewsFeeds(cmsNews);
   const totalRaw = rawItems.length;
 
-  // 1. Quality Gate Filter
   const qualityItems = rawItems.filter(passesQualityGate);
   const afterQualityGate = qualityItems.length;
 
-  // 2. Score Articles with Multi-Factor Formula
   const scoredItems: CuratedArticle[] = qualityItems.map((item) => {
     const scoreBreakdown = evaluateArticleScore(item);
     return {
@@ -242,19 +270,19 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
     };
   });
 
-  // 3. De-duplicate Stories
   const dedupedItems = deduplicateStories(scoredItems);
   const afterDeduplication = dedupedItems.length;
 
-  // 4. Threshold Filters
   const newsThresholdItems = dedupedItems.filter((i) => i.relevanceScore >= 60);
-  const homeThresholdItems = dedupedItems.filter((i) => i.relevanceScore >= 80);
 
-  // 5. Apply Source Diversity
+  // HARD HOME QUALITY GATE: Score >= 80 AND Audience Relevance >= 15
+  const homeThresholdItems = dedupedItems.filter(
+    (i) => i.relevanceScore >= 80 && (i.scoreBreakdown?.audienceRelevance || 0) >= 15
+  );
+
   const diverseNews = applySourceDiversity(newsThresholdItems, 3);
   diverseNews.sort((a, b) => b.relevanceScore - a.relevanceScore || new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
-  // Category Distribution Stats
   const categoryCounts: Record<string, number> = {
     designNews: 0,
     aiNews: 0,
@@ -304,11 +332,16 @@ export async function fetchCuratedNewsEngine(cmsNews: any[] = []): Promise<Curat
 }
 
 /**
- * Main News Engine API for Home Page Showcase (Score >= 80, max 6 diverse items, max 1 per publisher)
+ * Main News Engine API for Home Page Showcase:
+ * HARD HOME QUALITY GATE ENFORCED: Score >= 80 AND Audience Relevance >= 15, max 1 per publisher
  */
 export async function fetchHomeNewsEngine(cmsNews: any[] = []): Promise<CuratedArticle[]> {
   const all = await fetchCuratedNewsEngine(cmsNews);
-  const homeEligible = all.filter((item) => item.relevanceScore >= 80);
+
+  // Filter ONLY articles with Score >= 80 AND Audience Relevance >= 15
+  const homeEligible = all.filter(
+    (item) => item.relevanceScore >= 80 && (item.scoreBreakdown?.audienceRelevance || 0) >= 15
+  );
 
   const seenSources = new Set<string>();
   const result: CuratedArticle[] = [];
@@ -321,10 +354,10 @@ export async function fetchHomeNewsEngine(cmsNews: any[] = []): Promise<CuratedA
     if (result.length >= 6) break;
   }
 
-  // Fallback if less than 6 meet score >= 80
+  // Fallback ONLY with articles that pass Audience Relevance >= 15
   if (result.length < 6) {
     for (const item of all) {
-      if (!seenSources.has(item.sourceName)) {
+      if (!seenSources.has(item.sourceName) && (item.scoreBreakdown?.audienceRelevance || 0) >= 15) {
         seenSources.add(item.sourceName);
         result.push(item);
       }
