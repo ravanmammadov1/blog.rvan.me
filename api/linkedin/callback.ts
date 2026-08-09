@@ -18,30 +18,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const adminRedirectBase = `${protocol}://${host}/admin/linkedin`;
   const redirectUri = process.env.LINKEDIN_REDIRECT_URI || `${protocol}://${host}/api/linkedin/callback`;
 
-  // Check 1: Did LinkedIn return an OAuth error query param?
-  if (error) {
-    const errMsg = (error_description as string) || (error as string) || "LinkedIn OAuth error";
-    console.error("[linkedin/callback] LinkedIn returned OAuth error:", errMsg);
-    return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent(errMsg)}`);
-  }
-
-  // Check 2: Was authorization code provided?
-  if (!code || typeof code !== "string") {
-    console.error("[linkedin/callback] Missing authorization code in query params");
-    return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent("Missing authorization code from LinkedIn")}`);
-  }
-
-  // Check 3: Inspect server-side environment variables
-  const clientId = process.env.LINKEDIN_CLIENT_ID;
-  const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
-
-  if (!clientId || !clientSecret) {
-    const envErr = `Missing server env variables: ${!clientId ? 'LINKEDIN_CLIENT_ID ' : ''}${!clientSecret ? 'LINKEDIN_CLIENT_SECRET' : ''}`.trim();
-    console.error("[linkedin/callback]", envErr);
-    return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent(envErr)}`);
-  }
-
   try {
+    const { code, error, error_description } = req.query || {};
+
+    // Check 1: Did LinkedIn return an OAuth error query param?
+    if (error) {
+      const errMsg = (error_description as string) || (error as string) || "LinkedIn OAuth error";
+      console.error("[linkedin/callback] LinkedIn returned OAuth error:", errMsg);
+      return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent(errMsg)}`);
+    }
+
+    // Check 2: Was authorization code provided?
+    if (!code || typeof code !== "string") {
+      console.error("[linkedin/callback] Missing authorization code in query params");
+      return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent("Missing authorization code from LinkedIn")}`);
+    }
+
+    // Check 3: Inspect server-side environment variables
+    const clientId = process.env.LINKEDIN_CLIENT_ID;
+    const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      const envErr = `Missing server env variables: ${!clientId ? 'LINKEDIN_CLIENT_ID ' : ''}${!clientSecret ? 'LINKEDIN_CLIENT_SECRET' : ''}`.trim();
+      console.error("[linkedin/callback]", envErr);
+      return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent(envErr)}`);
+    }
+
     // 1. Exchange code for access token
     console.log("[linkedin/callback] Initiating token exchange with redirect_uri:", redirectUri);
     const tokenParams = new URLSearchParams({
