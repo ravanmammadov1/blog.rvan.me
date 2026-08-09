@@ -28,8 +28,11 @@ const fadeUp = {
   }),
 };
 
+import { useLanguage } from "../lib/i18n/LanguageContext";
+
 export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,34 +68,34 @@ export default function HomePage() {
               className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary mono uppercase mb-6">
-                <Sparkles size={13} /> STUDIO VISION &amp; CREATIVE ENGINE
+                <Sparkles size={13} /> {t("heroBadge", "STUDIO VISION & CREATIVE ENGINE")}
               </div>
 
               <h1
                 className="font-bold tracking-[-.04em] leading-[1.05] text-foreground mb-8 w-full"
                 style={{ fontSize: "clamp(2.4rem, 5.8vw, 6rem)" }}
               >
-                Design that moves.<br />
-                Ideas that matter.
+                {t("heroTitle1", "Design that moves.")}<br />
+                {t("heroTitle2", "Ideas that matter.")}
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground/90 font-medium max-w-2xl leading-relaxed mb-10">
-                A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.
+                {t("heroSubtitle", "A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.")}
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
                 <Link
-                  to="/resources"
+                  to={getLocalizedPath("/resources")}
                   className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-[0_0_25px_rgba(232,253,82,0.25)]"
                 >
-                  EXPLORE RESOURCES <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  {t("btnExploreResources", "EXPLORE RESOURCES")} <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
 
                 <Link
-                  to="/news"
+                  to={getLocalizedPath("/news")}
                   className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary/50 hover:bg-white/10 glass"
                 >
-                  READ INDUSTRY NEWS <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                  {t("btnReadNews", "READ INDUSTRY NEWS")} <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                 </Link>
               </div>
             </motion.div>

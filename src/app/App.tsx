@@ -32,6 +32,64 @@ import CookiePreferencesModal from "./components/CookiePreferencesModal";
 import GoogleTagManager from "./components/GoogleTagManager";
 import { GlobalNoiseBackdrop } from "@/components/ui/noise-background";
 
+import { LanguageProvider } from "../lib/i18n/LanguageContext";
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* English Default Routes */}
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/ravan-mammadov" element={<ProfilePage />} />
+      <Route path="/work" element={<Navigate to="/profile" replace />} />
+      <Route path="/work/:slug" element={<ProjectDetail />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/blog" element={<BlogArchive />} />
+      <Route path="/blog/:slug" element={<BlogDetail />} />
+      <Route path="/news" element={<NewsArchive />} />
+      <Route path="/news/:slug" element={<NewsDetail />} />
+      <Route path="/tools" element={<ToolsArchive />} />
+      <Route path="/tools/:toolId" element={<ToolDetailPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/resources" element={<ResourcesArchive />} />
+      <Route path="/resources/:slug" element={<ResourceDetail />} />
+      <Route path="/ai-tools" element={<AiToolArchivePage />} />
+      <Route path="/opportunities" element={<OpportunityArchivePage />} />
+      <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
+      <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
+
+      {/* Azerbaijani (/az) Parallel Routes */}
+      <Route path="/az" element={<HomePage />} />
+      <Route path="/az/about" element={<AboutPage />} />
+      <Route path="/az/profile" element={<ProfilePage />} />
+      <Route path="/az/ravan-mammadov" element={<ProfilePage />} />
+      <Route path="/az/work" element={<Navigate to="/az/profile" replace />} />
+      <Route path="/az/work/:slug" element={<ProjectDetail />} />
+      <Route path="/az/contact" element={<ContactPage />} />
+      <Route path="/az/blog" element={<BlogArchive />} />
+      <Route path="/az/blog/:slug" element={<BlogDetail />} />
+      <Route path="/az/news" element={<NewsArchive />} />
+      <Route path="/az/news/:slug" element={<NewsDetail />} />
+      <Route path="/az/tools" element={<ToolsArchive />} />
+      <Route path="/az/tools/:toolId" element={<ToolDetailPage />} />
+      <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/az/cookie-policy" element={<CookiePolicyPage />} />
+      <Route path="/az/terms" element={<TermsPage />} />
+      <Route path="/az/resources" element={<ResourcesArchive />} />
+      <Route path="/az/resources/:slug" element={<ResourceDetail />} />
+      <Route path="/az/ai-tools" element={<AiToolArchivePage />} />
+      <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
+      <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
+      <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
 function AppContent() {
   useClarity();
   const { consent } = useCookieConsent();
@@ -40,36 +98,7 @@ function AppContent() {
     <>
       <GlobalNoiseBackdrop />
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/ravan-mammadov" element={<ProfilePage />} />
-          <Route path="/work" element={<Navigate to="/profile" replace />} />
-          <Route path="/work/:slug" element={<ProjectDetail />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/blog" element={<BlogArchive />} />
-          <Route path="/blog/:slug" element={<BlogDetail />} />
-          <Route path="/news" element={<NewsArchive />} />
-          <Route path="/news/:slug" element={<NewsDetail />} />
-          <Route path="/tools" element={<ToolsArchive />} />
-          <Route path="/tools/:toolId" element={<ToolDetailPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/cookie-policy" element={<CookiePolicyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/resources" element={<ResourcesArchive />} />
-          <Route path="/resources/:slug" element={<ResourceDetail />} />
-          <Route path="/ai-tools" element={<AiToolArchivePage />} />
-          <Route path="/opportunities" element={<OpportunityArchivePage />} />
-          <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
-          <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
-
-
-
-
-
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppRoutes />
       </Suspense>
 
       <CookieConsentBanner />
@@ -92,7 +121,9 @@ export default function App() {
   return (
     <AuthProvider>
       <CookieConsentProvider>
-        <AppContent />
+        <LanguageProvider>
+          <AppContent />
+        </LanguageProvider>
       </CookieConsentProvider>
     </AuthProvider>
   );

@@ -15,6 +15,8 @@ import SiteHeader from "./components/SiteHeader";
 import CommentSection from "./components/CommentSection";
 import Footer from "./components/Footer";
 
+import { useLanguage } from "../lib/i18n/LanguageContext";
+
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
   visible: (delay = 0) => ({
@@ -33,6 +35,7 @@ export default function NewsDetail() {
   const [relatedArticles, setRelatedArticles] = useState<NormalizedResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -156,10 +159,10 @@ export default function NewsDetail() {
           <h1 className="text-4xl font-semibold mb-4">Article Not Found</h1>
           <p className="text-muted-foreground mb-8">The requested publication could not be located.</p>
           <Link
-            to="/news"
+            to={getLocalizedPath("/news")}
             className="inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3 text-xs font-bold tracking-widest text-primary hover:bg-primary hover:text-black transition-all mono"
           >
-            <ArrowLeft size={16} /> BACK TO NEWS HUB
+            <ArrowLeft size={16} /> {t("backToNews", "BACK TO NEWS HUB")}
           </Link>
         </div>
       </main>
@@ -170,12 +173,13 @@ export default function NewsDetail() {
     article.title,
     article.description,
     article.sourceName,
-    article.category
+    article.category,
+    language
   );
 
   const coverImage = article.logoUrl || getArticleCoverImage(article.category, article.title);
   const siteDomain = siteSettings?.seo?.canonicalUrl || "https://www.rvan.me";
-  const articleUrl = `${siteDomain}/news/${article.slug}`;
+  const articleUrl = `${siteDomain}${getLocalizedPath(`/news/${article.slug}`)}`;
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
@@ -208,10 +212,10 @@ export default function NewsDetail() {
           {/* Back button & Action controls */}
           <div className="mb-8 flex items-center justify-between">
             <Link
-              to="/news"
+              to={getLocalizedPath("/news")}
               className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase"
             >
-              <ArrowLeft size={14} /> BACK TO NEWS
+              <ArrowLeft size={14} /> {t("backToNews", "BACK TO NEWS")}
             </Link>
 
             <button
@@ -219,7 +223,7 @@ export default function NewsDetail() {
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-all glass-sm mono"
             >
               {copied ? <Check size={14} className="text-emerald-400" /> : <Share2 size={14} />}
-              {copied ? "COPIED" : "SHARE"}
+              {copied ? t("linkCopied", "COPIED") : t("copyLink", "SHARE")}
             </button>
           </div>
 

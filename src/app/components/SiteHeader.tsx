@@ -139,6 +139,34 @@ function UserAuthMenu() {
 
 
 
+import { useLanguage } from "../../lib/i18n/LanguageContext";
+
+function LanguageSwitcher() {
+  const { language, switchLanguage } = useLanguage();
+  return (
+    <div className="flex items-center rounded-full border border-white/20 bg-white/5 p-0.5 text-[10px] font-bold mono tracking-wider text-foreground glass-sm shrink-0 self-center">
+      <button
+        onClick={() => switchLanguage("en")}
+        className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
+          language === "en" ? "bg-primary text-black shadow-sm" : "text-white/60 hover:text-white"
+        }`}
+        aria-label="Switch to English"
+      >
+        EN
+      </button>
+      <button
+        onClick={() => switchLanguage("az")}
+        className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
+          language === "az" ? "bg-primary text-black shadow-sm" : "text-white/60 hover:text-white"
+        }`}
+        aria-label="Azərbaycan dilinə keçin"
+      >
+        AZ
+      </button>
+    </div>
+  );
+}
+
 interface SiteHeaderProps {
   siteSettings?: SiteSettings | null;
 }
@@ -147,8 +175,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { t, getLocalizedPath, language } = useLanguage();
 
-  const isHomePage = location.pathname === "/";
+  const isHomePage = location.pathname === "/" || location.pathname === "/az";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -167,34 +196,22 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, []);
 
-  const getNavHref = (target: string) => {
-    if (target.startsWith("/")) return target;
-    const normalized = target.toLowerCase();
-    if (normalized === "top" || normalized === "home") return "/";
-    if (normalized === "about") return "/about";
-    return `/${normalized}`;
-  };
-
   const baseNavItems = [
-    { label: "HOME",      target: "/" },
-    { label: "RESOURCES", target: "/resources" },
-    { label: "NEWS",      target: "/news" },
-    { label: "TOOLS",     target: "/tools" },
-    { label: "BLOG",      target: "/blog" },
-    { label: "ABOUT",     target: "/about" },
-    { label: "CONTACT",   target: "/contact" },
+    { label: t("navHome", "HOME"),      target: "/" },
+    { label: t("navResources", "RESOURCES"), target: "/resources" },
+    { label: t("navNews", "NEWS"),      target: "/news" },
+    { label: t("navTools", "TOOLS"),     target: "/tools" },
+    { label: t("navBlog", "BLOG"),      target: "/blog" },
+    { label: t("navAbout", "ABOUT"),     target: "/about" },
+    { label: t("navContact", "CONTACT"),   target: "/contact" },
   ];
 
-
-  // Hide HOME when on the Home page; show HOME only when on other pages
   const navItems = baseNavItems.filter((item) => {
     if (item.target === "/") {
       return !isHomePage;
     }
     return true;
   });
-
-  const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
 
   return (
     <>
@@ -208,7 +225,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
         <div className="mx-auto flex h-11 md:h-12 max-w-[1600px] items-center justify-between px-6 md:px-10">
           {/* Logo & Brand */}
           <Link
-            to="/"
+            to={getLocalizedPath("/")}
             className="group flex items-center gap-3 rounded-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background shrink-0 self-center"
             aria-label="Ravan Mammadov Home"
           >
@@ -234,16 +251,17 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-2 text-[10.5px] font-medium tracking-[.08em] mono uppercase md:flex shrink-0 self-center">
             {navItems.map((item) => {
+              const localizedTarget = getLocalizedPath(item.target);
               const isActive =
                 item.target === "/"
-                  ? location.pathname === "/"
-                  : location.pathname === item.target ||
-                    location.pathname.startsWith(item.target + "/");
+                  ? isHomePage
+                  : location.pathname === localizedTarget ||
+                    location.pathname.startsWith(localizedTarget + "/");
 
               return (
                 <Link
-                  key={item.label}
-                  to={getNavHref(item.target)}
+                  key={item.target}
+                  to={localizedTarget}
                   className={`relative px-3 py-1.5 transition-colors duration-300 ${
                     isActive
                       ? "text-white font-bold"
@@ -266,6 +284,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
  
           {/* Action Buttons & Authentication */}
           <div className="flex items-center gap-3 shrink-0 self-center">
+            {/* Language Switcher (EN | AZ) */}
+            <LanguageSwitcher />
+
             {/* Auth Button / Profile Dropdown */}
             <UserAuthMenu />
 

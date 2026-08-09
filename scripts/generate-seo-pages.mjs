@@ -305,26 +305,33 @@ const curatedNewsPages = [
 }));
 
 const pages = [...staticPages, ...cmsPages, ...curatedNewsPages, ...fontPages];
+const azPages = pages.map((p) => ({
+  ...p,
+  path: p.path === "/" ? "/az" : `/az${p.path}`,
+  title: `${p.title} — Rvan.me (AZ)`,
+}));
 
-for (const page of pages) {
+const allPages = [...pages, ...azPages];
+
+for (const page of allPages) {
   const pageDirectory = page.path === "/" ? distRoot : path.join(distRoot, ...page.path.split("/").filter(Boolean));
   await fs.mkdir(pageDirectory, { recursive: true });
   await fs.writeFile(path.join(pageDirectory, "index.html"), applyPageMetadata(template, page), "utf8");
 }
 
-console.log(`Generated SEO-ready HTML for ${pages.length} routes.`);
+console.log(`Generated SEO-ready HTML for ${allPages.length} routes (EN + AZ).`);
 
 // Generate dist/sitemap.xml automatically
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages
+${allPages
   .map((p) => {
     const url = `${domain}${p.path === "/" ? "/" : p.path.replace(/\/+$/, "")}`;
-    return `  <url>\n    <loc>${url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${p.path === "/" ? "1.0" : p.path.startsWith("/fonts/") ? "0.7" : "0.8"}</priority>\n  </url>`;
+    return `  <url>\n    <loc>${url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${p.path === "/" || p.path === "/az" ? "1.0" : p.path.includes("/fonts/") ? "0.7" : "0.8"}</priority>\n  </url>`;
   })
   .join("\n")}
 </urlset>`;
 
 await fs.writeFile(path.join(distRoot, "sitemap.xml"), sitemapXml.trim(), "utf8");
-console.log(`Generated sitemap.xml with ${pages.length} URLs.`);
+console.log(`Generated sitemap.xml with ${allPages.length} URLs.`);
 

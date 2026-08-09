@@ -204,9 +204,56 @@ export function generateDetailedEditorial(
   title: string,
   rawExcerpt: string,
   sourceName: string,
-  category = "Industry"
+  category = "Industry",
+  language: "en" | "az" = "en"
 ): DetailedEditorial {
   const cleanExcerpt = rawExcerpt.replace(/<[^>]*>?/gm, "").trim() || title;
+
+  if (language === "az") {
+    const overview = `Bu analitik redaksiya icmalı original olaraq ${sourceName} tərəfindən dərc edilmiş "${title}" mövzusunu təhlil edir. Məqalə ${category} sahəsində baş verən vacib inkişafları və müasir istifadəçi gözləntilərinin dizayn paradaiqmalarını necə dəyişdiyini vurğulayır. Rəqəmsal məhsullar mürəkkəbləşdikcə, komandaların keyfiyyəti və performansı qorumaq üçün belə mühüm standartlara ehtiyacı var.`;
+    const whatsNew = `Bu yeniləmədə təqdim olunan əsas nailiyyətlər arxitekturanın təkmilləşdirilməsi və istehsalat səmərəliliyinin artırılmasına yönəlib. Xüsusilə, "${title}" yaradıcıların daha sürətli prototipləşdirmə aparmasına və yeniləmələri inamla tətbiq etməsinə imkan yaradır.`;
+    const keyFeatures = [
+      `Optimallaşdırılmış Arxitektura: ${sourceName} tərəfindən hazırlanmış standart inteqrasiya yolları.`,
+      `Yüksək Performans: Resurs istifadəsinin azaldılması və render gecikmələrinin aradan qaldırılması.`,
+      `Təkmilləşdirilmiş Alətlər: Dizayner və proqramçıların məhsuldarlığını artıran intuitiv imkanlar.`,
+      `Çox-Platformalı Uyğunluq: Veb, iş masası və mobil mühitlərdə vahid vizual keyfiyyət.`,
+      `İctimai Sınaq: Ən aparıcı texnologiya komandalarının təcrübəsinə əsaslanan sistem.`,
+    ];
+    const technicalBreakdown = `Mühəndislik nöqteyi-nəzərindən, "${title}" arxasında duran sistem müasir resurs idarəetməsi və modul strukturlara əsaslanır. Ağır hesablama məntiqlərini əsas interfeysdən ayırmaqla tədqiqatlar və vizual qarşılıqlı əlaqələr 60 FPS səviyyəsində rəvan qalır.`;
+    const industryImpact = `${sourceName} tərəfindən təqdim olunan bu yenilik geniş yaradıcı və proqram təminatı ekosistemi üçün mühüm mərhələdir. Süni intellekt və canlı əməkdaşlıq mühitində bu standartları mənimsəyən komandalar bazara çıxış sürətini ciddi şəkildə artırırlar.`;
+    const whyItMatters = `${sourceName} kimi nüfuzlu mənbələrin təcrübəsinə uyğunlaşmaq rəqəmsal məhsulların daima müasir keyfiyyət standartında qalmasına zəmanət verir.`;
+    const keyTakeaways = [
+      `Məhsuldarlıq Artımı: Məqalədə qeyd olunan strategiyaların tətbiqi iş sürətini artırır.`,
+      `Genişlənə Bilən Komponentlər: Modul strukturlar texniki borc yaratmadan böyüməni dəstəkləyir.`,
+      `Gələcəyə Hazır İnfrastruktur: Uzunmüddətli çərçivə uyğunluğu.`,
+      `Əməli Sahə İcmalı: Rəqəmsal liderlər və dizaynerlər üçün dəyərli istinad materialı.`,
+    ];
+
+    const fullText = [
+      overview,
+      whatsNew,
+      keyFeatures.join(" "),
+      technicalBreakdown,
+      industryImpact,
+      whyItMatters,
+      keyTakeaways.join(" "),
+    ].join(" ");
+
+    const wordCount = fullText.split(/\s+/).length;
+    const estimatedReadingTimeMinutes = Math.max(3, Math.ceil(wordCount / 200));
+
+    return {
+      overview,
+      whatsNew,
+      keyFeatures,
+      technicalBreakdown,
+      industryImpact,
+      whyItMatters,
+      keyTakeaways,
+      estimatedReadingTimeMinutes,
+      wordCount,
+    };
+  }
 
   const overview = `This comprehensive editorial report analyzes "${title}", originally published by ${sourceName}. The article highlights pivotal shifts across ${category}, exploring how technological evolution and modern user expectations are driving new design paradigms. At its core, the development addresses critical challenges in workflow efficiency, technical scalability, and user interface ergonomics. As digital products become increasingly complex and multi-layered, teams require robust frameworks to maintain velocity without sacrificing quality or performance.`;
 
@@ -259,8 +306,8 @@ export function generateDetailedEditorial(
   };
 }
 
-export function generateNewsSummary(title: string, rawExcerpt: string, sourceName: string) {
-  const editorial = generateDetailedEditorial(title, rawExcerpt, sourceName);
+export function generateNewsSummary(title: string, rawExcerpt: string, sourceName: string, language: "en" | "az" = "en") {
+  const editorial = generateDetailedEditorial(title, rawExcerpt, sourceName, "Industry", language);
   return {
     overview: editorial.overview,
     whatsNew: editorial.whatsNew,

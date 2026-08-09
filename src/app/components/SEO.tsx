@@ -140,7 +140,6 @@ export default function SEO({
     updateMeta('meta[property="og:image:secure_url"]', resolvedOgImage);
     updateMeta('meta[property="og:image:type"]', "image/jpeg");
     updateMeta('meta[property="og:image:width"]', "1200");
-    updateMeta('meta[property="og:image:height"]', "630");
     updateMeta('meta[property="og:image:alt"]', resolvedTitle);
 
     if (type === "article") {
@@ -148,14 +147,36 @@ export default function SEO({
       if (modifiedDate) updateMeta('meta[property="article:modified_time"]', modifiedDate);
       updateMeta('meta[property="article:author"]', resolvedAuthor);
     }
+    
+    const isAz = resolvedUrl.includes("/az/") || resolvedUrl.endsWith("/az");
+    updateMeta('meta[property="og:locale"]', isAz ? "az_AZ" : "en_US");
 
-    let canonical: HTMLLinkElement | null = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.rel = "canonical";
-      document.head.appendChild(canonical);
-    }
-    canonical.href = resolvedUrl;
+    // Hreflang alternate links
+    const isAzPath = resolvedUrl.includes("/az/") || resolvedUrl.endsWith("/az");
+    const enCanonical = isAzPath
+      ? resolvedUrl.replace(`${siteDomain}/az`, siteDomain).replace(/\/\/$/, "/")
+      : resolvedUrl;
+    const azCanonical = isAzPath
+      ? resolvedUrl
+      : (resolvedUrl === `${siteDomain}/` ? `${siteDomain}/az` : resolvedUrl.replace(`${siteDomain}/`, `${siteDomain}/az/`));
+
+    const updateLink = (rel: string, href: string, hreflang?: string) => {
+      const selector = hreflang ? `link[rel="${rel}"][hreflang="${hreflang}"]` : `link[rel="${rel}"]`;
+      let element = document.querySelector(selector);
+      if (!element) {
+        const link = document.createElement("link");
+        link.rel = rel;
+        if (hreflang) link.setAttribute("hreflang", hreflang);
+        document.head.appendChild(link);
+        element = link;
+      }
+      element.setAttribute("href", href);
+    };
+
+    updateLink("canonical", resolvedUrl);
+    updateLink("alternate", enCanonical, "en");
+    updateLink("alternate", azCanonical, "az");
+    updateLink("alternate", enCanonical, "x-default");
 
     const sanityFaviconUrl = (favicon || activeSettings?.favicon)
       ? urlFor(favicon || activeSettings?.favicon)?.url()
