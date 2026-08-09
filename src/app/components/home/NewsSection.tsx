@@ -22,10 +22,10 @@ export default function NewsSection() {
     fetchNews()
       .then((cmsNews) => fetchHomeNewsEngine(cmsNews || []))
       .then((items) => {
-        setNewsList((items || []).slice(0, 6));
+        setNewsList((items || []).slice(0, 3));
       })
       .catch(() => {
-        fetchHomeNewsEngine([]).then((items) => setNewsList((items || []).slice(0, 6)));
+        fetchHomeNewsEngine([]).then((items) => setNewsList((items || []).slice(0, 3)));
       });
   }, []);
 

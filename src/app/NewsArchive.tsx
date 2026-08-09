@@ -95,6 +95,8 @@ export default function NewsArchive() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const [visibleLimit, setVisibleLimit] = useState(18);
+
   const filteredFeeds = useMemo(() => {
     let result = newsFeeds;
     if (activeTab !== "all") {
@@ -211,126 +213,140 @@ export default function NewsArchive() {
               </button>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredFeeds.map((item, idx) => {
-                const sourceBadgeClass = SOURCE_COLORS[item.sourceName] || "text-primary border-primary/30 bg-primary/10";
-                const isInternal = item.link.startsWith("/news/");
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredFeeds.slice(0, visibleLimit).map((item, idx) => {
+                  const sourceBadgeClass = SOURCE_COLORS[item.sourceName] || "text-primary border-primary/30 bg-primary/10";
+                  const isInternal = item.link.startsWith("/news/");
 
-                return (
-                  <motion.article
-                    key={item.id || idx}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.05 }}
-                    custom={idx * 0.04}
-                    className="group rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between relative transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.12)] overflow-hidden"
-                  >
-                    <div>
-                      {/* Featured Cover Image / Branded Placeholder (16:9, ~105px height) */}
-                      <div className="relative w-full h-[105px] overflow-hidden bg-black/60 border-b border-white/10 flex-shrink-0">
-                        {item.imageUrl || item.logoUrl ? (
-                          <img
-                            src={item.imageUrl || item.logoUrl}
-                            alt={item.title}
-                            width={1200}
-                            height={800}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        ) : (
-                          <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex items-center justify-center overflow-hidden">
-                            <div
-                              className="absolute inset-0 opacity-25"
-                              style={{
-                                backgroundImage:
-                                  "radial-gradient(circle at 20% 30%, rgba(16,185,129,0.35) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(6,182,212,0.25) 0%, transparent 65%)",
-                              }}
+                  return (
+                    <motion.article
+                      key={item.id || idx}
+                      variants={fadeUp}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.05 }}
+                      custom={idx * 0.04}
+                      className="group rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between relative transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.12)] overflow-hidden"
+                    >
+                      <div>
+                        {/* Featured Cover Image / Branded Placeholder (16:9, ~105px height) */}
+                        <div className="relative w-full h-[105px] overflow-hidden bg-black/60 border-b border-white/10 flex-shrink-0">
+                          {item.imageUrl || item.logoUrl ? (
+                            <img
+                              src={item.imageUrl || item.logoUrl}
+                              alt={item.title}
+                              width={1200}
+                              height={800}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
+                              loading="lazy"
+                              decoding="async"
                             />
-                            <div className="relative z-10 flex items-center gap-2 px-4 text-center">
-                              <div className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-primary/80">
-                                <Rss size={14} />
+                          ) : (
+                            <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex items-center justify-center overflow-hidden">
+                              <div
+                                className="absolute inset-0 opacity-25"
+                                style={{
+                                  backgroundImage:
+                                    "radial-gradient(circle at 20% 30%, rgba(16,185,129,0.35) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(6,182,212,0.25) 0%, transparent 65%)",
+                                }}
+                              />
+                              <div className="relative z-10 flex items-center gap-2 px-4 text-center">
+                                <div className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-primary/80">
+                                  <Rss size={14} />
+                                </div>
+                                <span className="text-[10px] font-bold tracking-widest text-muted-foreground/80 mono uppercase line-clamp-1">
+                                  {item.sourceName || "Industry News"}
+                                </span>
                               </div>
-                              <span className="text-[10px] font-bold tracking-widest text-muted-foreground/80 mono uppercase line-clamp-1">
-                                {item.sourceName || "Industry News"}
-                              </span>
                             </div>
-                          </div>
-                        )}
-                        {/* Subtle 10-20% dark gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-                      </div>
-
-                      {/* Card Content */}
-                      <div className="p-5">
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold mono ${sourceBadgeClass}`}>
-                            {item.sourceName}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground/60 mono flex items-center gap-1">
-                            <Clock size={11} /> {item.formattedDate}
-                          </span>
+                          )}
+                          {/* Subtle 10-20% dark gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
                         </div>
 
-                        <h3 className="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                          {isInternal ? (
-                            <Link to={item.link}>{item.title}</Link>
-                          ) : (
-                            <a href={item.link} target="_blank" rel="noopener noreferrer">
-                              {item.title}
-                            </a>
-                          )}
-                        </h3>
+                        {/* Card Content */}
+                        <div className="p-5">
+                          <div className="flex items-center justify-between gap-2 mb-3">
+                            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold mono ${sourceBadgeClass}`}>
+                              {item.sourceName}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground/60 mono flex items-center gap-1">
+                              <Clock size={11} /> {item.formattedDate}
+                            </span>
+                          </div>
 
-                        <p className="mt-2 text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
-                          {item.description}
-                        </p>
+                          <h3 className="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                            {isInternal ? (
+                              <Link to={item.link}>{item.title}</Link>
+                            ) : (
+                              <a href={item.link} target="_blank" rel="noopener noreferrer">
+                                {item.title}
+                              </a>
+                            )}
+                          </h3>
+
+                          <p className="mt-2 text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="p-5 pt-0">
-                      <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
-                        <button
-                          onClick={() => setSelectedNewsModal(item)}
-                          className="inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:text-white transition-colors mono uppercase tracking-wider"
-                        >
-                          <Sparkles size={12} /> AI SUMMARY
-                        </button>
-
-                        <div className="flex items-center gap-2">
+                      <div className="p-5 pt-0">
+                        <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
                           <button
-                            onClick={() => handleCopyLink(item.link.startsWith("http") ? item.link : window.location.origin + item.link, item.id)}
-                            className="rounded-full p-1.5 border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground transition-colors glass-sm"
-                            title="Copy Link"
+                            onClick={() => setSelectedNewsModal(item)}
+                            className="inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:text-white transition-colors mono uppercase tracking-wider"
                           >
-                            {copiedId === item.id ? <Check size={12} className="text-emerald-400" /> : <Share2 size={12} />}
+                            <Sparkles size={12} /> AI SUMMARY
                           </button>
 
-                          {isInternal ? (
-                            <Link
-                              to={item.link}
-                              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleCopyLink(item.link.startsWith("http") ? item.link : window.location.origin + item.link, item.id)}
+                              className="rounded-full p-1.5 border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground transition-colors glass-sm"
+                              title="Copy Link"
                             >
-                              READ <ArrowUpRight size={12} />
-                            </Link>
-                          ) : (
-                            <a
-                              href={item.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
-                            >
-                              VISIT <ExternalLink size={12} />
-                            </a>
-                          )}
+                              {copiedId === item.id ? <Check size={12} className="text-emerald-400" /> : <Share2 size={12} />}
+                            </button>
+
+                            {isInternal ? (
+                              <Link
+                                to={item.link}
+                                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
+                              >
+                                READ <ArrowUpRight size={12} />
+                              </Link>
+                            ) : (
+                              <a
+                                href={item.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
+                              >
+                                VISIT <ExternalLink size={12} />
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.article>
-                );
-              })}
-            </div>
+                    </motion.article>
+                  );
+                })}
+              </div>
+
+              {/* Load More Pagination */}
+              {visibleLimit < filteredFeeds.length && (
+                <div className="mt-12 text-center">
+                  <button
+                    onClick={() => setVisibleLimit((prev) => prev + 18)}
+                    className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm"
+                  >
+                    LOAD MORE ARTICLES ({filteredFeeds.length - visibleLimit} REMAINING)
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
