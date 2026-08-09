@@ -1,5 +1,3 @@
-import { createClient } from "@sanity/client";
-
 export interface LinkedInTokenDoc {
   _id: string;
   _type: string;
@@ -17,28 +15,32 @@ export interface LinkedInTokenDoc {
 
 const SINGLETON_ID = "linkedinTokenSingleton";
 
-function getSanityClient() {
+function getSanityConfig() {
   const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg";
   const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
   const token = process.env.SANITY_API_WRITE_TOKEN;
-
-  return createClient({
-    projectId,
-    dataset,
-    token,
-    apiVersion: "2025-01-01",
-    useCdn: false,
-  });
+  return { projectId, dataset, token };
 }
 
 export async function getStoredLinkedInToken(): Promise<LinkedInTokenDoc | null> {
   try {
-    const sanityClient = getSanityClient();
-    const doc = await sanityClient.fetch<LinkedInTokenDoc | null>(
-      `*[_id == $id][0]`,
-      { id: SINGLETON_ID }
-    );
-    return doc || null;
+    const { projectId, dataset, token } = getSanityConfig();
+    const query = encodeURIComponent(`*[_id == "${SINGLETON_ID}"][0]`);
+    const url = `https://${projectId}.api.sanity.io/v2025-01-01/data/query/${dataset}?query=${query}`;
+
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      console.error("[linkedinStorage] Sanity query failed status:", res.status);
+      return null;
+    }
+
+    const data = await res.json();
+    return data.result || null;
   } catch (error) {
     console.error("[linkedinStorage] Error reading token from Sanity:", error);
     return null;
@@ -77,14 +79,36 @@ export async function saveLinkedInToken(data: {
     updatedAt: new Date().toISOString(),
   };
 
-  try {
-    const sanityClient = getSanityClient();
-    const saved = await sanityClient.createOrReplace(doc);
-    return saved as LinkedInTokenDoc;
-  } catch (error) {
-    console.error("[linkedinStorage] Error saving token to Sanity:", error);
-    throw error;
+  const { projectId, dataset, token } = getSanityConfig();
+
+  if (!token) {
+    console.warn("[linkedinStorage] SANITY_API_WRITE_TOKEN is missing on server");
+    throw new Error("SANITY_API_WRITE_TOKEN environment variable is not configured on server.");
   }
+
+  const url = `https://${projectId}.api.sanity.io/v2025-01-01/data/mutate/${dataset}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      mutations: [
+        {
+          createOrReplace: doc,
+        },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`[linkedinStorage] Sanity mutation HTTP ${res.status}:`, errText);
+    throw new Error(`Sanity write failed (${res.status}): ${errText}`);
+  }
+
+  return doc;
 }
 
 export async function refreshLinkedInAccessTokenIfNeeded(): Promise<LinkedInTokenDoc | null> {
