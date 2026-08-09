@@ -12,9 +12,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { code, error, error_description } = req.query;
-  const adminRedirectBase = "https://www.rvan.me/admin/linkedin";
-  const redirectUri = "https://www.rvan.me/api/linkedin/callback";
+  const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "rvan.me";
+  const protocol = (req.headers["x-forwarded-proto"] as string) || "https";
+
+  const adminRedirectBase = `${protocol}://${host}/admin/linkedin`;
+  const redirectUri = process.env.LINKEDIN_REDIRECT_URI || `${protocol}://${host}/api/linkedin/callback`;
 
   // Check 1: Did LinkedIn return an OAuth error query param?
   if (error) {
