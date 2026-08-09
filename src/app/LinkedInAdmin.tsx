@@ -179,7 +179,7 @@ export default function LinkedInAdmin() {
     setPipelineError(null);
 
     try {
-      const res = await fetch("/api/linkedin/approve-post", {
+      const res = await fetch("/api/linkedin/pipeline?action=approve", {
         method: "POST",
         headers: { "x-admin-secret": adminSecret },
       });
@@ -205,7 +205,7 @@ export default function LinkedInAdmin() {
     setPipelineError(null);
 
     try {
-      const res = await fetch("/api/linkedin/reject-post", {
+      const res = await fetch("/api/linkedin/pipeline?action=reject", {
         method: "POST",
         headers: { "x-admin-secret": adminSecret },
       });
