@@ -1,23 +1,24 @@
 import { useEffect, useState, useMemo, useDeferredValue } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Search, X, Download, Type, Sliders, BadgeCheck
+  Type,
+  Sliders,
+  ExternalLink,
+  GitFork,
+  Star,
+  Download,
+  ArrowUpRight,
 } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
-import { SiteSettings, UniversalContentItem } from "../types/cms";
-import { fetchLiveFontCatalog, FontItem, resolveDirectFontDownloadUrl } from "../lib/fontEngine";
+import { SiteSettings } from "../types/cms";
+import { fetchLiveFontCatalog, FontItem } from "../lib/fontEngine";
+import { fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../lib/resourceEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
-import { useContentItems } from "./hooks/useContentItems";
-import { useSearchFilter } from "./hooks/useSearchFilter";
-import { ContentCard, formatHumanTitle } from "./components/content/ContentCard";
-import { ToolCard } from "./components/content/ToolCard";
-import { JobCard } from "./components/content/JobCard";
-import { ScholarshipCard } from "./components/content/ScholarshipCard";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
@@ -26,14 +27,15 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { duration: 0.7, delay, ease: EASE },
   }),
 };
 
-export const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
-  all: { label: "All Resources", icon: "⚡" },
+export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: string }> = {
   fonts: { label: "Fonts", icon: "🔤" },
+  githubRepos: { label: "GitHub Repositories", icon: "🐙" },
   tools: { label: "Tools", icon: "🛠️" },
   assets: { label: "Assets", icon: "🎁" },
   learning: { label: "Learning", icon: "📚" },
@@ -44,10 +46,8 @@ export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
-  const [fontsLoading, setFontsLoading] = useState<boolean>(true);
-
-  // Unified Content Store
-  const { items: rawContentItems, loading: contentLoading } = useContentItems();
+  const [unifiedItems, setUnifiedItems] = useState<SharedResourceItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Interactive Font Specimen controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
@@ -55,16 +55,9 @@ export default function ResourcesArchive() {
   const [fontCategorySubfilter, setFontCategorySubfilter] = useState("all");
   const [visibleFontLimit, setVisibleFontLimit] = useState(10);
 
-  const activeCategory = searchParams.get("category") || "all";
+  const activeCategory = (searchParams.get("category") as ResourceCategoryKey) || "fonts";
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
-
-  // Search filter hook
-  const {
-    query,
-    setQuery,
-    filteredItems: flexFilteredItems,
-  } = useSearchFilter(rawContentItems);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -73,14 +66,13 @@ export default function ResourcesArchive() {
       if (data) setSiteSettings(data);
     });
 
-    fetchLiveFontCatalog()
-      .then((fontItems) => {
-        if (Array.isArray(fontItems) && fontItems.length > 0) {
-          setFontCatalog(fontItems);
-        }
-      })
-      .catch((err) => console.error("Error syncing live fonts:", err))
-      .finally(() => setFontsLoading(false));
+    fetchLiveFontCatalog().then((items) => {
+      if (Array.isArray(items)) setFontCatalog(items);
+    });
+
+    fetchUnifiedResources()
+      .then((items) => setUnifiedItems(items || []))
+      .finally(() => setLoading(false));
   }, []);
 
   const setParam = (key: string, val: string) => {
@@ -93,49 +85,29 @@ export default function ResourcesArchive() {
     setSearchParams(newParams);
   };
 
-  useEffect(() => {
-    if (searchQuery !== query) {
-      setQuery(searchQuery);
-    }
-  }, [searchQuery]);
-
   const handleSearchChange = (newQuery: string) => {
-    setQuery(newQuery);
     setParam("q", newQuery);
   };
 
-  // Broad consolidated category filtering
-  const displayedContentItems = useMemo(() => {
-    if (activeCategory === "all") return flexFilteredItems;
-    
-    return flexFilteredItems.filter((item) => {
-      const catSlug = typeof item.category?.slug === "string" ? item.category.slug : item.category?.slug?.current;
-      const catName = typeof item.category?.name === "string" ? item.category.name.toLowerCase() : "";
+  // Filtered Unified Non-Font Resources
+  const filteredCategoryItems = useMemo(() => {
+    let list = unifiedItems.filter((item) => item.category === activeCategory);
 
-      if (activeCategory === "tools") {
-        return item.contentType === "aiTool" || catSlug === "tools" || catName.includes("tool");
-      }
-      if (activeCategory === "assets") {
-        return (
-          item.contentType === "designAsset" ||
-          item.contentType === "resource" ||
-          item.contentType === "template" ||
-          catSlug === "freeDesignAssets" ||
-          catSlug === "freeMockups" ||
-          catSlug === "freeIcons" ||
-          catSlug === "freeUIKits"
-        );
-      }
-      if (activeCategory === "learning") {
-        return item.contentType === "freeCourse" || catSlug === "learning" || catName.includes("learn") || catName.includes("course");
-      }
-      if (activeCategory === "inspiration") {
-        return catSlug === "inspiration" || catName.includes("inspiration") || catName.includes("gallery");
-      }
-      return catSlug === activeCategory;
-    });
-  }, [flexFilteredItems, activeCategory]);
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.toLowerCase();
+      list = list.filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q) ||
+          item.type.toLowerCase().includes(q) ||
+          item.source.toLowerCase().includes(q)
+      );
+    }
 
+    return list;
+  }, [unifiedItems, activeCategory, deferredSearch]);
+
+  // Filtered Fonts
   const filteredFonts = useMemo(() => {
     let list = fontCatalog || [];
 
@@ -164,10 +136,9 @@ export default function ResourcesArchive() {
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
-      {/* Tab Title: Never begin browser titles with numbers */}
       <SEO
-        title="Creative Resources — Rvan.me"
-        description="Discover open-source font families, developer tools, vector assets, mockups, and UI kits."
+        title="Creative Resources & Developer Toolkit — Rvan.me"
+        description="Discover open-source font families, curated GitHub repositories, developer tools, vector assets, mockups, and UI kits."
         url="https://www.rvan.me/resources"
       />
 
@@ -190,7 +161,7 @@ export default function ResourcesArchive() {
         title="Creative Resources &"
         accentText="Developer Toolkit."
         gradientVariant="creative"
-        description="Explore open-source font families, developer tools, vector icons, device mockups, and UI kits."
+        description="Explore open-source font families, curated GitHub repositories, developer tools, vector icons, device mockups, and UI kits."
       />
 
       {/* Master Page Filter Bar & Search */}
@@ -204,19 +175,18 @@ export default function ResourcesArchive() {
         onSelectCategory={(key) => setParam("category", key)}
         searchQuery={searchQuery}
         onSearchChange={(q) => handleSearchChange(q)}
-        searchPlaceholder="Search fonts, tools, mockups & assets..."
+        searchPlaceholder={`Search ${CATEGORY_MAP[activeCategory]?.label || "resources"}...`}
         searchId="resource-search"
       />
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          1. FONTS CATEGORY (OPEN-SOURCE & FREE COMMERCIAL FONT CATALOG)
+          1. FONTS CATEGORY (DEFAULT & FIRST TAB)
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "fonts" ? (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
             {/* Type Tester Controls */}
             <div className="mb-8 p-5 rounded-2xl border border-white/10 bg-white/5 glass space-y-4">
-
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2 border-t border-white/5">
                 <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
                   <Type size={16} /> Specimen Controls
@@ -267,7 +237,7 @@ export default function ResourcesArchive() {
             </div>
 
             {/* Font Grid */}
-            {fontsLoading ? (
+            {loading ? (
               <div className="grid gap-6 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((n) => (
                   <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
@@ -277,7 +247,10 @@ export default function ResourcesArchive() {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
                 <p className="text-muted-foreground text-xs">No font families found matching your search.</p>
                 <button
-                  onClick={() => { setFontCategorySubfilter("all"); handleSearchChange(""); }}
+                  onClick={() => {
+                    setFontCategorySubfilter("all");
+                    handleSearchChange("");
+                  }}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
                   RESET FILTERS
@@ -315,41 +288,77 @@ export default function ResourcesArchive() {
         </section>
       ) : (
         /* ─────────────────────────────────────────────────────────────────────────────
-            2. UNIFIED RESOURCE GRID (TOOLS, ASSETS, LEARNING, INSPIRATION, ALL)
+            2. UNIFIED RESOURCE CATEGORIES (GITHUB REPOS, TOOLS, ASSETS, LEARNING, INSPIRATION)
         ───────────────────────────────────────────────────────────────────────────── */
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-
-            {contentLoading ? (
+            {loading ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((n) => (
                   <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
                 ))}
               </div>
-            ) : displayedContentItems.length === 0 ? (
+            ) : filteredCategoryItems.length === 0 ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs font-medium">No resources found matching your search.</p>
+                <p className="text-muted-foreground text-xs font-medium">No items found matching your filter or search.</p>
                 <button
-                  onClick={() => { setParam("category", "all"); handleSearchChange(""); }}
+                  onClick={() => handleSearchChange("")}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
-                  RESET FILTERS
+                  RESET SEARCH
                 </button>
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {displayedContentItems.map((item: UniversalContentItem) => {
-                  if (item.contentType === "aiTool") {
-                    return <ToolCard key={item._id} item={item} />;
-                  }
-                  if (item.contentType === "remoteJob") {
-                    return <JobCard key={item._id} item={item} />;
-                  }
-                  if (item.contentType === "scholarship") {
-                    return <ScholarshipCard key={item._id} item={item} />;
-                  }
-                  return <ContentCard key={item._id} item={item} />;
-                })}
+                {filteredCategoryItems.map((item) => (
+                  <motion.article
+                    key={item.id}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
+                          {item.type}
+                        </span>
+                        {item.starsCount && (
+                          <span className="text-xs font-bold text-amber-400 flex items-center gap-1 mono">
+                            <Star size={12} className="fill-amber-400" /> {item.starsCount.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+                        {item.title}
+                      </h3>
+
+                      <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-4">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
+                      <span className="text-muted-foreground">{item.source} {item.language ? `· ${item.language}` : ""}</span>
+                      {item.url.startsWith("/") ? (
+                        <Link to={item.url} className="text-primary hover:text-white flex items-center gap-1">
+                          VIEW <ArrowUpRight size={13} />
+                        </Link>
+                      ) : (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:text-white flex items-center gap-1"
+                        >
+                          VISIT <ExternalLink size={13} />
+                        </a>
+                      )}
+                    </div>
+                  </motion.article>
+                ))}
               </div>
             )}
           </div>
