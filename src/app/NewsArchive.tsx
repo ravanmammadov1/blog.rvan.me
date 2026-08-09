@@ -241,6 +241,9 @@ export default function NewsArchive() {
                               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
                               loading="lazy"
                               decoding="async"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLElement).style.display = "none";
+                              }}
                             />
                           ) : (
                             <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex items-center justify-center overflow-hidden">

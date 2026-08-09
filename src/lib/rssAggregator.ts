@@ -46,6 +46,109 @@ export interface NormalizedResource {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// XML Entity Normalization & Image Resolution Engine
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Decodes HTML and XML entities including decimal and hexadecimal character codes
+ */
+export function decodeXmlEntities(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&#34;/g, '"')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&mdash;/g, "—")
+    .replace(/&ndash;/g, "–")
+    .replace(/&ldquo;/g, "“")
+    .replace(/&rdquo;/g, "”")
+    .replace(/&lsquo;/g, "‘")
+    .replace(/&rsquo;/g, "’")
+    .replace(/&copy;/g, "©")
+    .replace(/&reg;/g, "®")
+    .replace(/&trade;/g, "™")
+    .trim();
+}
+
+/**
+ * Multi-tier Image Resolution Pipeline for RSS feeds
+ * 1. media:content (url)
+ * 2. media:thumbnail (url)
+ * 3. enclosure (image url)
+ * 4. content:encoded img src
+ * 5. description / content img src
+ * 6. Neutral Publisher Fallback
+ */
+export function resolveRssCoverImage(
+  itemNode: Element | any,
+  rawContentHtml: string = "",
+  publisherName: string = ""
+): { imageUrl?: string; method: string } {
+  if (!itemNode) return { method: "fallback" };
+
+  // 1. media:content
+  const mediaContent = itemNode.querySelector("media\\:content, content");
+  if (mediaContent) {
+    const url = mediaContent.getAttribute("url") || mediaContent.getAttribute("href");
+    const type = mediaContent.getAttribute("type") || "";
+    const medium = mediaContent.getAttribute("medium") || "";
+    if (url && (medium === "image" || type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|svg)/i.test(url))) {
+      return { imageUrl: url, method: "media:content" };
+    }
+  }
+
+  // 2. media:thumbnail
+  const mediaThumb = itemNode.querySelector("media\\:thumbnail, thumbnail");
+  if (mediaThumb) {
+    const url = mediaThumb.getAttribute("url") || mediaThumb.getAttribute("href");
+    if (url) return { imageUrl: url, method: "media:thumbnail" };
+  }
+
+  // 3. enclosure (type image/*)
+  const enclosure = itemNode.querySelector("enclosure");
+  if (enclosure) {
+    const url = enclosure.getAttribute("url");
+    const type = enclosure.getAttribute("type") || "";
+    if (url && (type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|svg)/i.test(url))) {
+      return { imageUrl: url, method: "enclosure" };
+    }
+  }
+
+  // Helper to extract first <img> src attribute
+  const extractImgSrc = (html: string): string | null => {
+    if (!html) return null;
+    const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match && match[1] && !match[1].includes("gravatar.com") && !match[1].includes("feeds.feedburner.com") && !match[1].includes("pixel.wp.com")) {
+      return match[1];
+    }
+    return null;
+  };
+
+  // 4. content:encoded
+  const contentEncoded = itemNode.querySelector("content\\:encoded, encoded")?.textContent || "";
+  const imgFromContent = extractImgSrc(contentEncoded);
+  if (imgFromContent) {
+    return { imageUrl: imgFromContent, method: "content:encoded img" };
+  }
+
+  // 5. description / content
+  const description = itemNode.querySelector("description, summary, content")?.textContent || rawContentHtml;
+  const imgFromDesc = extractImgSrc(description);
+  if (imgFromDesc) {
+    return { imageUrl: imgFromDesc, method: "description img" };
+  }
+
+  return { method: "fallback" };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // COMPREHENSIVE CURATED NEWS DATABASE
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -631,12 +734,13 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
   const itemNodes = Array.from(xmlDoc.querySelectorAll("item, entry")).slice(0, 100);
 
   itemNodes.forEach((node, idx) => {
-    const title = node.querySelector("title")?.textContent?.trim() || "";
+    const rawTitle = node.querySelector("title")?.textContent?.trim() || "";
+    const title = decodeXmlEntities(rawTitle);
     const rawLink =
       node.querySelector("link")?.textContent?.trim() ||
       node.querySelector("link")?.getAttribute("href") ||
       "";
-    const description =
+    const descriptionRaw =
       node.querySelector("description")?.textContent ||
       node.querySelector("content\\:encoded")?.textContent ||
       node.querySelector("summary")?.textContent ||
@@ -670,20 +774,23 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
         lowerT.includes("ai") ||
         lowerT.includes("prompt");
 
-      if (!isRelevantJob) return; // Ignore unrelated categories (e.g. accounting, sales executive)
+      if (!isRelevantJob) return; // Ignore unrelated categories
     }
 
     const publishedAt = parsePubDate(rawPubDate);
     const formattedDate = formatPublicationTimestamp(publishedAt);
-    const cleanDesc = cleanText(description) || title;
+    const cleanDesc = decodeXmlEntities(cleanText(descriptionRaw) || title);
     const slugId = `rss-${feed._id}-${idx}`;
 
+    // Image Resolution Pipeline: media:content -> media:thumbnail -> enclosure -> content:encoded img -> description img
+    const imageResolution = resolveRssCoverImage(node, descriptionRaw, feed.sourceName || feed.name);
+
     // Extract company name if available in title or source
-    let companyName = feed.sourceName || feed.name;
+    let companyName = decodeXmlEntities(feed.sourceName || feed.name);
     if (title.includes(" is hiring ") || title.includes(" at ") || title.includes(" — ")) {
       const parts = title.split(/ is hiring | at | — | - /i);
       if (parts.length > 1) {
-        companyName = parts[parts.length - 1].trim();
+        companyName = decodeXmlEntities(parts[parts.length - 1].trim());
       }
     }
 
@@ -704,6 +811,7 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
       country: feed.defaultCountry || "Global",
       workType: "remote", // Force 100% remote for curated jobs
       isFree: true,
+      imageUrl: imageResolution.imageUrl,
       difficulty: "all",
       isRss: true,
       analyticsId: feed._id,
