@@ -22,7 +22,7 @@ import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { fetchCuratedNewsEngine, CuratedArticle } from "../lib/newsEngine";
-import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds } from "../lib/rssAggregator";
+import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds, cleanPublisherUrl } from "../lib/rssAggregator";
 import { generateNewsSummary } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -228,7 +228,8 @@ export default function NewsArchive() {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleFeeds.map((item, idx) => {
                   const sourceBadgeClass = SOURCE_COLORS[item.sourceName] || "text-primary border-primary/30 bg-primary/10";
-                  const isInternal = item.link.startsWith("/news/");
+                  const detailPath = `/news/${item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+                  const publisherUrl = cleanPublisherUrl(item.link);
 
                   return (
                     <motion.article
@@ -291,13 +292,7 @@ export default function NewsArchive() {
                           </div>
 
                           <h3 className="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                            {isInternal ? (
-                              <Link to={item.link}>{item.title}</Link>
-                            ) : (
-                              <a href={item.link} target="_blank" rel="noopener noreferrer">
-                                {item.title}
-                              </a>
-                            )}
+                            <Link to={detailPath}>{item.title}</Link>
                           </h3>
 
                           <p className="mt-2 text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
@@ -317,28 +312,29 @@ export default function NewsArchive() {
 
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleCopyLink(item.link.startsWith("http") ? item.link : window.location.origin + item.link, item.id)}
+                              onClick={() => handleCopyLink(window.location.origin + detailPath, item.id)}
                               className="rounded-full p-1.5 border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground transition-colors glass-sm"
                               title="Copy Link"
                             >
                               {copiedId === item.id ? <Check size={12} className="text-emerald-400" /> : <Share2 size={12} />}
                             </button>
 
-                            {isInternal ? (
-                              <Link
-                                to={item.link}
-                                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
-                              >
-                                READ <ArrowUpRight size={12} />
-                              </Link>
-                            ) : (
+                            <Link
+                              to={detailPath}
+                              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
+                            >
+                              READ <ArrowUpRight size={12} />
+                            </Link>
+
+                            {publisherUrl.startsWith("http") && (
                               <a
-                                href={item.link}
+                                href={publisherUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
+                                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground transition-all"
+                                title="Visit original publisher website"
                               >
-                                VISIT <ExternalLink size={12} />
+                                VISIT <ExternalLink size={10} />
                               </a>
                             )}
                           </div>

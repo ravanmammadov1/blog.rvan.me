@@ -131,62 +131,6 @@ export function triggerDirectFontDownload(font: FontItem) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function fetchLiveFontCatalog(): Promise<FontItem[]> {
-  const catalogMap = new Map<string, FontItem>();
-
-  // 1. Seed with the full catalog after the Resources route requests it.
-  const staticCatalog = await loadStaticFontCatalog();
-  staticCatalog.forEach((f) => catalogMap.set(f.family.toLowerCase().trim(), f));
-
-  // 2. Background sync live Google Fonts Metadata feed for newly added families
-  try {
-    const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://fonts.google.com/metadata/fonts"), { signal: AbortSignal.timeout(6000) });
-    if (res.ok) {
-      const json = await res.json();
-      const parsedData = JSON.parse(json.contents);
-      if (parsedData && Array.isArray(parsedData.familyMetadataList)) {
-        parsedData.familyMetadataList.forEach((meta: any) => {
-          const name = meta.family || meta.name;
-          if (!name) return;
-          const key = name.toLowerCase().trim();
-
-          if (catalogMap.has(key)) return; // Deduplicate
-
-          let cat: FontItem["category"] = "Sans Serif";
-          const catStr = (meta.category || "").toLowerCase();
-          if (catStr.includes("serif") && !catStr.includes("sans")) cat = "Serif";
-          else if (catStr.includes("display")) cat = "Display";
-          else if (catStr.includes("monospace")) cat = "Monospace";
-          else if (catStr.includes("handwriting")) cat = "Handwriting";
-
-          const isVar = Boolean(meta.axes && meta.axes.length > 0);
-          const designers = meta.designers ? meta.designers.join(", ") : "Google Fonts Contributor";
-          const directZipUrl = `https://fonts.google.com/download?family=${encodeURIComponent(name)}`;
-
-          catalogMap.set(key, {
-            id: `gf-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-            name,
-            family: name,
-            designer: designers,
-            foundry: "Google Fonts",
-            license: "SIL Open Font License 1.1",
-            category: cat,
-            stylesCount: meta.fonts ? Object.keys(meta.fonts).length : 6,
-            isVariable: isVar,
-            isCommercialFree: true,
-            downloadUrl: directZipUrl,
-            officialUrl: `https://fonts.google.com/specimen/${encodeURIComponent(name)}`,
-            useCases: [cat, "Web Design", "UI/UX", "Typography"],
-            sampleText: "Grumpy wizards make toxic brew for the evil Queen and Jack.",
-            description: `${name} is an open-source ${cat.toLowerCase()} typeface family hosted on Google Fonts, free for both commercial and personal digital projects.`,
-            trendingScore: 75,
-            createdAt: new Date().toISOString(),
-          });
-        });
-      }
-    }
-  } catch (e) {
-    // Rely on static baseline
-  }
-
-  return Array.from(catalogMap.values());
+  // Return static catalog instantly for 0ms delay initial render and sub-millisecond filtering
+  return loadStaticFontCatalog();
 }

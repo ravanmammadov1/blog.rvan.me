@@ -63,51 +63,43 @@ export default function NewsSection() {
 
         {/* News Cards Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {newsList.map((item, idx) => (
-            <motion.article
-              key={item.id || idx}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-4">
-                  <span className="text-[10px] font-bold text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono uppercase">
-                    {item.category === "aiNews" ? "AI & ML" : item.category === "designNews" ? "Design" : item.category === "frontendNews" ? "Frontend" : item.category === "marketingNews" ? "Marketing" : "Motion"}
-                  </span>
-                  <span className="text-[10px] font-bold text-muted-foreground mono">{item.formattedDate}</span>
+          {newsList.map((item, idx) => {
+            const detailPath = `/news/${item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+            return (
+              <motion.article
+                key={item.id || idx}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="text-[10px] font-bold text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono uppercase">
+                      {item.category === "aiNews" ? "AI & ML" : item.category === "designNews" ? "Design" : item.category === "frontendNews" ? "Frontend" : item.category === "marketingNews" ? "Marketing" : "Motion"}
+                    </span>
+                    <span className="text-[10px] font-bold text-muted-foreground mono">{item.formattedDate}</span>
+                  </div>
+
+                  <h3 className="text-lg font-bold leading-snug text-foreground group-hover:text-primary transition-colors mb-3">
+                    <Link to={detailPath}>{item.title}</Link>
+                  </h3>
+
+                  <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-6">
+                    {item.description}
+                  </p>
                 </div>
 
-                <h3 className="text-lg font-bold leading-snug text-foreground group-hover:text-primary transition-colors mb-3">
-                  {item.title}
-                </h3>
-
-                <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-6">
-                  {item.description}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
-                <span className="text-muted-foreground">{item.sourceName}</span>
-                {item.link.startsWith("/") ? (
-                  <Link to={item.link} className="text-primary hover:text-white flex items-center gap-1">
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
+                  <span className="text-muted-foreground">{item.sourceName}</span>
+                  <Link to={detailPath} className="text-primary hover:text-white flex items-center gap-1">
                     READ ARTICLE <ArrowUpRight size={13} />
                   </Link>
-                ) : (
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-white flex items-center gap-1"
-                  >
-                    READ ARTICLE <ArrowUpRight size={13} />
-                  </a>
-                )}
-              </div>
-            </motion.article>
-          ))}
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>

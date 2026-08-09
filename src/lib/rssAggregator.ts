@@ -52,6 +52,22 @@ export interface NormalizedResource {
 /**
  * Decodes HTML and XML entities including decimal and hexadecimal character codes
  */
+export function cleanPublisherUrl(url?: string): string {
+  if (!url) return "https://www.rvan.me/news";
+  if (url.startsWith("/")) return url;
+  
+  // Strip raw RSS / XML feed paths
+  if (url.includes(".xml") || url.includes("/feed") || url.includes("/rss") || url.includes("/atom") || url.includes("feedburner")) {
+    try {
+      const parsed = new URL(url);
+      return parsed.origin;
+    } catch {
+      return "https://www.rvan.me/news";
+    }
+  }
+  return url;
+}
+
 export function decodeXmlEntities(text: string): string {
   if (!text) return "";
   return text
