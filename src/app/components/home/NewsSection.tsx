@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Rss } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeNewsEngine, CuratedArticle } from "../../../lib/newsEngine";
 import { fetchNews } from "../../../lib/sanityQueries";
+import { getArticleCoverImage } from "../../../lib/contentEngine";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -19,32 +20,25 @@ export default function NewsSection() {
   const [newsList, setNewsList] = useState<CuratedArticle[]>([]);
 
   useEffect(() => {
-    fetchNews()
-      .then((cmsNews) => fetchHomeNewsEngine(cmsNews || []))
-      .then((items) => {
-        setNewsList((items || []).slice(0, 3));
-      })
-      .catch(() => {
-        fetchHomeNewsEngine([]).then((items) => setNewsList((items || []).slice(0, 3)));
+    fetchNews().then((cmsData) => {
+      fetchHomeNewsEngine(cmsData || []).then((items) => {
+        setNewsList(items || []);
       });
+    });
   }, []);
 
+  if (newsList.length === 0) return null;
+
   return (
-    <section id="news" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
-      {/* Subtle section background */}
-      <div 
-        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
-        style={{
-          background: "radial-gradient(circle at 20% 40%, rgba(16,185,129,0.08) 0%, rgba(6,182,212,0.04) 40%, transparent 70%)",
-        }}
-      />
-      <div className="mx-auto max-w-[1600px] relative z-10">
+    <section id="news" className="relative px-6 py-28 md:px-10 md:py-40">
+      <div className="mx-auto max-w-[1600px]">
+        {/* Header */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
+          className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end"
         >
           <div>
             <Eyebrow className="text-muted-foreground">02 / Industry Intelligence Feed</Eyebrow>
@@ -65,6 +59,8 @@ export default function NewsSection() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {newsList.map((item, idx) => {
             const detailPath = `/news/${item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+            const coverUrl = item.imageUrl || item.logoUrl || getArticleCoverImage(item.category, item.title);
+
             return (
               <motion.article
                 key={item.id || idx}
@@ -75,7 +71,24 @@ export default function NewsSection() {
                 className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-4">
+                  {/* Cover Image (Matches BlogCard exact h-48 height, rounded-xl border) */}
+                  <div className="mb-4 h-48 w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80 flex-shrink-0">
+                    <img
+                      src={coverUrl}
+                      alt={item.title}
+                      width={800}
+                      height={520}
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(item.category, item.title);
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="text-[10px] font-bold text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono uppercase">
                       {item.category === "aiNews" ? "AI & ML" : item.category === "designNews" ? "Design" : item.category === "frontendNews" ? "Frontend" : item.category === "marketingNews" ? "Marketing" : "Motion"}
                     </span>

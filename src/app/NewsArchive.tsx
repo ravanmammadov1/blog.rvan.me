@@ -23,7 +23,7 @@ import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { fetchCuratedNewsEngine, CuratedArticle } from "../lib/newsEngine";
 import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds, cleanPublisherUrl } from "../lib/rssAggregator";
-import { generateNewsSummary } from "../lib/contentEngine";
+import { generateNewsSummary, getArticleCoverImage } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -239,49 +239,28 @@ export default function NewsArchive() {
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.05 }}
                       custom={idx * 0.04}
-                      className="group rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between relative transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.12)] overflow-hidden"
+                      className="group rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass p-5 flex flex-col justify-between relative transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.12)] overflow-hidden"
                     >
                       <div>
-                        {/* Featured Cover Image / Branded Placeholder (16:9, ~105px height) */}
-                        <div className="relative w-full h-[105px] overflow-hidden bg-black/60 border-b border-white/10 flex-shrink-0">
-                          {item.imageUrl || item.logoUrl ? (
-                            <img
-                              src={item.imageUrl || item.logoUrl}
-                              alt={item.title}
-                              width={1200}
-                              height={800}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => {
-                                (e.currentTarget as HTMLElement).style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black flex items-center justify-center overflow-hidden">
-                              <div
-                                className="absolute inset-0 opacity-25"
-                                style={{
-                                  backgroundImage:
-                                    "radial-gradient(circle at 20% 30%, rgba(16,185,129,0.35) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(6,182,212,0.25) 0%, transparent 65%)",
-                                }}
-                              />
-                              <div className="relative z-10 flex items-center gap-2 px-4 text-center">
-                                <div className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-primary/80">
-                                  <Rss size={14} />
-                                </div>
-                                <span className="text-[10px] font-bold tracking-widest text-muted-foreground/80 mono uppercase line-clamp-1">
-                                  {item.sourceName || "Industry News"}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                          {/* Subtle 10-20% dark gradient overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                        {/* Cover Image (Matches BlogCard exact h-48 height, rounded-xl border) */}
+                        <div className="mb-4 h-48 w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80 flex-shrink-0">
+                          <img
+                            src={item.imageUrl || item.logoUrl || getArticleCoverImage(item.category, item.title)}
+                            alt={item.title}
+                            width={800}
+                            height={520}
+                            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(item.category, item.title);
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                         </div>
 
                         {/* Card Content */}
-                        <div className="p-5">
+                        <div>
                           <div className="flex items-center justify-between gap-2 mb-3">
                             <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold mono ${sourceBadgeClass}`}>
                               {item.sourceName}
