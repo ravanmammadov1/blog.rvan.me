@@ -15,10 +15,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const protocol = (req.headers["x-forwarded-proto"] as string) || "https";
-  const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "www.rvan.me";
   const redirectUri =
-    process.env.LINKEDIN_REDIRECT_URI || `${protocol}://${host}/api/linkedin/callback`;
+    process.env.LINKEDIN_REDIRECT_URI || "https://www.rvan.me/api/linkedin/callback";
 
   const state = crypto.randomBytes(16).toString("hex");
 

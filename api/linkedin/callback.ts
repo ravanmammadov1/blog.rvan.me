@@ -9,9 +9,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { code, error, error_description } = req.query;
 
-  const protocol = (req.headers["x-forwarded-proto"] as string) || "https";
-  const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "www.rvan.me";
-  const adminRedirectBase = `${protocol}://${host}/admin/linkedin`;
+  const adminRedirectBase = "https://www.rvan.me/admin/linkedin";
 
   if (error) {
     const errMsg = (error_description as string) || (error as string) || "OAuth error";
@@ -30,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const redirectUri =
-    process.env.LINKEDIN_REDIRECT_URI || `${protocol}://${host}/api/linkedin/callback`;
+    process.env.LINKEDIN_REDIRECT_URI || "https://www.rvan.me/api/linkedin/callback";
 
   try {
     // 1. Exchange code for access token
