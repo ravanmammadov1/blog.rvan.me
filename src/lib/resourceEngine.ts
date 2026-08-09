@@ -291,7 +291,8 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
           .replace(/[^a-z0-9]/g, "")
           .trim();
 
-        const canonicalKey = cleanUrl || cleanTitle || item.id;
+        // Canonical URL is the PRIMARY identifier. Title is ONLY a secondary fallback if URL is empty.
+        const canonicalKey = cleanUrl ? `url:${cleanUrl}` : cleanTitle ? `title:${cleanTitle}` : item.id;
 
         if (!dedupedMap.has(canonicalKey)) {
           dedupedMap.set(canonicalKey, item);
