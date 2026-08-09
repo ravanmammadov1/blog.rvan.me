@@ -20,6 +20,7 @@ import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings, NewsItem } from "../types/cms";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
+import { fetchCuratedNewsEngine, CuratedArticle } from "../lib/newsEngine";
 import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds } from "../lib/rssAggregator";
 import { generateNewsSummary } from "../lib/contentEngine";
 import SEO from "./components/SEO";
@@ -40,11 +41,9 @@ export const NEWS_TABS = [
   { key: "all", label: "All News", icon: "🌐" },
   { key: "designNews", label: "Design", icon: "🎨" },
   { key: "aiNews", label: "AI & ML", icon: "🤖" },
-  { key: "frontendNews", label: "Frontend", icon: "💻" },
-  { key: "devNews", label: "Development", icon: "⚙️" },
   { key: "marketingNews", label: "Marketing", icon: "📈" },
-  { key: "motionNews", label: "Motion 3D", icon: "🎬" },
-  { key: "announcements", label: "Announcements", icon: "📣" },
+  { key: "frontendNews", label: "Frontend", icon: "💻" },
+  { key: "motionNews", label: "Motion", icon: "🎬" },
 ];
 
 export const SOURCE_COLORS: Record<string, string> = {
@@ -75,9 +74,9 @@ export default function NewsArchive() {
     window.scrollTo(0, 0);
     fetchSiteSettings().then((data) => { if (data) setSiteSettings(data); });
 
-    // Non-blocking background revalidation of Sanity CMS news & RSS feeds
+    // Background revalidation of Sanity CMS news & RSS feeds with News Engine scoring
     fetchNews()
-      .then((cmsNews) => aggregateNewsFeeds(cmsNews || []))
+      .then((cmsNews) => fetchCuratedNewsEngine(cmsNews || []))
       .then((items) => {
         if (Array.isArray(items) && items.length > 0) {
           setNewsFeeds(items);

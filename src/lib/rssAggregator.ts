@@ -424,24 +424,36 @@ export const CURATED_RESOURCE_CATALOG: NormalizedResource[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const NEWS_RSS_FEEDS: RssFeedConfig[] = [
+  // DESIGN
   { _id: "news-smashingmagazine", name: "Smashing Magazine", url: "https://www.smashingmagazine.com/feed/", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Smashing Magazine" },
+  { _id: "news-sidebar", name: "Sidebar.io", url: "https://sidebar.io/feed.xml", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Sidebar.io" },
   { _id: "news-uxcollective", name: "UX Collective", url: "https://uxdesign.cc/feed", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "UX Collective" },
-  { _id: "news-creativebloq", name: "Creative Bloq", url: "https://www.creativebloq.com/feeds/all.xml", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Creative Bloq" },
-  { _id: "news-abduzeedo", name: "Abduzeedo", url: "https://feeds.feedburner.com/abduzeedo", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Abduzeedo" },
+  { _id: "news-creativeboom", name: "Creative Boom", url: "https://www.creativeboom.com/feed/", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Creative Boom" },
   { _id: "news-codrops", name: "Codrops", url: "https://tympanus.net/codrops/feed/", category: "designNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Codrops" },
-  
+
+  // AI & ML
+  { _id: "news-openai", name: "OpenAI News", url: "https://openai.com/news/rss.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "OpenAI" },
+  { _id: "news-deepmind", name: "Google DeepMind Blog", url: "https://deepmind.google/blog/rss.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Google DeepMind" },
   { _id: "news-huggingface", name: "Hugging Face Blog", url: "https://huggingface.co/blog/feed.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Hugging Face" },
-  { _id: "news-verge-ai", name: "The Verge — AI", url: "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "The Verge" },
   { _id: "news-technologyreview", name: "MIT Technology Review — AI", url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "MIT Tech Review" },
-  
+  { _id: "news-techcrunch-ai", name: "TechCrunch AI", url: "https://techcrunch.com/category/artificial-intelligence/feed/", category: "aiNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "TechCrunch AI" },
+
+  // MARKETING
+  { _id: "news-adweek", name: "Adweek", url: "https://www.adweek.com/feed/", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Adweek" },
+  { _id: "news-digiday", name: "Digiday", url: "https://digiday.com/feed/", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Digiday" },
+  { _id: "news-socialmediatoday", name: "Social Media Today", url: "https://www.socialmediatoday.com/feeds/news/", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Social Media Today" },
+
+  // FRONTEND
   { _id: "news-reactblog", name: "React Official Blog", url: "https://react.dev/rss.xml", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "React Blog" },
   { _id: "news-vercelblog", name: "Vercel Blog", url: "https://vercel.com/atom", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Vercel" },
-  
-  { _id: "news-devto", name: "Dev.to Top Posts", url: "https://dev.to/feed", category: "devNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Dev.to" },
-  { _id: "news-hackernews", name: "Hacker News Top", url: "https://news.ycombinator.com/rss", category: "devNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Hacker News" },
-  
-  { _id: "news-hubspot", name: "HubSpot Marketing", url: "https://blog.hubspot.com/marketing/rss.xml", category: "marketingNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "HubSpot" },
-  { _id: "news-schoolofmotion", name: "School of Motion", url: "https://www.schoolofmotion.com/blog/rss.xml", category: "motionNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "School of Motion" },
+  { _id: "news-webdev", name: "web.dev", url: "https://web.dev/feed.xml", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "web.dev" },
+  { _id: "news-csstricks", name: "CSS-Tricks", url: "https://css-tricks.com/feed/", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "CSS-Tricks" },
+  { _id: "news-mozillahacks", name: "Mozilla Hacks", url: "https://hacks.mozilla.org/feed/", category: "frontendNews", refreshInterval: "hourly", enabled: true, priority: 9, sourceName: "Mozilla Hacks" },
+
+  // MOTION
+  { _id: "news-motionographer", name: "Motionographer", url: "https://motionographer.com/feed/", category: "motionNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Motionographer" },
+  { _id: "news-blenderdev", name: "Blender Developer Blog", url: "https://code.blender.org/feed/", category: "motionNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Blender Dev" },
+  { _id: "news-stashmedia", name: "Stash Magazine", url: "https://www.stashmedia.tv/feed/", category: "motionNews", refreshInterval: "hourly", enabled: true, priority: 10, sourceName: "Stash Magazine" },
 ];
 
 export const RESOURCE_RSS_FEEDS: RssFeedConfig[] = [
