@@ -17,16 +17,23 @@ export interface LinkedInTokenDoc {
 
 const SINGLETON_ID = "linkedinTokenSingleton";
 
-const sanityClient = createClient({
-  projectId: process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg",
-  dataset: process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production",
-  token: process.env.SANITY_API_WRITE_TOKEN,
-  apiVersion: "2025-01-01",
-  useCdn: false,
-});
+function getSanityClient() {
+  const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg";
+  const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
+  const token = process.env.SANITY_API_WRITE_TOKEN;
+
+  return createClient({
+    projectId,
+    dataset,
+    token,
+    apiVersion: "2025-01-01",
+    useCdn: false,
+  });
+}
 
 export async function getStoredLinkedInToken(): Promise<LinkedInTokenDoc | null> {
   try {
+    const sanityClient = getSanityClient();
     const doc = await sanityClient.fetch<LinkedInTokenDoc | null>(
       `*[_id == $id][0]`,
       { id: SINGLETON_ID }
@@ -71,6 +78,7 @@ export async function saveLinkedInToken(data: {
   };
 
   try {
+    const sanityClient = getSanityClient();
     const saved = await sanityClient.createOrReplace(doc);
     return saved as LinkedInTokenDoc;
   } catch (error) {

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { refreshLinkedInAccessTokenIfNeeded } from "../../src/lib/linkedinStorage";
+import { refreshLinkedInAccessTokenIfNeeded } from "../_lib/linkedinStorage";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {

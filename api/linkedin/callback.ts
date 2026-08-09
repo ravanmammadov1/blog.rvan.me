@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { saveLinkedInToken } from "../../src/lib/linkedinStorage";
+import { saveLinkedInToken } from "../_lib/linkedinStorage";
 
 function safeRedirect(res: VercelResponse, url: string) {
   res.writeHead(302, { Location: url });
