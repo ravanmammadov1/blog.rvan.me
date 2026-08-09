@@ -50,7 +50,7 @@ export default function HomePage() {
       <SiteHeader siteSettings={siteSettings} />
 
       {/* ── 2. HERO SECTION ── */}
-      <section className="relative min-h-[90vh] flex flex-col justify-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28">
+      <section className="relative min-h-[70vh] lg:min-h-[90vh] flex flex-col justify-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28">
         <Suspense fallback={null}>
           <HeroParticles />
         </Suspense>
@@ -62,14 +62,17 @@ export default function HomePage() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="lg:col-span-7 flex flex-col items-start"
+              className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary mono uppercase mb-6">
                 <Sparkles size={13} /> STUDIO VISION &amp; CREATIVE ENGINE
               </div>
 
-              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-.05em] leading-[1.02] text-foreground mb-8">
-                Design that moves. <br className="hidden sm:inline" />
+              <h1
+                className="font-bold tracking-[-.04em] leading-[1.05] text-foreground mb-8 w-full"
+                style={{ fontSize: "clamp(2.4rem, 5.8vw, 6rem)" }}
+              >
+                Design that moves.<br />
                 Ideas that matter.
               </h1>
 
@@ -94,13 +97,13 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Hero Right Visual Portrait / Interactive Canvas */}
+            {/* Hero Right Visual Portrait — hidden on mobile, visible on lg+ */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
               custom={0.2}
-              className="lg:col-span-5 flex justify-center lg:justify-end"
+              className="hidden lg:flex lg:col-span-5 justify-center lg:justify-end"
             >
               <Suspense fallback={<div className="h-[420px] w-full rounded-2xl border border-white/10 bg-white/5 animate-pulse" />}>
                 <HeroPortrait />
