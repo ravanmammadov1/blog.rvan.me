@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { client } from "../../../lib/sanityClient";
 import BlogCard from "../blog/BlogCard";
 import { Eyebrow } from "../Eyebrow";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -48,6 +49,7 @@ const FALLBACK_BLOGS = [
 export default function BlogSection() {
   const [blogPosts, setBlogPosts] = useState<any[]>(FALLBACK_BLOGS);
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     // Fetch Blogs in background without blocking initial render
@@ -93,23 +95,23 @@ export default function BlogSection() {
           className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">03 / Insights &amp; Ideas</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{t("sectionBlogEyebrow", "03 / Insights & Ideas")}</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Thinking out loud.
+              {t("sectionBlogTitle", "Thinking out loud.")}
             </h2>
           </div>
           <Link
-            to="/blog"
+            to={getLocalizedPath("/blog")}
             className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            EXPLORE ALL ARTICLES
+            {t("exploreAllArticles", "EXPLORE ALL ARTICLES")}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
 
         {blogPosts.length === 0 ? (
           <div className="h-64 rounded-xl border border-white/10 bg-white/5 glass flex items-center justify-center text-muted-foreground text-sm">
-            No blog articles available.
+            {t("noBlogArticles", "No blog articles available.")}
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -129,10 +131,10 @@ export default function BlogSection() {
 
         <div className="mt-16 flex justify-center">
           <Link
-            to="/blog"
+            to={getLocalizedPath("/blog")}
             className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
           >
-            EXPLORE FULL BLOG ARCHIVE ({blogPosts.length} ARTICLES)
+            {t("exploreFullBlogArchive", "EXPLORE FULL BLOG ARCHIVE")} ({blogPosts.length})
             <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>

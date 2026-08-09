@@ -24,6 +24,7 @@ const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const ToolDetailPage = lazy(() => import("./pages/ToolDetailPage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
+const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
@@ -61,6 +62,9 @@ function AppRoutes() {
       <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
       <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
 
+      {/* Admin Control Routes */}
+      <Route path="/admin/linkedin" element={<LinkedInAdmin />} />
+
       {/* Azerbaijani (/az) Parallel Routes */}
       <Route path="/az" element={<HomePage />} />
       <Route path="/az/about" element={<AboutPage />} />
@@ -84,6 +88,7 @@ function AppRoutes() {
       <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
+      <Route path="/az/admin/linkedin" element={<LinkedInAdmin />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

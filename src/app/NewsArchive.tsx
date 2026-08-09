@@ -28,6 +28,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -70,6 +71,16 @@ export default function NewsArchive() {
   const deferredSearch = useDeferredValue(searchQuery);
   const [selectedNewsModal, setSelectedNewsModal] = useState<NormalizedResource | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { t, getLocalizedPath, language } = useLanguage();
+
+  const tabLabels: Record<string, string> = {
+    all: t("allNews", "All News"),
+    designNews: t("designNews", "Design"),
+    aiNews: t("aiNews", "AI & ML"),
+    marketingNews: t("marketingNews", "Marketing"),
+    frontendNews: t("frontendNews", "Frontend"),
+    motionNews: t("motionNews", "Motion"),
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -139,8 +150,8 @@ export default function NewsArchive() {
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="Industry News & Technical Insights — Rvan.me"
-        description="Real-time coverage across Design, AI, Frontend, Dev, Marketing, and Motion. Unified real-time feed."
+        title={`${t("newsArchiveTitle", "Industry News & Technical Insights")} — Rvan.me`}
+        description={t("newsArchiveSubtitle", "Real-time coverage across Design, AI, Frontend, Dev, Marketing, and Motion. Unified real-time feed.")}
         url="https://www.rvan.me/news"
       />
 
@@ -161,31 +172,27 @@ export default function NewsArchive() {
       <PageHero
         eyebrow={
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-widest text-primary mono uppercase">
-            <Rss size={13} /> CREATIVE PUBLICATION PLATFORM · REAL-TIME RSS AGGREGATION
+            <Rss size={13} /> {t("rssEyebrow", "CREATIVE PUBLICATION PLATFORM · REAL-TIME RSS AGGREGATION")}
           </span>
         }
-        title="Industry"
-        accentText="News Hub."
+        title={t("newsHeroTitle", "Industry")}
+        accentText={t("newsHeroAccent", "News Hub.")}
         gradientVariant="accent"
-        description={
-          <>
-            Real-time coverage across <span className="text-foreground font-medium">Design</span>, <span className="text-foreground font-medium">AI</span>, <span className="text-foreground font-medium">Frontend</span>, <span className="text-foreground font-medium">Marketing</span>, and <span className="text-foreground font-medium">Motion</span>. Aggregated automatically with accurate UTC publication dates.
-          </>
-        }
+        description={t("newsHeroDesc", "Real-time coverage across Design, AI, Frontend, Marketing, and Motion. Aggregated automatically with accurate UTC publication dates.")}
       />
 
       {/* Master Page Filter Bar & Search */}
       <PageFilterBar
         categories={NEWS_TABS.filter((tab) => tab.key === "all" || (tabCounts[tab.key] || 0) > 0).map((tab) => ({
           key: tab.key,
-          label: tab.label,
+          label: tabLabels[tab.key] || tab.label,
           icon: tab.icon,
         }))}
         activeCategory={activeTab}
         onSelectCategory={setActiveTab}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search news & articles..."
+        searchPlaceholder={t("searchNews", "Search news & articles...")}
         searchId="news-search"
       />
 
@@ -196,11 +203,11 @@ export default function NewsArchive() {
             <div className="flex items-center gap-3">
               <Rss size={16} className="text-primary" />
               <h2 className="text-sm font-bold tracking-[.15em] text-primary uppercase mono">
-                {activeTab === "all" ? "Live Industry Stream" : NEWS_TABS.find(t => t.key === activeTab)?.label}
+                {activeTab === "all" ? t("liveIndustryStream", "Live Industry Stream") : (tabLabels[activeTab] || NEWS_TABS.find(t => t.key === activeTab)?.label)}
               </h2>
               {!loading && (
                 <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold text-muted-foreground">
-                  {filteredFeeds.length} articles
+                  {filteredFeeds.length} {t("articles", "articles")}
                 </span>
               )}
             </div>
@@ -215,12 +222,12 @@ export default function NewsArchive() {
           ) : filteredFeeds.length === 0 ? (
             <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center glass">
               <Rss size={32} className="text-muted-foreground/40 mx-auto mb-4" />
-              <p className="text-muted-foreground">No articles found for this search or category.</p>
+              <p className="text-muted-foreground">{t("noArticlesFound", "No articles found for this search or category.")}</p>
               <button
                 onClick={() => { setActiveTab("all"); setSearchQuery(""); }}
                 className="mt-4 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white transition-colors"
               >
-                SHOW ALL NEWS
+                {t("showAllNews", "SHOW ALL NEWS")}
               </button>
             </div>
           ) : (
@@ -228,7 +235,8 @@ export default function NewsArchive() {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleFeeds.map((item, idx) => {
                   const sourceBadgeClass = SOURCE_COLORS[item.sourceName] || "text-primary border-primary/30 bg-primary/10";
-                  const detailPath = `/news/${item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+                  const rawSlug = item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                  const detailPath = getLocalizedPath(`/news/${rawSlug}`);
                   const publisherUrl = cleanPublisherUrl(item.link);
 
                   return (
@@ -286,7 +294,7 @@ export default function NewsArchive() {
                             onClick={() => setSelectedNewsModal(item)}
                             className="inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:text-white transition-colors mono uppercase tracking-wider"
                           >
-                            <Sparkles size={12} /> AI SUMMARY
+                            <Sparkles size={12} /> {t("aiSummaryBtn", "AI SUMMARY")}
                           </button>
 
                           <div className="flex items-center gap-2">
@@ -302,7 +310,7 @@ export default function NewsArchive() {
                               to={detailPath}
                               className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-foreground hover:bg-primary hover:text-black transition-all"
                             >
-                              READ <ArrowUpRight size={12} />
+                              {t("read", "READ")} <ArrowUpRight size={12} />
                             </Link>
 
                             {publisherUrl.startsWith("http") && (
@@ -313,7 +321,7 @@ export default function NewsArchive() {
                                 className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground transition-all"
                                 title="Visit original publisher website"
                               >
-                                VISIT <ExternalLink size={10} />
+                                {t("visit", "VISIT")} <ExternalLink size={10} />
                               </a>
                             )}
                           </div>
@@ -332,7 +340,7 @@ export default function NewsArchive() {
                     disabled={isLoadingMore}
                     className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
                   >
-                    {isLoadingMore ? "LOADING BATCH..." : `LOAD MORE ARTICLES (${remainingCount} REMAINING)`}
+                    {isLoadingMore ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMoreArticles", "LOAD MORE ARTICLES")} (${remainingCount} ${t("remaining", "REMAINING")})`}
                   </button>
                 </div>
               )}
@@ -353,7 +361,7 @@ export default function NewsArchive() {
             </button>
 
             <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase mb-2">
-              <Sparkles size={14} /> AI Structured Analytical Summary
+              <Sparkles size={14} /> {t("aiStructuredSummary", "AI Structured Analytical Summary")}
             </div>
             
             <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">
@@ -361,48 +369,48 @@ export default function NewsArchive() {
             </h2>
 
             {(() => {
-              const summary = generateNewsSummary(selectedNewsModal.title, selectedNewsModal.description, selectedNewsModal.sourceName);
+              const summary = generateNewsSummary(selectedNewsModal.title, selectedNewsModal.description, selectedNewsModal.sourceName, language);
               return (
                 <div className="space-y-6 text-xs text-muted-foreground leading-relaxed">
                   <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">📌 Overview</h4>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">📌 {t("modalOverview", "Overview")}</h4>
                     <p>{summary.overview}</p>
                   </div>
 
                   <div>
-                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">🚀 What's New</h4>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">🚀 {t("modalWhatsNew", "What's New")}</h4>
                     <p>{summary.whatsNew}</p>
                   </div>
 
                   <div>
-                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-2">⚡ Key Features</h4>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-2">⚡ {t("modalKeyFeatures", "Key Features")}</h4>
                     <ul className="list-disc pl-4 space-y-1">
                       {summary.keyFeatures.map((f, i) => <li key={i}>{f}</li>)}
                     </ul>
                   </div>
 
                   <div>
-                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">💡 Industry Impact & Why It Matters</h4>
+                    <h4 className="font-bold text-foreground uppercase mono text-[11px] mb-1">💡 {t("modalImpact", "Industry Impact & Why It Matters")}</h4>
                     <p>{summary.industryImpact}</p>
                     <p className="mt-2">{summary.whyItMatters}</p>
                   </div>
 
                   <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-primary font-medium">
-                    <h4 className="font-bold uppercase mono text-[11px] mb-2 text-primary">Key Takeaways</h4>
+                    <h4 className="font-bold uppercase mono text-[11px] mb-2 text-primary">{t("modalKeyTakeaways", "Key Takeaways")}</h4>
                     <ul className="list-disc pl-4 space-y-1">
-                      {summary.keyTakeaways.map((t, i) => <li key={i}>{t}</li>)}
+                      {summary.keyTakeaways.map((tItem, i) => <li key={i}>{tItem}</li>)}
                     </ul>
                   </div>
 
                   <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                    <span className="text-[10px] mono text-muted-foreground">Publisher: {selectedNewsModal.sourceName}</span>
+                    <span className="text-[10px] mono text-muted-foreground">{t("publisher", "Publisher")}: {selectedNewsModal.sourceName}</span>
                     <a
                       href={selectedNewsModal.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors"
                     >
-                      READ FULL ORIGINAL ARTICLE <ExternalLink size={12} />
+                      {t("readFullOriginal", "READ FULL ORIGINAL ARTICLE")} <ExternalLink size={12} />
                     </a>
                   </div>
                 </div>

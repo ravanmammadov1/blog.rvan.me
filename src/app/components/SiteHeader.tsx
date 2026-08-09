@@ -14,6 +14,7 @@ function UserAuthMenu() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -66,7 +67,7 @@ function UserAuthMenu() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
             />
           </svg>
-          <span>SIGN IN</span>
+          <span>{t("signIn", "SIGN IN")}</span>
         </button>
 
         <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
@@ -114,11 +115,11 @@ function UserAuthMenu() {
             </div>
 
             <Link
-              to="/profile"
+              to={getLocalizedPath("/profile")}
               onClick={() => setDropdownOpen(false)}
               className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-foreground/90 hover:bg-white/10 hover:text-white transition-colors text-left mono"
             >
-              <UserIcon size={14} className="text-primary" /> View Profile
+              <UserIcon size={14} className="text-primary" /> {t("viewProfile", "View Profile")}
             </Link>
 
             <button
@@ -128,7 +129,7 @@ function UserAuthMenu() {
               }}
               className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors text-left mono mt-1"
             >
-              <LogOut size={14} /> Sign out
+              <LogOut size={14} /> {t("signOut", "Sign out")}
             </button>
           </motion.div>
         )}
@@ -136,10 +137,6 @@ function UserAuthMenu() {
     </div>
   );
 }
-
-
-
-import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 function LanguageSwitcher() {
   const { language, switchLanguage } = useLanguage();
@@ -175,7 +172,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const { t, getLocalizedPath, language } = useLanguage();
+  const { t, getLocalizedPath } = useLanguage();
 
   const isHomePage = location.pathname === "/" || location.pathname === "/az";
 
@@ -243,7 +240,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             <span className="hidden text-[10px] font-bold leading-tight tracking-[.16em] sm:block uppercase">
               RVAN.ME
               <br />
-              <span className="text-[9px] font-medium text-muted-foreground">STUDIO</span>
+              <span className="text-[9px] font-medium text-muted-foreground">{t("studio", "STUDIO")}</span>
             </span>
 
           </Link>
@@ -304,9 +301,6 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
         </div>
       </header>
 
-
-
-
       {/* Mobile Slide-Over Menu */}
       <AnimatePresence>
         {menuOpen && (
@@ -329,11 +323,12 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
             <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 relative z-10">
               {navItems.map((item, i) => {
+                const localizedTarget = getLocalizedPath(item.target);
                 const isActive =
                   item.target === "/"
-                    ? location.pathname === "/"
-                    : location.pathname === item.target ||
-                      location.pathname.startsWith(item.target + "/");
+                    ? isHomePage
+                    : location.pathname === localizedTarget ||
+                      location.pathname.startsWith(localizedTarget + "/");
 
                 return (
                   <motion.div
@@ -344,7 +339,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                     className="border-b border-border/30"
                   >
                     <Link
-                      to={getNavHref(item.target)}
+                      to={localizedTarget}
                       onClick={() => setMenuOpen(false)}
                       className={`flex w-full items-baseline gap-4 py-4 text-left text-2xl font-semibold uppercase tracking-tight transition-all duration-300 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                         isActive ? "text-primary" : "text-foreground/80"
@@ -360,13 +355,13 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             </nav>
 
             <div className="mt-8 pt-6 border-t border-border/30 flex justify-between items-center text-xs mono text-muted-foreground relative z-10">
-              <span>CREATIVE PLATFORM & PUBLICATION</span>
+              <span>{t("creativePlatform", "CREATIVE PLATFORM & PUBLICATION")}</span>
               <Link
-                to="/contact"
+                to={getLocalizedPath("/contact")}
                 onClick={() => setMenuOpen(false)}
                 className="text-primary font-bold hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                COLLABORATE →
+                {t("collaborate", "COLLABORATE")} →
               </Link>
             </div>
           </motion.div>

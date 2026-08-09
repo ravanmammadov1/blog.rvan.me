@@ -1,9 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ExternalLink, Star, Type, Code, Box, BookOpen, Sparkles } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Star } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
-import { fetchUnifiedResources, fetchHomeShowcaseResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
+import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -29,6 +30,16 @@ export default function ResourcesSection() {
   const [resources, setResources] = useState<SharedResourceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<ResourceCategoryKey>("fonts");
+  const { t, getLocalizedPath } = useLanguage();
+
+  const categoryLabels: Record<ResourceCategoryKey, string> = {
+    fonts: t("fonts", "Fonts"),
+    githubRepos: t("githubRepos", "GitHub Repositories"),
+    tools: t("tools", "Tools"),
+    assets: t("assets", "Assets"),
+    learning: t("learning", "Learning"),
+    inspiration: t("inspiration", "Inspiration"),
+  };
 
   useEffect(() => {
     // 1. Instant 0ms initial render from lightweight showcase catalog
@@ -72,16 +83,16 @@ export default function ResourcesSection() {
           className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between border-b border-white/10 pb-6 gap-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">04 / Unified Creative Ecosystem</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{t("sectionResourcesEyebrow", "04 / Unified Creative Ecosystem")}</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Knowledge & Assets.
+              {t("sectionResourcesTitle", "Knowledge & Assets.")}
             </h2>
           </div>
           <Link
-            to={`/resources?category=${activeCategory}`}
+            to={getLocalizedPath(`/resources?category=${activeCategory}`)}
             className="group inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono uppercase"
           >
-            EXPLORE ALL {HOME_RESOURCE_CATEGORIES[activeCategory]?.label}
+            {t("exploreAll", "EXPLORE ALL")} {categoryLabels[activeCategory]}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
@@ -98,7 +109,7 @@ export default function ResourcesSection() {
                   : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
               }`}
             >
-              <span>{config.icon}</span> {config.label}
+              <span>{config.icon}</span> {categoryLabels[key as ResourceCategoryKey]}
             </button>
           ))}
         </div>
@@ -112,7 +123,7 @@ export default function ResourcesSection() {
           </div>
         ) : filteredResources.length === 0 ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center glass">
-            <p className="text-xs text-muted-foreground">No featured items available for this category.</p>
+            <p className="text-xs text-muted-foreground">{t("noFeaturedItems", "No featured items available for this category.")}</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -149,8 +160,8 @@ export default function ResourcesSection() {
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                   <span className="text-muted-foreground">{item.source}</span>
                   {item.url.startsWith("/") ? (
-                    <Link to={item.url} className="text-primary hover:text-white flex items-center gap-1">
-                      VIEW DETAILS <ArrowUpRight size={13} />
+                    <Link to={getLocalizedPath(item.url)} className="text-primary hover:text-white flex items-center gap-1">
+                      {t("viewDetails", "VIEW DETAILS")} <ArrowUpRight size={13} />
                     </Link>
                   ) : (
                     <a
@@ -159,7 +170,7 @@ export default function ResourcesSection() {
                       rel="noopener noreferrer"
                       className="text-primary hover:text-white flex items-center gap-1"
                     >
-                      VISIT <ExternalLink size={13} />
+                      {t("visit", "VISIT")} <ExternalLink size={13} />
                     </a>
                   )}
                 </div>

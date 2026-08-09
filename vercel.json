@@ -271,6 +271,14 @@
       "destination": "/resources/:slug/index.html"
     },
     {
+      "source": "/admin/linkedin",
+      "destination": "/admin/linkedin/index.html"
+    },
+    {
+      "source": "/az/admin/linkedin",
+      "destination": "/az/admin/linkedin/index.html"
+    },
+    {
       "source": "/((?!api/|assets/|models/|imports/|.*\\.[a-zA-Z0-9]+$).*)",
       "destination": "/api/not-found"
     }

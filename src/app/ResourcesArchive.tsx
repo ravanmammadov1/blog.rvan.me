@@ -23,6 +23,7 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
@@ -49,6 +50,7 @@ export default function ResourcesArchive() {
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
   const [unifiedItems, setUnifiedItems] = useState<SharedResourceItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { t, getLocalizedPath } = useLanguage();
 
   // Interactive Font Specimen controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
@@ -59,6 +61,15 @@ export default function ResourcesArchive() {
   const activeCategory = (searchParams.get("category") as ResourceCategoryKey) || "fonts";
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
+
+  const categoryLabels: Record<ResourceCategoryKey, string> = {
+    fonts: t("fonts", "Fonts"),
+    githubRepos: t("githubRepos", "GitHub Repositories"),
+    tools: t("tools", "Tools"),
+    assets: t("assets", "Assets"),
+    learning: t("learning", "Learning"),
+    inspiration: t("inspiration", "Inspiration"),
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -100,40 +111,12 @@ export default function ResourcesArchive() {
         (item) =>
           item.title.toLowerCase().includes(q) ||
           item.description.toLowerCase().includes(q) ||
-          item.type.toLowerCase().includes(q) ||
           item.source.toLowerCase().includes(q)
       );
     }
 
     return list;
   }, [unifiedItems, activeCategory, deferredSearch]);
-
-  // Filtered Fonts
-  const filteredFonts = useMemo(() => {
-    let list = fontCatalog || [];
-
-    if (fontCategorySubfilter !== "all") {
-      if (fontCategorySubfilter === "Variable") {
-        list = list.filter((f) => f && f.isVariable);
-      } else {
-        list = list.filter((f) => f && f.category === fontCategorySubfilter);
-      }
-    }
-
-    if (deferredSearch.trim()) {
-      const q = deferredSearch.toLowerCase();
-      list = list.filter(
-        (f) =>
-          f &&
-          ((f.family && f.family.toLowerCase().includes(q)) ||
-            (f.name && f.name.toLowerCase().includes(q)) ||
-            (f.designer && f.designer.toLowerCase().includes(q)) ||
-            (f.foundry && f.foundry.toLowerCase().includes(q)))
-      );
-    }
-
-    return list;
-  }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
 
   const {
     visibleItems: visibleCategoryItems,
@@ -142,25 +125,54 @@ export default function ResourcesArchive() {
     loadMore: loadMoreCategoryItems,
     isLoadingMore: isLoadingMoreCategory,
   } = useProgressiveRendering(filteredCategoryItems, {
-    initialBatchSize: 12,
-    stepBatchSize: 12,
+    initialBatchSize: 9,
+    stepBatchSize: 6,
     resetDependencies: [activeCategory, deferredSearch],
   });
+
+  // Filtered Font Catalog
+  const filteredFonts = useMemo(() => {
+    let list = fontCatalog;
+
+    if (fontCategorySubfilter !== "all") {
+      list = list.filter((f) => (f.category || "").toLowerCase() === fontCategorySubfilter.toLowerCase());
+    }
+
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.toLowerCase();
+      list = list.filter(
+        (f) =>
+          f.family.toLowerCase().includes(q) ||
+          (f.category || "").toLowerCase().includes(q) ||
+          (f.designer || "").toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
+
+  const fontCountsBySubfilter = useMemo(() => {
+    const counts: Record<string, number> = { all: fontCatalog.length };
+    fontCatalog.forEach((f) => {
+      const cat = (f.category || "sans-serif").toLowerCase();
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+    return counts;
+  }, [fontCatalog]);
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title="Creative Resources & Developer Toolkit — Rvan.me"
-        description="Discover open-source font families, curated GitHub repositories, developer tools, vector assets, mockups, and UI kits."
+        title={`${t("resourcesArchiveTitle", "Creative Resources & Open-Source Directory")} — Rvan.me`}
+        description={t("resourcesArchiveSubtitle", "Curated open-source fonts, developer repositories, design utilities, asset kits, and learning roadmaps.")}
         url="https://www.rvan.me/resources"
       />
 
-      {/* Ambient background blob */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden opacity-30">
+      {/* Aurora Ambient Lighting */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-30">
         <div
-          className="absolute -top-[20%] left-[20%] h-[600px] w-[600px] rounded-full"
+          className="absolute -top-[20%] left-[20%] h-[700px] w-[700px] rounded-full"
           style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(6,182,212,0.06) 0%, rgba(59,130,246,0.03) 50%, transparent 75%)",
+            background: "radial-gradient(circle at 50% 50%, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.04) 50%, transparent 75%)",
             filter: "blur(90px)",
           }}
         />
@@ -170,83 +182,78 @@ export default function ResourcesArchive() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow="⚡ CREATIVE RESOURCES & DEV TOOLS"
-        title="Creative Resources &"
-        accentText="Developer Toolkit."
-        gradientVariant="creative"
-        description="Explore open-source font families, curated GitHub repositories, developer tools, vector icons, device mockups, and UI kits."
+        eyebrow="OPEN-SOURCE VAULT & DEVELOPER TOOLKIT"
+        title="Creative"
+        accentText="Resources."
+        gradientVariant="primary"
+        description={t("resourcesArchiveSubtitle", "Curated open-source fonts, developer repositories, design utilities, asset kits, and learning roadmaps.")}
       />
 
       {/* Master Page Filter Bar & Search */}
       <PageFilterBar
         categories={Object.entries(CATEGORY_MAP).map(([key, config]) => ({
           key,
-          label: config.label,
+          label: categoryLabels[key as ResourceCategoryKey] || config.label,
           icon: config.icon,
         }))}
         activeCategory={activeCategory}
-        onSelectCategory={(key) => setParam("category", key)}
+        onSelectCategory={(key) => {
+          setParam("category", key);
+        }}
         searchQuery={searchQuery}
-        onSearchChange={(q) => handleSearchChange(q)}
-        searchPlaceholder={`Search ${CATEGORY_MAP[activeCategory]?.label || "resources"}...`}
-        searchId="resource-search"
+        onSearchChange={handleSearchChange}
+        searchPlaceholder={t("searchPlaceholder", "Search by title, keyword, or tag...")}
+        searchId="resources-search"
       />
 
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          1. FONTS CATEGORY (DEFAULT & FIRST TAB)
-      ───────────────────────────────────────────────────────────────────────────── */}
+      {/* Category Content */}
       {activeCategory === "fonts" ? (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Type Tester Controls */}
-            <div className="mb-8 p-5 rounded-2xl border border-white/10 bg-white/5 glass space-y-4">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2 border-t border-white/5">
-                <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
-                  <Type size={16} /> Specimen Controls
-                </div>
-
-                {/* Sub-category Filters */}
-                <div className="flex flex-wrap gap-2 text-xs">
-                  {["all", "Sans Serif", "Serif", "Display", "Monospace", "Variable"].map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setFontCategorySubfilter(cat)}
-                      className={`px-3 py-1 rounded-full border transition-all ${
-                        fontCategorySubfilter === cat
-                          ? "border-primary bg-primary/10 text-primary font-bold"
-                          : "border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {cat === "all" ? "All Categories" : cat}
-                    </button>
-                  ))}
-                </div>
+            {/* Font Specimen Toolbar Controls */}
+            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
+              <div className="flex flex-1 items-center gap-3 rounded-xl border border-white/10 bg-background/60 px-4 py-2">
+                <Type size={16} className="text-primary shrink-0" />
+                <input
+                  type="text"
+                  value={previewText}
+                  onChange={(e) => setPreviewText(e.target.value)}
+                  placeholder="Type specimen text..."
+                  className="w-full bg-transparent text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/50 font-medium"
+                />
               </div>
 
-              {/* Preview Text & Slider */}
-              <div className="grid gap-4 md:grid-cols-12 items-center">
-                <div className="md:col-span-8 relative">
-                  <input
-                    type="text"
-                    value={previewText}
-                    onChange={(e) => setPreviewText(e.target.value)}
-                    placeholder="Type custom preview text..."
-                    className="w-full rounded-xl border border-white/10 bg-background/80 px-4 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none glass-sm"
-                  />
-                </div>
-                <div className="md:col-span-4 flex items-center gap-3">
-                  <Sliders size={14} className="text-muted-foreground shrink-0" />
+              <div className="flex items-center gap-4 shrink-0">
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase">
+                  <Sliders size={14} className="text-primary" />
+                  <span>{fontSizePx}px</span>
                   <input
                     type="range"
-                    min="16"
-                    max="64"
+                    min="14"
+                    max="72"
                     value={fontSizePx}
                     onChange={(e) => setFontSizePx(Number(e.target.value))}
-                    className="w-full accent-primary"
+                    className="h-1.5 w-24 cursor-pointer accent-primary bg-white/10 rounded-lg"
                   />
-                  <span className="text-xs font-bold mono text-muted-foreground w-12 text-right">{fontSizePx}px</span>
                 </div>
               </div>
+            </div>
+
+            {/* Font Subfilter Tabs */}
+            <div className="mb-8 flex flex-wrap gap-2">
+              {["all", "sans-serif", "serif", "monospace", "display"].map((sub) => (
+                <button
+                  key={sub}
+                  onClick={() => setFontCategorySubfilter(sub)}
+                  className={`rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider transition-all mono ${
+                    fontCategorySubfilter === sub
+                      ? "bg-primary text-black"
+                      : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {sub === "all" ? t("allNews", "All") : sub} ({(fontCountsBySubfilter[sub] || 0)})
+                </button>
+              ))}
             </div>
 
             {/* Font Grid */}
@@ -258,7 +265,7 @@ export default function ResourcesArchive() {
               </div>
             ) : filteredFonts.length === 0 ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs">No font families found matching your search.</p>
+                <p className="text-muted-foreground text-xs">{t("noArticlesFound", "No font families found matching your search.")}</p>
                 <button
                   onClick={() => {
                     setFontCategorySubfilter("all");
@@ -266,7 +273,7 @@ export default function ResourcesArchive() {
                   }}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
-                  RESET FILTERS
+                  {t("resetFilters", "RESET FILTERS")}
                 </button>
               </div>
             ) : (
@@ -291,7 +298,7 @@ export default function ResourcesArchive() {
                       onClick={() => setVisibleFontLimit((prev) => prev + 16)}
                       className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-7 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm"
                     >
-                      LOAD MORE FONTS ({filteredFonts.length - visibleFontLimit} REMAINING)
+                      {t("loadMore", "LOAD MORE FONTS")} ({filteredFonts.length - visibleFontLimit} {t("remaining", "REMAINING")})
                     </button>
                   </div>
                 )}
@@ -300,9 +307,7 @@ export default function ResourcesArchive() {
           </div>
         </section>
       ) : (
-        /* ─────────────────────────────────────────────────────────────────────────────
-            2. UNIFIED RESOURCE CATEGORIES (GITHUB REPOS, TOOLS, ASSETS, LEARNING, INSPIRATION)
-        ───────────────────────────────────────────────────────────────────────────── */
+        /* Unified Category Section */
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
             {loading ? (
@@ -313,12 +318,12 @@ export default function ResourcesArchive() {
               </div>
             ) : filteredCategoryItems.length === 0 ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs font-medium">No items found matching your filter or search.</p>
+                <p className="text-muted-foreground text-xs font-medium">{t("noFeaturedItems", "No items found matching your filter or search.")}</p>
                 <button
                   onClick={() => handleSearchChange("")}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
-                  RESET SEARCH
+                  {t("resetFilters", "RESET SEARCH")}
                 </button>
               </div>
             ) : (
@@ -357,8 +362,8 @@ export default function ResourcesArchive() {
                       <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                         <span className="text-muted-foreground">{item.source} {item.language ? `· ${item.language}` : ""}</span>
                         {item.url.startsWith("/") ? (
-                          <Link to={item.url} className="text-primary hover:text-white flex items-center gap-1">
-                            VIEW <ArrowUpRight size={13} />
+                          <Link to={getLocalizedPath(item.url)} className="text-primary hover:text-white flex items-center gap-1">
+                            {t("viewDetails", "VIEW")} <ArrowUpRight size={13} />
                           </Link>
                         ) : (
                           <a
@@ -367,7 +372,7 @@ export default function ResourcesArchive() {
                             rel="noopener noreferrer"
                             className="text-primary hover:text-white flex items-center gap-1"
                           >
-                            VISIT <ExternalLink size={13} />
+                            {t("visit", "VISIT")} <ExternalLink size={13} />
                           </a>
                         )}
                       </div>
@@ -383,7 +388,7 @@ export default function ResourcesArchive() {
                       disabled={isLoadingMoreCategory}
                       className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
                     >
-                      {isLoadingMoreCategory ? "LOADING BATCH..." : `LOAD MORE ITEMS (${remainingCategoryCount} REMAINING)`}
+                      {isLoadingMoreCategory ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMore", "LOAD MORE ITEMS")} (${remainingCategoryCount} ${t("remaining", "REMAINING")})`}
                     </button>
                   </div>
                 )}

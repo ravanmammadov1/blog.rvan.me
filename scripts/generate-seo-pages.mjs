@@ -115,6 +115,7 @@ const staticPages = [
   { path: "/privacy-policy", title: "Privacy Policy — Ravan Mammadov", description: "Privacy policy for the Ravan Mammadov portfolio and publication.", type: "website" },
   { path: "/cookie-policy", title: "Cookie Policy — Ravan Mammadov", description: "Cookie policy for the Ravan Mammadov portfolio and publication.", type: "website" },
   { path: "/terms", title: "Terms of Service — Ravan Mammadov", description: "Terms of service for the Ravan Mammadov portfolio and publication.", type: "website" },
+  { path: "/admin/linkedin", title: "LinkedIn Admin Control Panel — Rvan.me", description: "LinkedIn OAuth 2.0 and personal profile publishing admin control panel.", type: "website" },
 
   { path: "/work/wuling-creative-campaign", title: "Wuling Creative Campaign — Motion Design Case Study | Ravan Mammadov", description: "Explore the Wuling creative campaign case study combining automotive art direction, motion design, and marketing campaign assets.", type: "website" },
   { path: "/work/limitless-drive", title: "Limitless Drive — 3D Brand Identity Case Study | Ravan Mammadov", description: "Explore the Limitless Drive automotive brand identity and 3D design case study by Ravan Mammadov.", type: "website" },

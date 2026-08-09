@@ -143,7 +143,7 @@ export default function NewsDetail() {
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           <p className="text-xs font-semibold tracking-widest text-muted-foreground mono">
-            LOADING EDITORIAL...
+            {t("loadingEditorial", "LOADING EDITORIAL...")}
           </p>
         </div>
       </div>
@@ -153,11 +153,11 @@ export default function NewsDetail() {
   if (!article) {
     return (
       <main className="min-h-screen bg-background text-foreground px-6 py-32">
-        <SEO title="Article Not Found — Rvan.me" />
+        <SEO title={`${t("articleNotFound", "Article Not Found")} — Rvan.me`} />
         <SEO noIndex />
         <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-4xl font-semibold mb-4">Article Not Found</h1>
-          <p className="text-muted-foreground mb-8">The requested publication could not be located.</p>
+          <h1 className="text-4xl font-semibold mb-4">{t("articleNotFound", "Article Not Found")}</h1>
+          <p className="text-muted-foreground mb-8">{t("articleNotFoundDesc", "The requested publication could not be located.")}</p>
           <Link
             to={getLocalizedPath("/news")}
             className="inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3 text-xs font-bold tracking-widest text-primary hover:bg-primary hover:text-black transition-all mono"
@@ -243,7 +243,7 @@ export default function NewsDetail() {
               </span>
               <span className="flex items-center gap-1 text-muted-foreground/70">
                 <Clock size={12} />
-                {editorial.estimatedReadingTimeMinutes} MIN READ
+                {editorial.estimatedReadingTimeMinutes} {t("minRead", "MIN READ")}
               </span>
             </div>
 
@@ -279,7 +279,7 @@ export default function NewsDetail() {
           </motion.div>
 
           {/* ─────────────────────────────────────────────────────────────────────────────
-              COMPREHENSIVE 500-1000 WORD AI EDITORIAL SUMMARY
+              COMPREHENSIVE AI EDITORIAL SUMMARY
           ───────────────────────────────────────────────────────────────────────────── */}
           <motion.div
             variants={fadeUp}
@@ -290,13 +290,13 @@ export default function NewsDetail() {
           >
             {/* Header Tag */}
             <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs font-bold text-primary mono uppercase">
-              <Sparkles size={16} /> Extended AI Editorial & Technical Breakdown ({editorial.wordCount} Words)
+              <Sparkles size={16} /> {t("editorialHeader", "Extended AI Editorial & Technical Breakdown")} ({editorial.wordCount} {t("editorialWords", "Words")})
             </div>
 
             {/* 1. Overview */}
             <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 glass">
               <h2 className="text-xl font-bold tracking-tight text-foreground mb-3 flex items-center gap-2">
-                <span>📌</span> Executive Overview
+                <span>📌</span> {t("editorialOverview", "Executive Overview")}
               </h2>
               <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
                 {editorial.overview}
@@ -306,87 +306,47 @@ export default function NewsDetail() {
             {/* 2. What's New */}
             <section className="space-y-3">
               <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                <span>🚀</span> What's New & Core Innovations
+                <span>🚀</span> {t("editorialWhatsNew", "What's New & Core Innovations")}
               </h2>
               <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
                 {editorial.whatsNew}
               </p>
             </section>
 
-            {/* 3. Key Features */}
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 glass">
-              <h2 className="text-xl font-bold tracking-tight text-foreground mb-4 flex items-center gap-2">
-                <span>⚡</span> Key Capabilities & Highlights
-              </h2>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                {editorial.keyFeatures.map((feat, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-primary shrink-0" />
-                    <span>{feat}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            {/* 4. Technical Breakdown */}
+            {/* 3. Technical Breakdown */}
             <section className="space-y-3">
               <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                <span>⚙️</span> Technical & Architecture Deep-Dive
+                <span>⚙️</span> {t("editorialTechnical", "Technical & Architecture Deep-Dive")}
               </h2>
               <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
                 {editorial.technicalBreakdown}
               </p>
             </section>
 
-            {/* 5. Industry Impact */}
+            {/* 4. Industry Impact */}
             <section className="space-y-3">
               <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                <span>💡</span> Industry & Market Impact
+                <span>💡</span> {t("editorialImpact", "Industry & Market Impact")}
               </h2>
               <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
                 {editorial.industryImpact}
               </p>
             </section>
 
-            {/* 6. Why It Matters */}
-            <section className="space-y-3">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                <span>🎯</span> Strategic Value & Why It Matters
-              </h2>
-              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
-                {editorial.whyItMatters}
-              </p>
-            </section>
-
-            {/* 7. Key Takeaways */}
-            <section className="rounded-2xl border border-primary/20 bg-primary/5 p-6 md:p-8 text-foreground">
-              <h2 className="text-xl font-bold tracking-tight text-primary mb-4 flex items-center gap-2 uppercase mono">
-                Key Takeaways & Actionable Guidance
-              </h2>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                {editorial.keyTakeaways.map((takeaway, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="mt-1 text-primary font-bold">0{idx + 1}.</span>
-                    <span className="text-foreground">{takeaway}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
             {/* Optional Sanity PortableText if available */}
             {sanityBody && (
               <div className="pt-8 border-t border-white/10">
-                <h3 className="text-lg font-bold text-foreground mb-4">Original PortableText Body</h3>
+                <h3 className="text-lg font-bold text-foreground mb-4">{t("editorialPortableText", "Original PortableText Body")}</h3>
                 <PortableText value={sanityBody} />
               </div>
             )}
 
             {/* ─────────────────────────────────────────────────────────────────────────────
-                READ FULL ORIGINAL ARTICLE BUTTON (PLACED AFTER THE ENTIRE AI SUMMARY)
+                READ FULL ORIGINAL ARTICLE BUTTON
             ───────────────────────────────────────────────────────────────────────────── */}
             <div className="mt-16 pt-10 border-t border-white/10 flex flex-col items-center justify-center text-center gap-4">
               <p className="text-xs text-muted-foreground mono">
-                Article curated from original publisher <span className="text-foreground font-bold">{article.sourceName}</span>.
+                {t("articleCuratedFrom", "Article curated from original publisher")} <span className="text-foreground font-bold">{article.sourceName}</span>.
               </p>
               {article.link && article.link.startsWith("http") && (
                 <a
@@ -395,7 +355,7 @@ export default function NewsDetail() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-8 py-4 text-xs font-bold text-black uppercase tracking-widest hover:bg-white hover:shadow-[0_0_25px_rgba(232,253,82,0.4)] transition-all duration-300 mono"
                 >
-                  <span>READ FULL ORIGINAL ARTICLE AT {article.sourceName.toUpperCase()}</span>
+                  <span>{t("visitOriginalAt", "READ FULL ORIGINAL ARTICLE AT")} {article.sourceName.toUpperCase()}</span>
                   <ExternalLink size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               )}
@@ -406,7 +366,7 @@ export default function NewsDetail() {
           {relatedArticles.length > 0 && (
             <div className="mt-24 border-t border-white/10 pt-16">
               <h3 className="text-xs font-bold tracking-[.18em] mb-8 mono uppercase text-primary">
-                Related Articles
+                {t("relatedArticles", "Related Articles")}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedArticles.map((rel) => {
@@ -414,7 +374,7 @@ export default function NewsDetail() {
                   return (
                     <Link
                       key={rel.id}
-                      to={`/news/${rel.slug}`}
+                      to={getLocalizedPath(`/news/${rel.slug}`)}
                       className="group flex flex-col justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:border-primary/50 hover:bg-white/10 transition-all duration-300 glass"
                     >
                       <div>

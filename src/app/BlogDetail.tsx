@@ -27,94 +27,38 @@ export default function BlogDetail() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [post, setPost] = useState<BlogPost | null>(null);
   const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
     });
+  }, []);
 
-    async function fetchPost() {
-      if (!slug) {
-        setLoading(false);
-        return;
-      }
+  useEffect(() => {
+    if (!slug) return;
+    setLoading(true);
+    setError(null);
 
-      try {
-        setLoading(true);
-        setError(null);
-
-        const slugClean = slug.toLowerCase().trim();
-        const [article, all] = await Promise.all([
-          client.fetch(
-            `
-            *[_type == "blog" && (status == "published" || !defined(status)) && defined(publishDate) && publishDate <= now() && slug.current == $slug][0]{
-              _id,
-              title,
-              slug,
-              excerpt,
-              body,
-              publishDate,
-              readTime,
-              category,
-              tags,
-              featured,
-              coverImage,
-              authorName,
-              authorRole,
-              authorPhoto,
-              authorBio
-            }
-            `,
-            { slug: slugClean }
-          ),
-          client.fetch(
-            `
-            *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current) && (!defined(publishDate) || publishDate <= now())] | order(publishDate desc){
-              _id,
-              title,
-              slug,
-              excerpt,
-              body,
-              publishDate,
-              readTime,
-              category,
-              tags,
-              featured,
-              coverImage,
-              authorName,
-              authorRole,
-              authorPhoto,
-              authorBio
-            }
-            `
-          ),
-        ]);
-
-        const allList = all && all.length > 0 ? all : [];
-        setAllPosts(allList);
-
-        if (article) {
-          setPost(article);
-          const related = allList.filter((p: BlogPost) => p._id !== article._id).slice(0, 3);
-          setRelatedPosts(related);
+    Promise.all([fetchBlogBySlug(slug), fetchAllBlogs()])
+      .then(([singlePost, postsList]) => {
+        if (singlePost) {
+          setPost(singlePost);
         } else {
-          setPost(null);
+          setError("Blog post not found");
         }
-      } catch (err) {
-        console.error("Error fetching blog post:", err);
-        setError("Failed to load article. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchPost();
+        if (postsList) {
+          setAllPosts(postsList);
+        }
+      })
+      .catch((err) => {
+        console.error("Error loading blog detail:", err);
+        setError("Failed to load article");
+      })
+      .finally(() => setLoading(false));
   }, [slug]);
 
   // Back to top visibility
@@ -130,12 +74,12 @@ export default function BlogDetail() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        navigate("/blog");
+        navigate(getLocalizedPath("/blog"));
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [navigate]);
+  }, [navigate, getLocalizedPath]);
 
   if (loading) {
     return (
@@ -143,7 +87,7 @@ export default function BlogDetail() {
         <div className="flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           <div className="text-sm font-medium tracking-widest text-muted-foreground mono">
-            LOADING ARTICLE...
+            {t("loadingArticle", "LOADING ARTICLE...")}
           </div>
         </div>
       </main>
@@ -153,18 +97,18 @@ export default function BlogDetail() {
   if (error || !post) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-foreground">
-        <SEO title="Article Not Found — Ravan Mammadov" noIndex />
+        <SEO title={`${t("articleNotFound", "Article Not Found")} — Ravan Mammadov`} noIndex />
         <div className="text-center">
-          <h1 className="text-4xl font-bold">Article Not Found</h1>
+          <h1 className="text-4xl font-bold">{t("articleNotFound", "Article Not Found")}</h1>
           <p className="mt-4 text-muted-foreground">
-            {error || "The requested blog post could not be found."}
+            {error || t("articleNotFoundDesc", "The requested blog post could not be found.")}
           </p>
           <Link
-            to="/blog"
+            to={getLocalizedPath("/blog")}
             className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm text-white backdrop-blur-xl transition hover:bg-white/20"
           >
             <ArrowLeft size={16} />
-            Back to Blog Archive
+            {t("backToBlogArchive", "Back to Blog Archive")}
           </Link>
         </div>
       </main>
@@ -175,13 +119,17 @@ export default function BlogDetail() {
   const coverUrl = imgBuilder ? imgBuilder.width(1200).url() : undefined;
 
   const currentIndex = allPosts.findIndex(
-    (p) => p.slug?.current === slug || p._id === post._id
+    (p) => (p.slug?.current || p._id) === (post.slug?.current || post._id)
   );
   const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
   const nextPost =
     currentIndex >= 0 && currentIndex < allPosts.length - 1
       ? allPosts[currentIndex + 1]
       : null;
+
+  const relatedPosts = allPosts
+    .filter((p) => (p.slug?.current || p._id) !== (post.slug?.current || post._id))
+    .slice(0, 3);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -194,116 +142,55 @@ export default function BlogDetail() {
         publishDate={post.publishDate}
       />
 
-      {/* ── Aurora background blobs ── */}
-      <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
-        <div className="absolute inset-0 bg-background" />
-        
-        {/* Blob 1 — violet / blue, top-left */}
-        <div
-          className="aurora-blob-1 absolute"
-          style={{
-            top: "-15%", left: "-10%",
-            width: "60%", height: "70%",
-            background: "radial-gradient(ellipse at 40% 40%, rgba(139,92,246,0.06) 0%, rgba(59,130,246,0.03) 45%, transparent 72%)",
-            filter: "blur(64px)",
-          }}
-        />
-
-        {/* Blob 2 — emerald / teal, top-right */}
-        <div
-          className="aurora-blob-2 absolute"
-          style={{
-            top: "0%", right: "-12%",
-            width: "55%", height: "65%",
-            background: "radial-gradient(ellipse at 65% 30%, rgba(16,185,129,0.05) 0%, rgba(6,182,212,0.03) 50%, transparent 78%)",
-            filter: "blur(72px)",
-          }}
-        />
-
-        {/* Micro grid overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
-          }}
-        />
-      </div>
-
-      {/* Global Unified Header */}
       <SiteHeader siteSettings={siteSettings} />
 
-      <ReadingProgress />
+      <article className="mx-auto max-w-[1600px] px-6 pt-24 pb-28 md:px-10">
+        <BlogHeader post={post} />
 
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <BlogHero post={post} />
-
-        <div className="mt-16 grid gap-12 lg:grid-cols-12">
-          {/* Sidebar — Sticky Table of Contents */}
-          <aside className="hidden lg:col-span-3 lg:order-2 lg:block">
-            <div className="sticky top-28 space-y-8">
-              {Array.isArray(post.body) && <TableOfContents body={post.body} />}
+        <div className="mt-12 grid gap-12 lg:grid-cols-12">
+          <aside className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-28 space-y-6">
+              <TableOfContents content={post.body} />
             </div>
           </aside>
 
-          {/* Mobile ToC */}
-          {Array.isArray(post.body) && (
-            <div className="lg:hidden">
-              <details className="group rounded-2xl border border-white/10 bg-surface/50 backdrop-blur-md">
-                <summary className="flex cursor-pointer items-center justify-between px-6 py-4 text-xs font-bold uppercase tracking-[.18em] text-primary mono">
-                  <span>Table of Contents</span>
-                  <span className="transition-transform group-open:rotate-180">▾</span>
-                </summary>
-                <div className="px-6 pb-6">
-                  <TableOfContents body={post.body} />
-                </div>
-              </details>
-            </div>
-          )}
-
-          {/* Main content */}
           <div className="lg:col-span-9 lg:order-1">
             <BlogContent post={post} />
-
             <ShareButtons title={post.title} />
-
             <AuthorCard post={post} />
-
             <CommentSection postId={post.slug?.current || post._id} postTitle={post.title} />
 
-            {/* Previous / Next Article Navigation */}
             {(prevPost || nextPost) && (
               <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-white/10 pt-12">
                 {prevPost ? (
                   <Link
-                    to={`/blog/${prevPost.slug?.current || prevPost._id}`}
+                    to={getLocalizedPath(`/blog/${prevPost.slug?.current || prevPost._id}`)}
                     className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5"
                   >
-                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← PREVIOUS ARTICLE</span>
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← {t("previousArticle", "PREVIOUS ARTICLE")}</span>
                     <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{prevPost.title}</p>
                   </Link>
                 ) : <div />}
 
                 {nextPost ? (
                   <Link
-                    to={`/blog/${nextPost.slug?.current || nextPost._id}`}
+                    to={getLocalizedPath(`/blog/${nextPost.slug?.current || nextPost._id}`)}
                     className="group flex flex-col justify-between items-end rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 text-right"
                   >
-                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">NEXT ARTICLE →</span>
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">{t("nextArticle", "NEXT ARTICLE")} →</span>
                     <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{nextPost.title}</p>
                   </Link>
                 ) : <div />}
               </div>
             )}
 
-            {/* Back to Blog Archive Navigation Button */}
             <div className="mt-10 flex justify-center border-t border-white/10 pt-8">
               <Link
-                to="/blog"
+                to={getLocalizedPath("/blog")}
                 className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary mono glass-sm"
               >
                 <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-                BACK TO BLOG ARCHIVE
+                {t("backToBlogArchive", "BACK TO BLOG ARCHIVE")}
               </Link>
             </div>
 
@@ -313,9 +200,10 @@ export default function BlogDetail() {
             />
           </div>
         </div>
-      </div>
+      </article>
 
-      {/* Back to top */}
+      <Footer siteSettings={siteSettings} />
+
       <AnimatePresence>
         {showBackToTop && (
           <motion.button

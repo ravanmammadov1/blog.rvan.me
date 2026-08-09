@@ -7,6 +7,7 @@ import { urlFor } from "../../../lib/sanityClient";
 import { formatBlogDate, estimateReadingTime } from "../../../lib/blogHelpers";
 import { getArticleCoverImage } from "../../../lib/contentEngine";
 import { NoiseBackground } from "@/components/ui/noise-background";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -34,6 +35,7 @@ export default function BlogCard({
   onHoverStart,
   onHoverEnd,
 }: BlogCardProps) {
+  const { getLocalizedPath } = useLanguage();
   const imgBuilder = urlFor(post.coverImage);
   const coverUrl = imgBuilder ? imgBuilder.width(800).url() : getArticleCoverImage(
     post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : post.category === "Marketing" ? "marketingNews" : "frontendNews",
@@ -51,7 +53,7 @@ export default function BlogCard({
 
   return (
     <Link
-      to={`/blog/${slugStr}`}
+      to={getLocalizedPath(`/blog/${slugStr}`)}
       className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl h-full"
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}

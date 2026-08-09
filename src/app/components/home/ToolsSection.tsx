@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { client, urlFor } from "../../../lib/sanityClient";
 import { Eyebrow } from "../Eyebrow";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -16,6 +17,7 @@ const fadeUp = {
 
 export default function ToolsSection() {
   const [toolsList, setToolsList] = useState<any[]>([]);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     // Fetch Tools (latest 4)
@@ -54,23 +56,23 @@ export default function ToolsSection() {
           className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">05 / Designer Toolkit</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{t("sectionToolsEyebrow", "05 / Designer Toolkit")}</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Tools of the trade.
+              {t("sectionToolsTitle", "Featured Interactive Tools.")}
             </h2>
           </div>
           <Link
-            to="/tools"
+            to={getLocalizedPath("/tools")}
             className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            VIEW ALL TOOLS
+            {t("viewAllUtilities", "VIEW ALL IN-BROWSER UTILITIES")}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
 
         {toolsList.length === 0 ? (
           <div className="h-64 rounded-xl border border-white/10 bg-white/5 glass flex items-center justify-center text-muted-foreground text-sm">
-            No tools available.
+            {t("noFeaturedItems", "No tools available.")}
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -111,12 +113,12 @@ export default function ToolsSection() {
                 {tool.link && (
                   <div className="relative z-10 border-t border-white/10 pt-4 mt-2">
                     <a
-                      href={tool.link}
-                      target="_blank"
+                      href={tool.link.startsWith("/") ? getLocalizedPath(tool.link) : tool.link}
+                      target={tool.link.startsWith("/") ? "_self" : "_blank"}
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[.14em] text-primary mono uppercase hover:text-white transition-colors duration-300"
                     >
-                      <span>VIEW TOOL</span>
+                      <span>{t("visit", "VIEW TOOL")}</span>
                       <ArrowUpRight size={12} />
                     </a>
                   </div>
@@ -128,10 +130,10 @@ export default function ToolsSection() {
 
         <div className="mt-16 flex justify-center md:hidden">
           <Link
-            to="/tools"
+            to={getLocalizedPath("/tools")}
             className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold tracking-[.14em] text-foreground transition-all duration-300 hover:bg-white/10 hover:border-white/20 mono"
           >
-            VIEW ALL TOOLS
+            {t("viewAllUtilities", "VIEW ALL IN-BROWSER UTILITIES")}
             <ArrowUpRight size={14} />
           </Link>
         </div>

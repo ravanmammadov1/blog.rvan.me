@@ -6,6 +6,7 @@ import { Eyebrow } from "../Eyebrow";
 import { fetchHomeNewsEngine, CuratedArticle } from "../../../lib/newsEngine";
 import { fetchNews } from "../../../lib/sanityQueries";
 import { getArticleCoverImage } from "../../../lib/contentEngine";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -18,6 +19,7 @@ const fadeUp = {
 
 export default function NewsSection() {
   const [newsList, setNewsList] = useState<CuratedArticle[]>([]);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     // 1. Instant 0ms initial render from cache/baseline
@@ -51,16 +53,16 @@ export default function NewsSection() {
           className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">02 / Industry Intelligence Feed</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{t("sectionNewsEyebrow", "02 / Industry Intelligence Feed")}</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Latest updates.
+              {t("sectionNewsTitle", "Latest updates.")}
             </h2>
           </div>
           <Link
-            to="/news"
+            to={getLocalizedPath("/news")}
             className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            VIEW ALL NEWS
+            {t("viewAllNews", "VIEW ALL NEWS")}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
@@ -68,7 +70,8 @@ export default function NewsSection() {
         {/* News Cards Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {newsList.map((item, idx) => {
-            const detailPath = `/news/${item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+            const rawSlug = item.slug || item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+            const detailPath = getLocalizedPath(`/news/${rawSlug}`);
             const coverUrl = item.imageUrl || item.logoUrl || getArticleCoverImage(item.category, item.title);
 
             return (
@@ -100,7 +103,7 @@ export default function NewsSection() {
 
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="text-[10px] font-bold text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono uppercase">
-                      {item.category === "aiNews" ? "AI & ML" : item.category === "designNews" ? "Design" : item.category === "frontendNews" ? "Frontend" : item.category === "marketingNews" ? "Marketing" : "Motion"}
+                      {item.category === "aiNews" ? t("aiNews", "AI & ML") : item.category === "designNews" ? t("designNews", "Design") : item.category === "frontendNews" ? t("frontendNews", "Frontend") : item.category === "marketingNews" ? t("marketingNews", "Marketing") : t("motionNews", "Motion")}
                     </span>
                     <span className="text-[10px] font-bold text-muted-foreground mono">{item.formattedDate}</span>
                   </div>
@@ -117,7 +120,7 @@ export default function NewsSection() {
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                   <span className="text-muted-foreground">{item.sourceName}</span>
                   <Link to={detailPath} className="text-primary hover:text-white flex items-center gap-1">
-                    READ ARTICLE <ArrowUpRight size={13} />
+                    {t("readArticle", "READ ARTICLE")} <ArrowUpRight size={13} />
                   </Link>
                 </div>
               </motion.article>

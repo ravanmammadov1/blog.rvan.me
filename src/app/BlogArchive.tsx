@@ -16,6 +16,7 @@ import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -35,6 +36,7 @@ export default function BlogArchive() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -129,8 +131,8 @@ export default function BlogArchive() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Design & Motion Insights Blog — Ravan Mammadov Studio"
-        description="In-depth articles and agency-grade guides on 3D motion design, visual hierarchy, brand systems, performance creative, and UX psychology."
+        title={`${t("blogArchiveTitle", "Design & Motion Insights")} — Rvan.me`}
+        description={t("blogArchiveSubtitle", "Original articles on visual strategy, motion mechanics, design systems, and creative technology.")}
         url="https://www.rvan.me/blog"
       />
 
@@ -174,25 +176,25 @@ export default function BlogArchive() {
       </div>
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow="INSIGHTS & IDEAS"
+        eyebrow={t("blogArchiveEyebrow", "INSIGHTS & IDEAS")}
         title="Design &"
-        accentText="Editorial Essays."
+        accentText={t("blogArchiveHeading", "Editorial Essays.")}
         gradientVariant="secondary"
-        description="Thoughts on design systems, motion craft, creative strategy, and building brands that move people."
+        description={t("blogArchiveSubtitle", "Original articles on visual strategy, motion mechanics, design systems, and creative technology.")}
       />
 
       {/* Master Page Filter Bar & Search */}
       <PageFilterBar
         categories={categories.map((cat) => ({
           key: cat,
-          label: cat,
+          label: cat === "All" ? t("allNews", "All") : cat,
           count: categoryCounts[cat],
         }))}
         activeCategory={activeCategory}
         onSelectCategory={setActiveCategory}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search articles..."
+        searchPlaceholder={t("searchArticles", "Search articles...")}
         searchId="blog-search"
       />
 
@@ -207,7 +209,7 @@ export default function BlogArchive() {
           className="mt-8 flex items-center justify-between"
         >
           <p className="text-xs font-bold tracking-[.14em] text-muted-foreground mono">
-            {filteredPosts.length} ARTICLE{filteredPosts.length !== 1 ? "S" : ""}
+            {filteredPosts.length} {t("articles", "ARTICLES")}
             {searchQuery && ` FOR "${searchQuery.toUpperCase()}"`}
           </p>
         </motion.div>
@@ -268,7 +270,7 @@ export default function BlogArchive() {
                   disabled={isLoadingMore}
                   className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
                 >
-                  {isLoadingMore ? "LOADING BATCH..." : `LOAD MORE ARTICLES (${remainingCount} REMAINING)`}
+                  {isLoadingMore ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMoreArticles", "LOAD MORE ARTICLES")} (${remainingCount} ${t("remaining", "REMAINING")})`}
                 </button>
               </div>
             )}
