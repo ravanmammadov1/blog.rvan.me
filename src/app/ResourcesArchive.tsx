@@ -19,6 +19,7 @@ import { ToolCard } from "./components/content/ToolCard";
 import { JobCard } from "./components/content/JobCard";
 import { ScholarshipCard } from "./components/content/ScholarshipCard";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
+import PageHero from "./components/PageHero";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
@@ -182,22 +183,14 @@ export default function ResourcesArchive() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Hero Header — 25% reduced visual dominance */}
-      <section className="px-6 pt-20 pb-8 md:px-10 md:pt-24 relative z-10">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
-            <h1 className="text-3xl font-bold tracking-tight md:text-5xl lg:text-6xl max-w-3xl leading-tight">
-              Creative Resources & <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
-                Developer Toolkit.
-              </span>
-            </h1>
-            <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl leading-relaxed font-medium">
-              Explore open-source font families, developer tools, vector icons, device mockups, and UI kits.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Unified Page Hero */}
+      <PageHero
+        eyebrow="⚡ CREATIVE RESOURCES & DEV TOOLS"
+        title="Creative Resources &"
+        accentText="Developer Toolkit."
+        gradientVariant="creative"
+        description="Explore open-source font families, developer tools, vector icons, device mockups, and UI kits."
+      />
 
       {/* Consolidated Category Navigation (5 Broad Categories) */}
       <section className="sticky top-20 z-30 px-6 py-3.5 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">

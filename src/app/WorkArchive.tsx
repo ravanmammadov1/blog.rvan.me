@@ -9,6 +9,7 @@ import { getFallbackProject, PORTFOLIO_FALLBACK_PROJECTS } from "../lib/portfoli
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import PageHero from "./components/PageHero";
 
 function getProjectImage(project: ProjectItem) {
   return project.coverImage ? urlFor(project.coverImage)?.width(1200).format("webp").auto("format").url() : undefined;
@@ -42,25 +43,18 @@ export default function WorkArchive() {
       />
       <SiteHeader siteSettings={siteSettings} />
 
-      <section className="px-6 pb-24 pt-32 md:px-10 md:pt-44">
+      {/* Unified Page Hero */}
+      <PageHero
+        eyebrow="SELECTED WORK · BAKU, AZERBAIJAN"
+        title="Motion, Brand &"
+        accentText="Graphic Case Studies."
+        gradientVariant="creative"
+        description="A selection of creative campaigns, brand systems, 3D visuals, and marketing design work by senior creative designer Ravan Mammadov."
+      />
+
+      <section className="px-6 pb-24 md:px-10">
         <div className="mx-auto max-w-[1600px]">
-          <nav aria-label="Breadcrumb" className="mb-10 text-xs font-bold tracking-widest text-muted-foreground mono uppercase">
-            <ol className="flex items-center gap-2">
-              <li><Link to="/" className="hover:text-primary">Home</Link></li>
-              <li aria-hidden="true">/</li>
-              <li aria-current="page" className="text-foreground">Work</li>
-            </ol>
-          </nav>
-
-          <p className="eyebrow text-primary">Selected work · Baku, Azerbaijan</p>
-          <h1 className="mt-5 max-w-5xl text-5xl font-semibold tracking-[-.06em] md:text-8xl">
-            Motion, brand & graphic design case studies.
-          </h1>
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            A selection of creative campaigns, brand systems, 3D visuals, and marketing design work by senior creative designer Ravan Mammadov.
-          </p>
-
-          <div className="mt-20 grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-3">
             {displayProjects.map((project, index) => {
               const fallback = getFallbackProject(project.slug);
               const image = project.image || fallback?.image;

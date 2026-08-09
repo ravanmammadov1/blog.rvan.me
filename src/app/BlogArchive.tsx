@@ -12,6 +12,7 @@ import CategoryFilter from "./components/blog/CategoryFilter";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import PageHero from "./components/PageHero";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -157,23 +158,16 @@ export default function BlogArchive() {
           }}
         />
       </div>
+      {/* Unified Page Hero */}
+      <PageHero
+        eyebrow="INSIGHTS & IDEAS"
+        title="Design &"
+        accentText="Editorial Essays."
+        gradientVariant="secondary"
+        description="Thoughts on design systems, motion craft, creative strategy, and building brands that move people."
+      />
 
-      <div className="mx-auto max-w-[1600px] px-6 py-20 md:px-10 md:py-28 relative z-10">
-        {/* Page heading */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-        >
-          <p className="eyebrow text-muted-foreground">Insights & Ideas</p>
-          <h1 className="mt-6 text-5xl font-semibold tracking-[-.07em] md:text-7xl">
-            All Articles
-          </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Thoughts on design systems, motion craft, creative strategy, and
-            building brands that move people.
-          </p>
-        </motion.div>
+      <div className="mx-auto max-w-[1600px] px-6 py-6 md:px-10 relative z-10">
 
         {/* Search & Filter bar */}
         <motion.div

@@ -9,6 +9,7 @@ import { ToolItem, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import PageHero from "./components/PageHero";
 import { INTERACTIVE_TOOLS } from "./lib/toolsRegistry";
 
 const DesignerToolsPanel = lazy(() => import("./components/DesignerToolsPanel"));
@@ -75,25 +76,18 @@ export default function ToolsArchive() {
       {/* Global Unified Header */}
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Hero section */}
-      <section className="px-6 pt-28 pb-12 md:px-10 md:pt-36 relative z-10">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.1}>
-            <p className="eyebrow text-primary mb-4 flex items-center gap-2">
-              <Zap size={14} /> FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES
-            </p>
-            <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
-              Tools & <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-primary to-emerald-400">
-                Interactive Toolkit.
-              </span>
-            </h1>
-            <p className="mt-8 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed font-medium">
-              Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly for CSS Grid, SVG Waves, Fluid Clamp(), Box Shadows, and SEO metadata.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Unified Page Hero */}
+      <PageHero
+        eyebrow={
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-widest text-primary mono uppercase">
+            <Zap size={14} /> FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES
+          </span>
+        }
+        title="Tools &"
+        accentText="Interactive Toolkit."
+        gradientVariant="primary"
+        description="Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly for CSS Grid, SVG Waves, Fluid Clamp(), Box Shadows, and SEO metadata."
+      />
 
       {/* Interactive Tools Showcase Grid */}
       <section className="px-6 py-12 md:px-10 relative z-10">

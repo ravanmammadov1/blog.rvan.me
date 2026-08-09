@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { fetchNews, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings, NewsItem } from "../types/cms";
+import PageHero from "./components/PageHero";
 import { aggregateNewsFeeds, NormalizedResource, getCachedNewsFeeds, setCachedNewsFeeds } from "../lib/rssAggregator";
 import { generateNewsSummary } from "../lib/contentEngine";
 import SEO from "./components/SEO";
@@ -143,25 +144,22 @@ export default function NewsArchive() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Hero Header */}
-      <section className="px-6 pt-20 pb-12 md:px-10 md:pt-28 relative z-10">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
-            <p className="eyebrow text-primary mb-4 flex items-center gap-2">
-              <Rss size={13} /> CREATIVE PUBLICATION PLATFORM · REAL-TIME RSS AGGREGATION
-            </p>
-            <h1 className="text-5xl font-semibold tracking-[-.06em] md:text-8xl max-w-5xl leading-[0.9]">
-              Industry<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">
-                News Hub.
-              </span>
-            </h1>
-            <p className="mt-8 text-base text-muted-foreground max-w-2xl leading-relaxed">
-              Real-time coverage across <span className="text-foreground font-medium">Design</span>, <span className="text-foreground font-medium">AI</span>, <span className="text-foreground font-medium">Frontend</span>, <span className="text-foreground font-medium">Marketing</span>, and <span className="text-foreground font-medium">Motion</span>. Aggregated automatically with accurate UTC publication dates.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Unified Page Hero */}
+      <PageHero
+        eyebrow={
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-widest text-primary mono uppercase">
+            <Rss size={13} /> CREATIVE PUBLICATION PLATFORM · REAL-TIME RSS AGGREGATION
+          </span>
+        }
+        title="Industry"
+        accentText="News Hub."
+        gradientVariant="accent"
+        description={
+          <>
+            Real-time coverage across <span className="text-foreground font-medium">Design</span>, <span className="text-foreground font-medium">AI</span>, <span className="text-foreground font-medium">Frontend</span>, <span className="text-foreground font-medium">Marketing</span>, and <span className="text-foreground font-medium">Motion</span>. Aggregated automatically with accurate UTC publication dates.
+          </>
+        }
+      />
 
       {/* Sticky Tab Bar & Search */}
       <section className="sticky top-20 z-30 px-6 py-4 md:px-10 bg-background/80 backdrop-blur-xl border-y border-white/10">

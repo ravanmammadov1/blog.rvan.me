@@ -25,6 +25,7 @@ import { SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import PageHero from "./components/PageHero";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -79,50 +80,34 @@ export default function AboutPage() {
         />
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          1. HERO SECTION — Platform Mission & Vision
-      ───────────────────────────────────────────────────────────────────────────── */}
-      <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="max-w-4xl"
+      {/* Unified Page Hero */}
+      <PageHero
+        eyebrow={
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-widest text-primary mono uppercase">
+            <Sparkles size={14} /> PLATFORM VISION & MISSION
+          </span>
+        }
+        title="Engineered for Designers,"
+        accentText="Marketers & Developers."
+        gradientVariant="accent"
+        description="Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace."
+      >
+        <div className="flex flex-wrap items-center gap-4">
+          <Link
+            to="/resources"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(216,255,68,0.3)] mono"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-              <Sparkles size={14} /> PLATFORM VISION & MISSION
-            </div>
-
-            <h1 className="mt-6 text-4xl font-extrabold tracking-[-.06em] md:text-6xl lg:text-7xl leading-[1.05]">
-              Engineered for Designers, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">
-                Marketers & Developers.
-              </span>
-            </h1>
-
-            <p className="mt-8 text-lg leading-relaxed text-muted-foreground md:text-xl font-medium max-w-3xl">
-              Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link
-                to="/resources"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(216,255,68,0.3)] mono"
-              >
-                EXPLORE RESOURCES
-                <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                to="/tools"
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
-              >
-                VIEW CREATOR TOOLS
-              </Link>
-            </div>
-          </motion.div>
+            EXPLORE RESOURCES
+            <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link
+            to="/tools"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+          >
+            VIEW CREATOR TOOLS
+          </Link>
         </div>
-      </section>
+      </PageHero>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
           2. THE PLATFORM MISSION & WHY RVAN.ME EXISTS
