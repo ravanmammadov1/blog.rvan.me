@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowUpRight, Rss } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
-import { fetchCuratedNewsEngine, CuratedArticle } from "../../../lib/newsEngine";
+import { fetchHomeNewsEngine, CuratedArticle } from "../../../lib/newsEngine";
 import { fetchNews } from "../../../lib/sanityQueries";
 
 const fadeUp = {
@@ -20,12 +20,12 @@ export default function NewsSection() {
 
   useEffect(() => {
     fetchNews()
-      .then((cmsNews) => fetchCuratedNewsEngine(cmsNews || []))
+      .then((cmsNews) => fetchHomeNewsEngine(cmsNews || []))
       .then((items) => {
-        setNewsList((items || []).slice(0, 3));
+        setNewsList((items || []).slice(0, 6));
       })
       .catch(() => {
-        fetchCuratedNewsEngine([]).then((items) => setNewsList((items || []).slice(0, 3)));
+        fetchHomeNewsEngine([]).then((items) => setNewsList((items || []).slice(0, 6)));
       });
   }, []);
 
@@ -62,7 +62,7 @@ export default function NewsSection() {
         </motion.div>
 
         {/* News Cards Grid */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {newsList.map((item, idx) => (
             <motion.article
               key={item.id || idx}
