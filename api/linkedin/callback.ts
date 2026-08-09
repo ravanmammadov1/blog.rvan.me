@@ -1,9 +1,71 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { saveLinkedInToken } from "../_lib/linkedinStorage";
 
 function safeRedirect(res: VercelResponse, url: string) {
   res.writeHead(302, { Location: url });
   res.end();
+}
+
+async function saveLinkedInToken(data: {
+  accessToken: string;
+  refreshToken?: string | null;
+  expiresInSeconds: number;
+  refreshTokenExpiresInSeconds?: number | null;
+  memberUrn: string;
+  memberName: string;
+  memberEmail?: string;
+  memberPicture?: string;
+  scope?: string;
+}) {
+  const SINGLETON_ID = "linkedinTokenSingleton";
+  const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg";
+  const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
+  const token = process.env.SANITY_API_WRITE_TOKEN;
+
+  if (!token) {
+    console.warn("[linkedin/callback] SANITY_API_WRITE_TOKEN is missing on server");
+    throw new Error("SANITY_API_WRITE_TOKEN environment variable is not configured on server.");
+  }
+
+  const now = Date.now();
+  const expiresAt = now + data.expiresInSeconds * 1000;
+  const refreshTokenExpiresAt = data.refreshTokenExpiresInSeconds
+    ? now + data.refreshTokenExpiresInSeconds * 1000
+    : null;
+
+  const doc = {
+    _id: SINGLETON_ID,
+    _type: "linkedinToken",
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken || null,
+    expiresAt,
+    refreshTokenExpiresAt,
+    memberUrn: data.memberUrn,
+    memberName: data.memberName,
+    memberEmail: data.memberEmail || "",
+    memberPicture: data.memberPicture || "",
+    scope: data.scope || "w_member_social openid profile email",
+    updatedAt: new Date().toISOString(),
+  };
+
+  const url = `https://${projectId}.api.sanity.io/v2025-01-01/data/mutate/${dataset}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      mutations: [{ createOrReplace: doc }],
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`[linkedin/callback] Sanity mutation HTTP ${res.status}:`, errText);
+    throw new Error(`Sanity write failed (${res.status}): ${errText}`);
+  }
+
+  return doc;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -69,7 +131,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const tokenData = await tokenRes.json();
     const accessToken = tokenData.access_token;
     const refreshToken = tokenData.refresh_token || null;
-    const expiresInSeconds = tokenData.expires_in || 5184000; // default ~60 days
+    const expiresInSeconds = tokenData.expires_in || 5184000;
     const refreshTokenExpiresInSeconds = tokenData.refresh_token_expires_in || null;
     const scope = tokenData.scope || "w_member_social openid profile email";
 
@@ -94,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const userinfo = await userinfoRes.json();
-    const memberSub = userinfo.sub; // LinkedIn member ID
+    const memberSub = userinfo.sub;
     if (!memberSub) {
       console.error("[linkedin/callback] Userinfo missing 'sub' identifier:", JSON.stringify(userinfo));
       return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent("Missing member ID (sub) in LinkedIn profile")}`);
@@ -131,7 +193,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return safeRedirect(res, `${adminRedirectBase}?connected=true`);
   } catch (err: any) {
     const errMsg = err?.message || String(err);
-    console.error("[linkedin/callback] Uncaught exception in callback handler:", err);
+    console.error("[linkedin/callback] Exception in callback handler:", err);
     return safeRedirect(res, `${adminRedirectBase}?error=${encodeURIComponent(`Callback exception: ${errMsg.substring(0, 150)}`)}`);
   }
 }

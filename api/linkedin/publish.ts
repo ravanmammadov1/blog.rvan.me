@@ -1,5 +1,49 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { refreshLinkedInAccessTokenIfNeeded } from "../_lib/linkedinStorage";
+
+interface LinkedInTokenDoc {
+  _id: string;
+  _type: string;
+  accessToken: string;
+  refreshToken?: string | null;
+  expiresAt: number;
+  refreshTokenExpiresAt?: number | null;
+  memberUrn: string;
+  memberName: string;
+  memberEmail?: string;
+  memberPicture?: string;
+  scope?: string;
+  updatedAt: string;
+}
+
+const SINGLETON_ID = "linkedinTokenSingleton";
+
+async function getStoredLinkedInToken(): Promise<LinkedInTokenDoc | null> {
+  try {
+    const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg";
+    const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production";
+    const token = process.env.SANITY_API_WRITE_TOKEN;
+
+    const query = encodeURIComponent(`*[_id == "${SINGLETON_ID}"][0]`);
+    const url = `https://${projectId}.api.sanity.io/v2025-01-01/data/query/${dataset}?query=${query}`;
+
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      console.error("[linkedin/publish] Sanity query failed status:", res.status);
+      return null;
+    }
+
+    const data = await res.json();
+    return data.result || null;
+  } catch (error) {
+    console.error("[linkedin/publish] Error reading token from Sanity:", error);
+    return null;
+  }
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -14,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Post commentary text is required." });
     }
 
-    const activeToken = await refreshLinkedInAccessTokenIfNeeded();
+    const activeToken = await getStoredLinkedInToken();
 
     if (!activeToken || !activeToken.accessToken) {
       return res.status(401).json({
