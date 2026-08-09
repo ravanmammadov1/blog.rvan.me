@@ -72,25 +72,34 @@ export default function NewsDetail() {
             isRss: false,
           });
           setSanityBody(sanityDoc.body || null);
-        } else {
-          // 2. Fetch from aggregated news stream (Sanity + RSS + Curated Baseline)
-          const cmsNews = await fetchNews();
-          const allItems = await aggregateNewsFeeds(cmsNews || []);
+          setLoading(false); // Show Sanity content immediately
+        }
+
+        // 2. Single aggregateNewsFeeds call (reused for article lookup AND related)
+        const cmsNews = await fetchNews();
+        const feedPromise = aggregateNewsFeeds(cmsNews || []);
+        const timeoutPromise = new Promise<NormalizedResource[]>((resolve) =>
+          setTimeout(() => resolve([]), 3000)
+        );
+        const allItems = await Promise.race([feedPromise, timeoutPromise]);
+
+        if (!sanityDoc && allItems.length > 0) {
           const matched = allItems.find(
             (item) => item.slug === slug || item.id === slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug
           );
 
           if (matched) {
-            if (!matched.logoUrl) {
+            if (!matched.logoUrl && !matched.imageUrl) {
               matched.logoUrl = getArticleCoverImage(matched.category, matched.title);
             }
             setArticle(matched);
           }
         }
 
-        // Fetch related items
-        const allFeeds = await aggregateNewsFeeds();
-        setRelatedArticles(allFeeds.filter((a) => a.slug !== slug && a.id !== slug).slice(0, 3));
+        // Reuse same allItems for related articles (no second network call!)
+        if (allItems.length > 0) {
+          setRelatedArticles(allItems.filter((a) => a.slug !== slug && a.id !== slug).slice(0, 3));
+        }
       } catch (err) {
         console.error("Error loading article detail:", err);
       } finally {

@@ -251,6 +251,28 @@ export function applySourceDiversity(articles: CuratedArticle[], maxPerSource = 
 let cachedNewsPipeline: CuratedArticle[] | null = null;
 let cachedAuditMetrics: NewsPipelineAuditResult | null = null;
 
+// Persist news pipeline to localStorage so Home and /news always share the same dataset
+const NEWS_PIPELINE_CACHE_KEY = "rvan_news_pipeline_v3";
+
+function loadPipelineCache(): CuratedArticle[] | null {
+  try {
+    const raw = localStorage.getItem(NEWS_PIPELINE_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+function savePipelineCache(items: CuratedArticle[]) {
+  try {
+    if (items.length > 0) {
+      localStorage.setItem(NEWS_PIPELINE_CACHE_KEY, JSON.stringify(items.slice(0, 100)));
+    }
+  } catch (e) { /* ignore quota */ }
+}
+
 /**
  * Runs the full Content Quality Pipeline and returns empirical audit stats
  */
@@ -318,6 +340,7 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
 
   cachedNewsPipeline = diverseNews;
   cachedAuditMetrics = audit;
+  savePipelineCache(diverseNews);
 
   return { articles: diverseNews, audit };
 }
@@ -327,7 +350,21 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
  */
 export async function fetchCuratedNewsEngine(cmsNews: any[] = []): Promise<CuratedArticle[]> {
   if (cachedNewsPipeline) return cachedNewsPipeline;
+
+  // Check localStorage for persisted pipeline (ensures Home + /news share same data)
+  const persisted = loadPipelineCache();
+  if (persisted && persisted.length > 0) {
+    cachedNewsPipeline = persisted;
+    // Background revalidate without blocking
+    runNewsPipelineAudit(cmsNews).then(({ articles }) => {
+      cachedNewsPipeline = articles;
+      savePipelineCache(articles);
+    }).catch(() => {});
+    return persisted;
+  }
+
   const { articles } = await runNewsPipelineAudit(cmsNews);
+  savePipelineCache(articles);
   return articles;
 }
 

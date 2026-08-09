@@ -5,6 +5,7 @@ import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
 import { formatBlogDate, estimateReadingTime } from "../../../lib/blogHelpers";
+import { getArticleCoverImage } from "../../../lib/contentEngine";
 import { NoiseBackground } from "@/components/ui/noise-background";
 
 interface BlogCardProps {
@@ -34,7 +35,10 @@ export default function BlogCard({
   onHoverEnd,
 }: BlogCardProps) {
   const imgBuilder = urlFor(post.coverImage);
-  const coverUrl = imgBuilder ? imgBuilder.width(800).url() : null;
+  const coverUrl = imgBuilder ? imgBuilder.width(800).url() : getArticleCoverImage(
+    post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : post.category === "Marketing" ? "marketingNews" : "frontendNews",
+    post.title
+  );
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
   const slugStr = post.slug?.current || "";
@@ -58,8 +62,7 @@ export default function BlogCard({
       >
         <div>
         <div className="mb-6 h-48 w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80">
-          {coverUrl ? (
-            <img
+          <img
               src={coverUrl}
               alt={post.title || "Blog cover"}
               width={800}
@@ -67,35 +70,13 @@ export default function BlogCard({
               loading="lazy"
               decoding="async"
               className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
+                  post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : "designNews",
+                  post.title
+                );
+              }}
             />
-          ) : (
-            <div className="h-full w-full relative overflow-hidden bg-gradient-to-br from-neutral-950 via-neutral-900 to-black p-5 flex flex-col justify-between border-b border-white/5">
-              <div
-                className="absolute inset-0 opacity-25 pointer-events-none"
-                style={{
-                  backgroundImage:
-                    post.category === "Design"
-                      ? "radial-gradient(circle at 80% 20%, rgba(232,253,82,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(16,185,129,0.25) 0%, transparent 65%)"
-                      : post.category === "AI"
-                      ? "radial-gradient(circle at 80% 20%, rgba(6,182,212,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(147,51,234,0.25) 0%, transparent 65%)"
-                      : "radial-gradient(circle at 80% 20%, rgba(255,118,75,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(244,63,94,0.25) 0%, transparent 65%)",
-                }}
-              />
-              <div className="flex items-center justify-between z-10">
-                <span className="text-[10px] font-extrabold tracking-[.2em] mono uppercase px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white/80">
-                  {post.category || "GUIDE"}
-                </span>
-                <span className="text-[10px] font-bold mono text-white/40 uppercase">
-                  EDITORIAL
-                </span>
-              </div>
-              <div className="z-10 mt-auto">
-                <p className="text-sm font-bold tracking-tight text-white/90 line-clamp-2 leading-snug">
-                  {post.title}
-                </p>
-              </div>
-            </div>
-          )}
           {/* Dynamic visual overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
         </div>
