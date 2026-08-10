@@ -168,9 +168,9 @@ ${hashtags}`;
 }
 
 // ──────────────────────────────────────────────────────────────────
-// ACTION 1: Generate Candidate Draft
+// ACTION 1: Generate Candidate Draft Logic (Directly invokable in-memory)
 // ──────────────────────────────────────────────────────────────────
-async function handleGenerate(req: VercelRequest, res: VercelResponse) {
+export async function executeGenerateCandidateDraft() {
   const historyList: any[] = (await querySanity(`*[_type == "linkedinPublishHistory"]{ articleSlug, sourceUrl, headline }`)) || [];
   const publishedSlugs = new Set<string>();
   const publishedUrls = new Set<string>();
@@ -196,10 +196,10 @@ async function handleGenerate(req: VercelRequest, res: VercelResponse) {
   )) || [];
 
   if (recentNews.length === 0) {
-    return res.status(200).json({
+    return {
       success: false,
       message: "No news articles found in the Rvan.me dataset.",
-    });
+    };
   }
 
   const candidates = recentNews.filter((article) => {
@@ -210,10 +210,10 @@ async function handleGenerate(req: VercelRequest, res: VercelResponse) {
   });
 
   if (candidates.length === 0) {
-    return res.status(200).json({
+    return {
       success: false,
       message: "All recent Rvan.me news articles have already been published to LinkedIn.",
-    });
+    };
   }
 
   const scored = candidates.map((article) => {
@@ -281,7 +281,7 @@ async function handleGenerate(req: VercelRequest, res: VercelResponse) {
 
   await mutateSanity([{ createOrReplace: pendingDoc }]);
 
-  return res.status(200).json({
+  return {
     success: true,
     approvalMode: true,
     autoPublished: false,
@@ -296,7 +296,12 @@ async function handleGenerate(req: VercelRequest, res: VercelResponse) {
       pipelineScore: pendingDoc.pipelineScore,
       status: pendingDoc.status,
     },
-  });
+  };
+}
+
+async function handleGenerate(req: VercelRequest, res: VercelResponse) {
+  const result = await executeGenerateCandidateDraft();
+  return res.status(200).json(result);
 }
 
 // ──────────────────────────────────────────────────────────────────
