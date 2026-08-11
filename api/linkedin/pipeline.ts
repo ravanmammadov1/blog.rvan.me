@@ -148,12 +148,12 @@ async function uploadImageToLinkedIn(
 ): Promise<string | null> {
   try {
     // Step 1: Initialize Upload
-    const initRes = await fetch("https://api.linkedin.com/rest/images?action=initializeUpload", {
+    const initRes = await fetch("https://api.linkedin.com/v2/images?action=initializeUpload", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "LinkedIn-Version": "202401",
+        "LinkedIn-Version": "202406",
         "X-Restli-Protocol-Version": "2.0.0",
       },
       body: JSON.stringify({
@@ -418,13 +418,13 @@ async function publishToLinkedIn(article: any, postText: string, coverImageUrl: 
     };
   }
 
-  const response = await fetch("https://api.linkedin.com/rest/posts", {
+  const response = await fetch("https://api.linkedin.com/v2/posts", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${tokenDoc.accessToken}`,
       "Content-Type": "application/json",
       "X-Restli-Protocol-Version": "2.0.0",
-      "LinkedIn-Version": "202401",
+      "LinkedIn-Version": "202406",
     },
     body: JSON.stringify(postPayload),
   });
