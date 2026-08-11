@@ -9,7 +9,7 @@ import { fetchNewsBySlug, fetchSiteSettings, fetchNews } from "../lib/sanityQuer
 import { urlFor, client } from "../lib/sanityClient";
 import { SiteSettings } from "../types/cms";
 import { aggregateNewsFeeds, NormalizedResource, CURATED_NEWS_CATALOG, getCachedNewsFeeds } from "../lib/rssAggregator";
-import { getArticleCoverImage } from "../lib/contentEngine";
+import { generateDetailedEditorial, getArticleCoverImage, DetailedEditorial } from "../lib/contentEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import CommentSection from "./components/CommentSection";
@@ -169,7 +169,13 @@ export default function NewsDetail() {
     );
   }
 
-  const readingTime = Math.max(1, Math.ceil((article.description || "").split(" ").length / 60));
+  const editorial: DetailedEditorial = generateDetailedEditorial(
+    article.title,
+    article.description,
+    article.sourceName,
+    article.category,
+    language
+  );
 
   const coverImage = article.logoUrl || getArticleCoverImage(article.category, article.title);
   const siteDomain = siteSettings?.seo?.canonicalUrl || "https://www.rvan.me";
@@ -237,7 +243,7 @@ export default function NewsDetail() {
               </span>
               <span className="flex items-center gap-1 text-muted-foreground/70">
                 <Clock size={12} />
-                {readingTime} {t("minRead", "MIN READ")}
+                {editorial.estimatedReadingTimeMinutes} {t("minRead", "MIN READ")}
               </span>
             </div>
 
@@ -272,27 +278,55 @@ export default function NewsDetail() {
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
           </motion.div>
 
-          {/* Article Main Content Information */}
+          {/* ─────────────────────────────────────────────────────────────────────────────
+              COMPREHENSIVE EDITORIAL DETAILS (Executive Overview Omitted as requested)
+          ───────────────────────────────────────────────────────────────────────────── */}
           <motion.div
             variants={fadeUp}
             initial="hidden"
             animate="visible"
             custom={0.3}
-            className="mt-10 space-y-8 text-foreground leading-relaxed font-sans"
+            className="mt-12 space-y-10 text-foreground leading-relaxed font-sans"
           >
-            {/* Article Info Section */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 glass">
-              <h2 className="text-lg font-bold tracking-tight text-foreground mb-3 flex items-center gap-2">
-                <span>📰</span> {t("newsArticleInfo", "Xəbər Haqqında Məlumat")}
-              </h2>
-              <p className="text-base md:text-lg leading-relaxed text-muted-foreground/95 font-normal">
-                {article.description}
-              </p>
+            {/* Header Tag */}
+            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs font-bold text-primary mono uppercase">
+              <Sparkles size={16} /> {t("editorialHeader", "Editorial & Technical Breakdown")} ({editorial.wordCount} {t("editorialWords", "Words")})
             </div>
+
+            {/* 1. What's New & Core Innovations */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>🚀</span> {t("editorialWhatsNew", "What's New & Core Innovations")}
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.whatsNew}
+              </p>
+            </section>
+
+            {/* 2. Technical & Architecture Deep-Dive */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>⚙️</span> {t("editorialTechnical", "Technical & Architecture Deep-Dive")}
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.technicalBreakdown}
+              </p>
+            </section>
+
+            {/* 3. Industry & Market Impact */}
+            <section className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>💡</span> {t("editorialImpact", "Industry & Market Impact")}
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
+                {editorial.industryImpact}
+              </p>
+            </section>
 
             {/* Optional Sanity PortableText if available */}
             {sanityBody && (
-              <div className="pt-6 border-t border-white/10">
+              <div className="pt-8 border-t border-white/10">
+                <h3 className="text-lg font-bold text-foreground mb-4">{t("editorialPortableText", "Original Body")}</h3>
                 <PortableText value={sanityBody} />
               </div>
             )}
@@ -300,7 +334,7 @@ export default function NewsDetail() {
             {/* ─────────────────────────────────────────────────────────────────────────────
                 READ FULL ORIGINAL ARTICLE BUTTON
             ───────────────────────────────────────────────────────────────────────────── */}
-            <div className="mt-12 pt-8 border-t border-white/10 flex flex-col items-center justify-center text-center gap-4">
+            <div className="mt-16 pt-10 border-t border-white/10 flex flex-col items-center justify-center text-center gap-4">
               <p className="text-xs text-muted-foreground mono">
                 {t("articleCuratedFrom", "Article curated from original publisher")} <span className="text-foreground font-bold">{article.sourceName}</span>.
               </p>
