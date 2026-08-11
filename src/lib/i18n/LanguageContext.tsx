@@ -51,7 +51,55 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const isAz = language === "az";
 
+  // Auto-detect Azerbaijan location and redirect to /az if appropriate
+  useEffect(() => {
+    try {
+      const savedPref = localStorage.getItem("rvan_user_lang_preference");
+
+      // If user explicitly chose 'en', respect explicit choice
+      if (savedPref === "en") return;
+
+      const isAlreadyAzUrl = location.pathname === "/az" || location.pathname.startsWith("/az/");
+
+      // Check timezone, browser language, or saved preference
+      const isBakuTimezone = typeof Intl !== "undefined" && Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Baku";
+      const isAzBrowserLang = typeof navigator !== "undefined" && (
+        (navigator.language && navigator.language.toLowerCase().startsWith("az")) ||
+        (navigator.languages && navigator.languages.some(l => l.toLowerCase().startsWith("az")))
+      );
+
+      const isAzerbaijanLocation = savedPref === "az" || isBakuTimezone || isAzBrowserLang;
+
+      if (isAzerbaijanLocation && !isAlreadyAzUrl) {
+        const targetPath = getLocalizedPath(location.pathname, "az") + location.search + location.hash;
+        navigate(targetPath, { replace: true });
+      } else if (!isAzerbaijanLocation && !savedPref) {
+        // Asynchronously confirm country via fast IP lookup as secondary check
+        fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(3000) })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data?.country === "AZ" || data?.country_code === "AZ") {
+              localStorage.setItem("rvan_user_lang_preference", "az");
+              if (!isAlreadyAzUrl) {
+                const targetPath = getLocalizedPath(location.pathname, "az") + location.search + location.hash;
+                navigate(targetPath, { replace: true });
+              }
+            }
+          })
+          .catch(() => {
+            // Silently ignore IP lookup failures
+          });
+      }
+    } catch (e) {
+      console.warn("Language auto-detection exception:", e);
+    }
+  }, []);
+
   const switchLanguage = (targetLang: Language) => {
+    try {
+      localStorage.setItem("rvan_user_lang_preference", targetLang);
+    } catch (e) {}
+
     if (targetLang === language) return;
     const targetPath = getLocalizedPath(location.pathname, targetLang) + location.search + location.hash;
     setLanguageState(targetLang);

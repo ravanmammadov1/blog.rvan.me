@@ -181,8 +181,8 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Hero Section
     heroBadge: "STUDİO VİZYONU VƏ YARADICI MƏRKƏZ",
-    heroTitle1: "Dizayn ki, hərəkət edir.",
-    heroTitle2: "Fikirlər ki, dəyər daşıyır.",
+    heroTitle1: "Fikirləri dizayn et.",
+    heroTitle2: "Gələcəyi qur.",
     heroSubtitle: "Rəqəmsal dünyanı formalaşdıran dizayn, marketinq, texnologiya və alətləri kəşf edən yaradıcı studiya və rəqəmsal platforma.",
     btnExploreResources: "RESURSLARI KƏŞF ET",
     btnReadNews: "SAHƏ XƏBƏRLƏRİNİ OXU",
