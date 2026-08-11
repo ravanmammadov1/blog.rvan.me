@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@sanity/client";
 import crypto from "crypto";
-import { executeGenerateCandidateDraft } from "./linkedin/pipeline";
+import { executeGenerateCandidateDraft } from "./linkedin/pipeline.js";
 
 const client = createClient({
   projectId: process.env.VITE_SANITY_PROJECT_ID || "0lqwkcmg",
