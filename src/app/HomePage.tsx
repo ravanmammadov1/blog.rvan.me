@@ -10,6 +10,8 @@ import SEO from "./components/SEO";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
+import HeroAtmosphere from "./components/HeroAtmosphere";
+
 // Lazy-loaded section components matching exact requested hierarchy
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const HeroParticles = lazy(() => import("./components/HeroParticles"));
@@ -54,6 +56,7 @@ export default function HomePage() {
 
       {/* ── 2. HERO SECTION ── */}
       <section className="relative min-h-[70vh] lg:min-h-[90vh] flex flex-col justify-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28">
+        <HeroAtmosphere />
         <Suspense fallback={null}>
           <HeroParticles />
         </Suspense>
@@ -67,8 +70,14 @@ export default function HomePage() {
               animate="visible"
               className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary mono uppercase mb-6">
-                <Sparkles size={13} /> {t("heroBadge", "STUDIO VISION & CREATIVE ENGINE")}
+              <div className="flex flex-wrap items-center justify-between gap-4 w-full mb-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary mono uppercase">
+                  <Sparkles size={13} /> {t("heroBadge", "STUDIO VISION & CREATIVE ENGINE")}
+                </div>
+
+                <div className="hidden sm:inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.25em] text-muted-foreground/60 mono uppercase">
+                  DESIGN • TECH • CREATIVE
+                </div>
               </div>
 
               <h1
