@@ -208,14 +208,59 @@ async function uploadImageToLinkedIn(
   }
 }
 
-function generateAzerbaijaniPost(article: {
+async function generateAzerbaijaniPost(article: {
   title: string;
   excerpt: string;
   category: string;
   sourceName: string;
   slug: string;
-}): string {
+}): Promise<string> {
   const rvanUrl = `https://www.rvan.me/az/news/${article.slug}`;
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (apiKey) {
+    try {
+      const prompt = `You are a Senior Editor and LinkedIn Content Strategist for Rvan.me (a premium digital design, AI & tech publication).
+Write an engaging, professional, natural LinkedIn post in AZERBAIJANI language for an Azerbaijani audience of designers, marketers, developers, and tech leaders.
+
+Article Details:
+- Title: "${article.title}"
+- Excerpt/Summary: "${article.excerpt}"
+- Category: "${article.category}"
+- Source: "${article.sourceName}"
+- Rvan.me URL: "${rvanUrl}"
+
+Requirements:
+1. Write in natural, professional, high-impact Azerbaijani (no direct google-translate tone).
+2. Start with a captivating hook or insight (1 line).
+3. Provide a clear 2-3 sentence breakdown of why this news/resource matters.
+4. Mention the original source: "Mənbə: ${article.sourceName}".
+5. Include a call to action with the Rvan.me link:
+"Xəbərin tam analizini və detallı icmalını Rvan.me-də oxuya bilərsiniz:
+${rvanUrl}"
+6. End with 3-5 relevant hashtags (e.g., #SüniIntellekt #AI #Dizayn #Texnologiya).
+7. Return ONLY the raw post text, no markdown codeblocks or meta comments.`;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        if (aiText && aiText.length > 50) {
+          console.log("[linkedin/pipeline] Gemini 2.0 Flash generated Azerbaijani post successfully!");
+          return aiText;
+        }
+      }
+    } catch (err) {
+      console.warn("[linkedin/pipeline] Gemini API error, falling back to template generator:", err);
+    }
+  }
 
   const categoryOpeners: Record<string, string[]> = {
     "AI": [
@@ -505,7 +550,7 @@ export async function executeGenerateCandidateDraft() {
   const results: any[] = [];
 
   // ── POST 1: Publish immediately (10:00 AZT) ──
-  const post1Text = generateAzerbaijaniPost({
+  const post1Text = await generateAzerbaijaniPost({
     title: firstArticle.title,
     excerpt: firstArticle.excerpt || "",
     category: firstArticle.category || "AI",
@@ -534,7 +579,7 @@ export async function executeGenerateCandidateDraft() {
 
   // ── POST 2: Save for afternoon (16:00 AZT / 12:00 UTC) ──
   if (secondArticle && secondArticle.slug !== firstArticle.slug) {
-    const post2Text = generateAzerbaijaniPost({
+    const post2Text = await generateAzerbaijaniPost({
       title: secondArticle.title,
       excerpt: secondArticle.excerpt || "",
       category: secondArticle.category || "AI",
