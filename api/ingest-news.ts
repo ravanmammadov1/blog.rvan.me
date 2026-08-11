@@ -167,160 +167,82 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "SANITY_API_WRITE_TOKEN is missing" });
   }
 
-  const results: Array<{ feed: string; count: number; imported: number; filtered: number; errors: number }> = [];
-
   try {
-    for (const feed of feeds) {
-      console.log(`Ingesting feed: ${feed.sourceName}`);
-      let feedItemCount = 0;
-      let importedCount = 0;
-      let filteredCount = 0;
-      let errorCount = 0;
+    console.log("🚀 Starting fast multi-feed ingestion...");
 
+    // Parallel fetch across all feeds with 4s timeout
+    const feedPromises = feeds.map(async (feed) => {
       try {
         const response = await fetch(feed.url, {
-          headers: { "User-Agent": "Mozilla/5.0 (compatible; Rvan.me/1.0; +https://www.rvan.me)" },
-          signal: AbortSignal.timeout(8000),
+          headers: { "User-Agent": "Mozilla/5.0 (compatible; Rvan.me/1.0)" },
+          signal: AbortSignal.timeout(4000),
         });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch feed (${response.status}): ${response.statusText}`);
-        }
+        if (!response.ok) return [];
         const text = await response.text();
-
         const items = parseFeedItems(text, feed.format);
-        feedItemCount = items.length;
 
-        // Process up to 15 articles per feed
-        const itemsToProcess = items.slice(0, 15);
+        const validItems = [];
+        for (const item of items.slice(0, 4)) {
+          if (!item.title || !item.link) continue;
+          if (!isHighImpact(item.title, item.description)) continue;
 
-        for (const item of itemsToProcess) {
-          try {
-            if (!item.title || !item.link) continue;
+          const publishedAt = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString();
+          const excerpt = cleanHtml(item.description).substring(0, 300) + "...";
+          const docId = "news-" + crypto.createHash("sha256").update(item.link).digest("hex");
+          const imageUrl = extractImageUrl(item.rawXml);
 
-            // Low-impact filtering
-            if (!isHighImpact(item.title, item.description)) {
-              console.log(`Skipped low-impact news: ${item.title}`);
-              filteredCount++;
-              continue;
-            }
-
-            const publishedAt = item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString();
-            const excerpt = cleanHtml(item.description).substring(0, 215) + "...";
-            const docId = "news-" + crypto.createHash("sha256").update(item.link).digest("hex");
-
-            // Check if document already exists to avoid redundant coverImage uploads
-            const exists = await client.fetch<boolean>(
-              `defined(*[_type == "news" && _id == $id][0]._id)`,
-              { id: docId }
-            );
-
-            if (exists) {
-              console.log(`Article already exists: ${item.title}`);
-              continue;
-            }
-
-            const doc: any = {
-              _type: "news",
-              _id: docId,
-              title: item.title.substring(0, 150),
-              slug: {
-                _type: "slug",
-                current: slugify(item.title).substring(0, 96),
-              },
-              excerpt,
-              category: feed.category,
-              publishedAt,
-              sourceUrl: item.link,
-              sourceName: feed.sourceName,
-              body: [
-                {
-                  _key: `block-${crypto.randomBytes(4).toString("hex")}`,
-                  _type: "block",
-                  style: "normal",
-                  markDefs: [
-                    {
-                      _key: "link-ref",
-                      _type: "link",
-                      href: item.link,
-                    },
-                  ],
-                  children: [
-                    {
-                      _type: "span",
-                      text: cleanHtml(item.description).substring(0, 500) + "...\n\n",
-                      marks: [],
-                    },
-                    {
-                      _type: "span",
-                      text: `Read the full article on ${feed.sourceName} →`,
-                      marks: ["link-ref"],
-                    },
-                  ],
-                },
-              ],
-            };
-
-            const imageUrl = extractImageUrl(item.rawXml);
-            if (imageUrl) {
-              try {
-                console.log(`Downloading image: ${imageUrl}`);
-                const imgRes = await fetch(imageUrl, { signal: AbortSignal.timeout(5000) });
-                if (imgRes.ok) {
-                  const arrayBuffer = await imgRes.arrayBuffer();
-                  const buffer = Buffer.from(arrayBuffer);
-                  const filename = crypto.createHash("md5").update(imageUrl).digest("hex") + ".jpg";
-                  
-                  const asset = await client.assets.upload("image", buffer, {
-                    filename,
-                    contentType: imgRes.headers.get("content-type") || "image/jpeg",
-                  });
-
-                  doc.coverImage = {
-                    _type: "image",
-                    asset: {
-                      _type: "reference",
-                      _ref: asset._id,
-                    },
-                    alt: item.title,
-                  };
-                }
-              } catch (imageErr) {
-                console.error(`Failed to upload image for ${item.title}:`, imageErr);
-              }
-            }
-
-            await client.createOrReplace(doc);
-            console.log(`Imported article: ${item.title}`);
-            importedCount++;
-          } catch (itemErr) {
-            console.error("Error processing item:", itemErr);
-            errorCount++;
-          }
+          validItems.push({
+            _type: "news",
+            _id: docId,
+            title: item.title.substring(0, 150),
+            slug: {
+              _type: "slug",
+              current: slugify(item.title).substring(0, 96),
+            },
+            excerpt,
+            category: feed.category,
+            publishedAt,
+            sourceUrl: item.link,
+            sourceName: feed.sourceName,
+            imageUrl: imageUrl || undefined,
+          });
         }
-      } catch (feedErr: any) {
-        console.error(`Error processing feed ${feed.sourceName}:`, feedErr);
-        errorCount += feedItemCount || 1;
+        return validItems;
+      } catch (err) {
+        return [];
       }
+    });
 
-      results.push({
-        feed: feed.sourceName,
-        count: feedItemCount,
-        imported: importedCount,
-        filtered: filteredCount,
-        errors: errorCount
-      });
+    const feedResults = await Promise.all(feedPromises);
+    const allDocs = feedResults.flat();
+
+    console.log(`[ingest-news] Total valid fresh docs parsed: ${allDocs.length}`);
+
+    // Batch upload to Sanity using fast createOrReplace mutations (takes ~1 sec)
+    if (allDocs.length > 0) {
+      const mutations = allDocs.map((doc) => ({ createOrReplace: doc }));
+      // Split into batches of 30
+      for (let i = 0; i < mutations.length; i += 30) {
+        const batch = mutations.slice(i, i + 30);
+        await client.mutate(batch);
+      }
+      console.log(`✅ [ingest-news] Batch mutated ${allDocs.length} articles into Sanity database.`);
     }
 
-    // Trigger daily LinkedIn candidate post generation (Approval Mode)
-    // Pipeline selects ONE article from the Rvan.me news dataset just ingested directly in memory
+    // Trigger candidate draft & publication pipeline
+    let pipelineResult = null;
     try {
-      const result = await executeGenerateCandidateDraft();
-      console.log("LinkedIn daily pipeline candidate successfully generated via ingest-news:", result);
-    } catch (pipelineErr) {
+      pipelineResult = await executeGenerateCandidateDraft();
+      console.log("LinkedIn daily pipeline candidate executed via ingest-news:", pipelineResult);
+    } catch (pipelineErr: any) {
       console.error("Failed to trigger LinkedIn daily pipeline from ingest-news:", pipelineErr);
     }
 
-    return res.status(200).json({ success: true, results });
+    return res.status(200).json({
+      success: true,
+      ingestedCount: allDocs.length,
+      pipelineResult,
+    });
   } catch (globalErr: any) {
     console.error("Global Ingestion Error:", globalErr);
     return res.status(500).json({ error: globalErr.message || "Unknown error occurred" });
