@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 
 export default function ScrollToTopButton() {
@@ -39,11 +39,18 @@ export default function ScrollToTopButton() {
           exit={{ opacity: 0, y: 16, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={scrollToTop}
-          className="group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-neutral-950/85 text-foreground backdrop-blur-md transition-all duration-300 hover:border-primary/60 hover:text-primary hover:scale-105 shadow-2xl glass-sm transform-gpu overflow-hidden"
+          className="group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-neutral-950/85 text-foreground backdrop-blur-md transition-all duration-300 hover:border-[#61c5ad]/60 hover:text-[#61c5ad] hover:scale-105 shadow-2xl glass-sm transform-gpu overflow-hidden"
           aria-label="Scroll back to top"
         >
           {/* Circular SVG Scroll Progress Ring */}
           <svg className="absolute inset-0 h-full w-full -rotate-90 pointer-events-none p-0.5" viewBox="0 0 48 48">
+            <defs>
+              <linearGradient id="scrollToTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#61c5ad" />
+                <stop offset="50%" stopColor="#426fba" />
+                <stop offset="100%" stopColor="#984f9f" />
+              </linearGradient>
+            </defs>
             {/* Track */}
             <circle
               cx="24"
@@ -57,7 +64,8 @@ export default function ScrollToTopButton() {
               cx="24"
               cy="24"
               r={radius}
-              className="stroke-primary fill-none transition-all duration-150 ease-out"
+              stroke="url(#scrollToTopGrad)"
+              className="fill-none transition-all duration-150 ease-out"
               strokeWidth="2.5"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
@@ -69,7 +77,7 @@ export default function ScrollToTopButton() {
           <div 
             className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
             style={{
-              background: "radial-gradient(circle at center, rgba(232,253,82,0.2) 0%, rgba(6,182,212,0.1) 60%, transparent 80%)",
+              background: "radial-gradient(circle at center, rgba(97,197,173,0.3) 0%, rgba(152,79,159,0.15) 60%, transparent 80%)",
             }}
           />
 

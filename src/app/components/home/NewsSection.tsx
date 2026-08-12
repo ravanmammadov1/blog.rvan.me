@@ -60,7 +60,7 @@ export default function NewsSection() {
           </div>
           <Link
             to={getLocalizedPath("/news")}
-            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-[#61c5ad] mono md:flex"
           >
             {t("viewAllNews", "VIEW ALL NEWS")}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -81,7 +81,7 @@ export default function NewsSection() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300"
+                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-[#61c5ad]/40 hover:bg-white/[0.05] transition-all duration-300 shadow-sm"
               >
                 <div>
                   {/* Cover Image (Matches BlogCard exact h-48 height, rounded-xl border) */}
@@ -102,13 +102,13 @@ export default function NewsSection() {
                   </div>
 
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[10px] font-bold text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono uppercase">
+                    <span className="text-[10px] font-bold text-[#61c5ad] border border-[#61c5ad]/35 bg-gradient-to-r from-[#61c5ad]/12 via-[#426fba]/12 to-[#984f9f]/12 px-3 py-1 rounded-full mono uppercase backdrop-blur-md shadow-[0_0_12px_rgba(97,197,173,0.12)]">
                       {item.category === "aiNews" ? t("aiNews", "AI & ML") : item.category === "designNews" ? t("designNews", "Design") : item.category === "frontendNews" ? t("frontendNews", "Frontend") : item.category === "marketingNews" ? t("marketingNews", "Marketing") : t("motionNews", "Motion")}
                     </span>
-                    <span className="text-[10px] font-bold text-muted-foreground mono">{item.formattedDate}</span>
+                    <span className="text-[10px] font-bold text-[#61c5ad]/85 mono">{item.formattedDate}</span>
                   </div>
 
-                  <h3 className="text-lg font-bold leading-snug text-foreground group-hover:text-primary transition-colors mb-3">
+                  <h3 className="text-lg font-bold leading-snug text-foreground group-hover:text-[#61c5ad] transition-colors mb-3">
                     <Link to={detailPath}>{item.title}</Link>
                   </h3>
 
@@ -119,8 +119,11 @@ export default function NewsSection() {
 
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                   <span className="text-muted-foreground">{item.sourceName}</span>
-                  <Link to={detailPath} className="text-primary hover:text-white flex items-center gap-1">
-                    {t("readArticle", "READ ARTICLE")} <ArrowUpRight size={13} />
+                  <Link to={detailPath} className="group/link flex items-center gap-1.5 text-xs font-bold mono transition-all duration-300">
+                    <span className="text-[#61c5ad] group-hover/link:text-white transition-colors duration-300">
+                      {t("readArticle", "READ ARTICLE")}
+                    </span>
+                    <ArrowUpRight size={13} className="text-[#61c5ad] group-hover/link:text-white transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
                   </Link>
                 </div>
               </motion.article>
