@@ -70,13 +70,12 @@ export default function HomePage() {
               animate="visible"
               className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
-              <div className="flex flex-wrap items-center justify-between gap-4 w-full mb-6">
-                <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary mono uppercase">
-                  <Sparkles size={13} /> {t("heroBadge", "STUDIO VISION & CREATIVE ENGINE")}
-                </div>
-
-                <div className="hidden sm:inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.25em] text-muted-foreground/60 mono uppercase">
-                  {t("heroEyebrowTag", "DESIGN • TECH • CREATIVE")}
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#61c5ad]/40 bg-gradient-to-r from-[#61c5ad]/15 via-[#426fba]/15 to-[#984f9f]/15 px-4 py-2 text-xs font-bold mono uppercase backdrop-blur-md shadow-[0_0_20px_rgba(97,197,173,0.15)]">
+                  <Sparkles size={14} className="text-[#61c5ad]" />
+                  <span className="bg-gradient-to-r from-[#61c5ad] via-[#5b87d6] to-[#b15eb8] bg-clip-text text-transparent font-bold tracking-wider">
+                    {t("heroBadge", "STUDIO VISION & CREATIVE ENGINE")}
+                  </span>
                 </div>
               </div>
 
@@ -95,7 +94,10 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-4">
                 <Link
                   to={getLocalizedPath("/resources")}
-                  className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-[0_0_25px_rgba(232,253,82,0.25)]"
+                  className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-xs font-bold tracking-[.18em] text-white uppercase transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(97,197,173,0.35)] hover:shadow-[0_0_40px_rgba(152,79,159,0.5)]"
+                  style={{
+                    background: "linear-gradient(135deg, #61c5ad 0%, #426fba 48%, #984f9f 100%)",
+                  }}
                 >
                   {t("btnExploreResources", "EXPLORE RESOURCES")} <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
