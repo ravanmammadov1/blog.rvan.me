@@ -1018,6 +1018,17 @@ async function fetchAndParseSingleFeed(feed: RssFeedConfig): Promise<NormalizedR
 // Public Aggregation Endpoints
 // ─────────────────────────────────────────────────────────────────────────────
 
+export function normalizeNewsCategory(cat?: string): string {
+  if (!cat) return "designNews";
+  const c = cat.toLowerCase();
+  if (c.includes("ai") || c.includes("machine learning") || c.includes("ml")) return "aiNews";
+  if (c.includes("market") || c.includes("growth") || c.includes("brand")) return "marketingNews";
+  if (c.includes("frontend") || c.includes("dev") || c.includes("code") || c.includes("react")) return "frontendNews";
+  if (c.includes("motion") || c.includes("3d") || c.includes("animation")) return "motionNews";
+  if (c.includes("design") || c.includes("ux") || c.includes("ui")) return "designNews";
+  return "designNews";
+}
+
 export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<NormalizedResource[]> {
   const feedResults = await Promise.allSettled(
     NEWS_RSS_FEEDS.filter((f) => f.enabled !== false).map((feed) => fetchAndParseSingleFeed(feed))
@@ -1033,23 +1044,26 @@ export async function aggregateNewsFeeds(cmsNews: any[] = []): Promise<Normalize
   const mappedCms: NormalizedResource[] = (cmsNews || []).map((item) => {
     const slugStr = item.slug?.current || item.slug || item._id;
     const pubIso = parsePubDate(item.publishedAt || item._createdAt);
+    const itemLink = item.sourceUrl || item.link || `https://www.rvan.me/news/${slugStr}`;
+    const publisherName = item.sourceName || item.benefitSummary || "Rvan Studio";
+
     return {
       id: item._id,
       title: item.title,
       slug: slugStr,
       resourceType: "news",
       description: item.excerpt || item.title,
-      benefitSummary: "Studio Announcement",
-      link: `/news/${slugStr}`,
-      sourceName: "Rvan Studio",
+      benefitSummary: publisherName,
+      link: itemLink,
+      sourceName: publisherName,
       publishedAt: pubIso,
       formattedDate: formatPublicationTimestamp(pubIso),
-      category: item.category === "Announcements" || item.category === "Milestone" ? "announcements" : "designNews",
+      category: normalizeNewsCategory(item.category),
       country: "Global",
       workType: "na",
       isFree: true,
       imageUrl: item.coverImage ? urlFor(item.coverImage)?.url() : item.imageUrl || item.logoUrl,
-      isRss: false,
+      isRss: true,
       analyticsId: item._id,
       isTrending: true,
       isFeatured: true,

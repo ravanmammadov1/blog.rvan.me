@@ -349,17 +349,19 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
  * Main News Engine API for News Page (Score >= 60)
  */
 export async function fetchCuratedNewsEngine(cmsNews: any[] = []): Promise<CuratedArticle[]> {
+  if (Array.isArray(cmsNews) && cmsNews.length > 0) {
+    const { articles } = await runNewsPipelineAudit(cmsNews);
+    cachedNewsPipeline = articles;
+    savePipelineCache(articles);
+    return articles;
+  }
+
   if (cachedNewsPipeline) return cachedNewsPipeline;
 
   // Check localStorage for persisted pipeline (ensures Home + /news share same data)
   const persisted = loadPipelineCache();
   if (persisted && persisted.length > 0) {
     cachedNewsPipeline = persisted;
-    // Background revalidate without blocking
-    runNewsPipelineAudit(cmsNews).then(({ articles }) => {
-      cachedNewsPipeline = articles;
-      savePipelineCache(articles);
-    }).catch(() => {});
     return persisted;
   }
 
