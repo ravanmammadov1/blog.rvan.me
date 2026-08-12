@@ -1,14 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown } from "lucide-react";
+import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown, Sun, Moon } from "lucide-react";
 import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
 import AuthModal from "./AuthModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { useTheme } from "../../context/ThemeContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+function ThemeToggle() {
+  const { theme, toggleTheme, isDark } = useTheme();
+
+  return (
+    <button
+      onClick={toggleTheme}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+      title={`Switch to ${isDark ? "light" : "dark"} theme`}
+      className="grid h-[34px] w-[34px] place-items-center rounded-full border border-white/20 bg-white/5 text-foreground hover:border-primary/60 hover:text-primary transition-all duration-300 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center"
+    >
+      {isDark ? (
+        <Sun className="h-4 w-4 text-amber-300 transition-transform duration-300 hover:rotate-45" />
+      ) : (
+        <Moon className="h-4 w-4 text-indigo-500 transition-transform duration-300 hover:-rotate-12" />
+      )}
+    </button>
+  );
+}
 
 function UserAuthMenu() {
   const { user, loading, signOut } = useAuth();
@@ -282,6 +302,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
  
           {/* Action Buttons & Authentication */}
           <div className="flex items-center gap-3 shrink-0 self-center">
+            {/* Theme Toggle (Sun / Moon) */}
+            <ThemeToggle />
+
             {/* Language Switcher (EN | AZ) */}
             <LanguageSwitcher />
 
