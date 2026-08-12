@@ -12,7 +12,7 @@
       "schedule": "0 6 * * *"
     },
     {
-      "path": "/api/publish-second",
+      "path": "/api/linkedin/pipeline?action=publish-second",
       "schedule": "0 12 * * *"
     }
   ],
@@ -283,7 +283,7 @@
     },
     {
       "source": "/((?!api/|assets/|models/|imports/|.*\\.[a-zA-Z0-9]+$).*)",
-      "destination": "/api/not-found"
+      "destination": "/index.html"
     }
   ],
   "headers": [
