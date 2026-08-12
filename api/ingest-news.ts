@@ -187,7 +187,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const body = typeof req.body === "string" ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
-    const action = req.query.action || body.action;
+    const urlObj = new URL(req.url || "", "https://www.rvan.me");
+    const action = urlObj.searchParams.get("action") || (req.query && (req.query.action as string)) || body.action;
 
     if (action === "update-blogs") {
       const existingBlogs = (await client.fetch(`*[_type == "blog"]{ _id, title, "slug": slug.current }`)) || [];
