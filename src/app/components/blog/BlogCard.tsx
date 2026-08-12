@@ -87,7 +87,7 @@ export default function BlogCard({
             <span
               className="flex items-center gap-2 text-[10px] font-bold tracking-[.18em] mono uppercase transition-colors duration-300"
               style={{
-                color: hovered ? "var(--primary)" : categoryColors[post.category || ""] || "var(--primary)",
+                color: "#61c5ad",
               }}
             >
               {post.category || "Article"}
@@ -96,9 +96,9 @@ export default function BlogCard({
             <motion.div
               animate={{ rotate: hovered ? 45 : 0 }}
               transition={{ duration: 0.3 }}
-              className="grid h-9 w-9 place-items-center rounded-full border border-border transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/10 group-hover:text-primary"
+              className="grid h-9 w-9 place-items-center rounded-full border border-border transition-all duration-300 group-hover:border-[#61c5ad]/60 group-hover:bg-[#61c5ad]/10 group-hover:text-[#61c5ad]"
               style={{
-                color: hovered ? "var(--primary)" : "var(--foreground)",
+                color: hovered ? "#61c5ad" : "var(--foreground)",
               }}
             >
               <ArrowRight size={14} />
@@ -107,7 +107,7 @@ export default function BlogCard({
 
           <h3
             className="mb-3 text-xl font-semibold leading-[1.25] tracking-[-.03em] transition-colors duration-300 relative z-10"
-            style={{ color: hovered ? "var(--primary)" : "var(--card-foreground)" }}
+            style={{ color: hovered ? "#61c5ad" : "var(--card-foreground)" }}
           >
             {post.title}
           </h3>

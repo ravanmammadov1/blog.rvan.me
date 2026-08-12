@@ -132,7 +132,10 @@ export default function BlogSection() {
         <div className="mt-16 flex justify-center">
           <Link
             to={getLocalizedPath("/blog")}
-            className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+            className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
+            style={{
+              background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+            }}
           >
             {t("exploreFullBlogArchive", "EXPLORE FULL BLOG ARCHIVE")} ({blogPosts.length})
             <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

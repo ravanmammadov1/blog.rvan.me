@@ -166,8 +166,13 @@ function LanguageSwitcher() {
       <button
         onClick={() => switchLanguage("en")}
         className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
-          language === "en" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+          language === "en" ? "text-white font-extrabold shadow-md" : "text-muted-foreground hover:text-foreground"
         }`}
+        style={
+          language === "en"
+            ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+            : {}
+        }
         aria-label="Switch to English"
       >
         EN
@@ -175,8 +180,13 @@ function LanguageSwitcher() {
       <button
         onClick={() => switchLanguage("az")}
         className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
-          language === "az" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+          language === "az" ? "text-white font-extrabold shadow-md" : "text-muted-foreground hover:text-foreground"
         }`}
+        style={
+          language === "az"
+            ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+            : {}
+        }
         aria-label="Azərbaycan dilinə keçin"
       >
         AZ

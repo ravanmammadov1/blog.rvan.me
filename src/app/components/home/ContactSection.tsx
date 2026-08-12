@@ -113,7 +113,10 @@ export default function ContactSection() {
             <div className="space-y-6">
               <a
                 href="mailto:hello@rvan.me"
-                className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
+                style={{
+                  background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                }}
               >
                 {letsTalkLabel}
                 <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
@@ -134,7 +137,7 @@ export default function ContactSection() {
             <div 
               className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
               style={{
-                background: "radial-gradient(circle at top right, rgba(16,185,129,0.05) 0%, transparent 60%)",
+                background: "radial-gradient(circle at top right, rgba(97,197,173,0.08) 0%, transparent 60%)",
               }}
             />
             <form onSubmit={handleContactSubmit} className="space-y-6 relative z-10" noValidate>
@@ -150,7 +153,7 @@ export default function ContactSection() {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
+                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#61c5ad]/60 focus:ring-1 focus:ring-[#61c5ad]/30 focus:outline-none transition-all duration-300"
                     placeholder={t("placeholderName", "Your name")}
                   />
                 </div>
@@ -165,7 +168,7 @@ export default function ContactSection() {
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
+                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#61c5ad]/60 focus:ring-1 focus:ring-[#61c5ad]/30 focus:outline-none transition-all duration-300"
                     placeholder={t("placeholderEmail", "your@email.com")}
                   />
                 </div>
@@ -182,7 +185,7 @@ export default function ContactSection() {
                   onChange={(e) => setContactMessage(e.target.value)}
                   required
                   rows={5}
-                  className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"
+                  className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#61c5ad]/60 focus:ring-1 focus:ring-[#61c5ad]/30 focus:outline-none transition-all duration-300 resize-none"
                   placeholder={t("placeholderMessage", "How can we collaborate? Share your details...")}
                 />
               </div>
@@ -202,7 +205,10 @@ export default function ContactSection() {
               <button
                 type="submit"
                 disabled={contactStatus === "loading"}
-                className="w-full group inline-flex items-center justify-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm disabled:opacity-50"
+                className="w-full group inline-flex items-center justify-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm disabled:opacity-50"
+                style={{
+                  background: "linear-gradient(135deg, rgba(97,197,173,0.15) 0%, rgba(66,111,186,0.15) 50%, rgba(152,79,159,0.15) 100%)",
+                }}
               >
                 {contactStatus === "loading" && (
                   <>

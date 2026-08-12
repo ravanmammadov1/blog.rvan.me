@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ExternalLink, Star } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Star, Type, GitBranch, Wrench, Package, BookOpen, Sparkles } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
@@ -17,13 +17,22 @@ const fadeUp = {
   }),
 };
 
-export const HOME_RESOURCE_CATEGORIES: Record<ResourceCategoryKey, { label: string; icon: string }> = {
-  fonts: { label: "Fonts", icon: "🔤" },
-  githubRepos: { label: "GitHub Repositories", icon: "🐙" },
-  tools: { label: "Tools", icon: "🛠️" },
-  assets: { label: "Assets", icon: "🎁" },
-  learning: { label: "Learning", icon: "📚" },
-  inspiration: { label: "Inspiration", icon: "✨" },
+const CATEGORY_ICONS: Record<ResourceCategoryKey, React.ReactNode> = {
+  fonts: <Type size={14} />,
+  githubRepos: <GitBranch size={14} />,
+  tools: <Wrench size={14} />,
+  assets: <Package size={14} />,
+  learning: <BookOpen size={14} />,
+  inspiration: <Sparkles size={14} />,
+};
+
+export const HOME_RESOURCE_CATEGORIES: Record<ResourceCategoryKey, { label: string }> = {
+  fonts: { label: "Fonts" },
+  githubRepos: { label: "GitHub Repositories" },
+  tools: { label: "Tools" },
+  assets: { label: "Assets" },
+  learning: { label: "Learning" },
+  inspiration: { label: "Inspiration" },
 };
 
 export default function ResourcesSection() {
@@ -90,28 +99,40 @@ export default function ResourcesSection() {
           </div>
           <Link
             to={getLocalizedPath(`/resources?category=${activeCategory}`)}
-            className="group inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono uppercase"
+            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-[#61c5ad] mono md:flex"
           >
             {t("exploreAll", "EXPLORE ALL")} {categoryLabels[activeCategory]}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
 
-        {/* Category Tabs */}
-        <div className="mb-12 flex flex-wrap gap-2">
-          {Object.entries(HOME_RESOURCE_CATEGORIES).map(([key, config]) => (
-            <button
-              key={key}
-              onClick={() => setActiveCategory(key as ResourceCategoryKey)}
-              className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 ${
-                activeCategory === key
-                  ? "bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.25)] font-bold"
-                  : "border border-white/10 bg-white/5 hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-              }`}
-            >
-              <span>{config.icon}</span> {categoryLabels[key as ResourceCategoryKey]}
-            </button>
-          ))}
+        {/* Category Tabs (No Emojis - Clean Lucide SVG Icons) */}
+        <div className="mb-12 flex flex-wrap gap-2.5">
+          {Object.entries(HOME_RESOURCE_CATEGORIES).map(([key]) => {
+            const catKey = key as ResourceCategoryKey;
+            const isActive = activeCategory === catKey;
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveCategory(catKey)}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 ${
+                  isActive
+                    ? "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)]"
+                    : "border border-white/10 bg-white/5 hover:border-[#61c5ad]/50 text-muted-foreground hover:text-foreground glass-sm"
+                }`}
+                style={
+                  isActive
+                    ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                    : {}
+                }
+              >
+                <span className={isActive ? "text-white" : "text-[#61c5ad]"}>
+                  {CATEGORY_ICONS[catKey]}
+                </span>
+                <span>{categoryLabels[catKey]}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Resource Cards Grid */}
@@ -134,11 +155,11 @@ export default function ResourcesSection() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between"
+                className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-[#61c5ad]/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between shadow-sm"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
+                    <span className="text-[10px] font-bold text-[#61c5ad] border border-[#61c5ad]/35 bg-gradient-to-r from-[#61c5ad]/12 via-[#426fba]/12 to-[#984f9f]/12 px-3 py-1 rounded-full mono uppercase backdrop-blur-md shadow-[0_0_12px_rgba(97,197,173,0.12)]">
                       {item.type}
                     </span>
                     {item.starsCount && (
@@ -148,7 +169,7 @@ export default function ResourcesSection() {
                     )}
                   </div>
 
-                  <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+                  <h3 className="text-lg font-bold text-foreground group-hover:text-[#61c5ad] transition-colors mb-2">
                     {item.title}
                   </h3>
 
@@ -160,7 +181,7 @@ export default function ResourcesSection() {
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                   <span className="text-muted-foreground">{item.source}</span>
                   {item.url.startsWith("/") ? (
-                    <Link to={getLocalizedPath(item.url)} className="text-primary hover:text-white flex items-center gap-1">
+                    <Link to={getLocalizedPath(item.url)} className="text-[#61c5ad] hover:text-white flex items-center gap-1">
                       {t("viewDetails", "VIEW DETAILS")} <ArrowUpRight size={13} />
                     </Link>
                   ) : (
@@ -168,7 +189,7 @@ export default function ResourcesSection() {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary hover:text-white flex items-center gap-1"
+                      className="text-[#61c5ad] hover:text-white flex items-center gap-1"
                     >
                       {t("visit", "VISIT")} <ExternalLink size={13} />
                     </a>

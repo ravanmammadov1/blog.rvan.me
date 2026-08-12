@@ -71,7 +71,7 @@ export const SvgWaveGenerator: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
-            <Waves className="text-primary" size={20} /> Gradient SVG Wave Generator
+            <Waves className="text-[#61c5ad]" size={20} /> Gradient SVG Wave Generator
           </h3>
           <p className="text-xs text-muted-foreground/80 font-medium mt-0.5">
             Create smooth SVG section dividers with custom gradients and wave complexity.
@@ -80,7 +80,10 @@ export const SvgWaveGenerator: React.FC = () => {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={copySvg}
-            className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-primary/20"
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-xs font-bold text-white uppercase tracking-wider hover:scale-105 transition-all shadow-lg shadow-[#61c5ad]/20"
+            style={{
+              background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
+            }}
           >
             {copied ? <Check size={14} /> : <Copy size={14} />}
             {copied ? "COPIED SVG!" : "COPY SVG CODE"}
