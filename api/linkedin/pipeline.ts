@@ -1018,7 +1018,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return await handlePublishSecond(req, res);
     } else if (action === "delete-post") {
       return await handleDeletePost(req, res);
-    } else if (action === "update-blogs") {
+    } else if (action === "update-blogs" || (req.url && req.url.includes("update-blogs"))) {
       return await handleUpdateBlogs(req, res);
     } else if (action === "delete-all-recent") {
       // Emergency deletion for test posts
