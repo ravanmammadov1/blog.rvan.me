@@ -288,10 +288,7 @@ export default function NewsDetail() {
             custom={0.3}
             className="mt-12 space-y-10 text-foreground leading-relaxed font-sans"
           >
-            {/* Header Tag */}
-            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs font-bold text-primary mono uppercase">
-              <Sparkles size={16} /> {t("editorialHeader", "Editorial & Technical Breakdown")} ({editorial.wordCount} {t("editorialWords", "Words")})
-            </div>
+
 
             {/* 1. What's New & Core Innovations */}
             <section className="space-y-3">

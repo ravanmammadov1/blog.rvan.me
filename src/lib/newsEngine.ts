@@ -303,7 +303,7 @@ export async function runNewsPipelineAudit(cmsNews: any[] = []): Promise<{ artic
   );
 
   const diverseNews = applySourceDiversity(newsThresholdItems, 3);
-  diverseNews.sort((a, b) => b.relevanceScore - a.relevanceScore || new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  diverseNews.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime() || b.relevanceScore - a.relevanceScore);
 
   const categoryCounts: Record<string, number> = {
     designNews: 0,
@@ -399,16 +399,12 @@ export async function fetchCuratedNewsEngine(cmsNews: any[] = []): Promise<Curat
  */
 export async function fetchHomeNewsEngine(cmsNews: any[] = []): Promise<CuratedArticle[]> {
   const all = await fetchCuratedNewsEngine(cmsNews);
-
-  // Filter ONLY articles with Score >= 80 AND Audience Relevance >= 15
-  const homeEligible = all.filter(
-    (item) => item.relevanceScore >= 80 && (item.scoreBreakdown?.audienceRelevance || 0) >= 15
-  );
+  const sorted = [...all].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
   const seenSources = new Set<string>();
   const result: CuratedArticle[] = [];
 
-  for (const item of homeEligible) {
+  for (const item of sorted) {
     if (!seenSources.has(item.sourceName)) {
       seenSources.add(item.sourceName);
       result.push(item);
@@ -416,11 +412,9 @@ export async function fetchHomeNewsEngine(cmsNews: any[] = []): Promise<CuratedA
     if (result.length >= 6) break;
   }
 
-  // Fallback ONLY with articles that pass Audience Relevance >= 15
   if (result.length < 6) {
-    for (const item of all) {
-      if (!seenSources.has(item.sourceName) && (item.scoreBreakdown?.audienceRelevance || 0) >= 15) {
-        seenSources.add(item.sourceName);
+    for (const item of sorted) {
+      if (!result.some((r) => r.id === item.id)) {
         result.push(item);
       }
       if (result.length >= 6) break;

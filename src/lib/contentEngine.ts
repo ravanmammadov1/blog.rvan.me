@@ -210,23 +210,29 @@ export function generateDetailedEditorial(
   const cleanExcerpt = rawExcerpt.replace(/<[^>]*>?/gm, "").trim() || title;
 
   if (language === "az") {
-    const overview = `Bu analitik redaksiya icmalı original olaraq ${sourceName} tərəfindən dərc edilmiş "${title}" mövzusunu təhlil edir. Məqalə ${category} sahəsində baş verən vacib inkişafları və müasir istifadəçi gözləntilərinin dizayn paradaiqmalarını necə dəyişdiyini vurğulayır. Rəqəmsal məhsullar mürəkkəbləşdikcə, komandaların keyfiyyəti və performansı qorumaq üçün belə mühüm standartlara ehtiyacı var.`;
-    const whatsNew = `Bu yeniləmədə təqdim olunan əsas nailiyyətlər arxitekturanın təkmilləşdirilməsi və istehsalat səmərəliliyinin artırılmasına yönəlib. Xüsusilə, "${title}" yaradıcıların daha sürətli prototipləşdirmə aparmasına və yeniləmələri inamla tətbiq etməsinə imkan yaradır.`;
+    const overview = `Bu genişıhətli redaksiya təhlili original olaraq ${sourceName} platformasında dərc edilmiş "${title}" mövzusunu dərindən araşdırır. Məqalə ${category} sahəsində baş verən kritik dəyişiklikləri, mühəndislik standartlarını və modern istifadəçi gözləntilərinin rəqəmsal məhsul arxitekturasını necə formalaşdırdığını təhlil edir. Rəqəmsal məhsullar mürəkkəbləşdikcə və canlı sistemlər böyüdükcə, komandaların məhsuldarlığı və vizual keyfiyyəti qorumaq üçün belə institusional standartlara ehtiyacı var. Məhz bu baxımdan "${cleanExcerpt}" tədqiqatı sənaye liderləri üçün mühüm istinad mənbəyidir.`;
+
+    const whatsNew = `Bu yeniləmədə təqdim olunan əsas texnoloji və dizayn nailiyyətləri arxitekturanın optimallaşdırılmasına, resurs istifadəsinin azaldılmasına və yaradıcı prosesin sürətləndirilməsinə yönəlib. Xüsusilə, "${title}" çərçivəsində təklif olunan struktur metodologiyaları dizayner və mühəndislərə interaktiv komponentləri daha çevik sınaqdan keçirməyə, prototipləri tez bir zamanda canlı mühitə keçirməyə imkan yaradır. Ənənəvi iş axınlarında qarşıya çıxan texniki borclar və uzadılmış yeniləmə dövrələri bu müasir yanaşma ilə aradan qaldırılır. Nəticədə rəqəmsal komandalar həm məhsul keyfiyyətini artırır, həm də bazara çıxış sürətini dəfələrlə sürətləndirirlər.`;
+
     const keyFeatures = [
-      `Optimallaşdırılmış Arxitektura: ${sourceName} tərəfindən hazırlanmış standart inteqrasiya yolları.`,
-      `Yüksək Performans: Resurs istifadəsinin azaldılması və render gecikmələrinin aradan qaldırılması.`,
-      `Təkmilləşdirilmiş Alətlər: Dizayner və proqramçıların məhsuldarlığını artıran intuitiv imkanlar.`,
-      `Çox-Platformalı Uyğunluq: Veb, iş masası və mobil mühitlərdə vahid vizual keyfiyyət.`,
-      `İctimai Sınaq: Ən aparıcı texnologiya komandalarının təcrübəsinə əsaslanan sistem.`,
+      `Optimallaşdırılmış Arxitektura Mexanizmi: ${sourceName} tərəfindən tətbiq edilən standart inteqrasiya və komponent quruluşu.`,
+      `Yüksək Render Performansı: Mərkəzi resurs istifadəsinin azaldılması və vizual kadr gecikmələrinin (latency) tam sıfırlanması.`,
+      `Təkmilləşdirilmiş Redaktə Və İş Alətləri: Dizayner və proqramçıların gündəlik səmərəliliyini kəskin artıran intuitiv imkanlar.`,
+      `Çox-Platformalı Tam Uyğunluq: Veb, mobil və desktop mühitlərində sabit vizual ritm və interfeys dürüstlüyü.`,
+      `Sənaye Tərəfindən Sınaqdan Keçirilmiş Standartlar: Ən aparıcı texnologiya komandalarının uzunmüddətli təcrübəsinə əsaslanan etibarlı infrastruktur.`,
     ];
-    const technicalBreakdown = `Mühəndislik nöqteyi-nəzərindən, "${title}" arxasında duran sistem müasir resurs idarəetməsi və modul strukturlara əsaslanır. Ağır hesablama məntiqlərini əsas interfeysdən ayırmaqla tədqiqatlar və vizual qarşılıqlı əlaqələr 60 FPS səviyyəsində rəvan qalır.`;
-    const industryImpact = `${sourceName} tərəfindən təqdim olunan bu yenilik geniş yaradıcı və proqram təminatı ekosistemi üçün mühüm mərhələdir. Süni intellekt və canlı əməkdaşlıq mühitində bu standartları mənimsəyən komandalar bazara çıxış sürətini ciddi şəkildə artırırlar.`;
-    const whyItMatters = `${sourceName} kimi nüfuzlu mənbələrin təcrübəsinə uyğunlaşmaq rəqəmsal məhsulların daima müasir keyfiyyət standartında qalmasına zəmanət verir.`;
+
+    const technicalBreakdown = `Mühəndislik nöqteyi-nəzərindən, "${title}" arxasında duran sistem müasir resurs idarəetməsi, modul enkapsulyasiya və bəyanatlı (declarative) dövrə strukturlarına əsaslanır. Ağır hesablama məntiqlərini əsas istifadəçi interfeysi oxundan (main UI thread) ayırmaqla vizual qarşılıqlı əlaqələr və dinamik keçidlər hətta yüksək yük altında belə sabit 60 FPS səviyyəsində rəvan qalır. Bundan əlavə, layihə strukturu mühəndislərə modul komponentləri müstəqil şəkildə test etməyə, kod bazasını texniki borc yaratmadan genişləndirməyə və gələcək AI modullarını rahatlıqla inteqrasiya etməyə imkan verir.`;
+
+    const industryImpact = `${sourceName} tərəfindən təqdim edilən bu innovativ yanaşma yalnız lokal komandalar üçün deyil, bütöv rəqəmsal ekosistem üçün mühüm dönüş nöqtəsidir. Süni intellekt alətlərinin, canlı əməkdaşlıq mühitlərinin və yüksək sürətli veb freymvorklarının kəsişdiyi müasir dövrdə bu kimi qabaqcıl metodologiyaları mənimsəyən rəqəmsal komandalar rəqabətdə ciddi üstünlük əldə edirlər. Statistik göstəricilər təsdiq edir ki, bu standartları tətbiq edən şirkətlərdə xətaların sayı ciddi dərəcədə azalır və istifadəçi məmnuniyyəti yüksəlir.`;
+
+    const whyItMatters = `${sourceName} kimi nüfuzlu və qlobal səviyyədə tanınan mənbələrin təcrübəsinə uyğunlaşmaq rəqəmsal məhsulların daima dünya standartlarında kalibrlənmiş qalmasına zəmanət verir. Sıfırdan bünövhrə mexanizmləri yaratmaq əvəzinə, məhsul rəhbərləri və aparıcı mühəndislər bu hazır analizlərdən istifadə edərək öz unikal biznes dəyərlərinə diqqət yetirə bilərlər.`;
+
     const keyTakeaways = [
-      `Məhsuldarlıq Artımı: Məqalədə qeyd olunan strategiyaların tətbiqi iş sürətini artırır.`,
-      `Genişlənə Bilən Komponentlər: Modul strukturlar texniki borc yaratmadan böyüməni dəstəkləyir.`,
-      `Gələcəyə Hazır İnfrastruktur: Uzunmüddətli çərçivə uyğunluğu.`,
-      `Əməli Sahə İcmalı: Rəqəmsal liderlər və dizaynerlər üçün dəyərli istinad materialı.`,
+      `Dərhal Məhsuldarlıq Artımı: Məqalədə təsvir olunan metodologiyaların tətbiqi istehsalat sürətini dərhal yüksəldir.`,
+      `Genişlənə Bilən Komponent Strategiyası: Modul strukturlar texniki borc yaratmadan məhsulun illərlə böyüməsini dəstəkləyir.`,
+      `Gələcəyə Hazır Texnoloji İnfrastruktur: Müasir AI alətləri və freymvork yeniləmələri ilə tam zəmanətli uzlaşma.`,
+      `Əməli Sahə Və Redaksiya İcmalı: Rəqəmsal liderlər, UX arxitektorları və proqramçılar üçün əvəzolunmaz istinad materialı.`,
     ];
 
     const fullText = [
@@ -240,7 +246,7 @@ export function generateDetailedEditorial(
     ].join(" ");
 
     const wordCount = fullText.split(/\s+/).length;
-    const estimatedReadingTimeMinutes = Math.max(3, Math.ceil(wordCount / 200));
+    const estimatedReadingTimeMinutes = Math.max(4, Math.ceil(wordCount / 180));
 
     return {
       overview,
@@ -255,9 +261,9 @@ export function generateDetailedEditorial(
     };
   }
 
-  const overview = `This comprehensive editorial report analyzes "${title}", originally published by ${sourceName}. The article highlights pivotal shifts across ${category}, exploring how technological evolution and modern user expectations are driving new design paradigms. At its core, the development addresses critical challenges in workflow efficiency, technical scalability, and user interface ergonomics. As digital products become increasingly complex and multi-layered, teams require robust frameworks to maintain velocity without sacrificing quality or performance.`;
+  const overview = `This comprehensive editorial report analyzes "${title}", originally published by ${sourceName}. The article highlights pivotal shifts across ${category}, exploring how technological evolution and modern user expectations are driving new design paradigms. At its core, the development addresses critical challenges in workflow efficiency, technical scalability, and user interface ergonomics. As digital products become increasingly complex and multi-layered, teams require robust frameworks to maintain velocity without sacrificing quality or performance. The research provided in "${cleanExcerpt}" offers critical clarity for digital product creators.`;
 
-  const whatsNew = `Key advancements introduced in this update center on architectural refining and streamlined developer experience. Specifically, ${title} introduces updated structural patterns that reduce friction in production pipelines. By eliminating legacy overhead, creators can rapidly iterate on feature concepts, prototype interactive components, and deploy updates with higher confidence. Furthermore, integration with modern design tokens and standardized APIs ensures seamless cross-platform consistency.`;
+  const whatsNew = `Key advancements introduced in this update center on architectural refining, system modularity, and streamlined developer experience. Specifically, ${title} introduces updated structural patterns that reduce friction in production pipelines. By eliminating legacy overhead, creators can rapidly iterate on feature concepts, prototype interactive components, and deploy updates with higher confidence. Furthermore, integration with modern design tokens and standardized APIs ensures seamless cross-platform consistency across all digital touchpoints.`;
 
   const keyFeatures = [
     `Streamlined Architecture: Standardized integration paths developed by ${sourceName} for frictionless deployment.`,
@@ -267,7 +273,7 @@ export function generateDetailedEditorial(
     `Community Validation: Built upon battle-tested standards and feedback from leading technology teams.`,
   ];
 
-  const technicalBreakdown = `From an engineering perspective, the implementation behind ${title} leverages modern compilation strategies, optimized memory allocation, and declarative state transitions. By decoupling heavy computational logic from main UI execution threads, applications maintain 60 FPS visual smoothness during complex interactions. The underlying schema enforces strict type safety and modular encapsulation, enabling engineering teams to inspect, test, and scale individual modules independently.`;
+  const technicalBreakdown = `From an engineering perspective, the implementation behind ${title} leverages modern compilation strategies, optimized memory allocation, and declarative state transitions. By decoupling heavy computational logic from main UI execution threads, applications maintain 60 FPS visual smoothness during complex interactions. The underlying schema enforces strict type safety and modular encapsulation, enabling engineering teams to inspect, test, and scale individual modules independently without accumulating technical debt.`;
 
   const industryImpact = `The release of ${title} by ${sourceName} marks a significant milestone for the broader creative and software ecosystem. As organizations navigate the convergence of AI assistance, real-time collaboration, and high-performance frontend frameworks, adopting these standardized patterns becomes a competitive imperative. Teams that implement these techniques report noticeable improvements in shipping cadence, fewer regression bugs, and elevated brand perception.`;
 
@@ -291,7 +297,7 @@ export function generateDetailedEditorial(
   ].join(" ");
 
   const wordCount = fullText.split(/\s+/).length;
-  const estimatedReadingTimeMinutes = Math.max(3, Math.ceil(wordCount / 200));
+  const estimatedReadingTimeMinutes = Math.max(4, Math.ceil(wordCount / 180));
 
   return {
     overview,
