@@ -187,10 +187,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const body = typeof req.body === "string" ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
-    const urlObj = new URL(req.url || "", "https://www.rvan.me");
-    const action = (req.headers["x-action"] as string) || body.action || urlObj.searchParams.get("action") || (req.query && (req.query.action as string));
+    const rawUrl = req.url || "";
+    const isUpdateBlogs = rawUrl.includes("update-blogs") || rawUrl.includes("updateBlogs") || req.headers["x-action"] === "update-blogs" || body.action === "update-blogs";
 
-    if (action === "update-blogs") {
+    if (isUpdateBlogs) {
       const existingBlogs = (await client.fetch(`*[_type == "blog"]{ _id, title, "slug": slug.current }`)) || [];
       const protectedSlugs = new Set(["what-is-the-fomo", "the-aida-framework", "10-graphic-design-rules"]);
       const blogsToUpdate = existingBlogs.filter((b: any) => !protectedSlugs.has(b.slug));
