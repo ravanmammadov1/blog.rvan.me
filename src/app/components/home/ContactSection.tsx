@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { ArrowDownRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { fetchSiteSettings } from "../../../lib/sanityQueries";
 import { Eyebrow } from "../Eyebrow";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -15,6 +16,7 @@ const fadeUp = {
 
 export default function ContactSection() {
   const [siteSettings, setSiteSettings] = useState<any>(null);
+  const { t } = useLanguage();
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
@@ -65,9 +67,9 @@ export default function ContactSection() {
     }
   };
 
-  const contactHeading = siteSettings?.contactHeading || "LET'S CREATE SOMETHING";
-  const contactSubtext = siteSettings?.contactSubtext || "Select work only. I take on a limited number of projects each quarter to ensure maximum attention and craft.";
-  const letsTalkLabel = siteSettings?.letsTalkLabel || "LET'S TALK";
+  const contactHeading = siteSettings?.contactHeading || t("contactHeading", "LET'S TALK.");
+  const contactSubtext = siteSettings?.contactSubtext || t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.");
+  const letsTalkLabel = siteSettings?.letsTalkLabel || t("btnGetInTouch", "ƏLAQƏ SAXLA");
 
   return (
     <section id="contact" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
@@ -87,7 +89,7 @@ export default function ContactSection() {
           className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">08 / Contact & Collaboration</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{t("contactBadge", "ƏLAQƏ SAXLA")}</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               {contactHeading}
             </h2>
@@ -105,7 +107,7 @@ export default function ContactSection() {
             className="flex flex-col justify-center"
           >
             <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-10">
-              Have questions about our resources, feedback on our design guides, or interest in collaborating on creative tools? Reach out below.
+              {contactSubtext}
             </p>
 
             <div className="space-y-6">
@@ -139,7 +141,7 @@ export default function ContactSection() {
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
                   <label htmlFor="name" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
-                    Name
+                    {t("yourName", "YOUR NAME *")}
                   </label>
                   <input
                     type="text"
@@ -149,12 +151,12 @@ export default function ContactSection() {
                     onChange={(e) => setContactName(e.target.value)}
                     required
                     className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
-                    placeholder="Your name"
+                    placeholder={t("placeholderName", "Your name")}
                   />
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
-                    Email
+                    {t("yourEmail", "YOUR EMAIL *")}
                   </label>
                   <input
                     type="email"
@@ -164,14 +166,14 @@ export default function ContactSection() {
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
                     className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
-                    placeholder="your@email.com"
+                    placeholder={t("placeholderEmail", "your@email.com")}
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="message" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
-                  Details & Message
+                  {t("yourMessage", "MESSAGE *")}
                 </label>
                 <textarea
                   id="message"
@@ -181,7 +183,7 @@ export default function ContactSection() {
                   required
                   rows={5}
                   className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"
-                  placeholder="How can we collaborate? Share your details..."
+                  placeholder={t("placeholderMessage", "How can we collaborate? Share your details...")}
                 />
               </div>
 
@@ -222,7 +224,7 @@ export default function ContactSection() {
                 )}
                 {contactStatus === "idle" && (
                   <>
-                    SEND MESSAGE
+                    {t("btnSendMessage", "SEND MESSAGE")}
                     <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                   </>
                 )}

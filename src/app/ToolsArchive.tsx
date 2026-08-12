@@ -16,6 +16,8 @@ import { INTERACTIVE_TOOLS } from "./lib/toolsRegistry";
 const DesignerToolsPanel = lazy(() => import("./components/DesignerToolsPanel"));
 const FeaturedInteractiveTools = lazy(() => import("./components/home/FeaturedInteractiveTools").then(m => ({ default: m.FeaturedInteractiveTools })));
 
+import { useLanguage } from "../lib/i18n/LanguageContext";
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
@@ -33,6 +35,7 @@ export default function ToolsArchive() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,6 +46,16 @@ export default function ToolsArchive() {
       .then((data) => setToolsList(data))
       .finally(() => setLoading(false));
   }, []);
+
+  const categoryLabelsMap: Record<string, string> = {
+    All: t("categoryAll", "All"),
+    Color: t("categoryColor", "Color"),
+    Typography: t("categoryTypography", "Typography"),
+    "Spacing & Grid": t("categorySpacingGrid", "Spacing & Grid"),
+    "SVG & Code": t("categorySvgCode", "SVG & Code"),
+    Shadows: t("categoryShadows", "Shadows"),
+    SEO: t("categorySeo", "SEO"),
+  };
 
   const toolCategories = ["All", "Color", "Typography", "Spacing & Grid", "SVG & Code", "Shadows", "SEO"];
 
@@ -69,8 +82,8 @@ export default function ToolsArchive() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Free Interactive Developer & Designer Tools Hub — Rvan.me"
-        description="Free in-browser developer utilities: CSS Grid generator, SVG wave generator, fluid typography clamp generator, multi-layer smooth box shadow builder, color contrast checker, and SEO meta tag generator."
+        title={`${t("toolsArchiveTitle", "Tools & Interactive Toolkit.")} — Rvan.me`}
+        description={t("toolsArchiveSubtitle", "Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly.")}
         url="https://www.rvan.me/tools"
       />
 
@@ -81,25 +94,25 @@ export default function ToolsArchive() {
       <PageHero
         eyebrow={
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-widest text-primary mono uppercase">
-            <Zap size={14} /> FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES
+            <Zap size={14} /> {t("toolsArchiveEyebrow", "FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES")}
           </span>
         }
-        title="Tools &"
-        accentText="Interactive Toolkit."
+        title={language === "az" ? "Alətlər və" : "Tools &"}
+        accentText={language === "az" ? "interaktiv dəst." : "Interactive Toolkit."}
         gradientVariant="primary"
-        description="Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly for CSS Grid, SVG Waves, Fluid Clamp(), Box Shadows, and SEO metadata."
+        description={t("toolsArchiveSubtitle", "Zero API dependencies, zero downloads. Copy clean production CSS, SVG, and HTML code instantly for CSS Grid, SVG Waves, Fluid Clamp(), Box Shadows, and SEO metadata.")}
       />
       {/* Master Page Filter Bar & Search */}
       <PageFilterBar
         categories={toolCategories.map((cat) => ({
           key: cat,
-          label: cat,
+          label: categoryLabelsMap[cat] || cat,
         }))}
         activeCategory={activeCategory}
         onSelectCategory={setActiveCategory}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search tools (e.g. CSS Grid, SVG Wave, clamp)..."
+        searchPlaceholder={t("toolsSearchPlaceholder", "Search tools...")}
         searchId="tools-search"
       />
 
@@ -121,7 +134,7 @@ export default function ToolsArchive() {
                   <div className="flex items-center justify-between gap-2 mb-4">
                     <span className="text-2xl">{tool.icon}</span>
                     <span className="text-[9px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
-                      {tool.category}
+                      {categoryLabelsMap[tool.category] || tool.category}
                     </span>
                   </div>
                   <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2">
@@ -133,10 +146,10 @@ export default function ToolsArchive() {
                 </div>
 
                 <Link
-                  to={tool.path}
+                  to={getLocalizedPath(tool.path)}
                   className="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-primary uppercase tracking-wider mono group-hover:text-white transition-colors"
                 >
-                  <span>LAUNCH UTILITY PAGE</span>
+                  <span>{t("openTool", "LAUNCH UTILITY PAGE")}</span>
                   <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
               </motion.article>

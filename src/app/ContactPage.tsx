@@ -7,6 +7,8 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 
+import { useLanguage } from "../lib/i18n/LanguageContext";
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
@@ -20,6 +22,7 @@ const fadeUp = {
 
 export default function ContactPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -98,8 +101,8 @@ export default function ContactPage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Contact — Ravan Mammadov Studio"
-        description="Have a project, collaboration idea, or feedback? Get in touch directly."
+        title={`${t("navContact", "Contact")} — Rvan.me Studio`}
+        description={t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.")}
         url="https://www.rvan.me/contact"
         jsonLd={jsonLd}
       />
@@ -149,20 +152,20 @@ export default function ContactPage() {
             >
               <div>
                 <p className="text-[11px] font-bold tracking-[.2em] text-primary mono uppercase mb-4">
-                  GET IN TOUCH
+                  {t("contactBadge", "GET IN TOUCH")}
                 </p>
                 <h1 className="text-4xl font-semibold tracking-[-.05em] sm:text-5xl lg:text-6xl text-foreground leading-[1.08] uppercase">
-                  LET'S <span className="aurora-text-animate font-bold">TALK.</span>
+                  {t("contactHeading", "LET'S TALK.")}
                 </h1>
                 <p className="mt-6 text-base sm:text-lg text-muted-foreground/90 leading-relaxed max-w-md font-medium">
-                  Have a project, collaboration idea, or feedback? Let's talk.
+                  {t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.")}
                 </p>
               </div>
 
               {/* Social links block */}
               <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
                 <p className="text-[10px] font-bold tracking-[.22em] text-muted-foreground/70 mono uppercase mb-4">
-                  CONNECT ACROSS NETWORKS
+                  {t("connectAcrossNetworks", "CONNECT ACROSS NETWORKS")}
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {[
@@ -202,10 +205,10 @@ export default function ContactPage() {
 
               <div className="relative z-10">
                 <h2 className="text-2xl font-semibold tracking-tight text-foreground mb-1">
-                  Send a Message
+                  {t("sendMessageTitle", "Send a Message")}
                 </h2>
                 <p className="text-xs text-muted-foreground/80 mb-8 font-medium">
-                  Fill out the fields below and I'll get back to you as soon as possible.
+                  {t("sendMessageDesc", "Fill out the fields below and I'll get back to you as soon as possible.")}
                 </p>
 
                 {status === "success" ? (
@@ -238,14 +241,14 @@ export default function ContactPage() {
                     <div className="grid gap-6 sm:grid-cols-2">
                       <div>
                         <label htmlFor="contact-name" className="block text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
-                          Your Name *
+                          {t("yourName", "YOUR NAME *")}
                         </label>
                         <input
                           type="text"
                           id="contact-name"
                           name="name"
                           required
-                          placeholder="Alex Morgan"
+                          placeholder={t("placeholderName", "Your name")}
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
@@ -254,14 +257,14 @@ export default function ContactPage() {
 
                       <div>
                         <label htmlFor="contact-email" className="block text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
-                          Your Email *
+                          {t("yourEmail", "YOUR EMAIL *")}
                         </label>
                         <input
                           type="email"
                           id="contact-email"
                           name="email"
                           required
-                          placeholder="alex@company.com"
+                          placeholder={t("placeholderEmail", "your@email.com")}
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
@@ -271,14 +274,14 @@ export default function ContactPage() {
 
                     <div>
                       <label htmlFor="contact-project-details" className="block text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground mono mb-2">
-                        Message *
+                        {t("yourMessage", "MESSAGE *")}
                       </label>
                       <textarea
                         required
                         id="contact-project-details"
                         name="projectDetails"
                         rows={5}
-                        placeholder="Tell me about your project, idea, or how we can collaborate..."
+                        placeholder={t("placeholderMessage", "How can we collaborate? Share your details...")}
                         value={formData.projectDetails}
                         onChange={(e) => setFormData({ ...formData, projectDetails: e.target.value })}
                         className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"
@@ -303,7 +306,7 @@ export default function ContactPage() {
                         </>
                       ) : (
                         <>
-                          SEND MESSAGE <Send size={13} />
+                          {t("btnSendMessage", "SEND MESSAGE")} <Send size={13} />
                         </>
                       )}
                     </button>

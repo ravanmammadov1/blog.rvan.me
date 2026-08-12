@@ -177,8 +177,8 @@ export default function BlogArchive() {
       {/* Unified Page Hero */}
       <PageHero
         eyebrow={t("blogArchiveEyebrow", "INSIGHTS & IDEAS")}
-        title="Design &"
-        accentText={t("blogArchiveHeading", "Editorial Essays.")}
+        title={language === "az" ? "Dizayn və" : "Design &"}
+        accentText={t("blogArchiveHeadingAccent", "Editorial Essays.")}
         gradientVariant="secondary"
         description={t("blogArchiveSubtitle", "Original articles on visual strategy, motion mechanics, design systems, and creative technology.")}
       />

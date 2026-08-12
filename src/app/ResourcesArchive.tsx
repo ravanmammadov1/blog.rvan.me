@@ -182,9 +182,9 @@ export default function ResourcesArchive() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow="OPEN-SOURCE VAULT & DEVELOPER TOOLKIT"
-        title="Creative"
-        accentText="Resources."
+        eyebrow={t("resourcesArchiveEyebrow", "OPEN-SOURCE VAULT & DEVELOPER TOOLKIT")}
+        title={t("resourcesHeadingMain", "Creative")}
+        accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"
         description={t("resourcesArchiveSubtitle", "Curated open-source fonts, developer repositories, design utilities, asset kits, and learning roadmaps.")}
       />

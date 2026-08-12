@@ -76,7 +76,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="hidden sm:inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.25em] text-muted-foreground/60 mono uppercase">
-                  DESIGN • TECH • CREATIVE
+                  {t("heroEyebrowTag", "DESIGN • TECH • CREATIVE")}
                 </div>
               </div>
 

@@ -28,6 +28,8 @@ import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
+import { useLanguage } from "../lib/i18n/LanguageContext";
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
@@ -41,6 +43,7 @@ const fadeUp = {
 
 export default function AboutPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,8 +58,8 @@ export default function AboutPage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="About Rvan.me — Creative Ecosystem & Platform Vision"
-        description="Learn about Rvan.me, a curated creative ecosystem built for designers, marketers and developers. Discover our mission, core pillars, and studio vision."
+        title={`${t("navAbout", "About")} Rvan.me — ${t("aboutHeroEyebrow", "PLATFORM VISION & MISSION")}`}
+        description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.")}
         url="https://www.rvan.me/about"
       />
 
@@ -84,27 +87,27 @@ export default function AboutPage() {
       <PageHero
         eyebrow={
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-widest text-primary mono uppercase">
-            <Sparkles size={14} /> PLATFORM VISION & MISSION
+            <Sparkles size={14} /> {t("aboutHeroEyebrow", "PLATFORM VISION & MISSION")}
           </span>
         }
-        title="Engineered for Designers,"
-        accentText="Marketers & Developers."
+        title={t("aboutHeroTitleMain", "Engineered for Designers,")}
+        accentText={t("aboutHeroTitleAccent", "Marketers & Developers.")}
         gradientVariant="accent"
-        description="Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace."
+        description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.")}
       >
         <div className="flex flex-wrap items-center gap-4">
           <Link
-            to="/resources"
+            to={getLocalizedPath("/resources")}
             className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(216,255,68,0.3)] mono"
           >
-            EXPLORE RESOURCES
+            {t("btnExploreResources", "EXPLORE RESOURCES")}
             <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
-            to="/tools"
+            to={getLocalizedPath("/tools")}
             className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
           >
-            VIEW CREATOR TOOLS
+            {t("aboutViewCreatorTools", "VIEW CREATOR TOOLS")}
           </Link>
         </div>
       </PageHero>
@@ -116,12 +119,12 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-12 lg:grid-cols-12 items-start">
             <div className="lg:col-span-5">
-              <span className="text-xs font-bold tracking-widest text-primary mono uppercase">WHY RVAN.ME EXISTS</span>
+              <span className="text-xs font-bold tracking-widest text-primary mono uppercase">{t("aboutWhyExistsEyebrow", "WHY RVAN.ME EXISTS")}</span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground leading-tight">
-                Bringing Clarity & Speed to Creative Workflows.
+                {t("aboutWhyExistsTitle", "Bringing Clarity & Speed to Creative Workflows.")}
               </h2>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground font-medium">
-                Modern digital creation is fragmented across hundreds of bookmarks, scattered tools, and noisy social feeds. Rvan.me eliminates visual noise by uniting high-density creative utilities, open-source typography, and verified industry news into one seamless hub.
+                {t("aboutWhyExistsDescription", "Modern digital creation is fragmented across hundreds of bookmarks, scattered tools, and noisy social feeds. Rvan.me eliminates visual noise by uniting high-density creative utilities, open-source typography, and verified industry news into one seamless hub.")}
               </p>
             </div>
 
@@ -130,9 +133,9 @@ export default function AboutPage() {
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
                   <CheckCircle2 size={20} />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">Value First</h3>
+                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutValueFirstTitle", "Value First")}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Zero fluff and zero promotional noise. Every font family, tool, and article is curated for real commercial and creative utility.
+                  {t("aboutValueFirstDesc", "Zero fluff and zero promotional noise. Every font family, tool, and article is curated for real commercial and creative utility.")}
                 </p>
               </div>
 
@@ -140,9 +143,9 @@ export default function AboutPage() {
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-400">
                   <Layers size={20} />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">Unified Ecosystem</h3>
+                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutUnifiedEcosystemTitle", "Unified Ecosystem")}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Open-source typography, AI automation tools, RSS news aggregation, and design essays connected under a single design system.
+                  {t("aboutUnifiedEcosystemDesc", "Open-source typography, AI automation tools, RSS news aggregation, and design essays connected under a single design system.")}
                 </p>
               </div>
 
@@ -150,9 +153,9 @@ export default function AboutPage() {
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-400">
                   <Zap size={20} />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">High Performance</h3>
+                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutHighPerformanceTitle", "High Performance")}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Engineered with modern web architecture, sub-second FlexSearch, instant static pre-rendering, and real-time synchronization.
+                  {t("aboutHighPerformanceDesc", "Engineered with modern web architecture, sub-second FlexSearch, instant static pre-rendering, and real-time synchronization.")}
                 </p>
               </div>
 
@@ -160,9 +163,9 @@ export default function AboutPage() {
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
                   <Compass size={20} />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">Free & Open Access</h3>
+                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutFreeAccessTitle", "Free & Open Access")}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Public access to resources with optional Google authentication for personalizing bookmarks and member features.
+                  {t("aboutFreeAccessDesc", "Public access to resources with optional Google authentication for personalizing bookmarks and member features.")}
                 </p>
               </div>
             </div>
@@ -176,19 +179,19 @@ export default function AboutPage() {
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10 bg-white/[0.01]">
         <div className="mx-auto max-w-[1600px]">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-bold tracking-widest text-primary mono uppercase">PLATFORM MODULES</span>
+            <span className="text-xs font-bold tracking-widest text-primary mono uppercase">{t("aboutPlatformModulesEyebrow", "PLATFORM MODULES")}</span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
-              What You Can Find Here.
+              {t("aboutPlatformModulesTitle", "What You Can Find Here.")}
             </h2>
             <p className="mt-4 text-sm text-muted-foreground font-medium">
-              Explore the core verticals engineered to accelerate your creative & technical projects.
+              {t("aboutPlatformModulesSubtitle", "Explore the core verticals engineered to accelerate your creative & technical projects.")}
             </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {/* Module 1: Resources */}
             <Link
-              to="/resources"
+              to={getLocalizedPath("/resources")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
             >
               <div>
@@ -196,21 +199,21 @@ export default function AboutPage() {
                   <Globe size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  Resources Directory
+                  {t("aboutModuleResourcesTitle", "Resources Directory")}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Curated open-source font catalog, vector icon sets, 3D mockups, and Figma UI kits.
+                  {t("aboutModuleResourcesDesc", "Curated open-source font catalog, vector icon sets, 3D mockups, and Figma UI kits.")}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>Explore Resources</span>
+                <span>{t("btnExploreResources", "Explore Resources")}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
 
             {/* Module 2: Tools */}
             <Link
-              to="/tools"
+              to={getLocalizedPath("/tools")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
             >
               <div>
@@ -218,21 +221,21 @@ export default function AboutPage() {
                   <Cpu size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  AI & Creator Tools
+                  {t("aboutModuleToolsTitle", "AI & Creator Tools")}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Verified AI utilities, motion animation scripts, and workflow automation extensions.
+                  {t("aboutModuleToolsDesc", "Verified AI utilities, motion animation scripts, and workflow automation extensions.")}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>Browse Tools</span>
+                <span>{t("aboutViewCreatorTools", "Browse Tools")}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
 
             {/* Module 3: News */}
             <Link
-              to="/news"
+              to={getLocalizedPath("/news")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
             >
               <div>
@@ -240,21 +243,21 @@ export default function AboutPage() {
                   <Newspaper size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  Industry News
+                  {t("aboutModuleNewsTitle", "Industry News")}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Live aggregated feeds covering design, technology, AI breakthroughs, and brand culture.
+                  {t("aboutModuleNewsDesc", "Live aggregated feeds covering design, technology, AI breakthroughs, and brand culture.")}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>Read Industry News</span>
+                <span>{t("btnReadNews", "Read Industry News")}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
 
             {/* Module 4: Blog */}
             <Link
-              to="/blog"
+              to={getLocalizedPath("/blog")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
             >
               <div>
@@ -262,10 +265,10 @@ export default function AboutPage() {
                   <BookOpen size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  Design Essays
+                  {t("aboutModuleBlogTitle", "Editorial Essays")}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  Original technical writeups on motion graphics, brand identity systems, and performance creative.
+                  {t("aboutModuleBlogDesc", "Original technical writeups on motion graphics, brand identity systems, and performance creative.")}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">

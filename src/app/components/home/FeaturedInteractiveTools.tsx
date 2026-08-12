@@ -2,6 +2,7 @@ import React, { useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Wrench, ArrowUpRight, Sparkles } from "lucide-react";
 import { INTERACTIVE_TOOLS } from "../../lib/toolsRegistry";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const CssGridGenerator = lazy(() => import("../tools/CssGridGenerator"));
 const SvgWaveGenerator = lazy(() => import("../tools/SvgWaveGenerator"));
@@ -11,6 +12,7 @@ const ColorConverterTool = lazy(() => import("../tools/ColorConverterTool"));
 
 export const FeaturedInteractiveTools: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("svg-wave-generator");
+  const { t, getLocalizedPath } = useLanguage();
 
   const renderActiveTool = () => {
     switch (activeTab) {
@@ -36,21 +38,21 @@ export const FeaturedInteractiveTools: React.FC = () => {
         <div className="mb-12 border-b border-border pb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div>
             <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase mono flex items-center gap-1.5 mb-3">
-              <Sparkles size={12} /> IN-BROWSER WORKFLOW ENGINE
+              <Sparkles size={12} /> {t("sectionToolsEyebrow", "PULSUZ BRAUZERDAXİLİ DEVELOPER VƏ DİZAYNER ALƏTLƏRİ")}
             </span>
             <h2 className="text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Featured Interactive Tools.
+              {t("sectionToolsTitle", "Alətlər və interaktiv dəst.")}
             </h2>
             <p className="mt-3 text-sm md:text-base text-muted-foreground/80 max-w-2xl font-medium leading-relaxed">
-              Test visual CSS generators, waves, fluid typography, and color contrast directly on this page—zero API dependencies, instant client-side code export.
+              {t("sectionToolsSubtitle", "API asılılığı və yükləmə olmadan istifadə edə biləcəyiniz praktik dizayn və developer alətləri. CSS, SVG, HTML və SEO üçün hazır nəticələr yaradın.")}
             </p>
           </div>
 
           <Link
-            to="/tools"
+            to={getLocalizedPath("/tools")}
             className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-widest text-black uppercase transition-all duration-300 hover:scale-105 hover:bg-white shadow-xl shrink-0"
           >
-            VIEW ALL IN-BROWSER UTILITIES <ArrowUpRight size={15} />
+            {t("viewAllUtilities", "BÜTÜN ALƏTLƏRƏ BAX")} <ArrowUpRight size={15} />
           </Link>
         </div>
 
