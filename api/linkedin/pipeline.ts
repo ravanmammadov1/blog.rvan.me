@@ -1007,7 +1007,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const body = typeof req.body === "string" ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
-    const action = (req.query.action as string) || body.action || "generate";
+    const urlObj = new URL(req.url || "", "https://www.rvan.me");
+    const action = urlObj.searchParams.get("action") || (req.query && (req.query.action as string)) || body.action || "generate";
 
     if (action === "approve") {
       return await handleApprove(req, res);
