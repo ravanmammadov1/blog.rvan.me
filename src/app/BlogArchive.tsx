@@ -36,7 +36,7 @@ export default function BlogArchive() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -217,7 +217,7 @@ export default function BlogArchive() {
         {/* Grid */}
         {loading ? (
           <div className="mt-20 flex items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#61c5ad] border-t-transparent" />
           </div>
         ) : filteredPosts.length === 0 ? (
           <motion.div
@@ -236,7 +236,7 @@ export default function BlogArchive() {
                   setSearchQuery("");
                   setActiveCategory("All");
                 }}
-                className="mt-4 text-sm text-primary underline underline-offset-4"
+                className="mt-4 text-sm text-[#61c5ad] underline underline-offset-4"
               >
                 Clear filters
               </button>
@@ -268,7 +268,10 @@ export default function BlogArchive() {
                 <button
                   onClick={loadMore}
                   disabled={isLoadingMore}
-                  className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.15em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent glass-sm disabled:opacity-50"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                  }}
                 >
                   {isLoadingMore ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMoreArticles", "LOAD MORE ARTICLES")} (${remainingCount} ${t("remaining", "REMAINING")})`}
                 </button>
