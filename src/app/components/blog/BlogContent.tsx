@@ -10,7 +10,7 @@ interface BlogContentProps {
 export default function BlogContent({ post }: BlogContentProps) {
   return (
     <article className="mx-auto mt-20 max-w-4xl">
-      <div className="prose prose-invert prose-lg max-w-none">
+      <div className="prose dark:prose-invert prose-lg max-w-none text-foreground">
         <PortableText
           value={post.body}
           components={portableTextComponents}

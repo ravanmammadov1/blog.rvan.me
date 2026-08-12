@@ -611,4 +611,58 @@ export async function fetchRelatedContentItems(currentId: string, contentType: s
   }
 }
 
+export async function fetchBlogBySlug(slug: string) {
+  try {
+    const data = await client.fetch(
+      `
+      *[_type == "blog" && (slug.current == $slug || _id == $slug) && (status == "published" || !defined(status))][0]{
+        _id,
+        title,
+        slug,
+        excerpt,
+        category,
+        tags,
+        featured,
+        publishDate,
+        readTime,
+        coverImage,
+        body
+      }
+    `,
+      { slug }
+    );
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching blog by slug from Sanity:", error);
+    return null;
+  }
+}
+
+export async function fetchAllBlogs() {
+  try {
+    const data = await client.fetch(
+      `
+      *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(featured desc, publishDate desc){
+        _id,
+        title,
+        slug,
+        excerpt,
+        category,
+        tags,
+        featured,
+        publishDate,
+        readTime,
+        coverImage,
+        body
+      }
+    `
+    );
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching all blogs from Sanity:", error);
+    return [];
+  }
+}
+
+
 

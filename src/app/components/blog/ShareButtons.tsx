@@ -36,8 +36,8 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
   const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
 
   return (
-    <div className="my-12 flex flex-wrap items-center justify-between gap-4 border-y border-white/10 py-6">
-      <span className="text-xs font-bold uppercase tracking-[.18em] text-white/50 mono">
+    <div className="my-12 flex flex-wrap items-center justify-between gap-4 border-y border-border py-6">
+      <span className="text-xs font-bold uppercase tracking-[.18em] text-muted-foreground mono">
         Share Article
       </span>
 
@@ -45,7 +45,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
         {canNativeShare && (
           <button
             onClick={handleNativeShare}
-            className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white transition hover:bg-white/15"
+            className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground transition hover:bg-secondary"
           >
             <Share2 size={14} />
             <span>Share</span>
@@ -54,12 +54,12 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
 
         <button
           onClick={handleCopyLink}
-          className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white transition hover:bg-white/15"
+          className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground transition hover:bg-secondary"
         >
           {copied ? (
             <>
-              <Check size={14} className="text-green-400" />
-              <span className="text-green-400">Link Copied!</span>
+              <Check size={14} className="text-green-500" />
+              <span className="text-green-500 font-semibold">Link Copied!</span>
             </>
           ) : (
             <>
@@ -74,7 +74,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
           href={xShareUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center rounded-full border border-white/15 bg-white/5 p-2 text-white transition hover:bg-white/15"
+          className="flex items-center justify-center rounded-full border border-border bg-surface p-2 text-foreground transition hover:bg-secondary"
           aria-label="Share on X"
         >
           <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -86,7 +86,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
           href={linkedinShareUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center rounded-full border border-white/15 bg-white/5 p-2 text-white transition hover:bg-white/15"
+          className="flex items-center justify-center rounded-full border border-border bg-surface p-2 text-foreground transition hover:bg-secondary"
           aria-label="Share on LinkedIn"
         >
           <Linkedin size={14} />

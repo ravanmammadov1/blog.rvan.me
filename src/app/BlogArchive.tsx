@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Search, X, ArrowLeft } from "lucide-react";
 
 import { client } from "../lib/sanityClient";

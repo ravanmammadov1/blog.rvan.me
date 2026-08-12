@@ -77,7 +77,7 @@ export default function TableOfContents({ body }: TableOfContentsProps) {
 
   return (
     <nav
-      className="rounded-2xl border border-white/10 bg-surface/50 p-6 backdrop-blur-md"
+      className="rounded-2xl border border-border bg-card p-6 backdrop-blur-md shadow-sm"
       aria-label="Table of Contents"
     >
       <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-primary mono">

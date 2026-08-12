@@ -17,12 +17,12 @@ interface NoiseBackgroundProps {
 export function GlobalNoiseBackdrop() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-50 overflow-hidden transform-gpu" aria-hidden="true">
-      {/* Base deep black background */}
-      <div className="absolute inset-0 bg-[#070708]" />
+      {/* Base theme background */}
+      <div className="absolute inset-0 bg-background transition-colors duration-300" />
 
-      {/* Layer 1 — Top Left Emerald / Gold Ambient Spot */}
+      {/* Layer 1 — Top Left Ambient Spot */}
       <div
-        className="absolute -top-[15%] -left-[10%] w-[55vw] h-[55vw] rounded-full pointer-events-none opacity-20 transform-gpu"
+        className="absolute -top-[15%] -left-[10%] w-[55vw] h-[55vw] rounded-full pointer-events-none opacity-20 dark:opacity-20 light:opacity-5 transform-gpu"
         style={{
           background: "radial-gradient(circle at center, rgba(232,253,82,0.12) 0%, rgba(16,185,129,0.04) 50%, transparent 70%)",
         }}
@@ -30,7 +30,7 @@ export function GlobalNoiseBackdrop() {
 
       {/* Layer 2 — Right Indigo Ambient Spot */}
       <div
-        className="absolute top-[25%] -right-[10%] w-[50vw] h-[50vw] rounded-full pointer-events-none opacity-15 transform-gpu"
+        className="absolute top-[25%] -right-[10%] w-[50vw] h-[50vw] rounded-full pointer-events-none opacity-15 dark:opacity-15 light:opacity-5 transform-gpu"
         style={{
           background: "radial-gradient(circle at center, rgba(109,129,255,0.1) 0%, rgba(139,92,246,0.03) 55%, transparent 75%)",
         }}
@@ -38,7 +38,7 @@ export function GlobalNoiseBackdrop() {
 
       {/* Layer 3 — Bottom Teal Ambient Spot */}
       <div
-        className="absolute -bottom-[15%] left-[25%] w-[45vw] h-[45vw] rounded-full pointer-events-none opacity-15 transform-gpu"
+        className="absolute -bottom-[15%] left-[25%] w-[45vw] h-[45vw] rounded-full pointer-events-none opacity-15 dark:opacity-15 light:opacity-5 transform-gpu"
         style={{
           background: "radial-gradient(circle at center, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.03) 60%, transparent 75%)",
         }}
@@ -74,7 +74,7 @@ export function NoiseBackground({
     >
       {/* Subtle multi-color gradient glow */}
       <motion.div
-        className="absolute inset-0 opacity-20 transition-opacity duration-700 group-hover:opacity-70 pointer-events-none"
+        className="absolute inset-0 opacity-20 dark:opacity-20 light:opacity-10 transition-opacity duration-700 group-hover:opacity-70 pointer-events-none"
         style={{
           background: `radial-gradient(circle at 20% 20%, ${color1} 0%, transparent 50%), radial-gradient(circle at 80% 50%, ${color2} 0%, transparent 55%), radial-gradient(circle at 40% 90%, ${color3} 0%, transparent 60%)`,
         }}
@@ -100,7 +100,7 @@ export function NoiseBackground({
       {/* Card Content Container */}
       <div
         className={cn(
-          "relative z-20 h-full w-full rounded-2xl bg-neutral-950/80 backdrop-blur-xl transition-colors duration-500 group-hover:bg-neutral-900/80 border border-white/10 group-hover:border-white/20",
+          "relative z-20 h-full w-full rounded-2xl bg-card text-card-foreground backdrop-blur-xl transition-all duration-500 border border-border group-hover:border-primary/50 shadow-sm light:shadow-md light:group-hover:shadow-xl",
           className
         )}
       >

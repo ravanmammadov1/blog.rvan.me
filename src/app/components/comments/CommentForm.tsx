@@ -37,7 +37,7 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
 
   if (!user) {
     return (
-      <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center backdrop-blur-xl aurora-card">
+      <div className="relative rounded-2xl border border-border bg-card p-6 text-center backdrop-blur-xl shadow-sm">
         <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
           <Sparkles size={18} />
         </div>
@@ -49,7 +49,7 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
         </p>
         <button
           onClick={() => setAuthModalOpen(true)}
-          className="inline-flex items-center gap-2.5 rounded-full bg-white text-black font-semibold text-xs py-2.5 px-6 tracking-wide transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-lg shadow-white/10"
+          className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface text-foreground font-semibold text-xs py-2.5 px-6 tracking-wide transition-all duration-300 hover:bg-secondary hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-sm"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
             <path
@@ -80,16 +80,16 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
   const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
-    <form onSubmit={handleSubmit} className="relative rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-5 backdrop-blur-xl aurora-card">
+    <form onSubmit={handleSubmit} className="relative rounded-2xl border border-border bg-card p-4 sm:p-5 backdrop-blur-xl shadow-sm">
       <div className="flex items-start gap-3">
         {user.photoURL ? (
           <img
             src={user.photoURL}
             alt={user.displayName || "User"}
-            className="h-8 w-8 rounded-full object-cover border border-white/20 shrink-0 mt-0.5"
+            className="h-8 w-8 rounded-full object-cover border border-border shrink-0 mt-0.5"
           />
         ) : (
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-black font-bold text-xs shrink-0 mt-0.5">
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground font-bold text-xs shrink-0 mt-0.5">
             {userInitial}
           </span>
         )}
@@ -110,7 +110,7 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
             maxLength={1000}
             rows={3}
             placeholder="Share your thoughts, feedback or questions..."
-            className="w-full resize-y rounded-xl border border-white/10 bg-background/60 p-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-background/80 focus:outline-none transition-all duration-200"
+            className="w-full resize-y rounded-xl border border-border bg-surface p-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-background focus:outline-none transition-all duration-200"
           />
 
           {error && (
@@ -121,7 +121,7 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
             <button
               type="submit"
               disabled={!text.trim() || isPosting}
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-xs font-bold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(216,255,68,0.25)] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 mono uppercase"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 mono uppercase"
             >
               {isPosting ? (
                 <>

@@ -69,7 +69,7 @@ const portableTextComponents = {
             className="w-full rounded-2xl object-cover shadow-2xl"
           />
           {value.caption && (
-            <figcaption className="mt-3 text-center text-sm text-white/50">
+            <figcaption className="mt-3 text-center text-sm text-muted-foreground">
               {value.caption}
             </figcaption>
           )}
@@ -83,7 +83,7 @@ const portableTextComponents = {
     h1: ({ children }: any) => {
       const id = generateId(children);
       return (
-        <h2 id={id} className="mt-14 mb-6 text-4xl font-black md:text-5xl scroll-mt-28">
+        <h2 id={id} className="mt-14 mb-6 text-4xl font-black md:text-5xl scroll-mt-28 text-foreground">
           {children}
         </h2>
       );
@@ -92,7 +92,7 @@ const portableTextComponents = {
     h2: ({ children }: any) => {
       const id = generateId(children);
       return (
-        <h2 id={id} className="mt-12 mb-5 text-3xl font-bold md:text-4xl scroll-mt-28">
+        <h2 id={id} className="mt-12 mb-5 text-3xl font-bold md:text-4xl scroll-mt-28 text-foreground">
           {children}
         </h2>
       );
@@ -101,20 +101,20 @@ const portableTextComponents = {
     h3: ({ children }: any) => {
       const id = generateId(children);
       return (
-        <h3 id={id} className="mt-10 mb-4 text-2xl font-semibold md:text-3xl scroll-mt-28">
+        <h3 id={id} className="mt-10 mb-4 text-2xl font-semibold md:text-3xl scroll-mt-28 text-foreground">
           {children}
         </h3>
       );
     },
 
     normal: ({ children }: any) => (
-      <p className="mb-6 text-lg leading-9 text-white/80 font-normal">
+      <p className="mb-6 text-lg leading-9 text-foreground/90 font-normal">
         {children}
       </p>
     ),
 
     blockquote: ({ children }: any) => (
-      <blockquote className="my-10 border-l-4 border-primary pl-6 italic text-white/70">
+      <blockquote className="my-10 border-l-4 border-primary pl-6 italic text-foreground/80">
         {children}
       </blockquote>
     ),
@@ -122,13 +122,13 @@ const portableTextComponents = {
 
   list: {
     bullet: ({ children }: any) => (
-      <ul className="my-6 list-disc space-y-2 pl-6 text-white/80">
+      <ul className="my-6 list-disc space-y-2 pl-6 text-foreground/90">
         {children}
       </ul>
     ),
 
     number: ({ children }: any) => (
-      <ol className="my-6 list-decimal space-y-2 pl-6 text-white/80">
+      <ol className="my-6 list-decimal space-y-2 pl-6 text-foreground/90">
         {children}
       </ol>
     ),
@@ -136,7 +136,7 @@ const portableTextComponents = {
 
   marks: {
     strong: ({ children }: any) => (
-      <strong className="font-bold text-white">
+      <strong className="font-bold text-foreground">
         {children}
       </strong>
     ),

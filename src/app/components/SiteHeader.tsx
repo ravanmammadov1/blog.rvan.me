@@ -19,7 +19,7 @@ function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
       title={`Switch to ${isDark ? "light" : "dark"} theme`}
-      className="grid h-[34px] w-[34px] place-items-center rounded-full border border-white/20 bg-white/5 text-foreground hover:border-primary/60 hover:text-primary transition-all duration-300 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center"
+      className="grid h-[34px] w-[34px] place-items-center rounded-full border border-border bg-card text-foreground hover:border-primary/60 hover:text-primary transition-all duration-300 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center shadow-sm"
     >
       {isDark ? (
         <Sun className="h-4 w-4 text-amber-300 transition-transform duration-300 hover:rotate-45" />
@@ -162,11 +162,11 @@ function UserAuthMenu() {
 function LanguageSwitcher() {
   const { language, switchLanguage } = useLanguage();
   return (
-    <div className="flex items-center rounded-full border border-white/20 bg-white/5 p-0.5 text-[10px] font-bold mono tracking-wider text-foreground glass-sm shrink-0 self-center">
+    <div className="flex items-center rounded-full border border-border bg-card p-0.5 text-[10px] font-bold mono tracking-wider text-foreground glass-sm shrink-0 self-center shadow-sm">
       <button
         onClick={() => switchLanguage("en")}
         className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
-          language === "en" ? "bg-primary text-black shadow-sm" : "text-white/60 hover:text-white"
+          language === "en" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
         }`}
         aria-label="Switch to English"
       >
@@ -175,7 +175,7 @@ function LanguageSwitcher() {
       <button
         onClick={() => switchLanguage("az")}
         className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
-          language === "az" ? "bg-primary text-black shadow-sm" : "text-white/60 hover:text-white"
+          language === "az" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
         }`}
         aria-label="Azərbaycan dilinə keçin"
       >
@@ -282,15 +282,15 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                   to={localizedTarget}
                   className={`relative px-3 py-1.5 transition-colors duration-300 ${
                     isActive
-                      ? "text-white font-bold"
-                      : "text-foreground/70 hover:text-white"
+                      ? "text-foreground font-bold"
+                      : "text-muted-foreground hover:text-foreground"
                   } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm`}
                 >
-                  {/* Clean white underline indicator */}
+                  {/* Clean underline indicator */}
                   {isActive && (
                     <motion.span
                       layoutId="nav-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-white rounded-full"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary rounded-full"
                       transition={{ type: "spring", stiffness: 380, damping: 28 }}
                     />
                   )}

@@ -87,7 +87,7 @@ export default function BlogCard({
             <span
               className="flex items-center gap-2 text-[10px] font-bold tracking-[.18em] mono uppercase transition-colors duration-300"
               style={{
-                color: hovered ? "var(--primary)" : categoryColors[post.category || ""] || "#d8ff44",
+                color: hovered ? "var(--primary)" : categoryColors[post.category || ""] || "var(--primary)",
               }}
             >
               {post.category || "Article"}
@@ -96,7 +96,7 @@ export default function BlogCard({
             <motion.div
               animate={{ rotate: hovered ? 45 : 0 }}
               transition={{ duration: 0.3 }}
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/15 transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/10 group-hover:text-primary"
+              className="grid h-9 w-9 place-items-center rounded-full border border-border transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/10 group-hover:text-primary"
               style={{
                 color: hovered ? "var(--primary)" : "var(--foreground)",
               }}
@@ -107,7 +107,7 @@ export default function BlogCard({
 
           <h3
             className="mb-3 text-xl font-semibold leading-[1.25] tracking-[-.03em] transition-colors duration-300 relative z-10"
-            style={{ color: hovered ? "var(--primary)" : "var(--foreground)" }}
+            style={{ color: hovered ? "var(--primary)" : "var(--card-foreground)" }}
           >
             {post.title}
           </h3>
@@ -115,7 +115,7 @@ export default function BlogCard({
           {post.excerpt && (
             <p
               className="mb-6 text-[13px] leading-relaxed line-clamp-3 transition-colors duration-300 relative z-10 font-medium"
-              style={{ color: hovered ? "rgba(255,255,255,0.85)" : "var(--muted-foreground)" }}
+              style={{ color: hovered ? "var(--foreground)" : "var(--muted-foreground)" }}
             >
               {post.excerpt}
             </p>
@@ -123,8 +123,8 @@ export default function BlogCard({
         </div>
 
         <div
-          className="mt-auto flex items-center gap-5 text-[10px] font-bold tracking-[.14em] mono uppercase transition-colors duration-300 relative z-10 pt-4 border-t border-white/10"
-          style={{ color: hovered ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.4)" }}
+          className="mt-auto flex items-center gap-5 text-[10px] font-bold tracking-[.14em] mono uppercase transition-colors duration-300 relative z-10 pt-4 border-t border-border"
+          style={{ color: hovered ? "var(--foreground)" : "var(--muted-foreground)" }}
         >
           {formattedDate && (
             <span className="flex items-center gap-1.5">

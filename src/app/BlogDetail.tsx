@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowUp } from "lucide-react";
 
 import { client, urlFor } from "../lib/sanityClient";
-import { fetchSiteSettings } from "../lib/sanityQueries";
+import { fetchSiteSettings, fetchBlogBySlug, fetchAllBlogs } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import { useLanguage } from "../lib/i18n/LanguageContext";

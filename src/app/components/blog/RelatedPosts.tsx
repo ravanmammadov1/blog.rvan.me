@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { BlogPost } from "../../../types/blog";
 import { formatBlogDate, estimateReadingTime } from "../../../lib/blogHelpers";
 import { urlFor } from "../../../lib/sanityClient";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface RelatedPostsProps {
   posts: BlogPost[];
@@ -12,6 +13,7 @@ export default function RelatedPosts({
   posts,
   currentPostId,
 }: RelatedPostsProps) {
+  const { getLocalizedPath } = useLanguage();
   const relatedPosts = posts
     .filter((post) => post._id !== currentPostId)
     .slice(0, 3);
@@ -42,8 +44,8 @@ export default function RelatedPosts({
           return (
             <Link
               key={post._id}
-              to={`/blog/${slugStr}`}
-              className="group flex flex-col justify-between rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              to={getLocalizedPath(`/blog/${slugStr}`)}
+              className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-sm"
             >
               <div>
                 {imgUrl && (

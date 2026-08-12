@@ -101,7 +101,7 @@ export default function CommentItemComponent({
         className={`group relative rounded-2xl border p-4 sm:p-5 transition-all duration-300 ${
           comment.isOptimistic
             ? "border-primary/30 bg-primary/[0.02] opacity-75"
-            : "border-white/10 bg-white/[0.02] hover:border-white/20"
+            : "border-border bg-card hover:border-primary/40 shadow-sm"
         }`}
       >
         <div className="flex items-start gap-3">

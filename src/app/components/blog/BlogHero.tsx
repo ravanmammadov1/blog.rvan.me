@@ -1,22 +1,24 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Clock, Tag, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
 import { formatBlogDate, estimateReadingTime } from "../../../lib/blogHelpers";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface BlogHeroProps {
   post: BlogPost;
 }
 
 export default function BlogHero({ post }: BlogHeroProps) {
+  const { getLocalizedPath } = useLanguage();
   const imgBuilder = urlFor(post.coverImage);
   const coverUrl = imgBuilder ? imgBuilder.width(1800).quality(90).url() : null;
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-surface min-h-[460px]">
+    <section className="relative overflow-hidden rounded-[32px] border border-border bg-surface min-h-[460px]">
       {coverUrl ? (
         <img
           src={coverUrl}
@@ -43,7 +45,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
         </div>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/40" />
 
       <motion.div
         initial={{ opacity: 0, y: 35 }}
@@ -57,7 +59,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
         {/* Subtle Back to Home Navigation Button */}
         <div className="mb-8 flex items-center justify-between">
           <Link
-            to="/"
+            to={getLocalizedPath("/")}
             className="group inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-black/60 px-5 py-2.5 text-xs font-bold tracking-[.18em] text-white backdrop-blur-xl transition-all duration-300 hover:border-primary hover:bg-primary hover:text-black uppercase mono"
           >
             <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
@@ -65,7 +67,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
           </Link>
 
           <Link
-            to="/blog"
+            to={getLocalizedPath("/blog")}
             className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[10px] font-bold tracking-widest text-white/80 backdrop-blur-md hover:text-white uppercase mono"
           >
             BLOG ARCHIVE
