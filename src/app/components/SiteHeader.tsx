@@ -261,10 +261,10 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               <img
                 src={urlFor(siteSettings.logo)?.url() || ""}
                 alt="Ravan Mammadov Logo"
-                className="h-9 w-9 md:h-10 md:w-10 rounded-full object-contain border border-white/30 p-1 transition-all duration-300 group-hover:scale-105 group-hover:border-primary/50 shadow-[0_0_12px_rgba(232,253,82,0.15)]"
+                className="h-9 w-9 md:h-10 md:w-10 rounded-full object-contain border border-white/30 p-1 transition-all duration-300 group-hover:scale-105 group-hover:border-[#61c5ad]/50 shadow-[0_0_12px_rgba(97,197,173,0.18)]"
               />
             ) : (
-              <span className="grid h-9 w-9 md:h-10 md:w-10 place-items-center rounded-full border border-white/30 text-sm font-bold transition-all duration-300 group-hover:rotate-45 group-hover:border-primary group-hover:text-primary shadow-[0_0_12px_rgba(232,253,82,0.15)]">
+              <span className="grid h-9 w-9 md:h-10 md:w-10 place-items-center rounded-full border border-white/30 text-sm font-bold transition-all duration-300 group-hover:rotate-45 group-hover:border-[#61c5ad] group-hover:text-[#61c5ad] shadow-[0_0_12px_rgba(97,197,173,0.18)]">
                 R
               </span>
             )}

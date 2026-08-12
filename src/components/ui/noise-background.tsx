@@ -20,27 +20,27 @@ export function GlobalNoiseBackdrop() {
       {/* Base theme background */}
       <div className="absolute inset-0 bg-background transition-colors duration-300" />
 
-      {/* Layer 1 — Top Left Ambient Spot */}
+      {/* Layer 1 — Top Left Ambient Spot (Logo Teal) */}
       <div
         className="absolute -top-[15%] -left-[10%] w-[55vw] h-[55vw] rounded-full pointer-events-none opacity-20 dark:opacity-20 light:opacity-5 transform-gpu"
         style={{
-          background: "radial-gradient(circle at center, rgba(232,253,82,0.12) 0%, rgba(16,185,129,0.04) 50%, transparent 70%)",
+          background: "radial-gradient(circle at center, rgba(97,197,173,0.15) 0%, rgba(66,111,186,0.05) 50%, transparent 70%)",
         }}
       />
 
-      {/* Layer 2 — Right Indigo Ambient Spot */}
+      {/* Layer 2 — Right Purple Ambient Spot (Logo Purple) */}
       <div
         className="absolute top-[25%] -right-[10%] w-[50vw] h-[50vw] rounded-full pointer-events-none opacity-15 dark:opacity-15 light:opacity-5 transform-gpu"
         style={{
-          background: "radial-gradient(circle at center, rgba(109,129,255,0.1) 0%, rgba(139,92,246,0.03) 55%, transparent 75%)",
+          background: "radial-gradient(circle at center, rgba(152,79,159,0.12) 0%, rgba(66,111,186,0.04) 55%, transparent 75%)",
         }}
       />
 
-      {/* Layer 3 — Bottom Teal Ambient Spot */}
+      {/* Layer 3 — Bottom Blue Ambient Spot (Logo Sky Blue) */}
       <div
         className="absolute -bottom-[15%] left-[25%] w-[45vw] h-[45vw] rounded-full pointer-events-none opacity-15 dark:opacity-15 light:opacity-5 transform-gpu"
         style={{
-          background: "radial-gradient(circle at center, rgba(6,182,212,0.08) 0%, rgba(59,130,246,0.03) 60%, transparent 75%)",
+          background: "radial-gradient(circle at center, rgba(66,111,186,0.1) 0%, rgba(97,197,173,0.03) 60%, transparent 75%)",
         }}
       />
     </div>
@@ -55,15 +55,15 @@ export function NoiseBackground({
   className,
   containerClassName,
   gradientColors = [
-    "rgb(232, 253, 82)",
-    "rgb(109, 129, 255)",
-    "rgb(6, 182, 212)",
+    "rgb(97, 197, 173)",
+    "rgb(66, 111, 186)",
+    "rgb(152, 79, 159)",
   ],
   noiseOpacity = 0.08,
 }: NoiseBackgroundProps) {
-  const color1 = gradientColors[0] || "rgb(232, 253, 82)";
-  const color2 = gradientColors[1] || "rgb(109, 129, 255)";
-  const color3 = gradientColors[2] || "rgb(6, 182, 212)";
+  const color1 = gradientColors[0] || "rgb(97, 197, 173)";
+  const color2 = gradientColors[1] || "rgb(66, 111, 186)";
+  const color3 = gradientColors[2] || "rgb(152, 79, 159)";
 
   return (
     <div

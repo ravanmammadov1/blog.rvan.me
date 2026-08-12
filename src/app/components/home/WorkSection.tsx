@@ -207,6 +207,40 @@ export default function WorkSection() {
                   </a>
                 )}
               </div>
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-white/90 mono uppercase mb-2">
+                      <span style={{ color: project.accent }}>{project.number}</span>
+                      <span>{project.year}</span>
+                    </div>
+                    <h3 className="text-xl font-semibold leading-tight text-white mb-2">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs text-white/70 line-clamp-2 font-medium">
+                      {project.type}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+              <div className="mt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
+                <Link to={`/work/${project.slug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
+                  <span>VIEW CASE STUDY</span>
+                  <ArrowUpRight size={12} />
+                </Link>
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300"
+                  >
+                    <span>LIVE PROJECT</span>
+                    <ArrowUpRight size={12} />
+                  </a>
+                )}
+              </div>
             </motion.article>
           ))}
         </div>
@@ -214,7 +248,10 @@ export default function WorkSection() {
         <div className="mt-16 flex justify-center">
           <Link
             to="/work"
-            className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+            className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
+            style={{
+              background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+            }}
           >
             EXPLORE FULL WORK ARCHIVE
             <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

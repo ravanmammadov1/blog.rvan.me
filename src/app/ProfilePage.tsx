@@ -150,7 +150,7 @@ export default function ProfilePage() {
         <div
           className="absolute -top-[15%] left-[10%] h-[700px] w-[700px] rounded-full"
           style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(232,253,82,0.08) 0%, rgba(59,130,246,0.04) 50%, transparent 75%)",
+            background: "radial-gradient(circle at 50% 50%, rgba(97,197,173,0.1) 0%, rgba(66,111,186,0.04) 50%, transparent 75%)",
             filter: "blur(90px)",
           }}
         />
@@ -193,7 +193,10 @@ export default function ProfilePage() {
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <a
                   href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
-                  className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] glass-sm"
+                  className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] glass-sm"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                  }}
                 >
                   Get in Touch
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -203,7 +206,7 @@ export default function ProfilePage() {
                   href="https://www.behance.net/mammadovravan"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-xs font-bold tracking-widest text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+                  className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-xs font-bold tracking-widest text-foreground hover:border-[#61c5ad]/50 hover:text-[#61c5ad] transition-all duration-300 mono uppercase glass-sm"
                 >
                   <BehanceIcon size={15} />
                   View Behance
@@ -223,7 +226,7 @@ export default function ProfilePage() {
               <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-white/15 bg-white/5 backdrop-blur-2xl shadow-2xl transition-all duration-500 overflow-hidden aurora-card">
                 {/* Header: Photo & Name */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-white/10 pb-8">
-                  <div className="h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1 shadow-[0_0_30px_rgba(232,253,82,0.25)] shrink-0">
+                  <div className="h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1 shadow-[0_0_30px_rgba(97,197,173,0.25)] shrink-0">
                     <picture>
                       <source
                         srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}

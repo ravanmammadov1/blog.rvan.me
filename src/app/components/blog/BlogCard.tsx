@@ -17,16 +17,16 @@ interface BlogCardProps {
 }
 
 const categoryColors: Record<string, string> = {
-  Design: "#d8ff44",
-  Motion: "#6d81ff",
-  Marketing: "#ff764b",
-  Targeting: "#efede7",
+  Design: "#61c5ad",
+  Motion: "#426fba",
+  Marketing: "#984f9f",
+  Targeting: "#61c5ad",
 };
 
 const categoryGradientColors: Record<string, string[]> = {
-  Design: ["rgb(232, 253, 82)", "rgb(16, 185, 129)", "rgb(6, 182, 212)"],
-  Motion: ["rgb(109, 129, 255)", "rgb(139, 92, 246)", "rgb(59, 130, 246)"],
-  Marketing: ["rgb(255, 118, 75)", "rgb(244, 63, 94)", "rgb(234, 88, 12)"],
+  Design: ["rgb(97, 197, 173)", "rgb(66, 111, 186)", "rgb(152, 79, 159)"],
+  Motion: ["rgb(66, 111, 186)", "rgb(152, 79, 159)", "rgb(97, 197, 173)"],
+  Marketing: ["rgb(152, 79, 159)", "rgb(97, 197, 173)", "rgb(66, 111, 186)"],
 };
 
 export default function BlogCard({
@@ -46,9 +46,9 @@ export default function BlogCard({
   const slugStr = post.slug?.current || "";
 
   const gradientColors = categoryGradientColors[post.category || ""] || [
-    "rgb(232, 253, 82)",
-    "rgb(109, 129, 255)",
-    "rgb(6, 182, 212)",
+    "rgb(97, 197, 173)",
+    "rgb(66, 111, 186)",
+    "rgb(152, 79, 159)",
   ];
 
   return (

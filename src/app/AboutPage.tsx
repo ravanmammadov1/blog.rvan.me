@@ -77,7 +77,7 @@ export default function AboutPage() {
         <div
           className="absolute top-[40%] right-[-10%] h-[600px] w-[600px] rounded-full"
           style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(232,253,82,0.06) 0%, rgba(147,51,234,0.03) 50%, transparent 75%)",
+            background: "radial-gradient(circle at 50% 50%, rgba(97,197,173,0.08) 0%, rgba(152,79,159,0.04) 50%, transparent 75%)",
             filter: "blur(90px)",
           }}
         />
@@ -308,7 +308,10 @@ export default function AboutPage() {
                 <div className="pt-2">
                   <Link
                     to="/profile"
-                    className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                    className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                    }}
                   >
                     VIEW FULL PROFILE & EXPERIENCE
                     <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -319,7 +322,7 @@ export default function AboutPage() {
               {/* Right Founder Photo — Prominent Large Size */}
               <div className="lg:col-span-5 flex justify-center lg:justify-end">
                 <div className="relative group/founder">
-                  <div className="h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80 lg:h-96 lg:w-96 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1.5 shadow-[0_0_35px_rgba(232,253,82,0.25)] group-hover/founder:border-primary group-hover/founder:shadow-[0_0_50px_rgba(232,253,82,0.4)] transition-all duration-500">
+                  <div className="h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80 lg:h-96 lg:w-96 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1.5 shadow-[0_0_35px_rgba(97,197,173,0.25)] group-hover/founder:border-[#61c5ad] group-hover/founder:shadow-[0_0_50px_rgba(152,79,159,0.4)] transition-all duration-500">
                     <picture>
                       <source
                         srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}

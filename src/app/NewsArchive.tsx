@@ -247,7 +247,7 @@ export default function NewsArchive() {
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.05 }}
                       custom={idx * 0.04}
-                      className="group rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass p-5 flex flex-col justify-between relative transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.12)] overflow-hidden"
+                      className="group rounded-2xl border border-white/10 bg-white/5 hover:border-[#61c5ad]/40 glass p-5 flex flex-col justify-between relative transition-all duration-300 hover:shadow-[0_0_25px_rgba(97,197,173,0.18)] overflow-hidden"
                     >
                       <div>
                         {/* Cover Image (Matches BlogCard exact h-48 height, rounded-xl border) */}

@@ -340,7 +340,10 @@ export default function NewsDetail() {
                   href={article.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-8 py-4 text-xs font-bold text-black uppercase tracking-widest hover:bg-white hover:shadow-[0_0_25px_rgba(232,253,82,0.4)] transition-all duration-300 mono"
+                  className="group inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-xs font-bold text-white uppercase tracking-widest hover:scale-105 shadow-[0_0_30px_rgba(97,197,173,0.35)] transition-all duration-300 mono"
+                  style={{
+                    background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
+                  }}
                 >
                   <span>{t("visitOriginalAt", "READ FULL ORIGINAL ARTICLE AT")} {article.sourceName.toUpperCase()}</span>
                   <ExternalLink size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

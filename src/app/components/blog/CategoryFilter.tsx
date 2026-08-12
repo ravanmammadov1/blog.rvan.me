@@ -23,11 +23,16 @@ export default function CategoryFilter({
             onClick={() => onChange(category)}
             role="tab"
             aria-selected={active}
-            className={`rounded-full border px-5 py-2.5 text-[11px] font-bold tracking-[.14em] transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+            className={`rounded-full border px-5 py-2.5 text-[11px] font-bold tracking-[.14em] transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#61c5ad] ${
               active
-                ? "border-primary bg-primary text-black shadow-[0_0_15px_rgba(232,253,82,0.2)]"
-                : "border-white/10 bg-white/5 text-muted-foreground hover:border-primary/50 hover:text-foreground glass-sm"
+                ? "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)]"
+                : "border-white/10 bg-white/5 text-muted-foreground hover:border-[#61c5ad]/50 hover:text-foreground glass-sm"
             }`}
+            style={
+              active
+                ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                : {}
+            }
           >
             {category.toUpperCase()}
             {count !== undefined && (

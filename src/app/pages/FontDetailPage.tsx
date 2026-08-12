@@ -170,7 +170,10 @@ export default function FontDetailPage() {
             download={`${font.family}.zip`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-all duration-300 mono cursor-pointer shadow-[0_0_20px_rgba(232,253,82,0.2)]"
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-xs font-bold text-white uppercase tracking-wider hover:scale-105 transition-all duration-300 mono cursor-pointer shadow-[0_0_25px_rgba(97,197,173,0.35)]"
+            style={{
+              background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
+            }}
           >
             DOWNLOAD ZIP <Download size={14} />
           </a>

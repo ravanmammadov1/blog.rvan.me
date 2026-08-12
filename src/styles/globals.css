@@ -319,16 +319,16 @@ html {
   z-index: 0;
   opacity: 0;
   transition: opacity 0.5s ease;
-  background: radial-gradient(circle at 80% 20%, rgba(232, 253, 82, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 100%);
+  background: radial-gradient(circle at 80% 20%, rgba(97, 197, 173, 0.1) 0%, rgba(66, 111, 186, 0.06) 50%, rgba(152, 79, 159, 0.04) 80%, transparent 100%);
   pointer-events: none;
 }
 
 .aurora-card:hover {
   transform: translateY(-4px) translateZ(0);
-  border-color: rgba(232, 253, 82, 0.25);
+  border-color: rgba(97, 197, 173, 0.35);
   box-shadow: 
     0 12px 30px rgba(0, 0, 0, 0.35), 
-    0 0 20px rgba(232, 253, 82, 0.04);
+    0 0 20px rgba(97, 197, 173, 0.1);
   background: rgba(255, 255, 255, 0.045);
 }
 

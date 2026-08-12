@@ -36,7 +36,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
             style={{
               backgroundImage:
                 post.category === "Design"
-                  ? "radial-gradient(circle at 80% 20%, rgba(232,253,82,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(16,185,129,0.25) 0%, transparent 65%)"
+                  ? "radial-gradient(circle at 80% 20%, rgba(97,197,173,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(152,79,159,0.25) 0%, transparent 65%)"
                   : post.category === "AI"
                   ? "radial-gradient(circle at 80% 20%, rgba(6,182,212,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(147,51,234,0.25) 0%, transparent 65%)"
                   : "radial-gradient(circle at 80% 20%, rgba(255,118,75,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(244,63,94,0.25) 0%, transparent 65%)",

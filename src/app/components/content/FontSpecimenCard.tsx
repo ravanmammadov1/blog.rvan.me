@@ -50,12 +50,12 @@ export function FontSpecimenCard({
       whileInView="visible"
       viewport={{ once: true, amount: 0.05 }}
       custom={(idx % 20) * 0.02}
-      className="group p-5 rounded-2xl border border-white/10 bg-white/5 hover:border-primary/40 glass flex flex-col justify-between transition-all duration-300 hover:shadow-[0_0_25px_rgba(232,253,82,0.1)]"
+      className="group p-5 rounded-2xl border border-white/10 bg-white/5 hover:border-[#61c5ad]/40 glass flex flex-col justify-between transition-all duration-300 hover:shadow-[0_0_25px_rgba(97,197,173,0.18)]"
     >
       <div>
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase text-primary mono">
+          <span className="flex items-center gap-1 rounded-full border border-[#61c5ad]/35 bg-gradient-to-r from-[#61c5ad]/12 via-[#426fba]/12 to-[#984f9f]/12 px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase text-[#61c5ad] mono">
             {font.category}
           </span>
           <div className="flex items-center gap-2 text-[10px] font-semibold text-muted-foreground mono">

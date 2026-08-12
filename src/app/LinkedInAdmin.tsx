@@ -352,7 +352,10 @@ export default function LinkedInAdmin() {
               <button
                 type="submit"
                 disabled={loadingStatus || !inputSecret.trim()}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-xs font-bold tracking-[.15em] text-black uppercase transition-all duration-300 hover:bg-primary/90 disabled:opacity-40 mono shadow-[0_0_20px_rgba(232,253,82,0.2)]"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-xs font-bold tracking-[.15em] text-white uppercase transition-all duration-300 hover:scale-105 disabled:opacity-40 mono shadow-[0_0_20px_rgba(97,197,173,0.3)]"
+                style={{
+                  background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
+                }}
               >
                 {loadingStatus ? "VERIFYING SECRET..." : "AUTHENTICATE ADMIN SESSION"}
               </button>
@@ -588,7 +591,10 @@ export default function LinkedInAdmin() {
                 <div className="mt-8 pt-5 border-t border-white/10">
                   <button
                     onClick={handleConnect}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-6 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] glass-sm"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[#61c5ad]/40 px-6 py-3.5 text-xs font-bold tracking-[.15em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] glass-sm"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                    }}
                   >
                     <ExternalLink size={14} />
                     {status?.connected ? "RECONNECT LINKEDIN ACCOUNT" : "CONNECT LINKEDIN ACCOUNT"}
@@ -637,7 +643,10 @@ export default function LinkedInAdmin() {
                       <button
                         type="submit"
                         disabled={publishing || !status?.connected}
-                        className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.15em] text-black uppercase transition-all duration-300 hover:bg-primary/90 disabled:opacity-40 mono shadow-[0_0_20px_rgba(232,253,82,0.2)]"
+                        className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-xs font-bold tracking-[.15em] text-white uppercase transition-all duration-300 hover:scale-105 disabled:opacity-40 mono shadow-[0_0_20px_rgba(97,197,173,0.25)]"
+                        style={{
+                          background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
+                        }}
                       >
                         {publishing ? (
                           <>

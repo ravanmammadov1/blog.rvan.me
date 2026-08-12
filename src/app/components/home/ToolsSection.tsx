@@ -44,7 +44,7 @@ export default function ToolsSection() {
       <div 
         className="pointer-events-none absolute inset-0 -z-10 opacity-30"
         style={{
-          background: "radial-gradient(circle at 10% 80%, rgba(232,253,82,0.06) 0%, rgba(245,158,11,0.04) 50%, transparent 70%)",
+          background: "radial-gradient(circle at 10% 80%, rgba(97,197,173,0.08) 0%, rgba(66,111,186,0.04) 50%, transparent 70%)",
         }}
       />
       <div className="mx-auto max-w-[1600px] relative z-10">

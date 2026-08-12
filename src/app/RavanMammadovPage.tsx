@@ -469,7 +469,10 @@ export default function RavanMammadovPage() {
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <a
                   href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
-                  className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                  className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                  }}
                 >
                   Get in Touch
                   <ArrowUpRight
@@ -482,7 +485,7 @@ export default function RavanMammadovPage() {
                   href="https://www.behance.net/mammadovravan"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-xs font-bold tracking-widest text-foreground hover:border-primary/50 hover:bg-white/10 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+                  className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-xs font-bold tracking-widest text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 hover:text-[#61c5ad] transition-all duration-300 mono uppercase glass-sm"
                 >
                   <BehanceIcon size={15} />
                   View Behance
@@ -499,16 +502,16 @@ export default function RavanMammadovPage() {
               custom={0.2}
               className="lg:col-span-5"
             >
-              <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-white/15 bg-white/5 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_25px_70px_rgba(232,253,82,0.12)] transition-all duration-500 overflow-hidden">
+              <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-white/15 bg-white/5 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] hover:-translate-y-1.5 hover:border-[#61c5ad]/40 hover:shadow-[0_25px_70px_rgba(97,197,173,0.15)] transition-all duration-500 overflow-hidden">
                 
                 {/* Glowing subtle top accent bar */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-primary to-purple-500 opacity-80 group-hover/profile:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] opacity-80 group-hover/profile:opacity-100 transition-opacity duration-500" />
 
                 {/* 1. Photo (45% Larger) + Spaced Typography */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-white/10 pb-8 relative z-10">
                   {/* Portrait photo - 45% larger with subtle border & soft glow */}
                   <div className="relative group/avatar flex-shrink-0">
-                    <div className="h-24 w-24 md:h-28 md:w-28 overflow-hidden rounded-3xl border-2 border-primary/50 bg-black p-1 shadow-[0_0_25px_rgba(232,253,82,0.22)] group-hover/profile:border-primary group-hover/profile:shadow-[0_0_35px_rgba(232,253,82,0.35)] transition-all duration-500">
+                    <div className="h-24 w-24 md:h-28 md:w-28 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1 shadow-[0_0_25px_rgba(97,197,173,0.22)] group-hover/profile:border-[#61c5ad] group-hover/profile:shadow-[0_0_35px_rgba(152,79,159,0.35)] transition-all duration-500">
                       <picture>
                         <source
                           srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
@@ -588,7 +591,10 @@ export default function RavanMammadovPage() {
                 <div className="pt-8 flex flex-col sm:flex-row items-center gap-3 relative z-10">
                   <a
                     href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
-                    className="w-full sm:w-1/2 group/btn flex items-center justify-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-5 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                    className="w-full sm:w-1/2 group/btn flex items-center justify-center gap-2 rounded-full border border-[#61c5ad]/40 px-5 py-3.5 text-xs font-bold tracking-[.15em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] glass-sm"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                    }}
                   >
                     Get in Touch
                     <ArrowUpRight size={14} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
@@ -598,7 +604,7 @@ export default function RavanMammadovPage() {
                     href="https://www.behance.net/mammadovravan"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-1/2 group/btn flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3.5 text-xs font-bold tracking-[.15em] text-foreground hover:border-primary/50 hover:bg-white/10 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+                    className="w-full sm:w-1/2 group/btn flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3.5 text-xs font-bold tracking-[.15em] text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 hover:text-[#61c5ad] transition-all duration-300 mono uppercase glass-sm"
                   >
                     <BehanceIcon size={14} />
                     View Behance
@@ -636,7 +642,10 @@ export default function RavanMammadovPage() {
                   href="https://www.behance.net/mammadovravan"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-full border border-primary/50 bg-primary/10 px-6 py-3 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(232,253,82,0.15)] hover:shadow-[0_0_30px_rgba(232,253,82,0.3)] glass-sm"
+                  className="group inline-flex items-center gap-2.5 rounded-full border border-[#61c5ad]/40 px-6 py-3 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] glass-sm"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
+                  }}
                 >
                   <BehanceIcon size={14} />
                   VIEW FULL BEHANCE
@@ -782,13 +791,13 @@ export default function RavanMammadovPage() {
                 className="relative group p-6 -ml-6 md:-ml-10 md:pl-10 rounded-2xl transition-all duration-500 hover:bg-white/5 border border-transparent hover:border-white/10"
               >
                 {/* Timeline Dot */}
-                <div className="absolute left-[23px] md:left-[7px] top-8 h-3 w-3 rounded-full border border-primary bg-background shadow-[0_0_10px_rgba(232,253,82,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-primary" />
+                <div className="absolute left-[23px] md:left-[7px] top-8 h-3 w-3 rounded-full border border-[#61c5ad] bg-background shadow-[0_0_10px_rgba(97,197,173,0.5)] transition-all duration-300 group-hover:scale-150 group-hover:bg-[#61c5ad]" />
                 
-                <span className="text-xs font-bold tracking-[.2em] text-primary mono transition-colors duration-300 group-hover:text-white">
+                <span className="text-xs font-bold tracking-[.2em] text-[#61c5ad] mono transition-colors duration-300 group-hover:text-white">
                   {exp.period}
                 </span>
 
-                <h3 className="mt-2 text-2xl md:text-3xl font-bold text-foreground transition-colors duration-300 group-hover:text-primary">
+                <h3 className="mt-2 text-2xl md:text-3xl font-bold text-foreground transition-colors duration-300 group-hover:text-[#61c5ad]">
                   {exp.company} <span className="text-muted-foreground/60 font-normal">· {exp.role}</span>
                 </h3>
 
@@ -798,7 +807,7 @@ export default function RavanMammadovPage() {
                   {exp.brands.map((b) => (
                     <span
                       key={b}
-                      className="text-[11px] font-semibold text-primary/90 border border-primary/20 bg-primary/5 rounded-full px-3 py-0.5 mono"
+                      className="text-[11px] font-semibold text-[#61c5ad]/90 border border-[#61c5ad]/20 bg-[#61c5ad]/5 rounded-full px-3 py-0.5 mono"
                     >
                       {b}
                     </span>
@@ -809,7 +818,7 @@ export default function RavanMammadovPage() {
                 <ul className="mt-5 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground/90 font-medium">
                   {exp.responsibilities.map((resp) => (
                     <li key={resp} className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-primary flex-shrink-0" />
+                      <CheckCircle2 size={14} className="text-[#61c5ad] flex-shrink-0" />
                       <span>{resp}</span>
                     </li>
                   ))}
@@ -839,7 +848,7 @@ export default function RavanMammadovPage() {
             {featuredBrandsList.map((brand) => (
               <span
                 key={brand}
-                className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-sm font-bold text-foreground hover:border-primary hover:text-primary transition-all duration-300 glass-sm mono"
+                className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-sm font-bold text-foreground hover:border-[#61c5ad] hover:text-[#61c5ad] transition-all duration-300 glass-sm mono"
               >
                 {brand}
               </span>
@@ -864,10 +873,10 @@ export default function RavanMammadovPage() {
             {industryList.map((ind) => (
               <div key={ind.name} className="p-6 aurora-card flex flex-col justify-between group">
                 <div>
-                  <div className="p-2.5 w-fit rounded-xl bg-white/5 border border-white/10 text-primary mb-4 group-hover:scale-110 transition-transform">
+                  <div className="p-2.5 w-fit rounded-xl bg-white/5 border border-white/10 text-[#61c5ad] mb-4 group-hover:scale-110 transition-transform">
                     <Building2 size={18} />
                   </div>
-                  <h4 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  <h4 className="text-base font-bold text-foreground group-hover:text-[#61c5ad] transition-colors">
                     {ind.name}
                   </h4>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground/80 font-medium">
@@ -900,7 +909,7 @@ export default function RavanMammadovPage() {
                 <div key={group.category + idx} className="p-8 aurora-card group relative flex flex-col justify-between">
                   <div>
                     <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-3 relative z-10">
-                      <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary shadow-[0_0_15px_rgba(232,253,82,0.15)] group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-[#61c5ad] shadow-[0_0_15px_rgba(97,197,173,0.18)] group-hover:scale-110 transition-transform duration-300">
                         <IconComp size={18} />
                       </div>
                       {group.category}
