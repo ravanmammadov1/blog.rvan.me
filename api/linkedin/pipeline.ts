@@ -1005,6 +1005,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: "Unauthorized pipeline trigger." });
   }
 
+  if (req.url && (req.url.includes("update-blogs") || req.url.includes("updateBlogs"))) {
+    return await handleUpdateBlogs(req, res);
+  }
+
   try {
     const body = typeof req.body === "string" ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
     const urlObj = new URL(req.url || "", "https://www.rvan.me");

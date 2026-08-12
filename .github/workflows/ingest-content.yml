@@ -1,9 +1,9 @@
-name: Scheduled Content Ingestion & AI Enrichment
+name: Scheduled Content Ingestion & AI Enrichment (Migrated to Vercel Cron)
 
+# Disabled schedule because ingestion runs natively via Vercel Crons (/api/ingest-news)
+# and GitHub Actions account quota has reached 100% (3000/3000 mins).
 on:
-  schedule:
-    - cron: '0 */4 * * *'  # Runs every 4 hours
-  workflow_dispatch:        # Manual trigger from GitHub Actions tab
+  workflow_dispatch:        # Manual trigger only if needed
 
 jobs:
   ingest:
