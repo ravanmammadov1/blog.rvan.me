@@ -7,6 +7,7 @@ import { client, urlFor } from "../lib/sanityClient";
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -23,6 +24,7 @@ import CommentSection from "./components/CommentSection";
 export default function BlogDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [post, setPost] = useState<BlogPost | null>(null);

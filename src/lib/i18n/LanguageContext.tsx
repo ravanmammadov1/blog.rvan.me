@@ -59,6 +59,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // If user explicitly chose 'en', respect explicit choice
       if (savedPref === "en") return;
 
+      // DO NOT auto-redirect away from explicit sub-pages (/blog, /news, /about, etc.)
+      // The requested URL takes absolute priority over IP/timezone detection.
+      const isRootPath = location.pathname === "/";
+      if (!isRootPath) return;
+
       const isAlreadyAzUrl = location.pathname === "/az" || location.pathname.startsWith("/az/");
 
       // Check timezone, browser language, or saved preference
@@ -73,22 +78,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (isAzerbaijanLocation && !isAlreadyAzUrl) {
         const targetPath = getLocalizedPath(location.pathname, "az") + location.search + location.hash;
         navigate(targetPath, { replace: true });
-      } else if (!isAzerbaijanLocation && !savedPref) {
-        // Asynchronously confirm country via fast IP lookup as secondary check
-        fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(3000) })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data?.country === "AZ" || data?.country_code === "AZ") {
-              localStorage.setItem("rvan_user_lang_preference", "az");
-              if (!isAlreadyAzUrl) {
-                const targetPath = getLocalizedPath(location.pathname, "az") + location.search + location.hash;
-                navigate(targetPath, { replace: true });
-              }
-            }
-          })
-          .catch(() => {
-            // Silently ignore IP lookup failures
-          });
       }
     } catch (e) {
       console.warn("Language auto-detection exception:", e);
