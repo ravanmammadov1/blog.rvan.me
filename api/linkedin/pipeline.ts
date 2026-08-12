@@ -853,7 +853,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const action = (req.query.action as string) || (req.body && req.body.action) || "generate";
+    const body = typeof req.body === "string" ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
+    const action = (req.query.action as string) || body.action || "generate";
 
     if (action === "approve") {
       return await handleApprove(req, res);
@@ -863,6 +864,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return await handlePublishSecond(req, res);
     } else if (action === "delete-post") {
       return await handleDeletePost(req, res);
+    } else if (action === "delete-all-recent") {
+      // Emergency deletion for test posts
+      const historyList = (await querySanity(`*[_type == "linkedinPublishHistory"] | order(publishedAt desc)[0..10]`)) || [];
+      const tokenDoc = await getSanityDoc(TOKEN_SINGLETON_ID);
+      const deleted: string[] = [];
+
+      if (tokenDoc && tokenDoc.accessToken) {
+        for (const item of historyList) {
+          if (item.postId && item.postId !== "published") {
+            const delUrl = `https://api.linkedin.com/v2/posts/${encodeURIComponent(item.postId)}`;
+            await fetch(delUrl, {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${tokenDoc.accessToken}`,
+                "X-Restli-Protocol-Version": "2.0.0",
+                "LinkedIn-Version": "202406",
+              },
+            });
+            deleted.push(item.postId);
+          }
+        }
+      }
+      // Also clear scheduled singleton
+      await mutateSanity([{ delete: { id: SECOND_POST_SINGLETON_ID } }]);
+      return res.status(200).json({ success: true, message: "Cleared all test posts.", deleted });
     } else {
       return await handleGenerate(req, res);
     }
