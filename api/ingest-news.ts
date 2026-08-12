@@ -104,8 +104,26 @@ function extractImageUrl(itemXml: string): string | null {
   return null;
 }
 
+function decodeHtmlEntities(str: string): string {
+  let prev = "";
+  let current = str || "";
+  for (let i = 0; i < 3 && current !== prev; i++) {
+    prev = current;
+    current = current
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/&amp;/gi, "&")
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&nbsp;/gi, " ");
+  }
+  return current;
+}
+
 function cleanHtml(html: string): string {
-  return html
+  if (!html) return "";
+  const decoded = decodeHtmlEntities(html);
+  return decoded
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
     .replace(/<[^>]+>/g, " ")

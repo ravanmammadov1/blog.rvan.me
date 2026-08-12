@@ -208,6 +208,33 @@ async function uploadImageToLinkedIn(
   }
 }
 
+function decodeHtmlEntities(str: string): string {
+  let prev = "";
+  let current = str || "";
+  for (let i = 0; i < 3 && current !== prev; i++) {
+    prev = current;
+    current = current
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/&amp;/gi, "&")
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&nbsp;/gi, " ");
+  }
+  return current;
+}
+
+function cleanText(text: string): string {
+  if (!text) return "";
+  const decoded = decodeHtmlEntities(text);
+  return decoded
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function generateAzerbaijaniPost(article: {
   title: string;
   excerpt: string;
@@ -218,28 +245,40 @@ async function generateAzerbaijaniPost(article: {
   const rvanUrl = `https://www.rvan.me/az/news/${article.slug}`;
   const apiKey = process.env.GEMINI_API_KEY;
 
+  const rawTitle = cleanText(article.title);
+  const rawExcerpt = cleanText(article.excerpt);
+
   if (apiKey) {
     try {
-      const prompt = `You are a Senior Editor and LinkedIn Content Strategist for Rvan.me (a premium digital design, AI & tech publication).
-Write an engaging, professional, natural LinkedIn post in AZERBAIJANI language for an Azerbaijani audience of designers, marketers, developers, and tech leaders.
+      const prompt = `You are a Senior Content Strategist and Executive Editor for Rvan.me (a high-performance digital design, AI, and creative technology publication).
+Write an engaging, professional, 100% AZERBAIJANI LinkedIn post for an audience of designers, marketers, tech leaders, and developers in Azerbaijan.
 
-Article Details:
-- Title: "${article.title}"
-- Excerpt/Summary: "${article.excerpt}"
-- Category: "${article.category}"
-- Source: "${article.sourceName}"
-- Rvan.me URL: "${rvanUrl}"
+ARTICLE DETAILS:
+- Headline (English): "${rawTitle}"
+- Summary/Excerpt: "${rawExcerpt}"
+- Primary Category: "${article.category}"
+- Publisher/Source: "${article.sourceName}"
+- Rvan.me Link: "${rvanUrl}"
 
-Requirements:
-1. Write in natural, professional, high-impact Azerbaijani (no direct google-translate tone).
-2. Start with a captivating hook or insight (1 line).
-3. Provide a clear 2-3 sentence breakdown of why this news/resource matters.
-4. Mention the original source: "Mənbə: ${article.sourceName}".
-5. Include a call to action with the Rvan.me link:
-"Xəbərin tam analizini və detallı icmalını Rvan.me-də oxuya bilərsiniz:
-${rvanUrl}"
-6. End with 3-5 relevant hashtags (e.g., #SüniIntellekt #AI #Dizayn #Texnologiya).
-7. Return ONLY the raw post text, no markdown codeblocks or meta comments.`;
+STRICT REQUIREMENTS:
+1. 100% NATIVE AZERBAIJANI: Translate and reframe the English headline into a natural, catchy Azerbaijani title. NEVER output an English headline.
+2. ZERO HTML OR RAW CODES: Do not include HTML entities (&lt;, &gt;, &amp;), raw tags, or promotional noise.
+3. DYNAMIC EDITORIAL STYLE: Write in one of these 5 professional perspectives naturally (do NOT print the perspective name):
+   - Perspective A: Expert Analysis & Strategic Takeaway (Focus on business/creative impact)
+   - Perspective B: Industry Shift & Future Outlook (Focus on market trends and innovation)
+   - Perspective C: Executive Summary & Core Insights (Structured, punchy Azerbaijani breakdown)
+   - Perspective D: Creative & Tech Deep Dive (Focus on UI/UX, AI workflows, or motion)
+   - Perspective E: Practical Application (Focus on actionable tools and daily workflow benefits)
+4. NO GENERIC REPETITION: NEVER use generic openers like "Yeni bir şey oldu", "Kontent strategiyasında maraqlı yanaşma", or "Buradan oxuya bilərsiniz".
+5. POST STRUCTURE:
+   - [Captivating Azerbaijani Headline - translated & bold-style uppercase]
+   - [2-4 sentences of insightful, fluent Azerbaijani analysis explaining key takeaways]
+   - Mənbə: ${article.sourceName}
+   - Xəbərin detallı analizi və icmalı Rvan.me-də:
+   ${rvanUrl}
+   - [4-5 relevant Azerbaijani hashtags e.g., #Süniİntellekt #Dizayn #Marketinq #RəqəmsalMarketinq #RvanMe]
+
+Return ONLY the final Azerbaijani post text. No markdown meta commentary.`;
 
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
         method: "POST",
@@ -253,77 +292,38 @@ ${rvanUrl}"
         const data = await res.json();
         const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
         if (aiText && aiText.length > 50) {
-          console.log("[linkedin/pipeline] Gemini 2.0 Flash generated Azerbaijani post successfully!");
-          return aiText;
+          console.log("[linkedin/pipeline] Gemini 2.0 Flash generated fluent Azerbaijani post successfully!");
+          return cleanText(aiText);
         }
       }
     } catch (err) {
-      console.warn("[linkedin/pipeline] Gemini API error, falling back to template generator:", err);
+      console.warn("[linkedin/pipeline] Gemini API error, falling back to dynamic generator:", err);
     }
   }
 
-  const categoryOpeners: Record<string, string[]> = {
-    "AI": [
-      "Süni intellekt sahəsində diqqətçəkən yenilik.",
-      "AI dünyasından vacib inkişaf.",
-      "Süni intellektin yeni üfüqləri.",
-      "AI texnologiyalarında maraqlı dönüş nöqtəsi.",
-    ],
-    "Design": [
-      "Dizayn dünyasından maraqlı yenilik.",
-      "UX/UI sahəsində diqqətə layiq dəyişiklik.",
-      "Rəqəmsal dizaynda yeni yanaşma.",
-      "Kreativ dizayn dünyasından ilham verici xəbər.",
-    ],
-    "Development": [
-      "Frontend inkişafında yeni tendensiya.",
-      "Veb texnologiyalarında maraqlı yenilik.",
-      "Proqramçılar üçün vacib yenilik.",
-    ],
-    "Marketing": [
-      "Rəqəmsal marketinqdə yeni strategiya.",
-      "Marketinq dünyasından aktual trend.",
-      "Kontent strategiyasında maraqlı yanaşma.",
-      "Digital marketing sahəsində diqqətçəkən inkişaf.",
-    ],
-    "Motion Design": [
-      "Motion dizayn sahəsində yeni tendensiya.",
-      "Animasiya və vizual effektlər dünyasından.",
-      "Kreativ hərəkət dizaynında yenilik.",
-    ],
-  };
-
-  const openers = categoryOpeners[article.category] || categoryOpeners["AI"];
-  const opener = openers[Math.floor(Math.random() * openers.length)];
-
-  let cleanExcerpt = article.excerpt
+  // Fallback Dynamic Azerbaijani Post Generator
+  const cleanSummary = rawExcerpt
     .replace(/\.{3,}$/, "")
     .replace(/\s*Read the full article.*$/i, "")
     .trim();
 
-  const sentences = cleanExcerpt.split(/\.\s+/).filter(s => s.length > 20);
-  const summaryPart = sentences.slice(0, 2).join(". ").trim();
-  const summary = summaryPart.endsWith(".") ? summaryPart : summaryPart + ".";
-
   const categoryTags: Record<string, string> = {
-    "AI": "#SüniIntellekt #AI #Texnologiya",
-    "Design": "#Dizayn #UXDesign #UIDesign",
-    "Development": "#WebDevelopment #Frontend #Proqramlaşdırma",
-    "Marketing": "#RəqəmsalMarketinq #Marketinq #KontentStrategiya",
-    "Motion Design": "#MotionDesign #Animasiya #KreativDizayn",
+    "AI": "#Süniİntellekt #AI #Texnologiya #Rəqəmsalİnnovasiya #RvanMe",
+    "Design": "#Dizayn #UXDesign #UIDesign #KreativStrategiya #RvanMe",
+    "Development": "#WebDevelopment #Frontend #Proqramlaşdırma #RvanMe",
+    "Marketing": "#RəqəmsalMarketinq #Marketinq #KontentStrategiya #RvanMe",
+    "Motion Design": "#MotionDesign #Animasiya #KreativDizayn #RvanMe",
   };
 
-  const hashtags = categoryTags[article.category] || "#Texnologiya #Innovation";
+  const hashtags = categoryTags[article.category] || "#Texnologiya #RəqəmsalMarketinq #RvanMe";
 
-  const post = `${opener}
+  const post = ` SƏNAYƏ İCMALI: ${rawTitle.toUpperCase()}
 
-${article.title}
-
-${summary}
+${cleanSummary}
 
 Mənbə: ${article.sourceName}
 
-Xəbərin tam analizini və detallı icmalını Rvan.me-də oxuya bilərsiniz:
+Xəbərin detallı analizi və icmalı Rvan.me-də:
 ${rvanUrl}
 
 ${hashtags}`;
@@ -332,7 +332,7 @@ ${hashtags}`;
 }
 
 // ──────────────────────────────────────────────────────────────────
-// Scoring: AZ LinkedIn Audience Priority System
+// Scoring: AZ LinkedIn Audience Priority System with COVER IMAGE MANDATE
 // ──────────────────────────────────────────────────────────────────
 
 function scoreArticle(article: any): number {
@@ -346,8 +346,13 @@ function scoreArticle(article: any): number {
   else if (ageHours <= 72) score += 20;
   else if (ageHours <= 168) score += 10;
 
-  // Cover image bonus
-  if (article.coverImageRef) score += 20;
+  // CRITICAL COVER IMAGE MANDATE: Articles WITH a cover image get +200 bonus, without image get -1000
+  const hasCoverImage = !!(article.imageUrl || article.coverImageRef);
+  if (hasCoverImage) {
+    score += 200;
+  } else {
+    score -= 1000; // Deprioritize articles without a cover image
+  }
 
   // Excerpt quality
   const excerptLen = (article.excerpt || "").length;
@@ -507,6 +512,7 @@ export async function executeGenerateCandidateDraft() {
       sourceUrl,
       sourceName,
       excerpt,
+      imageUrl,
       "coverImageRef": coverImage.asset._ref,
       "coverImageAlt": coverImage.alt
     }`
@@ -558,7 +564,7 @@ export async function executeGenerateCandidateDraft() {
     slug: firstArticle.slug,
   });
 
-  const coverUrl1 = firstArticle.coverImageRef ? resolveSanityImageUrl(firstArticle.coverImageRef) : null;
+  const coverUrl1 = firstArticle.imageUrl || (firstArticle.coverImageRef ? resolveSanityImageUrl(firstArticle.coverImageRef) : null);
   const pub1 = await publishToLinkedIn(firstArticle, post1Text, coverUrl1);
 
   if (pub1.success) {
@@ -587,7 +593,7 @@ export async function executeGenerateCandidateDraft() {
       slug: secondArticle.slug,
     });
 
-    const coverUrl2 = secondArticle.coverImageRef ? resolveSanityImageUrl(secondArticle.coverImageRef) : null;
+    const coverUrl2 = secondArticle.imageUrl || (secondArticle.coverImageRef ? resolveSanityImageUrl(secondArticle.coverImageRef) : null);
 
     // Save second post to Sanity for scheduled publish at 16:00 AZT
     const secondPostDoc = {
@@ -751,6 +757,61 @@ async function handleApprove(req: VercelRequest, res: VercelResponse) {
 }
 
 // ──────────────────────────────────────────────────────────────────
+// ACTION: Delete a Post on LinkedIn & Clear Scheduled Queue
+// ──────────────────────────────────────────────────────────────────
+async function handleDeletePost(req: VercelRequest, res: VercelResponse) {
+  const targetPostId = (req.query.postId as string) || (req.body && req.body.postId);
+
+  const tokenDoc = await getSanityDoc(TOKEN_SINGLETON_ID);
+  if (!tokenDoc || !tokenDoc.accessToken) {
+    return res.status(500).json({ error: "LinkedIn OAuth token missing." });
+  }
+
+  let deletedPostId = targetPostId;
+
+  // If no postId provided, find latest from history
+  if (!deletedPostId) {
+    const historyList = await querySanity(`*[_type == "linkedinPublishHistory"] | order(publishedAt desc)[0..1]`);
+    if (historyList && historyList[0] && historyList[0].postId) {
+      deletedPostId = historyList[0].postId;
+    }
+  }
+
+  if (!deletedPostId || deletedPostId === "published") {
+    return res.status(400).json({ error: "No valid post ID specified or found to delete." });
+  }
+
+  console.log(`[linkedin/pipeline] Deleting post URN ${deletedPostId} from LinkedIn...`);
+
+  const delUrl = `https://api.linkedin.com/v2/posts/${encodeURIComponent(deletedPostId)}`;
+  const delRes = await fetch(delUrl, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${tokenDoc.accessToken}`,
+      "X-Restli-Protocol-Version": "2.0.0",
+      "LinkedIn-Version": "202406",
+    },
+  });
+
+  const status = delRes.status;
+  const text = await delRes.text();
+
+  // Also clear scheduled second post singleton
+  try {
+    await mutateSanity([{ delete: { id: SECOND_POST_SINGLETON_ID } }]);
+  } catch (e) {
+    console.warn("Could not clear SECOND_POST_SINGLETON_ID:", e);
+  }
+
+  return res.status(200).json({
+    success: status >= 200 && status < 300,
+    statusCode: status,
+    deletedPostId,
+    response: text || "Post deleted successfully from LinkedIn feed.",
+  });
+}
+
+// ──────────────────────────────────────────────────────────────────
 // ACTION 3: Reject Draft
 // ──────────────────────────────────────────────────────────────────
 async function handleReject(req: VercelRequest, res: VercelResponse) {
@@ -800,6 +861,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return await handleReject(req, res);
     } else if (action === "publish-second") {
       return await handlePublishSecond(req, res);
+    } else if (action === "delete-post") {
+      return await handleDeletePost(req, res);
     } else {
       return await handleGenerate(req, res);
     }
