@@ -61,10 +61,10 @@ export default function HeroPortrait() {
     >
       {/* Floating + Parallax Pure Logo Focal Centerpiece */}
       <motion.div
-        className="relative z-10 w-full max-w-[360px] md:max-w-[440px] lg:max-w-[500px]"
+        className="relative z-10 w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px]"
         style={reduced ? {} : { x: logoX, y: logoY, rotateX, rotateY, transformStyle: "preserve-3d" }}
         whileHover={reduced ? {} : { scale: 1.03 }}
-        transition={{ type: "spring", stiffness: 200, damping: 25 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
       >
         <div className="hero-logo-float flex items-center justify-center p-4">
           <img

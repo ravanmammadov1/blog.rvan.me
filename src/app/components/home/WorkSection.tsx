@@ -10,7 +10,7 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-      transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.9, delay, ease: "easeInOut" },
   }),
 };
 
@@ -21,7 +21,7 @@ const fallbackProjects = [
     slug: "wuling-creative-campaign",
     type: "Art direction · Motion · Campaign",
     image: { large: "/assets/466885252088463.6a4df53862539-1200.webp", medium: "/assets/466885252088463.6a4df53862539-800.webp" },
-    accent: "#e8fd52",
+    accent: "#61c5ad",
     year: "2024",
     liveUrl: undefined as string | undefined,
   },
@@ -31,7 +31,7 @@ const fallbackProjects = [
     slug: "limitless-drive",
     type: "Brand identity · 3D · Automotive",
     image: { large: "/assets/cbfd4b251276815.6a33abf0bf48e-1200.webp", medium: "/assets/cbfd4b251276815.6a33abf0bf48e-800.webp" },
-    accent: "#ff764b",
+    accent: "#426fba",
     year: "2024",
     liveUrl: undefined as string | undefined,
   },
@@ -41,219 +41,159 @@ const fallbackProjects = [
     slug: "omoda-jaecoo",
     type: "Creative suite · Motion system",
     image: "/assets/063f86251210609.6a4670b82b027.png",
-    accent: "#5ce1e6",
-    year: "2025",
+    accent: "#984f9f",
+    year: "2024",
     liveUrl: undefined as string | undefined,
   },
 ];
 
 export default function WorkSection() {
   const [sanityProjects, setSanityProjects] = useState<any[]>([]);
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fetch Projects
     client
-      .fetch(`
-        *[_type == "projects" && (status == "published" || !defined(status)) && defined(slug.current)] | order(order asc, _createdAt desc){
+      .fetch(
+        `*[_type == "projects" && (status == "published" || !defined(status))] | order(orderAsc asc, year desc)[0..5]{
           _id,
           title,
-          slug,
-          coverImage,
-          client,
-          description,
-          type,
-          tags,
-          body,
-          gallery,
-          liveUrl,
+          "slug": slug.current,
+          category,
           year,
-          accent,
-          order
-        }
-      `)
+          coverImage,
+          accentColor,
+          liveUrl,
+          orderAsc
+        }`
+      )
       .then((data) => {
-        if (data && data.length > 0) setSanityProjects(data);
+        if (data && data.length > 0) {
+          setSanityProjects(data);
+        }
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.warn("Failed to fetch projects from Sanity, using fallback:", err);
+      });
   }, []);
 
-  const displayProjects = useMemo(() => {
+  const projectsToRender = useMemo(() => {
     if (sanityProjects.length > 0) {
-      return sanityProjects.map((p, index) => ({
-        number: String(index + 1).padStart(2, "0"),
-        title: p.title,
-        slug: p.slug?.current || p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-        type: p.type || (p.tags && p.tags.length > 0 ? p.tags.join(" · ") : "Creative Project"),
-        image: p.coverImage ? urlFor(p.coverImage)?.width(1200).format("webp").auto("format").url() || fallbackProjects[index % fallbackProjects.length].image : fallbackProjects[index % fallbackProjects.length].image,
-        accent: p.accent || "#e8fd52",
-        year: p.year || "2025",
-        liveUrl: p.liveUrl,
-      }));
+      return sanityProjects.map((p, idx) => {
+        const numStr = (idx + 1).toString().padStart(2, "0");
+        let imgUrl = "";
+        if (p.coverImage) {
+          imgUrl = urlFor(p.coverImage).width(1200).url();
+        }
+
+        return {
+          number: numStr,
+          title: p.title,
+          slug: p.slug,
+          type: p.category || "Creative Design",
+          image: imgUrl || fallbackProjects[idx % fallbackProjects.length].image,
+          accent: p.accentColor || "#61c5ad",
+          year: p.year || "2024",
+          liveUrl: p.liveUrl,
+        };
+      });
     }
-    return fallbackProjects.map((p) => ({
-      ...p,
-      slug: p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-    }));
+    return fallbackProjects;
   }, [sanityProjects]);
 
-  const homepageProjects = useMemo(() => {
-    return displayProjects.slice(0, 3);
-  }, [displayProjects]);
-
   return (
-    <section id="work" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
-      {/* Subtle section aurora background */}
-      <div 
-        className="pointer-events-none absolute inset-0 -z-10 opacity-20"
-        style={{
-          background: "radial-gradient(circle at 90% 10%, rgba(16,185,129,0.05) 0%, transparent 60%)",
-        }}
-      />
-      <div className="mx-auto max-w-[1600px] relative z-10">
+    <section id="work" className="relative px-6 py-24 md:px-10 md:py-36 bg-background text-foreground">
+      <div className="mx-auto max-w-[1600px]">
+        {/* Section Header */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
+          viewport={{ once: true, margin: "-100px" }}
+          className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">06 / Selected Projects</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              Creative Case Studies.
+            <Eyebrow number="01" label="SELECTED WORK" />
+            <h2
+              className="font-bold tracking-tight leading-[1.05] text-foreground"
+              style={{ fontSize: "clamp(2rem, 4.5vw, 4.2rem)" }}
+            >
+              Crafting stories.
+              <br />
+              <span className="text-muted-foreground">Building brands.</span>
             </h2>
           </div>
-          <Link
-            to="/work"
-            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
-          >
-            VIEW ALL WORK
-            <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
+          <p className="text-sm md:text-base text-muted-foreground font-medium max-w-md leading-relaxed">
+            A curated collection of visual identities, motion design campaigns, and digital experiences created for global brands.
+          </p>
         </motion.div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          {homepageProjects.map((project, index) => (
-            <motion.article
-              key={project.slug}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={index * 0.1}
-              className="group relative"
-            >
-              <Link
-                to={`/work/${project.slug}`}
-                className="block rounded-2xl overflow-hidden bg-white/5 border border-white/10 glass transition-all duration-500 hover:border-primary/50"
+        {/* Project Cards Grid */}
+        <div className="grid gap-8 md:gap-12 md:grid-cols-2 lg:grid-cols-3">
+          {projectsToRender.map((project, idx) => {
+            const isObjectImage = typeof project.image === "object" && project.image !== null;
+            const srcSet = isObjectImage
+              ? `${(project.image as any).medium} 800w, ${(project.image as any).large} 1200w`
+              : undefined;
+            const imgSrc = isObjectImage ? (project.image as any).large : (project.image as string);
+
+            return (
+              <motion.div
+                key={project.slug || idx}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                custom={idx * 0.15}
+                className="group relative flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-[#61c5ad]/50 hover:bg-white/[0.05] aurora-card"
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  {typeof project.image === "object" && project.image.large ? (
-                    <picture>
-                      <source media="(max-width: 768px)" srcSet={project.image.medium} type="image/webp" />
-                      <img
-                        src={project.image.large}
-                        alt={project.title}
-                        width={1200}
-                        height={900}
-                        loading={index === 0 ? "eager" : "lazy"}
-                        fetchPriority={index === 0 ? "high" : "auto"}
-                        decoding="async"
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
-                      />
-                    </picture>
-                  ) : (
+                <div>
+                  {/* Card Art Container */}
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black/40 mb-6 border border-white/10">
                     <img
-                      src={project.image as string}
+                      src={imgSrc}
+                      srcSet={srcSet}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       alt={project.title}
-                      width={1200}
-                      height={900}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      fetchPriority={index === 0 ? "high" : "auto"}
+                      loading={idx < 2 ? "eager" : "lazy"}
                       decoding="async"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-103"
+                      className="h-full w-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
                     />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-white/90 mono uppercase mb-2">
-                      <span style={{ color: project.accent }}>{project.number}</span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
+
+                    <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/50 px-3 py-1 text-[10px] font-bold mono text-white backdrop-blur-md">
+                      <span>{project.number}</span>
+                      <span className="text-white/40">/</span>
                       <span>{project.year}</span>
                     </div>
-                    <h3 className="text-xl font-semibold leading-tight text-white mb-2">
-                      {project.title}
-                    </h3>
-                    <p className="text-xs text-white/70 line-clamp-2 font-medium">
-                      {project.type}
-                    </p>
+                  </div>
+
+                  {/* Meta */}
+                  <div className="mb-2 text-xs font-bold mono uppercase tracking-wider text-[#61c5ad]">
+                    {project.type}
+                  </div>
+                  <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                    {project.title}
+                  </h3>
+                </div>
+
+                {/* Footer Action */}
+                <div className="mt-8 flex items-center justify-between pt-4 border-t border-white/10 text-xs font-bold mono uppercase tracking-wider text-muted-foreground group-hover:text-foreground">
+                  <span>{project.liveUrl ? "VIEW LIVE SITE" : "VIEW CASE STUDY"}</span>
+                  <div className="grid h-8 w-8 place-items-center rounded-full border border-white/20 bg-white/5 transition-all duration-300 group-hover:border-[#61c5ad] group-hover:bg-[#61c5ad] group-hover:text-black">
+                    <ArrowUpRight size={16} />
                   </div>
                 </div>
-              </Link>
-              <div className="mt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Link to={`/work/${project.slug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
-                  <span>VIEW CASE STUDY</span>
-                  <ArrowUpRight size={12} />
-                </Link>
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300"
-                  >
-                    <span>LIVE PROJECT</span>
-                    <ArrowUpRight size={12} />
-                  </a>
-                )}
-              </div>
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-white/90 mono uppercase mb-2">
-                      <span style={{ color: project.accent }}>{project.number}</span>
-                      <span>{project.year}</span>
-                    </div>
-                    <h3 className="text-xl font-semibold leading-tight text-white mb-2">
-                      {project.title}
-                    </h3>
-                    <p className="text-xs text-white/70 line-clamp-2 font-medium">
-                      {project.type}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-              <div className="mt-4 flex items-center justify-between text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Link to={`/work/${project.slug}`} className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300">
-                  <span>VIEW CASE STUDY</span>
-                  <ArrowUpRight size={12} />
-                </Link>
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 hover:text-white transition-colors duration-300"
-                  >
-                    <span>LIVE PROJECT</span>
-                    <ArrowUpRight size={12} />
-                  </a>
-                )}
-              </div>
-            </motion.article>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
 
+        {/* View All Projects CTA */}
         <div className="mt-16 flex justify-center">
           <Link
-            to="/work"
-            className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
-            style={{
-              background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
-            }}
+            to="/profile"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-[#61c5ad]/50 hover:bg-white/10 glass"
           >
-            EXPLORE FULL WORK ARCHIVE
+            <span>VIEW ALL ARCHIVED PROJECTS</span>
             <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>

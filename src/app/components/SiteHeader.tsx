@@ -9,7 +9,7 @@ import AuthModal from "./AuthModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { useTheme } from "../../context/ThemeContext";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const EASE = "easeInOut";
 
 function ThemeToggle() {
   const { theme, toggleTheme, isDark } = useTheme();

@@ -6,7 +6,7 @@ import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const EASE = "easeInOut";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },

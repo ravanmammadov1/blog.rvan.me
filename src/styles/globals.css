@@ -39,7 +39,7 @@ html {
 .hero-image {
   display: block;
   filter: saturate(0.9) contrast(1.03);
-  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform 1.2s ease-in-out;
 }
 
 .hero-section:hover .hero-image {
@@ -54,8 +54,8 @@ html {
 .project-art {
   transform: translateZ(0);
   transition:
-    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
-    box-shadow 0.7s ease;
+    transform 0.7s ease-in-out,
+    box-shadow 0.7s ease-in-out;
 }
 
 .project-card:hover .project-art {
@@ -307,7 +307,7 @@ html {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s ease-in-out;
   will-change: transform, border-color, box-shadow;
   transform: translateZ(0);
 }
@@ -318,7 +318,7 @@ html {
   inset: 0;
   z-index: 0;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease-in-out;
   background: radial-gradient(circle at 80% 20%, rgba(97, 197, 173, 0.1) 0%, rgba(66, 111, 186, 0.06) 50%, rgba(152, 79, 159, 0.04) 80%, transparent 100%);
   pointer-events: none;
 }
@@ -347,7 +347,7 @@ html {
     -1px -1px 0 0 rgba(97, 197, 173, 0.25) inset,
     1px 1px 0 0 rgba(152, 79, 159, 0.25) inset,
     0 20px 60px rgba(0, 0, 0, 0.35);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s ease-in-out;
 }
 
 .glass-liquid::after {
