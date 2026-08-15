@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Check, Download, Image as ImageIcon } from "lucide-react";
 import { IllustrationItem } from "../../../lib/illustrationEngine";
+import { downloadEpsFile } from "../../../lib/epsExporter";
 
 interface IllustrationSpecimenCardProps {
   illustration: IllustrationItem;
@@ -11,33 +12,19 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   illustration,
   accentColor = "#61c5ad",
 }) => {
-  const [downloadedType, setDownloadedType] = useState<"svg" | "png" | null>(null);
+  const [downloadedType, setDownloadedType] = useState<"eps" | "png" | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const rawSvgContent = illustration.svgTemplate(accentColor);
 
-  const handleDownloadSvg = () => {
+  const handleDownloadEps = () => {
     const svgElement = cardRef.current?.querySelector("svg");
-    if (!svgElement) return;
+    const svgString = svgElement
+      ? new XMLSerializer().serializeToString(svgElement)
+      : rawSvgContent;
 
-    // Clone SVG and set explicit XML namespaces for valid standalone vector file
-    const clonedSvg = svgElement.cloneNode(true) as SVGElement;
-    clonedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    clonedSvg.setAttribute("width", "800");
-    clonedSvg.setAttribute("height", "600");
-
-    const svgString = new XMLSerializer().serializeToString(clonedSvg);
-    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${illustration.id}.svg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    setDownloadedType("svg");
+    downloadEpsFile(svgString, illustration.id);
+    setDownloadedType("eps");
     setTimeout(() => setDownloadedType(null), 2500);
   };
 
@@ -95,7 +82,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
             {illustration.category}
           </span>
           <span className="text-[10px] font-mono text-muted-foreground/60 uppercase">
-            unDraw Vector
+            Vector Scene
           </span>
         </div>
 
@@ -116,19 +103,19 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
         </div>
       </div>
 
-      {/* Simplified Download Actions Footer */}
+      {/* Actions: DOWNLOAD .EPS and DOWNLOAD .PNG */}
       <div className="pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
         <button
-          onClick={handleDownloadSvg}
+          onClick={handleDownloadEps}
           className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
-          title="Download SVG vector file"
+          title="Download EPS vector file for Adobe Illustrator & Figma"
         >
-          {downloadedType === "svg" ? (
+          {downloadedType === "eps" ? (
             <Check size={14} className="text-emerald-400" />
           ) : (
             <Download size={14} className="text-[#61c5ad]" />
           )}
-          <span>DOWNLOAD .SVG</span>
+          <span>DOWNLOAD .EPS</span>
         </button>
 
         <button
