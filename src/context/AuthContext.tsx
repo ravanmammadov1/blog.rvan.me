@@ -25,16 +25,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [customAvatar, setCustomAvatar] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem("rvan_user_avatar");
-    } catch (e) {
-      return null;
-    }
-  });
+  const [customAvatar, setCustomAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     if (!auth || !isKeyConfigured) {
+      setUser(null);
+      setCustomAvatar(null);
       setLoading(false);
       return;
     }
@@ -44,11 +40,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       auth,
       (currentUser) => {
         setUser(currentUser);
+        if (currentUser?.uid) {
+          try {
+            const savedAvatar = localStorage.getItem(`rvan_user_avatar_${currentUser.uid}`);
+            setCustomAvatar(savedAvatar);
+          } catch (e) {
+            setCustomAvatar(null);
+          }
+        } else {
+          setCustomAvatar(null);
+        }
         setLoading(false);
       },
       (err) => {
         console.error("[Auth Context Error] Auth state listener error:", err);
         setError(err.message);
+        setUser(null);
+        setCustomAvatar(null);
         setLoading(false);
       }
     );
@@ -57,11 +65,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const updateCustomAvatar = (avatarUrl: string | null) => {
+    if (!user?.uid) return;
     try {
+      const storageKey = `rvan_user_avatar_${user.uid}`;
       if (avatarUrl) {
-        localStorage.setItem("rvan_user_avatar", avatarUrl);
+        localStorage.setItem(storageKey, avatarUrl);
       } else {
-        localStorage.removeItem("rvan_user_avatar");
+        localStorage.removeItem(storageKey);
       }
     } catch (e) {}
     setCustomAvatar(avatarUrl);
@@ -80,6 +90,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     try {
       await logout();
+      setUser(null);
+      setCustomAvatar(null);
     } catch (err: any) {
       setError(err?.message || "Sign out failed.");
     }
@@ -87,7 +99,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const clearError = () => setError(null);
 
-  const userPhoto = customAvatar || user?.photoURL || null;
+  // If unauthenticated (user === null), userPhoto MUST be null.
+  const userPhoto = user ? customAvatar || user.photoURL || null : null;
 
   return (
     <AuthContext.Provider

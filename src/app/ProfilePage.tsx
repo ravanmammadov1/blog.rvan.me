@@ -83,9 +83,9 @@ export default function ProfilePage() {
     setTimeout(() => setPhotoSuccessMsg(""), 3500);
   };
 
-  const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
-  const userName = user?.displayName || "Ravan Mammadov";
-  const userEmail = user?.email || "mammadovravan1@gmail.com";
+  const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "G";
+  const userName = user ? (user.displayName || "User") : "Guest User";
+  const userEmail = user ? user.email : "Not signed in";
 
   return (
     <main
@@ -128,6 +128,33 @@ export default function ProfilePage() {
             </p>
           </motion.div>
 
+          {/* Unauthenticated User Warning Banner */}
+          {!user && (
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 md:p-6 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            >
+              <div>
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">
+                  <ShieldCheck size={16} /> Authentication Required
+                </div>
+                <p className="mt-1 text-xs md:text-sm text-muted-foreground font-medium">
+                  You are currently browsing as a Guest. Sign in with Google to save custom profile photo preferences and sync account settings.
+                </p>
+              </div>
+              <Button
+                onClick={() => setAuthModalOpen(true)}
+                variant="primary"
+                size="sm"
+                className="shrink-0"
+              >
+                SIGN IN WITH GOOGLE
+              </Button>
+            </motion.div>
+          )}
+
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* 1. USER PROFILE & AVATAR CARD */}
             <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
@@ -150,19 +177,21 @@ export default function ProfilePage() {
                         {userInitial}
                       </div>
                     )}
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-lg bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
-                      title="Change photo"
-                    >
-                      <Camera size={12} />
-                    </button>
+                    {user && (
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-lg bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
+                        title="Change photo"
+                      >
+                        <Camera size={12} />
+                      </button>
+                    )}
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <p className="text-base font-bold text-white truncate">{userName}</p>
                     <p className="text-xs text-muted-foreground truncate mono mt-0.5">{userEmail}</p>
-                    {customAvatar && (
+                    {user && customAvatar && (
                       <span className="inline-flex items-center gap-1 text-[9px] font-mono text-emerald-400 font-bold mt-1">
                         <Check size={10} /> Custom Photo
                       </span>
@@ -177,37 +206,52 @@ export default function ProfilePage() {
                 )}
 
                 {/* Hidden File Input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp, image/gif"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                />
+                {user && (
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png, image/jpeg, image/webp, image/gif"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                )}
 
                 {/* Action Buttons */}
                 <div className="space-y-2">
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    icon={<Camera size={14} />}
-                    iconPosition="left"
-                  >
-                    Change Profile Photo
-                  </Button>
+                  {user ? (
+                    <>
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        icon={<Camera size={14} />}
+                        iconPosition="left"
+                      >
+                        Change Profile Photo
+                      </Button>
 
-                  {customAvatar && (
+                      {customAvatar && (
+                        <Button
+                          onClick={handleResetPhoto}
+                          variant="ghost"
+                          size="sm"
+                          className="w-full text-muted-foreground"
+                          icon={<RotateCcw size={13} />}
+                          iconPosition="left"
+                        >
+                          Reset Photo
+                        </Button>
+                      )}
+                    </>
+                  ) : (
                     <Button
-                      onClick={handleResetPhoto}
-                      variant="ghost"
+                      onClick={() => setAuthModalOpen(true)}
+                      variant="primary"
                       size="sm"
-                      className="w-full text-muted-foreground"
-                      icon={<RotateCcw size={13} />}
-                      iconPosition="left"
+                      className="w-full"
                     >
-                      Reset Photo
+                      SIGN IN WITH GOOGLE
                     </Button>
                   )}
                 </div>

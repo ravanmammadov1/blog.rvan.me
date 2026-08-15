@@ -102,10 +102,10 @@ function UserAuthMenu() {
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-white truncate">
-                    {user ? (user.displayName || "User") : "Ravan Mammadov"}
+                    {user ? (user.displayName || "User") : "Guest User"}
                   </p>
                   <p className="text-[10px] text-muted-foreground truncate mono mt-0.5">
-                    {user ? user.email : "mammadovravan1@gmail.com"}
+                    {user ? user.email : "Not signed in"}
                   </p>
                 </div>
               </div>
