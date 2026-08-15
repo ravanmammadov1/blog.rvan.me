@@ -16,6 +16,15 @@ export default function HeroAtmosphere() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none"
       aria-hidden="true"
     >
+      {/* ── 0. ELEGANT 45-DEGREE LASER RAY LINES (Syngri-inspired visual depth) ── */}
+      <div
+        className="absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+        style={{
+          backgroundImage: `linear-gradient(45deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px)`,
+          backgroundSize: "140px 140px",
+        }}
+      />
+
       {/* ── 1. SUBTLE BACKGROUND GRID OVERLAY (Low Opacity Tech Atmosphere) ── */}
       <div
         className="absolute inset-0 opacity-[0.025]"
