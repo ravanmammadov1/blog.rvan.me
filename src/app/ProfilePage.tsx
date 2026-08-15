@@ -7,7 +7,6 @@ import {
   User as UserIcon,
   Sun,
   Moon,
-  Zap,
   LogOut,
   Globe,
   Camera,
@@ -26,7 +25,6 @@ import { Button } from "./components/ui/Button";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../lib/i18n/LanguageContext";
-import { useExperience } from "../context/ExperienceContext";
 import AuthModal from "./components/AuthModal";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -49,7 +47,6 @@ export default function ProfilePage() {
   const { user, signOut, userPhoto, customAvatar, updateCustomAvatar } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, switchLanguage, t, getLocalizedPath } = useLanguage();
-  const { settings, toggleAnimations, toggleCursorEffects, toggleBackgroundEffects } = useExperience();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -283,7 +280,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => setTheme("dark")}
                     className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      theme === "dark" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
+                      theme === "dark" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     <Moon size={14} /> Dark
@@ -291,7 +288,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => setTheme("light")}
                     className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      theme === "light" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
+                      theme === "light" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     <Sun size={14} /> Light
@@ -316,7 +313,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => switchLanguage("en")}
                     className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      language === "en" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
+                      language === "en" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     English
@@ -324,7 +321,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => switchLanguage("az")}
                     className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      language === "az" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
+                      language === "az" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     Azərbaycan
@@ -334,91 +331,6 @@ export default function ProfilePage() {
               <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
                 Active: {language === "az" ? "Azərbaycan dili" : "English"}
               </div>
-            </div>
-
-            {/* 4. EXPERIENCE CARD */}
-            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl lg:col-span-2 flex flex-col justify-between">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <Zap size={14} /> EXPERIENCE & PERFORMANCE
-                </div>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {/* Animations Toggle */}
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-white font-mono">Animations</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">UI motion & smooth keyframe transitions</p>
-                    </div>
-                    <button
-                      onClick={toggleAnimations}
-                      className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all ${
-                        settings.animations ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/5 text-muted-foreground border border-white/10"
-                      }`}
-                    >
-                      {settings.animations ? "ENABLED" : "DISABLED"}
-                    </button>
-                  </div>
-
-                  {/* Cursor Effects Toggle */}
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-white font-mono">Cursor Effects</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Custom interactive pointer visuals</p>
-                    </div>
-                    <button
-                      onClick={toggleCursorEffects}
-                      className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all ${
-                        settings.cursorEffects ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/5 text-muted-foreground border border-white/10"
-                      }`}
-                    >
-                      {settings.cursorEffects ? "ENABLED" : "DISABLED"}
-                    </button>
-                  </div>
-
-                  {/* Background Effects Toggle */}
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-white font-mono">Background Effects</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Ambient laser grid & 3D glows</p>
-                    </div>
-                    <button
-                      onClick={toggleBackgroundEffects}
-                      className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all ${
-                        settings.backgroundEffects ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/5 text-muted-foreground border border-white/10"
-                      }`}
-                    >
-                      {settings.backgroundEffects ? "ENABLED" : "DISABLED"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 5. ACCOUNT CARD */}
-            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <ShieldCheck size={14} /> ACCOUNT & AUTHENTICATION
-                </div>
-                <p className="text-xs text-muted-foreground font-mono mb-6">
-                  {user ? "Signed in as " + user.email : "Currently browsing as a guest."}
-                </p>
-              </div>
-              {user ? (
-                <button
-                  onClick={() => signOut()}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs font-mono font-bold text-red-400 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
-                >
-                  <LogOut size={14} /> SIGN OUT
-                </button>
-              ) : (
-                <button
-                  onClick={() => setAuthModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/50 bg-primary/10 px-4 py-3 text-xs font-mono font-bold text-primary uppercase tracking-widest hover:bg-primary hover:text-black transition-all"
-                >
-                  SIGN IN WITH GOOGLE
-                </button>
-              )}
             </div>
           </div>
         </div>

@@ -53,20 +53,20 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
 
     if (variant === "primary") {
       variantClasses =
-        "text-white shadow-[0_0_30px_rgba(97,197,173,0.35)] hover:shadow-[0_0_40px_rgba(152,79,159,0.5)] hover:scale-[1.03]";
+        "text-white hover:scale-[1.03]";
       inlineStyle.background = "linear-gradient(135deg, #61c5ad 0%, #426fba 48%, #984f9f 100%)";
     } else if (variant === "secondary") {
       variantClasses =
         "border border-white/15 bg-white/5 text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 glass";
     } else if (variant === "outline") {
       variantClasses =
-        "border border-[#61c5ad]/40 text-[#61c5ad] hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm";
+        "border border-[#61c5ad]/40 text-[#61c5ad] hover:text-white hover:border-transparent glass-sm";
       inlineStyle.background =
         "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)";
     } else if (variant === "filter") {
       if (active) {
         variantClasses =
-          "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)] border border-transparent";
+          "text-white font-extrabold border border-transparent";
         inlineStyle.background =
           "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
       } else {
