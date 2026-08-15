@@ -12,7 +12,7 @@ import { useTheme } from "../../context/ThemeContext";
 const EASE = "easeInOut";
 
 function UserAuthMenu() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -53,18 +53,16 @@ function UserAuthMenu() {
         onClick={() => setDropdownOpen((prev) => !prev)}
         className="flex h-[38px] items-center gap-2.5 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center"
       >
-        {user ? (
-          user.photoURL ? (
-            <img
-              src={user.photoURL}
-              alt={user.displayName || "User"}
-              className="h-6 w-6 rounded-full object-cover border border-white/20 shrink-0"
-            />
-          ) : (
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-black font-bold text-xs shrink-0">
-              {userInitial}
-            </span>
-          )
+        {userPhoto ? (
+          <img
+            src={userPhoto}
+            alt={user?.displayName || "User"}
+            className="h-6 w-6 rounded-full object-cover border border-white/20 shrink-0"
+          />
+        ) : user ? (
+          <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-black font-bold text-xs shrink-0">
+            {userInitial}
+          </span>
         ) : (
           <span className="grid h-6 w-6 place-items-center rounded-full border border-white/20 bg-white/10 text-primary shrink-0">
             <UserIcon size={13} />
@@ -91,14 +89,12 @@ function UserAuthMenu() {
                 PROFILE
               </div>
               <div className="flex items-center gap-3 mb-3">
-                {user ? (
-                  user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName || "User"} className="h-9 w-9 rounded-full object-cover border border-white/20 shrink-0" />
-                  ) : (
-                    <div className="h-9 w-9 rounded-full bg-primary text-black font-bold flex items-center justify-center text-sm shrink-0">
-                      {userInitial}
-                    </div>
-                  )
+                {userPhoto ? (
+                  <img src={userPhoto} alt={user?.displayName || "User"} className="h-9 w-9 rounded-full object-cover border border-white/20 shrink-0" />
+                ) : user ? (
+                  <div className="h-9 w-9 rounded-full bg-primary text-black font-bold flex items-center justify-center text-sm shrink-0">
+                    {userInitial}
+                  </div>
                 ) : (
                   <div className="h-9 w-9 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-primary shrink-0">
                     <UserIcon size={16} />

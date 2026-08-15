@@ -12,6 +12,8 @@ const BlogDetail = lazy(() => import("./BlogDetail"));
 const ToolsArchive = lazy(() => import("./ToolsArchive"));
 const AboutPage = lazy(() => import("./AboutPage"));
 const ProfilePage = lazy(() => import("./ProfilePage"));
+const FounderProfilePage = lazy(() => import("./pages/FounderProfilePage"));
+const WorkArchive = lazy(() => import("./WorkArchive"));
 const PrivacyPolicyPage = lazy(() => import("./PrivacyPolicyPage"));
 const CookiePolicyPage = lazy(() => import("./CookiePolicyPage"));
 const TermsPage = lazy(() => import("./TermsPage"));
@@ -40,8 +42,9 @@ function AppRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/ravan-mammadov" element={<ProfilePage />} />
-      <Route path="/work" element={<Navigate to="/profile" replace />} />
+      <Route path="/ravanmammadov" element={<FounderProfilePage />} />
+      <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
+      <Route path="/work" element={<WorkArchive />} />
       <Route path="/work/:slug" element={<ProjectDetail />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/blog" element={<BlogArchive />} />
@@ -65,8 +68,9 @@ function AppRoutes() {
       <Route path="/az" element={<HomePage />} />
       <Route path="/az/about" element={<AboutPage />} />
       <Route path="/az/profile" element={<ProfilePage />} />
-      <Route path="/az/ravan-mammadov" element={<ProfilePage />} />
-      <Route path="/az/work" element={<Navigate to="/az/profile" replace />} />
+      <Route path="/az/ravanmammadov" element={<FounderProfilePage />} />
+      <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
+      <Route path="/az/work" element={<WorkArchive />} />
       <Route path="/az/work/:slug" element={<ProjectDetail />} />
       <Route path="/az/contact" element={<ContactPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />

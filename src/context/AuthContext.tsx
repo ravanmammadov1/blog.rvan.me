@@ -7,6 +7,9 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
+  customAvatar: string | null;
+  userPhoto: string | null;
+  updateCustomAvatar: (avatarUrl: string | null) => void;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
@@ -22,6 +25,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [customAvatar, setCustomAvatar] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem("rvan_user_avatar");
+    } catch (e) {
+      return null;
+    }
+  });
 
   useEffect(() => {
     if (!auth || !isKeyConfigured) {
@@ -46,6 +56,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  const updateCustomAvatar = (avatarUrl: string | null) => {
+    try {
+      if (avatarUrl) {
+        localStorage.setItem("rvan_user_avatar", avatarUrl);
+      } else {
+        localStorage.removeItem("rvan_user_avatar");
+      }
+    } catch (e) {}
+    setCustomAvatar(avatarUrl);
+  };
+
   const handleSignIn = async () => {
     setError(null);
     try {
@@ -66,12 +87,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const clearError = () => setError(null);
 
+  const userPhoto = customAvatar || user?.photoURL || null;
+
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
         error,
+        customAvatar,
+        userPhoto,
+        updateCustomAvatar,
         signIn: handleSignIn,
         signOut: handleSignOut,
         clearError,
