@@ -1,163 +1,235 @@
 import * as LucideIcons from "lucide-react";
+import { isFuzzyMatch } from "./fuzzySearch";
 
 export interface IconItem {
   id: string;
   name: string;
+  componentName: string;
   category: string;
   tags: string[];
-  componentName: string;
 }
 
 export const ICON_CATEGORIES = [
   "All",
-  "Interface & UI",
-  "Arrows & Navigation",
-  "Communication & Social",
-  "Code & Development",
-  "Media & Audio",
-  "Files & Folders",
-  "E-Commerce & Finance",
-  "Design & Shapes",
-  "Security & System",
+  "Interface & Controls",
+  "Navigation & Arrows",
+  "Design & Media",
+  "Communication & Mail",
+  "Commerce & Finance",
+  "Tech & Code",
+  "Files & Documents",
+  "Users & Security",
+  "Time & Calendar",
   "Weather & Nature",
-  "User & People",
-  "General & Objects",
+  "Miscellaneous",
 ] as const;
 
 export type IconCategory = typeof ICON_CATEGORIES[number];
 
-// Helper to separate camelCase into words ("ArrowUpRight" -> "Arrow Up Right")
-function camelToWords(str: string): string {
-  return str
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
-}
-
-// Automatic category detection based on icon name keywords
-function categorizeIcon(name: string): IconCategory {
+// Helper to determine category based on icon name keywords
+function categorizeIcon(name: string): string {
   const lower = name.toLowerCase();
 
   if (
-    /arrow|chevron|compass|map|pin|navigate|corner|external|expand|shrink|move|rotate|locate|direction|triangle-right|move-/.test(
-      lower
-    )
+    lower.includes("arrow") ||
+    lower.includes("chevron") ||
+    lower.includes("corner") ||
+    lower.includes("move") ||
+    lower.includes("navigate") ||
+    lower.includes("locate") ||
+    lower.includes("map") ||
+    lower.includes("compass")
   ) {
-    return "Arrows & Navigation";
+    return "Navigation & Arrows";
   }
 
   if (
-    /mail|message|chat|phone|send|share|globe|rss|radio|thumbs|heart|at|post|at-sign|inbox|contact|quote|hash|bell/.test(
-      lower
-    )
+    lower.includes("image") ||
+    lower.includes("video") ||
+    lower.includes("camera") ||
+    lower.includes("music") ||
+    lower.includes("audio") ||
+    lower.includes("palette") ||
+    lower.includes("brush") ||
+    lower.includes("pen") ||
+    lower.includes("paint") ||
+    lower.includes("layer") ||
+    lower.includes("figma") ||
+    lower.includes("canvas")
   ) {
-    return "Communication & Social";
+    return "Design & Media";
   }
 
   if (
-    /code|terminal|cpu|database|git|layers|package|workflow|zap|bug|binary|command|qr|braces|brackets|script|server|variable|webhook|bot|ai/.test(
-      lower
-    )
+    lower.includes("mail") ||
+    lower.includes("message") ||
+    lower.includes("send") ||
+    lower.includes("inbox") ||
+    lower.includes("phone") ||
+    lower.includes("call") ||
+    lower.includes("share") ||
+    lower.includes("chat") ||
+    lower.includes("bell")
   ) {
-    return "Code & Development";
+    return "Communication & Mail";
   }
 
   if (
-    /monitor|smartphone|laptop|camera|image|video|music|mic|volume|play|pause|disc|tv|film|speaker|headphones|radio|cassette|clapperboard|aperture/.test(
-      lower
-    )
+    lower.includes("dollar") ||
+    lower.includes("credit") ||
+    lower.includes("card") ||
+    lower.includes("coins") ||
+    lower.includes("wallet") ||
+    lower.includes("shopping") ||
+    lower.includes("cart") ||
+    lower.includes("bag") ||
+    lower.includes("tag") ||
+    lower.includes("percent") ||
+    lower.includes("receipt")
   ) {
-    return "Media & Audio";
+    return "Commerce & Finance";
   }
 
   if (
-    /file|folder|download|upload|copy|edit|trash|save|clipboard|archive|paperclip|document|notebook|receipt|history/.test(
-      lower
-    )
+    lower.includes("code") ||
+    lower.includes("terminal") ||
+    lower.includes("cpu") ||
+    lower.includes("database") ||
+    lower.includes("server") ||
+    lower.includes("cloud") ||
+    lower.includes("git") ||
+    lower.includes("wifi") ||
+    lower.includes("monitor") ||
+    lower.includes("laptop") ||
+    lower.includes("sparkles") ||
+    lower.includes("bot")
   ) {
-    return "Files & Folders";
+    return "Tech & Code";
   }
 
   if (
-    /shopping|cart|bag|card|dollar|euro|tag|percent|bank|coins|receipt|wallet|store|barcode|credit|currency|piggy|gem|gift/.test(
-      lower
-    )
+    lower.includes("file") ||
+    lower.includes("folder") ||
+    lower.includes("document") ||
+    lower.includes("clipboard") ||
+    lower.includes("book") ||
+    lower.includes("archive") ||
+    lower.includes("paper")
   ) {
-    return "E-Commerce & Finance";
+    return "Files & Documents";
   }
 
   if (
-    /palette|type|grid|waves|circle|square|triangle|hexagon|pen|brush|crop|ruler|pipette|stamp|scaling|paint|sparkle|wand|blend|blend-/.test(
-      lower
-    )
+    lower.includes("user") ||
+    lower.includes("person") ||
+    lower.includes("users") ||
+    lower.includes("shield") ||
+    lower.includes("lock") ||
+    lower.includes("key") ||
+    lower.includes("fingerprint") ||
+    lower.includes("eye") ||
+    lower.includes("keyhole")
   ) {
-    return "Design & Shapes";
+    return "Users & Security";
   }
 
   if (
-    /shield|lock|unlock|key|alert|info|help|check|x|cross|slash|eye|fingerprint|server|wifi|battery|power|siren|ban|vault/.test(
-      lower
-    )
+    lower.includes("clock") ||
+    lower.includes("time") ||
+    lower.includes("calendar") ||
+    lower.includes("timer") ||
+    lower.includes("watch") ||
+    lower.includes("history") ||
+    lower.includes("hourglass")
   ) {
-    return "Security & System";
+    return "Time & Calendar";
   }
 
   if (
-    /sun|moon|cloud|rain|wind|snowflake|tree|leaf|flame|droplet|thermometer|umbrella|sunrise|sunset|zap|sparkle/.test(
-      lower
-    )
+    lower.includes("sun") ||
+    lower.includes("moon") ||
+    lower.includes("cloud") ||
+    lower.includes("rain") ||
+    lower.includes("wind") ||
+    lower.includes("zap") ||
+    lower.includes("tree") ||
+    lower.includes("leaf") ||
+    lower.includes("flame")
   ) {
     return "Weather & Nature";
   }
 
   if (
-    /user|person|team|group|avatar|smile|frown|contact|badge|footprints|hand|biceps|face/.test(
-      lower
-    )
+    lower.includes("check") ||
+    lower.includes("x") ||
+    lower.includes("plus") ||
+    lower.includes("minus") ||
+    lower.includes("filter") ||
+    lower.includes("search") ||
+    lower.includes("grid") ||
+    lower.includes("list") ||
+    lower.includes("settings") ||
+    lower.includes("sliders") ||
+    lower.includes("help") ||
+    lower.includes("info") ||
+    lower.includes("alert")
   ) {
-    return "User & People";
+    return "Interface & Controls";
   }
 
-  if (
-    /search|slider|cog|gear|setting|option|filter|menu|list|grid|table|check|plus|minus|star|flame|bookmark|calendar|clock|refresh|loader|spin/.test(
-      lower
-    )
-  ) {
-    return "Interface & UI";
-  }
-
-  return "General & Objects";
+  return "Miscellaneous";
 }
 
-// Generate full catalog of ALL Lucide icons dynamically at runtime
-function buildFullLucideCatalog(): IconItem[] {
-  const catalog: IconItem[] = [];
-  const keys = Object.keys(LucideIcons);
+// Format Lucide PascalCase component name into human-readable spaced title
+function formatIconName(pascalName: string): string {
+  return pascalName
+    .replace(/([A-[Z])/g, " $1")
+    .replace(/^ /, "")
+    .trim();
+}
 
-  keys.forEach((key) => {
-    // Exclude internal non-icon exports
+// Generate tags for rich searchability
+function generateIconTags(componentName: string, humanName: string, category: string): string[] {
+  const words = humanName.toLowerCase().split(" ");
+  return Array.from(new Set([...words, componentName.toLowerCase(), category.toLowerCase(), "lucide", "vector", "icon"]));
+}
+
+// Dynamically extract ALL 1,500+ vector icons exported by lucide-react at runtime
+function buildFullLucideCatalog(): IconItem[] {
+  const allExports = Object.keys(LucideIcons);
+  const catalog: IconItem[] = [];
+
+  const blacklist = new Set([
+    "default",
+    "createLucideIcon",
+    "LucideIcon",
+    "LucideProps",
+    "Icon",
+    "icons",
+  ]);
+
+  for (const expKey of allExports) {
     if (
-      !/^[A-Z]/.test(key) ||
-      key === "LucideIcon" ||
-      key === "LucideProps" ||
-      key === "default" ||
-      key === "createLucideIcon"
+      blacklist.has(expKey) ||
+      !/^[A-Z]/.test(expKey) ||
+      expKey.endsWith("Icon") ||
+      typeof (LucideIcons as any)[expKey] !== "object" && typeof (LucideIcons as any)[expKey] !== "function"
     ) {
-      return;
+      continue;
     }
 
-    const humanName = camelToWords(key);
-    const category = categorizeIcon(key);
-    const words = humanName.toLowerCase().split(" ");
-    const tags = Array.from(new Set([key.toLowerCase(), ...words, category.toLowerCase()]));
+    const humanName = formatIconName(expKey);
+    const category = categorizeIcon(expKey);
+    const tags = generateIconTags(expKey, humanName, category);
 
     catalog.push({
-      id: `lucide-${key.toLowerCase()}`,
+      id: `lucide-${expKey.toLowerCase()}`,
       name: humanName,
+      componentName: expKey,
       category,
       tags,
-      componentName: key,
     });
-  });
+  }
 
   return catalog;
 }
@@ -168,22 +240,17 @@ export const LUCIDE_ICON_CATALOG = FULL_LUCIDE_CATALOG;
 
 export function searchLucideIcons(
   query: string,
-  activeCategory: string = "All"
+  category: IconCategory = "All"
 ): IconItem[] {
   let result = FULL_LUCIDE_CATALOG;
 
-  if (activeCategory !== "All") {
-    result = result.filter((item) => item.category === activeCategory);
+  if (category !== "All") {
+    result = result.filter((icon) => icon.category === category);
   }
 
   if (query.trim()) {
-    const q = query.toLowerCase();
-    result = result.filter(
-      (item) =>
-        item.name.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q) ||
-        item.componentName.toLowerCase().includes(q) ||
-        item.tags.some((tag) => tag.includes(q))
+    result = result.filter((icon) =>
+      isFuzzyMatch(query, `${icon.name} ${icon.componentName}`, icon.tags)
     );
   }
 
@@ -192,8 +259,8 @@ export function searchLucideIcons(
 
 export function getIconCategoryCounts(): Record<string, number> {
   const counts: Record<string, number> = { All: FULL_LUCIDE_CATALOG.length };
-  FULL_LUCIDE_CATALOG.forEach((item) => {
-    counts[item.category] = (counts[item.category] || 0) + 1;
+  FULL_LUCIDE_CATALOG.forEach((icon) => {
+    counts[icon.category] = (counts[icon.category] || 0) + 1;
   });
   return counts;
 }

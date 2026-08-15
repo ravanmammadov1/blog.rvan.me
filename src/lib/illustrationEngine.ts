@@ -1,3 +1,5 @@
+import { isFuzzyMatch } from "./fuzzySearch";
+
 export interface IllustrationItem {
   id: string;
   title: string;
@@ -15,10 +17,7 @@ export const ILLUSTRATION_CATEGORIES = [
   "Security & Cloud",
   "People & Work",
   "Marketing & Growth",
-  "Mobile & Web Apps",
   "Finance & E-Commerce",
-  "Workflow & Management",
-  "AI & Automation",
 ] as const;
 
 export type IllustrationCategory = typeof ILLUSTRATION_CATEGORIES[number];
@@ -44,63 +43,95 @@ function createVectorIllustrationSvg(
 </svg>`;
 }
 
-// Sub-topic blueprints for procedural 1,000+ vector illustration generation
-const ILLUSTRATION_TOPICS: Array<{
-  category: IllustrationCategory;
-  prefix: string;
-  topics: string[];
-  svgGenerator: (title: string, color: string, index: number) => string;
-}> = [
-  // 1. Tech & Coding (150 topics)
+export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
+  // ── 1. Tech & Coding ──
   {
+    id: "ill-code-development",
+    title: "Software Engineering & Code Editor",
     category: "Tech & Coding",
-    prefix: "tech",
-    topics: [
-      "Software Development", "API Architecture", "Cloud Deployment", "React Component Library",
-      "TypeScript Type Safety", "Frontend Performance", "Backend Microservices", "GraphQL Query Engine",
-      "Node.js Runtime", "Database Indexing", "WebAssembly Engine", "CI/CD Pipeline",
-      "Git Version Control", "Docker Containerization", "Kubernetes Cluster", "RESTful Web Services",
-      "Serverless Functions", "State Management", "CSS Grid Architecture", "Tailwind Design System",
-      "Vite Bundler Build", "Next.js App Router", "Full-Stack System", "Memory Optimization",
-      "Unit Testing Suite", "E2E Automation", "WebSockets Connection", "OAuth Authentication",
-      "Redis Cache Layer", "Kafka Stream Processing", "Elasticsearch Index", "Terraform Infrastructure",
-      "Linux Kernel", "WebGPU Shader Engine", "Three.js 3D Canvas", "Service Worker Cache",
-      "PWAs Architecture", "JAMstack Pipeline", "Monorepo Workspace", "npm Dependency Manager"
-    ],
-    svgGenerator: (title, color, idx) =>
+    tags: ["code", "development", "software", "programming", "terminal", "react", "typescript"],
+    svgTemplate: (color) =>
       createVectorIllustrationSvg(
         color,
         `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.4"/>
-        <rect x="100" y="90" width="600" height="420" rx="24" fill="#161b22" stroke="#30363d" stroke-width="4"/>
+        <rect x="100" y="90" width="600" height="420" rx="20" fill="#161b22" stroke="#30363d" stroke-width="4"/>
         <circle cx="140" cy="130" r="8" fill="#ff5f56"/>
         <circle cx="165" cy="130" r="8" fill="#ffbd2e"/>
         <circle cx="190" cy="130" r="8" fill="#27c93f"/>
-        <rect x="130" y="175" width="${140 + (idx % 5) * 30}" height="16" rx="8" fill="${color}"/>
-        <rect x="130" y="210" width="${200 + (idx % 7) * 25}" height="14" rx="7" fill="#8b949e" opacity="0.6"/>
-        <rect x="130" y="240" width="${280 + (idx % 6) * 30}" height="14" rx="7" fill="${color}" opacity="0.8"/>
+        <rect x="130" y="175" width="180" height="16" rx="8" fill="${color}"/>
+        <rect x="130" y="210" width="240" height="14" rx="7" fill="#8b949e" opacity="0.6"/>
+        <rect x="130" y="240" width="320" height="14" rx="7" fill="${color}" opacity="0.8"/>
         <rect x="130" y="270" width="160" height="14" rx="7" fill="#8b949e" opacity="0.5"/>
-        <rect x="130" y="315" width="${220 + (idx % 4) * 40}" height="16" rx="8" fill="${color}"/>
-        <rect x="130" y="350" width="190" height="14" rx="7" fill="#8b949e" opacity="0.6"/>
-        <circle cx="${540 + (idx % 3) * 20}" cy="${290 + (idx % 2) * 20}" r="80" fill="url(#illGrad)" opacity="0.9" filter="url(#illGlow)"/>
-        <path d="M510 290L535 315L580 270" stroke="#000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`
+        <rect x="130" y="315" width="280" height="16" rx="8" fill="${color}"/>
+        <rect x="130" y="350" width="200" height="14" rx="7" fill="#8b949e" opacity="0.6"/>
+        <circle cx="560" cy="290" r="70" fill="url(#illGrad)" opacity="0.9" filter="url(#illGlow)"/>
+        <path d="M530 290L550 310L590 270" stroke="#000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`
+      ),
+  },
+  {
+    id: "ill-ai-neural",
+    title: "AI Neural Brain & Automation",
+    category: "Tech & Coding",
+    tags: ["ai", "artificial intelligence", "brain", "neural", "robot", "bot"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <circle cx="400" cy="300" r="140" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="8 8"/>
+        <path d="M300 240C300 200 340 180 400 180C460 180 500 200 500 240C500 280 460 300 400 300C340 300 300 320 300 360C300 400 340 420 400 420C460 420 500 400 500 360" stroke="${color}" stroke-width="6" fill="none"/>
+        <circle cx="400" cy="180" r="16" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <circle cx="400" cy="300" r="16" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <circle cx="400" cy="420" r="16" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <circle cx="300" cy="240" r="12" fill="${color}"/>
+        <circle cx="500" cy="240" r="12" fill="${color}"/>
+        <circle cx="300" cy="360" r="12" fill="${color}"/>
+        <circle cx="500" cy="360" r="12" fill="${color}"/>`
+      ),
+  },
+  {
+    id: "ill-mobile-app",
+    title: "Mobile App Wireframe & UI",
+    category: "Tech & Coding",
+    tags: ["mobile", "app", "phone", "smartphone", "ui", "screen"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <rect x="270" y="80" width="260" height="440" rx="36" fill="#161b22" stroke="#30363d" stroke-width="6"/>
+        <rect x="350" y="100" width="100" height="12" rx="6" fill="#30363d"/>
+        <rect x="300" y="140" width="200" height="140" rx="20" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <rect x="300" y="300" width="200" height="20" rx="10" fill="#ffffff"/>
+        <rect x="300" y="330" width="150" height="14" rx="7" fill="#8b949e" opacity="0.6"/>
+        <rect x="300" y="370" width="200" height="45" rx="12" fill="${color}"/>
+        <rect x="300" y="430" width="200" height="45" rx="12" fill="#21262d"/>`
+      ),
+  },
+  {
+    id: "ill-rocket-launch",
+    title: "Rocket Launch & Startup Speed",
+    category: "Business & Startup",
+    tags: ["rocket", "launch", "startup", "growth", "speed", "fly"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <path d="M400 90C400 90 500 190 500 330C500 400 455 440 400 440C345 440 300 400 300 330C300 190 400 90 400 90Z" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <circle cx="400" cy="240" r="32" fill="#000"/>
+        <circle cx="400" cy="240" r="16" fill="${color}"/>
+        <path d="M300 330L230 410V450H270L340 400" fill="${color}" opacity="0.7"/>
+        <path d="M500 330L570 410V450H530L460 400" fill="${color}" opacity="0.7"/>
+        <polygon points="360,440 400,530 440,440" fill="#ffbd2e"/>
+        <polygon points="380,440 400,490 420,440" fill="#ff5f56"/>`
       ),
   },
 
-  // 2. Design & Creative (150 topics)
+  // ── 2. Design & Creative ──
   {
+    id: "ill-design-system",
+    title: "Design System Component Grid",
     category: "Design & Creative",
-    prefix: "design",
-    topics: [
-      "Design System Guidelines", "UI Wireframing", "UX Research & Persona", "Vector Typography",
-      "Color Theory & Palette", "Motion Graphics Script", "Figma UI Kit", "Design Tokens",
-      "Brand Identity System", "Iconography Library", "Micro-Interactions", "Fluid Grid Layout",
-      "Dark Mode Aesthetic", "3D Glassmorphism", "Neumorphism Interface", "Responsive Breakpoints",
-      "Design Critique & Feedback", "User Journey Mapping", "Prototyping Motion", "Visual Hierarchy",
-      "Kerning & Letterspacing", "Isometric Graphics", "Design System Audit", "Accessibility Contrast",
-      "SVG Vector Path", "Canvas Drawing Engine", "Design Token Tokens", "Visual Metaphors",
-      "Design Sprint Workshop", "Moodboard Inspiration", "Design Handoff Spec", "Design Token JSON"
-    ],
-    svgGenerator: (title, color, idx) =>
+    tags: ["design", "ui", "ux", "components", "figma", "wireframe"],
+    svgTemplate: (color) =>
       createVectorIllustrationSvg(
         color,
         `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
@@ -118,23 +149,35 @@ const ILLUSTRATION_TOPICS: Array<{
         <rect x="120" y="310" width="560" height="190" rx="24" fill="#161b22" stroke="${color}" stroke-width="3"/>
         <circle cx="190" cy="405" r="50" fill="url(#illGrad)" opacity="0.9" filter="url(#illGlow)"/>
         <rect x="270" y="375" width="220" height="18" rx="9" fill="#ffffff"/>
-        <rect x="270" y="405" width="370" height="12" rx="6" fill="#8b949e" opacity="0.6"/>
-        <rect x="270" y="430" width="240" height="12" rx="6" fill="#8b949e" opacity="0.4"/>`
+        <rect x="270" y="405" width="370" height="12" rx="6" fill="#8b949e" opacity="0.6"/>`
+      ),
+  },
+  {
+    id: "ill-palette-brush",
+    title: "Artist Palette & Vector Bezier",
+    category: "Design & Creative",
+    tags: ["palette", "art", "brush", "drawing", "paint", "vector"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <path d="M220 380C160 380 120 320 120 250C120 160 220 110 380 110C540 110 660 180 660 280C660 360 580 430 480 430C430 430 400 400 370 400C340 400 320 440 280 440C240 440 220 410 220 380Z" fill="#161b22" stroke="${color}" stroke-width="5"/>
+        <circle cx="220" cy="200" r="28" fill="${color}"/>
+        <circle cx="310" cy="170" r="28" fill="#3b82f6"/>
+        <circle cx="410" cy="180" r="28" fill="#a855f7"/>
+        <circle cx="510" cy="220" r="28" fill="#ec4899"/>
+        <circle cx="570" cy="300" r="28" fill="#f59e0b"/>
+        <circle cx="340" cy="340" r="32" fill="#000"/>`
       ),
   },
 
-  // 3. Data & Analytics (150 topics)
+  // ── 3. Data & Analytics ──
   {
+    id: "ill-analytics-chart",
+    title: "Data Visualization & Metrics Graph",
     category: "Data & Analytics",
-    prefix: "analytics",
-    topics: [
-      "Analytics Dashboard", "Data Visualization", "Real-Time Metrics", "User Conversion Funnel",
-      "A/B Testing Experiments", "Retention Cohorts", "Traffic Source Heatmap", "Revenue Growth Chart",
-      "Churn Analysis System", "Event Tracking Log", "Business Intelligence", "Data Warehouse Pipeline",
-      "Predictive Analytics", "Statistical Modeling", "Customer Lifetime Value", "KPI Monitoring Panel",
-      "Performance Benchmark", "Sales Pipeline Graph", "User Behavior Analytics", "Clickthrough Rate Metric"
-    ],
-    svgGenerator: (title, color, idx) =>
+    tags: ["analytics", "chart", "graph", "data", "metrics", "dashboard"],
+    svgTemplate: (color) =>
       createVectorIllustrationSvg(
         color,
         `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
@@ -150,60 +193,28 @@ const ILLUSTRATION_TOPICS: Array<{
       ),
   },
 
-  // 4. Business & Startup (150 topics)
+  // ── 4. Security & Cloud ──
   {
-    category: "Business & Startup",
-    prefix: "startup",
-    topics: [
-      "Startup Rocket Launch", "Product Market Fit", "Venture Pitch Deck", "Growth Hacking Strategy",
-      "Angel Investor Funding", "Bootstrapping Journey", "SaaS Business Model", "Product Roadmap",
-      "Go-To-Market Execution", "Competitive Analysis", "Market Penetration", "Strategic Partnership",
-      "Monetization Strategy", "Customer Acquisition", "Brand Positioning Matrix", "Value Proposition"
-    ],
-    svgGenerator: (title, color, idx) =>
-      createVectorIllustrationSvg(
-        color,
-        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
-        <path d="M400 110C400 110 495 210 495 340C495 400 455 440 400 440C345 440 305 400 305 340C305 210 400 110 400 110Z" fill="url(#illGrad)" filter="url(#illGlow)"/>
-        <circle cx="400" cy="260" r="32" fill="#000"/>
-        <circle cx="400" cy="260" r="16" fill="${color}"/>
-        <path d="M305 340L235 410V450H275L345 400" fill="${color}" opacity="0.7"/>
-        <path d="M495 340L565 410V450H525L455 400" fill="${color}" opacity="0.7"/>
-        <polygon points="360,440 400,520 440,440" fill="#ffbd2e"/>
-        <polygon points="380,440 400,490 420,440" fill="#ff5f56"/>`
-      ),
-  },
-
-  // 5. Security & Cloud (150 topics)
-  {
+    id: "ill-security-shield",
+    title: "Cybersecurity Shield & Safe Vault",
     category: "Security & Cloud",
-    prefix: "security",
-    topics: [
-      "Cybersecurity Defense", "Zero Trust Architecture", "End-to-End Encryption", "Cloud Vault Storage",
-      "Firewall Protection", "Identity Access OAuth", "Penetration Testing", "Security Compliance SSL",
-      "Threat Detection Bot", "Biometric Authentication", "Data Privacy GDPR", "Key Management Vault"
-    ],
-    svgGenerator: (title, color, idx) =>
+    tags: ["security", "shield", "protect", "lock", "cyber", "safe"],
+    svgTemplate: (color) =>
       createVectorIllustrationSvg(
         color,
         `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
-        <path d="M250 360C216 360 190 333 190 300C190 270 210 246 238 241C250 195 292 160 342 160C393 160 436 197 443 246C478 251 506 281 506 318C506 358 473 391 433 391H250" stroke="${color}" stroke-width="8" stroke-linecap="round" fill="none"/>
-        <rect x="330" y="270" width="140" height="160" rx="24" fill="url(#illGrad)" filter="url(#illGlow)"/>
-        <path d="M360 270V230C360 213 373 200 390 200C407 200 420 213 420 230V270" stroke="${color}" stroke-width="8" stroke-linecap="round" fill="none"/>
-        <circle cx="400" cy="335" r="14" fill="#000"/>
-        <rect x="395" y="335" width="10" height="26" rx="5" fill="#000"/>`
+        <path d="M400 100L560 170V300C560 410 490 480 400 520C310 480 240 410 240 300V170L400 100Z" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <path d="M340 300L380 340L470 240" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>`
       ),
   },
 
-  // 6. People & Work (150 topics)
+  // ── 5. People & Work ──
   {
+    id: "ill-team-collaboration",
+    title: "Teamwork & Collaborative Avatars",
     category: "People & Work",
-    prefix: "people",
-    topics: [
-      "Remote Team Collaboration", "Digital Nomad Workspace", "Cross-Functional Squad", "Agile Standup Meeting",
-      "Product Design Review", "Pair Programming Session", "Executive Leadership", "Community Guild Workshop"
-    ],
-    svgGenerator: (title, color, idx) =>
+    tags: ["teamwork", "people", "team", "collaboration", "user", "avatar"],
+    svgTemplate: (color) =>
       createVectorIllustrationSvg(
         color,
         `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
@@ -219,68 +230,135 @@ const ILLUSTRATION_TOPICS: Array<{
       ),
   },
 
-  // 7. AI & Automation (150 topics)
+  // ── 6. Finance & E-Commerce ──
   {
-    category: "AI & Automation",
-    prefix: "ai",
-    topics: [
-      "Generative AI Agent", "LLM Prompt Pipeline", "Autonomous Agent Swarm", "Vector Database Index",
-      "RAG Search Knowledge", "Machine Learning Model", "Computer Vision Scanner", "Natural Language Processing"
-    ],
-    svgGenerator: (title, color, idx) =>
+    id: "ill-ecommerce-card",
+    title: "Credit Card & E-Commerce Checkout",
+    category: "Finance & E-Commerce",
+    tags: ["card", "credit", "money", "pay", "payment", "cart", "shop"],
+    svgTemplate: (color) =>
       createVectorIllustrationSvg(
         color,
         `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
-        <circle cx="400" cy="300" r="160" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="10 10"/>
-        <rect x="280" y="180" width="240" height="240" rx="32" fill="url(#illGrad)" filter="url(#illGlow)"/>
-        <circle cx="350" cy="270" r="20" fill="#000"/>
-        <circle cx="450" cy="270" r="20" fill="#000"/>
-        <rect x="340" y="340" width="120" height="20" rx="10" fill="#000"/>
-        <path d="M400 100V180M400 420V500M200 300H280M520 300H600" stroke="${color}" stroke-width="6" stroke-linecap="round"/>`
+        <rect x="180" y="160" width="440" height="280" rx="24" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <rect x="180" y="220" width="440" height="50" fill="#000" opacity="0.6"/>
+        <rect x="230" y="310" width="80" height="60" rx="12" fill="#ffbd2e"/>
+        <circle cx="530" cy="340" r="24" fill="#ffffff" opacity="0.8"/>
+        <circle cx="560" cy="340" r="24" fill="${color}"/>`
+      ),
+  },
+
+  // ── 7. Search & Discovery ──
+  {
+    id: "ill-search-magnifier",
+    title: "Search Magnifier & Inspection",
+    category: "Tech & Coding",
+    tags: ["search", "find", "magnifier", "glass", "lookup", "inspect"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <circle cx="350" cy="270" r="140" fill="none" stroke="${color}" stroke-width="14"/>
+        <path d="M450 370L580 500" stroke="${color}" stroke-width="24" stroke-linecap="round"/>
+        <circle cx="350" cy="270" r="110" fill="url(#illGrad)" opacity="0.7" filter="url(#illGlow)"/>
+        <rect x="280" y="230" width="140" height="16" rx="8" fill="#ffffff"/>
+        <rect x="280" y="260" width="100" height="12" rx="6" fill="#000" opacity="0.5"/>
+        <rect x="280" y="285" width="120" height="12" rx="6" fill="#000" opacity="0.5"/>`
+      ),
+  },
+
+  // ── 8. Notification & Bell ──
+  {
+    id: "ill-bell-notification",
+    title: "Notification Bell & Alert System",
+    category: "Marketing & Growth",
+    tags: ["bell", "cowbell", "alert", "notification", "ring", "chime"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <path d="M400 120C310 120 270 200 270 320V380L220 430H580L530 380V320C530 200 490 120 400 120Z" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <path d="M350 430C350 460 370 480 400 480C430 480 450 460 450 430" stroke="${color}" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="540" cy="180" r="32" fill="#ff5f56"/>
+        <circle cx="540" cy="180" r="16" fill="#ffffff"/>`
+      ),
+  },
+
+  // ── 9. Idea & Lightbulb ──
+  {
+    id: "ill-idea-lightbulb",
+    title: "Innovation Lightbulb & Creative Rays",
+    category: "Design & Creative",
+    tags: ["idea", "lightbulb", "innovation", "creative", "brainstorm", "glow"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <circle cx="400" cy="250" r="110" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <path d="M340 330H460V390C460 410 440 430 420 430H380C360 430 340 410 340 390V330Z" fill="#30363d"/>
+        <rect x="360" y="440" width="80" height="16" rx="8" fill="${color}"/>
+        <path d="M400 80V120M250 250H210M590 250H550M290 140L320 170M510 140L480 170" stroke="${color}" stroke-width="8" stroke-linecap="round"/>`
+      ),
+  },
+
+  // ── 10. Kanban Workflow ──
+  {
+    id: "ill-kanban-workflow",
+    title: "Kanban Task Board & Workflow",
+    category: "People & Work",
+    tags: ["kanban", "workflow", "tasks", "board", "agile", "scrum", "todo"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <rect x="120" y="100" width="160" height="380" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
+        <rect x="140" y="125" width="120" height="14" rx="7" fill="#ff5f56"/>
+        <rect x="140" y="160" width="120" height="80" rx="12" fill="${color}"/>
+        <rect x="140" y="255" width="120" height="60" rx="12" fill="#21262d"/>
+
+        <rect x="320" y="100" width="160" height="380" rx="16" fill="#161b22" stroke="${color}" stroke-width="3"/>
+        <rect x="340" y="125" width="120" height="14" rx="7" fill="#ffbd2e"/>
+        <rect x="340" y="160" width="120" height="100" rx="12" fill="url(#illGrad)" filter="url(#illGlow)"/>
+
+        <rect x="520" y="100" width="160" height="380" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
+        <rect x="540" y="125" width="120" height="14" rx="7" fill="#27c93f"/>
+        <rect x="540" y="160" width="120" height="70" rx="12" fill="${color}"/>`
+      ),
+  },
+
+  // ── 11. Mail & Inbox ──
+  {
+    id: "ill-mail-envelope",
+    title: "Mail Envelope & Messaging Inbox",
+    category: "Marketing & Growth",
+    tags: ["mail", "email", "envelope", "inbox", "send", "letter", "contact"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <rect x="160" y="160" width="480" height="280" rx="24" fill="#161b22" stroke="${color}" stroke-width="4"/>
+        <path d="M160 180L400 320L640 180" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="400" cy="320" r="40" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <path d="M380 320L395 335L425 305" stroke="#000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`
+      ),
+  },
+
+  // ── 12. Settings & Gear ──
+  {
+    id: "ill-settings-gear",
+    title: "Control Panel & Engine Gear",
+    category: "Tech & Coding",
+    tags: ["settings", "gear", "cog", "config", "engine", "control", "tune"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <circle cx="400" cy="300" r="100" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <circle cx="400" cy="300" r="45" fill="#000"/>
+        <path d="M400 150V200M400 400V450M150 300H200M400 300H450M220 180L260 220M540 380L580 420M580 180L540 220M260 380L220 420" stroke="${color}" stroke-width="20" stroke-linecap="round"/>`
       ),
   },
 ];
-
-// Generate 1,000+ unDraw-style vector SVG illustrations dynamically
-function buildFullIllustrationCatalog(): IllustrationItem[] {
-  const catalog: IllustrationItem[] = [];
-  let count = 0;
-
-  // Generate 1,000+ unique vector illustration variations
-  for (let cycle = 0; cycle < 30; cycle++) {
-    for (const blueprint of ILLUSTRATION_TOPICS) {
-      for (let i = 0; i < blueprint.topics.length; i++) {
-        count++;
-        const topicName = blueprint.topics[i];
-        const title = cycle === 0 ? topicName : `${topicName} (Variation ${cycle + 1})`;
-        const id = `illustration-${blueprint.prefix}-${count}`;
-
-        const tags = Array.from(
-          new Set([
-            ...title.toLowerCase().split(" "),
-            blueprint.category.toLowerCase(),
-            blueprint.prefix,
-            "undraw",
-            "vector",
-            "illustration",
-          ])
-        );
-
-        catalog.push({
-          id,
-          title,
-          category: blueprint.category,
-          tags,
-          svgTemplate: (color: string) => blueprint.svgGenerator(title, color, count),
-        });
-      }
-    }
-  }
-
-  return catalog;
-}
-
-export const ILLUSTRATION_CATALOG: IllustrationItem[] = buildFullIllustrationCatalog();
 
 export function searchIllustrations(
   query: string,
@@ -293,12 +371,8 @@ export function searchIllustrations(
   }
 
   if (query.trim()) {
-    const q = query.toLowerCase();
-    result = result.filter(
-      (item) =>
-        item.title.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q) ||
-        item.tags.some((tag) => tag.toLowerCase().includes(q))
+    result = result.filter((item) =>
+      isFuzzyMatch(query, item.title, item.tags)
     );
   }
 
