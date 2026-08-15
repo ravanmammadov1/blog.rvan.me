@@ -14,6 +14,7 @@ export const ILLUSTRATION_CATEGORIES = [
   "Data & Analytics",
   "Security & Cloud",
   "People & Work",
+  "Marketing & Growth",
 ] as const;
 
 export type IllustrationCategory = typeof ILLUSTRATION_CATEGORIES[number];
@@ -40,7 +41,7 @@ function createVectorIllustrationSvg(
 }
 
 export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
-  // 1. Tech & Coding
+  // ── 1. Tech & Coding ──
   {
     id: "ill-code-development",
     title: "Software Engineering & Code",
@@ -64,7 +65,6 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
         <path d="M530 280L550 300L590 260" stroke="#000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`
       ),
   },
-
   {
     id: "ill-ai-automation",
     title: "AI Neural Network & Automation",
@@ -88,8 +88,33 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
         <circle cx="410" cy="295" r="5" fill="${color}"/>`
       ),
   },
+  {
+    id: "ill-cloud-computing",
+    title: "Cloud Infrastructure & Server Cluster",
+    category: "Tech & Coding",
+    tags: ["cloud", "server", "hosting", "kubernetes", "docker", "devops"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <rect x="180" y="140" width="440" height="80" rx="16" fill="#161b22" stroke="${color}" stroke-width="3"/>
+        <circle cx="220" cy="180" r="8" fill="${color}"/>
+        <circle cx="245" cy="180" r="8" fill="${color}"/>
+        <rect x="280" y="172" width="300" height="16" rx="8" fill="#30363d"/>
 
-  // 2. Design & Creative
+        <rect x="180" y="260" width="440" height="80" rx="16" fill="#161b22" stroke="${color}" stroke-width="3"/>
+        <circle cx="220" cy="300" r="8" fill="${color}"/>
+        <circle cx="245" cy="300" r="8" fill="${color}"/>
+        <rect x="280" y="292" width="220" height="16" rx="8" fill="url(#illGrad)"/>
+
+        <rect x="180" y="380" width="440" height="80" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
+        <circle cx="220" cy="420" r="8" fill="#ffbd2e"/>
+        <circle cx="245" cy="420" r="8" fill="#27c93f"/>
+        <rect x="280" y="412" width="260" height="16" rx="8" fill="#30363d"/>`
+      ),
+  },
+
+  // ── 2. Design & Creative ──
   {
     id: "ill-design-system",
     title: "Design System & Component Architecture",
@@ -118,7 +143,6 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
         <rect x="270" y="420" width="220" height="12" rx="6" fill="#8b949e" opacity="0.4"/>`
       ),
   },
-
   {
     id: "ill-creative-process",
     title: "Creative Strategy & Motion Design",
@@ -139,7 +163,7 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
       ),
   },
 
-  // 3. Data & Analytics
+  // ── 3. Data & Analytics ──
   {
     id: "ill-analytics-dashboard",
     title: "Data Visualization & Metrics Dashboard",
@@ -161,7 +185,7 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
       ),
   },
 
-  // 4. Business & Startup
+  // ── 4. Business & Startup ──
   {
     id: "ill-startup-launch",
     title: "Startup Launch & Product Growth",
@@ -181,7 +205,7 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
       ),
   },
 
-  // 5. Security & Cloud
+  // ── 5. Security & Cloud ──
   {
     id: "ill-security-cloud",
     title: "Cloud Infrastructure & Cybersecurity",
@@ -199,7 +223,7 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
       ),
   },
 
-  // 6. People & Work
+  // ── 6. People & Work ──
   {
     id: "ill-teamwork-collaboration",
     title: "Teamwork & Remote Collaboration",
@@ -218,6 +242,25 @@ export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
         <circle cx="400" cy="280" r="35" fill="#ffffff"/>
         <path d="M340 430C340 380 370 350 400 350C430 350 460 380 460 430V460H340V430Z" fill="#ffffff"/>
         <path d="M280 300L400 350L520 300" stroke="${color}" stroke-width="4" stroke-linecap="round"/>`
+      ),
+  },
+
+  // ── 7. Marketing & Growth ──
+  {
+    id: "ill-digital-marketing",
+    title: "Digital Marketing & Audience Reach",
+    category: "Marketing & Growth",
+    tags: ["marketing", "growth", "reach", "audience", "social", "campaign", "ad"],
+    svgTemplate: (color) =>
+      createVectorIllustrationSvg(
+        color,
+        `<rect width="800" height="600" rx="32" fill="#0d1117" opacity="0.3"/>
+        <path d="M220 380L480 180L540 240L280 440Z" fill="url(#illGrad)" filter="url(#illGlow)"/>
+        <circle cx="540" cy="240" r="60" fill="${color}"/>
+        <path d="M180 360C180 320 220 300 260 320L300 460H220L180 360Z" fill="#161b22" stroke="#30363d" stroke-width="4"/>
+        <circle cx="620" cy="180" r="24" fill="#ffffff"/>
+        <circle cx="660" cy="260" r="16" fill="${color}"/>
+        <circle cx="580" cy="320" r="20" fill="#ffbd2e"/>`
       ),
   },
 ];

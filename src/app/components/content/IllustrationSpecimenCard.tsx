@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { Check, Copy, Code, Download, Image as ImageIcon } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Check, Download, Image as ImageIcon } from "lucide-react";
 import { IllustrationItem } from "../../../lib/illustrationEngine";
-import { Button } from "../ui/Button";
 
 interface IllustrationSpecimenCardProps {
   illustration: IllustrationItem;
@@ -12,26 +11,23 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   illustration,
   accentColor = "#61c5ad",
 }) => {
-  const [copiedType, setCopiedType] = useState<"svg" | "react" | "download-svg" | "download-png" | null>(null);
+  const [downloadedType, setDownloadedType] = useState<"svg" | "png" | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const rawSvgContent = illustration.svgTemplate(accentColor);
 
-  const handleCopyReact = () => {
-    const componentName = illustration.title.replace(/[^a-zA-Z0-9]/g, "");
-    const jsxSnippet = `// unDraw Vector Illustration: ${illustration.title}\nconst ${componentName} = ({ color = "${accentColor}" }) => (\n  ${rawSvgContent}\n);`;
-    navigator.clipboard.writeText(jsxSnippet);
-    setCopiedType("react");
-    setTimeout(() => setCopiedType(null), 2500);
-  };
-
-  const handleCopySvg = () => {
-    navigator.clipboard.writeText(rawSvgContent);
-    setCopiedType("svg");
-    setTimeout(() => setCopiedType(null), 2500);
-  };
-
   const handleDownloadSvg = () => {
-    const blob = new Blob([rawSvgContent], { type: "image/svg+xml;charset=utf-8" });
+    const svgElement = cardRef.current?.querySelector("svg");
+    if (!svgElement) return;
+
+    // Clone SVG and set explicit XML namespaces for valid standalone vector file
+    const clonedSvg = svgElement.cloneNode(true) as SVGElement;
+    clonedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    clonedSvg.setAttribute("width", "800");
+    clonedSvg.setAttribute("height", "600");
+
+    const svgString = new XMLSerializer().serializeToString(clonedSvg);
+    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -41,27 +37,36 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    setCopiedType("download-svg");
-    setTimeout(() => setCopiedType(null), 2500);
+    setDownloadedType("svg");
+    setTimeout(() => setDownloadedType(null), 2500);
   };
 
   const handleDownloadPng = () => {
+    const svgElement = cardRef.current?.querySelector("svg");
+    if (!svgElement) return;
+
+    const clonedSvg = svgElement.cloneNode(true) as SVGElement;
+    clonedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    clonedSvg.setAttribute("width", "1200");
+    clonedSvg.setAttribute("height", "900");
+
+    const svgString = new XMLSerializer().serializeToString(clonedSvg);
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
     const canvas = document.createElement("canvas");
-    const canvasWidth = 1024;
-    const canvasHeight = 768;
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+    const width = 1200;
+    const height = 900;
+    canvas.width = width;
+    canvas.height = height;
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return;
 
     const img = new Image();
-    const svgBlob = new Blob([rawSvgContent], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-
     img.onload = () => {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-      ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(img, 0, 0, width, height);
       URL.revokeObjectURL(url);
 
       const pngUrl = canvas.toDataURL("image/png");
@@ -72,14 +77,17 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       a.click();
       document.body.removeChild(a);
 
-      setCopiedType("download-png");
-      setTimeout(() => setCopiedType(null), 2500);
+      setDownloadedType("png");
+      setTimeout(() => setDownloadedType(null), 2500);
     };
     img.src = url;
   };
 
   return (
-    <article className="group relative rounded-3xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-[#61c5ad]/40 hover:bg-white/[0.08] flex flex-col justify-between overflow-hidden">
+    <article
+      ref={cardRef}
+      className="group relative rounded-3xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-[#61c5ad]/40 hover:bg-white/[0.08] flex flex-col justify-between overflow-hidden"
+    >
       <div>
         {/* Top Header & Category Badge */}
         <div className="flex items-center justify-between gap-2 mb-4">
@@ -108,46 +116,32 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
         </div>
       </div>
 
-      {/* Action Toolbar */}
-      <div className="pt-4 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <Button
-          onClick={handleCopyReact}
-          variant="outline"
-          size="sm"
-          className="text-[10.5px] px-2 py-2"
-          icon={copiedType === "react" ? <Check size={12} className="text-emerald-400" /> : <Code size={12} />}
-          iconPosition="left"
-        >
-          {copiedType === "react" ? "REACT!" : "REACT"}
-        </Button>
-
-        <Button
-          onClick={handleCopySvg}
-          variant="secondary"
-          size="sm"
-          className="text-[10.5px] px-2 py-2"
-          icon={copiedType === "svg" ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-          iconPosition="left"
-        >
-          {copiedType === "svg" ? "SVG!" : "SVG"}
-        </Button>
-
+      {/* Simplified Download Actions Footer */}
+      <div className="pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
         <button
           onClick={handleDownloadSvg}
-          className="flex items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-mono font-bold text-muted-foreground hover:text-white hover:border-[#61c5ad]/40 transition-all cursor-pointer"
+          className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
           title="Download SVG vector file"
         >
-          {copiedType === "download-svg" ? <Check size={12} className="text-emerald-400" /> : <Download size={12} />}
-          <span>.SVG</span>
+          {downloadedType === "svg" ? (
+            <Check size={14} className="text-emerald-400" />
+          ) : (
+            <Download size={14} className="text-[#61c5ad]" />
+          )}
+          <span>DOWNLOAD .SVG</span>
         </button>
 
         <button
           onClick={handleDownloadPng}
-          className="flex items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-mono font-bold text-muted-foreground hover:text-white hover:border-[#61c5ad]/40 transition-all cursor-pointer"
-          title="Download high-res PNG file"
+          className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
+          title="Download high-res PNG image"
         >
-          {copiedType === "download-png" ? <Check size={12} className="text-emerald-400" /> : <ImageIcon size={12} />}
-          <span>.PNG</span>
+          {downloadedType === "png" ? (
+            <Check size={14} className="text-emerald-400" />
+          ) : (
+            <ImageIcon size={14} className="text-primary" />
+          )}
+          <span>DOWNLOAD .PNG</span>
         </button>
       </div>
     </article>
