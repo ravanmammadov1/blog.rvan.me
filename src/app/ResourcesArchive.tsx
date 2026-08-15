@@ -1,26 +1,18 @@
 import { useEffect, useState, useMemo, useDeferredValue } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  Type,
-  Sliders,
-  ExternalLink,
-  GitFork,
-  Star,
-  Download,
-  ArrowUpRight,
-} from "lucide-react";
+import { Type, Sliders, Sparkles, Layers } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { fetchLiveFontCatalog, FontItem } from "../lib/fontEngine";
-import { fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../lib/resourceEngine";
-import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
+import { searchLucideIcons, ICON_CATEGORIES, IconCategory } from "../lib/iconEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
+import { IconSpecimenCard } from "./components/content/IconSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { Button } from "./components/ui/Button";
@@ -36,40 +28,39 @@ const fadeUp = {
   }),
 };
 
+export type ResourceCategoryKey = "fonts" | "icons";
+
 export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: string }> = {
   fonts: { label: "Fonts", icon: "🔤" },
-  githubRepos: { label: "GitHub Repositories", icon: "🐙" },
-  tools: { label: "Tools", icon: "🛠️" },
-  assets: { label: "Assets", icon: "🎁" },
-  learning: { label: "Learning", icon: "📚" },
-  inspiration: { label: "Inspiration", icon: "✨" },
+  icons: { label: "Icons", icon: "🎨" },
 };
 
 export default function ResourcesArchive() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
-  const [unifiedItems, setUnifiedItems] = useState<SharedResourceItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t } = useLanguage();
 
-  // Interactive Font Specimen controls
+  // Font Specimen Interactive Controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
   const [fontSizePx, setFontSizePx] = useState(28);
   const [fontCategorySubfilter, setFontCategorySubfilter] = useState("all");
-  const [visibleFontLimit, setVisibleFontLimit] = useState(10);
+  const [visibleFontLimit, setVisibleFontLimit] = useState(12);
 
-  const activeCategory = (searchParams.get("category") as ResourceCategoryKey) || "fonts";
+  // Icon Specimen Interactive Controls
+  const [iconCategorySubfilter, setIconCategorySubfilter] = useState<IconCategory>("All");
+  const [iconSize, setIconSize] = useState(28);
+  const [strokeWidth, setStrokeWidth] = useState(2);
+  const [visibleIconLimit, setVisibleIconLimit] = useState(16);
+
+  const activeCategory = (searchParams.get("category") as ResourceCategoryKey) === "icons" ? "icons" : "fonts";
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
 
   const categoryLabels: Record<ResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
-    githubRepos: t("githubRepos", "GitHub Repositories"),
-    tools: t("tools", "Tools"),
-    assets: t("assets", "Assets"),
-    learning: t("learning", "Learning"),
-    inspiration: t("inspiration", "Inspiration"),
+    icons: t("icons", "Icons"),
   };
 
   useEffect(() => {
@@ -79,12 +70,10 @@ export default function ResourcesArchive() {
       if (data) setSiteSettings(data);
     });
 
-    fetchLiveFontCatalog().then((items) => {
-      if (Array.isArray(items)) setFontCatalog(items);
-    });
-
-    fetchUnifiedResources()
-      .then((items) => setUnifiedItems(items || []))
+    fetchLiveFontCatalog()
+      .then((items) => {
+        if (Array.isArray(items)) setFontCatalog(items);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -101,35 +90,6 @@ export default function ResourcesArchive() {
   const handleSearchChange = (newQuery: string) => {
     setParam("q", newQuery);
   };
-
-  // Filtered Unified Non-Font Resources
-  const filteredCategoryItems = useMemo(() => {
-    let list = unifiedItems.filter((item) => item.category === activeCategory);
-
-    if (deferredSearch.trim()) {
-      const q = deferredSearch.toLowerCase();
-      list = list.filter(
-        (item) =>
-          item.title.toLowerCase().includes(q) ||
-          item.description.toLowerCase().includes(q) ||
-          item.source.toLowerCase().includes(q)
-      );
-    }
-
-    return list;
-  }, [unifiedItems, activeCategory, deferredSearch]);
-
-  const {
-    visibleItems: visibleCategoryItems,
-    hasMore: hasMoreCategoryItems,
-    remainingCount: remainingCategoryCount,
-    loadMore: loadMoreCategoryItems,
-    isLoadingMore: isLoadingMoreCategory,
-  } = useProgressiveRendering(filteredCategoryItems, {
-    initialBatchSize: 9,
-    stepBatchSize: 6,
-    resetDependencies: [activeCategory, deferredSearch],
-  });
 
   // Filtered Font Catalog
   const filteredFonts = useMemo(() => {
@@ -160,11 +120,16 @@ export default function ResourcesArchive() {
     return counts;
   }, [fontCatalog]);
 
+  // Filtered Lucide Icons Catalog
+  const filteredIcons = useMemo(() => {
+    return searchLucideIcons(deferredSearch, iconCategorySubfilter);
+  }, [deferredSearch, iconCategorySubfilter]);
+
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${t("resourcesArchiveTitle", "Creative Resources & Open-Source Directory")} — Rvan.me`}
-        description={t("resourcesArchiveSubtitle", "Curated open-source fonts, developer repositories, design utilities, asset kits, and learning roadmaps.")}
+        title={`${t("resourcesArchiveTitle", "Open-Source Fonts & Vector Icons Directory")} — Rvan.me`}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and SVG/React vector icon catalog.")}
         url="https://www.rvan.me/resources"
       />
 
@@ -181,15 +146,15 @@ export default function ResourcesArchive() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Unified Page Hero */}
+      {/* Page Hero */}
       <PageHero
         title={t("resourcesHeadingMain", "Creative")}
         accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"
-        description={t("resourcesArchiveSubtitle", "Curated open-source fonts, developer repositories, design utilities, asset kits, and learning roadmaps.")}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and SVG/React vector icon catalog.")}
       />
 
-      {/* Master Page Filter Bar & Search */}
+      {/* Primary Category Filter Bar (FONTS | ICONS) */}
       <PageFilterBar
         categories={Object.entries(CATEGORY_MAP).map(([key, config]) => ({
           key,
@@ -202,11 +167,13 @@ export default function ResourcesArchive() {
         }}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
-        searchPlaceholder={t("searchPlaceholder", "Search by title, keyword, or tag...")}
+        searchPlaceholder={activeCategory === "fonts" ? "Search fonts by family or designer..." : "Search icons by name, category, or tag..."}
         searchId="resources-search"
       />
 
-      {/* Category Content */}
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          1. FONTS CATALOG SECTION
+      ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "fonts" ? (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
@@ -294,12 +261,13 @@ export default function ResourcesArchive() {
                 {/* Load More Button */}
                 {visibleFontLimit < filteredFonts.length && (
                   <div className="mt-10 text-center">
-                    <button
+                    <Button
                       onClick={() => setVisibleFontLimit((prev) => prev + 16)}
-                      className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-7 py-3.5 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm"
+                      variant="outline"
+                      size="md"
                     >
-                      {t("loadMore", "LOAD MORE FONTS")} ({filteredFonts.length - visibleFontLimit} {t("remaining", "REMAINING")})
-                    </button>
+                      LOAD MORE FONTS ({filteredFonts.length - visibleFontLimit} REMAINING)
+                    </Button>
                   </div>
                 )}
               </>
@@ -307,89 +275,101 @@ export default function ResourcesArchive() {
           </div>
         </section>
       ) : (
-        /* Unified Category Section */
+        /* ─────────────────────────────────────────────────────────────────────────────
+            2. ICONS CATALOG SECTION (Lucide Vectors & React Snippets)
+        ───────────────────────────────────────────────────────────────────────────── */
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {loading ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
-                ))}
+            {/* Icon Toolbar Controls (Size & Stroke Width Sliders) */}
+            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
+              <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
+                <Sparkles size={16} />
+                <span>LUCIDE VECTOR ICON SYSTEM</span>
               </div>
-            ) : filteredCategoryItems.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs font-medium">{t("noFeaturedItems", "No items found matching your filter or search.")}</p>
+
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase">
+                  <Sliders size={14} className="text-primary" />
+                  <span>Size: {iconSize}px</span>
+                  <input
+                    type="range"
+                    min="16"
+                    max="56"
+                    value={iconSize}
+                    onChange={(e) => setIconSize(Number(e.target.value))}
+                    className="h-1.5 w-24 cursor-pointer accent-primary bg-white/10 rounded-lg"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase">
+                  <Layers size={14} className="text-primary" />
+                  <span>Stroke: {strokeWidth}px</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="3"
+                    step="0.5"
+                    value={strokeWidth}
+                    onChange={(e) => setStrokeWidth(Number(e.target.value))}
+                    className="h-1.5 w-20 cursor-pointer accent-primary bg-white/10 rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Icon Category Subfilter Chips */}
+            <div className="mb-8 flex flex-wrap gap-2">
+              {ICON_CATEGORIES.map((cat) => (
                 <button
-                  onClick={() => handleSearchChange("")}
+                  key={cat}
+                  onClick={() => setIconCategorySubfilter(cat)}
+                  className={`rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider transition-all mono ${
+                    iconCategorySubfilter === cat
+                      ? "bg-primary text-black"
+                      : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Icon Specimen Grid */}
+            {filteredIcons.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
+                <p className="text-muted-foreground text-xs">No vector icons found matching your search filter.</p>
+                <button
+                  onClick={() => {
+                    setIconCategorySubfilter("All");
+                    handleSearchChange("");
+                  }}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
                 >
-                  {t("resetFilters", "RESET SEARCH")}
+                  RESET FILTERS
                 </button>
               </div>
             ) : (
               <>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {visibleCategoryItems.map((item) => (
-                    <motion.article
-                      key={item.id}
-                      variants={fadeUp}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
-                      className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <span className="text-xs font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
-                            {item.type}
-                          </span>
-                          {item.starsCount && (
-                            <span className="text-xs font-bold text-amber-400 flex items-center gap-1 mono">
-                              <Star size={12} className="fill-amber-400" /> {item.starsCount.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-
-                        <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                          {item.title}
-                        </h3>
-
-                        <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-4">
-                          {item.description}
-                        </p>
-                      </div>
-
-                      <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
-                        <span className="text-muted-foreground">{item.source} {item.language ? `· ${item.language}` : ""}</span>
-                        {item.url.startsWith("/") ? (
-                          <Link to={getLocalizedPath(item.url)} className="text-primary hover:text-white flex items-center gap-1">
-                            {t("viewDetails", "VIEW")} <ArrowUpRight size={13} />
-                          </Link>
-                        ) : (
-                          <a
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:text-white flex items-center gap-1"
-                          >
-                            {t("visit", "VISIT")} <ExternalLink size={13} />
-                          </a>
-                        )}
-                      </div>
-                    </motion.article>
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  {filteredIcons.slice(0, visibleIconLimit).map((iconItem) => (
+                    <IconSpecimenCard
+                      key={iconItem.id}
+                      iconItem={iconItem}
+                      iconSize={iconSize}
+                      strokeWidth={strokeWidth}
+                    />
                   ))}
                 </div>
 
-                {/* Load More Pagination */}
-                {hasMoreCategoryItems && (
-                  <div className="mt-12 text-center">
+                {/* Load More Icons Button */}
+                {visibleIconLimit < filteredIcons.length && (
+                  <div className="mt-10 text-center">
                     <Button
-                      onClick={loadMoreCategoryItems}
-                      disabled={isLoadingMoreCategory}
+                      onClick={() => setVisibleIconLimit((prev) => prev + 24)}
                       variant="outline"
-                      size="lg"
+                      size="md"
                     >
-                      {isLoadingMoreCategory ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMore", "LOAD MORE ITEMS")} (${remainingCategoryCount} ${t("remaining", "REMAINING")})`}
+                      LOAD MORE ICONS ({filteredIcons.length - visibleIconLimit} REMAINING)
                     </Button>
                   </div>
                 )}

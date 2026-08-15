@@ -113,11 +113,12 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Resources Archive
     resourcesArchiveEyebrow: "OPEN-SOURCE VAULT & DEVELOPER TOOLKIT",
-    resourcesArchiveTitle: "Creative Resources & Open-Source Directory",
-    resourcesArchiveSubtitle: "Curated open-source fonts, developer repositories, design utilities, asset kits, and learning roadmaps.",
+    resourcesArchiveTitle: "Open-Source Fonts & Vector Icons Directory",
+    resourcesArchiveSubtitle: "Curated open-source Google Font families and SVG/React vector icon catalog.",
     resourcesHeadingMain: "Creative",
     resourcesHeadingAccent: "Resources.",
     fonts: "Fonts",
+    icons: "Icons",
     githubRepos: "GitHub Repositories",
     tools: "Tools",
     assets: "Assets",
@@ -374,6 +375,7 @@ export const translations: Record<Language, Record<string, string>> = {
     resourcesHeadingMain: "Yaradıcı",
     resourcesHeadingAccent: "resurslar.",
     fonts: "Şriftlər",
+    icons: "İkonlar",
     githubRepos: "GitHub repozitoriyaları",
     tools: "Alətlər",
     assets: "Vizual dəstlər",

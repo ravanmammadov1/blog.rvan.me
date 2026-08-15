@@ -1,9 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ExternalLink, Star, Type, GitBranch, Wrench, Package, BookOpen, Sparkles } from "lucide-react";
+import { ArrowUpRight, Type, Sparkles, Code, Copy, Check } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
+import { LUCIDE_ICON_CATALOG, IconItem } from "../../../lib/iconEngine";
+import { IconSpecimenCard } from "../content/IconSpecimenCard";
+import { FontSpecimenCard } from "../content/FontSpecimenCard";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Button } from "../ui/Button";
 
@@ -20,20 +23,12 @@ const fadeUp = {
 
 const CATEGORY_ICONS: Record<ResourceCategoryKey, React.ReactNode> = {
   fonts: <Type size={14} />,
-  githubRepos: <GitBranch size={14} />,
-  tools: <Wrench size={14} />,
-  assets: <Package size={14} />,
-  learning: <BookOpen size={14} />,
-  inspiration: <Sparkles size={14} />,
+  icons: <Sparkles size={14} />,
 };
 
 export const HOME_RESOURCE_CATEGORIES: Record<ResourceCategoryKey, { label: string }> = {
   fonts: { label: "Fonts" },
-  githubRepos: { label: "GitHub Repositories" },
-  tools: { label: "Tools" },
-  assets: { label: "Assets" },
-  learning: { label: "Learning" },
-  inspiration: { label: "Inspiration" },
+  icons: { label: "Icons" },
 };
 
 export default function ResourcesSection() {
@@ -44,15 +39,10 @@ export default function ResourcesSection() {
 
   const categoryLabels: Record<ResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
-    githubRepos: t("githubRepos", "GitHub Repositories"),
-    tools: t("tools", "Tools"),
-    assets: t("assets", "Assets"),
-    learning: t("learning", "Learning"),
-    inspiration: t("inspiration", "Inspiration"),
+    icons: t("icons", "Icons"),
   };
 
   useEffect(() => {
-    // 1. Instant 0ms initial render from lightweight showcase catalog
     fetchHomeShowcaseResources().then((items) => {
       if (items && items.length > 0) {
         setResources(items);
@@ -60,7 +50,6 @@ export default function ResourcesSection() {
       }
     });
 
-    // 2. Parallel background revalidation with full unified resources
     fetchUnifiedResources()
       .then((items) => {
         if (items && items.length > 0) {
@@ -71,9 +60,13 @@ export default function ResourcesSection() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filteredResources = useMemo(() => {
-    return resources.filter((r) => r.category === activeCategory).slice(0, 6);
-  }, [resources, activeCategory]);
+  const showcaseFonts = useMemo(() => {
+    return resources.filter((r) => r.category === "fonts").slice(0, 4);
+  }, [resources]);
+
+  const showcaseIcons = useMemo(() => {
+    return LUCIDE_ICON_CATALOG.slice(0, 8);
+  }, []);
 
   return (
     <section id="resources" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
@@ -98,100 +91,83 @@ export default function ResourcesSection() {
               {t("sectionResourcesTitle", "Knowledge & Assets.")}
             </h2>
           </div>
-          <Link
+
+          <Button
             to={getLocalizedPath(`/resources?category=${activeCategory}`)}
-            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-[#61c5ad] mono md:flex"
+            variant="secondary"
+            size="md"
+            icon={<ArrowUpRight size={14} className="text-primary" />}
           >
-            {t("exploreAll", "EXPLORE ALL")} {categoryLabels[activeCategory]}
-            <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
+            {t("exploreAllResources", "BROWSE ALL RESOURCES")}
+          </Button>
         </motion.div>
 
-        {/* Category Tabs (No Emojis - Clean Lucide SVG Icons) */}
-        <div className="mb-12 flex flex-wrap gap-2.5">
-          {Object.entries(HOME_RESOURCE_CATEGORIES).map(([key]) => {
-            const catKey = key as ResourceCategoryKey;
+        {/* Category Tabs: FONTS | ICONS */}
+        <div className="mb-10 flex flex-wrap gap-2">
+          {(Object.keys(HOME_RESOURCE_CATEGORIES) as ResourceCategoryKey[]).map((catKey) => {
             const isActive = activeCategory === catKey;
             return (
               <Button
-                key={key}
-                variant="filter"
-                size="sm"
-                active={isActive}
+                key={catKey}
                 onClick={() => setActiveCategory(catKey)}
-                icon={<span className={isActive ? "text-white" : "text-[#61c5ad]"}>{CATEGORY_ICONS[catKey]}</span>}
+                variant="filter"
+                active={isActive}
+                size="sm"
+                icon={CATEGORY_ICONS[catKey]}
                 iconPosition="left"
               >
-                {categoryLabels[catKey]}
+                {categoryLabels[catKey] || HOME_RESOURCE_CATEGORIES[catKey].label}
               </Button>
             );
           })}
         </div>
 
-        {/* Resource Cards Grid */}
-        {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="h-44 rounded-2xl border border-white/10 bg-white/5 animate-pulse glass" />
+        {/* Resource Cards Display */}
+        {activeCategory === "fonts" ? (
+          <div className="grid gap-6 sm:grid-cols-2">
+            {showcaseFonts.map((item, idx) => (
+              <FontSpecimenCard
+                key={item.id}
+                font={{
+                  family: item.title,
+                  category: item.type || "Sans-Serif",
+                  designer: item.authorName || "Google Fonts",
+                  foundry: item.source,
+                  license: item.license || "SIL Open Font License",
+                  description: item.description,
+                  url: item.url,
+                }}
+                previewText="Design systems engineered for precision & elegance."
+                fontSizePx={26}
+                idx={idx}
+                fadeUpVariants={fadeUp}
+              />
             ))}
           </div>
-        ) : filteredResources.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center glass">
-            <p className="text-xs text-muted-foreground">{t("noFeaturedItems", "No featured items available for this category.")}</p>
-          </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredResources.map((item, idx) => (
-              <motion.article
-                key={item.id || idx}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-[#61c5ad]/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between shadow-sm"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[10px] font-bold text-[#61c5ad] border border-[#61c5ad]/35 bg-gradient-to-r from-[#61c5ad]/12 via-[#426fba]/12 to-[#984f9f]/12 px-3 py-1 rounded-full mono uppercase backdrop-blur-md shadow-[0_0_12px_rgba(97,197,173,0.12)]">
-                      {item.type}
-                    </span>
-                    {item.starsCount && (
-                      <span className="text-xs font-bold text-amber-400 flex items-center gap-1 mono">
-                        <Star size={12} className="fill-amber-400" /> {item.starsCount.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-lg font-bold text-foreground group-hover:text-[#61c5ad] transition-colors mb-2">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium line-clamp-3 mb-4">
-                    {item.description}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
-                  <span className="text-muted-foreground">{item.source}</span>
-                  {item.url.startsWith("/") ? (
-                    <Link to={getLocalizedPath(item.url)} className="text-[#61c5ad] hover:text-white flex items-center gap-1">
-                      {t("viewDetails", "VIEW DETAILS")} <ArrowUpRight size={13} />
-                    </Link>
-                  ) : (
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#61c5ad] hover:text-white flex items-center gap-1"
-                    >
-                      {t("visit", "VISIT")} <ExternalLink size={13} />
-                    </a>
-                  )}
-                </div>
-              </motion.article>
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {showcaseIcons.map((iconItem) => (
+              <IconSpecimenCard
+                key={iconItem.id}
+                iconItem={iconItem}
+                iconSize={28}
+                strokeWidth={2}
+              />
             ))}
           </div>
         )}
+
+        {/* Bottom CTA Button */}
+        <div className="mt-12 text-center">
+          <Button
+            to={getLocalizedPath(`/resources?category=${activeCategory}`)}
+            variant="primary"
+            size="lg"
+            icon={<ArrowUpRight size={14} />}
+          >
+            EXPLORE FULL {activeCategory.toUpperCase()} ARCHIVE
+          </Button>
+        </div>
       </div>
     </section>
   );
