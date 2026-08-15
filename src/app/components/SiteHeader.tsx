@@ -11,31 +11,13 @@ import { useTheme } from "../../context/ThemeContext";
 
 const EASE = "easeInOut";
 
-function ThemeToggle() {
-  const { theme, toggleTheme, isDark } = useTheme();
-
-  return (
-    <button
-      onClick={toggleTheme}
-      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
-      title={`Switch to ${isDark ? "light" : "dark"} theme`}
-      className="grid h-[34px] w-[34px] place-items-center rounded-full border border-border bg-card text-foreground hover:border-primary/60 hover:text-primary transition-all duration-300 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center shadow-sm"
-    >
-      {isDark ? (
-        <Sun className="h-4 w-4 text-amber-300 transition-transform duration-300 hover:rotate-45" />
-      ) : (
-        <Moon className="h-4 w-4 text-indigo-500 transition-transform duration-300 hover:-rotate-12" />
-      )}
-    </button>
-  );
-}
-
 function UserAuthMenu() {
   const { user, loading, signOut } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -63,40 +45,7 @@ function UserAuthMenu() {
     return <div className="h-[38px] w-24 rounded-full bg-white/5 border border-white/10 animate-pulse shrink-0 self-center" />;
   }
 
-  if (!user) {
-    return (
-      <>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="inline-flex h-[38px] items-center gap-2 rounded-full border border-white/20 px-4 text-[10.5px] font-medium tracking-[.08em] uppercase transition-all duration-300 hover:border-primary/60 hover:bg-primary hover:text-black glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 self-center"
-        >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
-            <path
-              fill="currentColor"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-            />
-            <path
-              fill="currentColor"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-            />
-            <path
-              fill="currentColor"
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-            />
-            <path
-              fill="currentColor"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-            />
-          </svg>
-          <span>{t("signIn", "SIGN IN")}</span>
-        </button>
-
-        <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
-      </>
-    );
-  }
-
-  const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+  const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
     <div ref={menuRef} className="relative inline-block text-left shrink-0 self-center user-auth-menu">
@@ -104,19 +53,25 @@ function UserAuthMenu() {
         onClick={() => setDropdownOpen((prev) => !prev)}
         className="flex h-[38px] items-center gap-2.5 rounded-full border border-white/20 bg-white/5 pl-1.5 pr-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center"
       >
-        {user.photoURL ? (
-          <img
-            src={user.photoURL}
-            alt={user.displayName || "User"}
-            className="h-6 w-6 rounded-full object-cover border border-white/20 shrink-0"
-          />
+        {user ? (
+          user.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt={user.displayName || "User"}
+              className="h-6 w-6 rounded-full object-cover border border-white/20 shrink-0"
+            />
+          ) : (
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-black font-bold text-xs shrink-0">
+              {userInitial}
+            </span>
+          )
         ) : (
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-black font-bold text-xs shrink-0">
-            {userInitial}
+          <span className="grid h-6 w-6 place-items-center rounded-full border border-white/20 bg-white/10 text-primary shrink-0">
+            <UserIcon size={13} />
           </span>
         )}
         <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[120px] text-foreground">
-          {user.displayName || user.email?.split("@")[0]}
+          {user ? (user.displayName || user.email?.split("@")[0]) : t("profile", "PROFILE")}
         </span>
         <ChevronDown size={14} className={`transition-transform duration-200 shrink-0 ${dropdownOpen ? "rotate-180" : ""}`} />
       </button>
@@ -127,70 +82,149 @@ function UserAuthMenu() {
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
-            transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-white/15 bg-[#09090b]/95 p-3.5 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] z-50 pointer-events-auto"
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-white/15 bg-[#09090b]/95 p-4 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-50 pointer-events-auto"
           >
-            <div className="px-3 py-2 border-b border-white/10 mb-2">
-              <p className="text-xs font-bold text-foreground truncate">{user.displayName || "User"}</p>
-              <p className="text-[10px] text-muted-foreground truncate mono mt-0.5">{user.email}</p>
+            {/* 1. PROFILE SECTION */}
+            <div className="pb-3.5 border-b border-white/10">
+              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono mb-2.5">
+                PROFILE
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                {user ? (
+                  user.photoURL ? (
+                    <img src={user.photoURL} alt={user.displayName || "User"} className="h-9 w-9 rounded-full object-cover border border-white/20 shrink-0" />
+                  ) : (
+                    <div className="h-9 w-9 rounded-full bg-primary text-black font-bold flex items-center justify-center text-sm shrink-0">
+                      {userInitial}
+                    </div>
+                  )
+                ) : (
+                  <div className="h-9 w-9 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-primary shrink-0">
+                    <UserIcon size={16} />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-white truncate">
+                    {user ? (user.displayName || "User") : "Ravan Mammadov"}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground truncate mono mt-0.5">
+                    {user ? user.email : "mammadovravan1@gmail.com"}
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                to={getLocalizedPath("/profile")}
+                onClick={() => setDropdownOpen(false)}
+                className="w-full flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-3 py-2.5 text-xs font-medium text-foreground hover:bg-white/10 hover:border-primary/50 transition-all text-left mono"
+              >
+                <span className="flex items-center gap-2">
+                  <UserIcon size={14} className="text-primary" /> {t("viewProfile", "View Profile")}
+                </span>
+                <ArrowUpRight size={13} className="text-muted-foreground" />
+              </Link>
             </div>
 
-            <Link
-              to={getLocalizedPath("/profile")}
-              onClick={() => setDropdownOpen(false)}
-              className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-foreground/90 hover:bg-white/10 hover:text-white transition-colors text-left mono"
-            >
-              <UserIcon size={14} className="text-primary" /> {t("viewProfile", "View Profile")}
-            </Link>
+            {/* 2. PREFERENCES SECTION */}
+            <div className="py-3.5 border-b border-white/10 space-y-3.5">
+              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono">
+                PREFERENCES
+              </div>
 
-            <button
-              onClick={() => {
-                setDropdownOpen(false);
-                signOut();
-              }}
-              className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors text-left mono mt-1"
-            >
-              <LogOut size={14} /> {t("signOut", "Sign out")}
-            </button>
+              {/* Appearance: Dark / Light */}
+              <div>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono mb-1.5">
+                  <span>Appearance</span>
+                  <span className="text-[10px] text-primary font-bold uppercase mono">{theme}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
+                  <button
+                    onClick={() => setTheme("dark")}
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
+                      theme === "dark"
+                        ? "bg-primary text-black shadow-sm"
+                        : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    <Moon size={13} /> Dark
+                  </button>
+                  <button
+                    onClick={() => setTheme("light")}
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
+                      theme === "light"
+                        ? "bg-primary text-black shadow-sm"
+                        : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    <Sun size={13} /> Light
+                  </button>
+                </div>
+              </div>
+
+              {/* Language: English / Azərbaycan dili */}
+              <div>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono mb-1.5">
+                  <span>Language</span>
+                  <span className="text-[10px] text-primary font-bold uppercase mono">{language === "az" ? "AZ" : "EN"}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
+                  <button
+                    onClick={() => switchLanguage("en")}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
+                      language === "en"
+                        ? "bg-primary text-black shadow-sm"
+                        : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => switchLanguage("az")}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
+                      language === "az"
+                        ? "bg-primary text-black shadow-sm"
+                        : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    Azərbaycan
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. ACCOUNT SECTION */}
+            <div className="pt-3.5">
+              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono mb-2">
+                ACCOUNT
+              </div>
+              {user ? (
+                <button
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    signOut();
+                  }}
+                  className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors text-left mono"
+                >
+                  <LogOut size={14} /> {t("signOut", "Sign out")}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    setModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/50 bg-primary/10 px-3 py-2.5 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-black transition-all"
+                >
+                  {t("signIn", "SIGN IN WITH GOOGLE")}
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
 
-function LanguageSwitcher() {
-  const { language, switchLanguage } = useLanguage();
-  return (
-    <div className="flex items-center rounded-full border border-border bg-card p-0.5 text-[10px] font-bold mono tracking-wider text-foreground glass-sm shrink-0 self-center shadow-sm">
-      <button
-        onClick={() => switchLanguage("en")}
-        className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
-          language === "en" ? "text-white font-extrabold shadow-md" : "text-muted-foreground hover:text-foreground"
-        }`}
-        style={
-          language === "en"
-            ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-            : {}
-        }
-        aria-label="Switch to English"
-      >
-        EN
-      </button>
-      <button
-        onClick={() => switchLanguage("az")}
-        className={`px-2.5 py-1 rounded-full transition-all duration-200 ${
-          language === "az" ? "text-white font-extrabold shadow-md" : "text-muted-foreground hover:text-foreground"
-        }`}
-        style={
-          language === "az"
-            ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-            : {}
-        }
-        aria-label="Azərbaycan dilinə keçin"
-      >
-        AZ
-      </button>
+      <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
@@ -311,13 +345,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
  
           {/* Action Buttons & Authentication */}
           <div className="flex items-center gap-3 shrink-0 self-center">
-            {/* Theme Toggle (Sun / Moon) */}
-            <ThemeToggle />
-
-            {/* Language Switcher (EN | AZ) */}
-            <LanguageSwitcher />
-
-            {/* Auth Button / Profile Dropdown */}
+            {/* Integrated Profile & Preferences Dropdown */}
             <UserAuthMenu />
 
             {/* Mobile Menu Toggle */}

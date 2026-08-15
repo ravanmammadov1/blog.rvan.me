@@ -116,6 +116,7 @@ function AppContent() {
 
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
+import { ExperienceProvider } from "../context/ExperienceContext";
 
 export default function App() {
   return (
@@ -123,7 +124,9 @@ export default function App() {
       <CookieConsentProvider>
         <ThemeProvider>
           <LanguageProvider>
-            <AppContent />
+            <ExperienceProvider>
+              <AppContent />
+            </ExperienceProvider>
           </LanguageProvider>
         </ThemeProvider>
       </CookieConsentProvider>

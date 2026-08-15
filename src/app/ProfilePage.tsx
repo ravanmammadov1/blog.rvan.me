@@ -10,7 +10,12 @@ import {
   Compass,
   Cpu,
   Layers,
-  Globe
+  Globe,
+  User as UserIcon,
+  Sun,
+  Moon,
+  Zap,
+  LogOut
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
@@ -23,6 +28,11 @@ import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import { PORTFOLIO_FALLBACK_PROJECTS } from "../lib/portfolioFallback";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { useAuth } from "../hooks/useAuth";
+import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../lib/i18n/LanguageContext";
+import { useExperience } from "../context/ExperienceContext";
+import AuthModal from "./components/AuthModal";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -113,6 +123,11 @@ const realExperience = [
 
 export default function ProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const { language, switchLanguage, t } = useLanguage();
+  const { settings, toggleAnimations, toggleCursorEffects, toggleBackgroundEffects } = useExperience();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -132,14 +147,16 @@ export default function ProfilePage() {
     behanceCoverUrl: project.image,
   }));
 
+  const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+
   return (
     <main
       className="min-h-screen bg-background text-foreground"
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Founder & Creative Director"
-        description="Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."
+        title="Settings & Profile — Ravan Mammadov"
+        description="User control panel, preferences, interface appearance, language settings, and founder profile of Ravan Mammadov."
         url="https://www.rvan.me/profile"
       />
 
@@ -157,9 +174,213 @@ export default function ProfilePage() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
+          0. SETTINGS & PREFERENCES CONTROL PANEL
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="px-6 pt-28 pb-12 md:px-10 md:pt-36 relative z-10">
+        <div className="mx-auto max-w-[1600px]">
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" className="mb-10">
+            <span className="text-xs font-bold tracking-[0.2em] text-primary mono uppercase flex items-center gap-2">
+              <Sparkles size={14} /> USER CONTROL PANEL
+            </span>
+            <h1 className="mt-3 text-4xl font-extrabold tracking-[-.05em] md:text-6xl text-foreground">
+              SETTINGS
+            </h1>
+            <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-2xl font-medium leading-relaxed">
+              Manage your user profile, interface theme, language preferences, interactive experience, and account controls.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* 1. PROFILE CARD */}
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
+                  <UserIcon size={14} /> PROFILE
+                </div>
+                <div className="flex items-center gap-4 mb-4">
+                  {user?.photoURL ? (
+                    <img src={user.photoURL} alt={user.displayName || "User"} className="h-12 w-12 rounded-full object-cover border-2 border-primary/50" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full bg-primary text-black font-extrabold flex items-center justify-center text-lg">
+                      {userInitial}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-base font-bold text-white truncate">{user?.displayName || "Ravan Mammadov"}</p>
+                    <p className="text-xs text-muted-foreground truncate mono mt-0.5">{user?.email || "mammadovravan1@gmail.com"}</p>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  const el = document.getElementById("founder-profile-section");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="w-full flex items-center justify-between rounded-xl bg-white/10 border border-white/15 px-4 py-3 text-xs font-mono font-bold text-foreground hover:border-primary/50 hover:bg-white/20 transition-all text-left"
+              >
+                <span>View Profile</span>
+                <ArrowUpRight size={14} className="text-primary" />
+              </button>
+            </div>
+
+            {/* 2. APPEARANCE CARD */}
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
+                  <Sun size={14} /> APPEARANCE
+                </div>
+                <p className="text-xs text-muted-foreground font-mono mb-4">
+                  Select your preferred visual aesthetic theme.
+                </p>
+                <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
+                  <button
+                    onClick={() => setTheme("dark")}
+                    className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
+                      theme === "dark" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    <Moon size={14} /> Dark
+                  </button>
+                  <button
+                    onClick={() => setTheme("light")}
+                    className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
+                      theme === "light" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    <Sun size={14} /> Light
+                  </button>
+                </div>
+              </div>
+              <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
+                Active: {theme} mode
+              </div>
+            </div>
+
+            {/* 3. LANGUAGE CARD */}
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
+                  <Globe size={14} /> LANGUAGE
+                </div>
+                <p className="text-xs text-muted-foreground font-mono mb-4">
+                  Choose your preferred website language.
+                </p>
+                <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
+                  <button
+                    onClick={() => switchLanguage("en")}
+                    className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
+                      language === "en" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => switchLanguage("az")}
+                    className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
+                      language === "az" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                    }`}
+                  >
+                    Azərbaycan
+                  </button>
+                </div>
+              </div>
+              <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
+                Active: {language === "az" ? "Azərbaycan dili" : "English"}
+              </div>
+            </div>
+
+            {/* 4. EXPERIENCE CARD */}
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl lg:col-span-2 flex flex-col justify-between">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
+                  <Zap size={14} /> EXPERIENCE & PERFORMANCE
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {/* Animations Toggle */}
+                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-white font-mono">Animations</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">UI motion & smooth keyframe transitions</p>
+                    </div>
+                    <button
+                      onClick={toggleAnimations}
+                      className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all ${
+                        settings.animations ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/5 text-muted-foreground border border-white/10"
+                      }`}
+                    >
+                      {settings.animations ? "ENABLED" : "DISABLED"}
+                    </button>
+                  </div>
+
+                  {/* Cursor Effects Toggle */}
+                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-white font-mono">Cursor Effects</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Custom interactive pointer visuals</p>
+                    </div>
+                    <button
+                      onClick={toggleCursorEffects}
+                      className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all ${
+                        settings.cursorEffects ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/5 text-muted-foreground border border-white/10"
+                      }`}
+                    >
+                      {settings.cursorEffects ? "ENABLED" : "DISABLED"}
+                    </button>
+                  </div>
+
+                  {/* Background Effects Toggle */}
+                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-white font-mono">Background Effects</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Ambient laser grid & 3D glows</p>
+                    </div>
+                    <button
+                      onClick={toggleBackgroundEffects}
+                      className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all ${
+                        settings.backgroundEffects ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" : "bg-white/5 text-muted-foreground border border-white/10"
+                      }`}
+                    >
+                      {settings.backgroundEffects ? "ENABLED" : "DISABLED"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. ACCOUNT CARD */}
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
+                  <LogOut size={14} /> ACCOUNT
+                </div>
+                <p className="text-xs text-muted-foreground font-mono mb-6">
+                  {user ? "Signed in as " + user.email : "Currently browsing as a guest."}
+                </p>
+              </div>
+              {user ? (
+                <button
+                  onClick={() => signOut()}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs font-mono font-bold text-red-400 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+                >
+                  <LogOut size={14} /> SIGN OUT
+                </button>
+              ) : (
+                <button
+                  onClick={() => setAuthModalOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/50 bg-primary/10 px-4 py-3 text-xs font-mono font-bold text-primary uppercase tracking-widest hover:bg-primary hover:text-black transition-all"
+                >
+                  SIGN IN WITH GOOGLE
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
           1. HERO & FOUNDER PROFILE CARD
       ───────────────────────────────────────────────────────────────────────────── */}
-      <section className="px-6 pt-24 pb-16 md:px-10 md:pt-32 relative z-10">
+      <section id="founder-profile-section" className="px-6 pt-16 pb-16 md:px-10 md:pt-20 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
             {/* Left Hero Column */}
@@ -411,6 +632,7 @@ export default function ProfilePage() {
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </main>
   );
 }
