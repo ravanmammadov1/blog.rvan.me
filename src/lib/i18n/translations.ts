@@ -176,8 +176,8 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // About Page
     aboutHeroEyebrow: "PLATFORM VISION & MISSION",
-    aboutHeroTitleMain: "Engineered for Designers,",
-    aboutHeroTitleAccent: "Marketers & Developers.",
+    aboutHeroTitleMain: "Built for creative minds.",
+    aboutHeroTitleAccent: "Engineered for impact.",
     aboutHeroDescription: "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.",
     aboutWhyExistsEyebrow: "WHY RVAN.ME EXISTS",
     aboutWhyExistsTitle: "Bringing Clarity & Speed to Creative Workflows.",
@@ -432,8 +432,8 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // About Page
     aboutHeroEyebrow: "PLATFORMANIN VİZYONU VƏ MİSSİYASI",
-    aboutHeroTitleMain: "Dizaynerlər, marketoloqlar",
-    aboutHeroTitleAccent: "və developerlər üçün yaradılıb.",
+    aboutHeroTitleMain: "Yaradıcı düşüncələr üçün",
+    aboutHeroTitleAccent: "yaradılıb.",
     aboutHeroDescription: "Rvan.me dizayn düşüncəsini, developer alətlərini və sahə üzrə aktual məlumatları vahid rəqəmsal ekosistemdə birləşdirən platformadır.",
     aboutWhyExistsEyebrow: "RVAN.ME NİYƏ VAR",
     aboutWhyExistsTitle: "Yaradıcı iş proseslərinə aydınlıq və sürət gətiririk.",

@@ -182,7 +182,6 @@ export default function ResourcesArchive() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow={t("resourcesArchiveEyebrow", "OPEN-SOURCE VAULT & DEVELOPER TOOLKIT")}
         title={t("resourcesHeadingMain", "Creative")}
         accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"

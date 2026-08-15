@@ -85,13 +85,8 @@ export default function AboutPage() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow={
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-widest text-primary mono uppercase">
-            <Sparkles size={14} /> {t("aboutHeroEyebrow", "PLATFORM VISION & MISSION")}
-          </span>
-        }
-        title={t("aboutHeroTitleMain", "Engineered for Designers,")}
-        accentText={t("aboutHeroTitleAccent", "Marketers & Developers.")}
+        title={t("aboutHeroTitleMain", "Built for creative minds.")}
+        accentText={t("aboutHeroTitleAccent", "Engineered for impact.")}
         gradientVariant="accent"
         description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.")}
       >

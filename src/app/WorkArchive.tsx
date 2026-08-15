@@ -47,7 +47,6 @@ export default function WorkArchive() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow={t("sectionWorkEyebrow", "SELECTED WORK · BAKU, AZERBAIJAN")}
         title={t("sectionWorkTitleMain", "Motion, Brand &")}
         accentText={t("sectionWorkTitleAccent", "Graphic Case Studies.")}
         gradientVariant="creative"

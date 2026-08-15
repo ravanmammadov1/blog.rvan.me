@@ -92,11 +92,6 @@ export default function ToolsArchive() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow={
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-widest text-primary mono uppercase">
-            <Zap size={14} /> {t("toolsArchiveEyebrow", "FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES")}
-          </span>
-        }
         title={language === "az" ? "Alətlər və" : "Tools &"}
         accentText={language === "az" ? "interaktiv dəst." : "Interactive Toolkit."}
         gradientVariant="primary"
