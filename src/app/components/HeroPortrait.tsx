@@ -70,8 +70,8 @@ export default function HeroPortrait() {
       >
         <div className="hero-logo-float relative">
           
-          {/* Main 3D Iridescent Glass Knot Sculpture with Glass Glow */}
-          <div className="relative rounded-3xl overflow-hidden border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-2 backdrop-blur-2xl shadow-[0_30px_70px_rgba(0,0,0,0.45)] dark:shadow-[0_30px_80px_rgba(97,197,173,0.18)] transition-all duration-500 hover:border-[#61c5ad]/50">
+          {/* Main 3D Iridescent Glass Knot Sculpture with Glass Glow & Physical Refractions */}
+          <div className="glass-liquid relative rounded-3xl overflow-hidden p-2 dark:shadow-[0_30px_80px_rgba(97,197,173,0.18)] transition-all duration-500 hover:border-[#61c5ad]/60">
             
             {/* Header Window Dots (TaskHarbor style) */}
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-white/5">
