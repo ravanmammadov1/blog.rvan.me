@@ -493,6 +493,16 @@ async function savePublishHistory(article: any, postId: string) {
 // ACTION 1: Generate & Auto-Publish TWO Daily Posts
 // ──────────────────────────────────────────────────────────────────
 export async function executeGenerateCandidateDraft() {
+  const isLinkedInPaused = process.env.PAUSE_LINKEDIN_AUTOMATION !== "false";
+  if (isLinkedInPaused) {
+    console.log("[linkedin/pipeline] Automated LinkedIn posting is PAUSED during site reconstruction.");
+    return {
+      success: true,
+      paused: true,
+      message: "Automated LinkedIn posting is currently paused during site reconstruction.",
+    };
+  }
+
   const historyList: any[] = (await querySanity(`*[_type == "linkedinPublishHistory"]{ articleSlug, sourceUrl, headline }`)) || [];
   const publishedSlugs = new Set<string>();
   const publishedUrls = new Set<string>();
@@ -664,6 +674,16 @@ export async function executeGenerateCandidateDraft() {
 // ACTION: Publish Second Scheduled Post (called at 12:00 UTC / 16:00 AZT)
 // ──────────────────────────────────────────────────────────────────
 export async function executePublishSecondPost() {
+  const isLinkedInPaused = process.env.PAUSE_LINKEDIN_AUTOMATION !== "false";
+  if (isLinkedInPaused) {
+    console.log("[linkedin/pipeline] Automated LinkedIn second post is PAUSED during site reconstruction.");
+    return {
+      success: true,
+      paused: true,
+      message: "Automated LinkedIn second post is currently paused during site reconstruction.",
+    };
+  }
+
   const secondPost = await getSanityDoc(SECOND_POST_SINGLETON_ID);
   if (!secondPost || secondPost.status !== "scheduled") {
     return { success: false, message: "No scheduled second post found." };
