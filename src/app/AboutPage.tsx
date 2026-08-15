@@ -188,7 +188,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-3">
             {/* Module 1: Resources */}
             <Link
               to={getLocalizedPath("/resources")}
@@ -229,28 +229,6 @@ export default function AboutPage() {
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
                 <span>{t("aboutViewCreatorTools", "Browse Tools")}</span>
-                <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
-            </Link>
-
-            {/* Module 3: News */}
-            <Link
-              to={getLocalizedPath("/news")}
-              className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
-            >
-              <div>
-                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
-                  <Newspaper size={22} />
-                </div>
-                <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  {t("aboutModuleNewsTitle", "Industry News")}
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutModuleNewsDesc", "Live aggregated feeds covering design, technology, AI breakthroughs, and brand culture.")}
-                </p>
-              </div>
-              <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>{t("btnReadNews", "Read Industry News")}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>

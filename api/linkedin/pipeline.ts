@@ -513,25 +513,24 @@ export async function executeGenerateCandidateDraft() {
   });
 
   const recentNews: any[] = (await querySanity(
-    `*[_type == "news" && defined(slug.current) && defined(title)] | order(publishedAt desc) [0..80] {
+    `*[_type == "blog" && defined(slug.current) && defined(title)] | order(publishDate desc) [0..80] {
       _id,
       title,
       "slug": slug.current,
       category,
-      publishedAt,
-      sourceUrl,
-      sourceName,
+      "publishedAt": publishDate,
+      "sourceName": "Rvan.me Editorial",
       excerpt,
-      imageUrl,
+      "imageUrl": coverImage.asset->url,
       "coverImageRef": coverImage.asset._ref,
-      "coverImageAlt": coverImage.alt
+      "coverImageAlt": title
     }`
   )) || [];
 
   if (recentNews.length === 0) {
     return {
       success: false,
-      message: "No news articles found in the Rvan.me dataset.",
+      message: "No blog articles found in the Rvan.me dataset.",
     };
   }
 

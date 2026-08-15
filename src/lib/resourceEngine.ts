@@ -1,6 +1,5 @@
 import { client } from "./sanityClient";
 import { loadStaticFontCatalog, FontItem, getFontSlug } from "./fontEngine";
-import { aggregateAllResources, NormalizedResource } from "./rssAggregator";
 import { fetchUniversalContentItems } from "./sanityQueries";
 import { INTERACTIVE_TOOLS } from "../app/lib/toolsRegistry";
 import { APPROVED_DISCOVERY_REPOS } from "./githubDiscoveryEngine";
@@ -610,8 +609,6 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
         fetchUniversalContentItems().catch(() => [] as UniversalContentItem[]),
       ]);
 
-      const rssItems = await aggregateAllResources(cmsResources || []);
-
       const list: SharedResourceItem[] = [];
 
       // 1. Convert Google Font Catalog to SharedResourceItem
@@ -668,29 +665,6 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
 
       // 3d. Add Curated Learning Baseline Dataset
       CURATED_LEARNING_RESOURCES.forEach((item) => list.push(item));
-
-      // 4. Map Aggregated RSS & Sanity Resources
-      (rssItems || []).forEach((r: NormalizedResource) => {
-        let catKey: ResourceCategoryKey = "assets";
-        if (r.category === "freeFonts") catKey = "fonts";
-        else if (r.category === "learning") catKey = "learning";
-        else if (r.category === "tools" || r.category === "aiTools") catKey = "tools";
-        else if (r.category === "inspiration") catKey = "inspiration";
-
-        list.push({
-          id: r.id || `rss-${Math.random()}`,
-          title: r.title,
-          description: r.description || r.benefitSummary || "Curated design resource.",
-          category: catKey,
-          type: r.resourceType || "Design Asset",
-          source: r.sourceName || "Curated",
-          url: r.link,
-          image: r.imageUrl || r.logoUrl,
-          publishedAt: r.publishedAt || new Date().toISOString(),
-          qualityScore: 90,
-          trendingScore: r.isTrending ? 96 : 85,
-        });
-      });
 
       // 5. Map Sanity Universal Content Items
       (universalItems || []).forEach((item: UniversalContentItem) => {

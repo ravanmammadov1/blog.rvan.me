@@ -22,7 +22,6 @@ const STATIC_PAGES: SitemapPage[] = [
   { url: `${DOMAIN}/work`, changefreq: "monthly", priority: "0.9" },
   { url: `${DOMAIN}/contact`, changefreq: "monthly", priority: "0.8" },
   { url: `${DOMAIN}/blog`, changefreq: "weekly", priority: "0.8" },
-  { url: `${DOMAIN}/news`, changefreq: "weekly", priority: "0.6" },
   { url: `${DOMAIN}/tools`, changefreq: "monthly", priority: "0.5" },
   { url: `${DOMAIN}/ravan-mammadov`, changefreq: "monthly", priority: "0.9" },
   { url: `${DOMAIN}/resources`, changefreq: "weekly", priority: "0.6" },
@@ -68,7 +67,7 @@ ${pages
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   try {
-    const [blogs, news, projects, resources] = await Promise.all([
+    const [blogs, projects, resources] = await Promise.all([
       client.fetch<Array<{ slug: string; updatedAt?: string; publishDate?: string }>>(`
         *[
           _type == "blog" &&
@@ -80,19 +79,6 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
           "slug": slug.current,
           "updatedAt": _updatedAt,
           publishDate
-        }
-      `),
-      client.fetch<Array<{ slug: string; updatedAt?: string; publishedAt?: string }>>(`
-        *[
-          _type == "news" &&
-          (status == "published" || !defined(status)) &&
-          defined(slug.current) &&
-          defined(publishedAt) &&
-          publishedAt <= now()
-        ]{
-          "slug": slug.current,
-          "updatedAt": _updatedAt,
-          publishedAt
         }
       `),
       client.fetch<Array<{ slug: string; updatedAt?: string }>>(`
@@ -123,12 +109,6 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
         lastmod: formatDate(post.updatedAt || post.publishDate),
         changefreq: "weekly" as const,
         priority: "0.7",
-      })),
-      ...news.map((article) => ({
-        url: `${DOMAIN}/news/${encodeURIComponent(article.slug)}`,
-        lastmod: formatDate(article.updatedAt || article.publishedAt),
-        changefreq: "weekly" as const,
-        priority: "0.6",
       })),
       ...projects.map((project) => ({
         url: `${DOMAIN}/work/${encodeURIComponent(project.slug)}`,

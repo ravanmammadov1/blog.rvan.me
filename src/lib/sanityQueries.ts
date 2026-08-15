@@ -119,51 +119,6 @@ export async function fetchProjectBySlug(slug: string): Promise<ProjectItem | nu
   }
 }
 
-export async function fetchNews(): Promise<NewsItem[]> {
-  try {
-    const data = await client.fetch(`
-      *[_type == "news" && defined(slug.current) && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now())] | order(publishedAt desc){
-        _id,
-        title,
-        slug,
-        coverImage,
-        excerpt,
-        body,
-        publishedAt,
-        category
-      }
-    `);
-    return data || [];
-  } catch (error) {
-    console.error("Error fetching news from Sanity:", error);
-    return [];
-  }
-}
-
-export async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
-  try {
-    const data = await client.fetch(
-      `
-      *[_type == "news" && (status == "published" || !defined(status)) && (!defined(publishedAt) || publishedAt <= now()) && slug.current == $slug][0]{
-        _id,
-        title,
-        slug,
-        coverImage,
-        excerpt,
-        body,
-        publishedAt,
-        category
-      }
-    `,
-      { slug }
-    );
-    return data || null;
-  } catch (error) {
-    console.error("Error fetching news by slug from Sanity:", error);
-    return null;
-  }
-}
-
 export async function fetchTools(): Promise<ToolItem[]> {
   try {
     const data = await client.fetch(`

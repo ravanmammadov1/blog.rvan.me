@@ -32,12 +32,6 @@ const staticPages = [
     type: "website",
   },
   {
-    path: "/news",
-    title: "Creative Industry News & Design Insights — Ravan Mammadov",
-    description: "Curated creative industry, design, technology, and marketing news with original editorial context.",
-    type: "website",
-  },
-  {
     path: "/tools",
     title: "Designer Tools & Creative Stack — Ravan Mammadov",
     description: "A practical creative stack for motion designers, graphic designers, brand designers, and digital creatives.",
@@ -279,31 +273,7 @@ const template = await fs.readFile(path.join(distRoot, "index.html"), "utf8");
 const fontPages = await fetchFontPages();
 const cmsPages = await fetchDynamicPages();
 
-const curatedNewsPages = [
-  "designing-for-spatial-computing-visionos",
-  "state-of-ux-2026-ai-copilots",
-  "design-acme",
-  "figma-variables-2-token-studio-guide",
-  "google-deepmind-gemini-robotics-er2",
-  "openai-acquires-nextslide-ai-presentation",
-  "what-star-trek-got-wrong-about-ai-so-far",
-  "hugging-face-agent-canvas-open-source",
-  "vercel-ai-gateway-hermes-agent",
-  "react-19-compiler-deep-dive",
-  "css-baseline-2026-container-queries-subgrid",
-  "noir-qatsi-studio-motion-breakdown",
-  "blender-4-2-lts-eevee-next-gpu-raytracing",
-  "rive-runtime-2026-interactive-vector-animation",
-  "ideally-research-creative-process",
-  "death-of-generic-performance-ads-creative-strategy",
-  "hyper-personalized-video-campaigns-brand-identity"
-].map((slug) => ({
-  path: `/news/${slug}`,
-  title: `${slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} — Industry News | Rvan.me`,
-  description: `Read editorial breakdown and key insights for ${slug} on Rvan.me Industry News.`,
-  type: "article",
-  schemaType: "NewsArticle",
-}));
+const curatedNewsPages = [];
 
 const pages = [...staticPages, ...cmsPages, ...curatedNewsPages, ...fontPages];
 const azPages = pages.map((p) => ({

@@ -227,7 +227,6 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const baseNavItems = [
     { label: t("navHome", "HOME"),      target: "/" },
     { label: t("navResources", "RESOURCES"), target: "/resources" },
-    { label: t("navNews", "NEWS"),      target: "/news" },
     { label: t("navTools", "TOOLS"),     target: "/tools" },
     { label: t("navBlog", "BLOG"),      target: "/blog" },
     { label: t("navAbout", "ABOUT"),     target: "/about" },

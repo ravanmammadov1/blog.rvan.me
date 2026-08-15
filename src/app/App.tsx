@@ -9,8 +9,6 @@ import NotFound from "./NotFound";
 
 const BlogArchive = lazy(() => import("./BlogArchive"));
 const BlogDetail = lazy(() => import("./BlogDetail"));
-const NewsArchive = lazy(() => import("./NewsArchive"));
-const NewsDetail = lazy(() => import("./NewsDetail"));
 const ToolsArchive = lazy(() => import("./ToolsArchive"));
 const AboutPage = lazy(() => import("./AboutPage"));
 const ProfilePage = lazy(() => import("./ProfilePage"));
@@ -48,8 +46,6 @@ function AppRoutes() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/blog" element={<BlogArchive />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
-      <Route path="/news" element={<NewsArchive />} />
-      <Route path="/news/:slug" element={<NewsDetail />} />
       <Route path="/tools" element={<ToolsArchive />} />
       <Route path="/tools/:toolId" element={<ToolDetailPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -75,8 +71,6 @@ function AppRoutes() {
       <Route path="/az/contact" element={<ContactPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
-      <Route path="/az/news" element={<NewsArchive />} />
-      <Route path="/az/news/:slug" element={<NewsDetail />} />
       <Route path="/az/tools" element={<ToolsArchive />} />
       <Route path="/az/tools/:toolId" element={<ToolDetailPage />} />
       <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />

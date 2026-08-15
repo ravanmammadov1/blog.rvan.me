@@ -15,7 +15,6 @@ import HeroAtmosphere from "./components/HeroAtmosphere";
 // Lazy-loaded section components matching exact requested hierarchy
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const HeroParticles = lazy(() => import("./components/HeroParticles"));
-const NewsSection = lazy(() => import("./components/home/NewsSection"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
 const FeaturedInteractiveTools = lazy(() => import("./components/home/FeaturedInteractiveTools").then(m => ({ default: m.FeaturedInteractiveTools })));
@@ -103,10 +102,10 @@ export default function HomePage() {
                 </Link>
 
                 <Link
-                  to={getLocalizedPath("/news")}
+                  to={getLocalizedPath("/blog")}
                   className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary/50 hover:bg-white/10 glass"
                 >
-                  {t("btnReadNews", "READ INDUSTRY NEWS")} <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                  {t("exploreAllArticles", "READ BLOG & ARTICLES")} <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                 </Link>
               </div>
             </motion.div>
@@ -127,12 +126,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 3. LATEST NEWS (3 cards) ── */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING LATEST NEWS...</div>}>
-        <NewsSection />
-      </Suspense>
-
-      {/* ── 4. EDITORIAL / BLOG (3 best articles) ── */}
+      {/* ── 3. EDITORIAL / BLOG (3 best articles) ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING EDITORIAL BLOG...</div>}>
         <BlogSection />
       </Suspense>
