@@ -307,28 +307,6 @@ export async function fetchResourceCategories() {
   }
 }
 
-export async function fetchRssFeeds() {
-  try {
-    const data = await client.fetch(`
-      *[_type == "rssFeed" && enabled == true] | order(priority desc){
-        _id,
-        name,
-        url,
-        category,
-        refreshInterval,
-        enabled,
-        priority,
-        sourceName,
-        defaultCountry,
-        defaultWorkType
-      }
-    `);
-    return data || [];
-  } catch (error) {
-    console.error("Error fetching RSS feeds from Sanity:", error);
-    return [];
-  }
-}
 
 export async function fetchUniversalContentItems(contentType?: string) {
   try {
