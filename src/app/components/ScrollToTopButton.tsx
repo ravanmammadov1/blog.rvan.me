@@ -39,7 +39,7 @@ export default function ScrollToTopButton() {
           exit={{ opacity: 0, y: 16, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={scrollToTop}
-          className="group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-neutral-950/85 text-foreground backdrop-blur-md transition-all duration-300 hover:border-[#61c5ad]/60 hover:text-[#61c5ad] hover:scale-105 shadow-2xl glass-sm transform-gpu overflow-hidden"
+          className="group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-neutral-950/85 text-foreground backdrop-blur-md transition-all duration-300 hover:border-[#61c5ad]/60 hover:text-[#61c5ad] hover:scale-105 shadow-[0_0_20px_rgba(97,197,173,0.25)] hover:shadow-[0_0_30px_rgba(152,79,159,0.4)] glass-sm transform-gpu overflow-hidden"
           aria-label="Scroll back to top"
         >
           {/* Circular SVG Scroll Progress Ring */}

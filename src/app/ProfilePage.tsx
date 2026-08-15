@@ -228,7 +228,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => setTheme("dark")}
                     className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      theme === "dark" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                      theme === "dark" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     <Moon size={14} /> Dark
@@ -236,7 +236,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => setTheme("light")}
                     className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      theme === "light" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                      theme === "light" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     <Sun size={14} /> Light
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => switchLanguage("en")}
                     className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      language === "en" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                      language === "en" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     English
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => switchLanguage("az")}
                     className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      language === "az" ? "bg-primary text-black shadow-lg" : "text-muted-foreground hover:text-white"
+                      language === "az" ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.35)]" : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     Azərbaycan
