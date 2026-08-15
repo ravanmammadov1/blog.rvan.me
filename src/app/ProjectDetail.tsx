@@ -9,6 +9,7 @@ import { getFallbackProject } from "../lib/portfolioFallback";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 function projectImage(project: ProjectItem | ReturnType<typeof getFallbackProject>) {
   if (!project) return undefined;
@@ -23,6 +24,7 @@ export default function ProjectDetail() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [project, setProject] = useState<ProjectItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,10 +49,10 @@ export default function ProjectDetail() {
       <main className="grid min-h-screen place-items-center bg-background px-6 text-foreground">
         <SEO title="Project Not Found — Ravan Mammadov" noIndex />
         <div className="text-center">
-          <h1 className="text-4xl font-semibold">Project not found</h1>
-          <p className="mt-4 text-muted-foreground">This case study is unavailable or has been removed.</p>
-          <Link to="/work" className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-black mono">
-            <ArrowLeft size={15} /> Back to work
+          <h1 className="text-4xl font-semibold">{t("projectNotFound", "Project Not Found")}</h1>
+          <p className="mt-4 text-muted-foreground">{t("projectNotFoundDesc", "This case study is unavailable or has been removed.")}</p>
+          <Link to={getLocalizedPath("/profile")} className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-black mono">
+            <ArrowLeft size={15} /> {t("backToWork", "Back to work")}
           </Link>
         </div>
       </main>
@@ -90,9 +92,9 @@ export default function ProjectDetail() {
         <div className="mx-auto max-w-[1280px]">
           <nav aria-label="Breadcrumb" className="mb-10 text-xs font-bold tracking-widest text-muted-foreground mono uppercase">
             <ol className="flex flex-wrap items-center gap-2">
-              <li><Link to="/" className="hover:text-primary">Home</Link></li>
+              <li><Link to={getLocalizedPath("/")} className="hover:text-primary">{t("home", "Home")}</Link></li>
               <li aria-hidden="true">/</li>
-              <li><Link to="/work" className="hover:text-primary">Work</Link></li>
+              <li><Link to={getLocalizedPath("/profile")} className="hover:text-primary">{t("navProfile", "Profile")}</Link></li>
               <li aria-hidden="true">/</li>
               <li aria-current="page" className="text-foreground">{title}</li>
             </ol>
@@ -112,33 +114,33 @@ export default function ProjectDetail() {
           <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_2fr]">
             <aside className="space-y-6">
               <div>
-                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono">Role</h2>
+                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono">{t("role", "Role")}</h2>
                 <p className="mt-2 font-semibold">Senior Creative Designer</p>
               </div>
               <div>
-                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono">Focus</h2>
+                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono">{t("focus", "Focus")}</h2>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {tags.map((tag) => <span key={tag} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted-foreground">{tag}</span>)}
                 </div>
               </div>
-              <Link to="/contact" className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
-                Discuss a similar project <ArrowUpRight size={14} />
+              <Link to={getLocalizedPath("/contact")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+                {t("btnGetInTouch", "Discuss a similar project")} <ArrowUpRight size={14} />
               </Link>
             </aside>
 
             <div className="prose prose-invert max-w-none">
-              <h2>Overview</h2>
+              <h2>{t("modalOverview", "Overview")}</h2>
               <p>{description}</p>
-              <h2>Creative direction</h2>
+              <h2>{t("creativeDirection", "Creative direction")}</h2>
               <p>This project brings together strategic visual thinking, graphic design, and motion-led storytelling to create a consistent experience across campaign and digital touchpoints.</p>
-              <h2>Need a design system that moves?</h2>
+              <h2>{t("needDesignSystem", "Need a design system that moves?")}</h2>
               <p>Ravan works with ambitious teams on brand identity, motion design, marketing creative, and visual systems from Baku and worldwide.</p>
             </div>
           </div>
 
           <div className="mt-16 border-t border-white/10 pt-8">
-            <Link to="/work" className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
-              <ArrowLeft size={15} /> Back to selected work
+            <Link to={getLocalizedPath("/profile")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+              <ArrowLeft size={15} /> {t("backToWork", "Back to selected work")}
             </Link>
           </div>
         </div>

@@ -10,6 +10,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 
 function getProjectImage(project: ProjectItem) {
   return project.coverImage ? urlFor(project.coverImage)?.width(1200).format("webp").auto("format").url() : undefined;
@@ -18,6 +19,7 @@ function getProjectImage(project: ProjectItem) {
 export default function WorkArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,11 +47,11 @@ export default function WorkArchive() {
 
       {/* Unified Page Hero */}
       <PageHero
-        eyebrow="SELECTED WORK · BAKU, AZERBAIJAN"
-        title="Motion, Brand &"
-        accentText="Graphic Case Studies."
+        eyebrow={t("sectionWorkEyebrow", "SELECTED WORK · BAKU, AZERBAIJAN")}
+        title={t("sectionWorkTitleMain", "Motion, Brand &")}
+        accentText={t("sectionWorkTitleAccent", "Graphic Case Studies.")}
         gradientVariant="creative"
-        description="A selection of creative campaigns, brand systems, 3D visuals, and marketing design work by senior creative designer Ravan Mammadov."
+        description={t("sectionWorkDesc", "A selection of creative campaigns, brand systems, 3D visuals, and marketing design work by senior creative designer Ravan Mammadov.")}
       />
 
       <section className="px-6 pb-24 md:px-10">
@@ -58,9 +60,10 @@ export default function WorkArchive() {
             {displayProjects.map((project, index) => {
               const fallback = getFallbackProject(project.slug);
               const image = project.image || fallback?.image;
+              const detailPath = getLocalizedPath(`/work/${project.slug}`);
               return (
                 <article key={project.slug} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                  <Link to={`/work/${project.slug}`} className="block">
+                  <Link to={detailPath} className="block">
                     <div className="relative aspect-[4/3] overflow-hidden">
                       {image && (
                         <img
@@ -84,8 +87,8 @@ export default function WorkArchive() {
                   <div className="p-6">
                     <p className="text-sm font-semibold text-foreground">{project.type || "Creative case study"}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{project.description || fallback?.description}</p>
-                    <Link to={`/work/${project.slug}`} className="mt-6 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
-                      Read case study <ArrowUpRight size={14} />
+                    <Link to={detailPath} className="mt-6 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+                      {t("readArticle", "Read case study")} <ArrowUpRight size={14} />
                     </Link>
                   </div>
                 </article>
@@ -94,10 +97,10 @@ export default function WorkArchive() {
           </div>
 
           <section className="mt-24 rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12" aria-labelledby="work-cta-heading">
-            <h2 id="work-cta-heading" className="text-3xl font-semibold tracking-tight md:text-5xl">Have a project in motion?</h2>
-            <p className="mt-4 max-w-2xl text-muted-foreground">Let’s discuss motion design, brand identity, graphic design, or a marketing campaign for your next launch.</p>
-            <Link to="/contact" className="mt-8 inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 text-xs font-bold tracking-widest text-black mono uppercase hover:bg-white">
-              Start a project <ArrowUpRight size={16} />
+            <h2 id="work-cta-heading" className="text-3xl font-semibold tracking-tight md:text-5xl">{t("sectionContactTitle", "Have a project in motion?")}</h2>
+            <p className="mt-4 max-w-2xl text-muted-foreground">{t("sectionContactSubtitle", "Let's discuss motion design, brand identity, graphic design, or a marketing campaign for your next launch.")}</p>
+            <Link to={getLocalizedPath("/contact")} className="mt-8 inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 text-xs font-bold tracking-widest text-black mono uppercase hover:bg-white">
+              {t("btnGetInTouch", "Start a project")} <ArrowUpRight size={16} />
             </Link>
           </section>
         </div>

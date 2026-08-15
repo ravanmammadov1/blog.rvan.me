@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { BadgeCheck, Download } from "lucide-react";
 import { FontItem, getFontSlug, resolveDirectFontDownloadUrl } from "../../../lib/fontEngine";
 import { loadFontOnDemand } from "../../../lib/fontLoader";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface FontSpecimenCardProps {
   font: FontItem;
@@ -22,6 +23,7 @@ export function FontSpecimenCard({
 }: FontSpecimenCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -41,6 +43,8 @@ export function FontSpecimenCard({
     observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [font]);
+
+  const detailPath = getLocalizedPath(`/fonts/${getFontSlug(font)}`);
 
   return (
     <motion.article
@@ -64,18 +68,18 @@ export function FontSpecimenCard({
                 VARIABLE
               </span>
             )}
-            <span>{font.stylesCount} Styles</span>
+            <span>{font.stylesCount} {t("styles", "Styles")}</span>
           </div>
         </div>
 
         {/* Font Family Name with Crawlable Link */}
         <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-          <Link to={`/fonts/${getFontSlug(font)}`} className="hover:underline">
+          <Link to={detailPath} className="hover:underline">
             {font.name}
           </Link>
         </h3>
         <p className="text-xs text-muted-foreground mono mt-0.5">
-          Designed by <span className="text-foreground/90 font-semibold">{font.designer}</span> · {font.foundry}
+          {t("designedBy", "Designed by")} <span className="text-foreground/90 font-semibold">{font.designer}</span> · {font.foundry}
         </p>
 
         {/* Specimen Live Preview in Authentic Font Style */}
@@ -96,10 +100,10 @@ export function FontSpecimenCard({
       {/* Bottom CTA */}
       <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
         <Link
-          to={`/fonts/${getFontSlug(font)}`}
+          to={detailPath}
           className="text-[11px] text-primary hover:text-white uppercase tracking-wider transition-colors flex items-center gap-1"
         >
-          SPECIMEN & DETAILS →
+          {t("specimenAndDetails", "SPECIMEN & DETAILS")} →
         </Link>
         <a
           href={resolveDirectFontDownloadUrl(font)}

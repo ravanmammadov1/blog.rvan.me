@@ -29,6 +29,7 @@ import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import { FontSpecimenCard } from "../components/content/FontSpecimenCard";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
@@ -45,10 +46,11 @@ export default function FontDetailPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [catalog, setCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t, getLocalizedPath } = useLanguage();
 
   // Live Specimen Tester State
   const [previewText, setPreviewText] = useState(
-    "Design systems engineered for precision, legibility, and elegance."
+    t("defaultSpecimenText", "Design systems engineered for precision, legibility, and elegance.")
   );
   const [fontSizePx, setFontSizePx] = useState(36);
   const [selectedWeight, setSelectedWeight] = useState<number>(400);
@@ -152,15 +154,15 @@ export default function FontDetailPage() {
       <PageHero
         eyebrow={
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-            <Link to="/resources?category=fonts" className="hover:underline flex items-center gap-1">
-              <ArrowLeft size={12} /> FONTS CATALOG
+            <Link to={getLocalizedPath("/resources?category=fonts")} className="hover:underline flex items-center gap-1">
+              <ArrowLeft size={12} /> {t("fontsCatalog", "FONTS CATALOG")}
             </Link>
             <span className="text-muted-foreground">/</span>
             <span className="text-foreground">{font.category}</span>
           </nav>
         }
         title={font.family}
-        accentText="Typeface Specimen."
+        accentText={t("typefaceSpecimen", "Typeface Specimen.")}
         gradientVariant="creative"
         description={font.description}
       >
@@ -175,7 +177,7 @@ export default function FontDetailPage() {
               background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
             }}
           >
-            DOWNLOAD ZIP <Download size={14} />
+            {t("downloadZip", "DOWNLOAD ZIP")} <Download size={14} />
           </a>
           {font.officialUrl && (
             <a
@@ -184,7 +186,7 @@ export default function FontDetailPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3.5 text-xs font-bold text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
             >
-              OFFICIAL HOMEPAGE <ExternalLink size={13} />
+              {t("officialHomepage", "OFFICIAL HOMEPAGE")} <ExternalLink size={13} />
             </a>
           )}
         </div>
@@ -196,13 +198,13 @@ export default function FontDetailPage() {
           <div className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 glass space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
               <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
-                <Type size={16} /> LIVE SPECIMEN TESTER
+                <Type size={16} /> {t("liveSpecimenTester", "LIVE SPECIMEN TESTER")}
               </div>
 
               <div className="flex items-center gap-6">
                 {/* Font Size Slider */}
                 <div className="flex items-center gap-3 text-xs font-bold mono">
-                  <span className="text-muted-foreground">SIZE:</span>
+                  <span className="text-muted-foreground">{t("size", "SIZE:")}</span>
                   <input
                     type="range"
                     min="14"
@@ -239,7 +241,7 @@ export default function FontDetailPage() {
                 type="text"
                 value={previewText}
                 onChange={(e) => setPreviewText(e.target.value)}
-                placeholder="Type your custom specimen text here..."
+                placeholder={t("specimenPlaceholder", "Type your custom specimen text here...")}
                 className="w-full rounded-xl border border-white/10 bg-background/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all glass-sm"
               />
             </div>
@@ -262,10 +264,10 @@ export default function FontDetailPage() {
 
           {/* Character Set & Glyphs Preview */}
           <div className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 glass space-y-4">
-            <h2 className="text-xs font-bold tracking-widest text-primary mono uppercase">CHARACTER SET & GLYPH OVERVIEW</h2>
+            <h2 className="text-xs font-bold tracking-widest text-primary mono uppercase">{t("glyphOverview", "CHARACTER SET & GLYPH OVERVIEW")}</h2>
             <div className="p-6 rounded-2xl border border-white/5 bg-background/90 font-medium space-y-4 overflow-hidden">
               <div>
-                <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">Uppercase Alphabet</p>
+                <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">{t("uppercaseAlphabet", "Uppercase Alphabet")}</p>
                 <p
                   style={{ fontFamily: `"${font.family}", system-ui, sans-serif` }}
                   className="text-2xl md:text-3xl text-foreground tracking-wider break-words"
@@ -274,7 +276,7 @@ export default function FontDetailPage() {
                 </p>
               </div>
               <div>
-                <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">Lowercase Alphabet</p>
+                <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">{t("lowercaseAlphabet", "Lowercase Alphabet")}</p>
                 <p
                   style={{ fontFamily: `"${font.family}", system-ui, sans-serif` }}
                   className="text-2xl md:text-3xl text-foreground tracking-wider break-words"
@@ -283,7 +285,7 @@ export default function FontDetailPage() {
                 </p>
               </div>
               <div>
-                <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">Numerals & Symbols</p>
+                <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">{t("numeralsSymbols", "Numerals & Symbols")}</p>
                 <p
                   style={{ fontFamily: `"${font.family}", system-ui, sans-serif` }}
                   className="text-2xl md:text-3xl text-foreground tracking-wider break-words"
@@ -297,29 +299,29 @@ export default function FontDetailPage() {
           {/* Metadata & Technical Specs Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
-              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">DESIGNER & FOUNDRY</span>
+              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("designerFoundry", "DESIGNER & FOUNDRY")}</span>
               <p className="mt-2 text-base font-bold text-foreground">{font.designer}</p>
               <p className="text-xs text-muted-foreground mono mt-0.5">{font.foundry}</p>
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
-              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">CATEGORY & STYLES</span>
+              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("categoryStyles", "CATEGORY & STYLES")}</span>
               <p className="mt-2 text-base font-bold text-primary">{font.category}</p>
-              <p className="text-xs text-muted-foreground mono mt-0.5">{font.stylesCount} Included Styles</p>
+              <p className="text-xs text-muted-foreground mono mt-0.5">{font.stylesCount} {t("includedStyles", "Included Styles")}</p>
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
-              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">TYPE ARCHITECTURE</span>
+              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("typeArchitecture", "TYPE ARCHITECTURE")}</span>
               <p className="mt-2 text-base font-bold text-cyan-400">
-                {font.isVariable ? "Variable Font (Axes Supported)" : "Static Family"}
+                {font.isVariable ? t("variableFontAxes", "Variable Font (Axes Supported)") : t("staticFamily", "Static Family")}
               </p>
               <p className="text-xs text-muted-foreground mono mt-0.5">Format: WOFF2 / TTF / OTF</p>
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
-              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">COMMERCIAL LICENSE</span>
+              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("commercialLicense", "COMMERCIAL LICENSE")}</span>
               <p className="mt-2 text-base font-bold text-emerald-400 flex items-center gap-1.5">
-                <BadgeCheck size={16} /> Free Commercial Use
+                <BadgeCheck size={16} /> {t("freeCommercialUse", "Free Commercial Use")}
               </p>
               <p className="text-xs text-muted-foreground mono mt-0.5">{font.license}</p>
             </div>
@@ -330,11 +332,11 @@ export default function FontDetailPage() {
             <div className="pt-8 border-t border-white/10 space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground">Similar {font.category} Typefaces</h2>
-                  <p className="text-xs text-muted-foreground mono mt-1">Explore alternative type families with similar visual characteristics.</p>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground">{t("similarTypefaces", "Similar Typefaces")} ({font.category})</h2>
+                  <p className="text-xs text-muted-foreground mono mt-1">{t("similarTypefacesDesc", "Explore alternative type families with similar visual characteristics.")}</p>
                 </div>
-                <Link to="/resources?category=fonts" className="text-xs font-bold text-primary mono uppercase hover:underline">
-                  VIEW ALL FONTS →
+                <Link to={getLocalizedPath("/resources?category=fonts")} className="text-xs font-bold text-primary mono uppercase hover:underline">
+                  {t("viewAllFonts", "VIEW ALL FONTS")} →
                 </Link>
               </div>
 
@@ -343,7 +345,7 @@ export default function FontDetailPage() {
                   <FontSpecimenCard
                     key={simFont.id || idx}
                     font={simFont}
-                    previewText="Design systems & typography."
+                    previewText={t("defaultSpecimenText", "Design systems & typography.")}
                     fontSizePx={24}
                     idx={idx}
                     fadeUpVariants={fadeUp}
