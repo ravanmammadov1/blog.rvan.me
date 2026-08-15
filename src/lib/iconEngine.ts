@@ -1,3 +1,5 @@
+import * as LucideIcons from "lucide-react";
+
 export interface IconItem {
   id: string;
   name: string;
@@ -12,127 +14,163 @@ export const ICON_CATEGORIES = [
   "Arrows & Navigation",
   "Communication & Social",
   "Code & Development",
-  "Media & Devices",
+  "Media & Audio",
   "Files & Folders",
   "E-Commerce & Finance",
   "Design & Shapes",
   "Security & System",
+  "Weather & Nature",
+  "User & People",
+  "General & Objects",
 ] as const;
 
 export type IconCategory = typeof ICON_CATEGORIES[number];
 
-export const LUCIDE_ICON_CATALOG: IconItem[] = [
-  // ── Interface & UI ──
-  { id: "icon-search", name: "Search", category: "Interface & UI", componentName: "Search", tags: ["search", "find", "magnifying", "glass", "lookup", "query"] },
-  { id: "icon-heart", name: "Heart", category: "Interface & UI", componentName: "Heart", tags: ["heart", "like", "love", "favorite", "bookmark"] },
-  { id: "icon-user", name: "User", category: "Interface & UI", componentName: "User", tags: ["user", "person", "account", "profile", "avatar", "member"] },
-  { id: "icon-users", name: "Users", category: "Interface & UI", componentName: "Users", tags: ["users", "group", "team", "people", "community"] },
-  { id: "icon-settings", name: "Settings", category: "Interface & UI", componentName: "Settings", tags: ["settings", "cog", "gear", "options", "preferences", "config"] },
-  { id: "icon-sliders", name: "Sliders", category: "Interface & UI", componentName: "Sliders", tags: ["sliders", "controls", "adjust", "filter", "settings"] },
-  { id: "icon-sliders-horizontal", name: "SlidersHorizontal", category: "Interface & UI", componentName: "SlidersHorizontal", tags: ["sliders", "controls", "tune", "equalizer"] },
-  { id: "icon-bell", name: "Bell", category: "Interface & UI", componentName: "Bell", tags: ["bell", "notification", "alert", "reminder", "ring"] },
-  { id: "icon-bookmark", name: "Bookmark", category: "Interface & UI", componentName: "Bookmark", tags: ["bookmark", "save", "favorite", "ribbon", "tag"] },
-  { id: "icon-calendar", name: "Calendar", category: "Interface & UI", componentName: "Calendar", tags: ["calendar", "date", "schedule", "event", "time"] },
-  { id: "icon-clock", name: "Clock", category: "Interface & UI", componentName: "Clock", tags: ["clock", "time", "hour", "history", "recent", "watch"] },
-  { id: "icon-check", name: "Check", category: "Interface & UI", componentName: "Check", tags: ["check", "tick", "confirm", "done", "success", "correct"] },
-  { id: "icon-check-circle-2", name: "CheckCircle2", category: "Interface & UI", componentName: "CheckCircle2", tags: ["check", "circle", "success", "verified"] },
-  { id: "icon-x", name: "X", category: "Interface & UI", componentName: "X", tags: ["x", "close", "cross", "cancel", "remove", "delete"] },
-  { id: "icon-plus", name: "Plus", category: "Interface & UI", componentName: "Plus", tags: ["plus", "add", "create", "new", "more"] },
-  { id: "icon-minus", name: "Minus", category: "Interface & UI", componentName: "Minus", tags: ["minus", "subtract", "remove", "less", "decrease"] },
-  { id: "icon-eye", name: "Eye", category: "Interface & UI", componentName: "Eye", tags: ["eye", "view", "preview", "visible", "show"] },
-  { id: "icon-eye-off", name: "EyeOff", category: "Interface & UI", componentName: "EyeOff", tags: ["eye", "off", "hidden", "hide", "private", "secret"] },
-  { id: "icon-refresh-cw", name: "RefreshCw", category: "Interface & UI", componentName: "RefreshCw", tags: ["refresh", "rotate", "sync", "update", "reload"] },
-  { id: "icon-sparkles", name: "Sparkles", category: "Interface & UI", componentName: "Sparkles", tags: ["sparkles", "stars", "ai", "magic", "clean", "shine"] },
-  { id: "icon-star", name: "Star", category: "Interface & UI", componentName: "Star", tags: ["star", "rating", "favorite", "review", "score"] },
-  { id: "icon-flame", name: "Flame", category: "Interface & UI", componentName: "Flame", tags: ["flame", "fire", "hot", "trending", "popular"] },
+// Helper to separate camelCase into words ("ArrowUpRight" -> "Arrow Up Right")
+function camelToWords(str: string): string {
+  return str
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
+}
 
-  // ── Arrows & Navigation ──
-  { id: "icon-arrow-up-right", name: "ArrowUpRight", category: "Arrows & Navigation", componentName: "ArrowUpRight", tags: ["arrow", "up", "right", "external", "link", "goto"] },
-  { id: "icon-arrow-right", name: "ArrowRight", category: "Arrows & Navigation", componentName: "ArrowRight", tags: ["arrow", "right", "forward", "next", "proceed"] },
-  { id: "icon-arrow-left", name: "ArrowLeft", category: "Arrows & Navigation", componentName: "ArrowLeft", tags: ["arrow", "left", "back", "previous", "return"] },
-  { id: "icon-arrow-up", name: "ArrowUp", category: "Arrows & Navigation", componentName: "ArrowUp", tags: ["arrow", "up", "top", "scroll"] },
-  { id: "icon-arrow-down", name: "ArrowDown", category: "Arrows & Navigation", componentName: "ArrowDown", tags: ["arrow", "down", "bottom"] },
-  { id: "icon-chevron-down", name: "ChevronDown", category: "Arrows & Navigation", componentName: "ChevronDown", tags: ["chevron", "down", "dropdown", "expand"] },
-  { id: "icon-chevron-up", name: "ChevronUp", category: "Arrows & Navigation", componentName: "ChevronUp", tags: ["chevron", "up", "collapse"] },
-  { id: "icon-chevron-right", name: "ChevronRight", category: "Arrows & Navigation", componentName: "ChevronRight", tags: ["chevron", "right", "next"] },
-  { id: "icon-chevron-left", name: "ChevronLeft", category: "Arrows & Navigation", componentName: "ChevronLeft", tags: ["chevron", "left", "back"] },
-  { id: "icon-compass", name: "Compass", category: "Arrows & Navigation", componentName: "Compass", tags: ["compass", "navigation", "explore", "direction", "location"] },
-  { id: "icon-map-pin", name: "MapPin", category: "Arrows & Navigation", componentName: "MapPin", tags: ["map", "pin", "location", "place", "address", "marker"] },
-  { id: "icon-external-link", name: "ExternalLink", category: "Arrows & Navigation", componentName: "ExternalLink", tags: ["external", "link", "open", "url", "redirect"] },
+// Automatic category detection based on icon name keywords
+function categorizeIcon(name: string): IconCategory {
+  const lower = name.toLowerCase();
 
-  // ── Communication & Social ──
-  { id: "icon-mail", name: "Mail", category: "Communication & Social", componentName: "Mail", tags: ["mail", "email", "letter", "envelope", "contact", "message"] },
-  { id: "icon-message-square", name: "MessageSquare", category: "Communication & Social", componentName: "MessageSquare", tags: ["message", "comment", "chat", "feedback", "talk"] },
-  { id: "icon-send", name: "Send", category: "Communication & Social", componentName: "Send", tags: ["send", "submit", "paperplane", "post"] },
-  { id: "icon-share-2", name: "Share2", category: "Communication & Social", componentName: "Share2", tags: ["share", "social", "export", "network"] },
-  { id: "icon-globe", name: "Globe", category: "Communication & Social", componentName: "Globe", tags: ["globe", "world", "web", "internet", "language", "i18n"] },
-  { id: "icon-phone", name: "Phone", category: "Communication & Social", componentName: "Phone", tags: ["phone", "call", "contact", "mobile"] },
-  { id: "icon-thumbs-up", name: "ThumbsUp", category: "Communication & Social", componentName: "ThumbsUp", tags: ["thumbs", "up", "like", "agree", "vote"] },
+  if (
+    /arrow|chevron|compass|map|pin|navigate|corner|external|expand|shrink|move|rotate|locate|direction|triangle-right|move-/.test(
+      lower
+    )
+  ) {
+    return "Arrows & Navigation";
+  }
 
-  // ── Code & Development ──
-  { id: "icon-code", name: "Code", category: "Code & Development", componentName: "Code", tags: ["code", "brackets", "developer", "html", "script"] },
-  { id: "icon-terminal", name: "Terminal", category: "Code & Development", componentName: "Terminal", tags: ["terminal", "command", "cli", "shell", "console"] },
-  { id: "icon-cpu", name: "Cpu", category: "Code & Development", componentName: "Cpu", tags: ["cpu", "chip", "processor", "hardware", "ai", "core"] },
-  { id: "icon-database", name: "Database", category: "Code & Development", componentName: "Database", tags: ["database", "storage", "sql", "server", "data"] },
-  { id: "icon-git-branch", name: "GitBranch", category: "Code & Development", componentName: "GitBranch", tags: ["git", "branch", "vcs", "code", "fork"] },
-  { id: "icon-git-fork", name: "GitFork", category: "Code & Development", componentName: "GitFork", tags: ["git", "fork", "repository"] },
-  { id: "icon-github", name: "Github", category: "Code & Development", componentName: "Github", tags: ["github", "git", "repo", "open-source"] },
-  { id: "icon-layers", name: "Layers", category: "Code & Development", componentName: "Layers", tags: ["layers", "stack", "design", "components", "architecture"] },
-  { id: "icon-package", name: "Package", category: "Code & Development", componentName: "Package", tags: ["package", "npm", "box", "library", "module"] },
-  { id: "icon-workflow", name: "Workflow", category: "Code & Development", componentName: "Workflow", tags: ["workflow", "pipeline", "nodes", "automation"] },
-  { id: "icon-zap", name: "Zap", category: "Code & Development", componentName: "Zap", tags: ["zap", "lightning", "fast", "speed", "power", "quick"] },
+  if (
+    /mail|message|chat|phone|send|share|globe|rss|radio|thumbs|heart|at|post|at-sign|inbox|contact|quote|hash|bell/.test(
+      lower
+    )
+  ) {
+    return "Communication & Social";
+  }
 
-  // ── Media & Devices ──
-  { id: "icon-monitor", name: "Monitor", category: "Media & Devices", componentName: "Monitor", tags: ["monitor", "desktop", "screen", "display"] },
-  { id: "icon-smartphone", name: "Smartphone", category: "Media & Devices", componentName: "Smartphone", tags: ["smartphone", "mobile", "phone", "device"] },
-  { id: "icon-laptop", name: "Laptop", category: "Media & Devices", componentName: "Laptop", tags: ["laptop", "computer", "notebook"] },
-  { id: "icon-camera", name: "Camera", category: "Media & Devices", componentName: "Camera", tags: ["camera", "photo", "image", "picture", "snapshot"] },
-  { id: "icon-image", name: "Image", category: "Media & Devices", componentName: "Image", tags: ["image", "picture", "photo", "media", "graphic"] },
-  { id: "icon-video", name: "Video", category: "Media & Devices", componentName: "Video", tags: ["video", "movie", "film", "record", "clip"] },
-  { id: "icon-music", name: "Music", category: "Media & Devices", componentName: "Music", tags: ["music", "audio", "song", "sound", "note"] },
-  { id: "icon-mic", name: "Mic", category: "Media & Devices", componentName: "Mic", tags: ["mic", "microphone", "audio", "voice", "record"] },
-  { id: "icon-volume-2", name: "Volume2", category: "Media & Devices", componentName: "Volume2", tags: ["volume", "sound", "speaker", "audio"] },
+  if (
+    /code|terminal|cpu|database|git|layers|package|workflow|zap|bug|binary|command|qr|braces|brackets|script|server|variable|webhook|bot|ai/.test(
+      lower
+    )
+  ) {
+    return "Code & Development";
+  }
 
-  // ── Files & Folders ──
-  { id: "icon-file-text", name: "FileText", category: "Files & Folders", componentName: "FileText", tags: ["file", "text", "document", "paper", "page", "article"] },
-  { id: "icon-folder", name: "Folder", category: "Files & Folders", componentName: "Folder", tags: ["folder", "directory", "files", "storage"] },
-  { id: "icon-download", name: "Download", category: "Files & Folders", componentName: "Download", tags: ["download", "save", "export", "get", "arrow"] },
-  { id: "icon-upload", name: "Upload", category: "Files & Folders", componentName: "Upload", tags: ["upload", "import", "publish"] },
-  { id: "icon-copy", name: "Copy", category: "Files & Folders", componentName: "Copy", tags: ["copy", "duplicate", "clone", "clipboard"] },
-  { id: "icon-edit-3", name: "Edit3", category: "Files & Folders", componentName: "Edit3", tags: ["edit", "pencil", "pen", "write", "modify"] },
-  { id: "icon-trash-2", name: "Trash2", category: "Files & Folders", componentName: "Trash2", tags: ["trash", "delete", "remove", "bin"] },
+  if (
+    /monitor|smartphone|laptop|camera|image|video|music|mic|volume|play|pause|disc|tv|film|speaker|headphones|radio|cassette|clapperboard|aperture/.test(
+      lower
+    )
+  ) {
+    return "Media & Audio";
+  }
 
-  // ── E-Commerce & Finance ──
-  { id: "icon-shopping-bag", name: "ShoppingBag", category: "E-Commerce & Finance", componentName: "ShoppingBag", tags: ["shopping", "bag", "store", "buy", "cart"] },
-  { id: "icon-shopping-cart", name: "ShoppingCart", category: "E-Commerce & Finance", componentName: "ShoppingCart", tags: ["shopping", "cart", "store", "ecommerce", "trolley"] },
-  { id: "icon-credit-card", name: "CreditCard", category: "E-Commerce & Finance", componentName: "CreditCard", tags: ["card", "payment", "credit", "bank", "money", "pay"] },
-  { id: "icon-dollar-sign", name: "DollarSign", category: "E-Commerce & Finance", componentName: "DollarSign", tags: ["dollar", "money", "cash", "finance", "currency"] },
-  { id: "icon-tag", name: "Tag", category: "E-Commerce & Finance", componentName: "Tag", tags: ["tag", "label", "price", "category", "badge"] },
-  { id: "icon-percent", name: "Percent", category: "E-Commerce & Finance", componentName: "Percent", tags: ["percent", "discount", "offer", "sale"] },
+  if (
+    /file|folder|download|upload|copy|edit|trash|save|clipboard|archive|paperclip|document|notebook|receipt|history/.test(
+      lower
+    )
+  ) {
+    return "Files & Folders";
+  }
 
-  // ── Design & Shapes ──
-  { id: "icon-palette", name: "Palette", category: "Design & Shapes", componentName: "Palette", tags: ["palette", "color", "paint", "art", "design", "theme"] },
-  { id: "icon-type", name: "Type", category: "Design & Shapes", componentName: "Type", tags: ["type", "text", "font", "typography", "letter"] },
-  { id: "icon-grid", name: "Grid", category: "Design & Shapes", componentName: "Grid", tags: ["grid", "layout", "columns", "spacing", "flex"] },
-  { id: "icon-waves", name: "Waves", category: "Design & Shapes", componentName: "Waves", tags: ["waves", "svg", "water", "sound", "curve"] },
-  { id: "icon-circle", name: "Circle", category: "Design & Shapes", componentName: "Circle", tags: ["circle", "shape", "round", "dot"] },
-  { id: "icon-square", name: "Square", category: "Design & Shapes", componentName: "Square", tags: ["square", "shape", "box", "rectangle"] },
-  { id: "icon-triangle", name: "Triangle", category: "Design & Shapes", componentName: "Triangle", tags: ["triangle", "shape", "delta"] },
+  if (
+    /shopping|cart|bag|card|dollar|euro|tag|percent|bank|coins|receipt|wallet|store|barcode|credit|currency|piggy|gem|gift/.test(
+      lower
+    )
+  ) {
+    return "E-Commerce & Finance";
+  }
 
-  // ── Security & System ──
-  { id: "icon-shield", name: "Shield", category: "Security & System", componentName: "Shield", tags: ["shield", "security", "protect", "guard", "safe"] },
-  { id: "icon-shield-check", name: "ShieldCheck", category: "Security & System", componentName: "ShieldCheck", tags: ["shield", "check", "verified", "secure", "auth"] },
-  { id: "icon-lock", name: "Lock", category: "Security & System", componentName: "Lock", tags: ["lock", "private", "secure", "password", "key"] },
-  { id: "icon-unlock", name: "Unlock", category: "Security & System", componentName: "Unlock", tags: ["unlock", "open", "public", "access"] },
-  { id: "icon-key", name: "Key", category: "Security & System", componentName: "Key", tags: ["key", "passcode", "access", "auth", "token"] },
-  { id: "icon-alert-circle", name: "AlertCircle", category: "Security & System", componentName: "AlertCircle", tags: ["alert", "warning", "error", "info", "notice"] },
-];
+  if (
+    /palette|type|grid|waves|circle|square|triangle|hexagon|pen|brush|crop|ruler|pipette|stamp|scaling|paint|sparkle|wand|blend|blend-/.test(
+      lower
+    )
+  ) {
+    return "Design & Shapes";
+  }
+
+  if (
+    /shield|lock|unlock|key|alert|info|help|check|x|cross|slash|eye|fingerprint|server|wifi|battery|power|siren|ban|vault/.test(
+      lower
+    )
+  ) {
+    return "Security & System";
+  }
+
+  if (
+    /sun|moon|cloud|rain|wind|snowflake|tree|leaf|flame|droplet|thermometer|umbrella|sunrise|sunset|zap|sparkle/.test(
+      lower
+    )
+  ) {
+    return "Weather & Nature";
+  }
+
+  if (
+    /user|person|team|group|avatar|smile|frown|contact|badge|footprints|hand|biceps|face/.test(
+      lower
+    )
+  ) {
+    return "User & People";
+  }
+
+  if (
+    /search|slider|cog|gear|setting|option|filter|menu|list|grid|table|check|plus|minus|star|flame|bookmark|calendar|clock|refresh|loader|spin/.test(
+      lower
+    )
+  ) {
+    return "Interface & UI";
+  }
+
+  return "General & Objects";
+}
+
+// Generate full catalog of ALL Lucide icons dynamically at runtime
+function buildFullLucideCatalog(): IconItem[] {
+  const catalog: IconItem[] = [];
+  const keys = Object.keys(LucideIcons);
+
+  keys.forEach((key) => {
+    // Exclude internal non-icon exports
+    if (
+      !/^[A-Z]/.test(key) ||
+      key === "LucideIcon" ||
+      key === "LucideProps" ||
+      key === "default" ||
+      key === "createLucideIcon"
+    ) {
+      return;
+    }
+
+    const humanName = camelToWords(key);
+    const category = categorizeIcon(key);
+    const words = humanName.toLowerCase().split(" ");
+    const tags = Array.from(new Set([key.toLowerCase(), ...words, category.toLowerCase()]));
+
+    catalog.push({
+      id: `lucide-${key.toLowerCase()}`,
+      name: humanName,
+      category,
+      tags,
+      componentName: key,
+    });
+  });
+
+  return catalog;
+}
+
+// Singleton full catalog instance containing ALL 1,500+ Lucide icons
+export const FULL_LUCIDE_CATALOG: IconItem[] = buildFullLucideCatalog();
+export const LUCIDE_ICON_CATALOG = FULL_LUCIDE_CATALOG;
 
 export function searchLucideIcons(
   query: string,
   activeCategory: string = "All"
 ): IconItem[] {
-  let result = LUCIDE_ICON_CATALOG;
+  let result = FULL_LUCIDE_CATALOG;
 
   if (activeCategory !== "All") {
     result = result.filter((item) => item.category === activeCategory);
@@ -145,9 +183,17 @@ export function searchLucideIcons(
         item.name.toLowerCase().includes(q) ||
         item.category.toLowerCase().includes(q) ||
         item.componentName.toLowerCase().includes(q) ||
-        item.tags.some((tag) => tag.toLowerCase().includes(q))
+        item.tags.some((tag) => tag.includes(q))
     );
   }
 
   return result;
+}
+
+export function getIconCategoryCounts(): Record<string, number> {
+  const counts: Record<string, number> = { All: FULL_LUCIDE_CATALOG.length };
+  FULL_LUCIDE_CATALOG.forEach((item) => {
+    counts[item.category] = (counts[item.category] || 0) + 1;
+  });
+  return counts;
 }
