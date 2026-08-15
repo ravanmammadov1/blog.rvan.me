@@ -4,6 +4,7 @@ import { ArrowDownRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react
 import { fetchSiteSettings } from "../../../lib/sanityQueries";
 import { Eyebrow } from "../Eyebrow";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
+import { Button } from "../ui/Button";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -111,16 +112,14 @@ export default function ContactSection() {
             </p>
 
             <div className="space-y-6">
-              <a
+              <Button
                 href="mailto:hello@rvan.me"
-                className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
-                style={{
-                  background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
-                }}
+                variant="outline"
+                size="lg"
+                icon={<ArrowDownRight size={16} />}
               >
                 {letsTalkLabel}
-                <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-              </a>
+              </Button>
             </div>
           </motion.div>
 
@@ -202,13 +201,12 @@ export default function ContactSection() {
                 aria-hidden="true"
               />
 
-              <button
+              <Button
                 type="submit"
                 disabled={contactStatus === "loading"}
-                className="w-full group inline-flex items-center justify-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm disabled:opacity-50"
-                style={{
-                  background: "linear-gradient(135deg, rgba(97,197,173,0.15) 0%, rgba(66,111,186,0.15) 50%, rgba(152,79,159,0.15) 100%)",
-                }}
+                variant="outline"
+                size="lg"
+                className="w-full"
               >
                 {contactStatus === "loading" && (
                   <>
@@ -234,7 +232,7 @@ export default function ContactSection() {
                     <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                   </>
                 )}
-              </button>
+              </Button>
 
               {contactStatus === "error" && (
                 <p className="text-sm text-red-400 text-center" role="alert">

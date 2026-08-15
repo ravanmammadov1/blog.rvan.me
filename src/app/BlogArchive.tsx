@@ -17,6 +17,7 @@ import PageFilterBar from "./components/PageFilterBar";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+import { Button } from "./components/ui/Button";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -264,16 +265,14 @@ export default function BlogArchive() {
             {/* Load More Pagination */}
             {hasMore && (
               <div className="mt-12 text-center">
-                <button
+                <Button
                   onClick={loadMore}
                   disabled={isLoadingMore}
-                  className="inline-flex items-center gap-2 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.15em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent glass-sm disabled:opacity-50"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
-                  }}
+                  variant="outline"
+                  size="lg"
                 >
                   {isLoadingMore ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMoreArticles", "LOAD MORE ARTICLES")} (${remainingCount} ${t("remaining", "REMAINING")})`}
-                </button>
+                </Button>
               </div>
             )}
           </>

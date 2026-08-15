@@ -16,6 +16,7 @@ import {
   ArrowRight,
   MapPin
 } from "lucide-react";
+import { Button } from "./components/ui/Button";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
@@ -90,20 +91,22 @@ export default function AboutPage() {
         gradientVariant="accent"
         description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.")}
       >
-        <div className="flex flex-wrap items-center gap-4">
-          <Link
+        <div className="mt-10 flex flex-wrap items-center gap-4">
+          <Button
             to={getLocalizedPath("/resources")}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-primary px-7 py-3.5 text-xs font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(216,255,68,0.3)] mono"
+            variant="primary"
+            size="md"
+            icon={<ArrowRight size={15} />}
           >
             {t("btnExploreResources", "EXPLORE RESOURCES")}
-            <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-          </Link>
-          <Link
+          </Button>
+          <Button
             to={getLocalizedPath("/tools")}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+            variant="secondary"
+            size="md"
           >
             {t("aboutViewCreatorTools", "VIEW CREATOR TOOLS")}
-          </Link>
+          </Button>
         </div>
       </PageHero>
 
@@ -279,16 +282,14 @@ export default function AboutPage() {
                 </p>
 
                 <div className="pt-2">
-                  <Link
+                  <Button
                     to={getLocalizedPath("/ravanmammadov")}
-                    className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-7 py-3.5 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] hover:shadow-[0_0_30px_rgba(152,79,159,0.35)] glass-sm"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
-                    }}
+                    variant="outline"
+                    size="md"
+                    icon={<ArrowUpRight size={15} />}
                   >
                     VIEW FULL PROFILE & EXPERIENCE
-                    <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </Link>
+                  </Button>
                 </div>
               </div>
 

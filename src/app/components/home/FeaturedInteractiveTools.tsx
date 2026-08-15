@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Wrench, ArrowUpRight, Sparkles, Grid, Waves, Type, Layers, Palette, Search } from "lucide-react";
 import { INTERACTIVE_TOOLS } from "../../lib/toolsRegistry";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
+import { Button } from "../ui/Button";
 
 const CssGridGenerator = lazy(() => import("../tools/CssGridGenerator"));
 const SvgWaveGenerator = lazy(() => import("../tools/SvgWaveGenerator"));
@@ -57,15 +58,15 @@ export const FeaturedInteractiveTools: React.FC = () => {
             </p>
           </div>
 
-          <Link
+          <Button
             to={getLocalizedPath("/tools")}
-            className="group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-xs font-bold tracking-widest text-white uppercase transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(97,197,173,0.35)] shrink-0"
-            style={{
-              background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
-            }}
+            variant="primary"
+            size="md"
+            icon={<ArrowUpRight size={15} />}
+            className="shrink-0"
           >
-            {t("viewAllUtilities", "BÜTÜN ALƏTLƏRƏ BAX")} <ArrowUpRight size={15} />
-          </Link>
+            {t("viewAllUtilities", "BÜTÜN ALƏTLƏRƏ BAX")}
+          </Button>
         </div>
 
         {/* Interactive Tabs (Clean Lucide Icons, No Emojis) */}
@@ -73,25 +74,17 @@ export const FeaturedInteractiveTools: React.FC = () => {
           {INTERACTIVE_TOOLS.map((tool) => {
             const isActive = activeTab === tool.id;
             return (
-              <button
+              <Button
                 key={tool.id}
+                variant="filter"
+                size="sm"
+                active={isActive}
                 onClick={() => setActiveTab(tool.id)}
-                className={`rounded-full px-5 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${
-                  isActive
-                    ? "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)]"
-                    : "border border-white/10 bg-white/5 hover:border-[#61c5ad]/50 text-muted-foreground hover:text-foreground glass-sm"
-                }`}
-                style={
-                  isActive
-                    ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                    : {}
-                }
+                icon={<span className={isActive ? "text-white" : "text-[#61c5ad]"}>{TOOL_ICONS[tool.id] || <Wrench size={14} />}</span>}
+                iconPosition="left"
               >
-                <span className={isActive ? "text-white" : "text-[#61c5ad]"}>
-                  {TOOL_ICONS[tool.id] || <Wrench size={14} />}
-                </span>
-                <span>{tool.name}</span>
-              </button>
+                {tool.name}
+              </Button>
             );
           })}
         </div>

@@ -5,6 +5,7 @@ import { ArrowUpRight, ExternalLink, Star, Type, GitBranch, Wrench, Package, Boo
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
+import { Button } from "../ui/Button";
 
 const EASE = "easeInOut";
 
@@ -112,25 +113,17 @@ export default function ResourcesSection() {
             const catKey = key as ResourceCategoryKey;
             const isActive = activeCategory === catKey;
             return (
-              <button
+              <Button
                 key={key}
+                variant="filter"
+                size="sm"
+                active={isActive}
                 onClick={() => setActiveCategory(catKey)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 ${
-                  isActive
-                    ? "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)]"
-                    : "border border-white/10 bg-white/5 hover:border-[#61c5ad]/50 text-muted-foreground hover:text-foreground glass-sm"
-                }`}
-                style={
-                  isActive
-                    ? { background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                    : {}
-                }
+                icon={<span className={isActive ? "text-white" : "text-[#61c5ad]"}>{CATEGORY_ICONS[catKey]}</span>}
+                iconPosition="left"
               >
-                <span className={isActive ? "text-white" : "text-[#61c5ad]"}>
-                  {CATEGORY_ICONS[catKey]}
-                </span>
-                <span>{categoryLabels[catKey]}</span>
-              </button>
+                {categoryLabels[catKey]}
+              </Button>
             );
           })}
         </div>

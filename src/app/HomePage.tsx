@@ -9,6 +9,7 @@ import { SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { Button } from "./components/ui/Button";
 
 import HeroAtmosphere from "./components/HeroAtmosphere";
 
@@ -86,22 +87,23 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
-                <Link
+                <Button
                   to={getLocalizedPath("/resources")}
-                  className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-xs font-bold tracking-[.18em] text-white uppercase transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(97,197,173,0.35)] hover:shadow-[0_0_40px_rgba(152,79,159,0.5)]"
-                  style={{
-                    background: "linear-gradient(135deg, #61c5ad 0%, #426fba 48%, #984f9f 100%)",
-                  }}
+                  variant="primary"
+                  size="lg"
+                  icon={<ArrowUpRight size={16} />}
                 >
-                  {t("btnExploreResources", "EXPLORE RESOURCES")} <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </Link>
+                  {t("btnExploreResources", "EXPLORE RESOURCES")}
+                </Button>
 
-                <Link
+                <Button
                   to={getLocalizedPath("/blog")}
-                  className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-[#61c5ad]/50 hover:bg-white/10 glass"
+                  variant="secondary"
+                  size="lg"
+                  icon={<ArrowDownRight size={16} />}
                 >
-                  {t("exploreAllArticles", "READ BLOG & ARTICLES")} <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-                </Link>
+                  {t("exploreAllArticles", "READ BLOG & ARTICLES")}
+                </Button>
               </div>
             </motion.div>
 

@@ -18,6 +18,7 @@ import TableOfContents from "./components/blog/TableOfContents";
 import ShareButtons from "./components/blog/ShareButtons";
 import AuthorCard from "./components/blog/AuthorCard";
 import RelatedPosts from "./components/blog/RelatedPosts";
+import { Button } from "./components/ui/Button";
 
 import CommentSection from "./components/CommentSection";
 
@@ -187,13 +188,15 @@ export default function BlogDetail() {
             )}
 
             <div className="mt-10 flex justify-center border-t border-white/10 pt-8">
-              <Link
+              <Button
                 to={getLocalizedPath("/blog")}
-                className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary mono glass-sm"
+                variant="secondary"
+                size="lg"
+                icon={<ArrowLeft size={16} />}
+                iconPosition="left"
               >
-                <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
                 {t("backToBlogArchive", "BACK TO BLOG ARCHIVE")}
-              </Link>
+              </Button>
             </div>
 
             <RelatedPosts

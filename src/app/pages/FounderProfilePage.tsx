@@ -19,6 +19,7 @@ import Footer from "../components/Footer";
 import { PORTFOLIO_FALLBACK_PROJECTS } from "../../lib/portfolioFallback";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { Button } from "../components/ui/Button";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -188,27 +189,27 @@ export default function FounderProfilePage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a
+                <Button
                   href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
-                  className="group inline-flex items-center gap-3 rounded-full border border-[#61c5ad]/40 px-8 py-4 text-xs font-bold tracking-[.18em] text-[#61c5ad] uppercase transition-all duration-300 hover:text-white hover:border-transparent shadow-[0_0_20px_rgba(97,197,173,0.15)] glass-sm"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)",
-                  }}
+                  variant="outline"
+                  size="lg"
+                  icon={<ArrowUpRight size={16} />}
                 >
                   Get in Touch
-                  <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
+                </Button>
 
-                <a
+                <Button
                   href="https://www.behance.net/mammadovravan"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-xs font-bold tracking-widest text-foreground hover:border-[#61c5ad]/50 hover:text-[#61c5ad] transition-all duration-300 mono uppercase glass-sm"
+                  external
+                  variant="secondary"
+                  size="lg"
+                  icon={<ArrowUpRight size={14} />}
                 >
-                  <BehanceIcon size={15} />
-                  View Behance
-                  <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 opacity-60" />
-                </a>
+                  <span className="flex items-center gap-2">
+                    <BehanceIcon size={15} />
+                    View Behance
+                  </span>
+                </Button>
               </div>
             </motion.div>
 

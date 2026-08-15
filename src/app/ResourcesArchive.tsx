@@ -23,6 +23,7 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
+import { Button } from "./components/ui/Button";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -382,13 +383,14 @@ export default function ResourcesArchive() {
                 {/* Load More Pagination */}
                 {hasMoreCategoryItems && (
                   <div className="mt-12 text-center">
-                    <button
+                    <Button
                       onClick={loadMoreCategoryItems}
                       disabled={isLoadingMoreCategory}
-                      className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.15em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm disabled:opacity-50"
+                      variant="outline"
+                      size="lg"
                     >
                       {isLoadingMoreCategory ? t("loadingBatch", "LOADING BATCH...") : `${t("loadMore", "LOAD MORE ITEMS")} (${remainingCategoryCount} ${t("remaining", "REMAINING")})`}
-                    </button>
+                    </Button>
                   </div>
                 )}
               </>

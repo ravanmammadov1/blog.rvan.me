@@ -28,6 +28,7 @@ import SiteHeader from "../components/SiteHeader";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import { Button } from "../components/ui/Button";
 import { FontSpecimenCard } from "../components/content/FontSpecimenCard";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 
@@ -167,27 +168,25 @@ export default function FontDetailPage() {
         description={font.description}
       >
         <div className="flex flex-wrap items-center gap-3 pt-2">
-          <a
+          <Button
             href={directDownloadUrl}
-            download={`${font.family}.zip`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-xs font-bold text-white uppercase tracking-wider hover:scale-105 transition-all duration-300 mono cursor-pointer shadow-[0_0_25px_rgba(97,197,173,0.35)]"
-            style={{
-              background: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
-            }}
+            external
+            variant="primary"
+            size="md"
+            icon={<Download size={14} />}
           >
-            {t("downloadZip", "DOWNLOAD ZIP")} <Download size={14} />
-          </a>
+            {t("downloadZip", "DOWNLOAD ZIP")}
+          </Button>
           {font.officialUrl && (
-            <a
+            <Button
               href={font.officialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3.5 text-xs font-bold text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono uppercase glass-sm"
+              external
+              variant="secondary"
+              size="md"
+              icon={<ExternalLink size={13} />}
             >
-              {t("officialHomepage", "OFFICIAL HOMEPAGE")} <ExternalLink size={13} />
-            </a>
+              {t("officialHomepage", "OFFICIAL HOMEPAGE")}
+            </Button>
           )}
         </div>
       </PageHero>

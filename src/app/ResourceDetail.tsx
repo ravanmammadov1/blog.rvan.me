@@ -14,6 +14,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { Button } from "./components/ui/Button";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const fadeUp = {
@@ -249,14 +250,24 @@ export default function ResourceDetail() {
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap gap-3 relative z-10">
-                <a href={resource.link} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 rounded-full border border-primary/50 bg-primary/10 px-8 py-4 text-xs font-bold tracking-[.18em] text-primary uppercase transition-all duration-300 hover:bg-primary hover:text-black glass-sm">
-                  <ExternalLink size={13} />
+                <Button
+                  href={resource.link}
+                  external
+                  variant="primary"
+                  size="lg"
+                  icon={<ExternalLink size={14} />}
+                >
                   {t("accessResource", "ACCESS RESOURCE")}
-                </a>
-                <Link to={getLocalizedPath("/resources")} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-widest text-foreground hover:border-primary/50 hover:bg-white/10 transition-all duration-300 glass-sm">
-                  <ArrowLeft size={13} />
+                </Button>
+                <Button
+                  to={getLocalizedPath("/resources")}
+                  variant="secondary"
+                  size="lg"
+                  icon={<ArrowLeft size={14} />}
+                  iconPosition="left"
+                >
                   {t("backToDirectory", "BACK TO DIRECTORY")}
-                </Link>
+                </Button>
               </div>
             </motion.div>
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, X } from "lucide-react";
+import { Button } from "./ui/Button";
 
 export interface FilterOption {
   key: string;
@@ -48,24 +49,22 @@ export function PageFilterBar({
           {categories.map((cat) => {
             const isActive = activeCategory === cat.key;
             return (
-              <button
+              <Button
                 key={cat.key}
-                type="button"
+                variant="filter"
+                size="sm"
+                active={isActive}
                 onClick={() => onSelectCategory(cat.key)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap cursor-pointer ${
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-sm font-bold"
-                    : "border border-border bg-card hover:border-primary/50 text-muted-foreground hover:text-foreground glass-sm"
-                }`}
+                icon={cat.icon}
+                iconPosition="left"
               >
-                {cat.icon && <span className="text-sm">{cat.icon}</span>}
                 <span>{cat.label}</span>
                 {cat.count !== undefined && (
-                  <span className={`text-[10px] ${isActive ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                  <span className={`text-[10px] ml-1 ${isActive ? "text-white/90" : "text-muted-foreground"}`}>
                     ({cat.count})
                   </span>
                 )}
-              </button>
+              </Button>
             );
           })}
         </div>

@@ -6,6 +6,7 @@ import SEO from "../components/SEO";
 import { getToolById, INTERACTIVE_TOOLS } from "../lib/toolsRegistry";
 import { Wrench, ArrowLeft, Sparkles } from "lucide-react";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { Button } from "../components/ui/Button";
 
 // Lazy-load individual tools
 const CssGridGenerator = lazy(() => import("../components/tools/CssGridGenerator"));
@@ -122,12 +123,16 @@ export const ToolDetailPage: React.FC = () => {
               </p>
             </div>
 
-            <Link
+            <Button
               to={getLocalizedPath("/tools")}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all shrink-0 glass-sm"
+              variant="secondary"
+              size="sm"
+              icon={<ArrowLeft size={14} />}
+              iconPosition="left"
+              className="shrink-0"
             >
-              <ArrowLeft size={14} /> {t("allUtilities", "ALL UTILITIES")}
-            </Link>
+              {t("allUtilities", "ALL UTILITIES")}
+            </Button>
           </div>
         </div>
 
