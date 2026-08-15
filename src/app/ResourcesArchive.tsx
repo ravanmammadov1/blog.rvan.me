@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo, useDeferredValue, useRef } from "react";
+import { useEffect, useState, useMemo, useDeferredValue } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Type, Sliders, Sparkles, Layers, ChevronDown, Palette, Check, RefreshCw } from "lucide-react";
+import { Type, Sliders, Sparkles, Layers, ChevronDown, Palette, RefreshCw, Image as ImageIcon } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -11,14 +11,20 @@ import {
   ICON_CATEGORIES,
   IconCategory,
   getIconCategoryCounts,
-  FULL_LUCIDE_CATALOG,
 } from "../lib/iconEngine";
+import {
+  searchIllustrations,
+  ILLUSTRATION_CATEGORIES,
+  IllustrationCategory,
+  getIllustrationCategoryCounts,
+} from "../lib/illustrationEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import { IconSpecimenCard } from "./components/content/IconSpecimenCard";
+import { IllustrationSpecimenCard } from "./components/content/IllustrationSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { Button } from "./components/ui/Button";
@@ -34,15 +40,16 @@ const fadeUp = {
   }),
 };
 
-export type ResourceCategoryKey = "fonts" | "icons";
+export type ResourceCategoryKey = "fonts" | "icons" | "illustrations";
 
 export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: string }> = {
   fonts: { label: "Fonts", icon: "🔤" },
   icons: { label: "Icons", icon: "🎨" },
+  illustrations: { label: "Illustrations", icon: "🖼️" },
 };
 
 const COLOR_PRESETS = [
-  "#61c5ad", // Mint
+  "#61c5ad", // Mint (Default Brand)
   "#3b82f6", // Blue
   "#a855f7", // Purple
   "#ec4899", // Pink
@@ -70,15 +77,29 @@ export default function ResourcesArchive() {
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [iconColor, setIconColor] = useState("#61c5ad");
   const [visibleIconLimit, setVisibleIconLimit] = useState(36);
-  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [iconCategoryDropdownOpen, setIconCategoryDropdownOpen] = useState(false);
 
-  const activeCategory = (searchParams.get("category") as ResourceCategoryKey) === "icons" ? "icons" : "fonts";
+  // Illustration Specimen Interactive Controls
+  const [illustrationCategorySubfilter, setIllustrationCategorySubfilter] = useState<IllustrationCategory>("All");
+  const [illustrationColor, setIllustrationColor] = useState("#61c5ad");
+  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(8);
+  const [illustrationCategoryDropdownOpen, setIllustrationCategoryDropdownOpen] = useState(false);
+
+  const activeCategoryParam = searchParams.get("category") as ResourceCategoryKey;
+  const activeCategory: ResourceCategoryKey =
+    activeCategoryParam === "icons"
+      ? "icons"
+      : activeCategoryParam === "illustrations"
+      ? "illustrations"
+      : "fonts";
+
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
 
   const categoryLabels: Record<ResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
     icons: t("icons", "Icons"),
+    illustrations: t("illustrations", "Illustrations"),
   };
 
   useEffect(() => {
@@ -143,15 +164,24 @@ export default function ResourcesArchive() {
     return searchLucideIcons(deferredSearch, iconCategorySubfilter);
   }, [deferredSearch, iconCategorySubfilter]);
 
-  const categoryCounts = useMemo(() => {
+  const iconCategoryCounts = useMemo(() => {
     return getIconCategoryCounts();
+  }, []);
+
+  // Filtered Vector Illustrations Catalog
+  const filteredIllustrations = useMemo(() => {
+    return searchIllustrations(deferredSearch, illustrationCategorySubfilter);
+  }, [deferredSearch, illustrationCategorySubfilter]);
+
+  const illustrationCategoryCounts = useMemo(() => {
+    return getIllustrationCategoryCounts();
   }, []);
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${t("resourcesArchiveTitle", "Open-Source Fonts & 1,500+ Vector Icons Directory")} — Rvan.me`}
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and full 1,500+ Lucide SVG & React vector icon catalog.")}
+        title={`${t("resourcesArchiveTitle", "Open-Source Fonts, 1,500+ Icons & Vector Illustrations")} — Rvan.me`}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, full 1,500+ Lucide icon catalog, and customizable vector illustrations.")}
         url="https://www.rvan.me/resources"
       />
 
@@ -173,10 +203,10 @@ export default function ResourcesArchive() {
         title={t("resourcesHeadingMain", "Creative")}
         accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and full 1,500+ Lucide SVG & React vector icon catalog.")}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, full 1,500+ Lucide icon catalog, and customizable vector illustrations.")}
       />
 
-      {/* Primary Category Filter Bar (FONTS | ICONS) */}
+      {/* Primary Category Filter Bar (FONTS | ICONS | ILLUSTRATIONS) */}
       <PageFilterBar
         categories={Object.entries(CATEGORY_MAP).map(([key, config]) => ({
           key,
@@ -189,14 +219,20 @@ export default function ResourcesArchive() {
         }}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
-        searchPlaceholder={activeCategory === "fonts" ? "Search fonts by family or designer..." : "Search 1,500+ icons by name, category, or tag..."}
+        searchPlaceholder={
+          activeCategory === "fonts"
+            ? "Search fonts by family or designer..."
+            : activeCategory === "icons"
+            ? "Search 1,500+ icons by name or category..."
+            : "Search vector illustrations..."
+        }
         searchId="resources-search"
       />
 
       {/* ─────────────────────────────────────────────────────────────────────────────
           1. FONTS CATALOG SECTION
       ───────────────────────────────────────────────────────────────────────────── */}
-      {activeCategory === "fonts" ? (
+      {activeCategory === "fonts" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
             {/* Font Specimen Toolbar Controls */}
@@ -296,32 +332,33 @@ export default function ResourcesArchive() {
             )}
           </div>
         </section>
-      ) : (
-        /* ─────────────────────────────────────────────────────────────────────────────
-            2. ICONS CATALOG SECTION (1,500+ Lucide Vectors, Colors & Downloads)
-        ───────────────────────────────────────────────────────────────────────────── */
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          2. ICONS CATALOG SECTION (1,500+ Lucide Vectors)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {activeCategory === "icons" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
             {/* Sleek Single-Line Icon Toolbar with Dropdown Category Selector */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               
-              {/* Category Dropdown Selector (Clean & Compact) */}
+              {/* Category Dropdown Selector (Compact Popover) */}
               <div className="relative">
                 <button
-                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                  onClick={() => setIconCategoryDropdownOpen(!iconCategoryDropdownOpen)}
                   className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 transition-all cursor-pointer select-none"
                 >
                   <Sparkles size={14} className="text-primary" />
                   <span>Category: {iconCategorySubfilter}</span>
                   <span className="ml-1 text-[10px] text-primary border border-primary/30 bg-primary/10 px-2 py-0.5 rounded-full">
-                    {categoryCounts[iconCategorySubfilter] || filteredIcons.length}
+                    {iconCategoryCounts[iconCategorySubfilter] || filteredIcons.length}
                   </span>
-                  <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${categoryDropdownOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${iconCategoryDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
 
-                {/* Compact Category Dropdown Popover */}
                 <AnimatePresence>
-                  {categoryDropdownOpen && (
+                  {iconCategoryDropdownOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: 8, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -340,7 +377,7 @@ export default function ResourcesArchive() {
                               key={cat}
                               onClick={() => {
                                 setIconCategorySubfilter(cat);
-                                setCategoryDropdownOpen(false);
+                                setIconCategoryDropdownOpen(false);
                               }}
                               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
                                 isSelected
@@ -350,7 +387,7 @@ export default function ResourcesArchive() {
                             >
                               <span className="truncate">{cat}</span>
                               <span className={`text-[10px] px-2 py-0.5 rounded-full ${isSelected ? "bg-black/20 text-black font-bold" : "bg-white/5 text-muted-foreground/80"}`}>
-                                {categoryCounts[cat] || 0}
+                                {iconCategoryCounts[cat] || 0}
                               </span>
                             </button>
                           );
@@ -379,7 +416,6 @@ export default function ResourcesArchive() {
                         title={`Color: ${color}`}
                       />
                     ))}
-                    {/* Custom Color Input */}
                     <input
                       type="color"
                       value={iconColor}
@@ -474,6 +510,141 @@ export default function ResourcesArchive() {
                       size="md"
                     >
                       LOAD MORE ICONS ({filteredIcons.length - visibleIconLimit} REMAINING)
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          3. ILLUSTRATIONS CATALOG SECTION (unDraw Style Dynamic Vectors)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {activeCategory === "illustrations" && (
+        <section className="px-6 py-10 md:px-10 relative z-10">
+          <div className="mx-auto max-w-[1600px]">
+            {/* Single-Line Toolbar with Dropdown Category & Color Palette */}
+            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
+              
+              {/* Illustration Category Selector Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen)}
+                  className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 transition-all cursor-pointer select-none"
+                >
+                  <ImageIcon size={14} className="text-primary" />
+                  <span>Category: {illustrationCategorySubfilter}</span>
+                  <span className="ml-1 text-[10px] text-primary border border-primary/30 bg-primary/10 px-2 py-0.5 rounded-full">
+                    {illustrationCategoryCounts[illustrationCategorySubfilter] || filteredIllustrations.length}
+                  </span>
+                  <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {illustrationCategoryDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 mt-2 z-50 w-72 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+                    >
+                      <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
+                        Select Illustration Category
+                      </div>
+                      <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                        {ILLUSTRATION_CATEGORIES.map((cat) => {
+                          const isSelected = illustrationCategorySubfilter === cat;
+                          return (
+                            <button
+                              key={cat}
+                              onClick={() => {
+                                setIllustrationCategorySubfilter(cat);
+                                setIllustrationCategoryDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
+                                isSelected
+                                  ? "bg-primary text-black font-bold"
+                                  : "text-muted-foreground hover:text-white hover:bg-white/5"
+                              }`}
+                            >
+                              <span className="truncate">{cat}</span>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isSelected ? "bg-black/20 text-black font-bold" : "bg-white/5 text-muted-foreground/80"}`}>
+                                {illustrationCategoryCounts[cat] || 0}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Dynamic Brand Color Customizer for Vector Illustrations */}
+              <div className="flex items-center gap-2">
+                <Palette size={14} className="text-primary shrink-0" />
+                <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Brand Accent Color:</span>
+                <div className="flex items-center gap-1.5 bg-black/40 border border-white/10 p-1 rounded-xl">
+                  {COLOR_PRESETS.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setIllustrationColor(color)}
+                      className={`h-5 w-5 rounded-lg transition-transform cursor-pointer ${
+                        illustrationColor === color ? "scale-110 border-2 border-white shadow-md" : "hover:scale-105 opacity-80"
+                      }`}
+                      style={{ backgroundColor: color }}
+                      title={`Brand Color: ${color}`}
+                    />
+                  ))}
+                  <input
+                    type="color"
+                    value={illustrationColor}
+                    onChange={(e) => setIllustrationColor(e.target.value)}
+                    className="h-5 w-5 rounded-lg border-0 bg-transparent cursor-pointer opacity-80 hover:opacity-100"
+                    title="Custom Brand Hex Color"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Illustration Grid */}
+            {filteredIllustrations.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
+                <p className="text-muted-foreground text-xs">No vector illustrations found matching your query.</p>
+                <button
+                  onClick={() => {
+                    setIllustrationCategorySubfilter("All");
+                    handleSearchChange("");
+                  }}
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                >
+                  RESET FILTERS
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                  {filteredIllustrations.slice(0, visibleIllustrationLimit).map((item) => (
+                    <IllustrationSpecimenCard
+                      key={item.id}
+                      illustration={item}
+                      accentColor={illustrationColor}
+                    />
+                  ))}
+                </div>
+
+                {/* Load More Button */}
+                {visibleIllustrationLimit < filteredIllustrations.length && (
+                  <div className="mt-10 text-center">
+                    <Button
+                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 6)}
+                      variant="outline"
+                      size="md"
+                    >
+                      LOAD MORE ILLUSTRATIONS ({filteredIllustrations.length - visibleIllustrationLimit} REMAINING)
                     </Button>
                   </div>
                 )}
