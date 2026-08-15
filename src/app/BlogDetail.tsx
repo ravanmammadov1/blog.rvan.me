@@ -148,7 +148,7 @@ export default function BlogDetail() {
       <SiteHeader siteSettings={siteSettings} />
 
       <article className="mx-auto max-w-[1600px] px-6 pt-24 pb-28 md:px-10">
-        <BlogHeader post={post} />
+        <BlogHero post={post} />
 
         <div className="mt-12 grid gap-12 lg:grid-cols-12">
           <aside className="hidden lg:block lg:col-span-3">
