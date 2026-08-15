@@ -50,12 +50,14 @@ export default function HomePage() {
         url="https://www.rvan.me"
       />
 
+      {/* ── GLOBAL HOME PAGE SEAMLESS ATMOSPHERIC BACKGROUND ── */}
+      <HeroAtmosphere />
+
       {/* ── 1. NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />
 
       {/* ── 2. HERO SECTION ── */}
       <section className="relative min-h-[70vh] lg:min-h-[90vh] flex flex-col justify-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28">
-        <HeroAtmosphere />
         <Suspense fallback={null}>
           <HeroParticles />
         </Suspense>

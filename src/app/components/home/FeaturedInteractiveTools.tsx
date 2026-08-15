@@ -41,7 +41,7 @@ export const FeaturedInteractiveTools: React.FC = () => {
   };
 
   return (
-    <section id="interactive-tools" className="px-6 py-28 md:px-10 md:py-36 border-t border-border relative bg-background">
+    <section id="interactive-tools" className="px-6 py-28 md:px-10 md:py-36 border-t border-white/10 relative">
       <div className="mx-auto max-w-[1600px]">
         {/* Header */}
         <div className="mb-12 border-b border-border pb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
