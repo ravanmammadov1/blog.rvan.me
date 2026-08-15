@@ -10,13 +10,11 @@ import {
   searchLucideIcons,
   ICON_CATEGORIES,
   IconCategory,
-  getIconCategoryCounts,
 } from "../lib/iconEngine";
 import {
   searchIllustrations,
   ILLUSTRATION_CATEGORIES,
   IllustrationCategory,
-  getIllustrationCategoryCounts,
 } from "../lib/illustrationEngine";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -150,38 +148,21 @@ export default function ResourcesArchive() {
     return list;
   }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
 
-  const fontCountsBySubfilter = useMemo(() => {
-    const counts: Record<string, number> = { all: fontCatalog.length };
-    fontCatalog.forEach((f) => {
-      const cat = (f.category || "sans-serif").toLowerCase();
-      counts[cat] = (counts[cat] || 0) + 1;
-    });
-    return counts;
-  }, [fontCatalog]);
-
-  // Filtered Lucide Icons Catalog (1,500+ icons)
+  // Filtered Lucide Icons Catalog
   const filteredIcons = useMemo(() => {
     return searchLucideIcons(deferredSearch, iconCategorySubfilter);
   }, [deferredSearch, iconCategorySubfilter]);
 
-  const iconCategoryCounts = useMemo(() => {
-    return getIconCategoryCounts();
-  }, []);
-
-  // Filtered Vector Illustrations Catalog
+  // Filtered Vector Illustrations Catalog (1,000+ unDraw-styled templates)
   const filteredIllustrations = useMemo(() => {
     return searchIllustrations(deferredSearch, illustrationCategorySubfilter);
   }, [deferredSearch, illustrationCategorySubfilter]);
 
-  const illustrationCategoryCounts = useMemo(() => {
-    return getIllustrationCategoryCounts();
-  }, []);
-
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${t("resourcesArchiveTitle", "Open-Source Fonts, 1,500+ Icons & Vector Illustrations")} — Rvan.me`}
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, full 1,500+ Lucide icon catalog, and customizable vector illustrations.")}
+        title={`${t("resourcesArchiveTitle", "Open-Source Fonts, Vector Icons & Illustrations")} — Rvan.me`}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, vector icon catalog, and customizable vector illustrations.")}
         url="https://www.rvan.me/resources"
       />
 
@@ -203,7 +184,7 @@ export default function ResourcesArchive() {
         title={t("resourcesHeadingMain", "Creative")}
         accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, full 1,500+ Lucide icon catalog, and customizable vector illustrations.")}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, vector icon catalog, and customizable vector illustrations.")}
       />
 
       {/* Primary Category Filter Bar (FONTS | ICONS | ILLUSTRATIONS) */}
@@ -223,7 +204,7 @@ export default function ResourcesArchive() {
           activeCategory === "fonts"
             ? "Search fonts by family or designer..."
             : activeCategory === "icons"
-            ? "Search 1,500+ icons by name or category..."
+            ? "Search vector icons..."
             : "Search vector illustrations..."
         }
         searchId="resources-search"
@@ -264,19 +245,19 @@ export default function ResourcesArchive() {
               </div>
             </div>
 
-            {/* Font Subfilter Tabs */}
+            {/* Font Subfilter Tabs (No Count Numbers) */}
             <div className="mb-8 flex flex-wrap gap-2">
               {["all", "sans-serif", "serif", "monospace", "display"].map((sub) => (
                 <button
                   key={sub}
                   onClick={() => setFontCategorySubfilter(sub)}
-                  className={`rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider transition-all mono ${
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-all mono cursor-pointer ${
                     fontCategorySubfilter === sub
                       ? "bg-primary text-black"
                       : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {sub === "all" ? t("allNews", "All") : sub} ({(fontCountsBySubfilter[sub] || 0)})
+                  {sub === "all" ? t("allNews", "All") : sub}
                 </button>
               ))}
             </div>
@@ -296,7 +277,7 @@ export default function ResourcesArchive() {
                     setFontCategorySubfilter("all");
                     handleSearchChange("");
                   }}
-                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
                 >
                   {t("resetFilters", "RESET FILTERS")}
                 </button>
@@ -316,7 +297,7 @@ export default function ResourcesArchive() {
                   ))}
                 </div>
 
-                {/* Load More Button */}
+                {/* Load More Button (No Count Numbers) */}
                 {visibleFontLimit < filteredFonts.length && (
                   <div className="mt-10 text-center">
                     <Button
@@ -324,7 +305,7 @@ export default function ResourcesArchive() {
                       variant="outline"
                       size="md"
                     >
-                      LOAD MORE FONTS ({filteredFonts.length - visibleFontLimit} REMAINING)
+                      LOAD MORE FONTS
                     </Button>
                   </div>
                 )}
@@ -335,12 +316,12 @@ export default function ResourcesArchive() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          2. ICONS CATALOG SECTION (1,500+ Lucide Vectors)
+          2. ICONS CATALOG SECTION (Lucide Vectors)
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "icons" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Sleek Single-Line Icon Toolbar with Dropdown Category Selector */}
+            {/* Sleek Single-Line Icon Toolbar with Dropdown Category Selector (No Count Numbers) */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               
               {/* Category Dropdown Selector (Compact Popover) */}
@@ -351,9 +332,6 @@ export default function ResourcesArchive() {
                 >
                   <Sparkles size={14} className="text-primary" />
                   <span>Category: {iconCategorySubfilter}</span>
-                  <span className="ml-1 text-[10px] text-primary border border-primary/30 bg-primary/10 px-2 py-0.5 rounded-full">
-                    {iconCategoryCounts[iconCategorySubfilter] || filteredIcons.length}
-                  </span>
                   <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${iconCategoryDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
 
@@ -364,10 +342,10 @@ export default function ResourcesArchive() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.98 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-2 z-50 w-72 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+                      className="absolute top-full left-0 mt-2 z-50 w-64 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
                     >
                       <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
-                        Select Icon Category
+                        Select Category
                       </div>
                       <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
                         {ICON_CATEGORIES.map((cat) => {
@@ -386,9 +364,6 @@ export default function ResourcesArchive() {
                               }`}
                             >
                               <span className="truncate">{cat}</span>
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isSelected ? "bg-black/20 text-black font-bold" : "bg-white/5 text-muted-foreground/80"}`}>
-                                {iconCategoryCounts[cat] || 0}
-                              </span>
                             </button>
                           );
                         })}
@@ -457,21 +432,20 @@ export default function ResourcesArchive() {
               </div>
             </div>
 
-            {/* Icon Count & Results Summary */}
-            <div className="mb-6 flex items-center justify-between text-xs font-mono text-muted-foreground">
-              <span>Showing {Math.min(visibleIconLimit, filteredIcons.length)} of {filteredIcons.length} vector icons</span>
-              {(deferredSearch || iconCategorySubfilter !== "All") && (
+            {/* Reset Filters Option if filtered */}
+            {(deferredSearch || iconCategorySubfilter !== "All") && (
+              <div className="mb-6 flex justify-end">
                 <button
                   onClick={() => {
                     setIconCategorySubfilter("All");
                     handleSearchChange("");
                   }}
-                  className="flex items-center gap-1 text-primary hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-mono text-primary hover:text-white transition-colors cursor-pointer"
                 >
                   <RefreshCw size={12} /> Reset Filters
                 </button>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Icon Specimen Grid */}
             {filteredIcons.length === 0 ? (
@@ -482,7 +456,7 @@ export default function ResourcesArchive() {
                     setIconCategorySubfilter("All");
                     handleSearchChange("");
                   }}
-                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
                 >
                   RESET FILTERS
                 </button>
@@ -501,7 +475,7 @@ export default function ResourcesArchive() {
                   ))}
                 </div>
 
-                {/* Load More Icons Button */}
+                {/* Load More Icons Button (No Count Numbers) */}
                 {visibleIconLimit < filteredIcons.length && (
                   <div className="mt-10 text-center">
                     <Button
@@ -509,7 +483,7 @@ export default function ResourcesArchive() {
                       variant="outline"
                       size="md"
                     >
-                      LOAD MORE ICONS ({filteredIcons.length - visibleIconLimit} REMAINING)
+                      LOAD MORE ICONS
                     </Button>
                   </div>
                 )}
@@ -520,7 +494,7 @@ export default function ResourcesArchive() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          3. ILLUSTRATIONS CATALOG SECTION (unDraw Style Dynamic Vectors)
+          3. ILLUSTRATIONS CATALOG SECTION (1,000+ Vector Templates)
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "illustrations" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
@@ -528,7 +502,7 @@ export default function ResourcesArchive() {
             {/* Single-Line Toolbar with Dropdown Category & Color Palette */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               
-              {/* Illustration Category Selector Dropdown */}
+              {/* Illustration Category Selector Dropdown (No Count Numbers) */}
               <div className="relative">
                 <button
                   onClick={() => setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen)}
@@ -536,9 +510,6 @@ export default function ResourcesArchive() {
                 >
                   <ImageIcon size={14} className="text-primary" />
                   <span>Category: {illustrationCategorySubfilter}</span>
-                  <span className="ml-1 text-[10px] text-primary border border-primary/30 bg-primary/10 px-2 py-0.5 rounded-full">
-                    {illustrationCategoryCounts[illustrationCategorySubfilter] || filteredIllustrations.length}
-                  </span>
                   <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
 
@@ -549,10 +520,10 @@ export default function ResourcesArchive() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.98 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-2 z-50 w-72 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+                      className="absolute top-full left-0 mt-2 z-50 w-64 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
                     >
                       <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
-                        Select Illustration Category
+                        Select Category
                       </div>
                       <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
                         {ILLUSTRATION_CATEGORIES.map((cat) => {
@@ -571,9 +542,6 @@ export default function ResourcesArchive() {
                               }`}
                             >
                               <span className="truncate">{cat}</span>
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isSelected ? "bg-black/20 text-black font-bold" : "bg-white/5 text-muted-foreground/80"}`}>
-                                {illustrationCategoryCounts[cat] || 0}
-                              </span>
                             </button>
                           );
                         })}
@@ -610,6 +578,21 @@ export default function ResourcesArchive() {
               </div>
             </div>
 
+            {/* Reset Filters Option if filtered */}
+            {(deferredSearch || illustrationCategorySubfilter !== "All") && (
+              <div className="mb-6 flex justify-end">
+                <button
+                  onClick={() => {
+                    setIllustrationCategorySubfilter("All");
+                    handleSearchChange("");
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-mono text-primary hover:text-white transition-colors cursor-pointer"
+                >
+                  <RefreshCw size={12} /> Reset Filters
+                </button>
+              </div>
+            )}
+
             {/* Illustration Grid */}
             {filteredIllustrations.length === 0 ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
@@ -619,7 +602,7 @@ export default function ResourcesArchive() {
                     setIllustrationCategorySubfilter("All");
                     handleSearchChange("");
                   }}
-                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white"
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
                 >
                   RESET FILTERS
                 </button>
@@ -636,7 +619,7 @@ export default function ResourcesArchive() {
                   ))}
                 </div>
 
-                {/* Load More Button */}
+                {/* Load More Button (No Count Numbers) */}
                 {visibleIllustrationLimit < filteredIllustrations.length && (
                   <div className="mt-10 text-center">
                     <Button
@@ -644,7 +627,7 @@ export default function ResourcesArchive() {
                       variant="outline"
                       size="md"
                     >
-                      LOAD MORE ILLUSTRATIONS ({filteredIllustrations.length - visibleIllustrationLimit} REMAINING)
+                      LOAD MORE ILLUSTRATIONS
                     </Button>
                   </div>
                 )}
