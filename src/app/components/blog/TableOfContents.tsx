@@ -8,19 +8,21 @@ interface HeadingItem {
 }
 
 interface TableOfContentsProps {
-  body: any[];
+  body?: any[];
+  content?: any[];
 }
 
-export default function TableOfContents({ body }: TableOfContentsProps) {
+export default function TableOfContents({ body, content }: TableOfContentsProps) {
+  const blocks = body || content || [];
   const [headings, setHeadings] = useState<HeadingItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    if (!body || !Array.isArray(body)) return;
+    if (!blocks || !Array.isArray(blocks)) return;
 
     const extractedHeadings: HeadingItem[] = [];
 
-    body.forEach((block) => {
+    blocks.forEach((block) => {
       if (
         block._type === "block" &&
         ["h1", "h2", "h3"].includes(block.style) &&
@@ -42,7 +44,7 @@ export default function TableOfContents({ body }: TableOfContentsProps) {
     });
 
     setHeadings(extractedHeadings);
-  }, [body]);
+  }, [blocks]);
 
   useEffect(() => {
     if (headings.length === 0) return;

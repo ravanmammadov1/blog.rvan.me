@@ -9,13 +9,19 @@ interface BlogContentProps {
 
 export default function BlogContent({ post }: BlogContentProps) {
   return (
-    <article className="mx-auto mt-20 max-w-4xl">
-      <div className="prose dark:prose-invert prose-lg max-w-none text-foreground">
-        <PortableText
-          value={post.body}
-          components={portableTextComponents}
-        />
+    <div className="w-full">
+      <div className="prose dark:prose-invert prose-lg max-w-none text-foreground leading-relaxed">
+        {Array.isArray(post.body) && post.body.length > 0 ? (
+          <PortableText
+            value={post.body}
+            components={portableTextComponents}
+          />
+        ) : typeof post.body === "string" && post.body.trim() ? (
+          <div dangerouslySetInnerHTML={{ __html: post.body }} />
+        ) : (
+          <p className="text-muted-foreground italic">No content available for this article.</p>
+        )}
       </div>
-    </article>
+    </div>
   );
 }
