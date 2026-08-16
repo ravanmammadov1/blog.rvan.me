@@ -1,4 +1,5 @@
 import { isFuzzyMatch } from "./fuzzySearch";
+import { RAW_ILLUSTRATION_CATALOG, RawIllustrationItem } from "./illustrationCatalog";
 
 export interface IllustrationItem {
   id: string;
@@ -18,343 +19,279 @@ export const ILLUSTRATION_CATEGORIES = [
   "People & Work",
   "Finance & E-Commerce",
   "Marketing & Growth",
+  "Science & Education",
+  "Lifestyle & Wellness",
 ] as const;
 
-export type IllustrationCategory = typeof ILLUSTRATION_CATEGORIES[number];
+export type IllustrationCategory = (typeof ILLUSTRATION_CATEGORIES)[number];
 
-// Helper to wrap vector paths in standard unDraw SVG container
-function createUnDrawSvg(
-  pathsSvg: string,
-  viewBox = "0 0 800 600"
-): string {
+// Helper to wrap vector paths in standard 800x600 SVG container
+function createUnDrawSvg(pathsSvg: string, viewBox = "0 0 800 600"): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="100%" height="100%" fill="none">
   <rect width="800" height="600" rx="24" fill="#0d1117" opacity="0.4"/>
   ${pathsSvg}
 </svg>`;
 }
 
-// Master unDraw SVG Illustration Blueprints
-export const ILLUSTRATION_CATALOG: IllustrationItem[] = [
-  // 1. Winner
-  {
-    id: "ill-winner",
-    title: "Winner & Trophy Celebration",
-    category: "People & Work",
-    tags: ["winner", "trophy", "success", "celebrate", "award", "person", "achievement"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="520" rx="320" ry="20" fill="#161b22"/>
-        <path d="M440 280C440 340 400 370 400 370C400 370 360 340 360 280V200H440V280Z" fill="${color}"/>
-        <rect x="385" y="370" width="30" height="60" fill="#3f3d56"/>
-        <rect x="350" y="430" width="100" height="30" rx="8" fill="#2f2e41"/>
-        <path d="M360 220H320C300 220 290 240 290 260C290 290 320 300 360 300V280C330 280 310 275 310 260C310 245 320 240 360 240V220Z" fill="${color}"/>
-        <path d="M440 220H480C500 220 510 240 510 260C510 290 480 300 440 300V280C470 280 490 275 490 260C490 245 480 240 440 240V220Z" fill="${color}"/>
-        <polygon points="400,230 407,248 426,248 411,259 416,277 400,266 384,277 389,259 374,248 393,248" fill="#ffffff"/>
-        <circle cx="260" cy="260" r="26" fill="#3f3d56"/>
-        <path d="M235 300C235 300 260 285 290 310C300 320 310 340 290 360L260 330" fill="${color}"/>
-        <path d="M245 295L280 360L230 480H190L230 390L190 330Z" fill="#2f2e41"/>`
-      ),
-  },
+// ── PROCEDURAL VECTOR SVG TEMPLATES (unDraw / Open Doodles aesthetic) ──
 
-  // 2. Financial Advisor
-  {
-    id: "ill-financial-advisor",
-    title: "Financial Advisor & Mobile Analytics",
-    category: "Finance & E-Commerce",
-    tags: ["financial", "advisor", "mobile", "app", "phone", "money", "person", "chart"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="520" rx="300" ry="18" fill="#161b22"/>
-        <rect x="300" y="90" width="200" height="400" rx="28" fill="#2f2e41" stroke="#3f3d56" stroke-width="6"/>
-        <rect x="315" y="110" width="170" height="360" rx="16" fill="#ffffff"/>
-        <rect x="335" y="135" width="130" height="14" rx="7" fill="${color}"/>
-        <rect x="335" y="160" width="90" height="8" rx="4" fill="#e2e8f0"/>
-        <rect x="340" y="240" width="24" height="70" rx="6" fill="#e2e8f0"/>
-        <rect x="375" y="200" width="24" height="110" rx="6" fill="${color}"/>
-        <rect x="410" y="170" width="24" height="140" rx="6" fill="${color}"/>
-        <rect x="445" y="220" width="24" height="90" rx="6" fill="#e2e8f0"/>
-        <circle cx="400" cy="350" r="20" fill="#3f3d56"/>
-        <path d="M370 380C370 380 400 365 430 380V430H370V380Z" fill="${color}"/>
-        <path d="M375 430L355 490H380L395 440L410 490H435L415 430Z" fill="#2f2e41"/>`
-      ),
-  },
+function renderDesktopAnalytics(color: string, seed: number): string {
+  const chartHeight = 100 + (seed % 60);
+  const chartHeight2 = 140 - (seed % 50);
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
+    <!-- Monitor Base & Neck -->
+    <rect x="360" y="440" width="80" height="70" rx="6" fill="#2f2e41"/>
+    <ellipse cx="400" cy="505" rx="90" ry="12" fill="#3f3d56"/>
+    <!-- Main Screen Frame -->
+    <rect x="180" y="100" width="440" height="340" rx="20" fill="#2f2e41" stroke="#3f3d56" stroke-width="4"/>
+    <rect x="195" y="115" width="410" height="310" rx="14" fill="#ffffff"/>
+    <!-- Browser Top Bar -->
+    <rect x="195" y="115" width="410" height="32" rx="14" fill="#f1f5f9"/>
+    <circle cx="215" cy="131" r="5" fill="#ff5f56"/>
+    <circle cx="230" cy="131" r="5" fill="#ffbd2e"/>
+    <circle cx="245" cy="131" r="5" fill="#27c93f"/>
+    <!-- Search / URL Bar -->
+    <rect x="270" y="122" width="220" height="18" rx="9" fill="#e2e8f0"/>
+    <!-- Chart Bars with Custom Brand Color -->
+    <rect x="230" y="${380 - chartHeight}" width="36" height="${chartHeight}" rx="8" fill="${color}"/>
+    <rect x="285" y="${380 - chartHeight2}" width="36" height="${chartHeight2}" rx="8" fill="#cbd5e1"/>
+    <rect x="340" y="${380 - (chartHeight + 20)}" width="36" height="${chartHeight + 20}" rx="8" fill="${color}"/>
+    <rect x="395" y="${380 - (chartHeight2 - 15)}" width="36" height="${chartHeight2 - 15}" rx="8" fill="#94a3b8"/>
+    <!-- Floating KPI Badge -->
+    <rect x="460" y="170" width="125" height="75" rx="12" fill="#0f172a" stroke="${color}" stroke-width="2"/>
+    <circle cx="485" cy="195" r="10" fill="${color}"/>
+    <rect x="505" y="190" width="60" height="10" rx="5" fill="#ffffff"/>
+    <rect x="480" y="218" width="85" height="14" rx="4" fill="${color}" opacity="0.9"/>
+    <!-- Line Graph Overlay -->
+    <path d="M240 270 Q 320 220, 400 250 T 560 190" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="400" cy="250" r="6" fill="#ffffff" stroke="${color}" stroke-width="3"/>
+    <circle cx="560" cy="190" r="6" fill="#ffffff" stroke="${color}" stroke-width="3"/>
+  `);
+}
 
-  // 3. Team
-  {
-    id: "ill-team",
-    title: "Team Collaboration & Guild",
-    category: "People & Work",
-    tags: ["team", "avatars", "people", "group", "work", "community", "members"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
-        <circle cx="230" cy="180" r="30" fill="#3f3d56"/>
-        <path d="M190 245C190 215 215 210 230 210C245 210 270 215 270 245V280H190V245Z" fill="${color}"/>
-        <circle cx="400" cy="150" r="36" fill="#2f2e41"/>
-        <path d="M345 225C345 190 380 185 400 185C420 185 455 190 455 225V265H345V225Z" fill="#ffffff"/>
-        <circle cx="570" cy="180" r="30" fill="#3f3d56"/>
-        <path d="M530 245C530 215 555 210 570 210C585 210 610 215 610 245V280H530V245Z" fill="${color}"/>
-        <circle cx="300" cy="340" r="32" fill="#2f2e41"/>
-        <path d="M250 415C250 380 280 375 300 375C320 375 350 380 350 415V460H250V415Z" fill="${color}"/>
-        <circle cx="500" cy="340" r="32" fill="#3f3d56"/>
-        <path d="M450 415C450 380 480 375 500 375C520 375 550 380 550 415V460H450V415Z" fill="#ffffff"/>`
-      ),
-  },
+function renderMobileApp(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="520" rx="300" ry="18" fill="#161b22"/>
+    <!-- Left Floating Card -->
+    <rect x="150" y="180" width="160" height="180" rx="18" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+    <circle cx="190" cy="220" r="18" fill="${color}"/>
+    <rect x="220" y="215" width="70" height="12" rx="6" fill="#ffffff"/>
+    <rect x="175" y="260" width="110" height="10" rx="5" fill="#64748b"/>
+    <rect x="175" y="285" width="85" height="10" rx="5" fill="#475569"/>
+    <rect x="175" y="315" width="110" height="24" rx="8" fill="${color}"/>
+    <!-- Center Smartphone Frame -->
+    <rect x="300" y="70" width="200" height="420" rx="32" fill="#2f2e41" stroke="#3f3d56" stroke-width="6"/>
+    <rect x="315" y="90" width="170" height="380" rx="20" fill="#ffffff"/>
+    <!-- Dynamic Island / Notch -->
+    <rect x="365" y="98" width="70" height="14" rx="7" fill="#111827"/>
+    <!-- App UI List Elements -->
+    <rect x="335" y="130" width="130" height="45" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+    <circle cx="355" cy="152" r="12" fill="${color}"/>
+    <rect x="375" y="146" width="70" height="12" rx="4" fill="#0f172a"/>
+    <rect x="335" y="190" width="130" height="45" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+    <circle cx="355" cy="212" r="12" fill="#94a3b8"/>
+    <rect x="375" y="206" width="70" height="12" rx="4" fill="#0f172a"/>
+    <!-- Big Action Button on Phone -->
+    <rect x="335" y="390" width="130" height="42" rx="12" fill="${color}"/>
+    <rect x="365" y="405" width="70" height="12" rx="6" fill="#ffffff"/>
+    <!-- Right Notification Bubble -->
+    <rect x="480" y="220" width="170" height="90" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.2))"/>
+    <circle cx="510" cy="250" r="12" fill="${color}"/>
+    <rect x="535" y="245" width="90" height="10" rx="5" fill="#0f172a"/>
+    <rect x="510" y="275" width="115" height="8" rx="4" fill="#94a3b8"/>
+  `);
+}
 
-  // 4. Online Transactions
-  {
-    id: "ill-online-transactions",
-    title: "Online Transactions & Gateway",
-    category: "Finance & E-Commerce",
-    tags: ["online", "transactions", "payment", "credit", "card", "mobile", "money"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="500" rx="320" ry="20" fill="#161b22"/>
-        <rect x="250" y="230" width="300" height="180" rx="20" fill="${color}"/>
-        <rect x="250" y="270" width="300" height="40" fill="#2f2e41"/>
-        <rect x="280" y="340" width="70" height="45" rx="8" fill="#ffbd2e"/>
-        <circle cx="470" cy="360" r="18" fill="#ffffff" opacity="0.8"/>
-        <circle cx="498" cy="360" r="18" fill="#3f3d56"/>
-        <rect x="130" y="160" width="100" height="180" rx="18" fill="#2f2e41"/>
-        <rect x="142" y="175" width="76" height="150" rx="10" fill="#ffffff"/>
-        <circle cx="180" cy="250" r="18" fill="${color}"/>
-        <rect x="570" y="160" width="100" height="180" rx="18" fill="#2f2e41"/>
-        <rect x="585" y="190" width="70" height="16" rx="4" fill="${color}"/>
-        <rect x="585" y="220" width="70" height="16" rx="4" fill="#3f3d56"/>
-        <path d="M230 250H250M550 250H570" stroke="${color}" stroke-width="4" stroke-dasharray="6 6"/>`
-      ),
-  },
+function renderTeamCollab(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
+    <!-- Character 1 (Left) -->
+    <circle cx="220" cy="220" r="28" fill="#2f2e41"/>
+    <path d="M180 300 C180 260 210 250 220 250 C230 250 260 260 260 300 V380 H180 Z" fill="${color}"/>
+    <path d="M190 380 L180 490 H210 L220 420 L230 490 H260 L250 380 Z" fill="#1e293b"/>
+    <!-- Center Collaboration Board -->
+    <rect x="300" y="120" width="200" height="240" rx="16" fill="#ffffff" stroke="#3f3d56" stroke-width="4"/>
+    <rect x="320" y="145" width="70" height="70" rx="8" fill="${color}" opacity="0.9"/>
+    <rect x="410" y="145" width="70" height="70" rx="8" fill="#e2e8f0"/>
+    <rect x="320" y="235" width="70" height="70" rx="8" fill="#e2e8f0"/>
+    <rect x="410" y="235" width="70" height="70" rx="8" fill="${color}"/>
+    <line x1="400" y1="360" x2="400" y2="480" stroke="#3f3d56" stroke-width="8"/>
+    <ellipse cx="400" cy="485" rx="45" ry="10" fill="#2f2e41"/>
+    <!-- Character 2 (Right) -->
+    <circle cx="580" cy="220" r="28" fill="#3f3d56"/>
+    <path d="M540 300 C540 260 570 250 580 250 C590 250 620 260 620 300 V380 H540 Z" fill="#ffffff"/>
+    <path d="M550 380 L540 490 H570 L580 420 L590 490 H620 L610 380 Z" fill="#1e293b"/>
+    <!-- Dynamic Connecting Arc -->
+    <path d="M250 280 Q 400 200, 550 280" stroke="${color}" stroke-width="4" stroke-dasharray="8 8" fill="none"/>
+  `);
+}
 
-  // 5. Tight Deadline
-  {
-    id: "ill-tight-deadline",
-    title: "Tight Deadline & Work Desk",
-    category: "People & Work",
-    tags: ["deadline", "clock", "time", "work", "laptop", "desk", "person"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-        <rect x="160" y="400" width="480" height="18" rx="9" fill="#2f2e41"/>
-        <rect x="200" y="418" width="18" height="90" fill="#3f3d56"/>
-        <rect x="580" y="418" width="18" height="90" fill="#3f3d56"/>
-        <circle cx="530" cy="230" r="90" fill="${color}"/>
-        <circle cx="530" cy="230" r="72" fill="#ffffff"/>
-        <path d="M530 230V175M530 230L565 265" stroke="#2f2e41" stroke-width="9" stroke-linecap="round"/>
-        <rect x="240" y="315" width="160" height="95" rx="10" fill="#3f3d56"/>
-        <rect x="252" y="327" width="136" height="73" fill="#ffffff"/>
-        <circle cx="170" cy="290" r="24" fill="#3f3d56"/>
-        <path d="M142 330C142 330 170 318 198 330V400H142V330Z" fill="${color}"/>`
-      ),
-  },
+function renderCloudNodes(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="520" rx="320" ry="18" fill="#161b22"/>
+    <!-- Central Cloud Core -->
+    <g transform="translate(260, 140)">
+      <path d="M70 120 H210 C240 120 260 95 255 65 C250 35 220 20 190 30 C175 -5 125 -10 95 15 C80 5 50 15 45 40 C15 45 5 75 25 100 C35 115 50 120 70 120 Z" fill="${color}"/>
+      <circle cx="140" cy="65" r="24" fill="#ffffff"/>
+      <path d="M130 65 L140 55 L150 65 M140 55 V75" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <!-- Peripheral Devices / Nodes -->
+    <rect x="140" y="320" width="120" height="90" rx="12" fill="#2f2e41" stroke="${color}" stroke-width="2"/>
+    <rect x="155" y="335" width="90" height="60" rx="6" fill="#ffffff"/>
+    <rect x="540" y="320" width="120" height="90" rx="12" fill="#2f2e41" stroke="${color}" stroke-width="2"/>
+    <rect x="555" y="335" width="90" height="60" rx="6" fill="#ffffff"/>
+    <!-- Server Stack Bottom Center -->
+    <rect x="340" y="380" width="120" height="100" rx="12" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+    <line x1="355" y1="410" x2="445" y2="410" stroke="#334155" stroke-width="4"/>
+    <line x1="355" y1="440" x2="445" y2="440" stroke="#334155" stroke-width="4"/>
+    <circle cx="365" cy="395" r="4" fill="${color}"/>
+    <circle cx="365" cy="425" r="4" fill="${color}"/>
+    <circle cx="365" cy="455" r="4" fill="#22c55e"/>
+    <!-- Dashed Network Links -->
+    <line x1="320" y1="240" x2="210" y2="320" stroke="${color}" stroke-width="3" stroke-dasharray="6 6"/>
+    <line x1="480" y1="240" x2="590" y2="320" stroke="${color}" stroke-width="3" stroke-dasharray="6 6"/>
+    <line x1="400" y1="260" x2="400" y2="380" stroke="${color}" stroke-width="3" stroke-dasharray="6 6"/>
+  `);
+}
 
-  // 6. Progress Bar
-  {
-    id: "ill-progress-bar",
-    title: "Progress Bar & System Work",
-    category: "Tech & Coding",
-    tags: ["progress", "bar", "loading", "laptop", "computer", "system", "gear"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="500" rx="300" ry="18" fill="#161b22"/>
-        <rect x="200" y="150" width="400" height="250" rx="18" fill="#2f2e41" stroke="#3f3d56" stroke-width="6"/>
-        <rect x="222" y="172" width="356" height="206" rx="10" fill="#ffffff"/>
-        <path d="M140 410L660 410L605 388L195 388Z" fill="#3f3d56"/>
-        <circle cx="400" cy="245" r="28" fill="${color}"/>
-        <rect x="260" y="315" width="280" height="18" rx="9" fill="#e2e8f0"/>
-        <rect x="260" y="315" width="190" height="18" rx="9" fill="${color}"/>`
-      ),
-  },
+function renderIsometricGrid(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
+    <!-- 3D Isometric Stacked Cubes -->
+    <!-- Base Platform -->
+    <polygon points="400,280 580,370 400,460 220,370" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+    <polygon points="220,370 400,460 400,500 220,410" fill="#0f172a"/>
+    <polygon points="580,370 400,460 400,500 580,410" fill="#090d16"/>
+    <!-- Top Glowing Cube with Brand Color -->
+    <polygon points="400,160 500,210 400,260 300,210" fill="${color}"/>
+    <polygon points="300,210 400,260 400,320 300,270" fill="#1e293b" opacity="0.9"/>
+    <polygon points="500,210 400,260 400,320 500,270" fill="#0f172a" opacity="0.9"/>
+    <!-- Floating Data Spheres -->
+    <circle cx="260" cy="180" r="16" fill="${color}"/>
+    <circle cx="540" cy="220" r="20" fill="#ffffff" stroke="${color}" stroke-width="4"/>
+    <circle cx="400" cy="100" r="12" fill="${color}"/>
+  `);
+}
 
-  // 7. Order Delivered
-  {
-    id: "ill-order-delivered",
-    title: "Order Delivered & Logistics",
-    category: "Finance & E-Commerce",
-    tags: ["order", "delivered", "package", "box", "shipping", "ecommerce", "person"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-        <rect x="430" y="310" width="150" height="130" rx="14" fill="${color}"/>
-        <circle cx="240" cy="370" r="26" fill="${color}"/>
-        <path d="M227 370L236 379L253 362" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="320" cy="230" r="26" fill="#3f3d56"/>
-        <path d="M292 268C292 268 320 256 348 268V360H292V268Z" fill="#2f2e41"/>
-        <rect x="330" y="295" width="90" height="75" rx="10" fill="${color}"/>`
-      ),
-  },
+function renderFloatingCards(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <!-- Card 1 (Back Left) -->
+    <rect x="180" y="140" width="220" height="260" rx="20" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+    <rect x="205" y="170" width="80" height="14" rx="7" fill="#64748b"/>
+    <rect x="205" y="200" width="140" height="80" rx="10" fill="#0f172a"/>
+    <!-- Card 2 (Front Center Hero) -->
+    <rect x="280" y="180" width="260" height="300" rx="24" fill="#ffffff" stroke="${color}" stroke-width="4" filter="drop-shadow(0 20px 30px rgba(0,0,0,0.3))"/>
+    <circle cx="330" cy="230" r="22" fill="${color}"/>
+    <rect x="370" y="222" width="120" height="16" rx="8" fill="#0f172a"/>
+    <!-- Progress Bar -->
+    <rect x="320" y="280" width="180" height="18" rx="9" fill="#f1f5f9"/>
+    <rect x="320" y="280" width="120" height="18" rx="9" fill="${color}"/>
+    <rect x="320" y="330" width="180" height="110" rx="14" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+    <path d="M340 410 L 380 370 L 420 390 L 480 350" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Card 3 (Right Accent Badge) -->
+    <rect x="510" y="120" width="160" height="160" rx="18" fill="#0f172a" stroke="${color}" stroke-width="2"/>
+    <circle cx="590" cy="180" r="28" fill="${color}" opacity="0.2"/>
+    <circle cx="590" cy="180" r="16" fill="${color}"/>
+    <rect x="540" y="230" width="100" height="12" rx="6" fill="#ffffff"/>
+  `);
+}
 
-  // 8. Looking for Answers
-  {
-    id: "ill-looking-for-answers",
-    title: "Looking for Answers & Knowledge",
-    category: "Design & Creative",
-    tags: ["answers", "search", "flashlight", "question", "thought", "bubble", "person"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-        <path d="M240 190C205 190 185 222 195 255C172 277 185 310 205 322C205 344 228 365 262 355C284 365 330 355 342 322C365 310 375 268 352 235C352 202 308 180 272 190Z" fill="${color}"/>
-        <text x="255" y="290" font-family="sans-serif" font-size="80" font-weight="bold" fill="#ffffff">?</text>
-        <circle cx="570" cy="310" r="24" fill="#3f3d56"/>
-        <path d="M542 348C542 348 570 336 598 348V440H542V348Z" fill="#2f2e41"/>
-        <polygon points="535,365 330,320 340,230" fill="${color}" opacity="0.3"/>`
-      ),
-  },
+function renderCharacterScene(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
+    <!-- Giant Glowing Symbol in Background -->
+    <circle cx="480" cy="260" r="140" fill="${color}" opacity="0.15"/>
+    <circle cx="480" cy="260" r="90" fill="#ffffff" stroke="${color}" stroke-width="6"/>
+    <!-- Character Standing on Left -->
+    <circle cx="280" cy="180" r="32" fill="#2f2e41"/>
+    <!-- Hair -->
+    <path d="M260 170 C250 140 300 130 310 160 Z" fill="#111827"/>
+    <!-- Hoodie/Shirt with Accent Color -->
+    <path d="M230 250 C230 220 270 215 280 215 C290 215 330 220 330 250 V370 H230 Z" fill="${color}"/>
+    <!-- Left Hand Holding Coffee -->
+    <path d="M230 280 L200 320" stroke="#2f2e41" stroke-width="12" stroke-linecap="round"/>
+    <rect x="185" y="315" width="20" height="24" rx="4" fill="#ffffff" stroke="#111" stroke-width="2"/>
+    <!-- Legs & Shoes -->
+    <path d="M245 370 L235 490 H265 L275 410 L285 490 H315 L305 370 Z" fill="#1e293b"/>
+    <!-- Floating Idea Bubbles -->
+    <circle cx="340" cy="140" r="10" fill="${color}"/>
+    <circle cx="370" cy="110" r="18" fill="${color}"/>
+  `);
+}
 
-  // 9. Photo Landscape
-  {
-    id: "ill-photo-landscape",
-    title: "Photo Landscape & Gallery",
-    category: "Design & Creative",
-    tags: ["photo", "landscape", "picture", "image", "gallery", "frame", "mountains"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="500" rx="300" ry="18" fill="#161b22"/>
-        <rect x="200" y="130" width="400" height="280" rx="18" fill="#2f2e41"/>
-        <rect x="222" y="152" width="356" height="236" rx="10" fill="#ffffff"/>
-        <circle cx="300" cy="220" r="30" fill="#ffbd2e"/>
-        <polygon points="222,388 350,250 440,388" fill="${color}"/>
-        <polygon points="350,388 460,270 578,388" fill="#3f3d56"/>`
-      ),
-  },
+function renderMinimalConcept(color: string, seed: number): string {
+  return createUnDrawSvg(`
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <!-- Overlapping Abstract Circles & Geometric Vectors -->
+    <circle cx="340" cy="280" r="130" fill="${color}" opacity="0.8"/>
+    <circle cx="460" cy="280" r="130" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+    <path d="M260 400 Q 400 120, 540 400" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="400" cy="260" r="28" fill="#ffffff" stroke="${color}" stroke-width="6"/>
+    <!-- Orbiting Accent Stars -->
+    <polygon points="400,100 405,115 420,115 408,125 412,140 400,130 388,140 392,125 380,115 395,115" fill="${color}"/>
+    <circle cx="560" cy="180" r="8" fill="${color}"/>
+    <circle cx="240" cy="200" r="12" fill="#ffffff"/>
+  `);
+}
 
-  // 10. Visiting Japan
-  {
-    id: "ill-visiting-japan",
-    title: "Visiting Japan & Pagoda Temple",
-    category: "People & Work",
-    tags: ["japan", "travel", "pagoda", "temple", "culture", "person", "sun"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
-        <circle cx="270" cy="210" r="65" fill="#ff5f56"/>
-        <rect x="230" y="380" width="90" height="60" fill="#2f2e41"/>
-        <polygon points="180,380 370,380 345,350 205,350" fill="${color}"/>
-        <rect x="242" y="295" width="66" height="55" fill="#2f2e41"/>
-        <polygon points="195,295 355,295 332,265 218,265" fill="${color}"/>
-        <circle cx="540" cy="330" r="22" fill="#3f3d56"/>
-        <path d="M512 365C512 365 540 353 568 365V440H512V365Z" fill="${color}"/>`
-      ),
-  },
+// Master style renderer dispatcher
+function renderSvgByStyle(style: string, color: string, seed: number): string {
+  switch (style) {
+    case "desktop-analytics":
+    case "metric-charts":
+      return renderDesktopAnalytics(color, seed);
+    case "mobile-app":
+      return renderMobileApp(color, seed);
+    case "team-collab":
+      return renderTeamCollab(color, seed);
+    case "cloud-nodes":
+      return renderCloudNodes(color, seed);
+    case "isometric-grid":
+      return renderIsometricGrid(color, seed);
+    case "floating-cards":
+    case "flow-diagram":
+      return renderFloatingCards(color, seed);
+    case "character-scene":
+      return renderCharacterScene(color, seed);
+    case "minimal-concept":
+    case "dark-futuristic":
+    default:
+      return renderMinimalConcept(color, seed);
+  }
+}
 
-  // 11. Developer Code Setup
-  {
-    id: "ill-code-typing",
-    title: "Software Developer & Workstation",
-    category: "Tech & Coding",
-    tags: ["developer", "code", "programming", "monitors", "desktop", "setup", "person"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
-        <rect x="130" y="390" width="540" height="18" rx="9" fill="#2f2e41"/>
-        <rect x="170" y="190" width="220" height="160" rx="14" fill="#3f3d56"/>
-        <rect x="182" y="202" width="196" height="136" fill="#0d1117"/>
-        <rect x="205" y="225" width="90" height="12" rx="6" fill="${color}"/>
-        <rect x="410" y="190" width="220" height="160" rx="14" fill="#3f3d56"/>
-        <rect x="422" y="202" width="196" height="136" fill="#0d1117"/>
-        <rect x="445" y="225" width="130" height="12" rx="6" fill="#ffffff"/>
-        <circle cx="400" cy="315" r="26" fill="#3f3d56"/>
-        <path d="M368 353C368 353 400 341 432 353V440H368V353Z" fill="${color}"/>`
-      ),
-  },
+// ── BUILD COMPLETE CATALOG (1,000+ ITEMS) ──
+export const ILLUSTRATION_CATALOG: IllustrationItem[] = RAW_ILLUSTRATION_CATALOG.map((raw) => ({
+  id: raw.id,
+  title: raw.title,
+  category: raw.category,
+  tags: raw.tags,
+  svgTemplate: (color: string) => renderSvgByStyle(raw.style, color, raw.seed),
+}));
 
-  // 12. Cyber Security Vault
-  {
-    id: "ill-security-cloud-vault",
-    title: "Cyber Security & Padlock Vault",
-    category: "Security & Cloud",
-    tags: ["security", "cloud", "vault", "padlock", "lock", "cyber", "protection"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="500" rx="300" ry="18" fill="#161b22"/>
-        <rect x="260" y="230" width="280" height="220" rx="32" fill="${color}"/>
-        <path d="M315 230V160C315 115 350 80 400 80C450 80 485 115 485 160V230" stroke="#3f3d56" stroke-width="28" stroke-linecap="round" fill="none"/>
-        <circle cx="400" cy="315" r="24" fill="#2f2e41"/>
-        <polygon points="388,315 412,315 418,385 382,385" fill="#2f2e41"/>`
-      ),
-  },
-
-  // 13. Data Analytics Dashboard
-  {
-    id: "ill-data-analytics-dashboard",
-    title: "Data Analytics & KPI Board",
-    category: "Data & Analytics",
-    tags: ["analytics", "data", "dashboard", "charts", "metrics", "growth", "person"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-        <rect x="150" y="110" width="500" height="300" rx="22" fill="#2f2e41"/>
-        <rect x="172" y="132" width="456" height="256" rx="14" fill="#ffffff"/>
-        <rect x="210" y="255" width="45" height="110" rx="7" fill="#e2e8f0"/>
-        <rect x="275" y="200" width="45" height="165" rx="7" fill="${color}"/>
-        <rect x="340" y="160" width="45" height="205" rx="7" fill="${color}"/>
-        <circle cx="530" cy="235" r="55" fill="${color}"/>
-        <circle cx="230" cy="375" r="24" fill="#3f3d56"/>
-        <path d="M202 413C202 413 230 401 258 413V480H202V413Z" fill="${color}"/>`
-      ),
-  },
-
-  // 14. Brainstorming Notes
-  {
-    id: "ill-brainstorming-ideas",
-    title: "Brainstorming & Sticky Notes Board",
-    category: "Design & Creative",
-    tags: ["brainstorming", "ideas", "board", "notes", "sticky", "creative", "team"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-        <rect x="170" y="100" width="460" height="300" rx="22" fill="#2f2e41"/>
-        <rect x="192" y="122" width="416" height="256" rx="14" fill="#ffffff"/>
-        <rect x="225" y="155" width="75" height="75" rx="8" fill="${color}"/>
-        <rect x="320" y="155" width="75" height="75" rx="8" fill="#ffbd2e"/>
-        <rect x="415" y="155" width="75" height="75" rx="8" fill="#ff5f56"/>
-        <circle cx="150" cy="375" r="24" fill="#3f3d56"/>
-        <path d="M122 413C122 413 150 401 178 413V480H122V413Z" fill="${color}"/>`
-      ),
-  },
-
-  // 15. E-Commerce Cart
-  {
-    id: "ill-shopping-cart-checkout",
-    title: "E-Commerce Cart & Shopping",
-    category: "Finance & E-Commerce",
-    tags: ["shopping", "cart", "store", "buy", "checkout", "ecommerce", "person"],
-    svgTemplate: (color) =>
-      createUnDrawSvg(
-        `<ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-        <path d="M210 210H265L320 400H540L590 250H295" stroke="${color}" stroke-width="14" stroke-linecap="round" fill="none"/>
-        <circle cx="340" cy="455" r="26" fill="#2f2e41"/>
-        <circle cx="510" cy="455" r="26" fill="#2f2e41"/>
-        <rect x="325" y="210" width="80" height="80" rx="14" fill="#ffbd2e"/>
-        <rect x="415" y="175" width="100" height="115" rx="14" fill="${color}"/>
-        <circle cx="170" cy="270" r="26" fill="#3f3d56"/>
-        <path d="M142 308C142 308 170 296 198 308V440H142V308Z" fill="#2f2e41"/>`
-      ),
-  },
-];
-
+/**
+ * Searches the 1,000+ vector illustration catalog by query and category filter.
+ */
 export function searchIllustrations(
   query: string,
-  activeCategory: string = "All"
+  category: string = "All"
 ): IllustrationItem[] {
-  let result = ILLUSTRATION_CATALOG;
+  let results = ILLUSTRATION_CATALOG;
 
-  if (activeCategory !== "All") {
-    result = result.filter((item) => item.category === activeCategory);
-  }
-
-  if (query.trim()) {
-    result = result.filter((item) =>
-      isFuzzyMatch(query, item.title, item.tags)
+  if (category && category !== "All") {
+    results = results.filter(
+      (item) => item.category.toLowerCase() === category.toLowerCase()
     );
   }
 
-  return result;
-}
+  const cleanQuery = query.trim().toLowerCase();
+  if (!cleanQuery) return results;
 
-export function getIllustrationCategoryCounts(): Record<string, number> {
-  const counts: Record<string, number> = { All: ILLUSTRATION_CATALOG.length };
-  ILLUSTRATION_CATALOG.forEach((item) => {
-    counts[item.category] = (counts[item.category] || 0) + 1;
+  return results.filter((item) => {
+    if (isFuzzyMatch(cleanQuery, item.title)) return true;
+    if (isFuzzyMatch(cleanQuery, item.category)) return true;
+    return item.tags.some((tag) => isFuzzyMatch(cleanQuery, tag));
   });
-  return counts;
 }

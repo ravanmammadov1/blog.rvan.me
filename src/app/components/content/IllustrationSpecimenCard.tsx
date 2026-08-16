@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Check, Download, Image as ImageIcon } from "lucide-react";
+import { Check, Download, Copy, Image as ImageIcon, FileCode } from "lucide-react";
 import { IllustrationItem } from "../../../lib/illustrationEngine";
 import { downloadEpsFile } from "../../../lib/epsExporter";
 
@@ -12,10 +12,31 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   illustration,
   accentColor = "#61c5ad",
 }) => {
-  const [downloadedType, setDownloadedType] = useState<"eps" | "png" | null>(null);
+  const [downloadedType, setDownloadedType] = useState<"eps" | "png" | "svg" | "copied" | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const rawSvgContent = illustration.svgTemplate(accentColor);
+
+  const handleCopySvg = () => {
+    navigator.clipboard.writeText(rawSvgContent);
+    setDownloadedType("copied");
+    setTimeout(() => setDownloadedType(null), 2000);
+  };
+
+  const handleDownloadSvg = () => {
+    const blob = new Blob([rawSvgContent], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${illustration.id}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setDownloadedType("svg");
+    setTimeout(() => setDownloadedType(null), 2000);
+  };
 
   const handleDownloadEps = () => {
     const svgElement = cardRef.current?.querySelector("svg");
@@ -25,7 +46,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
     downloadEpsFile(svgString, illustration.id);
     setDownloadedType("eps");
-    setTimeout(() => setDownloadedType(null), 2500);
+    setTimeout(() => setDownloadedType(null), 2000);
   };
 
   const handleDownloadPng = () => {
@@ -65,7 +86,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       document.body.removeChild(a);
 
       setDownloadedType("png");
-      setTimeout(() => setDownloadedType(null), 2500);
+      setTimeout(() => setDownloadedType(null), 2000);
     };
     img.src = url;
   };
@@ -73,62 +94,77 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   return (
     <article
       ref={cardRef}
-      className="group relative rounded-3xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-[#61c5ad]/40 hover:bg-white/[0.08] flex flex-col justify-between overflow-hidden"
+      className="group relative rounded-3xl border border-white/10 bg-white/5 p-5 glass transition-all duration-300 hover:border-[#61c5ad]/40 hover:bg-white/[0.08] flex flex-col justify-between overflow-hidden shadow-lg"
     >
       <div>
         {/* Top Header & Category Badge */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#61c5ad] border border-[#61c5ad]/20 bg-[#61c5ad]/10 px-3 py-1 rounded-full mono">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#61c5ad] border border-[#61c5ad]/20 bg-[#61c5ad]/10 px-2.5 py-0.5 rounded-full mono">
             {illustration.category}
           </span>
-          <span className="text-[10px] font-mono text-muted-foreground/60 uppercase">
-            Vector Scene
-          </span>
+          <button
+            onClick={handleCopySvg}
+            className="text-[10px] font-mono text-muted-foreground hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+            title="Copy raw SVG to clipboard"
+          >
+            {downloadedType === "copied" ? (
+              <>
+                <Check size={12} className="text-emerald-400" />
+                <span className="text-emerald-400 font-bold">COPIED</span>
+              </>
+            ) : (
+              <>
+                <Copy size={12} />
+                <span>COPY SVG</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Live Vector SVG Render Preview */}
         <div
-          className="my-4 flex items-center justify-center p-6 rounded-2xl border border-white/5 bg-black/40 min-h-[220px] transition-transform duration-300 group-hover:scale-[1.02]"
+          className="my-3 flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 aspect-[4/3] transition-transform duration-300 group-hover:scale-[1.02] overflow-hidden"
           dangerouslySetInnerHTML={{ __html: rawSvgContent }}
         />
 
         {/* Title & Tags */}
         <div className="mb-4">
-          <h3 className="text-base font-bold text-foreground group-hover:text-[#61c5ad] transition-colors mono">
+          <h3 className="text-sm font-bold text-foreground group-hover:text-[#61c5ad] transition-colors mono truncate">
             {illustration.title}
           </h3>
-          <p className="text-xs text-muted-foreground/70 mono mt-1">
+          <p className="text-[11px] text-muted-foreground/70 mono mt-1 truncate">
             {illustration.tags.slice(0, 4).join(" • ")}
           </p>
         </div>
       </div>
 
-      {/* Actions: DOWNLOAD .EPS and DOWNLOAD .PNG */}
-      <div className="pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+      {/* Action Buttons: SVG | PNG | EPS */}
+      <div className="pt-3 border-t border-white/10 grid grid-cols-3 gap-2">
         <button
-          onClick={handleDownloadEps}
-          className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
-          title="Download EPS vector file for Adobe Illustrator & Figma"
+          onClick={handleDownloadSvg}
+          className="flex items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 py-2 text-[11px] font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
+          title="Download vector SVG"
         >
-          {downloadedType === "eps" ? (
-            <Check size={14} className="text-emerald-400" />
-          ) : (
-            <Download size={14} className="text-[#61c5ad]" />
-          )}
-          <span>DOWNLOAD .EPS</span>
+          {downloadedType === "svg" ? <Check size={12} className="text-emerald-400" /> : <FileCode size={12} className="text-[#61c5ad]" />}
+          <span>SVG</span>
         </button>
 
         <button
           onClick={handleDownloadPng}
-          className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
-          title="Download high-res PNG image"
+          className="flex items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 py-2 text-[11px] font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
+          title="Download 1200px PNG"
         >
-          {downloadedType === "png" ? (
-            <Check size={14} className="text-emerald-400" />
-          ) : (
-            <ImageIcon size={14} className="text-primary" />
-          )}
-          <span>DOWNLOAD .PNG</span>
+          {downloadedType === "png" ? <Check size={12} className="text-emerald-400" /> : <ImageIcon size={12} className="text-primary" />}
+          <span>PNG</span>
+        </button>
+
+        <button
+          onClick={handleDownloadEps}
+          className="flex items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 py-2 text-[11px] font-mono font-bold text-white hover:border-[#61c5ad] hover:bg-[#61c5ad]/10 transition-all cursor-pointer"
+          title="Download EPS file"
+        >
+          {downloadedType === "eps" ? <Check size={12} className="text-emerald-400" /> : <Download size={12} className="text-zinc-400" />}
+          <span>EPS</span>
         </button>
       </div>
     </article>

@@ -80,7 +80,7 @@ export default function ResourcesArchive() {
   // Illustration Specimen Interactive Controls
   const [illustrationCategorySubfilter, setIllustrationCategorySubfilter] = useState<IllustrationCategory>("All");
   const [illustrationColor, setIllustrationColor] = useState("#61c5ad");
-  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(8);
+  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(18);
   const [illustrationCategoryDropdownOpen, setIllustrationCategoryDropdownOpen] = useState(false);
 
   const activeCategoryParam = searchParams.get("category") as ResourceCategoryKey;
@@ -651,7 +651,7 @@ export default function ResourcesArchive() {
               </div>
             ) : (
               <>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredIllustrations.slice(0, visibleIllustrationLimit).map((item) => (
                     <IllustrationSpecimenCard
                       key={item.id}
@@ -665,7 +665,7 @@ export default function ResourcesArchive() {
                 {visibleIllustrationLimit < filteredIllustrations.length && (
                   <div className="mt-10 text-center">
                     <Button
-                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 6)}
+                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 18)}
                       variant="outline"
                       size="md"
                     >
