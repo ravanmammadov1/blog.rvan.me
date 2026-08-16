@@ -11,6 +11,7 @@ import { useLanguage } from "../lib/i18n/LanguageContext";
 
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
+import Footer from "./components/Footer";
 import ReadingProgress from "./components/blog/ReadingProgress";
 import BlogHero from "./components/blog/BlogHero";
 import BlogContent from "./components/blog/BlogContent";
