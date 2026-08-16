@@ -1,11 +1,14 @@
 import React from "react";
 import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
+import { Sb2novTemplate } from "./Sb2novTemplate";
+import { ModerncvTemplate } from "./ModerncvTemplate";
+import { OnyxTemplate } from "./OnyxTemplate";
+import { LeafishTemplate } from "./LeafishTemplate";
 import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
 import { Modern2ColTemplate } from "./Modern2ColTemplate";
 import { SoftBannerTemplate } from "./SoftBannerTemplate";
 import { ClassicHarvardTemplate } from "./ClassicHarvardTemplate";
 import { ModernTechTemplate } from "./ModernTechTemplate";
-import { MinimalTemplate } from "./MinimalTemplate";
 
 interface ResumePreviewProps {
   data: ResumeData;
@@ -26,20 +29,16 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
     }
   };
 
-  const getDensityPadding = () => {
-    switch (theme.density) {
-      case "compact":
-        return "p-0";
-      case "relaxed":
-        return "p-0";
-      case "standard":
-      default:
-        return "p-0";
-    }
-  };
-
   const renderTemplate = () => {
     switch (theme.template) {
+      case "sb2nov":
+        return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "moderncv":
+        return <ModerncvTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "onyx":
+        return <OnyxTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "leafish":
+        return <LeafishTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "dark-sidebar":
         return <DarkSidebarTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "modern-2col":
@@ -48,8 +47,6 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
         return <SoftBannerTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "classic-harvard":
         return <ClassicHarvardTemplate data={data} theme={theme} />;
-      case "minimal":
-        return <MinimalTemplate data={data} theme={theme} />;
       case "modern-tech":
       default:
         return <ModernTechTemplate data={data} theme={theme} />;
@@ -88,7 +85,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
       <div
         id="printable-resume"
-        className={`w-full max-w-[850px] mx-auto bg-white text-neutral-900 rounded-xl shadow-2xl transition-all duration-300 border border-neutral-300 print:rounded-none print:border-none print:shadow-none overflow-hidden ${getDensityPadding()}`}
+        className="w-full max-w-[850px] mx-auto bg-white text-neutral-900 rounded-xl shadow-2xl transition-all duration-300 border border-neutral-300 print:rounded-none print:border-none print:shadow-none overflow-hidden"
         style={{
           fontFamily: getFontFamily(),
           minHeight: "1050px",

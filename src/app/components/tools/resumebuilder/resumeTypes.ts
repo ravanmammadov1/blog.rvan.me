@@ -1,10 +1,13 @@
 export type TemplateId =
+  | "sb2nov"
+  | "moderncv"
+  | "onyx"
+  | "leafish"
   | "dark-sidebar"
   | "modern-2col"
   | "soft-banner"
   | "classic-harvard"
-  | "modern-tech"
-  | "minimal";
+  | "modern-tech";
 
 export type ResumeFont = "sans" | "serif" | "mono";
 export type ResumeDensity = "compact" | "standard" | "relaxed";
@@ -113,42 +116,69 @@ export interface ResumeThemeConfig {
   sidebarColor?: string;
 }
 
-export const TEMPLATE_OPTIONS: { id: TemplateId; name: string; description: string; bestFor: string }[] = [
+export const TEMPLATE_OPTIONS: { id: TemplateId; name: string; description: string; bestFor: string; sourceBadge?: string }[] = [
+  {
+    id: "sb2nov",
+    name: "RenderCV sb2nov (r/EngineeringResumes)",
+    description: "The world's most widely used LaTeX engineering resume template. Full-width clean section lines and metric-dense typography.",
+    bestFor: "Software Engineers, FAANG/Big Tech, AI Researchers",
+    sourceBadge: "RenderCV",
+  },
+  {
+    id: "moderncv",
+    name: "RenderCV ModernCV (LaTeX Class)",
+    description: "Iconic LaTeX ModernCV document class with left date metadata columns and accent bullet highlights.",
+    bestFor: "Academics, Scientists, Senior Engineers",
+    sourceBadge: "RenderCV",
+  },
+  {
+    id: "onyx",
+    name: "Reactive Resume Onyx",
+    description: "Sleek modern header badge with clean 2-column card grid and high-contrast typography.",
+    bestFor: "Tech Leads, Architects, Designers",
+    sourceBadge: "Reactive Resume",
+  },
+  {
+    id: "leafish",
+    name: "Reactive Resume Leafish",
+    description: "Modern sidebar layout with soft accent container, icon bullet points, and high contrast readability.",
+    bestFor: "Product Managers, Growth, Marketing",
+    sourceBadge: "Reactive Resume",
+  },
   {
     id: "dark-sidebar",
     name: "Dark Sidebar Executive",
-    description: "Contrast split layout with dark left sidebar, circular photo, timeline experience, and references (as seen in modern finance & corporate resumes).",
+    description: "Contrast split layout with dark left sidebar, circular photo, timeline experience, and references.",
     bestFor: "Executives, Accountants, Consultants, Operations",
+    sourceBadge: "Executive",
   },
   {
     id: "modern-2col",
-    name: "Modern 2-Column Grid",
-    description: "Enhancv-inspired tech layout with top photo, skill badges, key strengths with icons, and language rating dots.",
+    name: "Enhancv 2-Column Grid",
+    description: "2-Column layout with top photo, skill badges, key strengths with icons, and language rating dots.",
     bestFor: "Project Managers, Tech Leads, Developers, Analysts",
+    sourceBadge: "Enhancv",
   },
   {
     id: "soft-banner",
     name: "Nordic Soft Banner",
     description: "Clean pastel header banner with overlapping portrait, career overview quote, and modern 2-column split.",
     bestFor: "Healthcare, Education, Design, Communications",
+    sourceBadge: "Nordic",
   },
   {
     id: "classic-harvard",
     name: "Classic Harvard (ATS Gold)",
     description: "Universal single-column standard with horizontal dividers, 100% accepted by all ATS software.",
     bestFor: "Universal, Big Tech, Finance, Legal, Law",
+    sourceBadge: "Harvard",
   },
   {
     id: "modern-tech",
-    name: "Silicon Valley Tech",
+    name: "Silicon Valley Tech Stack",
     description: "High-impact developer format with tech stack pills, live project links, and metric-driven achievements.",
     bestFor: "Software Engineers, DevOps, Full-Stack Developers",
-  },
-  {
-    id: "minimal",
-    name: "Minimalist Clean",
-    description: "Clean airy whitespace with subtle vertical rules for rapid scanning.",
-    bestFor: "Startups, Generalists, Creative Specialists",
+    sourceBadge: "Silicon Valley",
   },
 ];
 

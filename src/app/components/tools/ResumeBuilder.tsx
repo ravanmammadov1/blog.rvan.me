@@ -9,12 +9,18 @@ import {
   MODERN_2COL_PRESET,
   SOFT_BANNER_PRESET,
   SOFTWARE_ENGINEER_PRESET,
+  PRODUCT_DESIGNER_PRESET,
   BLANK_RESUME_DATA,
   TemplateId,
   ResumeFont,
   ResumeDensity,
 } from "./resumebuilder/resumeTypes";
 import { calculateAtsScore } from "./resumebuilder/atsEngine";
+import {
+  exportToRenderCvYaml,
+  exportToReactiveResumeJson,
+  importUniversalResume,
+} from "./resumebuilder/converters/schemaConverters";
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
 import { PersonalInfoForm } from "./resumebuilder/editor/PersonalInfoForm";
 import { SummaryForm } from "./resumebuilder/editor/SummaryForm";
@@ -50,11 +56,13 @@ import {
   ZoomIn,
   ZoomOut,
   MousePointerClick,
+  FileCode,
+  ChevronDown,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
-const STORAGE_KEY = "rvan_ats_resume_data_v2";
-const THEME_STORAGE_KEY = "rvan_ats_resume_theme_v2";
+const STORAGE_KEY = "rvan_ats_resume_data_v3";
+const THEME_STORAGE_KEY = "rvan_ats_resume_theme_v3";
 
 type ActiveTab = "personal" | "summary" | "experience" | "education" | "skills" | "projects" | "certifications" | "references";
 
@@ -67,7 +75,7 @@ export default function ResumeBuilder() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) return JSON.parse(saved);
     } catch {}
-    return DARK_SIDEBAR_PRESET;
+    return SOFTWARE_ENGINEER_PRESET;
   });
 
   // Resume Theme Config State
@@ -77,8 +85,8 @@ export default function ResumeBuilder() {
       if (savedTheme) return JSON.parse(savedTheme);
     } catch {}
     return {
-      template: "dark-sidebar",
-      accentColor: "#1e3a8a",
+      template: "sb2nov",
+      accentColor: "#111827",
       fontFamily: "sans",
       density: "standard",
       paperSize: "a4",
@@ -89,6 +97,7 @@ export default function ResumeBuilder() {
   const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
   const [previewZoom, setPreviewZoom] = useState<number>(0.9);
   const [showAtsModal, setShowAtsModal] = useState<boolean>(false);
+  const [showExportMenu, setShowExportMenu] = useState<boolean>(false);
   const [copiedText, setCopiedText] = useState<boolean>(false);
 
   // Sync to LocalStorage
@@ -118,36 +127,55 @@ export default function ResumeBuilder() {
     window.print();
   };
 
-  // Export JSON Backup
-  const handleExportJson = () => {
-    const jsonStr = JSON.stringify({ resumeData, theme }, null, 2);
-    const blob = new Blob([jsonStr], { type: "application/json" });
+  // Export File Helper
+  const downloadFile = (content: string, filename: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_backup.json`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    setShowExportMenu(false);
   };
 
-  // Import JSON Backup
-  const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Native JSON Backup
+  const handleExportJson = () => {
+    const jsonStr = JSON.stringify({ resumeData, theme }, null, 2);
+    downloadFile(jsonStr, `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_backup.json`, "application/json");
+  };
+
+  // RenderCV YAML Export
+  const handleExportRenderCvYaml = () => {
+    const yaml = exportToRenderCvYaml(resumeData);
+    downloadFile(yaml, `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_rendercv.yaml`, "text/yaml");
+  };
+
+  // Reactive Resume JSON Export
+  const handleExportReactiveResumeJson = () => {
+    const jsonStr = exportToReactiveResumeJson(resumeData);
+    downloadFile(jsonStr, `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_reactive_resume.json`, "application/json");
+  };
+
+  // Universal Import (RenderCV YAML, Reactive Resume JSON, or Native JSON)
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const parsed = JSON.parse(event.target?.result as string);
-        if (parsed.resumeData) {
-          setResumeData(parsed.resumeData);
-          if (parsed.theme) setTheme(parsed.theme);
+        const content = event.target?.result as string;
+        const parsed = importUniversalResume(content);
+        if (parsed) {
+          setResumeData((prev) => ({ ...prev, ...parsed }));
+          alert("Resume imported successfully! All fields mapped.");
         } else {
-          setResumeData(parsed);
+          alert("Could not recognize file format. Please upload valid JSON or YAML.");
         }
       } catch (err) {
-        alert("Invalid resume JSON backup file.");
+        alert("Invalid file format.");
       }
     };
     reader.readAsText(file);
@@ -210,8 +238,18 @@ export default function ResumeBuilder() {
           {/* Presets */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
-              {language === "az" ? "Şablon Nümunələri:" : "Design Presets:"}
+              {language === "az" ? "Hazır Nümunələr:" : "Presets:"}
             </span>
+            <button
+              onClick={() => loadPreset(SOFTWARE_ENGINEER_PRESET, "sb2nov", "#111827")}
+              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                theme.template === "sb2nov"
+                  ? "bg-primary text-black border-primary font-bold shadow-sm"
+                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              }`}
+            >
+              🚀 RenderCV sb2nov (FAANG)
+            </button>
             <button
               onClick={() => loadPreset(DARK_SIDEBAR_PRESET, "dark-sidebar", "#1e3a8a")}
               className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
@@ -220,7 +258,7 @@ export default function ResumeBuilder() {
                   : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
               }`}
             >
-              💼 Dark Sidebar (Executive)
+              💼 Dark Sidebar Executive
             </button>
             <button
               onClick={() => loadPreset(MODERN_2COL_PRESET, "modern-2col", "#0284c7")}
@@ -230,7 +268,7 @@ export default function ResumeBuilder() {
                   : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
               }`}
             >
-              📊 Modern 2-Column Grid
+              📊 Enhancv 2-Col
             </button>
             <button
               onClick={() => loadPreset(SOFT_BANNER_PRESET, "soft-banner", "#3b82f6")}
@@ -240,20 +278,10 @@ export default function ResumeBuilder() {
                   : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
               }`}
             >
-              🩺 Nordic Soft Banner
+              🩺 Nordic Banner
             </button>
             <button
-              onClick={() => loadPreset(SOFTWARE_ENGINEER_PRESET, "modern-tech", "#1e3a8a")}
-              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                theme.template === "modern-tech"
-                  ? "bg-primary text-black border-primary font-bold shadow-sm"
-                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
-              }`}
-            >
-              💻 Silicon Valley Tech
-            </button>
-            <button
-              onClick={() => loadPreset(BLANK_RESUME_DATA, "classic-harvard", "#111827")}
+              onClick={() => loadPreset(BLANK_RESUME_DATA, "sb2nov", "#111827")}
               className="text-xs font-mono font-bold px-2.5 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50 hover:bg-red-500/10 text-muted-foreground hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
               title="Reset to blank template"
             >
@@ -261,7 +289,7 @@ export default function ResumeBuilder() {
             </button>
           </div>
 
-          {/* ATS Score Meter & Primary Export */}
+          {/* ATS Score Meter & Primary Export Actions */}
           <div className="flex flex-wrap items-center gap-2.5">
             {/* ATS Score Indicator */}
             <button
@@ -286,20 +314,52 @@ export default function ResumeBuilder() {
               <span>{copiedText ? "COPIED!" : "COPY TEXT"}</span>
             </button>
 
-            {/* Save / Load JSON */}
-            <button
-              onClick={handleExportJson}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer"
-              title="Save resume JSON backup file"
-            >
-              <Download size={13} />
-              <span>SAVE JSON</span>
-            </button>
+            {/* Export Multi-Format Dropdown (RenderCV YAML, Reactive Resume JSON, Native) */}
+            <div className="relative">
+              <button
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer"
+              >
+                <Download size={13} />
+                <span>EXPORT CODE</span>
+                <ChevronDown size={11} />
+              </button>
 
-            <label className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer">
+              {showExportMenu && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-neutral-900 border border-white/15 p-2 shadow-2xl z-50 space-y-1 font-mono text-xs text-foreground">
+                  <button
+                    onClick={handleExportJson}
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer"
+                  >
+                    <span>Native Backup (.json)</span>
+                    <span className="text-[10px] text-muted-foreground">JSON</span>
+                  </button>
+                  <button
+                    onClick={handleExportRenderCvYaml}
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-emerald-400"
+                  >
+                    <span>RenderCV YAML (.yaml)</span>
+                    <span className="text-[10px] text-emerald-400">YAML</span>
+                  </button>
+                  <button
+                    onClick={handleExportReactiveResumeJson}
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-sky-400"
+                  >
+                    <span>Reactive Resume v4 (.json)</span>
+                    <span className="text-[10px] text-sky-400">JSON</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Universal Import */}
+            <label
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer"
+              title="Import RenderCV YAML, Reactive Resume JSON, or Native Backup"
+            >
               <Upload size={13} />
-              <span>LOAD JSON</span>
-              <input type="file" accept=".json" onChange={handleImportJson} className="hidden" />
+              <span>IMPORT</span>
+              <input type="file" accept=".json,.yaml,.yml" onChange={handleImportFile} className="hidden" />
             </label>
 
             {/* Print / Download PDF */}
@@ -314,33 +374,33 @@ export default function ResumeBuilder() {
           </div>
         </div>
 
-        {/* Row 2: Visual Customizer (Templates, Accent Colors, Fonts, Density) */}
-        <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-          {/* Template Selector */}
+        {/* Row 2: Visual Customizer (9 Templates, Accent Colors, Fonts, Density) */}
+        <div className="pt-3 border-t border-white/10 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+          {/* Template Selector with source badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground flex items-center gap-1">
-              <Layers size={11} className="text-primary" /> Template:
+            <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground flex items-center gap-1 shrink-0">
+              <Layers size={11} className="text-primary" /> Template ({TEMPLATE_OPTIONS.length}):
             </span>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {TEMPLATE_OPTIONS.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => setTheme({ ...theme, template: t.id })}
-                  className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                     theme.template === t.id
-                      ? "bg-primary text-black"
+                      ? "bg-primary text-black shadow-md shadow-primary/20 scale-[1.02]"
                       : "bg-white/5 text-muted-foreground hover:text-white hover:bg-white/10 border border-white/10"
                   }`}
                   title={t.description}
                 >
-                  {t.name}
+                  <span>{t.name}</span>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Colors, Fonts, Density */}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4 shrink-0">
             {/* Colors */}
             <div className="flex items-center gap-1.5">
               <Palette size={12} className="text-primary" />
@@ -398,13 +458,15 @@ export default function ResumeBuilder() {
           <MousePointerClick size={15} className="shrink-0 animate-bounce" />
           <span>
             {language === "az"
-              ? "💡 PDF Editor Rejimi: A4 vərəqi üzərində istənilən mətnə birbaşa klik edərək dərhal yaza və redaktə edə bilərsiniz!"
-              : "💡 PDF Canvas Editor Mode: Click anywhere directly on the A4 document preview to type, edit and format in real-time!"}
+              ? "💡 İnteraktiv PDF Editor Rejimi: A4 vərəqi üzərində istənilən mətnə birbaşa klik edərək dərhal yaza və dəyişdirə bilərsiniz!"
+              : "💡 Interactive PDF Editor Mode: Click directly anywhere on the A4 document canvas to type, edit, and format in real-time!"}
           </span>
         </div>
-        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-primary text-black shrink-0 hidden sm:inline">
-          Live Editable
-        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hidden sm:inline">
+            RenderCV & Reactive Resume Compatible
+          </span>
+        </div>
       </div>
 
       {/* Mobile Toggle: Edit Form vs Live Preview */}
@@ -462,13 +524,13 @@ export default function ResumeBuilder() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: LIVE INTERACTIVE A4 PREVIEW */}
+        {/* RIGHT COLUMN: LIVE INTERACTIVE A4 PREVIEW CANVAS */}
         <div className={`lg:col-span-6 space-y-3 ${mobileView === "edit" ? "hidden lg:block" : "block"}`}>
           {/* Preview Toolbar */}
           <div className="flex items-center justify-between px-3 py-1.5 rounded-2xl bg-black/40 border border-white/10 text-xs font-mono text-muted-foreground">
             <div className="flex items-center gap-2">
               <Eye size={13} className="text-primary" />
-              <span className="font-bold text-foreground">Interactive A4 Canvas Preview</span>
+              <span className="font-bold text-foreground">A4 Canvas PDF Preview (Click to Edit)</span>
             </div>
 
             {/* Zoom Controls */}
