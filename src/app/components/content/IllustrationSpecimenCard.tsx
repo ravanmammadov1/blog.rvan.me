@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Check, Download, Copy, Image as ImageIcon, FileCode } from "lucide-react";
 import { IllustrationItem } from "../../../lib/illustrationEngine";
 import { downloadEpsFile } from "../../../lib/epsExporter";
@@ -13,8 +13,8 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   accentColor = "#61c5ad",
 }) => {
   const [downloadedType, setDownloadedType] = useState<"eps" | "png" | "svg" | "copied" | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
 
+  // Raw SVG with background included
   const rawSvgContent = illustration.svgTemplate(accentColor);
 
   const handleCopySvg = () => {
@@ -24,7 +24,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   };
 
   const handleDownloadSvg = () => {
-    const blob = new Blob([rawSvgContent], { type: "image/svg+xml" });
+    const blob = new Blob([rawSvgContent], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -39,29 +39,12 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   };
 
   const handleDownloadEps = () => {
-    const svgElement = cardRef.current?.querySelector("svg");
-    const svgString = svgElement
-      ? new XMLSerializer().serializeToString(svgElement)
-      : rawSvgContent;
-
-    downloadEpsFile(svgString, illustration.id);
+    downloadEpsFile(rawSvgContent, illustration.id);
     setDownloadedType("eps");
     setTimeout(() => setDownloadedType(null), 2000);
   };
 
   const handleDownloadPng = () => {
-    const svgElement = cardRef.current?.querySelector("svg");
-    if (!svgElement) return;
-
-    const clonedSvg = svgElement.cloneNode(true) as SVGElement;
-    clonedSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    clonedSvg.setAttribute("width", "1200");
-    clonedSvg.setAttribute("height", "900");
-
-    const svgString = new XMLSerializer().serializeToString(clonedSvg);
-    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-
     const canvas = document.createElement("canvas");
     const width = 1200;
     const height = 900;
@@ -71,12 +54,21 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
     if (!ctx) return;
 
-    const img = new Image();
-    img.onload = () => {
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(img, 0, 0, width, height);
-      URL.revokeObjectURL(url);
+    // Draw rich solid dark background first
+    ctx.fillStyle = "#0c0c10";
+    ctx.fillRect(0, 0, width, height);
 
+    // Prepare clean standalone SVG data URL
+    let exportSvg = rawSvgContent;
+    if (!exportSvg.includes('xmlns="http://www.w3.org/2000/svg"')) {
+      exportSvg = exportSvg.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+
+    const svgDataUri = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(exportSvg);
+    const img = new Image();
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, width, height);
       const pngUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = pngUrl;
@@ -88,12 +80,34 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       setDownloadedType("png");
       setTimeout(() => setDownloadedType(null), 2000);
     };
-    img.src = url;
+
+    img.onerror = () => {
+      // Fallback in case data URI needs blob URL
+      const svgBlob = new Blob([exportSvg], { type: "image/svg+xml;charset=utf-8" });
+      const blobUrl = URL.createObjectURL(svgBlob);
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => {
+        ctx.drawImage(fallbackImg, 0, 0, width, height);
+        URL.revokeObjectURL(blobUrl);
+        const pngUrl = canvas.toDataURL("image/png");
+        const a = document.createElement("a");
+        a.href = pngUrl;
+        a.download = `${illustration.id}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        setDownloadedType("png");
+        setTimeout(() => setDownloadedType(null), 2000);
+      };
+      fallbackImg.src = blobUrl;
+    };
+
+    img.src = svgDataUri;
   };
 
   return (
     <article
-      ref={cardRef}
       className="group relative rounded-3xl border border-white/10 bg-white/5 p-5 glass transition-all duration-300 hover:border-[#61c5ad]/40 hover:bg-white/[0.08] flex flex-col justify-between overflow-hidden shadow-lg"
     >
       <div>
@@ -121,9 +135,9 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
           </button>
         </div>
 
-        {/* Live Vector SVG Render Preview */}
+        {/* Live Vector SVG Render Preview with Background Frame */}
         <div
-          className="my-3 flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-black/40 aspect-[4/3] transition-transform duration-300 group-hover:scale-[1.02] overflow-hidden"
+          className="my-3 flex items-center justify-center rounded-2xl border border-white/5 bg-[#0c0c10] aspect-[4/3] transition-transform duration-300 group-hover:scale-[1.02] overflow-hidden shadow-inner"
           dangerouslySetInnerHTML={{ __html: rawSvgContent }}
         />
 

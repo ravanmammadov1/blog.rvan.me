@@ -80,7 +80,7 @@ export default function ResourcesArchive() {
   // Illustration Specimen Interactive Controls
   const [illustrationCategorySubfilter, setIllustrationCategorySubfilter] = useState<IllustrationCategory>("All");
   const [illustrationColor, setIllustrationColor] = useState("#61c5ad");
-  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(33);
+  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(48);
   const [illustrationCategoryDropdownOpen, setIllustrationCategoryDropdownOpen] = useState(false);
 
   const activeCategoryParam = searchParams.get("category") as ResourceCategoryKey;
