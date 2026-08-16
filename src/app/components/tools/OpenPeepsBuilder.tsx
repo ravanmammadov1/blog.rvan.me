@@ -10,8 +10,6 @@ import {
   HAIR_COLORS,
   CLOTHING_COLORS,
   BACKGROUND_PRESETS,
-  PREMADE_PEEPS,
-  PremadePeep,
   buildPeepSvg,
   generateRandomPeep,
 } from "./openpeeps/peepsAssets";
@@ -31,16 +29,11 @@ import {
   ZoomOut,
   ImageIcon,
   SlidersHorizontal,
-  Grid,
-  HelpCircle,
-  ArrowRight,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 export default function OpenPeepsBuilder() {
   const { language } = useLanguage();
-  const [viewMode, setViewMode] = useState<"studio">("studio");
-  const [galleryCategory, setGalleryCategory] = useState<"busts" | "standing" | "sitting">("busts");
   const [config, setConfig] = useState<PeepConfig>(DEFAULT_PEEP_CONFIG);
   const [activeTab, setActiveTab] = useState<"expression" | "hair" | "accessory" | "body" | "colors">("expression");
   const [copied, setCopied] = useState(false);
@@ -52,7 +45,6 @@ export default function OpenPeepsBuilder() {
   // Handlers
   const handleRandomize = () => {
     setConfig(generateRandomPeep());
-    setViewMode("studio");
   };
 
   const handleCopySvg = () => {
@@ -102,29 +94,6 @@ export default function OpenPeepsBuilder() {
       console.error("PNG export error:", err);
       setIsExportingPng(false);
     }
-  };
-
-  const handleCustomizePremade = (item: PremadePeep) => {
-    setConfig(item.config);
-    setViewMode("studio");
-  };
-
-  const filteredPremade = PREMADE_PEEPS.filter((p) => p.category === galleryCategory);
-
-  // Guide Peep configuration
-  const guidePeepConfig: PeepConfig = {
-    mode: "bust",
-    headExpression: "pattern_sweater_smirk",
-    hairStyle: "short_fade",
-    accessory: "none",
-    bodyPose: "patterned_sweater",
-    skinColor: "#ffffff",
-    hairColor: "#111111",
-    clothingColor: "#111111",
-    backgroundColor: "#ffffff",
-    inkStyle: "bw",
-    flipHorizontal: false,
-    scale: 1,
   };
 
   return (

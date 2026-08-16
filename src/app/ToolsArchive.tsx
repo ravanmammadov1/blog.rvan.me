@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Sparkles, Search, X, Check, Dices, Layers } from "lucide-react";
+import { Sparkles, Check } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -9,10 +9,9 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
-import PageFilterBar from "./components/PageFilterBar";
-import { INTERACTIVE_TOOLS, TOOL_CATEGORIES, InteractiveToolDefinition, ToolCategory } from "./lib/toolsRegistry";
+import { INTERACTIVE_TOOLS } from "./lib/toolsRegistry";
 import { useLanguage } from "../lib/i18n/LanguageContext";
-import { buildPeepSvg, PREMADE_PEEPS } from "./components/tools/openpeeps/peepsAssets";
+import { buildPeepSvg, DEFAULT_PEEP_CONFIG } from "./components/tools/openpeeps/peepsAssets";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -27,8 +26,6 @@ const fadeUp = {
 
 export default function ToolsArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
@@ -37,27 +34,6 @@ export default function ToolsArchive() {
       if (data) setSiteSettings(data);
     });
   }, []);
-
-  const filteredTools = useMemo(() => {
-    let list = INTERACTIVE_TOOLS;
-
-    if (activeCategory !== "All") {
-      list = list.filter((tool) => tool.category === activeCategory);
-    }
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      list = list.filter(
-        (tool) =>
-          tool.name.toLowerCase().includes(q) ||
-          tool.description.toLowerCase().includes(q) ||
-          (tool.name_az && tool.name_az.toLowerCase().includes(q)) ||
-          tool.tags.some((tag) => tag.toLowerCase().includes(q))
-      );
-    }
-
-    return list;
-  }, [activeCategory, searchQuery]);
 
   const featuredTool = useMemo(() => {
     return INTERACTIVE_TOOLS.find((t) => t.featured) || INTERACTIVE_TOOLS[0];
@@ -70,7 +46,10 @@ export default function ToolsArchive() {
     >
       <SEO
         title={`${t("toolsArchiveTitle", "Creative Tools & Interactive Suite.")} — Rvan.me`}
-        description={t("toolsArchiveSubtitle", "Powerful in-browser creative tools for designers, marketers, and developers. Character illustration builders, visual web builders, and modular generators.")}
+        description={t(
+          "toolsArchiveSubtitle",
+          "Powerful in-browser creative tools for designers, marketers, and developers. Character illustration builders and modular vector asset generators."
+        )}
         url="https://www.rvan.me/tools"
       />
 
@@ -89,35 +68,22 @@ export default function ToolsArchive() {
         }
       />
 
-      {/* Master Page Filter Bar & Search */}
-      <PageFilterBar
-        categories={TOOL_CATEGORIES.map((cat) => ({
-          key: cat.id,
-          label: language === "az" ? cat.label_az : cat.label,
-        }))}
-        activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        searchPlaceholder={language === "az" ? "Yaradıcı alətləri axtarın..." : "Search creative tools..."}
-        searchId="tools-search"
-      />
-
       {/* ── TOOLS WORKSPACE SECTION ── */}
       <section className="px-6 py-12 md:px-10 relative z-10">
-        <div className="mx-auto max-w-[1600px] space-y-12">
-          {/* 1. FEATURED TOOL SPOTLIGHT (When viewing All or Creative) */}
-          {activeCategory === "All" && !searchQuery.trim() && featuredTool && (
+        <div className="mx-auto max-w-[1600px] space-y-10">
+          {/* 1. FEATURED FLAGSHIP TOOL CARD */}
+          {featuredTool && (
             <motion.div
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="relative overflow-hidden rounded-3xl border border-primary/40 bg-gradient-to-br from-primary/[0.08] via-white/[0.02] to-transparent p-8 md:p-12 shadow-2xl backdrop-blur-2xl"
+              className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] via-white/[0.015] to-transparent p-8 md:p-12 shadow-2xl backdrop-blur-2xl"
             >
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="flex items-center gap-2">
+                {/* Left Information */}
+                <div className="lg:col-span-7 space-y-5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-primary uppercase border border-primary/30 bg-primary/10 px-3 py-1 rounded-full flex items-center gap-1.5">
                       <Sparkles size={12} /> {language === "az" ? "FLAQMAN YARADICI ALƏT" : "FEATURED FLAGSHIP TOOL"}
                     </span>
@@ -136,7 +102,7 @@ export default function ToolsArchive() {
                       : featuredTool.description}
                   </p>
 
-                  <div className="pt-4 flex flex-wrap items-center gap-4">
+                  <div className="pt-3 flex flex-wrap items-center gap-4">
                     <Link
                       to={getLocalizedPath(featuredTool.path)}
                       className="px-6 py-3.5 rounded-full bg-primary text-black font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-[0_0_25px_rgba(97,197,173,0.3)] hover:scale-105 transition-all duration-300"
@@ -150,33 +116,17 @@ export default function ToolsArchive() {
                   </div>
                 </div>
 
-                {/* Right Visual Preview Badge */}
+                {/* Right Visual Preview Badge (Smiling Cheerful Character) */}
                 <div className="lg:col-span-5 flex justify-center lg:justify-end">
                   <div className="w-full max-w-[320px] aspect-square rounded-3xl border border-white/15 bg-white p-4 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden group">
                     <div
                       className="w-48 h-48 flex items-center justify-center transition-transform duration-500 group-hover:scale-110"
                       dangerouslySetInnerHTML={{
-                        __html: buildPeepSvg(PREMADE_PEEPS[0]?.config || {
-                          mode: "bust",
-                          headExpression: "knife_intense",
-                          hairStyle: "afro_headband",
-                          accessory: "none",
-                          bodyPose: "knife_pose",
-                          skinColor: "#ffffff",
-                          hairColor: "#111111",
-                          clothingColor: "#111111",
-                          backgroundColor: "#ffffff",
-                          inkStyle: "bw",
-                          flipHorizontal: false,
-                          scale: 1,
-                        }, 220),
+                        __html: buildPeepSvg(DEFAULT_PEEP_CONFIG, 220),
                       }}
                     />
                     <div className="w-full pt-2 border-t border-zinc-200 flex flex-col items-center">
-                      <span className="font-mono text-[10px] font-bold text-black uppercase tracking-wider">
-                        584,688+ COMBINATIONS
-                      </span>
-                      <span className="text-[10px] text-zinc-500">
+                      <span className="text-[10px] font-mono text-zinc-500">
                         Modular Vector System • Zero Dependencies
                       </span>
                     </div>
@@ -186,95 +136,19 @@ export default function ToolsArchive() {
             </motion.div>
           )}
 
-          {/* 2. TOOLS DIRECTORY GRID */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-mono font-bold tracking-widest text-primary uppercase flex items-center gap-2">
-                <Layers size={14} /> {language === "az" ? "BÜTÜN YARADICI ALƏTLƏR" : "ALL CREATIVE TOOLS"}
-              </h3>
-              <span className="text-xs font-mono text-muted-foreground">
-                {filteredTools.length} {language === "az" ? "alət mövcuddur" : "tools available"}
-              </span>
-            </div>
-
-            {filteredTools.length === 0 ? (
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-12 text-center glass">
-                <p className="text-muted-foreground text-sm font-mono mb-4">
-                  {language === "az" ? "Axtarışa uyğun alət tapılmadı." : "No tools found matching your criteria."}
-                </p>
-                <button
-                  onClick={() => {
-                    setActiveCategory("All");
-                    setSearchQuery("");
-                  }}
-                  className="px-5 py-2.5 rounded-full bg-primary text-black font-mono font-bold text-xs uppercase"
-                >
-                  {language === "az" ? "FİLTRLƏRİ SIFIRLA" : "RESET FILTERS"}
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredTools.map((tool, idx) => (
-                  <motion.article
-                    key={tool.id}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    custom={idx * 0.08}
-                    className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] hover:border-primary/50 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-[0_0_30px_rgba(97,197,173,0.15)]"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-4">
-                        {tool.id === "open-peeps" ? (
-                          <div
-                            className="w-12 h-12 rounded-xl bg-white p-1 flex items-center justify-center overflow-hidden border border-white/20 shadow-md group-hover:scale-110 transition-transform"
-                            dangerouslySetInnerHTML={{
-                              __html: buildPeepSvg(PREMADE_PEEPS[1]?.config || {
-                                mode: "bust",
-                                headExpression: "pattern_sweater_smirk",
-                                hairStyle: "straight_bob",
-                                accessory: "none",
-                                bodyPose: "patterned_sweater",
-                                skinColor: "#ffffff",
-                                hairColor: "#111111",
-                                clothingColor: "#111111",
-                                backgroundColor: "#ffffff",
-                                inkStyle: "bw",
-                                flipHorizontal: false,
-                                scale: 1,
-                              }, 48),
-                            }}
-                          />
-                        ) : (
-                          <span className="text-3xl">{typeof tool.icon === "string" ? tool.icon : "🧑‍🎨"}</span>
-                        )}
-                        <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full">
-                          {tool.category}
-                        </span>
-                      </div>
-
-                      <h4 className="text-xl font-extrabold text-foreground group-hover:text-primary transition-colors mb-2 tracking-tight">
-                        {language === "az" && tool.name_az ? tool.name_az : tool.name}
-                      </h4>
-
-                      <p className="text-xs text-muted-foreground/90 leading-relaxed font-medium line-clamp-3 mb-6">
-                        {language === "az" && tool.description_az ? tool.description_az : tool.description}
-                      </p>
-                    </div>
-
-                    <Link
-                      to={getLocalizedPath(tool.path)}
-                      className="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-mono font-bold text-primary uppercase tracking-wider group-hover:text-white transition-colors"
-                    >
-                      <span>{tool.id === "open-peeps" ? (language === "az" ? "PERSONAJI YARAT" : "CREATE CHARACTER") : (language === "az" ? "ALƏTİ AÇ" : "OPEN BUILDER")}</span>
-                      <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 text-primary" />
-                    </Link>
-                  </motion.article>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* 2. COMING SOON SECTION (Matching Image 2) */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0.15}
+            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.03] via-white/[0.015] to-transparent py-24 md:py-36 px-8 flex flex-col items-center justify-center text-center shadow-2xl backdrop-blur-2xl"
+          >
+            <h3 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white/90 font-sans">
+              coming soon...
+            </h3>
+          </motion.div>
         </div>
       </section>
 

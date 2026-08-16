@@ -636,15 +636,15 @@ export const BODIES = [
 export const PREMADE_PEEPS: PremadePeep[] = [
   // ── BUSTS (8 Models) ──
   {
-    id: "peep_knife",
-    name: "The Knife Wielder",
+    id: "peep_happy",
+    name: "The Happy Creator",
     category: "busts",
     config: {
       mode: "bust",
-      headExpression: "knife_intense",
-      hairStyle: "afro_headband",
+      headExpression: "big_smile",
+      hairStyle: "big_afro",
       accessory: "none",
-      bodyPose: "knife_pose",
+      bodyPose: "patterned_sweater",
       skinColor: "#ffffff",
       hairColor: "#111111",
       clothingColor: "#111111",
@@ -1208,10 +1208,10 @@ export function generateRandomPeep(): PeepConfig {
 
 export const DEFAULT_PEEP_CONFIG: PeepConfig = {
   mode: "bust",
-  headExpression: "knife_intense",
-  hairStyle: "afro_headband",
+  headExpression: "big_smile",
+  hairStyle: "big_afro",
   accessory: "none",
-  bodyPose: "knife_pose",
+  bodyPose: "patterned_sweater",
   skinColor: "#ffffff",
   hairColor: "#111111",
   clothingColor: "#111111",
