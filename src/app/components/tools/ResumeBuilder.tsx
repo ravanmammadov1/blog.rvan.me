@@ -5,8 +5,10 @@ import {
   TEMPLATE_OPTIONS,
   COLOR_OPTIONS,
   FONT_OPTIONS,
+  DARK_SIDEBAR_PRESET,
+  MODERN_2COL_PRESET,
+  SOFT_BANNER_PRESET,
   SOFTWARE_ENGINEER_PRESET,
-  PRODUCT_DESIGNER_PRESET,
   BLANK_RESUME_DATA,
   TemplateId,
   ResumeFont,
@@ -21,6 +23,7 @@ import { EducationForm } from "./resumebuilder/editor/EducationForm";
 import { SkillsForm } from "./resumebuilder/editor/SkillsForm";
 import { ProjectsForm } from "./resumebuilder/editor/ProjectsForm";
 import { CertificationsForm } from "./resumebuilder/editor/CertificationsForm";
+import { ReferencesForm } from "./resumebuilder/editor/ReferencesForm";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
 
 import {
@@ -40,18 +43,20 @@ import {
   Code,
   FolderGit2,
   Award,
+  Users,
   Layers,
   ShieldCheck,
   RotateCcw,
   ZoomIn,
   ZoomOut,
+  MousePointerClick,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
-const STORAGE_KEY = "rvan_ats_resume_data_v1";
-const THEME_STORAGE_KEY = "rvan_ats_resume_theme_v1";
+const STORAGE_KEY = "rvan_ats_resume_data_v2";
+const THEME_STORAGE_KEY = "rvan_ats_resume_theme_v2";
 
-type ActiveTab = "personal" | "summary" | "experience" | "education" | "skills" | "projects" | "certifications";
+type ActiveTab = "personal" | "summary" | "experience" | "education" | "skills" | "projects" | "certifications" | "references";
 
 export default function ResumeBuilder() {
   const { language } = useLanguage();
@@ -62,7 +67,7 @@ export default function ResumeBuilder() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) return JSON.parse(saved);
     } catch {}
-    return SOFTWARE_ENGINEER_PRESET;
+    return DARK_SIDEBAR_PRESET;
   });
 
   // Resume Theme Config State
@@ -72,7 +77,7 @@ export default function ResumeBuilder() {
       if (savedTheme) return JSON.parse(savedTheme);
     } catch {}
     return {
-      template: "modern-tech",
+      template: "dark-sidebar",
       accentColor: "#1e3a8a",
       fontFamily: "sans",
       density: "standard",
@@ -186,13 +191,14 @@ export default function ResumeBuilder() {
   };
 
   const navTabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: "personal", label: "Contact Info", icon: <FileText size={13} /> },
+    { id: "personal", label: "Contact & Photo", icon: <FileText size={13} /> },
     { id: "summary", label: "Summary", icon: <Sparkles size={13} /> },
     { id: "experience", label: `Experience (${resumeData.experiences.length})`, icon: <Briefcase size={13} /> },
     { id: "education", label: `Education (${resumeData.education.length})`, icon: <GraduationCap size={13} /> },
-    { id: "skills", label: "Skills & Stack", icon: <Code size={13} /> },
+    { id: "skills", label: "Skills", icon: <Code size={13} /> },
     { id: "projects", label: `Projects (${resumeData.projects.length})`, icon: <FolderGit2 size={13} /> },
     { id: "certifications", label: "Certifications", icon: <Award size={13} /> },
+    { id: "references", label: `References (${resumeData.references?.length || 0})`, icon: <Users size={13} /> },
   ];
 
   return (
@@ -204,25 +210,54 @@ export default function ResumeBuilder() {
           {/* Presets */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
-              {language === "az" ? "Hazır Nümunələr:" : "Starter Presets:"}
+              {language === "az" ? "Şablon Nümunələri:" : "Design Presets:"}
             </span>
             <button
-              onClick={() => loadPreset(SOFTWARE_ENGINEER_PRESET, "modern-tech", "#1e3a8a")}
-              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-primary/50 hover:bg-white/10 text-foreground transition-all cursor-pointer"
+              onClick={() => loadPreset(DARK_SIDEBAR_PRESET, "dark-sidebar", "#1e3a8a")}
+              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                theme.template === "dark-sidebar"
+                  ? "bg-primary text-black border-primary font-bold shadow-sm"
+                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              }`}
             >
-              💻 Software Engineer
+              💼 Dark Sidebar (Executive)
             </button>
             <button
-              onClick={() => loadPreset(PRODUCT_DESIGNER_PRESET, "creative", "#059669")}
-              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-primary/50 hover:bg-white/10 text-foreground transition-all cursor-pointer"
+              onClick={() => loadPreset(MODERN_2COL_PRESET, "modern-2col", "#0284c7")}
+              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                theme.template === "modern-2col"
+                  ? "bg-primary text-black border-primary font-bold shadow-sm"
+                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              }`}
             >
-              🎨 Product Designer
+              📊 Modern 2-Column Grid
+            </button>
+            <button
+              onClick={() => loadPreset(SOFT_BANNER_PRESET, "soft-banner", "#3b82f6")}
+              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                theme.template === "soft-banner"
+                  ? "bg-primary text-black border-primary font-bold shadow-sm"
+                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              }`}
+            >
+              🩺 Nordic Soft Banner
+            </button>
+            <button
+              onClick={() => loadPreset(SOFTWARE_ENGINEER_PRESET, "modern-tech", "#1e3a8a")}
+              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                theme.template === "modern-tech"
+                  ? "bg-primary text-black border-primary font-bold shadow-sm"
+                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              }`}
+            >
+              💻 Silicon Valley Tech
             </button>
             <button
               onClick={() => loadPreset(BLANK_RESUME_DATA, "classic-harvard", "#111827")}
-              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50 hover:bg-red-500/10 text-muted-foreground hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
+              className="text-xs font-mono font-bold px-2.5 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50 hover:bg-red-500/10 text-muted-foreground hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
+              title="Reset to blank template"
             >
-              <RotateCcw size={11} /> {language === "az" ? "Təmiz Kətan" : "Blank Canvas"}
+              <RotateCcw size={11} /> {language === "az" ? "Təmiz" : "Blank"}
             </button>
           </div>
 
@@ -357,6 +392,21 @@ export default function ResumeBuilder() {
         </div>
       </div>
 
+      {/* PDF Editor Direct Typing Hint Banner */}
+      <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 text-xs font-mono text-primary flex items-center justify-between gap-2 shadow-inner">
+        <div className="flex items-center gap-2">
+          <MousePointerClick size={15} className="shrink-0 animate-bounce" />
+          <span>
+            {language === "az"
+              ? "💡 PDF Editor Rejimi: A4 vərəqi üzərində istənilən mətnə birbaşa klik edərək dərhal yaza və redaktə edə bilərsiniz!"
+              : "💡 PDF Canvas Editor Mode: Click anywhere directly on the A4 document preview to type, edit and format in real-time!"}
+          </span>
+        </div>
+        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-primary text-black shrink-0 hidden sm:inline">
+          Live Editable
+        </span>
+      </div>
+
       {/* Mobile Toggle: Edit Form vs Live Preview */}
       <div className="lg:hidden flex items-center justify-center p-1 rounded-2xl bg-white/5 border border-white/10 max-w-xs mx-auto">
         <button
@@ -408,6 +458,7 @@ export default function ResumeBuilder() {
             {activeTab === "skills" && <SkillsForm data={resumeData} onChange={setResumeData} />}
             {activeTab === "projects" && <ProjectsForm data={resumeData} onChange={setResumeData} />}
             {activeTab === "certifications" && <CertificationsForm data={resumeData} onChange={setResumeData} />}
+            {activeTab === "references" && <ReferencesForm data={resumeData} onChange={setResumeData} />}
           </div>
         </div>
 
@@ -417,7 +468,7 @@ export default function ResumeBuilder() {
           <div className="flex items-center justify-between px-3 py-1.5 rounded-2xl bg-black/40 border border-white/10 text-xs font-mono text-muted-foreground">
             <div className="flex items-center gap-2">
               <Eye size={13} className="text-primary" />
-              <span className="font-bold text-foreground">Live A4 Document Preview</span>
+              <span className="font-bold text-foreground">Interactive A4 Canvas Preview</span>
             </div>
 
             {/* Zoom Controls */}
@@ -441,7 +492,7 @@ export default function ResumeBuilder() {
           </div>
 
           {/* Sheet Canvas Container */}
-          <div className="p-4 md:p-6 rounded-3xl border border-white/10 bg-neutral-950/80 shadow-2xl overflow-auto max-h-[880px] custom-scrollbar flex justify-center">
+          <div className="p-4 md:p-6 rounded-3xl border border-white/10 bg-neutral-950/80 shadow-2xl overflow-auto max-h-[920px] custom-scrollbar flex justify-center">
             <div
               style={{
                 transform: `scale(${previewZoom})`,
@@ -450,7 +501,7 @@ export default function ResumeBuilder() {
               }}
               className="w-full"
             >
-              <ResumePreview data={resumeData} theme={theme} />
+              <ResumePreview data={resumeData} theme={theme} onUpdate={setResumeData} />
             </div>
           </div>
         </div>
