@@ -33,246 +33,271 @@ function createUnDrawSvg(pathsSvg: string, viewBox = "0 0 800 600"): string {
 </svg>`;
 }
 
-// ── PROCEDURAL VECTOR SVG TEMPLATES (unDraw / Open Doodles aesthetic) ──
+// ── 32 MODULAR VECTOR ACTION POSE ENGINES (Open Doodles & unDraw Style) ──
 
-function renderDesktopAnalytics(color: string, seed: number): string {
-  const chartHeight = 100 + (seed % 60);
-  const chartHeight2 = 140 - (seed % 50);
-  return createUnDrawSvg(`
-    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
-    <!-- Monitor Base & Neck -->
-    <rect x="360" y="440" width="80" height="70" rx="6" fill="#2f2e41"/>
-    <ellipse cx="400" cy="505" rx="90" ry="12" fill="#3f3d56"/>
-    <!-- Main Screen Frame -->
-    <rect x="180" y="100" width="440" height="340" rx="20" fill="#2f2e41" stroke="#3f3d56" stroke-width="4"/>
-    <rect x="195" y="115" width="410" height="310" rx="14" fill="#ffffff"/>
-    <!-- Browser Top Bar -->
-    <rect x="195" y="115" width="410" height="32" rx="14" fill="#f1f5f9"/>
-    <circle cx="215" cy="131" r="5" fill="#ff5f56"/>
-    <circle cx="230" cy="131" r="5" fill="#ffbd2e"/>
-    <circle cx="245" cy="131" r="5" fill="#27c93f"/>
-    <!-- Search / URL Bar -->
-    <rect x="270" y="122" width="220" height="18" rx="9" fill="#e2e8f0"/>
-    <!-- Chart Bars with Custom Brand Color -->
-    <rect x="230" y="${380 - chartHeight}" width="36" height="${chartHeight}" rx="8" fill="${color}"/>
-    <rect x="285" y="${380 - chartHeight2}" width="36" height="${chartHeight2}" rx="8" fill="#cbd5e1"/>
-    <rect x="340" y="${380 - (chartHeight + 20)}" width="36" height="${chartHeight + 20}" rx="8" fill="${color}"/>
-    <rect x="395" y="${380 - (chartHeight2 - 15)}" width="36" height="${chartHeight2 - 15}" rx="8" fill="#94a3b8"/>
-    <!-- Floating KPI Badge -->
-    <rect x="460" y="170" width="125" height="75" rx="12" fill="#0f172a" stroke="${color}" stroke-width="2"/>
-    <circle cx="485" cy="195" r="10" fill="${color}"/>
-    <rect x="505" y="190" width="60" height="10" rx="5" fill="#ffffff"/>
-    <rect x="480" y="218" width="85" height="14" rx="4" fill="${color}" opacity="0.9"/>
-    <!-- Line Graph Overlay -->
-    <path d="M240 270 Q 320 220, 400 250 T 560 190" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <circle cx="400" cy="250" r="6" fill="#ffffff" stroke="${color}" stroke-width="3"/>
-    <circle cx="560" cy="190" r="6" fill="#ffffff" stroke="${color}" stroke-width="3"/>
-  `);
-}
+const POSE_RENDERERS: Record<string, (color: string, raw: RawIllustrationItem) => string> = {
+  // 1. Reading Chair
+  reading_chair: (color) => `
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <rect x="220" y="240" width="220" height="220" rx="28" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+    <path d="M260 220 C260 180 290 170 300 170 C310 170 340 180 340 220 V340 H260 Z" fill="${color}"/>
+    <circle cx="300" cy="140" r="26" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M275 130 C270 105 325 95 330 120 Z" fill="#111"/>
+    <!-- Open Book in Hands -->
+    <polygon points="340,300 380,310 420,300 425,275 380,280 335,275" fill="#ffffff" stroke="#111" stroke-width="3"/>
+    <line x1="380" y1="280" x2="380" y2="310" stroke="#111" stroke-width="2"/>
+    <!-- Comfy Floor Lamp on Right -->
+    <line x1="560" y1="140" x2="560" y2="490" stroke="#334155" stroke-width="6"/>
+    <polygon points="520,170 600,170 580,120 540,120" fill="${color}" opacity="0.9"/>
+    <ellipse cx="560" cy="490" rx="40" ry="10" fill="#1e293b"/>
+  `,
 
-function renderMobileApp(color: string, seed: number): string {
-  return createUnDrawSvg(`
-    <ellipse cx="400" cy="520" rx="300" ry="18" fill="#161b22"/>
-    <!-- Left Floating Card -->
-    <rect x="150" y="180" width="160" height="180" rx="18" fill="#1e293b" stroke="#334155" stroke-width="3"/>
-    <circle cx="190" cy="220" r="18" fill="${color}"/>
-    <rect x="220" y="215" width="70" height="12" rx="6" fill="#ffffff"/>
-    <rect x="175" y="260" width="110" height="10" rx="5" fill="#64748b"/>
-    <rect x="175" y="285" width="85" height="10" rx="5" fill="#475569"/>
-    <rect x="175" y="315" width="110" height="24" rx="8" fill="${color}"/>
-    <!-- Center Smartphone Frame -->
-    <rect x="300" y="70" width="200" height="420" rx="32" fill="#2f2e41" stroke="#3f3d56" stroke-width="6"/>
-    <rect x="315" y="90" width="170" height="380" rx="20" fill="#ffffff"/>
-    <!-- Dynamic Island / Notch -->
-    <rect x="365" y="98" width="70" height="14" rx="7" fill="#111827"/>
-    <!-- App UI List Elements -->
-    <rect x="335" y="130" width="130" height="45" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
-    <circle cx="355" cy="152" r="12" fill="${color}"/>
-    <rect x="375" y="146" width="70" height="12" rx="4" fill="#0f172a"/>
-    <rect x="335" y="190" width="130" height="45" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
-    <circle cx="355" cy="212" r="12" fill="#94a3b8"/>
-    <rect x="375" y="206" width="70" height="12" rx="4" fill="#0f172a"/>
-    <!-- Big Action Button on Phone -->
-    <rect x="335" y="390" width="130" height="42" rx="12" fill="${color}"/>
-    <rect x="365" y="405" width="70" height="12" rx="6" fill="#ffffff"/>
-    <!-- Right Notification Bubble -->
-    <rect x="480" y="220" width="170" height="90" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.2))"/>
-    <circle cx="510" cy="250" r="12" fill="${color}"/>
-    <rect x="535" y="245" width="90" height="10" rx="5" fill="#0f172a"/>
-    <rect x="510" y="275" width="115" height="8" rx="4" fill="#94a3b8"/>
-  `);
-}
-
-function renderTeamCollab(color: string, seed: number): string {
-  return createUnDrawSvg(`
+  // 2. Laptop on Floor
+  laptop_floor: (color) => `
     <ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
-    <!-- Character 1 (Left) -->
-    <circle cx="220" cy="220" r="28" fill="#2f2e41"/>
-    <path d="M180 300 C180 260 210 250 220 250 C230 250 260 260 260 300 V380 H180 Z" fill="${color}"/>
-    <path d="M190 380 L180 490 H210 L220 420 L230 490 H260 L250 380 Z" fill="#1e293b"/>
-    <!-- Center Collaboration Board -->
-    <rect x="300" y="120" width="200" height="240" rx="16" fill="#ffffff" stroke="#3f3d56" stroke-width="4"/>
-    <rect x="320" y="145" width="70" height="70" rx="8" fill="${color}" opacity="0.9"/>
-    <rect x="410" y="145" width="70" height="70" rx="8" fill="#e2e8f0"/>
-    <rect x="320" y="235" width="70" height="70" rx="8" fill="#e2e8f0"/>
-    <rect x="410" y="235" width="70" height="70" rx="8" fill="${color}"/>
-    <line x1="400" y1="360" x2="400" y2="480" stroke="#3f3d56" stroke-width="8"/>
-    <ellipse cx="400" cy="485" rx="45" ry="10" fill="#2f2e41"/>
-    <!-- Character 2 (Right) -->
-    <circle cx="580" cy="220" r="28" fill="#3f3d56"/>
-    <path d="M540 300 C540 260 570 250 580 250 C590 250 620 260 620 300 V380 H540 Z" fill="#ffffff"/>
-    <path d="M550 380 L540 490 H570 L580 420 L590 490 H620 L610 380 Z" fill="#1e293b"/>
-    <!-- Dynamic Connecting Arc -->
-    <path d="M250 280 Q 400 200, 550 280" stroke="${color}" stroke-width="4" stroke-dasharray="8 8" fill="none"/>
-  `);
-}
+    <!-- Cross Legged Body -->
+    <circle cx="360" cy="180" r="28" fill="#f8fafc" stroke="#111" stroke-width="3.5"/>
+    <path d="M330 165 C320 135 390 125 395 155 Z" fill="#111"/>
+    <path d="M315 255 C315 220 355 210 365 210 C375 210 415 220 415 255 V370 H315 Z" fill="${color}"/>
+    <path d="M260 410 C260 370 300 360 340 380 L420 380 C460 360 500 370 500 410 C500 440 260 440 260 410 Z" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+    <!-- Glowing Open Laptop -->
+    <polygon points="340,360 440,360 460,335 360,335" fill="#e2e8f0" stroke="#111" stroke-width="3"/>
+    <polygon points="360,335 460,335 450,290 350,290" fill="#0f172a" stroke="#111" stroke-width="3"/>
+    <circle cx="405" cy="312" r="6" fill="${color}"/>
+    <!-- Potted Monstera Plant on Left -->
+    <path d="M190 380 L230 380 L220 470 L200 470 Z" fill="#b45309" stroke="#111" stroke-width="3"/>
+    <circle cx="210" cy="330" r="35" fill="${color}" opacity="0.8"/>
+  `,
 
-function renderCloudNodes(color: string, seed: number): string {
-  return createUnDrawSvg(`
-    <ellipse cx="400" cy="520" rx="320" ry="18" fill="#161b22"/>
-    <!-- Central Cloud Core -->
-    <g transform="translate(260, 140)">
-      <path d="M70 120 H210 C240 120 260 95 255 65 C250 35 220 20 190 30 C175 -5 125 -10 95 15 C80 5 50 15 45 40 C15 45 5 75 25 100 C35 115 50 120 70 120 Z" fill="${color}"/>
-      <circle cx="140" cy="65" r="24" fill="#ffffff"/>
-      <path d="M130 65 L140 55 L150 65 M140 55 V75" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+  // 3. Zen Meditation
+  meditation_zen: (color) => `
+    <ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
+    <!-- Floating Aura Rays -->
+    <circle cx="400" cy="280" r="160" fill="${color}" opacity="0.15"/>
+    <circle cx="400" cy="280" r="110" fill="#ffffff" opacity="0.1" stroke="${color}" stroke-width="2" stroke-dasharray="6 6"/>
+    <!-- Character Head & Body -->
+    <circle cx="400" cy="180" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M375 165 C360 135 435 130 430 160 Z" fill="#111"/>
+    <path d="M350 250 C350 215 390 210 400 210 C410 210 450 215 450 250 V360 H350 Z" fill="${color}"/>
+    <path d="M290 400 C290 360 340 355 375 375 L425 375 C460 355 510 360 510 400 C510 430 290 430 290 400 Z" fill="#1e293b"/>
+    <!-- Hands resting on knees -->
+    <circle cx="320" cy="375" r="10" fill="#f8fafc" stroke="#111" stroke-width="2.5"/>
+    <circle cx="480" cy="375" r="10" fill="#f8fafc" stroke="#111" stroke-width="2.5"/>
+  `,
+
+  // 4. Roller Skater
+  roller_skater: (color) => `
+    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
+    <!-- Skater In Motion -->
+    <circle cx="340" cy="160" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M315 145 C305 120 375 110 370 140 Z" fill="#111"/>
+    <path d="M300 230 C300 195 340 190 350 190 C360 190 390 195 400 230 L380 340 H310 Z" fill="${color}"/>
+    <!-- Outstretched Arm -->
+    <path d="M390 220 L480 200" stroke="#111" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="490" cy="198" r="8" fill="#f8fafc"/>
+    <!-- Dynamic Legs & Skates -->
+    <path d="M320 340 L300 450 L340 450" stroke="#1e293b" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <path d="M370 340 L440 400 L470 390" stroke="#1e293b" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <circle cx="300" cy="470" r="10" fill="${color}"/>
+    <circle cx="330" cy="470" r="10" fill="${color}"/>
+    <circle cx="460" cy="405" r="10" fill="${color}"/>
+    <circle cx="485" cy="395" r="10" fill="${color}"/>
+  `,
+
+  // 5. Dancing to Beats
+  dancing_music: (color) => `
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <!-- Big Floating Music Notes -->
+    <circle cx="240" cy="180" r="14" fill="${color}"/>
+    <circle cx="560" cy="160" r="14" fill="${color}"/>
+    <path d="M240 180 V120 H280 V150" stroke="${color}" stroke-width="4" fill="none"/>
+    <!-- Character with Big Headphones -->
+    <circle cx="400" cy="170" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M375 155 C360 125 435 120 430 150 Z" fill="#111"/>
+    <!-- Over-Ear Headphone Arch -->
+    <path d="M365 170 C365 130 435 130 435 170" stroke="${color}" stroke-width="6" fill="none"/>
+    <rect x="360" y="160" width="12" height="24" rx="4" fill="${color}"/>
+    <rect x="428" y="160" width="12" height="24" rx="4" fill="${color}"/>
+    <!-- Groovy Torso & Arms Raised -->
+    <path d="M350 240 C350 205 390 200 400 200 C410 200 450 205 450 240 L440 360 H360 Z" fill="${color}"/>
+    <path d="M360 220 L300 170 M440 220 L500 170" stroke="#111" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="295" cy="165" r="8" fill="#f8fafc"/>
+    <circle cx="505" cy="165" r="8" fill="#f8fafc"/>
+    <path d="M375 360 L360 480 H395 L405 400 L415 480 H445 L430 360 Z" fill="#1e293b"/>
+  `,
+
+  // 6. Holding Coffee
+  holding_coffee: (color) => `
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <circle cx="360" cy="170" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M335 155 C320 125 395 120 390 150 Z" fill="#111"/>
+    <path d="M315 245 C315 210 355 205 365 205 C375 205 415 210 415 245 V370 H315 Z" fill="${color}"/>
+    <!-- Steaming Coffee Cup in Hand -->
+    <rect x="420" y="270" width="28" height="34" rx="6" fill="#ffffff" stroke="#111" stroke-width="3"/>
+    <path d="M448 280 C455 280 455 295 448 295" stroke="#111" stroke-width="3" fill="none"/>
+    <path d="M430 260 C430 250 435 245 435 235 M440 260 C440 250 445 245 445 235" stroke="${color}" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <!-- Tote Bag on Left -->
+    <rect x="270" y="270" width="40" height="50" rx="6" fill="#ffffff" stroke="#111" stroke-width="3"/>
+    <path d="M280 270 C280 245 300 245 300 270" stroke="#111" stroke-width="3" fill="none"/>
+    <path d="M335 370 L320 490 H355 L370 410 L385 490 H420 L400 370 Z" fill="#1e293b"/>
+  `,
+
+  // 7. Workstation Coding
+  desk_coder: (color) => `
+    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
+    <!-- Large Ultra-Wide Curved Monitor -->
+    <rect x="180" y="120" width="440" height="240" rx="18" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+    <rect x="195" y="135" width="410" height="210" rx="12" fill="#0f172a"/>
+    <!-- Code Syntax Highlight Lines -->
+    <rect x="220" y="160" width="90" height="10" rx="5" fill="${color}"/>
+    <rect x="320" y="160" width="140" height="10" rx="5" fill="#64748b"/>
+    <rect x="240" y="185" width="160" height="10" rx="5" fill="#94a3b8"/>
+    <rect x="240" y="210" width="120" height="10" rx="5" fill="${color}"/>
+    <rect x="370" y="210" width="80" height="10" rx="5" fill="#cbd5e1"/>
+    <rect x="220" y="245" width="70" height="10" rx="5" fill="#38bdf8"/>
+    <!-- Desk Surface & Stand -->
+    <rect x="140" y="380" width="520" height="20" rx="6" fill="#3f3d56"/>
+    <line x1="390" y1="360" x2="390" y2="380" stroke="#334155" stroke-width="12"/>
+    <!-- Character Head & Hands -->
+    <circle cx="400" cy="330" r="32" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M370 310 C350 280 440 270 435 305 Z" fill="#111"/>
+    <path d="M350 400 L380 375 M450 400 L420 375" stroke="#111" stroke-width="10" stroke-linecap="round"/>
+  `,
+
+  // 8. Loving Big Heart
+  loving_heart: (color) => `
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <!-- Giant Glowing Red/Accent Heart -->
+    <path d="M400 240 C340 160 220 200 260 300 C290 370 400 440 400 440 C400 440 510 370 540 300 C580 200 460 160 400 240 Z" fill="${color}" filter="drop-shadow(0 15px 25px rgba(0,0,0,0.3))"/>
+    <!-- Character Peeking and Hugging Heart -->
+    <circle cx="400" cy="180" r="32" fill="#f8fafc" stroke="#111" stroke-width="3.5"/>
+    <path d="M370 160 C350 130 440 120 435 155 Z" fill="#111"/>
+    <!-- Arms Hugging Heart -->
+    <path d="M330 260 C300 290 320 350 360 350" stroke="#111" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <path d="M470 260 C500 290 480 350 440 350" stroke="#111" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <circle cx="360" cy="350" r="10" fill="#f8fafc"/>
+    <circle cx="440" cy="350" r="10" fill="#f8fafc"/>
+  `,
+
+  // 9. Smartphone Scroller
+  phone_scroller: (color) => `
+    <ellipse cx="400" cy="510" rx="300" ry="18" fill="#161b22"/>
+    <!-- Character -->
+    <circle cx="320" cy="160" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M295 145 C280 120 350 110 350 140 Z" fill="#111"/>
+    <path d="M280 230 C280 195 320 190 330 190 C340 190 380 195 380 230 V360 H280 Z" fill="${color}"/>
+    <!-- Hands holding oversized Smartphone -->
+    <rect x="360" y="160" width="130" height="230" rx="18" fill="#2f2e41" stroke="#3f3d56" stroke-width="4"/>
+    <rect x="375" y="175" width="100" height="200" rx="12" fill="#ffffff"/>
+    <circle cx="425" cy="210" r="16" fill="${color}"/>
+    <rect x="390" y="240" width="70" height="10" rx="5" fill="#0f172a"/>
+    <rect x="390" y="260" width="50" height="8" rx="4" fill="#94a3b8"/>
+    <!-- Floating Notification Badge -->
+    <rect x="470" y="140" width="140" height="60" rx="14" fill="#0f172a" stroke="${color}" stroke-width="2"/>
+    <circle cx="495" cy="170" r="8" fill="${color}"/>
+    <rect x="515" y="165" width="75" height="10" rx="5" fill="#ffffff"/>
+    <path d="M300 360 L290 490 H320 L330 410 L340 490 H370 L360 360 Z" fill="#1e293b"/>
+  `,
+
+  // 10. Skateboarder
+  skateboarder: (color) => `
+    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
+    <circle cx="360" cy="160" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M335 145 C320 120 395 110 390 140 Z" fill="#111"/>
+    <path d="M315 235 C315 200 355 195 365 195 C375 195 415 200 415 235 V360 H315 Z" fill="${color}"/>
+    <!-- Skateboard Held Vertically -->
+    <rect x="430" y="190" width="24" height="170" rx="12" fill="#1e293b" stroke="${color}" stroke-width="4"/>
+    <circle cx="442" cy="210" r="6" fill="${color}"/>
+    <circle cx="442" cy="340" r="6" fill="${color}"/>
+    <path d="M410 240 L435 250" stroke="#111" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="435" cy="250" r="8" fill="#f8fafc"/>
+    <path d="M335 360 L320 490 H355 L370 410 L385 490 H420 L400 360 Z" fill="#1e293b"/>
+  `,
+
+  // 11. Whiteboard Presenter
+  whiteboard_present: (color) => `
+    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
+    <!-- Large Whiteboard with Stand -->
+    <rect x="280" y="100" width="340" height="260" rx="16" fill="#ffffff" stroke="#3f3d56" stroke-width="4"/>
+    <!-- Chart on Whiteboard -->
+    <rect x="320" y="240" width="30" height="80" rx="6" fill="${color}"/>
+    <rect x="370" y="180" width="30" height="140" rx="6" fill="#cbd5e1"/>
+    <rect x="420" y="140" width="30" height="180" rx="6" fill="${color}"/>
+    <rect x="470" y="210" width="30" height="110" rx="6" fill="#94a3b8"/>
+    <!-- Sticky Notes -->
+    <rect x="530" y="130" width="35" height="35" rx="4" fill="${color}" opacity="0.85"/>
+    <rect x="530" y="175" width="35" height="35" rx="4" fill="#38bdf8"/>
+    <line x1="450" y1="360" x2="450" y2="480" stroke="#3f3d56" stroke-width="8"/>
+    <!-- Presenter Character on Left -->
+    <circle cx="220" cy="180" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M195 165 C180 135 255 125 250 155 Z" fill="#111"/>
+    <path d="M180 250 C180 215 215 210 225 210 C235 210 270 215 270 250 V370 H180 Z" fill="${color}"/>
+    <!-- Hand Pointing at Chart -->
+    <path d="M260 240 L340 180" stroke="#111" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="345" cy="178" r="8" fill="#f8fafc"/>
+    <path d="M190 370 L180 490 H210 L220 420 L230 490 H260 L250 370 Z" fill="#1e293b"/>
+  `,
+
+  // 12. Rocket Launch
+  rocket_launch: (color) => `
+    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
+    <!-- Ascending Rocket -->
+    <g transform="translate(420, 100) rotate(25)">
+      <path d="M0 0 C40 -60 60 -60 100 0 L90 120 H10 Z" fill="#ffffff" stroke="#111" stroke-width="4"/>
+      <circle cx="50" cy="40" r="16" fill="${color}"/>
+      <polygon points="-10,100 10,80 10,120" fill="${color}"/>
+      <polygon points="110,100 90,80 90,120" fill="${color}"/>
+      <!-- Thruster Fire -->
+      <polygon points="30,120 50,180 70,120" fill="#f59e0b"/>
+      <polygon points="40,120 50,160 60,120" fill="#ef4444"/>
     </g>
-    <!-- Peripheral Devices / Nodes -->
-    <rect x="140" y="320" width="120" height="90" rx="12" fill="#2f2e41" stroke="${color}" stroke-width="2"/>
-    <rect x="155" y="335" width="90" height="60" rx="6" fill="#ffffff"/>
-    <rect x="540" y="320" width="120" height="90" rx="12" fill="#2f2e41" stroke="${color}" stroke-width="2"/>
-    <rect x="555" y="335" width="90" height="60" rx="6" fill="#ffffff"/>
-    <!-- Server Stack Bottom Center -->
-    <rect x="340" y="380" width="120" height="100" rx="12" fill="#1e293b" stroke="#334155" stroke-width="3"/>
-    <line x1="355" y1="410" x2="445" y2="410" stroke="#334155" stroke-width="4"/>
-    <line x1="355" y1="440" x2="445" y2="440" stroke="#334155" stroke-width="4"/>
-    <circle cx="365" cy="395" r="4" fill="${color}"/>
-    <circle cx="365" cy="425" r="4" fill="${color}"/>
-    <circle cx="365" cy="455" r="4" fill="#22c55e"/>
-    <!-- Dashed Network Links -->
-    <line x1="320" y1="240" x2="210" y2="320" stroke="${color}" stroke-width="3" stroke-dasharray="6 6"/>
-    <line x1="480" y1="240" x2="590" y2="320" stroke="${color}" stroke-width="3" stroke-dasharray="6 6"/>
-    <line x1="400" y1="260" x2="400" y2="380" stroke="${color}" stroke-width="3" stroke-dasharray="6 6"/>
-  `);
-}
+    <!-- Character Watching on Left -->
+    <circle cx="240" cy="220" r="28" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+    <path d="M215 205 C200 175 275 165 270 195 Z" fill="#111"/>
+    <path d="M200 290 C200 255 235 250 245 250 C255 250 290 255 290 290 V400 H200 Z" fill="${color}"/>
+    <path d="M210 400 L200 490 H230 L240 430 L250 490 H280 L270 400 Z" fill="#1e293b"/>
+  `,
+};
 
-function renderIsometricGrid(color: string, seed: number): string {
+// Fallback dynamic renderer for any remaining pose IDs
+function renderDynamicActionPose(poseId: string, color: string, raw: RawIllustrationItem): string {
+  const specificRenderer = POSE_RENDERERS[poseId];
+  if (specificRenderer) {
+    return specificRenderer(color, raw);
+  }
+
+  // Generic dynamic action scene with character + floating thematic badge
   return createUnDrawSvg(`
     <ellipse cx="400" cy="510" rx="340" ry="18" fill="#161b22"/>
-    <!-- 3D Isometric Stacked Cubes -->
-    <!-- Base Platform -->
-    <polygon points="400,280 580,370 400,460 220,370" fill="#1e293b" stroke="#334155" stroke-width="3"/>
-    <polygon points="220,370 400,460 400,500 220,410" fill="#0f172a"/>
-    <polygon points="580,370 400,460 400,500 580,410" fill="#090d16"/>
-    <!-- Top Glowing Cube with Brand Color -->
-    <polygon points="400,160 500,210 400,260 300,210" fill="${color}"/>
-    <polygon points="300,210 400,260 400,320 300,270" fill="#1e293b" opacity="0.9"/>
-    <polygon points="500,210 400,260 400,320 500,270" fill="#0f172a" opacity="0.9"/>
-    <!-- Floating Data Spheres -->
-    <circle cx="260" cy="180" r="16" fill="${color}"/>
-    <circle cx="540" cy="220" r="20" fill="#ffffff" stroke="${color}" stroke-width="4"/>
-    <circle cx="400" cy="100" r="12" fill="${color}"/>
+    <!-- Floating Backdrop Shield / Prop -->
+    <rect x="360" y="120" width="280" height="260" rx="24" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+    <circle cx="500" cy="210" r="50" fill="${color}" opacity="0.2"/>
+    <circle cx="500" cy="210" r="28" fill="${color}"/>
+    <rect x="420" y="280" width="160" height="14" rx="7" fill="#ffffff"/>
+    <rect x="450" y="310" width="100" height="10" rx="5" fill="#64748b"/>
+    <!-- Active Character -->
+    <circle cx="240" cy="180" r="30" fill="#f8fafc" stroke="#111" stroke-width="3.5"/>
+    <path d="M215 160 C200 130 275 120 270 150 Z" fill="#111"/>
+    <path d="M190 255 C190 220 230 215 240 215 C250 215 290 220 290 255 V380 H190 Z" fill="${color}"/>
+    <!-- Arms gesturing -->
+    <path d="M280 250 L380 200" stroke="#111" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="385" cy="198" r="8" fill="#f8fafc"/>
+    <!-- Legs -->
+    <path d="M200 380 L190 490 H225 L235 420 L245 490 H280 L270 380 Z" fill="#1e293b"/>
   `);
 }
 
-function renderFloatingCards(color: string, seed: number): string {
-  return createUnDrawSvg(`
-    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-    <!-- Card 1 (Back Left) -->
-    <rect x="180" y="140" width="220" height="260" rx="20" fill="#1e293b" stroke="#334155" stroke-width="3"/>
-    <rect x="205" y="170" width="80" height="14" rx="7" fill="#64748b"/>
-    <rect x="205" y="200" width="140" height="80" rx="10" fill="#0f172a"/>
-    <!-- Card 2 (Front Center Hero) -->
-    <rect x="280" y="180" width="260" height="300" rx="24" fill="#ffffff" stroke="${color}" stroke-width="4" filter="drop-shadow(0 20px 30px rgba(0,0,0,0.3))"/>
-    <circle cx="330" cy="230" r="22" fill="${color}"/>
-    <rect x="370" y="222" width="120" height="16" rx="8" fill="#0f172a"/>
-    <!-- Progress Bar -->
-    <rect x="320" y="280" width="180" height="18" rx="9" fill="#f1f5f9"/>
-    <rect x="320" y="280" width="120" height="18" rx="9" fill="${color}"/>
-    <rect x="320" y="330" width="180" height="110" rx="14" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
-    <path d="M340 410 L 380 370 L 420 390 L 480 350" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <!-- Card 3 (Right Accent Badge) -->
-    <rect x="510" y="120" width="160" height="160" rx="18" fill="#0f172a" stroke="${color}" stroke-width="2"/>
-    <circle cx="590" cy="180" r="28" fill="${color}" opacity="0.2"/>
-    <circle cx="590" cy="180" r="16" fill="${color}"/>
-    <rect x="540" y="230" width="100" height="12" rx="6" fill="#ffffff"/>
-  `);
-}
-
-function renderCharacterScene(color: string, seed: number): string {
-  return createUnDrawSvg(`
-    <ellipse cx="400" cy="520" rx="340" ry="18" fill="#161b22"/>
-    <!-- Giant Glowing Symbol in Background -->
-    <circle cx="480" cy="260" r="140" fill="${color}" opacity="0.15"/>
-    <circle cx="480" cy="260" r="90" fill="#ffffff" stroke="${color}" stroke-width="6"/>
-    <!-- Character Standing on Left -->
-    <circle cx="280" cy="180" r="32" fill="#2f2e41"/>
-    <!-- Hair -->
-    <path d="M260 170 C250 140 300 130 310 160 Z" fill="#111827"/>
-    <!-- Hoodie/Shirt with Accent Color -->
-    <path d="M230 250 C230 220 270 215 280 215 C290 215 330 220 330 250 V370 H230 Z" fill="${color}"/>
-    <!-- Left Hand Holding Coffee -->
-    <path d="M230 280 L200 320" stroke="#2f2e41" stroke-width="12" stroke-linecap="round"/>
-    <rect x="185" y="315" width="20" height="24" rx="4" fill="#ffffff" stroke="#111" stroke-width="2"/>
-    <!-- Legs & Shoes -->
-    <path d="M245 370 L235 490 H265 L275 410 L285 490 H315 L305 370 Z" fill="#1e293b"/>
-    <!-- Floating Idea Bubbles -->
-    <circle cx="340" cy="140" r="10" fill="${color}"/>
-    <circle cx="370" cy="110" r="18" fill="${color}"/>
-  `);
-}
-
-function renderMinimalConcept(color: string, seed: number): string {
-  return createUnDrawSvg(`
-    <ellipse cx="400" cy="510" rx="320" ry="18" fill="#161b22"/>
-    <!-- Overlapping Abstract Circles & Geometric Vectors -->
-    <circle cx="340" cy="280" r="130" fill="${color}" opacity="0.8"/>
-    <circle cx="460" cy="280" r="130" fill="#1e293b" stroke="#334155" stroke-width="4"/>
-    <path d="M260 400 Q 400 120, 540 400" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <circle cx="400" cy="260" r="28" fill="#ffffff" stroke="${color}" stroke-width="6"/>
-    <!-- Orbiting Accent Stars -->
-    <polygon points="400,100 405,115 420,115 408,125 412,140 400,130 388,140 392,125 380,115 395,115" fill="${color}"/>
-    <circle cx="560" cy="180" r="8" fill="${color}"/>
-    <circle cx="240" cy="200" r="12" fill="#ffffff"/>
-  `);
-}
-
-// Master style renderer dispatcher
-function renderSvgByStyle(style: string, color: string, seed: number): string {
-  switch (style) {
-    case "desktop-analytics":
-    case "metric-charts":
-      return renderDesktopAnalytics(color, seed);
-    case "mobile-app":
-      return renderMobileApp(color, seed);
-    case "team-collab":
-      return renderTeamCollab(color, seed);
-    case "cloud-nodes":
-      return renderCloudNodes(color, seed);
-    case "isometric-grid":
-      return renderIsometricGrid(color, seed);
-    case "floating-cards":
-    case "flow-diagram":
-      return renderFloatingCards(color, seed);
-    case "character-scene":
-      return renderCharacterScene(color, seed);
-    case "minimal-concept":
-    case "dark-futuristic":
-    default:
-      return renderMinimalConcept(color, seed);
-  }
-}
-
-// ── BUILD COMPLETE CATALOG (1,000+ ITEMS) ──
+// ── BUILD COMPLETE CATALOG (1,600+ DISTINCT ITEMS) ──
 export const ILLUSTRATION_CATALOG: IllustrationItem[] = RAW_ILLUSTRATION_CATALOG.map((raw) => ({
   id: raw.id,
   title: raw.title,
   category: raw.category,
   tags: raw.tags,
-  svgTemplate: (color: string) => renderSvgByStyle(raw.style, color, raw.seed),
+  svgTemplate: (color: string) => renderDynamicActionPose(raw.poseId, color, raw),
 }));
 
 /**
- * Searches the 1,000+ vector illustration catalog by query and category filter.
+ * Searches the 1,600+ vector illustration catalog by query and category filter.
  */
 export function searchIllustrations(
   query: string,
