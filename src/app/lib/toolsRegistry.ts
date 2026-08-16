@@ -28,6 +28,22 @@ export const TOOL_CATEGORIES: { id: string; label: string; label_az: string }[] 
 
 export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
   {
+    id: "resume-builder",
+    slug: "resume-builder",
+    name: "ATS Resume & CV Builder",
+    name_az: "ATS Resume və CV Quraşdırıcı",
+    category: "Developer",
+    description: "Free, in-browser ATS-friendly resume and CV builder. Choose from HR-approved templates, customize live with split-screen preview, and export high-resolution ATS-compliant PDF.",
+    description_az: "Pulsuz, brauzerdaxili ATS-uyğun rezyume və CV quraşdırıcısı. HR təsdiqli şablonlar, canlı bölünmüş ekran redaktoru və 100% ATS-oxunaqlı PDF ixracı.",
+    icon: "📄",
+    path: "/tools/resume-builder",
+    status: "live",
+    featured: true,
+    seoTitle: "Free ATS Resume & CV Builder — HR-Approved Vector PDF Generator",
+    seoDescription: "Create professional ATS-compliant resumes with real-time preview, ATS score checker, and instant high-quality PDF download. Designed for software engineers, designers, and professionals.",
+    tags: ["resume-builder", "cv-maker", "ats-resume", "developer-cv", "career", "pdf-export", "templates"],
+  },
+  {
     id: "open-peeps",
     slug: "open-peeps",
     name: "Character Builder Tool",
@@ -49,6 +65,9 @@ export function getToolById(id: string): InteractiveToolDefinition | undefined {
   const cleanId = (id || "").toLowerCase().trim();
   if (cleanId === "openpeeps" || cleanId === "peeps" || cleanId === "character-builder") {
     return INTERACTIVE_TOOLS.find((t) => t.id === "open-peeps");
+  }
+  if (cleanId === "resumebuilder" || cleanId === "resume" || cleanId === "cv-builder" || cleanId === "cv") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "resume-builder");
   }
   return INTERACTIVE_TOOLS.find((t) => t.id === cleanId || t.slug === cleanId);
 }

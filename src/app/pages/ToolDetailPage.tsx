@@ -10,6 +10,7 @@ import { Button } from "../components/ui/Button";
 
 // Lazy-load individual tools
 const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
+const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -61,6 +62,8 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
+      case "resume-builder":
+        return <ResumeBuilder />;
       case "open-peeps":
       case "peeps":
       case "character-builder":

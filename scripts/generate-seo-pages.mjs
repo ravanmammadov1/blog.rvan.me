@@ -93,6 +93,13 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/tools/resume-builder",
+    title: "Free ATS Resume & CV Builder — HR-Approved Vector PDF Generator",
+    description: "Create professional ATS-compliant resumes with real-time preview, ATS score checker, and instant high-quality vector PDF download. Built for engineers, designers, and executives.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/open-peeps",
     title: "Character Builder Tool — Free Vector Avatar & Illustration Generator",
     description: "Create custom hand-drawn character illustrations with the modular character builder. Mix facial expressions, hairstyles, poses, clothing, and export clean SVG or high-res PNG.",
