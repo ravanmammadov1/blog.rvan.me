@@ -134,6 +134,13 @@ const staticPages = [
     type: "website",
     lastmod: todayIso,
   },
+  {
+    path: "/tools/grapesjs-web-builder",
+    title: "GrapesJS Visual Web Builder — Free Online Drag & Drop HTML/CSS Editor",
+    description: "Build responsive web pages and landing pages visually with GrapesJS. Drag components, edit typography, customize styles, and export clean HTML/CSS code.",
+    type: "website",
+    lastmod: todayIso,
+  },
   { path: "/privacy-policy", title: "Privacy Policy — Ravan Mammadov", description: "Privacy policy and user data protections for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
   { path: "/cookie-policy", title: "Cookie Policy — Ravan Mammadov", description: "Cookie policy and consent preferences for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
   { path: "/terms", title: "Terms of Service — Ravan Mammadov", description: "Terms of service and intellectual property notice for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
@@ -518,6 +525,10 @@ const staticAzTranslations = {
   "/resources": {
     title: "Kreativ Resurslar — Açıq Mənbəli Şriftlər, İkonlar və Alətlər | Rvan.me",
     description: "Dizaynerlər və proqramçılar üçün açıq mənbəli şrift ailələri, vektor aktivləri və UI dəstləri.",
+  },
+  "/tools/grapesjs-web-builder": {
+    title: "GrapesJS Veb Quraşdırıcı — Pulsuz Onlayn Drag & Drop HTML/CSS Redaktoru",
+    description: "GrapesJS ilə vizual olaraq responsiv veb səhifələr və açılış səhifələri qurun. Blokları sürükləyin, üslubları redaktə edin və təmiz kod ixrac edin.",
   },
 };
 

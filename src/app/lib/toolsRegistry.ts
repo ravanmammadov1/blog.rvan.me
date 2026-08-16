@@ -76,9 +76,21 @@ export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
     seoTitle: "SEO Meta Tag Generator — OpenGraph & Twitter Card Preview",
     seoDescription: "Generate production-ready HTML SEO meta tags, OpenGraph protocol tags, and Twitter Cards with real-time Google search snippet previews.",
     tags: ["seo", "meta-tags", "opengraph", "twitter-cards"]
+  },
+  {
+    id: "grapesjs-web-builder",
+    name: "GrapesJS Visual Web & Landing Page Builder",
+    category: "SVG & Code",
+    description: "Visual drag-and-drop HTML5 and CSS website builder. Design responsive pages, manage styles, inspect layers, and export clean code.",
+    icon: "⚡",
+    path: "/tools/grapesjs-web-builder",
+    seoTitle: "GrapesJS Visual Web Builder — Free Online Drag & Drop HTML/CSS Editor",
+    seoDescription: "Build responsive web pages and landing pages visually with GrapesJS. Drag components, edit typography, customize styles, and export clean HTML/CSS code.",
+    tags: ["grapesjs", "web-builder", "html-editor", "css-builder", "drag-and-drop", "landing-page"]
   }
 ];
 
 export function getToolById(id: string): InteractiveToolDefinition | undefined {
+  if (id === "grapesjs" || id === "web-builder") return INTERACTIVE_TOOLS.find((t) => t.id === "grapesjs-web-builder");
   return INTERACTIVE_TOOLS.find((t) => t.id === id);
 }

@@ -15,6 +15,7 @@ const FluidTypescaleGenerator = lazy(() => import("../components/tools/FluidType
 const BoxShadowGenerator = lazy(() => import("../components/tools/BoxShadowGenerator"));
 const ColorConverterTool = lazy(() => import("../components/tools/ColorConverterTool"));
 const SeoMetaGenerator = lazy(() => import("../components/tools/SeoMetaGenerator"));
+const GrapesJsWebBuilder = lazy(() => import("../components/tools/GrapesJsWebBuilder"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -78,6 +79,10 @@ export const ToolDetailPage: React.FC = () => {
         return <ColorConverterTool />;
       case "seo-meta-generator":
         return <SeoMetaGenerator />;
+      case "grapesjs-web-builder":
+      case "grapesjs":
+      case "web-builder":
+        return <GrapesJsWebBuilder />;
       default:
         return null;
     }
