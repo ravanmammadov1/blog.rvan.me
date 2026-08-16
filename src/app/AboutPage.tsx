@@ -14,20 +14,23 @@ import {
   UserCheck,
   Compass,
   ArrowRight,
-  MapPin
+  MapPin,
+  Quote
 } from "lucide-react";
 import { Button } from "./components/ui/Button";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
-import { fetchSiteSettings } from "../lib/sanityQueries";
-import { SiteSettings } from "../types/cms";
+import { fetchAboutSection, fetchSiteSettings, fetchTestimonials } from "../lib/sanityQueries";
+import { urlFor } from "../lib/sanityClient";
+import { AboutSection, SiteSettings, TestimonialItem } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import TestimonialsSection from "./components/TestimonialsSection";
 
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -42,8 +45,38 @@ const fadeUp = {
   }),
 };
 
+// Fallback values for Platform Values in case Sanity is offline
+const FALLBACK_VALUES = [
+  {
+    title: "Value First",
+    description: "Zero fluff and zero promotional noise. Every font family, tool, and article is curated for real commercial and creative utility.",
+    icon: "CheckCircle2",
+    color: "emerald",
+  },
+  {
+    title: "Unified Ecosystem",
+    description: "Open-source typography, AI automation tools, RSS news aggregation, and design essays connected under a single design system.",
+    icon: "Layers",
+    color: "cyan",
+  },
+  {
+    title: "High Performance",
+    description: "Engineered with modern web architecture, sub-second FlexSearch, instant static pre-rendering, and real-time synchronization.",
+    icon: "Zap",
+    color: "purple",
+  },
+  {
+    title: "Free & Open Access",
+    description: "Public access to resources with optional Google authentication for personalizing bookmarks and member features.",
+    icon: "Compass",
+    color: "primary",
+  },
+];
+
 export default function AboutPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [aboutData, setAboutData] = useState<AboutSection | null>(null);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
@@ -51,7 +84,21 @@ export default function AboutPage() {
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
     });
+    fetchAboutSection().then((data) => {
+      if (data) setAboutData(data);
+    });
+    fetchTestimonials().then((data) => {
+      if (data && data.length > 0) setTestimonials(data);
+    });
   }, []);
+
+  const platformValues = (aboutData?.platformValues && aboutData.platformValues.length > 0)
+    ? aboutData.platformValues
+    : FALLBACK_VALUES;
+
+  const sanityPortraitUrl = aboutData?.profilePhoto
+    ? urlFor(aboutData.profilePhoto)?.width(1200).height(1200).url()
+    : null;
 
   return (
     <main
@@ -111,7 +158,7 @@ export default function AboutPage() {
       </PageHero>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          2. THE PLATFORM MISSION & WHY RVAN.ME EXISTS
+          2. THE PLATFORM MISSION & WHY RVAN.ME EXISTS (DYNAMICS FROM SANITY)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
@@ -119,60 +166,68 @@ export default function AboutPage() {
             <div className="lg:col-span-5">
               <span className="text-xs font-bold tracking-widest text-primary mono uppercase">{t("aboutWhyExistsEyebrow", "WHY RVAN.ME EXISTS")}</span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground leading-tight">
-                {t("aboutWhyExistsTitle", "Bringing Clarity & Speed to Creative Workflows.")}
+                {aboutData?.heading || t("aboutWhyExistsTitle", "Bringing Clarity & Speed to Creative Workflows.")}
               </h2>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground font-medium">
-                {t("aboutWhyExistsDescription", "Modern digital creation is fragmented across hundreds of bookmarks, scattered tools, and noisy social feeds. Rvan.me eliminates visual noise by uniting high-density creative utilities, open-source typography, and verified industry news into one seamless hub.")}
+                {aboutData?.introParagraph1 || t("aboutWhyExistsDescription", "Modern digital creation is fragmented across hundreds of bookmarks, scattered tools, and noisy social feeds. Rvan.me eliminates visual noise by uniting high-density creative utilities, open-source typography, and verified industry news into one seamless hub.")}
               </p>
+              {aboutData?.introParagraph2 && (
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground/80 font-medium">
+                  {aboutData.introParagraph2}
+                </p>
+              )}
             </div>
 
             <div className="lg:col-span-7 grid gap-6 sm:grid-cols-2">
-              <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
-                  <CheckCircle2 size={20} />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutValueFirstTitle", "Value First")}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutValueFirstDesc", "Zero fluff and zero promotional noise. Every font family, tool, and article is curated for real commercial and creative utility.")}
-                </p>
-              </div>
+              {platformValues.map((val, idx) => {
+                const isEmerald = val.color === "emerald" || idx === 0;
+                const isCyan = val.color === "cyan" || idx === 1;
+                const isPurple = val.color === "purple" || idx === 2;
 
-              <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-400">
-                  <Layers size={20} />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutUnifiedEcosystemTitle", "Unified Ecosystem")}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutUnifiedEcosystemDesc", "Open-source typography, AI automation tools, RSS news aggregation, and design essays connected under a single design system.")}
-                </p>
-              </div>
+                const iconBorderBg = isEmerald
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : isCyan
+                  ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400"
+                  : isPurple
+                  ? "border-purple-500/30 bg-purple-500/10 text-purple-400"
+                  : "border-primary/30 bg-primary/10 text-primary";
 
-              <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-400">
-                  <Zap size={20} />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutHighPerformanceTitle", "High Performance")}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutHighPerformanceDesc", "Engineered with modern web architecture, sub-second FlexSearch, instant static pre-rendering, and real-time synchronization.")}
-                </p>
-              </div>
+                const IconComponent =
+                  val.icon === "Layers"
+                    ? Layers
+                    : val.icon === "Zap"
+                    ? Zap
+                    : val.icon === "Compass"
+                    ? Compass
+                    : CheckCircle2;
 
-              <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
-                  <Compass size={20} />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{t("aboutFreeAccessTitle", "Free & Open Access")}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutFreeAccessDesc", "Public access to resources with optional Google authentication for personalizing bookmarks and member features.")}
-                </p>
-              </div>
+                return (
+                  <motion.div
+                    key={val.title || idx}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={idx * 0.1}
+                    className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card"
+                  >
+                    <div className={`mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border ${iconBorderBg}`}>
+                      <IconComponent size={20} />
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground mb-2">{val.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                      {val.description}
+                    </p>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          3. THE CORE ECOSYSTEM PILLARS (Resources, Tools, News, Blog)
+          3. THE CORE ECOSYSTEM PILLARS (Resources, Tools, Blog)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10 bg-white/[0.01]">
         <div className="mx-auto max-w-[1600px]">
@@ -231,7 +286,7 @@ export default function AboutPage() {
               </div>
             </Link>
 
-            {/* Module 4: Blog */}
+            {/* Module 3: Blog */}
             <Link
               to={getLocalizedPath("/blog")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
@@ -257,7 +312,19 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          4. BEHIND RVAN.ME — MEET THE FOUNDER SECTION (LARGE PORTRAIT & FOUNDER CREATOR CARDS)
+          4. CLIENT & COLLABORATOR TESTIMONIALS (FROM SANITY)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {testimonials.length > 0 && (
+        <TestimonialsSection
+          testimonials={testimonials}
+          title={t("testimonialsTitle", "Trusted by Creative Teams.")}
+          eyebrow={t("testimonialsEyebrow", "COLLABORATIONS & REVIEWS")}
+          subtitle={t("testimonialsSubtitle", "What art directors, marketing leads, and creative partners say about working with Ravan Mammadov.")}
+        />
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          5. BEHIND RVAN.ME — MEET THE FOUNDER SECTION (DYNAMIC FROM SANITY)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-20 md:px-10 md:py-28 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
@@ -274,16 +341,16 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="text-base leading-relaxed text-muted-foreground font-medium max-w-2xl">
-                  Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and AI products.
+                  {aboutData?.introParagraph1 || "Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and AI products."}
                 </p>
 
                 <p className="text-xs md:text-sm leading-relaxed text-muted-foreground/80 font-medium max-w-2xl">
-                  Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics.
+                  {aboutData?.introParagraph2 || "Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics."}
                 </p>
 
                 <div className="pt-2">
                   <Button
-                    to={getLocalizedPath("/ravanmammadov")}
+                    to={getLocalizedPath("/ravan-mammadov")}
                     variant="outline"
                     size="md"
                     icon={<ArrowUpRight size={15} />}
@@ -293,22 +360,34 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Right Founder Photo — Prominent Large Size */}
+              {/* Right Founder Photo */}
               <div className="lg:col-span-5 flex justify-center lg:justify-end">
                 <div className="relative group/founder">
                   <div className="h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80 lg:h-96 lg:w-96 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1.5 shadow-[0_0_35px_rgba(97,197,173,0.25)] group-hover/founder:border-[#61c5ad] group-hover/founder:shadow-[0_0_50px_rgba(152,79,159,0.4)] transition-all duration-500">
                     <picture>
-                      <source
-                        srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
-                        type="image/webp"
-                      />
-                      <img
-                        src={RavanPortrait1200}
-                        alt="Ravan Mammadov — Founder of Rvan.me"
-                        width={1200}
-                        height={1200}
-                        className="h-full w-full object-cover object-center rounded-2xl group-hover/founder:scale-105 transition-transform duration-500"
-                      />
+                      {sanityPortraitUrl ? (
+                        <img
+                          src={sanityPortraitUrl}
+                          alt="Ravan Mammadov — Founder of Rvan.me"
+                          width={1200}
+                          height={1200}
+                          className="h-full w-full object-cover object-center rounded-2xl group-hover/founder:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <>
+                          <source
+                            srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
+                            type="image/webp"
+                          />
+                          <img
+                            src={RavanPortrait1200}
+                            alt="Ravan Mammadov — Founder of Rvan.me"
+                            width={1200}
+                            height={1200}
+                            className="h-full w-full object-cover object-center rounded-2xl group-hover/founder:scale-105 transition-transform duration-500"
+                          />
+                        </>
+                      )}
                     </picture>
                   </div>
                   <div className="absolute -bottom-3 -right-3 rounded-2xl border border-white/20 bg-background/90 px-4 py-2 text-xs font-bold text-primary mono uppercase backdrop-blur-md shadow-lg">

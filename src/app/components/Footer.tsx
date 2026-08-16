@@ -11,11 +11,15 @@ export default function Footer({ siteSettings }: FooterProps) {
   const { openPreferences } = useCookieConsent();
   const { t, getLocalizedPath } = useLanguage();
 
+  const footerCopyright = siteSettings?.footerText
+    ? siteSettings.footerText.replace("{year}", new Date().getFullYear().toString())
+    : `© ${new Date().getFullYear()} RVAN.ME · RAVAN MAMMADOV ALL RIGHTS RESERVED`;
+
   return (
     <footer className="w-full border-t border-border bg-background text-foreground px-6 py-8 md:px-10 md:py-10">
       <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row sm:items-center justify-between gap-4 text-[10.5px] font-bold tracking-[.18em] text-muted-foreground/70 mono uppercase">
         {/* Left Side */}
-        <span>© {new Date().getFullYear()} RVAN.ME · RAVAN MAMMADOV ALL RIGHTS RESERVED</span>
+        <span>{footerCopyright}</span>
 
         {/* Right Side */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">

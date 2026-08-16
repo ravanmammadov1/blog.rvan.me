@@ -52,8 +52,12 @@ export async function fetchAboutSection(): Promise<AboutSection | null> {
         introParagraph2,
         profilePhoto,
         stats,
+        platformValues,
         experience,
-        skills
+        skills,
+        education,
+        awards,
+        brandLogos
       }
     `);
     return data || null;

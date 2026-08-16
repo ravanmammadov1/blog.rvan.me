@@ -369,6 +369,22 @@ export default function RavanMammadovPage() {
         behanceCoverUrl: project.image,
       }));
 
+  const activeExperience = (aboutSection?.experience && aboutSection.experience.length > 0)
+    ? aboutSection.experience
+    : realExperience;
+
+  const activeFeaturedBrands = (aboutSection?.brandLogos && aboutSection.brandLogos.length > 0)
+    ? aboutSection.brandLogos.map((b) => b.name)
+    : featuredBrandsList;
+
+  const activeEducation = (aboutSection?.education && aboutSection.education.length > 0)
+    ? aboutSection.education
+    : educationList;
+
+  const activeCertificates = (aboutSection?.awards && aboutSection.awards.length > 0)
+    ? aboutSection.awards
+    : certificatesList;
+
   return (
     <main
       className="min-h-screen bg-background text-foreground"
@@ -780,9 +796,9 @@ export default function RavanMammadovPage() {
           </motion.div>
 
           <div className="mt-16 space-y-12 border-l-[1px] border-white/20 pl-6 md:pl-10 relative">
-            {realExperience.map((exp, idx) => (
+            {activeExperience.map((exp, idx) => (
               <motion.div
-                key={exp.company + idx}
+                key={(exp.company || "exp") + idx}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
@@ -802,27 +818,31 @@ export default function RavanMammadovPage() {
                 </h3>
 
                 {/* Brands Worked With */}
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold text-muted-foreground mono uppercase">Brands:</span>
-                  {exp.brands.map((b) => (
-                    <span
-                      key={b}
-                      className="text-[11px] font-semibold text-[#61c5ad]/90 border border-[#61c5ad]/20 bg-[#61c5ad]/5 rounded-full px-3 py-0.5 mono"
-                    >
-                      {b}
-                    </span>
-                  ))}
-                </div>
+                {exp.brands && exp.brands.length > 0 && (
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-muted-foreground mono uppercase">Brands:</span>
+                    {exp.brands.map((b) => (
+                      <span
+                        key={b}
+                        className="text-[11px] font-semibold text-[#61c5ad]/90 border border-[#61c5ad]/20 bg-[#61c5ad]/5 rounded-full px-3 py-0.5 mono"
+                      >
+                        {b}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 {/* Core Responsibilities */}
-                <ul className="mt-5 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground/90 font-medium">
-                  {exp.responsibilities.map((resp) => (
-                    <li key={resp} className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-[#61c5ad] flex-shrink-0" />
-                      <span>{resp}</span>
-                    </li>
-                  ))}
-                </ul>
+                {exp.responsibilities && exp.responsibilities.length > 0 && (
+                  <ul className="mt-5 grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground/90 font-medium">
+                    {exp.responsibilities.map((resp) => (
+                      <li key={resp} className="flex items-center gap-2">
+                        <CheckCircle2 size={14} className="text-[#61c5ad] flex-shrink-0" />
+                        <span>{resp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </motion.div>
             ))}
           </div>
@@ -845,7 +865,7 @@ export default function RavanMammadovPage() {
           </motion.div>
 
           <div className="mt-12 flex flex-wrap gap-3">
-            {featuredBrandsList.map((brand) => (
+            {activeFeaturedBrands.map((brand) => (
               <span
                 key={brand}
                 className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-sm font-bold text-foreground hover:border-[#61c5ad] hover:text-[#61c5ad] transition-all duration-300 glass-sm mono"
@@ -989,7 +1009,7 @@ export default function RavanMammadovPage() {
               </motion.div>
 
               <div className="mt-10 space-y-6">
-                {educationList.map((edu) => (
+                {activeEducation.map((edu) => (
                   <div key={edu.degree} className="p-6 aurora-card">
                     <div className="flex items-center justify-between gap-2 text-xs font-bold text-primary mono uppercase">
                       <span className="flex items-center gap-1.5">
@@ -999,7 +1019,7 @@ export default function RavanMammadovPage() {
                     </div>
                     <h3 className="mt-3 text-xl font-bold text-foreground">{edu.degree}</h3>
                     <p className="mt-3 text-xs leading-relaxed text-muted-foreground/80 font-medium">
-                      {edu.desc}
+                      {edu.description || (edu as any).desc}
                     </p>
                   </div>
                 ))}
@@ -1011,16 +1031,18 @@ export default function RavanMammadovPage() {
               <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 <p className="eyebrow text-muted-foreground">Verified Training</p>
                 <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-5xl text-foreground">
-                  Certificates
+                  Certificates & Awards
                 </h2>
               </motion.div>
 
               <div className="mt-10 space-y-4">
-                {certificatesList.map((cert) => (
+                {activeCertificates.map((cert) => (
                   <div key={cert.title} className="p-5 aurora-card flex items-center justify-between">
                     <div>
                       <h4 className="text-base font-bold text-foreground">{cert.title}</h4>
-                      <p className="text-xs text-muted-foreground mono mt-1">{cert.issuer}</p>
+                      <p className="text-xs text-muted-foreground mono mt-1">
+                        {cert.issuer} {cert.year ? `· ${cert.year}` : ""}
+                      </p>
                     </div>
                     <BadgeCheck size={20} className="text-primary flex-shrink-0" />
                   </div>

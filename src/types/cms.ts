@@ -44,16 +44,40 @@ export interface StatItem {
   label: string;
 }
 
-export interface ExperienceItem {
-  year?: string;
+export interface PlatformValue {
+  title: string;
+  description: string;
+  icon?: string;
+  color?: string;
+}
+
+export interface DetailedExperienceItem {
+  period: string;
   role: string;
-  company?: string;
+  company: string;
+  brands?: string[];
+  responsibilities?: string[];
   desc?: string;
 }
 
-export interface SkillCategory {
-  category: string;
-  skills: string[];
+export interface EducationItem {
+  institution: string;
+  degree: string;
+  period?: string;
+  description?: string;
+}
+
+export interface AwardItem {
+  title: string;
+  issuer?: string;
+  year?: string;
+  category?: string;
+}
+
+export interface BrandItem {
+  name: string;
+  category?: string;
+  logo?: any;
 }
 
 export interface AboutSection {
@@ -63,8 +87,12 @@ export interface AboutSection {
   introParagraph2?: string;
   profilePhoto?: any;
   stats?: StatItem[];
-  experience?: ExperienceItem[];
+  platformValues?: PlatformValue[];
+  experience?: DetailedExperienceItem[];
   skills?: SkillCategory[];
+  education?: EducationItem[];
+  awards?: AwardItem[];
+  brandLogos?: BrandItem[];
 }
 
 export interface TestimonialItem {
