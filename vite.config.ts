@@ -52,14 +52,13 @@ export default defineConfig({
   // Build optimizations and manual chunking to reduce initial bundle weight
   build: {
     target: 'es2020',
-    chunkSizeWarningLimit: 1500, // in kB, adjust as needed
-    // Use Vite's default chunking so React and React Three Fiber remain compatible.
-    // Custom manualChunks can split React hooks across unsafe boundaries.
-    // Enable brotli size reports for CI visibility
+    chunkSizeWarningLimit: 1800,
     brotliSize: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Split pre-rendered Open Doodles SVG data into its own lazy-loaded chunk
+          if (id.includes("openDoodleSvgs")) return "open-doodles-svgs";
           if (!id.includes("node_modules")) return;
           if (id.includes("three") || id.includes("@react-three")) return "three-vendor";
           if (id.includes("framer-motion") || id.includes("motion")) return "motion-vendor";
@@ -70,4 +69,3 @@ export default defineConfig({
     },
   },
 })
-

@@ -1,151 +1,174 @@
+// Pre-render all 33 Open Doodles SVGs at BUILD TIME into static strings
+// so they can be used in the browser without ReactDOMServer
 import fs from "fs/promises";
 import path from "path";
+import React from "react";
+import ReactDOMServer from "react-dom/server";
+import * as OpenDoodles from "react-open-doodles";
 
-// 32 Distinct Character Action Poses (Open Doodles & Open Peeps inspired)
-export const ACTION_POSES = [
-  { id: "reading_chair", title: "Immersed in Book", tag: "reading" },
-  { id: "laptop_floor", title: "Coding on Floor", tag: "coding" },
-  { id: "meditation_zen", title: "Zen Mindfulness", tag: "meditation" },
-  { id: "roller_skater", title: "Roller Skating", tag: "skating" },
-  { id: "dancing_music", title: "Dancing to Beats", tag: "dancing" },
-  { id: "holding_coffee", title: "Coffee & Morning Walk", tag: "coffee" },
-  { id: "desk_coder", title: "Workstation Coding", tag: "workspace" },
-  { id: "loving_heart", title: "Loving Big Heart", tag: "loving" },
-  { id: "phone_scroller", title: "Mobile Chatting", tag: "social" },
-  { id: "skateboarder", title: "Skateboard Cruiser", tag: "skater" },
-  { id: "laying_tablet", title: "Laying Down & Drawing", tag: "creative" },
-  { id: "superhero_flying", title: "Superhero Floating", tag: "growth" },
-  { id: "gardening_plant", title: "Watering Botanical Plant", tag: "nature" },
-  { id: "petting_dog", title: "Petting Companion Dog", tag: "pet" },
-  { id: "unboxing_package", title: "Unboxing Delivery", tag: "ecommerce" },
-  { id: "trophy_celebrate", title: "Victory Celebration", tag: "success" },
-  { id: "whiteboard_present", title: "Whiteboard Strategy", tag: "business" },
-  { id: "cycling_bike", title: "Urban Bike Ride", tag: "cycling" },
-  { id: "yoga_stretch", title: "Yoga Warrior Stretch", tag: "yoga" },
-  { id: "rocket_launch", title: "Rocket Countdown", tag: "launch" },
-  { id: "shopping_cart", title: "Shopping Cart Spree", tag: "shopping" },
-  { id: "photographer", title: "Snapping Photo", tag: "photography" },
-  { id: "gamer_console", title: "Gaming Battle", tag: "gaming" },
-  { id: "guitarist_music", title: "Acoustic Melody", tag: "music" },
-  { id: "astronomer_telescope", title: "Deep Space Telescope", tag: "astronomy" },
-  { id: "coffee_barista", title: "Pour-Over Barista", tag: "coffee" },
-  { id: "scientist_chemistry", title: "Lab Beaker Chemistry", tag: "science" },
-  { id: "artist_painting", title: "Canvas Painting", tag: "art" },
-  { id: "backpack_traveler", title: "Wilderness Hiking", tag: "travel" },
-  { id: "vr_headset", title: "VR Spatial Metaverse", tag: "tech" },
-  { id: "chef_cooking", title: "Gourmet Chef Cooking", tag: "food" },
-  { id: "podcaster_mic", title: "Studio Podcast Stream", tag: "podcast" },
+const PLACEHOLDER_ACCENT = "__ACCENT__";
+const PLACEHOLDER_INK = "__INK__";
+
+const DOODLE_KEYS = [
+  "BalletDoodle", "BikiniDoodle", "ChillingDoodle", "ClumsyDoodle",
+  "CoffeeDoodle", "DancingDoodle", "DogJumpDoodle", "DoggieDoodle",
+  "FloatDoodle", "GroovyDoodle", "IceCreamDoodle", "JumpingDoodle",
+  "LayingDoodle", "LevitateDoodle", "LovingDoodle", "MeditatingDoodle",
+  "MoshingDoodle", "PettingDoodle", "PlantDoodle", "ReadingDoodle",
+  "ReadingSideDoodle", "RollerSkatingDoodle", "RollingDoodle", "RunningDoodle",
+  "SelfieDoodle", "SittingDoodle", "SittingReadingDoodle", "SleekDoodle",
+  "SprintingDoodle", "StrollingDoodle", "SwingingDoodle", "UnboxingDoodle",
+  "ZombieingDoodle",
 ];
 
-// 10 Curated Categories
-const CATEGORIES = [
-  {
-    name: "Tech & Coding",
-    topics: ["Cloud API Architecture", "Git Branching Workflow", "Neural Network Model", "Microservices Cluster", "Terminal Command Line", "React Component Tree", "Database Sharding", "GraphQL Engine", "CI/CD Pipeline", "DevOps Monitoring", "Quantum Algorithm", "Cyber Security Shield"],
-    tags: ["tech", "coding", "software", "developer", "cloud", "api", "git", "linux", "ai"],
-  },
-  {
-    name: "Design & Creative",
-    topics: ["Figma UI Wireframing", "Harmonious Color Palette", "Vector Bezier Drafting", "Design System Tokens", "3D Spatial Spline Render", "Motion Keyframe Curve", "Typography Hierarchy", "Brand Identity Guidelines", "Custom Iconography Set", "Creative Moodboard Flow", "Design Sprint Workshop", "Mobile UI Components"],
-    tags: ["design", "creative", "ui", "ux", "figma", "vector", "art", "typography", "colors"],
-  },
-  {
-    name: "Business & Startup",
-    topics: ["Startup Rocket Launch", "Investor Pitch Deck", "Agile Sprint Kanban", "Global Market Reach", "Enterprise Client Deal", "Co-Founder Strategic Alignment", "Quarterly Roadmap Milestones", "Annual ARR Target", "Company All-Hands Meeting", "Series A Venture Funding", "Lean Business Model", "Product Market Fit"],
-    tags: ["business", "startup", "pitch", "funding", "strategy", "management", "growth", "deals"],
-  },
-  {
-    name: "Data & Analytics",
-    topics: ["Executive KPI Dashboard", "Conversion Funnel Dropoff", "Scatter Plot Correlation", "Real-Time Big Data Stream", "A/B Testing Statistical Lift", "Server Cluster Telemetry", "Monthly Cohort Retention", "Geographical Heatmap", "User Journey Flow Tracker", "Predictive Financial Forecast", "Telemetry Metrics Graph", "Data Pipeline ETL"],
-    tags: ["data", "analytics", "dashboard", "charts", "metrics", "kpi", "telemetry", "statistics"],
-  },
-  {
-    name: "Security & Cloud",
-    topics: ["Biometric Face Unlock", "Cloud Firewall DDoS Defense", "End-to-End SSL Encryption", "Two-Factor 2FA Verification", "Automated Cloud Disaster Backup", "Encrypted VPN Tunnel", "Cryptographic Key Vault", "Zero Trust Identity Architecture", "Automated Vuln Pentest", "Isolated Sandbox Container", "Database Shield", "Passwordless Auth"],
-    tags: ["security", "cloud", "auth", "encryption", "firewall", "privacy", "2fa", "cybersecurity"],
-  },
-  {
-    name: "People & Work",
-    topics: ["Remote Work from Home", "Global Video Conference", "Collaborative Pair Programming", "Creative Brainstorming Session", "Espresso Coffee Break", "Talent Acquisition Interview", "Keynote Public Speech", "Customer Support Delight", "Deep Focus Task Completion", "Employee Onboarding Welcome", "Coworking Lounge Sync", "Team Milestone Celebration"],
-    tags: ["people", "work", "remote", "team", "office", "collaboration", "interview", "support"],
-  },
-  {
-    name: "Finance & E-Commerce",
-    topics: ["NFC Contactless Mobile Pay", "Frictionless Store Checkout", "DeFi Crypto Hardware Wallet", "Black Friday Discount Coupon", "High-Yield Portfolio Wealth", "Automated Recurring Invoicing", "Express Delivery Logistics", "Forex Currency Exchange", "VIP Loyalty Reward Points", "Smart Retail Point of Sale", "Order Fulfillment Warehouse", "Credit Card Cashback"],
-    tags: ["finance", "ecommerce", "payment", "shopping", "crypto", "money", "cart", "invoice"],
-  },
-  {
-    name: "Marketing & Growth",
-    topics: ["Viral Social Media Growth", "Organic Google SEO Rank #1", "Weekly Email Newsletter", "Brand Influencer Collab", "Grand Launch Megaphone", "Ad Retargeting Pixel", "Viral User Invite Referral", "Digital Content Studio", "Compound Growth Flywheel", "Community Ambassador Guild", "Audience Engagement Poll", "Content Marketing Strategy"],
-    tags: ["marketing", "growth", "seo", "social media", "newsletter", "ads", "influencer", "viral"],
-  },
-  {
-    name: "Science & Education",
-    topics: ["Interactive Online University", "Biotech Chemistry Lab", "Deep Space Telescope Exploration", "Academic Book Library Archive", "Quantum Particle Collider", "Youth STEM Robotics Camp", "Precision Genetics Gene Lab", "Live Expert Masterclass Webinar", "Astronomy Planetary Orbit", "Neuroscience Brain Mapping", "Coding Bootcamp Graduation", "Physics Resonance Waves"],
-    tags: ["science", "education", "learning", "books", "space", "chemistry", "research", "university"],
-  },
-  {
-    name: "Lifestyle & Wellness",
-    topics: ["Mindfulness Zen Meditation", "Mountain Wilderness Hiking", "Eco-Friendly Bicycle Commute", "Ambient Lo-Fi Focus Music", "Artisanal Pour-Over Coffee", "Pro Esports Arena Battle", "Feline Cat Cuddle & Play", "Organic Plant-Based Nutrition", "Evening Book Reading Nook", "Weekend Camping Campfire", "Morning Running Sprint", "Peaceful Yoga Sun Salutation"],
-    tags: ["lifestyle", "wellness", "yoga", "nature", "music", "coffee", "pets", "healthy", "hiking"],
-  },
+// Render each doodle with unique placeholder strings, then at runtime
+// we just do string.replace() — no ReactDOMServer needed in browser!
+const svgTemplates = {};
+
+for (const key of DOODLE_KEYS) {
+  const Comp = OpenDoodles[key];
+  if (!Comp) {
+    console.warn(`Missing component: ${key}`);
+    continue;
+  }
+
+  // Render with placeholder colors
+  const markup = ReactDOMServer.renderToStaticMarkup(
+    React.createElement(Comp, { accent: PLACEHOLDER_ACCENT, ink: PLACEHOLDER_INK })
+  );
+
+  svgTemplates[key] = markup;
+  console.log(`  ✓ ${key} → ${markup.length} chars`);
+}
+
+console.log(`\nPre-rendered ${Object.keys(svgTemplates).length} Open Doodles SVGs!\n`);
+
+// ── CATALOG: each doodle gets placed in multiple categories ──
+
+const DOODLE_META = [
+  { id: "LovingDoodle", name: "Loving", desc: "Big Heart Embrace", cats: ["People & Work", "Lifestyle & Wellness"] },
+  { id: "MeditatingDoodle", name: "Meditating", desc: "Zen Mindfulness", cats: ["Lifestyle & Wellness", "People & Work"] },
+  { id: "ReadingDoodle", name: "Reading", desc: "Immersed in Book", cats: ["Science & Education", "People & Work"] },
+  { id: "ReadingSideDoodle", name: "Reading Side", desc: "Deep Focus Study", cats: ["Science & Education", "People & Work"] },
+  { id: "SittingReadingDoodle", name: "Sitting Reading", desc: "Armchair Literature", cats: ["Science & Education", "Lifestyle & Wellness"] },
+  { id: "SittingDoodle", name: "Sitting", desc: "Relaxed Chill Sitting", cats: ["People & Work", "Lifestyle & Wellness"] },
+  { id: "CoffeeDoodle", name: "Coffee", desc: "Artisanal Coffee Break", cats: ["Lifestyle & Wellness", "People & Work"] },
+  { id: "ChillingDoodle", name: "Chilling", desc: "Casual Workspace Chill", cats: ["People & Work", "Lifestyle & Wellness"] },
+  { id: "LayingDoodle", name: "Laying", desc: "Laying on Floor Relaxing", cats: ["Tech & Coding", "Lifestyle & Wellness"] },
+  { id: "RollerSkatingDoodle", name: "Roller Skating", desc: "Dynamic Roller Skater", cats: ["Lifestyle & Wellness", "Marketing & Growth"] },
+  { id: "DancingDoodle", name: "Dancing", desc: "Spontaneous Dance", cats: ["Lifestyle & Wellness", "Design & Creative"] },
+  { id: "GroovyDoodle", name: "Groovy", desc: "Groovy Beats & Music", cats: ["Design & Creative", "Lifestyle & Wellness"] },
+  { id: "MoshingDoodle", name: "Moshing", desc: "High Energy Moshing", cats: ["Marketing & Growth", "Lifestyle & Wellness"] },
+  { id: "JumpingDoodle", name: "Jumping", desc: "Triumphant Victory Jump", cats: ["Business & Startup", "Marketing & Growth"] },
+  { id: "RunningDoodle", name: "Running", desc: "Agile Sprint to Goal", cats: ["Business & Startup", "Marketing & Growth"] },
+  { id: "SprintingDoodle", name: "Sprinting", desc: "High Velocity Sprint", cats: ["Marketing & Growth", "Business & Startup"] },
+  { id: "RollingDoodle", name: "Rolling", desc: "Playful Ground Rolling", cats: ["Design & Creative", "Lifestyle & Wellness"] },
+  { id: "FloatDoodle", name: "Floating", desc: "Zero Gravity Cloud Float", cats: ["Security & Cloud", "Tech & Coding"] },
+  { id: "LevitateDoodle", name: "Levitating", desc: "Spatial Metaverse Levitate", cats: ["Tech & Coding", "Security & Cloud"] },
+  { id: "BalletDoodle", name: "Ballet", desc: "Precision Design Ballet", cats: ["Design & Creative", "People & Work"] },
+  { id: "BikiniDoodle", name: "Bikini", desc: "Summer Beach Sunbathing", cats: ["Lifestyle & Wellness", "People & Work"] },
+  { id: "ClumsyDoodle", name: "Clumsy", desc: "Debugging Error Handling", cats: ["Tech & Coding", "People & Work"] },
+  { id: "DoggieDoodle", name: "Doggie", desc: "Walking Companion Dog", cats: ["Lifestyle & Wellness", "People & Work"] },
+  { id: "DogJumpDoodle", name: "Dog Jump", desc: "Enthusiastic Dog Hug", cats: ["People & Work", "Lifestyle & Wellness"] },
+  { id: "PettingDoodle", name: "Petting", desc: "Petting Furry Friend", cats: ["People & Work", "Lifestyle & Wellness"] },
+  { id: "PlantDoodle", name: "Plant", desc: "Watering Houseplant Growth", cats: ["Lifestyle & Wellness", "Business & Startup"] },
+  { id: "IceCreamDoodle", name: "Ice Cream", desc: "Delightful Customer Treat", cats: ["Finance & E-Commerce", "Lifestyle & Wellness"] },
+  { id: "SelfieDoodle", name: "Selfie", desc: "Social Media Selfie Moment", cats: ["Marketing & Growth", "People & Work"] },
+  { id: "SleekDoodle", name: "Sleek", desc: "Sleek Executive Pitch", cats: ["Business & Startup", "People & Work"] },
+  { id: "StrollingDoodle", name: "Strolling", desc: "Casual Urban Stroll", cats: ["Finance & E-Commerce", "Lifestyle & Wellness"] },
+  { id: "SwingingDoodle", name: "Swinging", desc: "Workplace Balance Swing", cats: ["People & Work", "Lifestyle & Wellness"] },
+  { id: "UnboxingDoodle", name: "Unboxing", desc: "Delivery Unboxing", cats: ["Finance & E-Commerce", "Marketing & Growth"] },
+  { id: "ZombieingDoodle", name: "Zombieing", desc: "Late Night Coding Sentry", cats: ["Tech & Coding", "People & Work"] },
 ];
 
-const allIllustrations = [];
+const CONTEXTS = [
+  "Core Scene", "Startup MVP", "Enterprise Workflow", "Creative Studio",
+  "Remote Team", "SaaS Showcase", "Mobile First", "Community Spirit",
+  "Growth Engine", "Deep Work", "Innovation Lab", "Digital Transform",
+  "Customer Delight", "Agile Sprint", "Future Vision",
+];
 
-CATEGORIES.forEach((cat, catIdx) => {
-  cat.topics.forEach((topic, topicIdx) => {
-    ACTION_POSES.forEach((pose, poseIdx) => {
-      // Create unique deterministic combinations
-      // (10 categories * 12 topics * 32 poses = up to 3,840 combinations)
-      // Pick subset of 3 or 4 poses per topic to produce exactly 1,152 unique illustrations!
-      if ((poseIdx + topicIdx + catIdx) % 3 === 0 || (poseIdx + topicIdx) % 7 === 0) {
-        const id = `ill-${cat.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${topic.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${pose.id}`;
-        const title = `${topic} — ${pose.title}`;
-        const tags = Array.from(new Set([
-          ...cat.tags,
-          pose.tag,
-          pose.id.replace("_", " "),
-          ...topic.toLowerCase().split(" ").filter(w => w.length > 2)
-        ]));
+const ALL_CATEGORIES = [
+  "Tech & Coding", "Design & Creative", "Business & Startup", "Data & Analytics",
+  "Security & Cloud", "People & Work", "Finance & E-Commerce", "Marketing & Growth",
+  "Science & Education", "Lifestyle & Wellness",
+];
 
-        allIllustrations.push({
-          id,
-          title,
-          category: cat.name,
-          tags,
-          poseId: pose.id,
-          topicIndex: topicIdx,
-          categoryIndex: catIdx,
-          headIndex: (poseIdx * 3 + topicIdx * 7) % 16,
-          hairIndex: (poseIdx * 5 + topicIdx * 11) % 16,
-          accessoryIndex: (poseIdx * 7 + topicIdx * 13) % 8,
-          envIndex: (poseIdx + topicIdx * 3) % 12,
-        });
-      }
+const catalogItems = [];
+
+// For each doodle, create entries across its categories and contexts
+DOODLE_META.forEach((doodle) => {
+  // Place in its natural categories
+  doodle.cats.forEach((cat) => {
+    CONTEXTS.forEach((ctx, ctxIdx) => {
+      const id = `${doodle.id.toLowerCase()}-${cat.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${ctx.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+      catalogItems.push({
+        id,
+        title: `${doodle.desc} — ${ctx}`,
+        category: cat,
+        tags: ["open-doodles", doodle.name.toLowerCase(), cat.toLowerCase(), ctx.toLowerCase().replace(/ /g, "-"), "hand-drawn", "vector", "sketch"],
+        doodleKey: doodle.id,
+      });
     });
+  });
+
+  // Also place in extra categories for broader coverage
+  ALL_CATEGORIES.forEach((cat) => {
+    if (!doodle.cats.includes(cat)) {
+      // Pick a subset of contexts for cross-category entries
+      const subset = CONTEXTS.filter((_, i) => (i + doodle.id.length) % 4 === 0);
+      subset.forEach((ctx) => {
+        const id = `${doodle.id.toLowerCase()}-${cat.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${ctx.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+        catalogItems.push({
+          id,
+          title: `${doodle.desc} — ${ctx}`,
+          category: cat,
+          tags: ["open-doodles", doodle.name.toLowerCase(), cat.toLowerCase(), ctx.toLowerCase().replace(/ /g, "-"), "hand-drawn", "vector"],
+          doodleKey: doodle.id,
+        });
+      });
+    }
   });
 });
 
-console.log(`Generated ${allIllustrations.length} unique illustration blueprints!`);
+console.log(`Total catalog entries: ${catalogItems.length}`);
 
-const fileContent = `// Auto-generated 1,000+ Modular Vector Illustrations Catalog
+// ── Write two output files ──
+
+// 1. Pre-rendered SVG templates (static strings with placeholder colors)
+const svgFileContent = `// AUTO-GENERATED: Pre-rendered Open Doodles SVG templates
+// DO NOT EDIT — run \`node scripts/build-illustrations-catalog.mjs\` to regenerate
+
+export const OPEN_DOODLE_SVGS: Record<string, string> = ${JSON.stringify(svgTemplates, null, 2)};
+`;
+
+await fs.writeFile(
+  path.join(process.cwd(), "src/lib/openDoodleSvgs.ts"),
+  svgFileContent,
+  "utf8"
+);
+console.log("✓ Wrote src/lib/openDoodleSvgs.ts (pre-rendered SVG templates)");
+
+// 2. Catalog metadata
+const catalogFileContent = `// AUTO-GENERATED: Open Doodles Illustration Catalog
+// DO NOT EDIT — run \`node scripts/build-illustrations-catalog.mjs\` to regenerate
+
 export interface RawIllustrationItem {
   id: string;
   title: string;
   category: string;
   tags: string[];
-  poseId: string;
-  topicIndex: number;
-  categoryIndex: number;
-  headIndex: number;
-  hairIndex: number;
-  accessoryIndex: number;
-  envIndex: number;
+  doodleKey: string;
 }
 
-export const RAW_ILLUSTRATION_CATALOG: RawIllustrationItem[] = ${JSON.stringify(allIllustrations, null, 2)};
+export const RAW_ILLUSTRATION_CATALOG: RawIllustrationItem[] = ${JSON.stringify(catalogItems, null, 2)};
 `;
 
-await fs.writeFile(path.join(process.cwd(), "src/lib/illustrationCatalog.ts"), fileContent, "utf8");
-console.log("Successfully wrote src/lib/illustrationCatalog.ts!");
+await fs.writeFile(
+  path.join(process.cwd(), "src/lib/illustrationCatalog.ts"),
+  catalogFileContent,
+  "utf8"
+);
+console.log("✓ Wrote src/lib/illustrationCatalog.ts (catalog metadata)");
+
+console.log("\n🎉 Done! Both files generated successfully.");
