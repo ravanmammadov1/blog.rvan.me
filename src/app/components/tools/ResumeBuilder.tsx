@@ -1,19 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
-  ResumeData,
-  ResumeThemeConfig,
-  TEMPLATE_OPTIONS,
-  COLOR_OPTIONS,
-  FONT_OPTIONS,
-  DARK_SIDEBAR_PRESET,
-  MODERN_2COL_PRESET,
-  SOFT_BANNER_PRESET,
+  ResumeEditorProvider,
+  useResumeEditor,
+} from "./resumebuilder/context/ResumeEditorContext";
+import {
   SOFTWARE_ENGINEER_PRESET,
-  PRODUCT_DESIGNER_PRESET,
-  BLANK_RESUME_DATA,
   TemplateId,
-  ResumeFont,
-  ResumeDensity,
 } from "./resumebuilder/resumeTypes";
 import { calculateAtsScore } from "./resumebuilder/atsEngine";
 import {
@@ -21,15 +13,9 @@ import {
   exportToReactiveResumeJson,
   importUniversalResume,
 } from "./resumebuilder/converters/schemaConverters";
+import { CanvaLeftToolbar } from "./resumebuilder/editor/CanvaLeftToolbar";
+import { FloatingFormatToolbar } from "./resumebuilder/editor/FloatingFormatToolbar";
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
-import { PersonalInfoForm } from "./resumebuilder/editor/PersonalInfoForm";
-import { SummaryForm } from "./resumebuilder/editor/SummaryForm";
-import { ExperienceForm } from "./resumebuilder/editor/ExperienceForm";
-import { EducationForm } from "./resumebuilder/editor/EducationForm";
-import { SkillsForm } from "./resumebuilder/editor/SkillsForm";
-import { ProjectsForm } from "./resumebuilder/editor/ProjectsForm";
-import { CertificationsForm } from "./resumebuilder/editor/CertificationsForm";
-import { ReferencesForm } from "./resumebuilder/editor/ReferencesForm";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
 
 import {
@@ -38,96 +24,50 @@ import {
   Upload,
   Copy,
   Check,
-  Sparkles,
-  Sliders,
-  Palette,
-  Type,
-  Eye,
-  FileText,
-  Briefcase,
-  GraduationCap,
-  Code,
-  FolderGit2,
-  Award,
-  Users,
-  Layers,
-  ShieldCheck,
-  RotateCcw,
+  Undo2,
+  Redo2,
   ZoomIn,
   ZoomOut,
-  MousePointerClick,
-  FileCode,
+  ShieldCheck,
   ChevronDown,
+  FileCode,
+  MousePointerClick,
+  Sparkles,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
-const STORAGE_KEY = "rvan_ats_resume_data_v3";
-const THEME_STORAGE_KEY = "rvan_ats_resume_theme_v3";
+/**
+ * Inner Canvas Editor Component
+ */
+const ResumeEditorCanvasInner: React.FC = () => {
+  const {
+    data,
+    theme,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    zoom,
+    setZoom,
+    updateFieldByPath,
+    setData,
+    setTheme,
+  } = useResumeEditor();
 
-type ActiveTab = "personal" | "summary" | "experience" | "education" | "skills" | "projects" | "certifications" | "references";
-
-export default function ResumeBuilder() {
   const { language } = useLanguage();
-
-  // Resume Data State
-  const [resumeData, setResumeData] = useState<ResumeData>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {}
-    return SOFTWARE_ENGINEER_PRESET;
-  });
-
-  // Resume Theme Config State
-  const [theme, setTheme] = useState<ResumeThemeConfig>(() => {
-    try {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-      if (savedTheme) return JSON.parse(savedTheme);
-    } catch {}
-    return {
-      template: "sb2nov",
-      accentColor: "#111827",
-      fontFamily: "sans",
-      density: "standard",
-      paperSize: "a4",
-    };
-  });
-
-  const [activeTab, setActiveTab] = useState<ActiveTab>("personal");
-  const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
-  const [previewZoom, setPreviewZoom] = useState<number>(0.9);
-  const [showAtsModal, setShowAtsModal] = useState<boolean>(false);
-  const [showExportMenu, setShowExportMenu] = useState<boolean>(false);
-  const [copiedText, setCopiedText] = useState<boolean>(false);
-
-  // Sync to LocalStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(resumeData));
-    } catch {}
-  }, [resumeData]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
-    } catch {}
-  }, [theme]);
+  const [showAtsModal, setShowAtsModal] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [copiedText, setCopiedText] = useState(false);
 
   // ATS Score Calculation
-  const atsResult = useMemo(() => calculateAtsScore(resumeData), [resumeData]);
-
-  // Preset Loaders
-  const loadPreset = (preset: ResumeData, template: TemplateId, color: string) => {
-    setResumeData(preset);
-    setTheme((prev) => ({ ...prev, template, accentColor: color }));
-  };
+  const atsResult = useMemo(() => calculateAtsScore(data), [data]);
 
   // Print / PDF Download
   const handlePrintPdf = () => {
     window.print();
   };
 
-  // Export File Helper
+  // Helper download
   const downloadFile = (content: string, filename: string, mime: string) => {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
@@ -143,20 +83,32 @@ export default function ResumeBuilder() {
 
   // Native JSON Backup
   const handleExportJson = () => {
-    const jsonStr = JSON.stringify({ resumeData, theme }, null, 2);
-    downloadFile(jsonStr, `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_backup.json`, "application/json");
+    const jsonStr = JSON.stringify({ resumeData: data, theme }, null, 2);
+    downloadFile(
+      jsonStr,
+      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_backup.json`,
+      "application/json"
+    );
   };
 
   // RenderCV YAML Export
   const handleExportRenderCvYaml = () => {
-    const yaml = exportToRenderCvYaml(resumeData);
-    downloadFile(yaml, `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_rendercv.yaml`, "text/yaml");
+    const yaml = exportToRenderCvYaml(data);
+    downloadFile(
+      yaml,
+      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_rendercv.yaml`,
+      "text/yaml"
+    );
   };
 
   // Reactive Resume JSON Export
   const handleExportReactiveResumeJson = () => {
-    const jsonStr = exportToReactiveResumeJson(resumeData);
-    downloadFile(jsonStr, `${resumeData.personalInfo.fullName ? resumeData.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_reactive_resume.json`, "application/json");
+    const jsonStr = exportToReactiveResumeJson(data);
+    downloadFile(
+      jsonStr,
+      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_reactive_resume.json`,
+      "application/json"
+    );
   };
 
   // Universal Import (RenderCV YAML, Reactive Resume JSON, or Native JSON)
@@ -169,8 +121,8 @@ export default function ResumeBuilder() {
         const content = event.target?.result as string;
         const parsed = importUniversalResume(content);
         if (parsed) {
-          setResumeData((prev) => ({ ...prev, ...parsed }));
-          alert("Resume imported successfully! All fields mapped.");
+          setData((prev) => ({ ...prev, ...parsed }));
+          alert("Resume imported successfully! All content mapped.");
         } else {
           alert("Could not recognize file format. Please upload valid JSON or YAML.");
         }
@@ -181,21 +133,21 @@ export default function ResumeBuilder() {
     reader.readAsText(file);
   };
 
-  // Copy Plain Text for Application Forms
+  // Copy Plain Text
   const handleCopyPlainText = () => {
     const lines: string[] = [];
-    const info = resumeData.personalInfo;
+    const info = data.personalInfo;
     lines.push(`${info.fullName.toUpperCase()}`);
     lines.push(`${info.title}`);
     lines.push(`Email: ${info.email} | Phone: ${info.phone} | Location: ${info.location}`);
     if (info.linkedin) lines.push(`LinkedIn: ${info.linkedin}`);
     if (info.github) lines.push(`GitHub: ${info.github}`);
     if (info.website) lines.push(`Portfolio: ${info.website}`);
-    lines.push("\n----------------------------------------\nPROFESSIONAL SUMMARY");
-    lines.push(resumeData.summary);
+    lines.push("\n----------------------------------------\nSUMMARY");
+    lines.push(data.summary);
 
-    lines.push("\n----------------------------------------\nWORK EXPERIENCE");
-    for (const exp of resumeData.experiences) {
+    lines.push("\n----------------------------------------\nEXPERIENCE");
+    for (const exp of data.experiences) {
       lines.push(`\n${exp.title} - ${exp.company} (${exp.location})`);
       lines.push(`${exp.startDate} - ${exp.current ? "Present" : exp.endDate}`);
       for (const b of exp.bullets) {
@@ -204,13 +156,8 @@ export default function ResumeBuilder() {
     }
 
     lines.push("\n----------------------------------------\nEDUCATION");
-    for (const edu of resumeData.education) {
+    for (const edu of data.education) {
       lines.push(`${edu.degree} in ${edu.field} - ${edu.institution} (${edu.startDate} - ${edu.endDate})`);
-    }
-
-    lines.push("\n----------------------------------------\nSKILLS");
-    for (const s of resumeData.skills) {
-      lines.push(`${s.name}: ${s.items.join(", ")}`);
     }
 
     navigator.clipboard.writeText(lines.join("\n"));
@@ -218,359 +165,232 @@ export default function ResumeBuilder() {
     setTimeout(() => setCopiedText(false), 2000);
   };
 
-  const navTabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: "personal", label: "Contact & Photo", icon: <FileText size={13} /> },
-    { id: "summary", label: "Summary", icon: <Sparkles size={13} /> },
-    { id: "experience", label: `Experience (${resumeData.experiences.length})`, icon: <Briefcase size={13} /> },
-    { id: "education", label: `Education (${resumeData.education.length})`, icon: <GraduationCap size={13} /> },
-    { id: "skills", label: "Skills", icon: <Code size={13} /> },
-    { id: "projects", label: `Projects (${resumeData.projects.length})`, icon: <FolderGit2 size={13} /> },
-    { id: "certifications", label: "Certifications", icon: <Award size={13} /> },
-    { id: "references", label: `References (${resumeData.references?.length || 0})`, icon: <Users size={13} /> },
-  ];
-
   return (
-    <div className="w-full space-y-6">
-      {/* ── TOP ACTION BAR (PRESETS, THEME CONTROLS, EXPORT) ── */}
-      <div className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6 glass shadow-2xl space-y-4">
-        {/* Row 1: Presets & Primary Export Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          {/* Presets */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
-              {language === "az" ? "Hazır Nümunələr:" : "Presets:"}
-            </span>
+    <div className="w-full flex flex-col min-h-[90vh] bg-neutral-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
+      {/* ── TOP APP HEADER BAR (Canva Style) ── */}
+      <header className="h-14 bg-neutral-900 border-b border-white/10 px-4 md:px-6 flex items-center justify-between gap-3 text-white shrink-0 z-40">
+        {/* Left: Document Title & Undo/Redo */}
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            value={data.personalInfo.fullName ? `${data.personalInfo.fullName} - Resume` : "My Resume"}
+            onChange={(e) => {}}
+            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[160px] sm:max-w-xs truncate"
+            title="Resume Name"
+          />
+
+          <div className="h-4 w-px bg-white/15" />
+
+          {/* Undo / Redo */}
+          <div className="flex items-center gap-1">
             <button
-              onClick={() => loadPreset(SOFTWARE_ENGINEER_PRESET, "sb2nov", "#111827")}
-              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                theme.template === "sb2nov"
-                  ? "bg-primary text-black border-primary font-bold shadow-sm"
-                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              type="button"
+              onClick={undo}
+              disabled={!canUndo}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                canUndo ? "hover:bg-white/10 text-white" : "opacity-30 text-neutral-500 cursor-not-allowed"
               }`}
+              title="Undo (Ctrl+Z)"
             >
-              🚀 RenderCV sb2nov (FAANG)
+              <Undo2 size={14} />
             </button>
             <button
-              onClick={() => loadPreset(DARK_SIDEBAR_PRESET, "dark-sidebar", "#1e3a8a")}
-              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                theme.template === "dark-sidebar"
-                  ? "bg-primary text-black border-primary font-bold shadow-sm"
-                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+              type="button"
+              onClick={redo}
+              disabled={!canRedo}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                canRedo ? "hover:bg-white/10 text-white" : "opacity-30 text-neutral-500 cursor-not-allowed"
               }`}
+              title="Redo (Ctrl+Shift+Z)"
             >
-              💼 Dark Sidebar Executive
-            </button>
-            <button
-              onClick={() => loadPreset(MODERN_2COL_PRESET, "modern-2col", "#0284c7")}
-              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                theme.template === "modern-2col"
-                  ? "bg-primary text-black border-primary font-bold shadow-sm"
-                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
-              }`}
-            >
-              📊 Enhancv 2-Col
-            </button>
-            <button
-              onClick={() => loadPreset(SOFT_BANNER_PRESET, "soft-banner", "#3b82f6")}
-              className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                theme.template === "soft-banner"
-                  ? "bg-primary text-black border-primary font-bold shadow-sm"
-                  : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
-              }`}
-            >
-              🩺 Nordic Banner
-            </button>
-            <button
-              onClick={() => loadPreset(BLANK_RESUME_DATA, "sb2nov", "#111827")}
-              className="text-xs font-mono font-bold px-2.5 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-red-400/50 hover:bg-red-500/10 text-muted-foreground hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
-              title="Reset to blank template"
-            >
-              <RotateCcw size={11} /> {language === "az" ? "Təmiz" : "Blank"}
-            </button>
-          </div>
-
-          {/* ATS Score Meter & Primary Export Actions */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* ATS Score Indicator */}
-            <button
-              onClick={() => setShowAtsModal(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
-              title="Click to view full ATS Compliance Audit"
-            >
-              <ShieldCheck size={14} className="text-primary group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-mono font-bold text-foreground">
-                ATS Score: <strong className={atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"}>{atsResult.score}/100</strong>
-              </span>
-              <span className="text-[10px] font-mono text-primary uppercase underline">Audit</span>
-            </button>
-
-            {/* Copy Plain Text */}
-            <button
-              onClick={handleCopyPlainText}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer"
-              title="Copy plain text for job application forms"
-            >
-              {copiedText ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
-              <span>{copiedText ? "COPIED!" : "COPY TEXT"}</span>
-            </button>
-
-            {/* Export Multi-Format Dropdown (RenderCV YAML, Reactive Resume JSON, Native) */}
-            <div className="relative">
-              <button
-                onClick={() => setShowExportMenu(!showExportMenu)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer"
-              >
-                <Download size={13} />
-                <span>EXPORT CODE</span>
-                <ChevronDown size={11} />
-              </button>
-
-              {showExportMenu && (
-                <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-neutral-900 border border-white/15 p-2 shadow-2xl z-50 space-y-1 font-mono text-xs text-foreground">
-                  <button
-                    onClick={handleExportJson}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer"
-                  >
-                    <span>Native Backup (.json)</span>
-                    <span className="text-[10px] text-muted-foreground">JSON</span>
-                  </button>
-                  <button
-                    onClick={handleExportRenderCvYaml}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-emerald-400"
-                  >
-                    <span>RenderCV YAML (.yaml)</span>
-                    <span className="text-[10px] text-emerald-400">YAML</span>
-                  </button>
-                  <button
-                    onClick={handleExportReactiveResumeJson}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-sky-400"
-                  >
-                    <span>Reactive Resume v4 (.json)</span>
-                    <span className="text-[10px] text-sky-400">JSON</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Universal Import */}
-            <label
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:border-white/30 hover:bg-white/10 transition-all cursor-pointer"
-              title="Import RenderCV YAML, Reactive Resume JSON, or Native Backup"
-            >
-              <Upload size={13} />
-              <span>IMPORT</span>
-              <input type="file" accept=".json,.yaml,.yml" onChange={handleImportFile} className="hidden" />
-            </label>
-
-            {/* Print / Download PDF */}
-            <button
-              onClick={handlePrintPdf}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all cursor-pointer shrink-0"
-              title="Print or Save as Vector ATS-Friendly PDF"
-            >
-              <Printer size={14} />
-              <span>DOWNLOAD PDF</span>
+              <Redo2 size={14} />
             </button>
           </div>
         </div>
 
-        {/* Row 2: Visual Customizer (9 Templates, Accent Colors, Fonts, Density) */}
-        <div className="pt-3 border-t border-white/10 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-          {/* Template Selector with source badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground flex items-center gap-1 shrink-0">
-              <Layers size={11} className="text-primary" /> Template ({TEMPLATE_OPTIONS.length}):
+        {/* Center: ATS Score Badge */}
+        <div className="hidden md:flex items-center gap-2">
+          <button
+            onClick={() => setShowAtsModal(true)}
+            className="flex items-center gap-2 px-3 py-1 rounded-full border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
+            title="Click to view ATS Score Analysis"
+          >
+            <ShieldCheck size={14} className="text-primary group-hover:scale-110 transition-transform" />
+            <span className="text-xs font-mono font-bold">
+              ATS Score:{" "}
+              <strong className={atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"}>
+                {atsResult.score}/100
+              </strong>
             </span>
-            <div className="flex flex-wrap gap-1.5">
-              {TEMPLATE_OPTIONS.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTheme({ ...theme, template: t.id })}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                    theme.template === t.id
-                      ? "bg-primary text-black shadow-md shadow-primary/20 scale-[1.02]"
-                      : "bg-white/5 text-muted-foreground hover:text-white hover:bg-white/10 border border-white/10"
-                  }`}
-                  title={t.description}
-                >
-                  <span>{t.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Colors, Fonts, Density */}
-          <div className="flex flex-wrap items-center gap-4 shrink-0">
-            {/* Colors */}
-            <div className="flex items-center gap-1.5">
-              <Palette size={12} className="text-primary" />
-              <div className="flex items-center gap-1 bg-black/40 border border-white/10 p-1 rounded-xl">
-                {COLOR_OPTIONS.map((c) => (
-                  <button
-                    key={c.hex}
-                    onClick={() => setTheme({ ...theme, accentColor: c.hex })}
-                    className={`h-4 w-4 rounded-full transition-transform cursor-pointer ${
-                      theme.accentColor === c.hex ? "scale-125 border-2 border-white" : "opacity-70 hover:opacity-100"
-                    }`}
-                    style={{ backgroundColor: c.hex }}
-                    title={c.label}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Font Picker */}
-            <div className="flex items-center gap-1 text-xs font-mono font-bold text-muted-foreground">
-              <Type size={12} className="text-primary" />
-              <select
-                value={theme.fontFamily}
-                onChange={(e) => setTheme({ ...theme, fontFamily: e.target.value as ResumeFont })}
-                className="rounded-xl border border-white/10 bg-black/50 px-2.5 py-1 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer"
-              >
-                {FONT_OPTIONS.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Density Picker */}
-            <div className="flex items-center gap-1 text-xs font-mono font-bold text-muted-foreground">
-              <Sliders size={12} className="text-primary" />
-              <select
-                value={theme.density}
-                onChange={(e) => setTheme({ ...theme, density: e.target.value as ResumeDensity })}
-                className="rounded-xl border border-white/10 bg-black/50 px-2.5 py-1 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer"
-              >
-                <option value="compact">Compact (1-Page)</option>
-                <option value="standard">Standard</option>
-                <option value="relaxed">Relaxed</option>
-              </select>
-            </div>
-          </div>
+          </button>
         </div>
-      </div>
 
-      {/* PDF Editor Direct Typing Hint Banner */}
-      <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 text-xs font-mono text-primary flex items-center justify-between gap-2 shadow-inner">
+        {/* Right: Export & PDF Download */}
         <div className="flex items-center gap-2">
-          <MousePointerClick size={15} className="shrink-0 animate-bounce" />
-          <span>
-            {language === "az"
-              ? "💡 İnteraktiv PDF Editor Rejimi: A4 vərəqi üzərində istənilən mətnə birbaşa klik edərək dərhal yaza və dəyişdirə bilərsiniz!"
-              : "💡 Interactive PDF Editor Mode: Click directly anywhere on the A4 document canvas to type, edit, and format in real-time!"}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hidden sm:inline">
-            RenderCV & Reactive Resume Compatible
-          </span>
-        </div>
-      </div>
+          {/* Copy Plain Text */}
+          <button
+            onClick={handleCopyPlainText}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
+            title="Copy plain text"
+          >
+            {copiedText ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+            <span>{copiedText ? "COPIED" : "TEXT"}</span>
+          </button>
 
-      {/* Mobile Toggle: Edit Form vs Live Preview */}
-      <div className="lg:hidden flex items-center justify-center p-1 rounded-2xl bg-white/5 border border-white/10 max-w-xs mx-auto">
-        <button
-          onClick={() => setMobileView("edit")}
-          className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
-            mobileView === "edit" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-          }`}
-        >
-          Form Editor
-        </button>
-        <button
-          onClick={() => setMobileView("preview")}
-          className={`flex-1 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
-            mobileView === "preview" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-          }`}
-        >
-          Live Preview
-        </button>
-      </div>
-
-      {/* ── MAIN WORKSPACE (SPLIT SCREEN: EDITOR & PREVIEW) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* LEFT COLUMN: FORM EDITOR TABS */}
-        <div className={`lg:col-span-6 space-y-4 ${mobileView === "preview" ? "hidden lg:block" : "block"}`}>
-          {/* Section Navigation Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto pb-2 custom-scrollbar">
-            {navTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-primary text-black shadow-md shadow-primary/20"
-                    : "bg-white/5 text-muted-foreground hover:text-white hover:bg-white/10 border border-white/10"
-                }`}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Active Section Form Box */}
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 glass shadow-xl min-h-[500px]">
-            {activeTab === "personal" && <PersonalInfoForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "summary" && <SummaryForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "experience" && <ExperienceForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "education" && <EducationForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "skills" && <SkillsForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "projects" && <ProjectsForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "certifications" && <CertificationsForm data={resumeData} onChange={setResumeData} />}
-            {activeTab === "references" && <ReferencesForm data={resumeData} onChange={setResumeData} />}
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: LIVE INTERACTIVE A4 PREVIEW CANVAS */}
-        <div className={`lg:col-span-6 space-y-3 ${mobileView === "edit" ? "hidden lg:block" : "block"}`}>
-          {/* Preview Toolbar */}
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-2xl bg-black/40 border border-white/10 text-xs font-mono text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Eye size={13} className="text-primary" />
-              <span className="font-bold text-foreground">A4 Canvas PDF Preview (Click to Edit)</span>
-            </div>
-
-            {/* Zoom Controls */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setPreviewZoom((z) => Math.max(0.6, z - 0.1))}
-                className="p-1 hover:text-white transition-colors cursor-pointer"
-                title="Zoom Out"
-              >
-                <ZoomOut size={13} />
-              </button>
-              <span>{Math.round(previewZoom * 100)}%</span>
-              <button
-                onClick={() => setPreviewZoom((z) => Math.min(1.2, z + 0.1))}
-                className="p-1 hover:text-white transition-colors cursor-pointer"
-                title="Zoom In"
-              >
-                <ZoomIn size={13} />
-              </button>
-            </div>
-          </div>
-
-          {/* Sheet Canvas Container */}
-          <div className="p-4 md:p-6 rounded-3xl border border-white/10 bg-neutral-950/80 shadow-2xl overflow-auto max-h-[920px] custom-scrollbar flex justify-center">
-            <div
-              style={{
-                transform: `scale(${previewZoom})`,
-                transformOrigin: "top center",
-                transition: "transform 0.15s ease-out",
-              }}
-              className="w-full"
+          {/* Export Code Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
             >
-              <ResumePreview data={resumeData} theme={theme} onUpdate={setResumeData} />
-            </div>
+              <Download size={12} />
+              <span className="hidden sm:inline">EXPORT</span>
+              <ChevronDown size={11} />
+            </button>
+
+            {showExportMenu && (
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-neutral-900 border border-white/15 p-2 shadow-2xl z-50 space-y-1 font-mono text-xs text-foreground">
+                <button
+                  onClick={handleExportJson}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer"
+                >
+                  <span>Native Backup (.json)</span>
+                  <span className="text-[10px] text-muted-foreground">JSON</span>
+                </button>
+                <button
+                  onClick={handleExportRenderCvYaml}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-emerald-400"
+                >
+                  <span>RenderCV YAML (.yaml)</span>
+                  <span className="text-[10px] text-emerald-400">YAML</span>
+                </button>
+                <button
+                  onClick={handleExportReactiveResumeJson}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-sky-400"
+                >
+                  <span>Reactive Resume v4 (.json)</span>
+                  <span className="text-[10px] text-sky-400">JSON</span>
+                </button>
+              </div>
+            )}
           </div>
+
+          {/* Universal Import */}
+          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer">
+            <Upload size={12} />
+            <span className="hidden sm:inline">IMPORT</span>
+            <input type="file" accept=".json,.yaml,.yml" onChange={handleImportFile} className="hidden" />
+          </label>
+
+          {/* Print PDF Download */}
+          <button
+            onClick={handlePrintPdf}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0"
+          >
+            <Printer size={13} />
+            <span>PDF</span>
+          </button>
         </div>
+      </header>
+
+      {/* ── WORKSPACE BODY (Canva Left Drawer + Center A4 Canvas) ── */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left Canva Tools Strip & Drawer */}
+        <CanvaLeftToolbar />
+
+        {/* Center Stage: The Live Editable A4 Canvas */}
+        <main
+          id="resume-canvas-viewport"
+          className="flex-1 bg-neutral-950 overflow-auto p-4 md:p-8 flex flex-col items-center custom-scrollbar relative"
+        >
+          {/* Floating Text Format Toolbar */}
+          <FloatingFormatToolbar />
+
+          {/* Canvas Direct Editing Hint Pill */}
+          <div className="mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-mono text-primary flex items-center gap-2 shadow-inner print:hidden">
+            <MousePointerClick size={13} className="animate-bounce" />
+            <span>
+              {language === "az"
+                ? "💡 CV üzərində istənilən mətnə iki dəfə klik edərək dərhal yaza və dəyişdirə bilərsiniz!"
+                : "💡 Direct Canvas Editor: Double-click any text directly on the resume to type and edit in place!"}
+            </span>
+          </div>
+
+          {/* The A4 Resume Document Sheet Container */}
+          <div
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: "top center",
+              transition: "transform 0.15s ease-out",
+            }}
+            className="w-full max-w-[850px] shadow-2xl relative"
+          >
+            <ResumePreview data={data} theme={theme} onUpdate={setData} />
+          </div>
+
+          {/* Floating Zoom & Fit Controls (Bottom-Right) */}
+          <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-neutral-900/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-2xl shadow-2xl text-xs font-mono text-white print:hidden">
+            <button
+              onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(1)))}
+              className="p-1 hover:text-primary transition-colors cursor-pointer"
+              title="Zoom Out"
+            >
+              <ZoomOut size={13} />
+            </button>
+            <span className="w-12 text-center font-bold">{Math.round(zoom * 100)}%</span>
+            <button
+              onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(1)))}
+              className="p-1 hover:text-primary transition-colors cursor-pointer"
+              title="Zoom In"
+            >
+              <ZoomIn size={13} />
+            </button>
+            <div className="h-3 w-px bg-white/20 mx-0.5" />
+            <button
+              onClick={() => setZoom(1.0)}
+              className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] uppercase font-bold cursor-pointer"
+            >
+              100%
+            </button>
+          </div>
+        </main>
       </div>
 
       {/* Detailed ATS Score Audit Modal */}
       {showAtsModal && <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />}
     </div>
+  );
+};
+
+/**
+ * Flagship Exported ResumeBuilder Component
+ */
+export default function ResumeBuilder() {
+  const [initialData] = useState<any>(() => {
+    try {
+      const saved = localStorage.getItem("rvan_ats_resume_data_v3");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SOFTWARE_ENGINEER_PRESET;
+  });
+
+  const [initialTheme] = useState<any>(() => {
+    try {
+      const savedTheme = localStorage.getItem("rvan_ats_resume_theme_v3");
+      if (savedTheme) return JSON.parse(savedTheme);
+    } catch {}
+    return {
+      template: "sb2nov",
+      accentColor: "#111827",
+      fontFamily: "sans",
+      density: "standard",
+      paperSize: "a4",
+    };
+  });
+
+  return (
+    <ResumeEditorProvider initialData={initialData} initialTheme={initialTheme}>
+      <ResumeEditorCanvasInner />
+    </ResumeEditorProvider>
   );
 }

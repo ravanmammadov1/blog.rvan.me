@@ -1,6 +1,10 @@
 import React from "react";
 import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
-import { InlineEdit } from "../editor/InlineEdit";
+import { CanvasText } from "../editor/CanvasText";
+import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
+import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
+import { useResumeEditor } from "../context/ResumeEditorContext";
+import { Plus, Trash2 } from "lucide-react";
 
 interface TemplateProps {
   data: ResumeData;
@@ -9,273 +13,411 @@ interface TemplateProps {
 }
 
 /**
- * Sb2nov Template (RenderCV / r/EngineeringResumes LaTeX Standard)
- * The most popular and parser-friendly software engineering resume format in the world.
+ * RenderCV sb2nov Template (LaTeX / Typst Engineering Resumes Standard)
+ * Full Canva-style direct click-to-edit implementation.
  */
-export const Sb2novTemplate: React.FC<TemplateProps> = ({ data, theme, onUpdate }) => {
+export const Sb2novTemplate: React.FC<TemplateProps> = () => {
+  const {
+    data,
+    theme,
+    updateFieldByPath,
+    addExperience,
+    removeExperience,
+    addExpBullet,
+    removeExpBullet,
+    updateExpBullet,
+    addEducation,
+    removeEducation,
+    addProject,
+    removeProject,
+    addSkillCategory,
+    removeSkillCategory,
+  } = useResumeEditor();
+
   const { personalInfo, summary, experiences, education, skills, projects, certifications } = data;
   const accent = theme.accentColor || "#111827";
 
-  const updateField = (section: keyof ResumeData, field: string, value: any) => {
-    if (!onUpdate) return;
-    onUpdate({
-      ...data,
-      [section]: {
-        ...(data[section] as any),
-        [field]: value,
-      },
-    });
-  };
-
-  const updateExpBullet = (expIdx: number, bulletIdx: number, val: string) => {
-    if (!onUpdate) return;
-    const updatedExp = [...experiences];
-    const bullets = [...updatedExp[expIdx].bullets];
-    bullets[bulletIdx] = val;
-    updatedExp[expIdx] = { ...updatedExp[expIdx], bullets };
-    onUpdate({ ...data, experiences: updatedExp });
-  };
-
   return (
-    <div className="p-8 md:p-10 text-neutral-900 bg-white min-h-[1050px] leading-snug text-left space-y-4">
-      {/* ── SB2NOV HEADER: CENTERED NAME & COMPACT CONTACT BAR ── */}
+    <div className="p-8 md:p-10 text-neutral-900 bg-white min-h-[1050px] leading-snug text-left space-y-4 font-sans">
+      {/* ── SB2NOV HEADER: DIRECT EDITABLE NAME & CONTACT BAR ── */}
       <header className="text-center space-y-1 pb-1">
         <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wide text-neutral-950 font-serif">
-          <InlineEdit
+          <CanvasText
+            id="personalInfo.fullName"
             value={personalInfo.fullName}
-            onChange={(val) => updateField("personalInfo", "fullName", val)}
+            onChange={(val) => updateFieldByPath("personalInfo.fullName", val)}
             placeholder="YOUR FULL NAME"
           />
         </h1>
         {personalInfo.title && (
           <p className="text-xs font-semibold text-neutral-700">
-            <InlineEdit
+            <CanvasText
+              id="personalInfo.title"
               value={personalInfo.title}
-              onChange={(val) => updateField("personalInfo", "title", val)}
+              onChange={(val) => updateFieldByPath("personalInfo.title", val)}
               placeholder="Target Role / Domain"
             />
           </p>
         )}
 
-        {/* Contact Links Row separated by pipes | */}
+        {/* Contact Links Row separated by dots */}
         <div className="flex flex-wrap items-center justify-center gap-x-2 text-[11px] text-neutral-650 font-mono">
-          {personalInfo.phone && <span>{personalInfo.phone}</span>}
-          {personalInfo.phone && personalInfo.email && <span>•</span>}
-          {personalInfo.email && (
-            <a href={`mailto:${personalInfo.email}`} className="text-neutral-900 underline hover:text-primary">
-              {personalInfo.email}
-            </a>
-          )}
-          {personalInfo.location && <span>•</span>}
-          {personalInfo.location && <span>{personalInfo.location}</span>}
-          {personalInfo.linkedin && <span>•</span>}
+          <CanvasText
+            id="personalInfo.phone"
+            value={personalInfo.phone}
+            onChange={(val) => updateFieldByPath("personalInfo.phone", val)}
+            placeholder="Phone Number"
+          />
+          <span>•</span>
+          <CanvasText
+            id="personalInfo.email"
+            value={personalInfo.email}
+            onChange={(val) => updateFieldByPath("personalInfo.email", val)}
+            placeholder="Email Address"
+          />
+          <span>•</span>
+          <CanvasText
+            id="personalInfo.location"
+            value={personalInfo.location}
+            onChange={(val) => updateFieldByPath("personalInfo.location", val)}
+            placeholder="City, State"
+          />
           {personalInfo.linkedin && (
-            <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-neutral-900 underline hover:text-primary">
-              {personalInfo.linkedin.replace(/^https?:\/\/(www\.)?/, "")}
-            </a>
+            <>
+              <span>•</span>
+              <CanvasText
+                id="personalInfo.linkedin"
+                value={personalInfo.linkedin.replace(/^https?:\/\/(www\.)?/, "")}
+                onChange={(val) => updateFieldByPath("personalInfo.linkedin", val)}
+                placeholder="LinkedIn"
+              />
+            </>
           )}
-          {personalInfo.github && <span>•</span>}
           {personalInfo.github && (
-            <a href={personalInfo.github} target="_blank" rel="noreferrer" className="text-neutral-900 underline hover:text-primary">
-              {personalInfo.github.replace(/^https?:\/\/(www\.)?/, "")}
-            </a>
-          )}
-          {personalInfo.website && <span>•</span>}
-          {personalInfo.website && (
-            <a href={personalInfo.website} target="_blank" rel="noreferrer" className="text-neutral-900 underline hover:text-primary">
-              {personalInfo.website.replace(/^https?:\/\/(www\.)?/, "")}
-            </a>
+            <>
+              <span>•</span>
+              <CanvasText
+                id="personalInfo.github"
+                value={personalInfo.github.replace(/^https?:\/\/(www\.)?/, "")}
+                onChange={(val) => updateFieldByPath("personalInfo.github", val)}
+                placeholder="GitHub"
+              />
+            </>
           )}
         </div>
       </header>
 
+      {/* ── SUMMARY (Optional) ── */}
+      {summary && (
+        <section className="space-y-1">
+          <CanvasSectionHeader title="Summary" style={{ borderColor: accent }} />
+          <CanvasText
+            id="summary"
+            value={summary}
+            onChange={(val) => updateFieldByPath("summary", val)}
+            placeholder="Write your career overview..."
+            tag="p"
+            multiline
+            className="text-xs text-neutral-750 leading-relaxed text-justify"
+          />
+        </section>
+      )}
+
       {/* ── EDUCATION SECTION ── */}
       {education.length > 0 && (
         <section className="space-y-1.5">
-          <h2
-            className="text-xs font-bold uppercase tracking-wider text-neutral-900 border-b pb-0.5"
+          <CanvasSectionHeader
+            title="Education"
+            onAddEntry={addEducation}
             style={{ borderColor: accent }}
-          >
-            Education
-          </h2>
-          <div className="space-y-1.5 text-xs">
+          />
+          <div className="space-y-2 text-xs">
             {education.map((edu, idx) => (
-              <div key={edu.id || idx}>
+              <div key={edu.id || idx} className="group relative space-y-0.5">
                 <div className="flex justify-between items-baseline font-bold text-neutral-950">
                   <span>
-                    <InlineEdit
+                    <CanvasText
+                      id={`education.${idx}.institution`}
                       value={edu.institution}
-                      onChange={(val) => {
-                        const updated = [...education];
-                        updated[idx] = { ...updated[idx], institution: val };
-                        onUpdate && onUpdate({ ...data, education: updated });
-                      }}
+                      onChange={(val) => updateFieldByPath(`education.${idx}.institution`, val)}
                       placeholder="University Name"
                     />
-                    {edu.location && <span className="font-normal text-neutral-600"> — {edu.location}</span>}
+                    <span className="font-normal text-neutral-600"> — </span>
+                    <CanvasText
+                      id={`education.${idx}.location`}
+                      value={edu.location}
+                      onChange={(val) => updateFieldByPath(`education.${idx}.location`, val)}
+                      placeholder="Location"
+                      className="font-normal text-neutral-600"
+                    />
                   </span>
                   <span className="text-[11px] font-medium text-neutral-600">
-                    {edu.startDate} – {edu.endDate}
+                    <CanvasText
+                      id={`education.${idx}.endDate`}
+                      value={`${edu.startDate} – ${edu.endDate}`}
+                      onChange={(val) => updateFieldByPath(`education.${idx}.endDate`, val)}
+                      placeholder="Graduation Date"
+                    />
                   </span>
                 </div>
                 <div className="flex justify-between items-baseline text-[11.5px] text-neutral-750">
                   <span className="italic">
-                    {edu.degree} in {edu.field}
+                    <CanvasText
+                      id={`education.${idx}.degree`}
+                      value={`${edu.degree} in ${edu.field}`}
+                      onChange={(val) => updateFieldByPath(`education.${idx}.degree`, val)}
+                      placeholder="Degree & Major"
+                    />
                   </span>
-                  {edu.gpa && <span className="font-medium text-neutral-600">GPA: {edu.gpa}</span>}
+                  {edu.gpa && (
+                    <span className="font-medium text-neutral-600">
+                      GPA:{" "}
+                      <CanvasText
+                        id={`education.${idx}.gpa`}
+                        value={edu.gpa}
+                        onChange={(val) => updateFieldByPath(`education.${idx}.gpa`, val)}
+                        placeholder="3.9"
+                      />
+                    </span>
+                  )}
                 </div>
+
+                {/* Delete Entry Button on Hover */}
+                <button
+                  type="button"
+                  onClick={() => removeEducation(idx)}
+                  className="absolute -left-5 top-0 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-500 p-0.5 transition-opacity print:hidden cursor-pointer"
+                  title="Delete Degree"
+                >
+                  <Trash2 size={12} />
+                </button>
               </div>
             ))}
           </div>
         </section>
       )}
 
+      <CanvasAddSectionDivider />
+
       {/* ── EXPERIENCE SECTION ── */}
       {experiences.length > 0 && (
         <section className="space-y-2">
-          <h2
-            className="text-xs font-bold uppercase tracking-wider text-neutral-900 border-b pb-0.5"
+          <CanvasSectionHeader
+            title="Experience"
+            onAddEntry={addExperience}
             style={{ borderColor: accent }}
-          >
-            Experience
-          </h2>
-          <div className="space-y-2.5 text-xs">
+          />
+          <div className="space-y-3 text-xs">
             {experiences.map((exp, expIdx) => (
-              <div key={exp.id || expIdx} className="space-y-1">
+              <div key={exp.id || expIdx} className="group relative space-y-1">
                 <div className="flex justify-between items-baseline">
                   <div>
                     <span className="font-bold text-neutral-950 text-sm">
-                      <InlineEdit
+                      <CanvasText
+                        id={`experiences.${expIdx}.title`}
                         value={exp.title}
-                        onChange={(val) => {
-                          const updated = [...experiences];
-                          updated[expIdx] = { ...updated[expIdx], title: val };
-                          onUpdate && onUpdate({ ...data, experiences: updated });
-                        }}
+                        onChange={(val) => updateFieldByPath(`experiences.${expIdx}.title`, val)}
                         placeholder="Job Title"
                       />
                     </span>
                     <span className="text-neutral-700 font-medium"> | </span>
                     <span className="font-semibold text-neutral-850">
-                      <InlineEdit
+                      <CanvasText
+                        id={`experiences.${expIdx}.company`}
                         value={exp.company}
-                        onChange={(val) => {
-                          const updated = [...experiences];
-                          updated[expIdx] = { ...updated[expIdx], company: val };
-                          onUpdate && onUpdate({ ...data, experiences: updated });
-                        }}
+                        onChange={(val) => updateFieldByPath(`experiences.${expIdx}.company`, val)}
                         placeholder="Company"
                       />
                     </span>
-                    {exp.location && <span className="text-neutral-500 font-normal">, {exp.location}</span>}
+                    <span className="text-neutral-500 font-normal">, </span>
+                    <CanvasText
+                      id={`experiences.${expIdx}.location`}
+                      value={exp.location}
+                      onChange={(val) => updateFieldByPath(`experiences.${expIdx}.location`, val)}
+                      placeholder="Location"
+                      className="text-neutral-500 font-normal"
+                    />
                   </div>
                   <span className="text-[11px] font-medium text-neutral-600">
-                    {exp.startDate} – {exp.current ? "Present" : exp.endDate}
+                    <CanvasText
+                      id={`experiences.${expIdx}.dates`}
+                      value={`${exp.startDate} – ${exp.current ? "Present" : exp.endDate}`}
+                      onChange={(val) => updateFieldByPath(`experiences.${expIdx}.startDate`, val)}
+                      placeholder="Dates"
+                    />
                   </span>
                 </div>
 
-                {/* Bullets with metric-first hyphen / dot style */}
+                {/* Bullets with metric-first syntax */}
                 <ul className="list-disc list-outside ml-4 space-y-0.5 text-[11.5px] text-neutral-800">
-                  {exp.bullets.filter(Boolean).map((bullet, bIdx) => (
-                    <li key={bIdx} className="leading-snug">
-                      <InlineEdit
+                  {exp.bullets.map((bullet, bIdx) => (
+                    <li key={bIdx} className="group/bullet relative leading-snug">
+                      <CanvasText
+                        id={`experiences.${expIdx}.bullets.${bIdx}`}
                         value={bullet}
                         onChange={(val) => updateExpBullet(expIdx, bIdx, val)}
-                        placeholder="Describe impact..."
+                        placeholder="Describe quantifiable achievement..."
+                        tag="span"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeExpBullet(expIdx, bIdx)}
+                        className="ml-1 opacity-0 group-hover/bullet:opacity-100 text-neutral-400 hover:text-red-500 p-0.5 transition-opacity print:hidden cursor-pointer inline-flex items-center"
+                        title="Delete Bullet"
+                      >
+                        <Trash2 size={10} />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Add Bullet Button on Hover */}
+                <div className="pl-4 opacity-0 group-hover:opacity-100 transition-opacity print:hidden">
+                  <button
+                    type="button"
+                    onClick={() => addExpBullet(expIdx)}
+                    className="text-[10px] font-mono text-primary hover:underline flex items-center gap-0.5 cursor-pointer font-bold"
+                  >
+                    <Plus size={10} /> Add Bullet
+                  </button>
+                </div>
+
+                {/* Delete Entire Role on Hover */}
+                <button
+                  type="button"
+                  onClick={() => removeExperience(expIdx)}
+                  className="absolute -left-5 top-0 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-500 p-0.5 transition-opacity print:hidden cursor-pointer"
+                  title="Delete Role"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <CanvasAddSectionDivider />
+
+      {/* ── PROJECTS SECTION ── */}
+      {projects && projects.length > 0 && (
+        <section className="space-y-2">
+          <CanvasSectionHeader
+            title="Projects"
+            onAddEntry={addProject}
+            style={{ borderColor: accent }}
+          />
+          <div className="space-y-2 text-xs">
+            {projects.map((proj, pIdx) => (
+              <div key={proj.id || pIdx} className="group relative space-y-0.5">
+                <div className="flex justify-between items-baseline font-bold text-neutral-950">
+                  <div>
+                    <CanvasText
+                      id={`projects.${pIdx}.name`}
+                      value={proj.name}
+                      onChange={(val) => updateFieldByPath(`projects.${pIdx}.name`, val)}
+                      placeholder="Project Name"
+                    />
+                    <span className="font-normal text-neutral-600 italic"> | </span>
+                    <CanvasText
+                      id={`projects.${pIdx}.techStack`}
+                      value={proj.techStack?.join(", ") || ""}
+                      onChange={(val) =>
+                        updateFieldByPath(
+                          `projects.${pIdx}.techStack`,
+                          val.split(",").map((s) => s.trim())
+                        )
+                      }
+                      placeholder="Tech Stack"
+                      className="font-normal text-neutral-600 italic"
+                    />
+                  </div>
+                  {(proj.link || proj.github) && (
+                    <CanvasText
+                      id={`projects.${pIdx}.link`}
+                      value={proj.link || proj.github || ""}
+                      onChange={(val) => updateFieldByPath(`projects.${pIdx}.link`, val)}
+                      placeholder="https://link.com"
+                      className="text-[11px] text-neutral-700 underline font-mono"
+                    />
+                  )}
+                </div>
+
+                <ul className="list-disc list-outside ml-4 space-y-0.5 text-[11.5px] text-neutral-800">
+                  {proj.description?.map((desc, dIdx) => (
+                    <li key={dIdx} className="leading-snug">
+                      <CanvasText
+                        id={`projects.${pIdx}.description.${dIdx}`}
+                        value={desc}
+                        onChange={(val) => {
+                          const updated = [...proj.description];
+                          updated[dIdx] = val;
+                          updateFieldByPath(`projects.${pIdx}.description`, updated);
+                        }}
+                        placeholder="Project description..."
                         tag="span"
                       />
                     </li>
                   ))}
                 </ul>
+
+                <button
+                  type="button"
+                  onClick={() => removeProject(pIdx)}
+                  className="absolute -left-5 top-0 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-500 p-0.5 transition-opacity print:hidden cursor-pointer"
+                  title="Delete Project"
+                >
+                  <Trash2 size={12} />
+                </button>
               </div>
             ))}
           </div>
         </section>
       )}
 
-      {/* ── PROJECTS SECTION ── */}
-      {projects && projects.length > 0 && (
-        <section className="space-y-2">
-          <h2
-            className="text-xs font-bold uppercase tracking-wider text-neutral-900 border-b pb-0.5"
-            style={{ borderColor: accent }}
-          >
-            Projects
-          </h2>
-          <div className="space-y-2 text-xs">
-            {projects.map((proj, pIdx) => (
-              <div key={proj.id || pIdx} className="space-y-0.5">
-                <div className="flex justify-between items-baseline font-bold text-neutral-950">
-                  <div>
-                    <span>{proj.name}</span>
-                    {proj.techStack && proj.techStack.length > 0 && (
-                      <span className="font-normal text-neutral-600 italic">
-                        {" "}
-                        | {proj.techStack.join(", ")}
-                      </span>
-                    )}
-                  </div>
-                  {(proj.link || proj.github) && (
-                    <a
-                      href={proj.link || proj.github}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[11px] text-neutral-700 underline font-mono"
-                    >
-                      {proj.link ? "Live Demo" : "Code"} ↗
-                    </a>
-                  )}
-                </div>
+      <CanvasAddSectionDivider />
 
-                <ul className="list-disc list-outside ml-4 space-y-0.5 text-[11.5px] text-neutral-800">
-                  {proj.description?.filter(Boolean).map((desc, dIdx) => (
-                    <li key={dIdx} className="leading-snug">
-                      {desc}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── TECHNICAL SKILLS (Compact inline colon format) ── */}
+      {/* ── TECHNICAL SKILLS ── */}
       {skills.length > 0 && (
         <section className="space-y-1">
-          <h2
-            className="text-xs font-bold uppercase tracking-wider text-neutral-900 border-b pb-0.5"
+          <CanvasSectionHeader
+            title="Technical Skills"
+            onAddEntry={addSkillCategory}
             style={{ borderColor: accent }}
-          >
-            Technical Skills
-          </h2>
+          />
           <div className="space-y-1 text-xs text-neutral-800">
             {skills.map((cat, idx) => (
-              <div key={cat.id || idx}>
-                <strong className="font-bold text-neutral-950">{cat.name}:</strong>{" "}
-                <span className="text-neutral-750">{cat.items.join(", ")}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+              <div key={cat.id || idx} className="group relative">
+                <strong className="font-bold text-neutral-950">
+                  <CanvasText
+                    id={`skills.${idx}.name`}
+                    value={cat.name}
+                    onChange={(val) => updateFieldByPath(`skills.${idx}.name`, val)}
+                    placeholder="Category"
+                  />
+                  :{" "}
+                </strong>
+                <CanvasText
+                  id={`skills.${idx}.items`}
+                  value={cat.items.join(", ")}
+                  onChange={(val) =>
+                    updateFieldByPath(
+                      `skills.${idx}.items`,
+                      val.split(",").map((s) => s.trim()).filter(Boolean)
+                    )
+                  }
+                  placeholder="TypeScript, React, Python..."
+                  className="text-neutral-750"
+                />
 
-      {/* ── CERTIFICATIONS (Optional) ── */}
-      {certifications && certifications.length > 0 && (
-        <section className="space-y-1">
-          <h2
-            className="text-xs font-bold uppercase tracking-wider text-neutral-900 border-b pb-0.5"
-            style={{ borderColor: accent }}
-          >
-            Certifications
-          </h2>
-          <div className="text-xs text-neutral-800 space-y-0.5">
-            {certifications.map((c) => (
-              <div key={c.id} className="flex justify-between items-baseline">
-                <span>
-                  <strong>{c.name}</strong> — {c.issuer}
-                </span>
-                <span className="text-[11px] text-neutral-500 font-mono">{c.date}</span>
+                <button
+                  type="button"
+                  onClick={() => removeSkillCategory(idx)}
+                  className="ml-2 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-500 p-0.5 transition-opacity print:hidden cursor-pointer inline-flex items-center"
+                  title="Delete Skill Group"
+                >
+                  <Trash2 size={10} />
+                </button>
               </div>
             ))}
           </div>
