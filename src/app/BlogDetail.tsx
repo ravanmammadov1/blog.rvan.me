@@ -162,60 +162,71 @@ export default function BlogDetail() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      <article className="mx-auto max-w-5xl px-6 pt-24 pb-28 md:px-10">
+      <article className="mx-auto max-w-[1400px] px-6 pt-24 pb-28 md:px-10">
         <BlogHero post={post} />
 
-        <div className="mx-auto max-w-3xl mt-12 space-y-12">
-          <TableOfContents body={post.body} />
-
-          <BlogContent post={post} />
-
-          <ShareButtons title={post.title} />
-
-          <AuthorCard post={post} />
-
-          <CommentSection postId={post.slug?.current || post._id} postTitle={post.title} />
-
-          {(prevPost || nextPost) && (
-            <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-white/10 pt-12">
-              {prevPost ? (
-                <Link
-                  to={getLocalizedPath(`/blog/${prevPost.slug?.current || prevPost._id}`)}
-                  className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5"
-                >
-                  <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← {t("previousArticle", "PREVIOUS ARTICLE")}</span>
-                  <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{prevPost.title}</p>
-                </Link>
-              ) : <div />}
-
-              {nextPost ? (
-                <Link
-                  to={getLocalizedPath(`/blog/${nextPost.slug?.current || nextPost._id}`)}
-                  className="group flex flex-col justify-between items-end rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 text-right"
-                >
-                  <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">{t("nextArticle", "NEXT ARTICLE")} →</span>
-                  <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{nextPost.title}</p>
-                </Link>
-              ) : <div />}
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Main Article Content Column */}
+          <div className="lg:col-span-8 space-y-12 min-w-0">
+            {/* Mobile Collapsible TOC */}
+            <div className="lg:hidden">
+              <TableOfContents body={post.body} isMobile />
             </div>
-          )}
 
-          <div className="mt-10 flex justify-center border-t border-white/10 pt-8">
-            <Button
-              to={getLocalizedPath("/blog")}
-              variant="secondary"
-              size="lg"
-              icon={<ArrowLeft size={16} />}
-              iconPosition="left"
-            >
-              {t("backToBlogArchive", "BACK TO BLOG ARCHIVE")}
-            </Button>
+            <BlogContent post={post} />
+
+            <ShareButtons title={post.title} />
+
+            <AuthorCard post={post} />
+
+            <CommentSection postId={post.slug?.current || post._id} postTitle={post.title} />
+
+            {(prevPost || nextPost) && (
+              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-white/10 pt-12">
+                {prevPost ? (
+                  <Link
+                    to={getLocalizedPath(`/blog/${prevPost.slug?.current || prevPost._id}`)}
+                    className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5"
+                  >
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← {t("previousArticle", "PREVIOUS ARTICLE")}</span>
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{prevPost.title}</p>
+                  </Link>
+                ) : <div />}
+
+                {nextPost ? (
+                  <Link
+                    to={getLocalizedPath(`/blog/${nextPost.slug?.current || nextPost._id}`)}
+                    className="group flex flex-col justify-between items-end rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 text-right"
+                  >
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">{t("nextArticle", "NEXT ARTICLE")} →</span>
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{nextPost.title}</p>
+                  </Link>
+                ) : <div />}
+              </div>
+            )}
+
+            <div className="mt-10 flex justify-center border-t border-white/10 pt-8">
+              <Button
+                to={getLocalizedPath("/blog")}
+                variant="secondary"
+                size="lg"
+                icon={<ArrowLeft size={16} />}
+                iconPosition="left"
+              >
+                {t("backToBlogArchive", "BACK TO BLOG ARCHIVE")}
+              </Button>
+            </div>
+
+            <RelatedPosts
+              posts={relatedPosts}
+              currentPostId={post._id}
+            />
           </div>
 
-          <RelatedPosts
-            posts={relatedPosts}
-            currentPostId={post._id}
-          />
+          {/* Sticky Desktop Aside Sidebar */}
+          <aside className="hidden lg:block lg:col-span-4 sticky top-28 space-y-6">
+            <TableOfContents body={post.body} />
+          </aside>
         </div>
       </article>
 

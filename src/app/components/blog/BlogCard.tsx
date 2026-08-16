@@ -41,10 +41,12 @@ export default function BlogCard({
   const isHovered = externalHovered ?? internalHovered;
 
   const imgBuilder = urlFor(post.coverImage);
-  const coverUrl = imgBuilder ? imgBuilder.width(800).url() : getArticleCoverImage(
-    post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : post.category === "Marketing" ? "marketingNews" : "frontendNews",
-    post.title
-  );
+  const coverUrl = imgBuilder
+    ? imgBuilder.width(1200).height(675).quality(90).auto("format").url()
+    : getArticleCoverImage(
+        post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : post.category === "Marketing" ? "marketingNews" : "frontendNews",
+        post.title
+      );
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
 
@@ -80,15 +82,15 @@ export default function BlogCard({
         className="p-7 min-h-[360px] flex flex-col justify-between"
       >
         <div>
-        <div className="mb-6 h-48 w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80">
+        <div className="mb-6 aspect-[16/9] w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80">
           <img
               src={coverUrl}
               alt={post.title || "Blog cover"}
-              width={800}
-              height={520}
+              width={1200}
+              height={675}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              className="h-full w-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-700 ease-out"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
                   post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : "designNews",

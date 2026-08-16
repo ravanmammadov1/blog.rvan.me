@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
 import { formatBlogDate, estimateReadingTime } from "../../../lib/blogHelpers";
+import { getArticleCoverImage } from "../../../lib/contentEngine";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface BlogHeroProps {
@@ -13,39 +14,36 @@ interface BlogHeroProps {
 export default function BlogHero({ post }: BlogHeroProps) {
   const { getLocalizedPath } = useLanguage();
   const imgBuilder = urlFor(post.coverImage);
-  const coverUrl = imgBuilder ? imgBuilder.width(1800).quality(90).url() : null;
+  const coverUrl = imgBuilder
+    ? imgBuilder.width(1800).height(1012).quality(92).auto("format").url()
+    : getArticleCoverImage(
+        post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : post.category === "Marketing" ? "marketingNews" : "frontendNews",
+        post.title
+      );
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-border bg-surface min-h-[460px]">
-      {coverUrl ? (
+    <section className="relative overflow-hidden rounded-[32px] border border-border bg-surface aspect-[16/9] md:aspect-[21/9] min-h-[420px] max-h-[580px] flex flex-col justify-end">
+      {coverUrl && (
         <img
           src={coverUrl}
           alt={post.title || "Blog cover"}
           width={1800}
-          height={1000}
+          height={1012}
           fetchPriority="high"
           decoding="async"
-          className="h-[560px] w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
+              post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : "designNews",
+              post.title
+            );
+          }}
         />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-neutral-900 to-black overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{
-              backgroundImage:
-                post.category === "Design"
-                  ? "radial-gradient(circle at 80% 20%, rgba(97,197,173,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(152,79,159,0.25) 0%, transparent 65%)"
-                  : post.category === "AI"
-                  ? "radial-gradient(circle at 80% 20%, rgba(6,182,212,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(147,51,234,0.25) 0%, transparent 65%)"
-                  : "radial-gradient(circle at 80% 20%, rgba(255,118,75,0.35) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(244,63,94,0.25) 0%, transparent 65%)",
-            }}
-          />
-        </div>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/35 pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 35 }}
