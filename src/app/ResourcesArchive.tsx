@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useDeferredValue } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Type, Sliders, Sparkles, Layers, ChevronDown, Palette, RefreshCw, Image as ImageIcon } from "lucide-react";
+import { Type, Sliders, Sparkles, Layers, ChevronDown, Palette, RefreshCw } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -11,20 +11,12 @@ import {
   ICON_CATEGORIES,
   IconCategory,
 } from "../lib/iconEngine";
-import {
-  searchIllustrations,
-  ILLUSTRATION_CATEGORIES,
-  ILLUSTRATION_COLLECTIONS,
-  IllustrationCategory,
-  IllustrationCollection,
-} from "../lib/illustrationsData";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import { IconSpecimenCard } from "./components/content/IconSpecimenCard";
-import { IllustrationSpecimenCard } from "./components/content/IllustrationSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { Button } from "./components/ui/Button";
@@ -40,12 +32,11 @@ const fadeUp = {
   }),
 };
 
-export type ResourceCategoryKey = "fonts" | "icons" | "illustrations";
+export type ResourceCategoryKey = "fonts" | "icons";
 
 export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: string }> = {
   fonts: { label: "Fonts", icon: "🔤" },
   icons: { label: "Icons", icon: "🎨" },
-  illustrations: { label: "Illustrations", icon: "🖼️" },
 };
 
 const COLOR_PRESETS = [
@@ -79,21 +70,8 @@ export default function ResourcesArchive() {
   const [visibleIconLimit, setVisibleIconLimit] = useState(36);
   const [iconCategoryDropdownOpen, setIconCategoryDropdownOpen] = useState(false);
 
-  // Illustration Specimen Interactive Controls
-  const [illustrationCategorySubfilter, setIllustrationCategorySubfilter] = useState<IllustrationCategory>("All");
-  const [illustrationCollectionSubfilter, setIllustrationCollectionSubfilter] = useState<IllustrationCollection>("All");
-  const [illustrationColor, setIllustrationColor] = useState("#61c5ad");
-  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(36);
-  const [illustrationCategoryDropdownOpen, setIllustrationCategoryDropdownOpen] = useState(false);
-  const [illustrationCollectionDropdownOpen, setIllustrationCollectionDropdownOpen] = useState(false);
-
   const activeCategoryParam = searchParams.get("category") as ResourceCategoryKey;
-  const activeCategory: ResourceCategoryKey =
-    activeCategoryParam === "icons"
-      ? "icons"
-      : activeCategoryParam === "illustrations"
-      ? "illustrations"
-      : "fonts";
+  const activeCategory: ResourceCategoryKey = activeCategoryParam === "icons" ? "icons" : "fonts";
 
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
@@ -101,7 +79,6 @@ export default function ResourcesArchive() {
   const categoryLabels: Record<ResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
     icons: t("icons", "Icons"),
-    illustrations: t("illustrations", "Illustrations"),
   };
 
   useEffect(() => {
@@ -128,78 +105,41 @@ export default function ResourcesArchive() {
     setSearchParams(newParams);
   };
 
-  const handleSearchChange = (newQuery: string) => {
-    setParam("q", newQuery);
+  const handleSearchChange = (val: string) => {
+    setParam("q", val);
   };
 
-  // Top curated typography priority rank
-  const PRIORITY_FONTS = useMemo(() => [
-    "geist", "inter", "plus jakarta sans", "satoshi", "general sans", "space grotesk",
-    "dm sans", "manrope", "sora", "outfit", "urbanist", "syne", "work sans",
-    "archivo", "instrument sans", "onest", "bricolage grotesk", "cabinet grotesk",
-    "clash display", "switzer", "uncut sans", "montserrat", "poppins", "roboto",
-    "open sans", "aileron", "league spartan", "cooper hewitt", "fraunces", "playfair display",
-    "cinzel", "jetbrains mono", "fira code", "space mono"
-  ], []);
-
-  // Filtered Font Catalog
+  // Filtered Fonts Catalog
   const filteredFonts = useMemo(() => {
     let list = fontCatalog;
 
-    // 1. Category filter (normalized for spaces & hyphens like 'sans-serif' vs 'Sans Serif')
     if (fontCategorySubfilter !== "all") {
-      const targetCat = fontCategorySubfilter.toLowerCase().replace(/[\s-_]+/g, "");
-      list = list.filter((f) => (f.category || "").toLowerCase().replace(/[\s-_]+/g, "") === targetCat);
+      list = list.filter((f) => f.category?.toLowerCase() === fontCategorySubfilter.toLowerCase());
     }
 
-    // 2. Search query filter
     if (deferredSearch.trim()) {
       const q = deferredSearch.toLowerCase().trim();
       list = list.filter(
         (f) =>
           f.family.toLowerCase().includes(q) ||
-          (f.name || "").toLowerCase().includes(q) ||
-          (f.category || "").toLowerCase().includes(q) ||
-          (f.designer || "").toLowerCase().includes(q) ||
-          (f.foundry || "").toLowerCase().includes(q)
+          f.designer?.toLowerCase().includes(q) ||
+          f.category?.toLowerCase().includes(q)
       );
-    } else {
-      // 3. Default view: prioritize top celebrated Sans-Serif and editorial typefaces
-      list = [...list].sort((a, b) => {
-        const aFam = a.family.toLowerCase().trim();
-        const bFam = b.family.toLowerCase().trim();
-        const aIdx = PRIORITY_FONTS.indexOf(aFam);
-        const bIdx = PRIORITY_FONTS.indexOf(bFam);
-
-        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-        if (aIdx !== -1) return -1;
-        if (bIdx !== -1) return 1;
-        return (b.trendingScore || 0) - (a.trendingScore || 0);
-      });
     }
 
     return list;
-  }, [fontCatalog, fontCategorySubfilter, deferredSearch, PRIORITY_FONTS]);
+  }, [fontCatalog, fontCategorySubfilter, deferredSearch]);
 
   // Filtered Lucide Icons Catalog
   const filteredIcons = useMemo(() => {
     return searchLucideIcons(deferredSearch, iconCategorySubfilter);
   }, [deferredSearch, iconCategorySubfilter]);
 
-  // Filtered Vector Illustrations Catalog (1,770+ Authentic Open-Source SVGs)
-  const filteredIllustrations = useMemo(() => {
-    return searchIllustrations(
-      deferredSearch,
-      illustrationCategorySubfilter,
-      illustrationCollectionSubfilter
-    );
-  }, [deferredSearch, illustrationCategorySubfilter, illustrationCollectionSubfilter]);
-
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${t("resourcesArchiveTitle", "Open-Source Fonts, Vector Icons & Illustrations")} — Rvan.me`}
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, vector icon catalog, and customizable vector illustrations.")}
+        title={`${t("resourcesArchiveTitle", "Open-Source Fonts & Vector Icons")} — Rvan.me`}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and vector icon catalog.")}
         url="https://www.rvan.me/resources"
       />
 
@@ -221,10 +161,10 @@ export default function ResourcesArchive() {
         title={t("resourcesHeadingMain", "Creative")}
         accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, vector icon catalog, and customizable vector illustrations.")}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and vector icon catalog.")}
       />
 
-      {/* Primary Category Filter Bar (FONTS | ICONS | ILLUSTRATIONS) */}
+      {/* Primary Category Filter Bar (FONTS | ICONS) */}
       <PageFilterBar
         categories={Object.entries(CATEGORY_MAP).map(([key, config]) => ({
           key,
@@ -240,9 +180,7 @@ export default function ResourcesArchive() {
         searchPlaceholder={
           activeCategory === "fonts"
             ? "Search fonts by family or designer..."
-            : activeCategory === "icons"
-            ? "Search vector icons..."
-            : "Search vector illustrations..."
+            : "Search vector icons..."
         }
         searchId="resources-search"
       />
@@ -253,27 +191,41 @@ export default function ResourcesArchive() {
       {activeCategory === "fonts" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Font Specimen Toolbar Controls */}
+            {/* Font Toolbar */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
-              <div className="flex flex-1 items-center gap-3 rounded-xl border border-white/10 bg-background/60 px-4 py-2">
-                <Type size={16} className="text-primary shrink-0" />
+              {/* Category Pills */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                {["all", "sans-serif", "serif", "display", "monospace", "handwriting"].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setFontCategorySubfilter(cat)}
+                    className={`rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      fontCategorySubfilter === cat
+                        ? "bg-primary text-black"
+                        : "text-muted-foreground hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Custom Preview Text & Size */}
+              <div className="flex flex-wrap items-center gap-4">
                 <input
                   type="text"
                   value={previewText}
                   onChange={(e) => setPreviewText(e.target.value)}
-                  placeholder="Type specimen text..."
-                  className="w-full bg-transparent text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/50 font-medium"
+                  placeholder="Type preview text..."
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none w-56 md:w-72"
                 />
-              </div>
 
-              <div className="flex items-center gap-4 shrink-0">
                 <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase">
-                  <Sliders size={14} className="text-primary" />
                   <span>{fontSizePx}px</span>
                   <input
                     type="range"
-                    min="14"
-                    max="72"
+                    min="18"
+                    max="64"
                     value={fontSizePx}
                     onChange={(e) => setFontSizePx(Number(e.target.value))}
                     className="h-1.5 w-24 cursor-pointer accent-primary bg-white/10 rounded-lg"
@@ -282,46 +234,14 @@ export default function ResourcesArchive() {
               </div>
             </div>
 
-            {/* Font Filter Controls (Category Tabs) */}
-            <div className="mb-8 flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground/70 mr-1">
-                CATEGORY:
-              </span>
-              {[
-                { key: "all", label: t("allFonts", "All") },
-                { key: "sans-serif", label: "Sans Serif" },
-                { key: "serif", label: "Serif" },
-                { key: "monospace", label: "Monospace" },
-                { key: "display", label: "Display" },
-                { key: "handwriting", label: "Handwriting" },
-              ].map((cat) => (
-                <button
-                  key={cat.key}
-                  onClick={() => {
-                    setFontCategorySubfilter(cat.key);
-                    setVisibleFontLimit(12);
-                  }}
-                  className={`rounded-full px-3.5 py-1 text-xs font-bold tracking-wider transition-all mono cursor-pointer ${
-                    fontCategorySubfilter === cat.key
-                      ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.3)]"
-                      : "border border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-white"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
             {/* Font Grid */}
             {loading ? (
-              <div className="grid gap-6 sm:grid-cols-2">
-                {[1, 2, 3, 4].map((n) => (
-                  <div key={n} className="h-48 rounded-xl border border-white/10 bg-white/5 animate-pulse glass" />
-                ))}
+              <div className="flex h-64 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               </div>
             ) : filteredFonts.length === 0 ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs">{t("noArticlesFound", "No font families found matching your search.")}</p>
+                <p className="text-muted-foreground text-xs">No Google Fonts found matching your criteria.</p>
                 <button
                   onClick={() => {
                     setFontCategorySubfilter("all");
@@ -329,7 +249,7 @@ export default function ResourcesArchive() {
                   }}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
                 >
-                  {t("resetFilters", "RESET FILTERS")}
+                  RESET FILTERS
                 </button>
               </div>
             ) : (
@@ -337,7 +257,7 @@ export default function ResourcesArchive() {
                 <div className="grid gap-6 sm:grid-cols-2">
                   {filteredFonts.slice(0, visibleFontLimit).map((font, idx) => (
                     <FontSpecimenCard
-                      key={font.id || `${font.family}-${idx}`}
+                      key={font.family}
                       font={font}
                       previewText={previewText}
                       fontSizePx={fontSizePx}
@@ -347,11 +267,10 @@ export default function ResourcesArchive() {
                   ))}
                 </div>
 
-                {/* Load More Button (No Count Numbers) */}
                 {visibleFontLimit < filteredFonts.length && (
                   <div className="mt-10 text-center">
                     <Button
-                      onClick={() => setVisibleFontLimit((prev) => prev + 16)}
+                      onClick={() => setVisibleFontLimit((prev) => prev + 12)}
                       variant="outline"
                       size="md"
                     >
@@ -366,15 +285,15 @@ export default function ResourcesArchive() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          2. ICONS CATALOG SECTION (Lucide Vectors)
+          2. ICONS CATALOG SECTION
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "icons" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Sleek Single-Line Icon Toolbar with Dropdown Category Selector (No Count Numbers) */}
+            {/* Single-Line Toolbar with Dropdown Category & Slider Controls */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               
-              {/* Category Dropdown Selector (Compact Popover) */}
+              {/* Category Selector Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setIconCategoryDropdownOpen(!iconCategoryDropdownOpen)}
@@ -525,7 +444,6 @@ export default function ResourcesArchive() {
                   ))}
                 </div>
 
-                {/* Load More Icons Button (No Count Numbers) */}
                 {visibleIconLimit < filteredIcons.length && (
                   <div className="mt-10 text-center">
                     <Button
@@ -535,214 +453,6 @@ export default function ResourcesArchive() {
                     >
                       LOAD MORE ICONS
                     </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          3. ILLUSTRATIONS CATALOG SECTION (1,770+ Open-Source Vector Assets)
-      ───────────────────────────────────────────────────────────────────────────── */}
-      {activeCategory === "illustrations" && (
-        <section className="px-6 py-10 md:px-10 relative z-10">
-          <div className="mx-auto max-w-[1600px]">
-            {/* Single-Line Toolbar with Dropdown Category & Collection Filter */}
-            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Category Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={() => {
-                      setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen);
-                      setIllustrationCollectionDropdownOpen(false);
-                    }}
-                    className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-primary/50 hover:bg-white/10 transition-all cursor-pointer select-none"
-                  >
-                    <ImageIcon size={14} className="text-primary" />
-                    <span>Category: {illustrationCategorySubfilter}</span>
-                    <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
-                  </button>
-
-                  <AnimatePresence>
-                    {illustrationCategoryDropdownOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute top-full left-0 mt-2 z-50 w-64 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
-                      >
-                        <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
-                          Select Category
-                        </div>
-                        <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                          {ILLUSTRATION_CATEGORIES.map((cat) => {
-                            const isSelected = illustrationCategorySubfilter === cat;
-                            return (
-                              <button
-                                key={cat}
-                                onClick={() => {
-                                  setIllustrationCategorySubfilter(cat);
-                                  setIllustrationCategoryDropdownOpen(false);
-                                }}
-                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
-                                  isSelected
-                                    ? "bg-primary text-black font-bold"
-                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
-                                }`}
-                              >
-                                <span className="truncate">{cat}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Collection Filter Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={() => {
-                      setIllustrationCollectionDropdownOpen(!illustrationCollectionDropdownOpen);
-                      setIllustrationCategoryDropdownOpen(false);
-                    }}
-                    className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-primary/50 hover:bg-white/10 transition-all cursor-pointer select-none"
-                  >
-                    <Layers size={14} className="text-primary" />
-                    <span>Collection: {illustrationCollectionSubfilter}</span>
-                    <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCollectionDropdownOpen ? "rotate-180" : ""}`} />
-                  </button>
-
-                  <AnimatePresence>
-                    {illustrationCollectionDropdownOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute top-full left-0 mt-2 z-50 w-56 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
-                      >
-                        <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
-                          Select Collection
-                        </div>
-                        <div className="space-y-1">
-                          {ILLUSTRATION_COLLECTIONS.map((col) => {
-                            const isSelected = illustrationCollectionSubfilter === col;
-                            return (
-                              <button
-                                key={col}
-                                onClick={() => {
-                                  setIllustrationCollectionSubfilter(col);
-                                  setIllustrationCollectionDropdownOpen(false);
-                                }}
-                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
-                                  isSelected
-                                    ? "bg-primary text-black font-bold"
-                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
-                                }`}
-                              >
-                                <span className="truncate">{col}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-
-              {/* Dynamic Brand Color Customizer for Vector Illustrations */}
-              <div className="flex items-center gap-2">
-                <Palette size={14} className="text-primary shrink-0" />
-                <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Brand Tint:</span>
-                <div className="flex items-center gap-1.5 bg-black/40 border border-white/10 p-1 rounded-xl">
-                  {COLOR_PRESETS.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setIllustrationColor(color)}
-                      className={`h-5 w-5 rounded-lg transition-transform cursor-pointer ${
-                        illustrationColor === color ? "scale-110 border-2 border-white shadow-md" : "hover:scale-105 opacity-80"
-                      }`}
-                      style={{ backgroundColor: color }}
-                      title={`Brand Color: ${color}`}
-                    />
-                  ))}
-                  <input
-                    type="color"
-                    value={illustrationColor}
-                    onChange={(e) => setIllustrationColor(e.target.value)}
-                    className="h-5 w-5 rounded-lg border-0 bg-transparent cursor-pointer opacity-80 hover:opacity-100"
-                    title="Custom Brand Hex Color"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Reset Filters Option if filtered */}
-            {(deferredSearch || illustrationCategorySubfilter !== "All" || illustrationCollectionSubfilter !== "All") && (
-              <div className="mb-6 flex items-center justify-between">
-                <span className="text-xs font-mono text-muted-foreground">
-                  Found {filteredIllustrations.length} matching vector illustrations
-                </span>
-                <button
-                  onClick={() => {
-                    setIllustrationCategorySubfilter("All");
-                    setIllustrationCollectionSubfilter("All");
-                    handleSearchChange("");
-                  }}
-                  className="flex items-center gap-1.5 text-xs font-mono text-primary hover:text-white transition-colors cursor-pointer"
-                >
-                  <RefreshCw size={12} /> Reset Filters
-                </button>
-              </div>
-            )}
-
-            {/* Illustration Grid */}
-            {filteredIllustrations.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs">No vector illustrations found matching your query.</p>
-                <button
-                  onClick={() => {
-                    setIllustrationCategorySubfilter("All");
-                    setIllustrationCollectionSubfilter("All");
-                    handleSearchChange("");
-                  }}
-                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
-                >
-                  RESET FILTERS
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredIllustrations.slice(0, visibleIllustrationLimit).map((item) => (
-                    <IllustrationSpecimenCard
-                      key={item.id}
-                      illustration={item}
-                      accentColor={illustrationColor}
-                    />
-                  ))}
-                </div>
-
-                {/* Load More Button */}
-                {visibleIllustrationLimit < filteredIllustrations.length && (
-                  <div className="mt-12 text-center flex flex-col items-center gap-3">
-                    <Button
-                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 36)}
-                      variant="outline"
-                      size="md"
-                    >
-                      LOAD MORE ({filteredIllustrations.length - visibleIllustrationLimit} REMAINING)
-                    </Button>
-                    <span className="text-[11px] font-mono text-muted-foreground">
-                      Showing {Math.min(visibleIllustrationLimit, filteredIllustrations.length)} of {filteredIllustrations.length} open-source illustrations
-                    </span>
                   </div>
                 )}
               </>

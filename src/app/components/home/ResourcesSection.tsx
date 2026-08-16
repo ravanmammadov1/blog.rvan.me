@@ -1,14 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Type, Sparkles, Image as ImageIcon } from "lucide-react";
+import { ArrowUpRight, Type, Sparkles } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 import type { IconItem } from "../../../lib/iconEngine";
-import { ILLUSTRATIONS_CATALOG } from "../../../lib/illustrationsData";
 import { IconSpecimenCard } from "../content/IconSpecimenCard";
 import { FontSpecimenCard } from "../content/FontSpecimenCard";
-import { IllustrationSpecimenCard } from "../content/IllustrationSpecimenCard";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Button } from "../ui/Button";
 
@@ -34,27 +32,26 @@ const fadeUp = {
   }),
 };
 
-const CATEGORY_ICONS: Record<ResourceCategoryKey, React.ReactNode> = {
+export type HomeResourceCategoryKey = "fonts" | "icons";
+
+const CATEGORY_ICONS: Record<HomeResourceCategoryKey, React.ReactNode> = {
   fonts: <Type size={14} />,
   icons: <Sparkles size={14} />,
-  illustrations: <ImageIcon size={14} />,
 };
 
-export const HOME_RESOURCE_CATEGORIES: Record<ResourceCategoryKey, { label: string }> = {
+export const HOME_RESOURCE_CATEGORIES: Record<HomeResourceCategoryKey, { label: string }> = {
   fonts: { label: "Fonts" },
   icons: { label: "Icons" },
-  illustrations: { label: "Illustrations" },
 };
 
 export default function ResourcesSection() {
   const [resources, setResources] = useState<SharedResourceItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState<ResourceCategoryKey>("fonts");
+  const [activeCategory, setActiveCategory] = useState<HomeResourceCategoryKey>("fonts");
   const { t, getLocalizedPath } = useLanguage();
 
-  const categoryLabels: Record<ResourceCategoryKey, string> = {
+  const categoryLabels: Record<HomeResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
     icons: t("icons", "Icons"),
-    illustrations: t("illustrations", "Illustrations"),
   };
 
   useEffect(() => {
@@ -79,10 +76,6 @@ export default function ResourcesSection() {
 
   const showcaseIcons = useMemo(() => {
     return SHOWCASE_ICONS;
-  }, []);
-
-  const showcaseIllustrations = useMemo(() => {
-    return ILLUSTRATIONS_CATALOG.slice(0, 4);
   }, []);
 
   return (
@@ -119,9 +112,9 @@ export default function ResourcesSection() {
           </Button>
         </motion.div>
 
-        {/* Category Tabs: FONTS | ICONS | ILLUSTRATIONS */}
+        {/* Category Tabs: FONTS | ICONS */}
         <div className="mb-10 flex flex-wrap gap-2">
-          {(Object.keys(HOME_RESOURCE_CATEGORIES) as ResourceCategoryKey[]).map((catKey) => {
+          {(Object.keys(HOME_RESOURCE_CATEGORIES) as HomeResourceCategoryKey[]).map((catKey) => {
             const isActive = activeCategory === catKey;
             return (
               <Button
@@ -161,7 +154,7 @@ export default function ResourcesSection() {
               />
             ))}
           </div>
-        ) : activeCategory === "icons" ? (
+        ) : (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
             {showcaseIcons.map((iconItem) => (
               <IconSpecimenCard
@@ -170,16 +163,6 @@ export default function ResourcesSection() {
                 iconSize={28}
                 strokeWidth={2}
                 iconColor="#61c5ad"
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2">
-            {showcaseIllustrations.map((illustration) => (
-              <IllustrationSpecimenCard
-                key={illustration.id}
-                illustration={illustration}
-                accentColor="#61c5ad"
               />
             ))}
           </div>
