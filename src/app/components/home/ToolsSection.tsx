@@ -15,9 +15,11 @@ const fadeUp = {
   }),
 };
 
+import { INTERACTIVE_TOOLS } from "../../lib/toolsRegistry";
+
 export default function ToolsSection() {
   const [toolsList, setToolsList] = useState<any[]>([]);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     // Fetch Tools (latest 4)
@@ -26,17 +28,44 @@ export default function ToolsSection() {
         *[_type == "tools"] | order(category asc, name asc)[0...4]{
           _id,
           name,
+          name_az,
           description,
+          description_az,
           icon,
           link,
           category
         }
       `)
       .then((data) => {
-        setToolsList(data || []);
+        if (Array.isArray(data) && data.length > 0) {
+          setToolsList(data);
+        } else {
+          // Fallback to primary creative tool registry
+          setToolsList(
+            INTERACTIVE_TOOLS.map((tool) => ({
+              _id: tool.id,
+              name: language === "az" && tool.name_az ? tool.name_az : tool.name,
+              description: language === "az" && tool.description_az ? tool.description_az : tool.description,
+              icon: tool.icon,
+              link: tool.path,
+              category: tool.category,
+            }))
+          );
+        }
       })
-      .catch(console.error);
-  }, []);
+      .catch(() => {
+        setToolsList(
+          INTERACTIVE_TOOLS.map((tool) => ({
+            _id: tool.id,
+            name: language === "az" && tool.name_az ? tool.name_az : tool.name,
+            description: language === "az" && tool.description_az ? tool.description_az : tool.description,
+            icon: tool.icon,
+            link: tool.path,
+            category: tool.category,
+          }))
+        );
+      });
+  }, [language]);
 
   return (
     <section id="tools" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">

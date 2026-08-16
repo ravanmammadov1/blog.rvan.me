@@ -9,18 +9,13 @@ import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { Button } from "../components/ui/Button";
 
 // Lazy-load individual tools
-const CssGridGenerator = lazy(() => import("../components/tools/CssGridGenerator"));
-const SvgWaveGenerator = lazy(() => import("../components/tools/SvgWaveGenerator"));
-const FluidTypescaleGenerator = lazy(() => import("../components/tools/FluidTypescaleGenerator"));
-const BoxShadowGenerator = lazy(() => import("../components/tools/BoxShadowGenerator"));
-const ColorConverterTool = lazy(() => import("../components/tools/ColorConverterTool"));
-const SeoMetaGenerator = lazy(() => import("../components/tools/SeoMetaGenerator"));
+const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
 const GrapesJsWebBuilder = lazy(() => import("../components/tools/GrapesJsWebBuilder"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
   const navigate = useNavigate();
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   const tool = getToolById(toolId || "");
 
@@ -34,7 +29,7 @@ export const ToolDetailPage: React.FC = () => {
         <SiteHeader />
         <div className="pt-40 pb-20 text-center px-6">
           <h1 className="text-3xl font-bold mb-4">{t("toolNotFound", "Tool Not Found")}</h1>
-          <p className="text-sm text-muted-foreground mb-6">{t("toolNotFoundDesc", "The interactive utility you requested does not exist or has moved.")}</p>
+          <p className="text-sm text-muted-foreground mb-6">{t("toolNotFoundDesc", "The interactive creative tool you requested does not exist or has moved.")}</p>
           <Link to={getLocalizedPath("/tools")} className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold text-black uppercase">
             <ArrowLeft size={14} /> {t("backToTools", "Back to Tools Hub")}
           </Link>
@@ -67,24 +62,16 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
-      case "css-grid-generator":
-        return <CssGridGenerator />;
-      case "svg-wave-generator":
-        return <SvgWaveGenerator />;
-      case "fluid-typography-generator":
-        return <FluidTypescaleGenerator />;
-      case "box-shadow-generator":
-        return <BoxShadowGenerator />;
-      case "color-converter-palette":
-        return <ColorConverterTool />;
-      case "seo-meta-generator":
-        return <SeoMetaGenerator />;
+      case "open-peeps":
+      case "peeps":
+      case "character-builder":
+        return <OpenPeepsBuilder />;
       case "grapesjs-web-builder":
       case "grapesjs":
       case "web-builder":
         return <GrapesJsWebBuilder />;
       default:
-        return null;
+        return <OpenPeepsBuilder />;
     }
   };
 
