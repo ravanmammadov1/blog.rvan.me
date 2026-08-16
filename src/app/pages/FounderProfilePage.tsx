@@ -112,17 +112,17 @@ const realExperience = [
 export default function FounderProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-    fetchAboutSection().then((data) => {
+    fetchAboutSection(language).then((data) => {
       if (data) setAboutData(data);
     });
-  }, []);
+  }, [language]);
 
   const sanityPortraitUrl = aboutData?.profilePhoto
     ? urlFor(aboutData.profilePhoto)?.width(1200).height(1200).url()

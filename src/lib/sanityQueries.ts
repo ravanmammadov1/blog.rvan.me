@@ -9,13 +9,14 @@ import {
   TestimonialItem,
 } from "../types/cms";
 
-export async function fetchSiteSettings(): Promise<SiteSettings | null> {
+export async function fetchSiteSettings(lang: string = "en"): Promise<SiteSettings | null> {
   try {
+    const isAz = lang === "az";
     const data = await client.fetch(`
       *[_type == "siteSettings"][0]{
         _id,
-        heroTitle,
-        heroSubtitle,
+        "heroTitle": select(${isAz} && defined(heroTitle_az) => heroTitle_az, heroTitle),
+        "heroSubtitle": select(${isAz} && defined(heroSubtitle_az) => heroSubtitle_az, heroSubtitle),
         availabilityStatus,
         heroEmbedUrl,
         favicon,
@@ -24,11 +25,11 @@ export async function fetchSiteSettings(): Promise<SiteSettings | null> {
         socialLinks,
         seo,
         navItems,
-        contactHeading,
-        contactSubtext,
+        "contactHeading": select(${isAz} && defined(contactHeading_az) => contactHeading_az, contactHeading),
+        "contactSubtext": select(${isAz} && defined(contactSubtext_az) => contactSubtext_az, contactSubtext),
         letsTalkLabel,
         heroCoordinates,
-        footerText,
+        "footerText": select(${isAz} && defined(footerText_az) => footerText_az, footerText),
         announcementBar,
         services,
         principles,
@@ -42,14 +43,15 @@ export async function fetchSiteSettings(): Promise<SiteSettings | null> {
   }
 }
 
-export async function fetchAboutSection(): Promise<AboutSection | null> {
+export async function fetchAboutSection(lang: string = "en"): Promise<AboutSection | null> {
   try {
+    const isAz = lang === "az";
     const data = await client.fetch(`
       *[_type == "about"][0]{
         _id,
-        heading,
-        introParagraph1,
-        introParagraph2,
+        "heading": select(${isAz} && defined(heading_az) => heading_az, heading),
+        "introParagraph1": select(${isAz} && defined(introParagraph1_az) => introParagraph1_az, introParagraph1),
+        "introParagraph2": select(${isAz} && defined(introParagraph2_az) => introParagraph2_az, introParagraph2),
         profilePhoto,
         stats,
         platformValues,
@@ -67,17 +69,18 @@ export async function fetchAboutSection(): Promise<AboutSection | null> {
   }
 }
 
-export async function fetchProjects(): Promise<ProjectItem[]> {
+export async function fetchProjects(lang: string = "en"): Promise<ProjectItem[]> {
   try {
+    const isAz = lang === "az";
     const data = await client.fetch(`
       *[_type == "projects" && defined(slug.current) && (status == "published" || !defined(status))] | order(order asc, _createdAt desc){
         _id,
-        title,
+        "title": select(${isAz} && defined(title_az) => title_az, title),
         slug,
         coverImage,
         client,
-        description,
-        type,
+        "description": select(${isAz} && defined(description_az) => description_az, description),
+        "type": select(${isAz} && defined(type_az) => type_az, type),
         tags,
         body,
         gallery,
@@ -560,27 +563,39 @@ function getLocalBlogBySlug(slug: string) {
   });
 }
 
-export async function fetchBlogBySlug(slug: string) {
+export async function fetchBlogBySlug(slug: string, lang: string = "en") {
   const raw = (slug || "").trim();
   const cleanSlug = decodeURIComponent(raw).replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "").trim();
   const lowerSlug = cleanSlug.toLowerCase();
+  const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
   const localBlog = getLocalBlogBySlug(cleanSlug);
 
   try {
     const data = await client.fetch(
       `
-      *[_type == "blog" && (slug.current == $cleanSlug || lower(slug.current) == $lowerSlug || slug.current == $raw || _id == $cleanSlug || _id == $raw) && (status == "published" || !defined(status))][0]{
+      *[_type == "blog" && (
+        slug.current == $cleanSlug || 
+        slug_az.current == $cleanSlug || 
+        lower(slug.current) == $lowerSlug || 
+        lower(slug_az.current) == $lowerSlug || 
+        slug.current == $raw || 
+        slug_az.current == $raw || 
+        _id == $cleanSlug || 
+        _id == $raw
+      ) && (status == "published" || !defined(status))][0]{
         _id,
-        title,
-        slug,
-        excerpt,
-        category,
+        "title": select(${isAz} && defined(title_az) => title_az, title),
+        "slug": select(${isAz} && defined(slug_az.current) => slug_az, slug),
+        "originalSlug": slug.current,
+        "azSlug": slug_az.current,
+        "excerpt": select(${isAz} && defined(excerpt_az) => excerpt_az, excerpt),
+        "category": select(${isAz} && defined(category_az) => category_az, category),
         tags,
         featured,
         publishDate,
         readTime,
         coverImage,
-        body
+        "body": select(${isAz} && defined(body_az) => body_az, body)
       }
     `,
       { raw, cleanSlug, lowerSlug }
@@ -590,11 +605,8 @@ export async function fetchBlogBySlug(slug: string) {
       if (localBlog.coverImage && typeof localBlog.coverImage === "object" && (localBlog.coverImage as any).url) {
         post.coverImage = localBlog.coverImage;
       }
-      if (Array.isArray(localBlog.body)) {
-        const localImages = localBlog.body.filter((b: any) => b && b._type === "image" && String(b._key || "").startsWith("generated_inline_"));
-        if (localImages.length > 0) {
-          post.body = localBlog.body;
-        }
+      if (Array.isArray(localBlog.body) && (!post.body || post.body.length === 0)) {
+        post.body = localBlog.body;
       }
     }
     return post;
@@ -604,22 +616,25 @@ export async function fetchBlogBySlug(slug: string) {
   }
 }
 
-export async function fetchAllBlogs() {
+export async function fetchAllBlogs(lang: string = "en") {
   try {
+    const isAz = lang === "az";
     const data = await client.fetch(
       `
-      *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(featured desc, publishDate desc){
+      *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
         _id,
-        title,
-        slug,
-        excerpt,
-        category,
+        "title": select(${isAz} && defined(title_az) => title_az, title),
+        "slug": select(${isAz} && defined(slug_az.current) => slug_az, slug),
+        "originalSlug": slug.current,
+        "azSlug": slug_az.current,
+        "excerpt": select(${isAz} && defined(excerpt_az) => excerpt_az, excerpt),
+        "category": select(${isAz} && defined(category_az) => category_az, category),
         tags,
         featured,
         publishDate,
         readTime,
         coverImage,
-        body
+        "body": select(${isAz} && defined(body_az) => body_az, body)
       }
     `
     );

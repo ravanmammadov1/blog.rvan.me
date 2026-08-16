@@ -34,14 +34,14 @@ import { useLanguage } from "../lib/i18n/LanguageContext";
 
 export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-  }, []);
+  }, [language]);
 
   return (
     <main className="relative min-h-screen bg-background text-foreground overflow-x-hidden" style={{ fontFamily: "'Geist', sans-serif" }}>

@@ -37,10 +37,10 @@ export default function BlogDetail() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     if (!slug) return;
@@ -49,14 +49,16 @@ export default function BlogDetail() {
 
     const cleanSlug = decodeURIComponent(slug).replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "").trim().toLowerCase();
 
-    Promise.all([fetchBlogBySlug(slug), fetchAllBlogs()])
+    Promise.all([fetchBlogBySlug(slug, language), fetchAllBlogs(language)])
       .then(([singlePost, postsList]) => {
         let foundPost = singlePost;
 
         if (!foundPost && postsList && postsList.length > 0) {
           foundPost = postsList.find((p) => {
             const pSlug = (typeof p.slug === "string" ? p.slug : p.slug?.current || p._id || "").toLowerCase().replace(/\/+$/, "");
-            return pSlug === cleanSlug || (p._id && p._id.toLowerCase() === cleanSlug);
+            const pOrigSlug = (p.originalSlug || "").toLowerCase();
+            const pAzSlug = (p.azSlug || "").toLowerCase();
+            return pSlug === cleanSlug || pOrigSlug === cleanSlug || pAzSlug === cleanSlug || (p._id && p._id.toLowerCase() === cleanSlug);
           }) || null;
         }
 
@@ -75,7 +77,7 @@ export default function BlogDetail() {
         setError("Failed to load article");
       })
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, language]);
 
   // Back to top visibility
   useEffect(() => {

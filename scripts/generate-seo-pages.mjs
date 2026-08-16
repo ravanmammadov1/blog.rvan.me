@@ -364,19 +364,41 @@ function applyPageMetadata(html, page) {
 async function fetchDynamicPages() {
   const projectId = process.env.VITE_SANITY_PROJECT_ID || "0lqwkcmg";
   const dataset = process.env.VITE_SANITY_DATASET || "production";
-  const query = `*[defined(slug.current) && (( _type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())) || (_type == "news" && (status == "published" || !defined(status)) && defined(publishedAt) && publishedAt <= now()) || (_type == "projects" && (status == "published" || !defined(status))) || (_type == "resource" && status == "published"))]{_type,"slug":slug.current,title,excerpt,description,publishDate,publishedAt,_updatedAt,coverImage,body}`;
+  const query = `*[defined(slug.current) && (( _type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())) || (_type == "news" && (status == "published" || !defined(status)) && defined(publishedAt) && publishedAt <= now()) || (_type == "projects" && (status == "published" || !defined(status))) || (_type == "resource" && status == "published"))]{
+    _type,
+    "slug": slug.current,
+    "slug_az": slug_az.current,
+    title,
+    title_az,
+    excerpt,
+    excerpt_az,
+    description,
+    description_az,
+    type,
+    type_az,
+    publishDate,
+    publishedAt,
+    _updatedAt,
+    coverImage,
+    body,
+    body_az
+  }`;
   const endpoint = `https://${projectId}.api.sanity.io/v2025-01-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
 
   try {
     const response = await fetch(endpoint, { signal: AbortSignal.timeout(10000) });
-    if (!response.ok) return [];
+    if (!response.ok) return { enPages: [], azPages: [] };
     const payload = await response.json();
-    return (payload.result || []).map((item) => {
+    const enPages = [];
+    const azPages = [];
+
+    for (const item of (payload.result || [])) {
       const type = item._type;
       const prefix = type === "blog" ? "/blog" : type === "news" ? "/news" : type === "projects" ? "/work" : "/resources";
       const lastmodDate = (item._updatedAt || item.publishDate || item.publishedAt || todayIso).split("T")[0];
 
-      return {
+      // EN Page
+      enPages.push({
         path: `${prefix}/${item.slug}`,
         title: `${item.title || "Creative resource"} — Ravan Mammadov`,
         description: item.excerpt || item.description || `Explore ${item.title || "this resource"} by Senior Creative Designer Ravan Mammadov.`,
@@ -387,11 +409,47 @@ async function fetchDynamicPages() {
         coverImage: item.coverImage,
         body: item.body,
         lastmod: lastmodDate,
-      };
-    });
+      });
+
+      // AZ Page (Localized)
+      const azTitle = item.title_az || item.title || "Yaradıcı resurs";
+      const azDesc = item.excerpt_az || item.description_az || item.excerpt || item.description || `${azTitle} haqqında ətraflı oxuyun.`;
+      const azSlug = item.slug_az || item.slug;
+
+      azPages.push({
+        path: `/az${prefix}/${azSlug}`,
+        title: `${azTitle} — Rəvan Məmmədov`,
+        description: azDesc,
+        type: type === "blog" || type === "news" ? "article" : "website",
+        schemaType: type === "news" ? "NewsArticle" : "BlogPosting",
+        publishDate: item.publishDate || item.publishedAt,
+        modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
+        coverImage: item.coverImage,
+        body: item.body_az || item.body,
+        lastmod: lastmodDate,
+      });
+
+      // If AZ slug is different from EN slug, also generate the /az/blog/original-slug route as alias
+      if (item.slug_az && item.slug_az !== item.slug) {
+        azPages.push({
+          path: `/az${prefix}/${item.slug}`,
+          title: `${azTitle} — Rəvan Məmmədov`,
+          description: azDesc,
+          type: type === "blog" || type === "news" ? "article" : "website",
+          schemaType: type === "news" ? "NewsArticle" : "BlogPosting",
+          publishDate: item.publishDate || item.publishedAt,
+          modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
+          coverImage: item.coverImage,
+          body: item.body_az || item.body,
+          lastmod: lastmodDate,
+        });
+      }
+    }
+
+    return { enPages, azPages };
   } catch (error) {
     console.warn("SEO prerender skipped dynamic CMS pages:", error?.message || error);
-    return [];
+    return { enPages: [], azPages: [] };
   }
 }
 
@@ -420,18 +478,80 @@ async function fetchFontPages() {
   }
 }
 
+const staticAzTranslations = {
+  "/": {
+    title: "Rəvan Məmmədov — Kreativ Dizayner & Art Direktor | Rvan.me",
+    description: "Bakıda fəaliyyət göstərən aparıcı kreativ dizayner: motion dizayn, brend kimliyi, qrafik dizayn və performans kreativləri.",
+  },
+  "/work": {
+    title: "Kreativ Portfolio — Motion, Brendinq və Qrafik Dizayn | Rəvan Məmmədov",
+    description: "Rəvan Məmmədovun seçilmiş motion dizayn, brend şəxsiyyəti və qrafik dizayn layihələri ilə tanış olun.",
+  },
+  "/contact": {
+    title: "Əlaqə — Kreativ Dizayn və Motion Layihələri | Rəvan Məmmədov",
+    description: "Motion dizayn, brend identikliyi və rəqəmsal kampaniya layihələri üçün Rəvan Məmmədov ilə əlaqə saxlayın.",
+  },
+  "/blog": {
+    title: "Dizayn, Motion və AI Məqalələri — Rəvan Məmmədov Bloq",
+    description: "Motion dizayn, qrafik dizayn, brend strategiyası və süni intellekt alətləri haqqında dərin analitik məqalələr.",
+  },
+  "/tools": {
+    title: "Dizayner Alətləri və Kreativ Dəst — Rəvan Məmmədov",
+    description: "Motion dizaynerlər, qrafik dizaynerlər və developerlər üçün brauzerdaxili praktik dizayn və CSS alətləri.",
+  },
+  "/about": {
+    title: "Haqqında — Rvan.me Rəqəmsal Ekosistem və Missiya",
+    description: "Dizaynerlər, marketoloqlar və developerlər üçün qurulmuş vahid yaradıcı ekosistem və studiya vizyonu.",
+  },
+  "/ravan-mammadov": {
+    title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
+    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
+  },
+  "/ravanmammadov": {
+    title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
+    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
+  },
+  "/profile": {
+    title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
+    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
+  },
+  "/resources": {
+    title: "Kreativ Resurslar — Açıq Mənbəli Şriftlər, İkonlar və Alətlər | Rvan.me",
+    description: "Dizaynerlər və proqramçılar üçün açıq mənbəli şrift ailələri, vektor aktivləri və UI dəstləri.",
+  },
+};
+
 const template = await fs.readFile(path.join(distRoot, "index.html"), "utf8");
 const fontPages = await fetchFontPages();
-const cmsPages = await fetchDynamicPages();
+const { enPages: dynamicEnPages, azPages: dynamicAzPages } = await fetchDynamicPages();
 
-const pages = [...staticPages, ...cmsPages, ...fontPages];
-const azPages = pages.map((p) => ({
+const staticAzPages = staticPages.map((p) => {
+  const azMeta = staticAzTranslations[p.path] || {
+    title: `${p.title} — Rvan.me (AZ)`,
+    description: p.description,
+  };
+  return {
+    ...p,
+    path: p.path === "/" ? "/az" : `/az${p.path}`,
+    title: azMeta.title,
+    description: azMeta.description,
+  };
+});
+
+const fontAzPages = fontPages.map((p) => ({
   ...p,
-  path: p.path === "/" ? "/az" : `/az${p.path}`,
+  path: `/az${p.path}`,
   title: `${p.title} — Rvan.me (AZ)`,
 }));
 
-const allPages = [...pages, ...azPages];
+const allPages = [
+  ...staticPages,
+  ...staticAzPages,
+  ...dynamicEnPages,
+  ...dynamicAzPages,
+  ...fontPages,
+  ...fontAzPages,
+];
 
 for (const page of allPages) {
   const pageDirectory = page.path === "/" ? distRoot : path.join(distRoot, ...page.path.split("/").filter(Boolean));

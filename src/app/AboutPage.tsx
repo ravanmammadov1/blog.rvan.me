@@ -77,20 +77,20 @@ export default function AboutPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-    fetchAboutSection().then((data) => {
+    fetchAboutSection(language).then((data) => {
       if (data) setAboutData(data);
     });
     fetchTestimonials().then((data) => {
       if (data && data.length > 0) setTestimonials(data);
     });
-  }, []);
+  }, [language]);
 
   const platformValues = (aboutData?.platformValues && aboutData.platformValues.length > 0)
     ? aboutData.platformValues

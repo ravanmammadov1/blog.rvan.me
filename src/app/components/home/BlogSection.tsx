@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { client } from "../../../lib/sanityClient";
+import { fetchAllBlogs } from "../../../lib/sanityQueries";
 import BlogCard from "../blog/BlogCard";
 import { Eyebrow } from "../Eyebrow";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
@@ -50,33 +50,17 @@ const FALLBACK_BLOGS = [
 export default function BlogSection() {
   const [blogPosts, setBlogPosts] = useState<any[]>(FALLBACK_BLOGS);
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
-    // Fetch Blogs in background without blocking initial render
-    client
-      .fetch(`
-        *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
-          _id,
-          title,
-          slug,
-          excerpt,
-          category,
-          tags,
-          featured,
-          publishDate,
-          readTime,
-          coverImage,
-          body
-        }
-      `)
+    fetchAllBlogs(language)
       .then((data) => {
         if (data && data.length > 0) {
           setBlogPosts(data);
         }
       })
       .catch(console.error);
-  }, []);
+  }, [language]);
 
   return (
     <section id="blog" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">

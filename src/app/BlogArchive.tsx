@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, X, ArrowLeft } from "lucide-react";
 
-import { client } from "../lib/sanityClient";
-import { fetchSiteSettings } from "../lib/sanityQueries";
+import { fetchAllBlogs, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import BlogCard from "./components/blog/BlogCard";
@@ -42,28 +41,11 @@ export default function BlogArchive() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
 
-    client
-      .fetch(
-        `
-        *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current) && (!defined(publishDate) || publishDate <= now())] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
-          _id,
-          title,
-          slug,
-          excerpt,
-          category,
-          tags,
-          featured,
-          publishDate,
-          readTime,
-          coverImage,
-          body
-        }
-      `
-      )
+    fetchAllBlogs(language)
       .then((data) => {
         if (data && data.length > 0) {
           setPosts(data);
@@ -76,7 +58,7 @@ export default function BlogArchive() {
         setPosts([]);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [language]);
 
   const categories = useMemo(() => {
     const list = [...new Set(posts.map((p) => p.category).filter(Boolean))];

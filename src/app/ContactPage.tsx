@@ -22,7 +22,7 @@ const fadeUp = {
 
 export default function ContactPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -34,10 +34,10 @@ export default function ContactPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-  }, []);
+  }, [language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
