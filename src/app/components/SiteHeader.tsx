@@ -125,14 +125,14 @@ function UserAuthMenu() {
             {/* 2. PREFERENCES SECTION */}
             <div className="py-3.5 border-b border-white/10 space-y-3.5">
               <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono">
-                PREFERENCES
+                {t("preferences", "PREFERENCES")}
               </div>
 
               {/* Appearance: Dark / Light */}
               <div>
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono mb-1.5">
-                  <span>Appearance</span>
-                  <span className="text-[10px] text-primary font-bold uppercase mono">{theme}</span>
+                  <span>{t("appearance", "Appearance")}</span>
+                  <span className="text-[10px] text-primary font-bold uppercase mono">{theme === "dark" ? (language === "az" ? "QARANLIQ" : "DARK") : (language === "az" ? "İŞIQLI" : "LIGHT")}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
                   <button
@@ -143,7 +143,7 @@ function UserAuthMenu() {
                         : "text-muted-foreground hover:text-white"
                     }`}
                   >
-                    <Moon size={13} /> Dark
+                    <Moon size={13} /> {t("darkTheme", "Dark")}
                   </button>
                   <button
                     onClick={() => setTheme("light")}
@@ -153,7 +153,7 @@ function UserAuthMenu() {
                         : "text-muted-foreground hover:text-white"
                     }`}
                   >
-                    <Sun size={13} /> Light
+                    <Sun size={13} /> {t("lightTheme", "Light")}
                   </button>
                 </div>
               </div>
@@ -161,7 +161,7 @@ function UserAuthMenu() {
               {/* Language: English / Azərbaycan dili */}
               <div>
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono mb-1.5">
-                  <span>Language</span>
+                  <span>{t("languageLabel", "Language")}</span>
                   <span className="text-[10px] text-primary font-bold uppercase mono">{language === "az" ? "AZ" : "EN"}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">

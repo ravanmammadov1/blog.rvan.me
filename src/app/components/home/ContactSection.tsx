@@ -206,31 +206,31 @@ export default function ContactSection() {
                 disabled={contactStatus === "loading"}
                 variant="outline"
                 size="lg"
-                className="w-full"
+                className="w-full whitespace-nowrap"
               >
                 {contactStatus === "loading" && (
-                  <>
+                  <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
                     <Loader2 size={16} className="animate-spin" />
                     <span>SENDING...</span>
-                  </>
+                  </span>
                 )}
                 {contactStatus === "success" && (
-                  <>
+                  <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
                     <CheckCircle2 size={16} />
                     <span>SENT SUCCESSFULLY</span>
-                  </>
+                  </span>
                 )}
                 {contactStatus === "error" && (
-                  <>
+                  <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
                     <AlertCircle size={16} />
                     <span>FAILED - TRY AGAIN</span>
-                  </>
+                  </span>
                 )}
                 {contactStatus === "idle" && (
-                  <>
-                    {t("btnSendMessage", "SEND MESSAGE")}
-                    <ArrowDownRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-                  </>
+                  <span className="inline-flex items-center justify-center gap-2.5 whitespace-nowrap w-full">
+                    <span>{t("btnSendMessage", "SEND MESSAGE")}</span>
+                    <ArrowDownRight size={16} className="shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                  </span>
                 )}
               </Button>
 

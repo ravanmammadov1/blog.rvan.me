@@ -100,7 +100,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground/90 font-medium max-w-2xl leading-relaxed mb-10">
-                {siteSettings?.heroSubtitle || t("heroSubtitle", "A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.")}
+                {siteSettings?.heroSubtitle || t("heroSubtitle", "A curated creative ecosystem for designers and developers — open-source resources, interactive tools, typography, and in-depth insights.")}
               </p>
 
               <div className="flex flex-wrap items-center gap-4">

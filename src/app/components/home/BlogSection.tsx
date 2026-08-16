@@ -121,7 +121,7 @@ export default function BlogSection() {
             size="lg"
             icon={<ArrowUpRight size={16} />}
           >
-            {t("exploreFullBlogArchive", "EXPLORE FULL BLOG ARCHIVE")} ({blogPosts.length})
+            {t("exploreFullBlogArchive", "EXPLORE FULL BLOG ARCHIVE")}
           </Button>
         </div>
       </div>

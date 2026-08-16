@@ -22,15 +22,14 @@ import { Button } from "./components/ui/Button";
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
-import { fetchAboutSection, fetchSiteSettings, fetchTestimonials } from "../lib/sanityQueries";
+import { fetchAboutSection, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
-import { AboutSection, SiteSettings, TestimonialItem } from "../types/cms";
+import { AboutSection, SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
 import ScrollToTopButton from "./components/ScrollToTopButton";
-import TestimonialsSection from "./components/TestimonialsSection";
 
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -63,20 +62,19 @@ const FALLBACK_VALUES = [
     title: "High Performance",
     description: "Engineered with modern web architecture, sub-second FlexSearch, instant static pre-rendering, and real-time synchronization.",
     icon: "Zap",
-    color: "purple",
+    color: "amber",
   },
   {
-    title: "Free & Open Access",
-    description: "Public access to resources with optional Google authentication for personalizing bookmarks and member features.",
-    icon: "Compass",
-    color: "primary",
+    title: "Design Precision",
+    description: "Every pixel, spacing unit, and fluid typography clamp is calibrated for balance, accessibility, and visual excellence.",
+    icon: "Sparkles",
+    color: "rose",
   },
 ];
 
 export default function AboutPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const { t, getLocalizedPath, language } = useLanguage();
 
   useEffect(() => {
@@ -86,9 +84,6 @@ export default function AboutPage() {
     });
     fetchAboutSection(language).then((data) => {
       if (data) setAboutData(data);
-    });
-    fetchTestimonials().then((data) => {
-      if (data && data.length > 0) setTestimonials(data);
     });
   }, [language]);
 
@@ -312,19 +307,7 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          4. CLIENT & COLLABORATOR TESTIMONIALS (FROM SANITY)
-      ───────────────────────────────────────────────────────────────────────────── */}
-      {testimonials.length > 0 && (
-        <TestimonialsSection
-          testimonials={testimonials}
-          title={t("testimonialsTitle", "Trusted by Creative Teams.")}
-          eyebrow={t("testimonialsEyebrow", "COLLABORATIONS & REVIEWS")}
-          subtitle={t("testimonialsSubtitle", "What art directors, marketing leads, and creative partners say about working with Ravan Mammadov.")}
-        />
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          5. BEHIND RVAN.ME — MEET THE FOUNDER SECTION (DYNAMIC FROM SANITY)
+          4. BEHIND RVAN.ME — MEET THE FOUNDER SECTION (DYNAMIC FROM SANITY)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-20 md:px-10 md:py-28 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">

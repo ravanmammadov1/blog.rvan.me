@@ -50,10 +50,10 @@ export default function ProfilePage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchSiteSettings().then((data) => {
+    fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-  }, []);
+  }, [language]);
 
   const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,7 +68,7 @@ export default function ProfilePage() {
     reader.onload = () => {
       const base64Url = reader.result as string;
       updateCustomAvatar(base64Url);
-      setPhotoSuccessMsg("Profile photo updated successfully!");
+      setPhotoSuccessMsg(t("profileUpdated", "Profile photo updated successfully!"));
       setTimeout(() => setPhotoSuccessMsg(""), 3500);
     };
     reader.readAsDataURL(file);
@@ -76,13 +76,13 @@ export default function ProfilePage() {
 
   const handleResetPhoto = () => {
     updateCustomAvatar(null);
-    setPhotoSuccessMsg("Reset to default profile photo.");
+    setPhotoSuccessMsg(t("profileReset", "Reset to default profile photo."));
     setTimeout(() => setPhotoSuccessMsg(""), 3500);
   };
 
   const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "G";
-  const userName = user ? (user.displayName || "User") : "Guest User";
-  const userEmail = user ? user.email : "Not signed in";
+  const userName = user ? (user.displayName || "User") : t("guestUser", "Guest User");
+  const userEmail = user ? user.email : t("notSignedIn", "Not signed in");
 
   return (
     <main
@@ -90,8 +90,8 @@ export default function ProfilePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="My Profile & Settings — Rvan.me"
-        description="Private user settings, profile photo customizer, interface theme, language preferences, and account control panel."
+        title={`${t("settingsTitle", "Settings")} — Rvan.me`}
+        description={t("settingsDescription", "Private user settings, profile photo customizer, interface theme, language preferences, and account control panel.")}
         url="https://www.rvan.me/profile"
       />
 
@@ -115,13 +115,13 @@ export default function ProfilePage() {
         <div className="mx-auto max-w-[1600px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className="mb-10">
             <span className="text-xs font-bold tracking-[0.2em] text-primary mono uppercase flex items-center gap-2">
-              <Sparkles size={14} /> USER CONTROL PANEL
+              <Sparkles size={14} /> {t("userControlPanel", "USER CONTROL PANEL")}
             </span>
             <h1 className="mt-3 text-4xl font-extrabold tracking-[-.05em] md:text-6xl text-foreground">
-              SETTINGS
+              {t("settingsTitle", "SETTINGS")}
             </h1>
             <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-2xl font-medium leading-relaxed">
-              Manage your personal profile details, profile picture, interface appearance, language preferences, and account controls.
+              {t("settingsDescription", "Manage your personal profile details, profile picture, interface appearance, language preferences, and account controls.")}
             </p>
           </motion.div>
 
@@ -135,10 +135,10 @@ export default function ProfilePage() {
             >
               <div>
                 <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">
-                  <ShieldCheck size={16} /> Authentication Required
+                  <ShieldCheck size={16} /> {t("authRequired", "Authentication Required")}
                 </div>
                 <p className="mt-1 text-xs md:text-sm text-muted-foreground font-medium">
-                  You are currently browsing as a Guest. Sign in with Google to save custom profile photo preferences and sync account settings.
+                  {t("authRequiredDesc", "You are currently browsing as a Guest. Sign in with Google to save custom profile photo preferences and sync account settings.")}
                 </p>
               </div>
               <Button
@@ -147,7 +147,7 @@ export default function ProfilePage() {
                 size="sm"
                 className="shrink-0"
               >
-                SIGN IN WITH GOOGLE
+                {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
               </Button>
             </motion.div>
           )}
@@ -157,7 +157,7 @@ export default function ProfilePage() {
             <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <UserIcon size={14} /> PROFILE
+                  <UserIcon size={14} /> {t("profileCardTitle", "PROFILE")}
                 </div>
 
                 {/* Profile Photo Display */}
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                       <button
                         onClick={() => fileInputRef.current?.click()}
                         className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-lg bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
-                        title="Change photo"
+                        title={t("changeProfilePhoto", "Change Profile Photo")}
                       >
                         <Camera size={12} />
                       </button>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                     <p className="text-xs text-muted-foreground truncate mono mt-0.5">{userEmail}</p>
                     {user && customAvatar && (
                       <span className="inline-flex items-center gap-1 text-[9px] font-mono text-emerald-400 font-bold mt-1">
-                        <Check size={10} /> Custom Photo
+                        <Check size={10} /> {t("customPhoto", "Custom Photo")}
                       </span>
                     )}
                   </div>
@@ -225,7 +225,7 @@ export default function ProfilePage() {
                         icon={<Camera size={14} />}
                         iconPosition="left"
                       >
-                        Change Profile Photo
+                        {t("changeProfilePhoto", "Change Profile Photo")}
                       </Button>
 
                       {customAvatar && (
@@ -237,7 +237,7 @@ export default function ProfilePage() {
                           icon={<RotateCcw size={13} />}
                           iconPosition="left"
                         >
-                          Reset Photo
+                          {t("resetPhoto", "Reset Photo")}
                         </Button>
                       )}
                     </>
@@ -248,7 +248,7 @@ export default function ProfilePage() {
                       size="sm"
                       className="w-full"
                     >
-                      SIGN IN WITH GOOGLE
+                      {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
                     </Button>
                   )}
                 </div>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                   className="w-full justify-between"
                   icon={<ArrowUpRight size={14} className="text-primary" />}
                 >
-                  View My Profile
+                  {t("viewMyProfile", "View My Profile")}
                 </Button>
               </div>
             </div>
@@ -271,10 +271,10 @@ export default function ProfilePage() {
             <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <Sun size={14} /> APPEARANCE
+                  <Sun size={14} /> {t("appearanceCardTitle", "APPEARANCE")}
                 </div>
                 <p className="text-xs text-muted-foreground font-mono mb-4">
-                  Select your preferred visual aesthetic theme.
+                  {t("appearanceDesc", "Select your preferred visual aesthetic theme.")}
                 </p>
                 <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
                   <button
@@ -283,7 +283,7 @@ export default function ProfilePage() {
                       theme === "dark" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
                     }`}
                   >
-                    <Moon size={14} /> Dark
+                    <Moon size={14} /> {t("darkTheme", "Dark")}
                   </button>
                   <button
                     onClick={() => setTheme("light")}
@@ -291,12 +291,12 @@ export default function ProfilePage() {
                       theme === "light" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
                     }`}
                   >
-                    <Sun size={14} /> Light
+                    <Sun size={14} /> {t("lightTheme", "Light")}
                   </button>
                 </div>
               </div>
               <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
-                Active: {theme} mode
+                {language === "az" ? `AKTİV: ${theme === "dark" ? "QARANLIQ" : "İŞIQLI"} REJİMİ` : `ACTIVE: ${theme.toUpperCase()} MODE`}
               </div>
             </div>
 
@@ -304,10 +304,10 @@ export default function ProfilePage() {
             <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <Globe size={14} /> LANGUAGE
+                  <Globe size={14} /> {t("languageCardTitle", "LANGUAGE")}
                 </div>
                 <p className="text-xs text-muted-foreground font-mono mb-4">
-                  Choose your preferred website language.
+                  {t("languageDesc", "Choose your preferred website language.")}
                 </p>
                 <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
                   <button
@@ -329,7 +329,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
-                Active: {language === "az" ? "Azərbaycan dili" : "English"}
+                {language === "az" ? "AKTİV: AZƏRBAYCAN DİLİ" : "ACTIVE: ENGLISH"}
               </div>
             </div>
           </div>
