@@ -14,8 +14,10 @@ import {
 import {
   searchIllustrations,
   ILLUSTRATION_CATEGORIES,
+  ILLUSTRATION_COLLECTIONS,
   IllustrationCategory,
-} from "../lib/illustrationEngine";
+  IllustrationCollection,
+} from "../lib/illustrationsData";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -79,9 +81,11 @@ export default function ResourcesArchive() {
 
   // Illustration Specimen Interactive Controls
   const [illustrationCategorySubfilter, setIllustrationCategorySubfilter] = useState<IllustrationCategory>("All");
+  const [illustrationCollectionSubfilter, setIllustrationCollectionSubfilter] = useState<IllustrationCollection>("All");
   const [illustrationColor, setIllustrationColor] = useState("#61c5ad");
-  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(48);
+  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(36);
   const [illustrationCategoryDropdownOpen, setIllustrationCategoryDropdownOpen] = useState(false);
+  const [illustrationCollectionDropdownOpen, setIllustrationCollectionDropdownOpen] = useState(false);
 
   const activeCategoryParam = searchParams.get("category") as ResourceCategoryKey;
   const activeCategory: ResourceCategoryKey =
@@ -182,10 +186,14 @@ export default function ResourcesArchive() {
     return searchLucideIcons(deferredSearch, iconCategorySubfilter);
   }, [deferredSearch, iconCategorySubfilter]);
 
-  // Filtered Vector Illustrations Catalog (1,000+ unDraw-styled templates)
+  // Filtered Vector Illustrations Catalog (1,770+ Authentic Open-Source SVGs)
   const filteredIllustrations = useMemo(() => {
-    return searchIllustrations(deferredSearch, illustrationCategorySubfilter);
-  }, [deferredSearch, illustrationCategorySubfilter]);
+    return searchIllustrations(
+      deferredSearch,
+      illustrationCategorySubfilter,
+      illustrationCollectionSubfilter
+    );
+  }, [deferredSearch, illustrationCategorySubfilter, illustrationCollectionSubfilter]);
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
@@ -536,67 +544,123 @@ export default function ResourcesArchive() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          3. ILLUSTRATIONS CATALOG SECTION (1,000+ Vector Templates)
+          3. ILLUSTRATIONS CATALOG SECTION (1,770+ Open-Source Vector Assets)
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "illustrations" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Single-Line Toolbar with Dropdown Category & Color Palette */}
+            {/* Single-Line Toolbar with Dropdown Category & Collection Filter */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
-              
-              {/* Illustration Category Selector Dropdown (No Count Numbers) */}
-              <div className="relative">
-                <button
-                  onClick={() => setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen)}
-                  className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 transition-all cursor-pointer select-none"
-                >
-                  <ImageIcon size={14} className="text-primary" />
-                  <span>Category: {illustrationCategorySubfilter}</span>
-                  <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
-                </button>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Category Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => {
+                      setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen);
+                      setIllustrationCollectionDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-primary/50 hover:bg-white/10 transition-all cursor-pointer select-none"
+                  >
+                    <ImageIcon size={14} className="text-primary" />
+                    <span>Category: {illustrationCategorySubfilter}</span>
+                    <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
 
-                <AnimatePresence>
-                  {illustrationCategoryDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-2 z-50 w-64 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
-                    >
-                      <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
-                        Select Category
-                      </div>
-                      <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                        {ILLUSTRATION_CATEGORIES.map((cat) => {
-                          const isSelected = illustrationCategorySubfilter === cat;
-                          return (
-                            <button
-                              key={cat}
-                              onClick={() => {
-                                setIllustrationCategorySubfilter(cat);
-                                setIllustrationCategoryDropdownOpen(false);
-                              }}
-                              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
-                                isSelected
-                                  ? "bg-primary text-black font-bold"
-                                  : "text-muted-foreground hover:text-white hover:bg-white/5"
-                              }`}
-                            >
-                              <span className="truncate">{cat}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  <AnimatePresence>
+                    {illustrationCategoryDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute top-full left-0 mt-2 z-50 w-64 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+                      >
+                        <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
+                          Select Category
+                        </div>
+                        <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                          {ILLUSTRATION_CATEGORIES.map((cat) => {
+                            const isSelected = illustrationCategorySubfilter === cat;
+                            return (
+                              <button
+                                key={cat}
+                                onClick={() => {
+                                  setIllustrationCategorySubfilter(cat);
+                                  setIllustrationCategoryDropdownOpen(false);
+                                }}
+                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
+                                  isSelected
+                                    ? "bg-primary text-black font-bold"
+                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                }`}
+                              >
+                                <span className="truncate">{cat}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Collection Filter Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => {
+                      setIllustrationCollectionDropdownOpen(!illustrationCollectionDropdownOpen);
+                      setIllustrationCategoryDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-primary/50 hover:bg-white/10 transition-all cursor-pointer select-none"
+                  >
+                    <Layers size={14} className="text-primary" />
+                    <span>Collection: {illustrationCollectionSubfilter}</span>
+                    <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCollectionDropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {illustrationCollectionDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute top-full left-0 mt-2 z-50 w-56 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+                      >
+                        <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
+                          Select Collection
+                        </div>
+                        <div className="space-y-1">
+                          {ILLUSTRATION_COLLECTIONS.map((col) => {
+                            const isSelected = illustrationCollectionSubfilter === col;
+                            return (
+                              <button
+                                key={col}
+                                onClick={() => {
+                                  setIllustrationCollectionSubfilter(col);
+                                  setIllustrationCollectionDropdownOpen(false);
+                                }}
+                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
+                                  isSelected
+                                    ? "bg-primary text-black font-bold"
+                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                }`}
+                              >
+                                <span className="truncate">{col}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
 
               {/* Dynamic Brand Color Customizer for Vector Illustrations */}
               <div className="flex items-center gap-2">
                 <Palette size={14} className="text-primary shrink-0" />
-                <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Brand Accent Color:</span>
+                <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Brand Tint:</span>
                 <div className="flex items-center gap-1.5 bg-black/40 border border-white/10 p-1 rounded-xl">
                   {COLOR_PRESETS.map((color) => (
                     <button
@@ -621,11 +685,15 @@ export default function ResourcesArchive() {
             </div>
 
             {/* Reset Filters Option if filtered */}
-            {(deferredSearch || illustrationCategorySubfilter !== "All") && (
-              <div className="mb-6 flex justify-end">
+            {(deferredSearch || illustrationCategorySubfilter !== "All" || illustrationCollectionSubfilter !== "All") && (
+              <div className="mb-6 flex items-center justify-between">
+                <span className="text-xs font-mono text-muted-foreground">
+                  Found {filteredIllustrations.length} matching vector illustrations
+                </span>
                 <button
                   onClick={() => {
                     setIllustrationCategorySubfilter("All");
+                    setIllustrationCollectionSubfilter("All");
                     handleSearchChange("");
                   }}
                   className="flex items-center gap-1.5 text-xs font-mono text-primary hover:text-white transition-colors cursor-pointer"
@@ -642,6 +710,7 @@ export default function ResourcesArchive() {
                 <button
                   onClick={() => {
                     setIllustrationCategorySubfilter("All");
+                    setIllustrationCollectionSubfilter("All");
                     handleSearchChange("");
                   }}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
@@ -661,16 +730,19 @@ export default function ResourcesArchive() {
                   ))}
                 </div>
 
-                {/* Load More Button (No Count Numbers) */}
+                {/* Load More Button */}
                 {visibleIllustrationLimit < filteredIllustrations.length && (
-                  <div className="mt-10 text-center">
+                  <div className="mt-12 text-center flex flex-col items-center gap-3">
                     <Button
-                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 18)}
+                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 36)}
                       variant="outline"
                       size="md"
                     >
-                      LOAD MORE ILLUSTRATIONS
+                      LOAD MORE ({filteredIllustrations.length - visibleIllustrationLimit} REMAINING)
                     </Button>
+                    <span className="text-[11px] font-mono text-muted-foreground">
+                      Showing {Math.min(visibleIllustrationLimit, filteredIllustrations.length)} of {filteredIllustrations.length} open-source illustrations
+                    </span>
                   </div>
                 )}
               </>

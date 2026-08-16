@@ -6,7 +6,8 @@
   "scripts": {
     "build": "vite build && node scripts/generate-seo-pages.mjs",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "illustrations:index": "node scripts/build-illustration-library.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",

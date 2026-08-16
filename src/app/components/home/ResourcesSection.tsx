@@ -5,7 +5,7 @@ import { ArrowUpRight, Type, Sparkles, Image as ImageIcon } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 import type { IconItem } from "../../../lib/iconEngine";
-import { ILLUSTRATION_CATALOG } from "../../../lib/illustrationEngine";
+import { ILLUSTRATIONS_CATALOG } from "../../../lib/illustrationsData";
 import { IconSpecimenCard } from "../content/IconSpecimenCard";
 import { FontSpecimenCard } from "../content/FontSpecimenCard";
 import { IllustrationSpecimenCard } from "../content/IllustrationSpecimenCard";
@@ -82,7 +82,7 @@ export default function ResourcesSection() {
   }, []);
 
   const showcaseIllustrations = useMemo(() => {
-    return ILLUSTRATION_CATALOG.slice(0, 4);
+    return ILLUSTRATIONS_CATALOG.slice(0, 4);
   }, []);
 
   return (
