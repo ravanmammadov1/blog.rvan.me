@@ -10,8 +10,8 @@
       "destination": "/api/sitemap"
     },
     {
-      "source": "/rss.xml",
-      "destination": "/api/rss"
+      "source": "/about",
+      "destination": "/about/index.html"
     },
     {
       "source": "/contact",
@@ -50,6 +50,10 @@
       "destination": "/ravan-mammadov/index.html"
     },
     {
+      "source": "/ravanmammadov",
+      "destination": "/ravanmammadov/index.html"
+    },
+    {
       "source": "/privacy-policy",
       "destination": "/privacy-policy/index.html"
     },
@@ -84,25 +88,11 @@
   ],
   "crons": [
     {
-      "path": "/api/ingest-news",
-      "schedule": "0 6 * * *"
-    },
-    {
       "path": "/api/linkedin/pipeline?action=publish-second",
       "schedule": "0 12 * * *"
     }
   ],
   "redirects": [
-    {
-      "source": "/ravanmammadov",
-      "destination": "/ravan-mammadov",
-      "permanent": true
-    },
-    {
-      "source": "/about",
-      "destination": "/ravan-mammadov",
-      "permanent": true
-    },
     {
       "source": "/terms-of-service",
       "destination": "/terms",

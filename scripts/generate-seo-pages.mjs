@@ -51,6 +51,20 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/ravan-mammadov",
+    title: "Ravan Mammadov — Founder & Senior Creative Designer",
+    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
+    type: "profile",
+    lastmod: todayIso,
+  },
+  {
+    path: "/ravanmammadov",
+    title: "Ravan Mammadov — Founder & Senior Creative Designer",
+    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
+    type: "profile",
+    lastmod: todayIso,
+  },
+  {
     path: "/profile",
     title: "Ravan Mammadov — Founder & Senior Creative Designer",
     description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",

@@ -49,7 +49,7 @@ export default function BlogArchive() {
     client
       .fetch(
         `
-        *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current) && (!defined(publishDate) || publishDate <= now())] | order(featured desc, publishDate desc){
+        *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current) && (!defined(publishDate) || publishDate <= now())] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
           _id,
           title,
           slug,

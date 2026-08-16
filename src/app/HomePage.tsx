@@ -76,14 +76,31 @@ export default function HomePage() {
                 className="font-bold tracking-[-.04em] leading-[1.05] text-foreground mb-8 w-full"
                 style={{ fontSize: "clamp(2.5rem, 6vw, 6.2rem)" }}
               >
-                {t("heroTitle1", "Design that moves.")}<br />
-                <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
-                  {t("heroTitle2", "Ideas that matter.")}
-                </span>
+                {siteSettings?.heroTitle ? (
+                  siteSettings.heroTitle.includes("\n") ? (
+                    <>
+                      {siteSettings.heroTitle.split("\n")[0]}<br />
+                      <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
+                        {siteSettings.heroTitle.split("\n").slice(1).join(" ")}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
+                      {siteSettings.heroTitle}
+                    </span>
+                  )
+                ) : (
+                  <>
+                    {t("heroTitle1", "Design that moves.")}<br />
+                    <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
+                      {t("heroTitle2", "Ideas that matter.")}
+                    </span>
+                  </>
+                )}
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground/90 font-medium max-w-2xl leading-relaxed mb-10">
-                {t("heroSubtitle", "A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.")}
+                {siteSettings?.heroSubtitle || t("heroSubtitle", "A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.")}
               </p>
 
               <div className="flex flex-wrap items-center gap-4">

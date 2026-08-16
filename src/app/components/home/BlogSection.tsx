@@ -56,7 +56,7 @@ export default function BlogSection() {
     // Fetch Blogs in background without blocking initial render
     client
       .fetch(`
-        *[_type == "blog"] | order(featured desc, publishDate desc){
+        *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
           _id,
           title,
           slug,

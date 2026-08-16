@@ -9,7 +9,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: import.meta.env.PROD,
+  useCdn: false, // Live un-cached runtime queries for real-time CMS updates
 });
 
 const builder = createImageUrlBuilder({ projectId, dataset });
