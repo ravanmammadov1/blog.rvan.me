@@ -1,4 +1,5 @@
 import { client } from "./sanityClient";
+import exportData from "../../sanity_to_wp_export.json";
 import {
   NewsItem,
   ToolItem,
@@ -543,8 +544,17 @@ export async function fetchRelatedContentItems(currentId: string, contentType: s
     return [];
   }
 }
+function getLocalBlogBySlug(slug: string) {
+  const blogs = (exportData as any)?.blogs || [];
+  return blogs.find((b: any) => {
+    const s = b.slug;
+    const slugStr = typeof s === "object" ? s?.current : s;
+    return slugStr === slug;
+  });
+}
 
 export async function fetchBlogBySlug(slug: string) {
+  const localBlog = getLocalBlogBySlug(slug);
   try {
     const data = await client.fetch(
       `
@@ -564,10 +574,22 @@ export async function fetchBlogBySlug(slug: string) {
     `,
       { slug }
     );
-    return data || null;
+    const post = data || localBlog || null;
+    if (post && localBlog) {
+      if (localBlog.coverImage && typeof localBlog.coverImage === "object" && (localBlog.coverImage as any).url) {
+        post.coverImage = localBlog.coverImage;
+      }
+      if (Array.isArray(localBlog.body)) {
+        const localImages = localBlog.body.filter((b: any) => b && b._type === "image" && String(b._key || "").startsWith("generated_inline_"));
+        if (localImages.length > 0) {
+          post.body = localBlog.body;
+        }
+      }
+    }
+    return post;
   } catch (error) {
     console.error("Error fetching blog by slug from Sanity:", error);
-    return null;
+    return localBlog || null;
   }
 }
 
