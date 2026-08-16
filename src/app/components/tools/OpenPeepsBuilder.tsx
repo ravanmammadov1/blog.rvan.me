@@ -39,7 +39,7 @@ import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 export default function OpenPeepsBuilder() {
   const { language } = useLanguage();
-  const [viewMode, setViewMode] = useState<"gallery" | "studio" | "guide">("gallery");
+  const [viewMode, setViewMode] = useState<"studio">("studio");
   const [galleryCategory, setGalleryCategory] = useState<"busts" | "standing" | "sitting">("busts");
   const [config, setConfig] = useState<PeepConfig>(DEFAULT_PEEP_CONFIG);
   const [activeTab, setActiveTab] = useState<"expression" | "hair" | "accessory" | "body" | "colors">("expression");
@@ -139,7 +139,7 @@ export default function OpenPeepsBuilder() {
             <h2 className="text-base font-extrabold text-white tracking-tight uppercase font-mono flex items-center gap-2">
               <span>CHARACTER BUILDER TOOL</span>
               <span className="text-[9px] font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full">
-                584,688+ COMBOS • CC0
+                CC0 • Open Source
               </span>
             </h2>
           </div>
@@ -148,33 +148,10 @@ export default function OpenPeepsBuilder() {
         {/* View Mode Switcher (Gallery / Studio / Guide) */}
         <div className="flex items-center gap-2">
           <div className="flex items-center bg-white/5 p-1 rounded-xl border border-white/10 text-xs font-mono">
-            <button
-              onClick={() => setViewMode("gallery")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                viewMode === "gallery" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-              }`}
-            >
-              <Grid size={13} />
-              <span>{language === "az" ? "Kataloq" : "Grab & Go"}</span>
-            </button>
-            <button
-              onClick={() => setViewMode("studio")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                viewMode === "studio" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-              }`}
-            >
+            <span className="px-3 py-1.5 rounded-lg font-bold bg-primary text-black flex items-center gap-1.5">
               <SlidersHorizontal size={13} />
               <span>{language === "az" ? "Studio" : "Custom Studio"}</span>
-            </button>
-            <button
-              onClick={() => setViewMode("guide")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                viewMode === "guide" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-              }`}
-            >
-              <HelpCircle size={13} />
-              <span>{language === "az" ? "Bələdçi" : "How to Mix"}</span>
-            </button>
+            </span>
           </div>
 
           <button
@@ -188,193 +165,14 @@ export default function OpenPeepsBuilder() {
         </div>
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          1. GRAB AND GO! PRE-MADE GALLERY SECTION (8 Busts, 8 Standing, 8 Sitting)
-      ───────────────────────────────────────────────────────────────────────────── */}
-      {viewMode === "gallery" && (
-        <div className="p-6 md:p-10 space-y-8 bg-black/40">
-          {/* Gallery Header & Subtitle */}
-          <div className="text-center space-y-2 max-w-xl mx-auto">
-            <h3 className="text-3xl md:text-5xl font-extrabold tracking-tight font-serif italic text-white">
-              Grab and go!
-            </h3>
-            <p className="text-sm text-muted-foreground font-medium">
-              {language === "az"
-                ? "Dərhal yükləməyə hazır olan 24+ orijinal əl ilə çəkilmiş vektor personaj."
-                : "Get started with these ready-to-download, hand-drawn vector characters."}
-            </p>
-          </div>
 
-          {/* Gallery Category Tabs */}
-          <div className="flex justify-center border-b border-white/10 pb-4">
-            <div className="flex items-center gap-8 text-sm font-mono font-bold">
-              {(["busts", "standing", "sitting"] as const).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setGalleryCategory(cat)}
-                  className={`pb-2 capitalize transition-all border-b-2 cursor-pointer ${
-                    galleryCategory === cat
-                      ? "border-primary text-primary font-extrabold text-base"
-                      : "border-transparent text-muted-foreground hover:text-white"
-                  }`}
-                >
-                  {cat === "busts" ? `Busts (${PREMADE_PEEPS.filter(p => p.category === "busts").length})` : cat === "standing" ? `Standing (${PREMADE_PEEPS.filter(p => p.category === "standing").length})` : `Sitting (${PREMADE_PEEPS.filter(p => p.category === "sitting").length})`}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredPremade.map((peep) => {
-              const svgData = buildPeepSvg(peep.config, 240);
-              return (
-                <div
-                  key={peep.id}
-                  className="group rounded-2xl border border-white/10 bg-[#ffffff] text-black p-4 flex flex-col items-center justify-between shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/50"
-                >
-                  {/* Visual Render */}
-                  <div
-                    className="w-full aspect-square flex items-center justify-center cursor-pointer"
-                    onClick={() => handleCustomizePremade(peep)}
-                    dangerouslySetInnerHTML={{ __html: svgData }}
-                    title="Click to edit in Studio"
-                  />
 
-                  {/* Character Name */}
-                  <span className="text-xs font-mono font-bold text-zinc-800 text-center truncate w-full mb-3">
-                    {peep.name}
-                  </span>
-
-                  {/* Action Buttons: PNG | SVG | Edit */}
-                  <div className="w-full flex items-center gap-2 pt-2 border-t border-zinc-200">
-                    <button
-                      onClick={() => handleDownloadPng(svgData, `${peep.id}.png`)}
-                      className="flex-1 py-1.5 rounded-lg border border-zinc-300 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 text-[11px] font-mono font-bold transition text-center uppercase cursor-pointer"
-                    >
-                      PNG
-                    </button>
-                    <button
-                      onClick={() => handleDownloadSvg(svgData, `${peep.id}.svg`)}
-                      className="flex-1 py-1.5 rounded-lg border border-zinc-300 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 text-[11px] font-mono font-bold transition text-center uppercase cursor-pointer"
-                    >
-                      SVG
-                    </button>
-                    <button
-                      onClick={() => handleCustomizePremade(peep)}
-                      className="px-2.5 py-1.5 rounded-lg bg-zinc-900 text-white hover:bg-black text-[11px] font-mono font-bold transition cursor-pointer"
-                      title="Edit in Studio"
-                    >
-                      ✏️
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          2. "HOW TO MIX A PEEP" ANATOMY GUIDE SECTION (Matching Image 1)
-      ───────────────────────────────────────────────────────────────────────────── */}
-      {viewMode === "guide" && (
-        <div className="p-6 md:p-12 bg-white text-zinc-900 flex flex-col items-center">
-          {/* Headline */}
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
-            <h3 className="text-4xl md:text-5xl font-extrabold font-serif italic text-black">
-              How to mix a Peep.
-            </h3>
-            <p className="text-sm md:text-base text-zinc-600 leading-relaxed font-medium">
-              Creating a character is easy! Use any product design tool or mix nested components in our interactive studio. There are over <strong className="text-black font-extrabold">584,688 possible combinations</strong> (yup, someone did the math!).
-            </p>
-          </div>
-
-          {/* Interactive Illustrated Anatomy Canvas */}
-          <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 items-center py-6">
-            {/* Left Annotations */}
-            <div className="space-y-8 text-left md:text-right">
-              <div>
-                <h4 className="text-lg font-bold text-black flex items-center md:justify-end gap-2">
-                  <span>Top them off</span>
-                </h4>
-                <p className="text-xs text-zinc-600 mt-1">
-                  You can choose curly, long, afro, dreadlocks, hats or no hair at all.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-bold text-black flex items-center md:justify-end gap-2">
-                  <span>Add a feeling</span>
-                </h4>
-                <p className="text-xs text-zinc-600 mt-1">
-                  Put an emotion on that beautiful face—smiles, laughs, winks, or 3-eyed aliens.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-bold text-black flex items-center md:justify-end gap-2">
-                  <span>Select a body</span>
-                </h4>
-                <p className="text-xs text-zinc-600 mt-1">
-                  Body language is just as important! Busts, standing skaters, or sitting coders.
-                </p>
-              </div>
-            </div>
-
-            {/* Center Illustrated Character Preview */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div
-                className="w-64 h-64 flex items-center justify-center"
-                dangerouslySetInnerHTML={{ __html: buildPeepSvg(guidePeepConfig, 260) }}
-              />
-              <button
-                onClick={() => setViewMode("studio")}
-                className="mt-4 px-6 py-2.5 rounded-full bg-black text-white text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2 hover:scale-105 transition cursor-pointer shadow-lg"
-              >
-                <span>OPEN IN STUDIO</span>
-                <ArrowRight size={14} />
-              </button>
-            </div>
-
-            {/* Right Annotations */}
-            <div className="space-y-8 text-left">
-              <div>
-                <h4 className="text-lg font-bold text-black flex items-center gap-2">
-                  <span>Give the gift of vision</span>
-                </h4>
-                <p className="text-xs text-zinc-600 mt-1">
-                  Choose from clear wire round lenses, dark sunnies, or eyepatch.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-bold text-black flex items-center gap-2">
-                  <span>Add facial hair</span>
-                </h4>
-                <p className="text-xs text-zinc-600 mt-1">
-                  Everyone loves a mustache—or full hipster beard, or... you get it.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-bold text-black flex items-center gap-2">
-                  <span>Change the colors</span>
-                </h4>
-                <p className="text-xs text-zinc-600 mt-1">
-                  The black and white colors are just a starting point—you can customize them in full color!
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ─────────────────────────────────────────────────────────────────────────────
           3. INTERACTIVE CHARACTER STUDIO SECTION
       ───────────────────────────────────────────────────────────────────────────── */}
-      {viewMode === "studio" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
           {/* ── LEFT: MODULAR ASSET SELECTOR ── */}
           <div className="lg:col-span-4 border-b lg:border-b-0 lg:border-r border-white/10 bg-black/30 flex flex-col">
             {/* Tab Selector */}
@@ -732,7 +530,6 @@ export default function OpenPeepsBuilder() {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 }

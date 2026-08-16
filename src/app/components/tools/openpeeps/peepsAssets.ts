@@ -109,6 +109,119 @@ export const EXPRESSIONS = [
       <path d="M88,96 C94,94 102,98 112,93" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
     `,
   },
+  {
+    id: "big_smile",
+    name: "Big Happy Smile 😊",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="86" cy="74" r="4" fill="#111" />
+      <circle cx="114" cy="74" r="4" fill="#111" />
+      <circle cx="86" cy="72" r="1.5" fill="#fff" />
+      <circle cx="114" cy="72" r="1.5" fill="#fff" />
+      <path d="M82,66 C86,62 92,63 94,66" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M106,66 C108,63 114,62 118,66" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M100,76 C102,80 98,82 100,84" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M84,92 C90,102 110,102 116,92" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M86,93 C92,99 108,99 114,93" fill="#b91c1c" />
+    `,
+  },
+  {
+    id: "wink_tongue",
+    name: "Playful Wink 😜",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="86" cy="74" r="4" fill="#111" />
+      <path d="M106,74 C110,70 118,74" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M82,66 C86,62 92,63 94,66" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M100,76 C102,80 98,82 100,84" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M88,92 C96,100 104,100 112,92" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M100,102 C102,108 98,112 96,108" fill="#e74c4c" stroke="#111" stroke-width="2" />
+    `,
+  },
+  {
+    id: "cute_blush",
+    name: "Cute Blushing 🥰",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="86" cy="74" r="3" fill="#111" />
+      <circle cx="114" cy="74" r="3" fill="#111" />
+      <circle cx="86" cy="72" r="1.2" fill="#fff" />
+      <circle cx="114" cy="72" r="1.2" fill="#fff" />
+      <ellipse cx="78" cy="86" rx="8" ry="4" fill="#f5a0a0" opacity="0.5" />
+      <ellipse cx="122" cy="86" rx="8" ry="4" fill="#f5a0a0" opacity="0.5" />
+      <path d="M82,66 C86,63 92,64 94,66" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M106,66 C108,64 114,63 118,66" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M100,76 C102,79 98,82 100,83" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M92,94 C96,100 104,100 108,94" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
+    `,
+  },
+  {
+    id: "surprised_wow",
+    name: "Surprised Wow 😮",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="86" cy="72" r="6" fill="#fff" stroke="#111" stroke-width="3" />
+      <circle cx="86" cy="72" r="3" fill="#111" />
+      <circle cx="114" cy="72" r="6" fill="#fff" stroke="#111" stroke-width="3" />
+      <circle cx="114" cy="72" r="3" fill="#111" />
+      <path d="M80,60 C86,54 92,56 96,60" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
+      <path d="M104,60 C108,56 114,54 120,60" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
+      <ellipse cx="100" cy="96" rx="8" ry="10" fill="#b91c1c" stroke="#111" stroke-width="3" />
+    `,
+  },
+  {
+    id: "cool_sunglasses",
+    name: "Cool & Confident 😎",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <rect x="76" y="66" width="22" height="16" rx="4" fill="#111" stroke="#111" stroke-width="2" />
+      <rect x="102" y="66" width="22" height="16" rx="4" fill="#111" stroke="#111" stroke-width="2" />
+      <line x1="98" y1="72" x2="102" y2="72" stroke="#111" stroke-width="3" />
+      <line x1="76" y1="72" x2="72" y2="68" stroke="#111" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="124" y1="72" x2="128" y2="68" stroke="#111" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M100,78 C102,82 98,84 100,86" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M90,96 C96,100 104,100 110,96" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
+    `,
+  },
+  {
+    id: "sleepy_zzz",
+    name: "Sleepy & Tired 😴",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M80,74 C86,72 92,72 96,74" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M104,74 C110,72 116,72 120,74" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M100,78 C101,82 99,84 100,85" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M94,96 C98,98 102,98 106,96" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
+      <text x="126" y="58" font-size="12" font-weight="bold" fill="#111">z</text>
+      <text x="134" y="48" font-size="16" font-weight="bold" fill="#111">z</text>
+      <text x="144" y="36" font-size="20" font-weight="bold" fill="#111">Z</text>
+    `,
+  },
+  {
+    id: "heart_eyes",
+    name: "Heart Eyes 😍",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M80,70 C80,64 86,62 88,66 C90,62 96,64 96,70 C96,76 88,82 88,82 C88,82 80,76 80,70 Z" fill="#e74c4c" stroke="#111" stroke-width="2" />
+      <path d="M106,70 C106,64 112,62 114,66 C116,62 122,64 122,70 C122,76 114,82 114,82 C114,82 106,76 106,70 Z" fill="#e74c4c" stroke="#111" stroke-width="2" />
+      <path d="M100,78 C102,82 98,84 100,86" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M86,94 C92,102 108,102 114,94" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M88,95 C94,100 106,100 112,95" fill="#b91c1c" />
+    `,
+  },
+  {
+    id: "angry_grumpy",
+    name: "Angry Grumpy 😠",
+    svg: `
+      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="88" cy="76" r="3.5" fill="#111" />
+      <circle cx="112" cy="76" r="3.5" fill="#111" />
+      <path d="M78,62 L98,70" stroke="#111" stroke-width="4" stroke-linecap="round" />
+      <path d="M122,62 L102,70" stroke="#111" stroke-width="4" stroke-linecap="round" />
+      <path d="M100,76 L102,84 L98,86" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
+      <path d="M88,98 L112,98" stroke="#111" stroke-width="4" stroke-linecap="round" />
+    `,
+  },
 ];
 
 // ─── 2. DETAILED HAIR & HEADWEAR (Pablo Stanley Art) ───
@@ -183,6 +296,53 @@ export const HAIR_STYLES = [
       <line x1="120" y1="54" x2="120" y2="70" stroke="#111" stroke-width="2" />
     `,
   },
+  {
+    id: "messy_bun",
+    name: "Messy Top Bun",
+    svg: `
+      <circle cx="100" cy="18" r="18" fill="var(--hair-color)" stroke="#111" stroke-width="4" />
+      <path d="M65,56 C55,28 72,8 100,8 C128,8 145,28 135,56 C135,44 120,32 100,32 C80,32 65,44 65,56 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+    `,
+  },
+  {
+    id: "mohawk",
+    name: "Punk Mohawk",
+    svg: `
+      <path d="M92,56 L88,6 L96,14 L100,0 L104,14 L112,6 L108,56" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+      <path d="M70,56 C60,32 75,16 88,14" stroke="#111" stroke-width="3" fill="none" />
+      <path d="M130,56 C140,32 125,16 112,14" stroke="#111" stroke-width="3" fill="none" />
+    `,
+  },
+  {
+    id: "pigtails",
+    name: "Cute Pigtails",
+    svg: `
+      <path d="M65,56 C55,28 72,8 100,8 C128,8 145,28 135,56 C135,44 120,32 100,32 C80,32 65,44 65,56 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+      <path d="M62,56 C52,60 48,80 54,100 C56,106 60,108 62,104 C58,88 60,72 66,62" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+      <path d="M138,56 C148,60 152,80 146,100 C144,106 140,108 138,104 C142,88 140,72 134,62" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+    `,
+  },
+  {
+    id: "curly_medium",
+    name: "Curly Medium",
+    svg: `
+      <path d="M58,66 C48,30 72,6 100,6 C128,6 152,30 142,66" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+      <circle cx="58" cy="70" r="8" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+      <circle cx="66" cy="82" r="7" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+      <circle cx="142" cy="70" r="8" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+      <circle cx="134" cy="82" r="7" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+    `,
+  },
+  {
+    id: "headphones",
+    name: "With Headphones 🎧",
+    svg: `
+      <path d="M65,56 C55,28 72,8 100,8 C128,8 145,28 135,56 C135,44 120,32 100,32 C80,32 65,44 65,56 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+      <path d="M58,70 C52,40 68,18 100,18 C132,18 148,40 142,70" stroke="#555" stroke-width="5" fill="none" stroke-linecap="round" />
+      <rect x="50" y="64" width="14" height="22" rx="6" fill="#333" stroke="#111" stroke-width="3" />
+      <rect x="136" y="64" width="14" height="22" rx="6" fill="#333" stroke="#111" stroke-width="3" />
+    `,
+  },
 ];
 
 // ─── 3. ACCESSORIES & PROPS ───
@@ -216,6 +376,50 @@ export const ACCESSORIES = [
     svg: `
       <path d="M70,84 C68,122 84,142 100,142 C116,142 132,122 130,84 C124,98 116,106 100,106 C84,106 76,98 70,84 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
       <path d="M86,88 C94,84 99,88 100,89 C101,88 106,84 114,88 C118,93 108,97 100,93 C92,97 82,93 86,88 Z" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
+    `,
+  },
+  {
+    id: "face_mask",
+    name: "Face Mask 😷",
+    svg: `
+      <path d="M74,84 C74,78 80,76 100,76 C120,76 126,78 126,84 L126,100 C126,110 116,116 100,116 C84,116 74,110 74,100 Z" fill="#b8d8e8" stroke="#111" stroke-width="3" />
+      <line x1="74" y1="84" x2="62" y2="78" stroke="#111" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="126" y1="84" x2="138" y2="78" stroke="#111" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M82,90 L118,90" stroke="#8abbd4" stroke-width="1.5" opacity="0.6" />
+      <path d="M82,96 L118,96" stroke="#8abbd4" stroke-width="1.5" opacity="0.6" />
+    `,
+  },
+  {
+    id: "bow_tie",
+    name: "Fancy Bow Tie 🎀",
+    svg: `
+      <path d="M84,128 L100,120 L116,128 L100,136 Z" fill="#e74c4c" stroke="#111" stroke-width="3" stroke-linejoin="round" />
+      <circle cx="100" cy="128" r="4" fill="#c0392b" stroke="#111" stroke-width="2" />
+    `,
+  },
+  {
+    id: "earrings",
+    name: "Hoop Earrings 💍",
+    svg: `
+      <circle cx="62" cy="96" r="8" stroke="#daa520" stroke-width="3" fill="none" />
+      <circle cx="138" cy="96" r="8" stroke="#daa520" stroke-width="3" fill="none" />
+    `,
+  },
+  {
+    id: "bandana",
+    name: "Head Bandana",
+    svg: `
+      <path d="M62,60 C62,54 80,50 100,50 C120,50 138,54 138,60 L140,66 L60,66 Z" fill="#e74c4c" stroke="#111" stroke-width="3" stroke-linejoin="round" />
+      <path d="M136,58 C142,62 148,70 146,78" stroke="#e74c4c" stroke-width="4" stroke-linecap="round" fill="none" />
+    `,
+  },
+  {
+    id: "monocle",
+    name: "Gentleman's Monocle 🧐",
+    svg: `
+      <circle cx="112" cy="74" r="12" stroke="#daa520" stroke-width="3" fill="none" />
+      <line x1="124" y1="74" x2="132" y2="68" stroke="#daa520" stroke-width="2" stroke-linecap="round" />
+      <line x1="112" y1="86" x2="112" y2="110" stroke="#daa520" stroke-width="1.5" />
     `,
   },
 ];
