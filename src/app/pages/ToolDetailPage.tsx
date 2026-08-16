@@ -99,7 +99,7 @@ export const ToolDetailPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase mono flex items-center gap-1.5 mb-2">
-                <span>{tool.icon}</span> {t("inBrowserUtility", "IN-BROWSER UTILITY")}
+                <span>{typeof tool.icon === "string" ? tool.icon : "🎨"}</span> {t("inBrowserUtility", "IN-BROWSER UTILITY")}
               </span>
               <h1 className="text-3xl font-bold tracking-tight md:text-5xl text-foreground">
                 {tool.name}
@@ -141,7 +141,7 @@ export const ToolDetailPage: React.FC = () => {
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-lg">{other.icon}</span>
+                    <span className="text-lg">{typeof other.icon === "string" ? other.icon : "🎨"}</span>
                     <span className="text-[9px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
                       {other.category}
                     </span>

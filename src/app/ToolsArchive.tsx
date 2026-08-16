@@ -205,7 +205,7 @@ export default function ToolsArchive() {
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-4">
-                        <span className="text-3xl">{tool.icon}</span>
+                        <span className="text-3xl">{typeof tool.icon === "string" ? tool.icon : "🎨"}</span>
                         <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full">
                           {tool.category}
                         </span>

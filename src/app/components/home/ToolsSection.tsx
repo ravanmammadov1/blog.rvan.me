@@ -118,8 +118,18 @@ export default function ToolsSection() {
                 <div className="relative z-10 flex-1">
                   <div className="flex items-center gap-4 mb-4">
                     {tool.icon && (
-                      <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-background border border-white/5 flex items-center justify-center text-2xl">
-                        {tool.icon}
+                      <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-background border border-white/5 flex items-center justify-center text-2xl overflow-hidden">
+                        {typeof tool.icon === "string" ? (
+                          tool.icon
+                        ) : tool.icon?.asset ? (
+                          <img
+                            src={urlFor(tool.icon).width(64).height(64).url()}
+                            alt=""
+                            className="w-7 h-7 object-contain"
+                          />
+                        ) : (
+                          "🎨"
+                        )}
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
