@@ -326,6 +326,86 @@ export default function FontDetailPage() {
             </div>
           </div>
 
+          {/* Developer Integration & CDN Code Snippets */}
+          <div className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 glass space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-bold tracking-widest text-primary mono uppercase flex items-center gap-2">
+                <Sparkles size={14} /> DEVELOPER INTEGRATION & SOURCES
+              </h2>
+              <span className="text-[10px] font-mono text-muted-foreground">Google Fonts • Fontsource • Bunny Fonts • Open Foundry</span>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* 1. Fontsource NPM */}
+              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold text-primary">Fontsource (NPM / Self-Hosted)</span>
+                  <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">NPM</span>
+                </div>
+                <pre className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-zinc-300 overflow-x-auto select-all">
+                  npm install @fontsource/{getFontSlug(font)}
+                </pre>
+                <p className="text-[10px] text-muted-foreground font-mono">
+                  Import in React/Next.js: <code className="text-primary">import "@fontsource/{getFontSlug(font)}";</code>
+                </p>
+              </div>
+
+              {/* 2. Google Fonts HTML */}
+              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold text-cyan-400">Google Fonts CDN</span>
+                  <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">HTML LINK</span>
+                </div>
+                <pre className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-zinc-300 overflow-x-auto select-all">
+                  {`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(font.family).replace(/%20/g, "+")}:wght@400;600;700&display=swap" />`}
+                </pre>
+                <p className="text-[10px] text-muted-foreground font-mono">
+                  CSS rule: <code className="text-cyan-400">font-family: '{font.family}', sans-serif;</code>
+                </p>
+              </div>
+
+              {/* 3. Bunny Fonts Privacy CDN */}
+              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold text-emerald-400">Bunny Fonts (Zero-Tracking CDN)</span>
+                  <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">GDPR COMPLIANT</span>
+                </div>
+                <pre className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-zinc-300 overflow-x-auto select-all">
+                  {`<link rel="stylesheet" href="https://fonts.bunny.net/css?family=${getFontSlug(font)}:400,600,700" />`}
+                </pre>
+                <p className="text-[10px] text-muted-foreground font-mono">
+                  100% privacy-first EU CDN with zero user telemetry.
+                </p>
+              </div>
+
+              {/* 4. Open Foundry & Direct Source */}
+              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[11px] font-mono font-bold text-purple-400">Open Foundry & Releases</span>
+                    <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">OFFICIAL</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Open-source licensed under <strong className="text-white">{font.license}</strong>. Direct download includes all TTF, OTF, and WOFF2 family binaries.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <Button
+                    href={resolveDirectFontDownloadUrl(font)}
+                    download={`${font.family}.zip`}
+                    external
+                    variant="primary"
+                    size="sm"
+                    className="w-full"
+                    icon={<Download size={14} />}
+                  >
+                    {t("downloadFontFamilyZip", "DOWNLOAD FONT FAMILY (ZIP)")}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Similar Fonts Section */}
           {similarFonts.length > 0 && (
             <div className="pt-8 border-t border-white/10 space-y-6">
