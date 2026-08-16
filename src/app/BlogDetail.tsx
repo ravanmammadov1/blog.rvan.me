@@ -46,13 +46,25 @@ export default function BlogDetail() {
     setLoading(true);
     setError(null);
 
+    const cleanSlug = decodeURIComponent(slug).replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "").trim().toLowerCase();
+
     Promise.all([fetchBlogBySlug(slug), fetchAllBlogs()])
       .then(([singlePost, postsList]) => {
-        if (singlePost) {
-          setPost(singlePost);
+        let foundPost = singlePost;
+
+        if (!foundPost && postsList && postsList.length > 0) {
+          foundPost = postsList.find((p) => {
+            const pSlug = (typeof p.slug === "string" ? p.slug : p.slug?.current || p._id || "").toLowerCase().replace(/\/+$/, "");
+            return pSlug === cleanSlug || (p._id && p._id.toLowerCase() === cleanSlug);
+          }) || null;
+        }
+
+        if (foundPost) {
+          setPost(foundPost);
         } else {
           setError("Blog post not found");
         }
+
         if (postsList) {
           setAllPosts(postsList);
         }

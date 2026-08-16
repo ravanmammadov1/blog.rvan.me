@@ -546,19 +546,26 @@ export async function fetchRelatedContentItems(currentId: string, contentType: s
 }
 function getLocalBlogBySlug(slug: string) {
   const blogs = (exportData as any)?.blogs || [];
+  const raw = (slug || "").trim();
+  const clean = decodeURIComponent(raw).replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "").trim().toLowerCase();
   return blogs.find((b: any) => {
     const s = b.slug;
-    const slugStr = typeof s === "object" ? s?.current : s;
-    return slugStr === slug;
+    const slugStr = (typeof s === "object" ? s?.current : s || "").toLowerCase().replace(/\/+$/, "");
+    const bId = (b._id || "").toLowerCase();
+    return slugStr === clean || bId === clean || slugStr === raw.toLowerCase();
   });
 }
 
 export async function fetchBlogBySlug(slug: string) {
-  const localBlog = getLocalBlogBySlug(slug);
+  const raw = (slug || "").trim();
+  const cleanSlug = decodeURIComponent(raw).replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "").trim();
+  const lowerSlug = cleanSlug.toLowerCase();
+  const localBlog = getLocalBlogBySlug(cleanSlug);
+
   try {
     const data = await client.fetch(
       `
-      *[_type == "blog" && (slug.current == $slug || _id == $slug) && (status == "published" || !defined(status))][0]{
+      *[_type == "blog" && (slug.current == $cleanSlug || lower(slug.current) == $lowerSlug || slug.current == $raw || _id == $cleanSlug || _id == $raw) && (status == "published" || !defined(status))][0]{
         _id,
         title,
         slug,
@@ -572,7 +579,7 @@ export async function fetchBlogBySlug(slug: string) {
         body
       }
     `,
-      { slug }
+      { raw, cleanSlug, lowerSlug }
     );
     const post = data || localBlog || null;
     if (post && localBlog) {

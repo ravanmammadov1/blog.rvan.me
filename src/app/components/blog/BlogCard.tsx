@@ -11,9 +11,9 @@ import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface BlogCardProps {
   post: BlogPost;
-  hovered: boolean;
-  onHoverStart: () => void;
-  onHoverEnd: () => void;
+  hovered?: boolean;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }
 
 const categoryColors: Record<string, string> = {
@@ -31,11 +31,14 @@ const categoryGradientColors: Record<string, string[]> = {
 
 export default function BlogCard({
   post,
-  hovered,
+  hovered: externalHovered,
   onHoverStart,
   onHoverEnd,
 }: BlogCardProps) {
   const { getLocalizedPath } = useLanguage();
+  const [internalHovered, setInternalHovered] = useState(false);
+  const isHovered = externalHovered ?? internalHovered;
+
   const imgBuilder = urlFor(post.coverImage);
   const coverUrl = imgBuilder ? imgBuilder.width(800).url() : getArticleCoverImage(
     post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : post.category === "Marketing" ? "marketingNews" : "frontendNews",
@@ -43,9 +46,10 @@ export default function BlogCard({
   );
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
+
   // Safely extract slug string regardless of whether post.slug is an object { current: string }, a string, or post._id
   const rawSlug = typeof post.slug === "string" ? post.slug : (post.slug?.current || post._id || "");
-  const slugStr = rawSlug.replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "");
+  const slugStr = rawSlug.replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "");
 
   const gradientColors = categoryGradientColors[post.category || ""] || [
     "rgb(97, 197, 173)",
@@ -53,12 +57,22 @@ export default function BlogCard({
     "rgb(152, 79, 159)",
   ];
 
+  const handleMouseEnter = () => {
+    setInternalHovered(true);
+    if (onHoverStart) onHoverStart();
+  };
+
+  const handleMouseLeave = () => {
+    setInternalHovered(false);
+    if (onHoverEnd) onHoverEnd();
+  };
+
   return (
     <Link
       to={getLocalizedPath(`/blog/${slugStr}`)}
       className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl h-full cursor-pointer relative z-10 group"
-      onMouseEnter={onHoverStart}
-      onMouseLeave={onHoverEnd}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <NoiseBackground
         gradientColors={gradientColors}
@@ -96,11 +110,11 @@ export default function BlogCard({
             </span>
 
             <motion.div
-              animate={{ rotate: hovered ? 45 : 0 }}
+              animate={{ rotate: isHovered ? 45 : 0 }}
               transition={{ duration: 0.3 }}
               className="grid h-9 w-9 place-items-center rounded-full border border-border transition-all duration-300 group-hover:border-[#61c5ad]/60 group-hover:bg-[#61c5ad]/10 group-hover:text-[#61c5ad]"
               style={{
-                color: hovered ? "#61c5ad" : "var(--foreground)",
+                color: isHovered ? "#61c5ad" : "var(--foreground)",
               }}
             >
               <ArrowRight size={14} />
@@ -109,7 +123,7 @@ export default function BlogCard({
 
           <h3
             className="mb-3 text-xl font-semibold leading-[1.25] tracking-[-.03em] transition-colors duration-300 relative z-10"
-            style={{ color: hovered ? "#61c5ad" : "var(--card-foreground)" }}
+            style={{ color: isHovered ? "#61c5ad" : "var(--card-foreground)" }}
           >
             {post.title}
           </h3>
@@ -117,7 +131,7 @@ export default function BlogCard({
           {post.excerpt && (
             <p
               className="mb-6 text-[13px] leading-relaxed line-clamp-3 transition-colors duration-300 relative z-10 font-medium"
-              style={{ color: hovered ? "var(--foreground)" : "var(--muted-foreground)" }}
+              style={{ color: isHovered ? "var(--foreground)" : "var(--muted-foreground)" }}
             >
               {post.excerpt}
             </p>
@@ -126,7 +140,7 @@ export default function BlogCard({
 
         <div
           className="mt-auto flex items-center gap-5 text-[10px] font-bold tracking-[.14em] mono uppercase transition-colors duration-300 relative z-10 pt-4 border-t border-border"
-          style={{ color: hovered ? "var(--foreground)" : "var(--muted-foreground)" }}
+          style={{ color: isHovered ? "var(--foreground)" : "var(--muted-foreground)" }}
         >
           {formattedDate && (
             <span className="flex items-center gap-1.5">
