@@ -4,6 +4,82 @@
     {
       "source": "/__/auth/:path*",
       "destination": "https://rvan-2796c.firebaseapp.com/__/auth/:path*"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "/api/rss"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog/index.html"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/blog/:slug/index.html"
+    },
+    {
+      "source": "/news",
+      "destination": "/news/index.html"
+    },
+    {
+      "source": "/news/:slug",
+      "destination": "/news/:slug/index.html"
+    },
+    {
+      "source": "/tools",
+      "destination": "/tools/index.html"
+    },
+    {
+      "source": "/work",
+      "destination": "/work/index.html"
+    },
+    {
+      "source": "/work/:slug",
+      "destination": "/work/:slug/index.html"
+    },
+    {
+      "source": "/ravan-mammadov",
+      "destination": "/ravan-mammadov/index.html"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy/index.html"
+    },
+    {
+      "source": "/cookie-policy",
+      "destination": "/cookie-policy/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms/index.html"
+    },
+    {
+      "source": "/resources",
+      "destination": "/resources/index.html"
+    },
+    {
+      "source": "/resources/:slug",
+      "destination": "/resources/:slug/index.html"
+    },
+    {
+      "source": "/admin/linkedin",
+      "destination": "/admin/linkedin/index.html"
+    },
+    {
+      "source": "/az/admin/linkedin",
+      "destination": "/az/admin/linkedin/index.html"
+    },
+    {
+      "source": "/((?!api/|assets/|models/|imports/|.*\\.[a-zA-Z0-9]+$).*)",
+      "destination": "/index.html"
     }
   ],
   "crons": [
@@ -206,84 +282,6 @@
       "source": "/blog/why-ad-campaigns-fail-creative-fatigue",
       "destination": "/blog/why-ad-campaigns-fail-fatigue",
       "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
-      "source": "/rss.xml",
-      "destination": "/api/rss"
-    },
-    {
-      "source": "/contact",
-      "destination": "/contact/index.html"
-    },
-    {
-      "source": "/blog",
-      "destination": "/blog/index.html"
-    },
-    {
-      "source": "/blog/:slug",
-      "destination": "/blog/:slug/index.html"
-    },
-    {
-      "source": "/news",
-      "destination": "/news/index.html"
-    },
-    {
-      "source": "/news/:slug",
-      "destination": "/news/:slug/index.html"
-    },
-    {
-      "source": "/tools",
-      "destination": "/tools/index.html"
-    },
-    {
-      "source": "/work",
-      "destination": "/work/index.html"
-    },
-    {
-      "source": "/work/:slug",
-      "destination": "/work/:slug/index.html"
-    },
-    {
-      "source": "/ravan-mammadov",
-      "destination": "/ravan-mammadov/index.html"
-    },
-    {
-      "source": "/privacy-policy",
-      "destination": "/privacy-policy/index.html"
-    },
-    {
-      "source": "/cookie-policy",
-      "destination": "/cookie-policy/index.html"
-    },
-    {
-      "source": "/terms",
-      "destination": "/terms/index.html"
-    },
-    {
-      "source": "/resources",
-      "destination": "/resources/index.html"
-    },
-    {
-      "source": "/resources/:slug",
-      "destination": "/resources/:slug/index.html"
-    },
-    {
-      "source": "/admin/linkedin",
-      "destination": "/admin/linkedin/index.html"
-    },
-    {
-      "source": "/az/admin/linkedin",
-      "destination": "/az/admin/linkedin/index.html"
-    },
-    {
-      "source": "/((?!api/|assets/|models/|imports/|.*\\.[a-zA-Z0-9]+$).*)",
-      "destination": "/index.html"
     }
   ],
   "headers": [

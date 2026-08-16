@@ -43,7 +43,9 @@ export default function BlogCard({
   );
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
-  const slugStr = post.slug?.current || "";
+  // Safely extract slug string regardless of whether post.slug is an object { current: string }, a string, or post._id
+  const rawSlug = typeof post.slug === "string" ? post.slug : (post.slug?.current || post._id || "");
+  const slugStr = rawSlug.replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "");
 
   const gradientColors = categoryGradientColors[post.category || ""] || [
     "rgb(97, 197, 173)",
@@ -54,7 +56,7 @@ export default function BlogCard({
   return (
     <Link
       to={getLocalizedPath(`/blog/${slugStr}`)}
-      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl h-full"
+      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl h-full cursor-pointer relative z-10 group"
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}
     >
