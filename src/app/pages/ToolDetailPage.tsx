@@ -10,7 +10,6 @@ import { Button } from "../components/ui/Button";
 
 // Lazy-load individual tools
 const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
-const GrapesJsWebBuilder = lazy(() => import("../components/tools/GrapesJsWebBuilder"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -65,11 +64,6 @@ export const ToolDetailPage: React.FC = () => {
       case "open-peeps":
       case "peeps":
       case "character-builder":
-        return <OpenPeepsBuilder />;
-      case "grapesjs-web-builder":
-      case "grapesjs":
-      case "web-builder":
-        return <GrapesJsWebBuilder />;
       default:
         return <OpenPeepsBuilder />;
     }

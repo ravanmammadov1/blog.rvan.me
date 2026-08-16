@@ -67,7 +67,6 @@ export default function ResourcesArchive() {
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
   const [fontSizePx, setFontSizePx] = useState(28);
   const [fontCategorySubfilter, setFontCategorySubfilter] = useState("all");
-  const [fontSourceSubfilter, setFontSourceSubfilter] = useState("all");
   const [visibleFontLimit, setVisibleFontLimit] = useState(12);
 
   // Icon Specimen Interactive Controls
@@ -149,22 +148,7 @@ export default function ResourcesArchive() {
       list = list.filter((f) => (f.category || "").toLowerCase().replace(/[\s-_]+/g, "") === targetCat);
     }
 
-    // 2. Foundry / Source provider filter (Google Fonts, Fontsource, Bunny Fonts, Open Foundry, Fontshare)
-    if (fontSourceSubfilter !== "all") {
-      const src = fontSourceSubfilter.toLowerCase();
-      list = list.filter((f) => {
-        const foundry = (f.foundry || "").toLowerCase();
-        const url = (f.officialUrl || f.downloadUrl || "").toLowerCase();
-        if (src === "google") return foundry.includes("google") || url.includes("google");
-        if (src === "fontsource") return true; // All open-source fonts are in Fontsource ecosystem
-        if (src === "bunny") return foundry.includes("google") || foundry.includes("bunny") || url.includes("bunny");
-        if (src === "openfoundry") return foundry.includes("open") || foundry.includes("collective") || foundry.includes("vercel") || foundry.includes("rasmus") || url.includes("github");
-        if (src === "fontshare") return foundry.includes("fontshare") || url.includes("fontshare");
-        return true;
-      });
-    }
-
-    // 3. Search query filter
+    // 2. Search query filter
     if (deferredSearch.trim()) {
       const q = deferredSearch.toLowerCase().trim();
       list = list.filter(
@@ -176,7 +160,7 @@ export default function ResourcesArchive() {
           (f.foundry || "").toLowerCase().includes(q)
       );
     } else {
-      // 4. Default view: prioritize top celebrated Sans-Serif and editorial typefaces
+      // 3. Default view: prioritize top celebrated Sans-Serif and editorial typefaces
       list = [...list].sort((a, b) => {
         const aFam = a.family.toLowerCase().trim();
         const bFam = b.family.toLowerCase().trim();
@@ -191,7 +175,7 @@ export default function ResourcesArchive() {
     }
 
     return list;
-  }, [fontCatalog, fontCategorySubfilter, fontSourceSubfilter, deferredSearch, PRIORITY_FONTS]);
+  }, [fontCatalog, fontCategorySubfilter, deferredSearch, PRIORITY_FONTS]);
 
   // Filtered Lucide Icons Catalog
   const filteredIcons = useMemo(() => {
@@ -290,67 +274,34 @@ export default function ResourcesArchive() {
               </div>
             </div>
 
-            {/* Font Filter Controls (Category + Foundry/Source Provider) */}
-            <div className="mb-8 space-y-3">
-              {/* Row 1: Category Filter Tabs */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground/70 mr-1">
-                  CATEGORY:
-                </span>
-                {[
-                  { key: "all", label: t("allFonts", "All") },
-                  { key: "sans-serif", label: "Sans Serif" },
-                  { key: "serif", label: "Serif" },
-                  { key: "monospace", label: "Monospace" },
-                  { key: "display", label: "Display" },
-                  { key: "handwriting", label: "Handwriting" },
-                ].map((cat) => (
-                  <button
-                    key={cat.key}
-                    onClick={() => {
-                      setFontCategorySubfilter(cat.key);
-                      setVisibleFontLimit(12);
-                    }}
-                    className={`rounded-full px-3.5 py-1 text-xs font-bold tracking-wider transition-all mono cursor-pointer ${
-                      fontCategorySubfilter === cat.key
-                        ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.3)]"
-                        : "border border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-white"
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Row 2: Source Provider / Foundry Tabs */}
-              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
-                <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground/70 mr-1">
-                  SOURCE:
-                </span>
-                {[
-                  { key: "all", label: "All Sources" },
-                  { key: "google", label: "Google Fonts" },
-                  { key: "fontsource", label: "Fontsource (NPM)" },
-                  { key: "bunny", label: "Bunny Fonts" },
-                  { key: "openfoundry", label: "Open Foundry / GitHub" },
-                  { key: "fontshare", label: "Fontshare" },
-                ].map((src) => (
-                  <button
-                    key={src.key}
-                    onClick={() => {
-                      setFontSourceSubfilter(src.key);
-                      setVisibleFontLimit(12);
-                    }}
-                    className={`rounded-full px-3 py-1 text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                      fontSourceSubfilter === src.key
-                        ? "bg-white/20 text-white border border-white/30"
-                        : "border border-white/5 bg-black/40 text-muted-foreground/80 hover:text-white hover:border-white/15"
-                    }`}
-                  >
-                    {src.label}
-                  </button>
-                ))}
-              </div>
+            {/* Font Filter Controls (Category Tabs) */}
+            <div className="mb-8 flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-mono font-bold uppercase text-muted-foreground/70 mr-1">
+                CATEGORY:
+              </span>
+              {[
+                { key: "all", label: t("allFonts", "All") },
+                { key: "sans-serif", label: "Sans Serif" },
+                { key: "serif", label: "Serif" },
+                { key: "monospace", label: "Monospace" },
+                { key: "display", label: "Display" },
+                { key: "handwriting", label: "Handwriting" },
+              ].map((cat) => (
+                <button
+                  key={cat.key}
+                  onClick={() => {
+                    setFontCategorySubfilter(cat.key);
+                    setVisibleFontLimit(12);
+                  }}
+                  className={`rounded-full px-3.5 py-1 text-xs font-bold tracking-wider transition-all mono cursor-pointer ${
+                    fontCategorySubfilter === cat.key
+                      ? "bg-primary text-black shadow-[0_0_15px_rgba(97,197,173,0.3)]"
+                      : "border border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-white"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
             </div>
 
             {/* Font Grid */}

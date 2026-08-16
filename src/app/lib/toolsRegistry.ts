@@ -43,28 +43,13 @@ export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
     seoDescription: "Create custom hand-drawn character illustrations with Open Peeps. Mix facial expressions, hairstyles, poses, clothing, and export clean SVG or high-res PNG.",
     tags: ["open-peeps", "character-builder", "illustrations", "svg", "avatar-generator", "vector", "creative"],
   },
-  {
-    id: "grapesjs-web-builder",
-    slug: "grapesjs-web-builder",
-    name: "GrapesJS Visual Web & Landing Page Builder",
-    name_az: "GrapesJS Vizual Veb və Açılış Səhifəsi Quraşdırıcısı",
-    category: "Design",
-    description: "Professional in-browser drag-and-drop HTML5 & CSS website builder. Design responsive pages, manage styles, inspect layers, and export clean code or standalone ZIP packages.",
-    description_az: "Brauzerdaxili peşəkar drag-and-drop HTML5 və CSS veb sayt quraşdırıcısı. Responsiv səhifələr dizayn edin, üslubları idarə edin və təmiz kod və ya ZIP paketi ixrac edin.",
-    icon: "⚡",
-    path: "/tools/grapesjs-web-builder",
-    status: "live",
-    featured: false,
-    seoTitle: "GrapesJS Visual Web Builder — Free Online Drag & Drop HTML/CSS Editor",
-    seoDescription: "Build responsive web pages and landing pages visually with GrapesJS. Drag components, edit typography, customize styles, and export clean HTML/CSS code.",
-    tags: ["grapesjs", "web-builder", "html-editor", "css-builder", "drag-and-drop", "landing-page", "design"],
-  },
 ];
 
 export function getToolById(id: string): InteractiveToolDefinition | undefined {
   const cleanId = (id || "").toLowerCase().trim();
-  if (cleanId === "openpeeps" || cleanId === "peeps") return INTERACTIVE_TOOLS.find((t) => t.id === "open-peeps");
-  if (cleanId === "grapesjs" || cleanId === "web-builder") return INTERACTIVE_TOOLS.find((t) => t.id === "grapesjs-web-builder");
+  if (cleanId === "openpeeps" || cleanId === "peeps" || cleanId === "character-builder") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "open-peeps");
+  }
   return INTERACTIVE_TOOLS.find((t) => t.id === cleanId || t.slug === cleanId);
 }
 

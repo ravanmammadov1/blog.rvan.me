@@ -206,7 +206,7 @@ export const translations: Record<Language, Record<string, string>> = {
     aboutViewCreatorTools: "VIEW CREATOR TOOLS",
 
     // Contact Page & Contact Section
-    contactBadge: "ƏLAQƏ SAXLA",
+    contactBadge: "GET IN TOUCH",
     contactHeading: "LET'S TALK.",
     contactSubtitle: "Have a project, collaboration idea, or feedback? Let's talk.",
     connectAcrossNetworks: "CONNECT ACROSS NETWORKS",

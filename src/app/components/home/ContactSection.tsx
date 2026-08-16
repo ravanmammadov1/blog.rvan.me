@@ -70,7 +70,7 @@ export default function ContactSection() {
 
   const contactHeading = siteSettings?.contactHeading || t("contactHeading", "LET'S TALK.");
   const contactSubtext = siteSettings?.contactSubtext || t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.");
-  const letsTalkLabel = siteSettings?.letsTalkLabel || t("btnGetInTouch", "ƏLAQƏ SAXLA");
+  const letsTalkLabel = siteSettings?.letsTalkLabel || t("btnGetInTouch", "GET IN TOUCH");
 
   return (
     <section id="contact" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
@@ -90,7 +90,7 @@ export default function ContactSection() {
           className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">{t("contactBadge", "ƏLAQƏ SAXLA")}</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{t("contactBadge", "GET IN TOUCH")}</Eyebrow>
             <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
               {contactHeading}
             </h2>
