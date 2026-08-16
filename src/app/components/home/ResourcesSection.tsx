@@ -4,13 +4,24 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Type, Sparkles, Image as ImageIcon } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
-import { LUCIDE_ICON_CATALOG } from "../../../lib/iconEngine";
+import type { IconItem } from "../../../lib/iconEngine";
 import { ILLUSTRATION_CATALOG } from "../../../lib/illustrationEngine";
 import { IconSpecimenCard } from "../content/IconSpecimenCard";
 import { FontSpecimenCard } from "../content/FontSpecimenCard";
 import { IllustrationSpecimenCard } from "../content/IllustrationSpecimenCard";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Button } from "../ui/Button";
+
+const SHOWCASE_ICONS: IconItem[] = [
+  { id: "icon-sparkles", name: "Sparkles", componentName: "Sparkles", category: "General", tags: ["magic", "star", "ai"] },
+  { id: "icon-layers", name: "Layers", componentName: "Layers", category: "Design", tags: ["stack", "design", "ui"] },
+  { id: "icon-zap", name: "Zap", componentName: "Zap", category: "General", tags: ["fast", "energy", "lightning"] },
+  { id: "icon-globe", name: "Globe", componentName: "Globe", category: "General", tags: ["world", "web", "internet"] },
+  { id: "icon-type", name: "Type", componentName: "Type", category: "Design", tags: ["font", "text", "typography"] },
+  { id: "icon-palette", name: "Palette", componentName: "Palette", category: "Design", tags: ["color", "art", "paint"] },
+  { id: "icon-cpu", name: "Cpu", componentName: "Cpu", category: "Development", tags: ["processor", "chip", "tech"] },
+  { id: "icon-compass", name: "Compass", componentName: "Compass", category: "General", tags: ["navigation", "direction", "explore"] },
+];
 
 const EASE = "easeInOut";
 
@@ -67,7 +78,7 @@ export default function ResourcesSection() {
   }, [resources]);
 
   const showcaseIcons = useMemo(() => {
-    return LUCIDE_ICON_CATALOG.slice(0, 8);
+    return SHOWCASE_ICONS;
   }, []);
 
   const showcaseIllustrations = useMemo(() => {

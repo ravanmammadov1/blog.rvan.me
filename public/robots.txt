@@ -1,11 +1,13 @@
-# robots.txt for www.rvan.me
+# robots.txt for https://www.rvan.me
 User-agent: *
 Allow: /
 
-# Block crawlers from API and internal paths
+# Block crawlers from API and internal/admin paths
 Disallow: /api/
 Disallow: /dist/
 Disallow: /_sanity/
+Disallow: /admin/
+Disallow: /az/admin/
 
 # Sitemap
 Sitemap: https://www.rvan.me/sitemap.xml
