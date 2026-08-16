@@ -16,6 +16,7 @@ const fadeUp = {
 };
 
 import { INTERACTIVE_TOOLS } from "../../lib/toolsRegistry";
+import { buildPeepSvg, PREMADE_PEEPS } from "../tools/openpeeps/peepsAssets";
 
 export default function ToolsSection() {
   const [toolsList, setToolsList] = useState<any[]>([]);
@@ -117,7 +118,27 @@ export default function ToolsSection() {
               >
                 <div className="relative z-10 flex-1">
                   <div className="flex items-center gap-4 mb-4">
-                    {tool.icon && (
+                    {tool._id === "open-peeps" || tool.link?.includes("open-peeps") ? (
+                      <div
+                        className="flex-shrink-0 h-12 w-12 rounded-xl bg-white p-1 border border-white/20 flex items-center justify-center overflow-hidden shadow-md group-hover:scale-110 transition-transform"
+                        dangerouslySetInnerHTML={{
+                          __html: buildPeepSvg(PREMADE_PEEPS[1]?.config || {
+                            mode: "bust",
+                            headExpression: "pattern_sweater_smirk",
+                            hairStyle: "straight_bob",
+                            accessory: "none",
+                            bodyPose: "patterned_sweater",
+                            skinColor: "#ffffff",
+                            hairColor: "#111111",
+                            clothingColor: "#111111",
+                            backgroundColor: "#ffffff",
+                            inkStyle: "bw",
+                            flipHorizontal: false,
+                            scale: 1,
+                          }, 48),
+                        }}
+                      />
+                    ) : tool.icon ? (
                       <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-background border border-white/5 flex items-center justify-center text-2xl overflow-hidden">
                         {typeof tool.icon === "string" ? (
                           tool.icon
@@ -128,10 +149,10 @@ export default function ToolsSection() {
                             className="w-7 h-7 object-contain"
                           />
                         ) : (
-                          "🎨"
+                          "🧑‍🎨"
                         )}
                       </div>
-                    )}
+                    ) : null}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
                         {tool.name}

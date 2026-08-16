@@ -12,6 +12,7 @@ import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { INTERACTIVE_TOOLS, TOOL_CATEGORIES, InteractiveToolDefinition, ToolCategory } from "./lib/toolsRegistry";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+import { buildPeepSvg, PREMADE_PEEPS } from "./components/tools/openpeeps/peepsAssets";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -151,14 +152,34 @@ export default function ToolsArchive() {
 
                 {/* Right Visual Preview Badge */}
                 <div className="lg:col-span-5 flex justify-center lg:justify-end">
-                  <div className="w-full max-w-[320px] aspect-square rounded-3xl border border-white/15 bg-black/60 p-6 flex flex-col items-center justify-center text-center shadow-xl">
-                    <div className="text-6xl mb-4 animate-bounce">🎨</div>
-                    <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
-                      MODULAR ILLUSTRATION SUITE
-                    </span>
-                    <span className="text-[11px] text-muted-foreground mt-1">
-                      1,000+ Combinations • Zero Dependencies
-                    </span>
+                  <div className="w-full max-w-[320px] aspect-square rounded-3xl border border-white/15 bg-white p-4 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden group">
+                    <div
+                      className="w-48 h-48 flex items-center justify-center transition-transform duration-500 group-hover:scale-110"
+                      dangerouslySetInnerHTML={{
+                        __html: buildPeepSvg(PREMADE_PEEPS[0]?.config || {
+                          mode: "bust",
+                          headExpression: "knife_intense",
+                          hairStyle: "afro_headband",
+                          accessory: "none",
+                          bodyPose: "knife_pose",
+                          skinColor: "#ffffff",
+                          hairColor: "#111111",
+                          clothingColor: "#111111",
+                          backgroundColor: "#ffffff",
+                          inkStyle: "bw",
+                          flipHorizontal: false,
+                          scale: 1,
+                        }, 220),
+                      }}
+                    />
+                    <div className="w-full pt-2 border-t border-zinc-200 flex flex-col items-center">
+                      <span className="font-mono text-[10px] font-bold text-black uppercase tracking-wider">
+                        584,688+ COMBINATIONS
+                      </span>
+                      <span className="text-[10px] text-zinc-500">
+                        Modular Vector System • Zero Dependencies
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -205,7 +226,29 @@ export default function ToolsArchive() {
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-4">
-                        <span className="text-3xl">{typeof tool.icon === "string" ? tool.icon : "🎨"}</span>
+                        {tool.id === "open-peeps" ? (
+                          <div
+                            className="w-12 h-12 rounded-xl bg-white p-1 flex items-center justify-center overflow-hidden border border-white/20 shadow-md group-hover:scale-110 transition-transform"
+                            dangerouslySetInnerHTML={{
+                              __html: buildPeepSvg(PREMADE_PEEPS[1]?.config || {
+                                mode: "bust",
+                                headExpression: "pattern_sweater_smirk",
+                                hairStyle: "straight_bob",
+                                accessory: "none",
+                                bodyPose: "patterned_sweater",
+                                skinColor: "#ffffff",
+                                hairColor: "#111111",
+                                clothingColor: "#111111",
+                                backgroundColor: "#ffffff",
+                                inkStyle: "bw",
+                                flipHorizontal: false,
+                                scale: 1,
+                              }, 48),
+                            }}
+                          />
+                        ) : (
+                          <span className="text-3xl">{typeof tool.icon === "string" ? tool.icon : "🧑‍🎨"}</span>
+                        )}
                         <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full">
                           {tool.category}
                         </span>

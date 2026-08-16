@@ -26,19 +26,14 @@ export const EXPRESSIONS = [
     id: "knife_intense",
     name: "Intense / Knife Wielder",
     svg: `
-      <!-- Head Contour -->
       <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <!-- Intense Angled Eyes -->
       <path d="M82,72 L94,76" stroke="#111" stroke-width="4" stroke-linecap="round" />
       <circle cx="88" cy="78" r="3.5" fill="#111" />
       <path d="M118,72 L106,76" stroke="#111" stroke-width="4" stroke-linecap="round" />
       <circle cx="112" cy="78" r="3.5" fill="#111" />
-      <!-- Angry Eyebrows -->
       <path d="M80,64 L96,70" stroke="#111" stroke-width="4" stroke-linecap="round" />
       <path d="M120,64 L104,70" stroke="#111" stroke-width="4" stroke-linecap="round" />
-      <!-- Sharp Nose -->
       <path d="M100,74 L104,84 L98,86" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Gritted Teeth Mouth -->
       <path d="M88,96 L112,96" stroke="#111" stroke-width="4" stroke-linecap="round" />
       <line x1="94" y1="93" x2="94" y2="99" stroke="#111" stroke-width="2" />
       <line x1="100" y1="93" x2="100" y2="99" stroke="#111" stroke-width="2" />
@@ -50,18 +45,13 @@ export const EXPRESSIONS = [
     name: "Three-Eyed Alien",
     svg: `
       <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <!-- Regular Eyes -->
       <circle cx="86" cy="76" r="4" fill="#111" />
       <circle cx="114" cy="76" r="4" fill="#111" />
-      <!-- 3rd Forehead Eye -->
       <circle cx="100" cy="58" r="5" fill="#fff" stroke="#111" stroke-width="3" />
       <circle cx="100" cy="58" r="2.5" fill="#111" />
-      <!-- Eyebrows -->
       <path d="M80,66 C86,63 92,65 94,67" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
       <path d="M106,67 C108,65 114,63 120,66" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Nose -->
       <path d="M100,74 C103,80 97,84 100,86" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Wavy Smile -->
       <path d="M88,96 C94,92 100,100 106,94 C110,92 114,96 114,96" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
     `,
   },
@@ -72,12 +62,9 @@ export const EXPRESSIONS = [
       <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
       <circle cx="88" cy="74" r="3.5" fill="#111" />
       <circle cx="112" cy="74" r="3.5" fill="#111" />
-      <!-- Raised Confident Brow -->
       <path d="M82,64 L94,62" stroke="#111" stroke-width="3.5" stroke-linecap="round" />
       <path d="M106,66 C110,64 116,65 118,68" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Nose -->
       <path d="M100,74 C102,80 98,84 100,85" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Side Smirk Mouth -->
       <path d="M90,95 C98,95 106,98 114,90" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
     `,
   },
@@ -86,31 +73,13 @@ export const EXPRESSIONS = [
     name: "Joyful Big Laugh",
     svg: `
       <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <!-- Laugh Eyes -->
       <path d="M82,74 C86,68 92,68 96,74" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
       <path d="M104,74 C108,68 114,68 118,74" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
-      <!-- Eyebrows -->
       <path d="M80,64 C86,60 92,61 94,64" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
       <path d="M106,64 C108,61 114,60 120,64" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Nose -->
       <path d="M100,74 C102,79 98,82 100,84" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Big Open Laughing Mouth -->
       <path d="M84,90 C84,106 116,106 116,90 Z" fill="#b91c1c" stroke="#111" stroke-width="3.5" stroke-linejoin="round" />
       <path d="M88,92 C96,96 104,96 112,92" fill="#fff" stroke="#111" stroke-width="2" />
-    `,
-  },
-  {
-    id: "heart_eyes",
-    name: "Heart Eyes (Loving)",
-    svg: `
-      <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <!-- Red Heart Eyes -->
-      <path d="M88,78 C88,74 82,68 78,74 C74,68 68,74 78,84 L88,94 L98,84 C108,74 102,68 98,74 C94,68 88,74 88,78 Z" transform="translate(4, -8) scale(0.4)" fill="#ef4444" stroke="#111" stroke-width="3" />
-      <path d="M88,78 C88,74 82,68 78,74 C74,68 68,74 78,84 L88,94 L98,84 C108,74 102,68 98,74 C94,68 88,74 88,78 Z" transform="translate(42, -8) scale(0.4)" fill="#ef4444" stroke="#111" stroke-width="3" />
-      <!-- Nose -->
-      <path d="M100,74 C102,79 98,83 100,84" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Warm Smile -->
-      <path d="M88,94 C94,102 106,102 112,94" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
     `,
   },
   {
@@ -118,33 +87,25 @@ export const EXPRESSIONS = [
     name: "Chill & Relaxed",
     svg: `
       <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <!-- Relaxed Eyes -->
       <path d="M82,75 C86,78 92,78 96,75" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
       <path d="M104,75 C108,78 114,78 118,75" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Soft Brows -->
       <path d="M82,66 C86,64 92,65 94,67" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
       <path d="M106,67 C108,65 114,64 118,66" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
-      <!-- Nose -->
       <circle cx="100" cy="82" r="2" fill="#111" />
-      <!-- Warm Gentle Smile -->
       <path d="M90,94 C96,98 104,98 110,94" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
     `,
   },
   {
     id: "skeptical_pout",
-    name: "Skeptical / Puzzled",
+    name: "Skeptical / Curious",
     svg: `
       <path d="M68,76 C65,118 135,118 132,76 C130,42 70,42 68,76 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <!-- One Wide Eye, One Squint -->
       <circle cx="86" cy="74" r="4.5" fill="#111" />
       <line x1="106" y1="74" x2="118" y2="74" stroke="#111" stroke-width="3.5" stroke-linecap="round" />
       <circle cx="112" cy="76" r="2.5" fill="#111" />
-      <!-- One Raised Brow, One Low -->
       <path d="M80,58 C86,56 94,58 96,62" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
       <path d="M106,68 L118,70" stroke="#111" stroke-width="3" stroke-linecap="round" />
-      <!-- Nose -->
       <path d="M100,74 C103,80 97,84 100,85" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
-      <!-- Crooked Mouth -->
       <path d="M88,96 C94,94 102,98 112,93" stroke="#111" stroke-width="3.5" stroke-linecap="round" fill="none" />
     `,
   },
@@ -157,7 +118,6 @@ export const HAIR_STYLES = [
     name: "Voluminous Big Afro",
     svg: `
       <path d="M48,80 C32,35 68,8 100,8 C132,8 168,35 152,80 C160,105 145,120 134,112 C138,82 132,56 100,56 C68,56 62,82 66,112 C55,120 40,105 48,80 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Texture strokes inside afro -->
       <path d="M60,40 C65,30 75,32 80,38" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
       <path d="M120,38 C125,32 135,30 140,40" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
       <path d="M95,20 C100,16 108,16 112,22" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none" />
@@ -167,9 +127,7 @@ export const HAIR_STYLES = [
     id: "straight_bob",
     name: "Straight Bob with Bangs",
     svg: `
-      <!-- Bob Silhouette -->
       <path d="M62,70 C58,35 80,24 100,24 C120,24 142,35 138,70 C144,115 136,132 126,132 C120,105 120,64 100,64 C80,64 80,105 74,132 C64,132 56,115 62,70 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Sharp Bangs Line across forehead -->
       <path d="M68,58 L132,58 L130,64 L100,64 L70,64 Z" fill="var(--hair-color)" stroke="#111" stroke-width="3.5" />
     `,
   },
@@ -177,13 +135,9 @@ export const HAIR_STYLES = [
     id: "afro_headband",
     name: "Afro with Knotted Headband",
     svg: `
-      <!-- Top Puff -->
       <circle cx="100" cy="30" r="28" fill="var(--hair-color)" stroke="#111" stroke-width="4" />
-      <!-- Base Hair -->
       <path d="M66,74 C64,48 80,32 100,32 C120,32 136,48 134,74 C130,60 120,52 100,52 C80,52 70,60 66,74 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" />
-      <!-- Striped Knotted Headband -->
       <path d="M62,60 C80,52 120,52 138,60 L134,68 C120,60 80,60 66,68 Z" fill="#ffffff" stroke="#111" stroke-width="3.5" />
-      <!-- Headband Knot Ribbon -->
       <path d="M96,48 L104,48 L108,54 L92,54 Z" fill="#ffffff" stroke="#111" stroke-width="3" />
       <path d="M92,44 C90,38 98,36 100,44" stroke="#111" stroke-width="3" fill="#ffffff" />
       <path d="M108,44 C110,38 102,36 100,44" stroke="#111" stroke-width="3" fill="#ffffff" />
@@ -193,11 +147,8 @@ export const HAIR_STYLES = [
     id: "fedora_hat",
     name: "Fedora / Sun Hat",
     svg: `
-      <!-- Hat Crown -->
       <path d="M72,54 C72,25 90,20 100,20 C110,20 128,25 128,54 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Hat Ribbon -->
       <path d="M72,50 C85,46 115,46 128,50 L128,54 C115,50 85,50 72,54 Z" fill="#111" stroke="#111" stroke-width="2" />
-      <!-- Wide Curved Brim -->
       <path d="M50,56 C70,48 130,48 150,56 C155,62 145,66 100,60 C55,66 45,62 50,56 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
     `,
   },
@@ -205,9 +156,7 @@ export const HAIR_STYLES = [
     id: "dreadlocks",
     name: "Textured Dreadlocks",
     svg: `
-      <!-- Base Hair -->
       <path d="M64,70 C60,40 80,28 100,28 C120,28 140,40 136,70 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" />
-      <!-- Strands of Dreads hanging down -->
       <path d="M62,65 C54,80 56,105 60,125 C64,128 70,126 68,115 C66,95 68,75 70,68" fill="var(--hair-color)" stroke="#111" stroke-width="3.5" />
       <path d="M72,60 C68,85 70,110 74,130 C78,132 82,128 80,115 C78,95 78,75 80,64" fill="var(--hair-color)" stroke="#111" stroke-width="3.5" />
       <path d="M128,60 C132,85 130,110 126,130 C122,132 118,128 120,115 C122,95 122,75 120,64" fill="var(--hair-color)" stroke="#111" stroke-width="3.5" />
@@ -228,7 +177,6 @@ export const HAIR_STYLES = [
     name: "Folded Winter Beanie",
     svg: `
       <path d="M62,64 C60,30 76,16 100,16 C124,16 140,30 138,64 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Ribbed Fold -->
       <rect x="58" y="54" width="84" height="16" rx="8" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
       <line x1="80" y1="54" x2="80" y2="70" stroke="#111" stroke-width="2" />
       <line x1="100" y1="54" x2="100" y2="70" stroke="#111" stroke-width="2" />
@@ -237,13 +185,9 @@ export const HAIR_STYLES = [
   },
 ];
 
-// ─── 3. ACCESSORIES & DETAILS ───
+// ─── 3. ACCESSORIES & PROPS ───
 export const ACCESSORIES = [
-  {
-    id: "none",
-    name: "None",
-    svg: ``,
-  },
+  { id: "none", name: "None", svg: `` },
   {
     id: "round_glasses",
     name: "Round Wire Glasses",
@@ -262,7 +206,6 @@ export const ACCESSORIES = [
       <path d="M74,68 L98,68 L96,84 C96,87 90,89 86,89 C78,89 74,84 74,78 Z" fill="#111" stroke="#111" stroke-width="3.5" />
       <path d="M102,68 L126,68 L126,78 C126,84 122,89 114,89 C110,89 104,87 104,84 Z" fill="#111" stroke="#111" stroke-width="3.5" />
       <line x1="98" y1="70" x2="102" y2="70" stroke="#111" stroke-width="3.5" />
-      <!-- Glare lines -->
       <line x1="78" y1="72" x2="86" y2="80" stroke="#fff" stroke-width="2" />
       <line x1="108" y1="72" x2="116" y2="80" stroke="#fff" stroke-width="2" />
     `,
@@ -272,37 +215,24 @@ export const ACCESSORIES = [
     name: "Full Hipster Beard",
     svg: `
       <path d="M70,84 C68,122 84,142 100,142 C116,142 132,122 130,84 C124,98 116,106 100,106 C84,106 76,98 70,84 Z" fill="var(--hair-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Mustache Layer -->
       <path d="M86,88 C94,84 99,88 100,89 C101,88 106,84 114,88 C118,93 108,97 100,93 C92,97 82,93 86,88 Z" fill="var(--hair-color)" stroke="#111" stroke-width="3" />
-    `,
-  },
-  {
-    id: "pirate_eyepatch",
-    name: "Pirate Eyepatch",
-    svg: `
-      <line x1="66" y1="60" x2="134" y2="84" stroke="#111" stroke-width="3" />
-      <circle cx="86" cy="74" r="10" fill="#111" stroke="#111" stroke-width="3.5" />
     `,
   },
 ];
 
 // ─── 4. RICH POSES & CLOTHING (Busts, Standing, Sitting) ───
 export const BODIES = [
-  // ── BUSTS ──
+  // ── 1. BUSTS ──
   {
     id: "knife_pose",
     name: "Bust: Knife in Hand",
     type: "bust",
     svg: `
-      <!-- Neck -->
       <path d="M88,110 L88,124 C88,128 112,128 112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
-      <!-- Torso -->
       <path d="M50,140 C56,126 78,124 88,124 C94,130 106,130 112,124 C122,124 144,126 150,140 L156,200 L44,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
       <path d="M88,124 C94,130 106,130 112,124" stroke="#111" stroke-width="3.5" fill="none" />
-      <!-- Hand Gripping Knife -->
       <g transform="translate(-10, 0)">
         <path d="M60,155 C54,145 66,135 74,142 L74,165 L60,165 Z" fill="var(--skin-color)" stroke="#111" stroke-width="3.5" />
-        <!-- Big Kitchen Knife -->
         <path d="M72,146 L108,125 C114,120 116,130 106,138 L72,156 Z" fill="#e2e8f0" stroke="#111" stroke-width="3.5" stroke-linejoin="round" />
         <rect x="58" y="148" width="16" height="6" rx="2" fill="#78350f" stroke="#111" stroke-width="2.5" />
       </g>
@@ -315,11 +245,9 @@ export const BODIES = [
     svg: `
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M48,140 C54,124 76,122 88,122 C94,128 106,128 112,122 C124,122 146,124 152,140 L156,200 L44,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Knitted Speckle Texture Patterns -->
       <path d="M64,146 L68,144 M80,150 L84,148 M120,146 L124,144 M136,152 L140,150" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
       <path d="M72,165 L76,163 M92,160 L96,158 M112,165 L116,163 M130,170 L134,168" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
       <path d="M60,185 L64,183 M80,180 L84,178 M100,185 L104,183 M124,182 L128,180 M144,188 L148,186" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
-      <!-- Collar -->
       <path d="M88,122 C94,128 106,128 112,122" stroke="#111" stroke-width="3.5" fill="none" />
     `,
   },
@@ -330,10 +258,8 @@ export const BODIES = [
     svg: `
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M48,140 C56,124 76,122 88,122 C94,128 106,128 112,122 C124,122 144,124 152,140 L156,200 L44,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Crossed Arms in Front -->
       <path d="M52,156 C60,175 100,178 148,156" stroke="#111" stroke-width="4" fill="none" />
       <path d="M56,168 C80,185 120,185 144,168" stroke="#111" stroke-width="4" fill="none" />
-      <!-- Hands tucked -->
       <path d="M136,158 C144,158 146,168 138,172" stroke="#111" stroke-width="3.5" fill="var(--skin-color)" />
     `,
   },
@@ -344,12 +270,9 @@ export const BODIES = [
     svg: `
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M50,140 C56,126 78,124 88,124 C94,130 106,130 112,124 C122,124 144,126 150,140 L156,200 L44,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Hand holding coffee -->
       <path d="M125,165 C132,155 142,165 138,176" stroke="#111" stroke-width="3.5" fill="var(--skin-color)" />
-      <!-- Mug -->
       <rect x="130" y="152" width="22" height="24" rx="4" fill="#ffffff" stroke="#111" stroke-width="3.5" />
       <path d="M152,158 C158,158 158,168 152,168" stroke="#111" stroke-width="3" fill="none" />
-      <!-- Steam -->
       <path d="M136,145 C136,138 140,136 140,130" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
       <path d="M144,145 C144,138 148,136 148,130" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none" />
     `,
@@ -361,7 +284,6 @@ export const BODIES = [
     svg: `
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M50,140 C56,126 78,124 88,124 C94,130 106,130 112,124 C122,124 144,126 150,140 L156,200 L44,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Pocket with wave design -->
       <rect x="120" y="145" width="18" height="20" rx="3" fill="#ffffff" stroke="#111" stroke-width="3" />
       <path d="M123,152 C126,150 129,154 132,152 C135,150 138,154 138,152" stroke="#111" stroke-width="2" fill="none" />
       <path d="M123,158 C126,156 129,160 132,158 C135,156 138,160 138,158" stroke="#111" stroke-width="2" fill="none" />
@@ -372,57 +294,143 @@ export const BODIES = [
     name: "Bust: Sleeveless Tank Top",
     type: "bust",
     svg: `
-      <!-- Neck & Bare Shoulders -->
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M48,145 C55,124 75,124 88,124 L112,124 C125,124 145,124 152,145 L156,200 L44,200 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
-      <!-- Tank Top Straps -->
       <path d="M68,135 L78,135 L80,200 L64,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="3" />
       <path d="M132,135 L122,135 L120,200 L136,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="3" />
       <path d="M78,155 C90,165 110,165 122,155 L122,200 L78,200 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="3.5" />
     `,
   },
 
-  // ── STANDING & SITTING ──
+  // ── 2. STANDING POSES ──
   {
     id: "standing_hands_pockets",
     name: "Standing: Hands in Pockets",
     type: "standing",
     svg: `
-      <!-- Neck & Torso -->
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M54,136 C60,124 78,122 88,122 C94,128 106,128 112,122 C122,122 140,124 146,136 L144,168 L56,168 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Pants & Legs -->
-      <path d="M58,168 L142,168 L146,200 L115,200 L102,175 L89,200 L54,200 Z" fill="#1e293b" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Hands in pockets stance -->
+      <path d="M58,168 L142,168 L146,200 L115,200 L102,175 L89,200 L54,200 Z" fill="#111" stroke="#111" stroke-width="4" stroke-linejoin="round" />
       <path d="M54,136 L48,158 L60,172" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round" />
       <path d="M146,136 L152,158 L140,172" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round" />
     `,
   },
   {
+    id: "standing_skater",
+    name: "Standing: Holding Skateboard",
+    type: "standing",
+    svg: `
+      <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
+      <path d="M52,136 C60,124 78,122 88,122 L112,122 C122,122 140,124 148,136 L144,168 L56,168 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
+      <!-- Baggy Jeans -->
+      <path d="M56,168 L144,168 L148,200 L114,200 L100,175 L86,200 L52,200 Z" fill="#111" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+      <!-- Skateboard held vertically under arm -->
+      <g transform="translate(-10, 0)">
+        <rect x="42" y="135" width="12" height="60" rx="6" fill="#61c5ad" stroke="#111" stroke-width="3.5" />
+        <circle cx="48" cy="142" r="3" fill="#111" />
+        <circle cx="48" cy="188" r="3" fill="#111" />
+        <path d="M54,145 C58,140 64,148 60,155" stroke="#111" stroke-width="3.5" fill="var(--skin-color)" />
+      </g>
+    `,
+  },
+  {
+    id: "standing_coffee_walk",
+    name: "Standing: Coffee & Tote Bag",
+    type: "standing",
+    svg: `
+      <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
+      <path d="M52,136 C60,124 78,122 88,122 L112,122 C122,122 140,124 148,136 L144,168 L56,168 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
+      <path d="M56,168 L144,168 L148,200 L114,200 L100,175 L86,200 L52,200 Z" fill="#111" stroke="#111" stroke-width="4" />
+      <!-- Tote Bag on shoulder -->
+      <rect x="46" y="150" width="20" height="26" rx="3" fill="#ffffff" stroke="#111" stroke-width="3" />
+      <path d="M50,150 C50,138 62,138 62,150" stroke="#111" stroke-width="2.5" fill="none" />
+      <!-- Hand holding coffee -->
+      <path d="M140,150 C146,145 152,155 146,162" stroke="#111" stroke-width="3" fill="var(--skin-color)" />
+      <rect x="144" y="142" width="14" height="16" rx="2" fill="#fff" stroke="#111" stroke-width="2.5" />
+    `,
+  },
+  {
+    id: "standing_phone_scroll",
+    name: "Standing: Phone Scroller",
+    type: "standing",
+    svg: `
+      <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
+      <path d="M52,136 C60,124 78,122 88,122 L112,122 C122,122 140,124 148,136 L144,168 L56,168 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
+      <path d="M56,168 L144,168 L148,200 L114,200 L100,175 L86,200 L52,200 Z" fill="#111" stroke="#111" stroke-width="4" />
+      <!-- Both arms forward holding phone -->
+      <path d="M58,142 L92,155 M142,142 L108,155" stroke="#111" stroke-width="6" stroke-linecap="round" />
+      <!-- Smartphone -->
+      <rect x="92" y="145" width="16" height="24" rx="3" fill="#111" stroke="#fff" stroke-width="1.5" />
+      <circle cx="100" cy="165" r="1.5" fill="#fff" />
+    `,
+  },
+
+  // ── 3. SITTING POSES ──
+  {
     id: "sitting_laptop",
-    name: "Sitting: Laptop Coder",
+    name: "Sitting: Desk Laptop Coder",
     type: "sitting",
     svg: `
-      <!-- Neck & Torso -->
       <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
       <path d="M52,136 C60,124 78,122 88,122 C94,128 106,128 112,122 C122,122 140,124 148,136 L146,165 L54,165 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" stroke-linejoin="round" />
-      <!-- Slanted Open Laptop -->
       <polygon points="70,165 130,165 140,150 80,150" fill="#cbd5e1" stroke="#111" stroke-width="3.5" />
       <polygon points="80,150 140,150 136,130 76,130" fill="#0f172a" stroke="#111" stroke-width="3.5" />
-      <!-- Glowing apple/logo on laptop -->
       <circle cx="106" cy="140" r="3" fill="#61c5ad" />
-      <!-- Hands typing -->
       <path d="M68,158 C75,152 82,160 86,162" stroke="#111" stroke-width="3.5" fill="var(--skin-color)" />
       <path d="M132,158 C125,152 118,160 114,162" stroke="#111" stroke-width="3.5" fill="var(--skin-color)" />
-      <!-- Chair & Legs base -->
       <path d="M50,175 L150,175 L145,200 L55,200 Z" fill="#334155" stroke="#111" stroke-width="4" />
+    `,
+  },
+  {
+    id: "sitting_armchair_book",
+    name: "Sitting: Armchair Reader",
+    type: "sitting",
+    svg: `
+      <!-- Armchair Back Cushion -->
+      <rect x="42" y="125" width="116" height="50" rx="12" fill="#1e293b" stroke="#111" stroke-width="4" />
+      <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
+      <path d="M54,136 C60,124 78,122 88,122 L112,122 C122,122 140,124 146,136 L144,170 L56,170 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
+      <!-- Open Book in hands -->
+      <polygon points="80,165 100,168 120,165 124,152 100,154 76,152" fill="#ffffff" stroke="#111" stroke-width="3" />
+      <line x1="100" y1="154" x2="100" y2="168" stroke="#111" stroke-width="2" />
+      <!-- Cozy Chair Base -->
+      <path d="M46,172 L154,172 L150,200 L50,200 Z" fill="#0f172a" stroke="#111" stroke-width="4" />
+    `,
+  },
+  {
+    id: "sitting_coffee_lounge",
+    name: "Sitting: Coffee Lounge Thinker",
+    type: "sitting",
+    svg: `
+      <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
+      <path d="M54,136 C60,124 78,122 88,122 L112,122 C122,122 140,124 146,136 L144,168 L56,168 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
+      <!-- Cross legged cushion -->
+      <ellipse cx="100" cy="180" rx="55" ry="18" fill="#334155" stroke="#111" stroke-width="4" />
+      <!-- Mug in two hands -->
+      <rect x="92" y="152" width="16" height="18" rx="3" fill="#ffffff" stroke="#111" stroke-width="3" />
+      <path d="M86,156 C90,152 94,158 92,166" stroke="#111" stroke-width="3" fill="var(--skin-color)" />
+      <path d="M114,156 C110,152 106,158 108,166" stroke="#111" stroke-width="3" fill="var(--skin-color)" />
+    `,
+  },
+  {
+    id: "sitting_floor_meditation",
+    name: "Sitting: Floor Meditation",
+    type: "sitting",
+    svg: `
+      <path d="M88,110 L88,124 L112,124 L112,110 Z" fill="var(--skin-color)" stroke="#111" stroke-width="4" />
+      <path d="M54,136 C60,124 78,122 88,122 L112,122 C122,122 140,124 146,136 L144,168 L56,168 Z" fill="var(--clothing-color)" stroke="#111" stroke-width="4" />
+      <!-- Folded knees yoga base -->
+      <path d="M44,180 C44,165 60,165 75,175 L125,175 C140,165 156,165 156,180 C156,198 44,198 44,180 Z" fill="#1e293b" stroke="#111" stroke-width="4" />
+      <!-- Hands resting open on knees -->
+      <circle cx="58" cy="172" r="5" fill="var(--skin-color)" stroke="#111" stroke-width="2.5" />
+      <circle cx="142" cy="172" r="5" fill="var(--skin-color)" stroke="#111" stroke-width="2.5" />
     `,
   },
 ];
 
-// ─── 5. PRE-MADE "GRAB AND GO!" CURATED CHARACTERS ───
+// ─── 5. 24+ CURATED PRE-MADE "GRAB AND GO!" CHARACTERS ───
 export const PREMADE_PEEPS: PremadePeep[] = [
-  // ── BUSTS ──
+  // ── BUSTS (8 Models) ──
   {
     id: "peep_knife",
     name: "The Knife Wielder",
@@ -576,10 +584,10 @@ export const PREMADE_PEEPS: PremadePeep[] = [
     },
   },
 
-  // ── STANDING ──
+  // ── STANDING (8 Models) ──
   {
     id: "peep_standing_casual",
-    name: "Casual Standing Stance",
+    name: "Casual Hands in Pockets",
     category: "standing",
     config: {
       mode: "standing",
@@ -597,13 +605,127 @@ export const PREMADE_PEEPS: PremadePeep[] = [
     },
   },
   {
-    id: "peep_standing_afro",
-    name: "Standing Afro Walker",
+    id: "peep_standing_skater",
+    name: "Skateboarder Peep",
     category: "standing",
     config: {
       mode: "standing",
       headExpression: "joyful_laugh",
       hairStyle: "big_afro",
+      accessory: "none",
+      bodyPose: "standing_skater",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_standing_coffee",
+    name: "Coffee & Tote Bag Walker",
+    category: "standing",
+    config: {
+      mode: "standing",
+      headExpression: "chill_beard_smile",
+      hairStyle: "fedora_hat",
+      accessory: "round_glasses",
+      bodyPose: "standing_coffee_walk",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_standing_phone",
+    name: "Smartphone Scroller",
+    category: "standing",
+    config: {
+      mode: "standing",
+      headExpression: "skeptical_pout",
+      hairStyle: "straight_bob",
+      accessory: "dark_sunglasses",
+      bodyPose: "standing_phone_scroll",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_standing_alien",
+    name: "Three-Eyed Skater",
+    category: "standing",
+    config: {
+      mode: "standing",
+      headExpression: "three_eyed",
+      hairStyle: "beanie_knit",
+      accessory: "none",
+      bodyPose: "standing_skater",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_standing_dreads",
+    name: "Dreadlocks Coffee Walker",
+    category: "standing",
+    config: {
+      mode: "standing",
+      headExpression: "knife_intense",
+      hairStyle: "dreadlocks",
+      accessory: "none",
+      bodyPose: "standing_coffee_walk",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_standing_beanie_phone",
+    name: "Beanie Phone Texter",
+    category: "standing",
+    config: {
+      mode: "standing",
+      headExpression: "chill_beard_smile",
+      hairStyle: "beanie_knit",
+      accessory: "round_glasses",
+      bodyPose: "standing_phone_scroll",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_standing_afro_pockets",
+    name: "Afro Pocket Stance",
+    category: "standing",
+    config: {
+      mode: "standing",
+      headExpression: "pattern_sweater_smirk",
+      hairStyle: "afro_headband",
       accessory: "dark_sunglasses",
       bodyPose: "standing_hands_pockets",
       skinColor: "#ffffff",
@@ -616,7 +738,7 @@ export const PREMADE_PEEPS: PremadePeep[] = [
     },
   },
 
-  // ── SITTING ──
+  // ── SITTING (8 Models) ──
   {
     id: "peep_sitting_coder",
     name: "Desk Laptop Coder",
@@ -646,6 +768,120 @@ export const PREMADE_PEEPS: PremadePeep[] = [
       hairStyle: "fedora_hat",
       accessory: "mustache_beard",
       bodyPose: "sitting_laptop",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_sitting_armchair",
+    name: "Armchair Book Reader",
+    category: "sitting",
+    config: {
+      mode: "sitting",
+      headExpression: "joyful_laugh",
+      hairStyle: "straight_bob",
+      accessory: "round_glasses",
+      bodyPose: "sitting_armchair_book",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_sitting_lounge",
+    name: "Coffee Lounge Thinker",
+    category: "sitting",
+    config: {
+      mode: "sitting",
+      headExpression: "pattern_sweater_smirk",
+      hairStyle: "big_afro",
+      accessory: "none",
+      bodyPose: "sitting_coffee_lounge",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_sitting_meditation",
+    name: "Floor Meditation Peep",
+    category: "sitting",
+    config: {
+      mode: "sitting",
+      headExpression: "chill_beard_smile",
+      hairStyle: "short_fade",
+      accessory: "none",
+      bodyPose: "sitting_floor_meditation",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_sitting_dreads_laptop",
+    name: "Dreadlocks Laptop Artist",
+    category: "sitting",
+    config: {
+      mode: "sitting",
+      headExpression: "knife_intense",
+      hairStyle: "dreadlocks",
+      accessory: "dark_sunglasses",
+      bodyPose: "sitting_laptop",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_sitting_afro_reader",
+    name: "Afro Bandana Reader",
+    category: "sitting",
+    config: {
+      mode: "sitting",
+      headExpression: "skeptical_pout",
+      hairStyle: "afro_headband",
+      accessory: "none",
+      bodyPose: "sitting_armchair_book",
+      skinColor: "#ffffff",
+      hairColor: "#111111",
+      clothingColor: "#111111",
+      backgroundColor: "#ffffff",
+      inkStyle: "bw",
+      flipHorizontal: false,
+      scale: 1,
+    },
+  },
+  {
+    id: "peep_sitting_zen_alien",
+    name: "Three-Eyed Zen Master",
+    category: "sitting",
+    config: {
+      mode: "sitting",
+      headExpression: "three_eyed",
+      hairStyle: "big_afro",
+      accessory: "none",
+      bodyPose: "sitting_floor_meditation",
       skinColor: "#ffffff",
       hairColor: "#111111",
       clothingColor: "#111111",

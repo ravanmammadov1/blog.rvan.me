@@ -94,8 +94,8 @@ const staticPages = [
   },
   {
     path: "/tools/open-peeps",
-    title: "Open Peeps Character Builder — Free Vector Avatar & Illustration Generator",
-    description: "Create custom hand-drawn character illustrations with Open Peeps. Mix facial expressions, hairstyles, poses, clothing, and export clean SVG or high-res PNG.",
+    title: "Character Builder Tool — Free Vector Avatar & Illustration Generator",
+    description: "Create custom hand-drawn character illustrations with the modular character builder. Mix facial expressions, hairstyles, poses, clothing, and export clean SVG or high-res PNG.",
     type: "website",
     lastmod: todayIso,
   },
@@ -485,8 +485,8 @@ const staticAzTranslations = {
     description: "Dizaynerlər və proqramçılar üçün açıq mənbəli şrift ailələri, vektor aktivləri və UI dəstləri.",
   },
   "/tools/open-peeps": {
-    title: "Open Peeps Personaj Quraşdırıcısı — Pulsuz Vektor İllüstrasiya Generatoru | Rvan.me",
-    description: "Open Peeps ilə xüsusi əl ilə çəkilmiş personaj illüstrasiyaları yaradın. Üz ifadələri, saç düzümləri və geyimləri birləşdirin, təmiz SVG və PNG ixrac edin.",
+    title: "Personaj Quraşdırıcı Aləti — Pulsuz Vektor İllüstrasiya Generatoru | Rvan.me",
+    description: "Modul personaj quraşdırıcı ilə xüsusi əl ilə çəkilmiş illüstrasiyalar yaradın. Üz ifadələri, saç düzümləri və geyimləri birləşdirin, təmiz SVG və PNG ixrac edin.",
   },
 };
 
