@@ -491,6 +491,10 @@ const staticAzTranslations = {
     title: "Kreativ Resurslar — Açıq Mənbəli Şriftlər, İkonlar və Alətlər | Rvan.me",
     description: "Dizaynerlər və proqramçılar üçün açıq mənbəli şrift ailələri, vektor aktivləri və UI dəstləri.",
   },
+  "/tools/resume-builder": {
+    title: "Pulsuz ATS CV Hazırlayıcı — HR Təsdiqli Vektor PDF Generatoru | Rvan.me",
+    description: "Real vaxt rejimində sənəd üzərində birbaşa redaktə, ATS xal auditi və 1 kliklə yüksək keyfiyyətli vektor A4 PDF yükləmə imkanı verən peşəkar CV hazırlayıcı.",
+  },
   "/tools/open-peeps": {
     title: "Personaj Quraşdırıcı Aləti — Pulsuz Vektor İllüstrasiya Generatoru | Rvan.me",
     description: "Modul personaj quraşdırıcı ilə xüsusi əl ilə çəkilmiş illüstrasiyalar yaradın. Üz ifadələri, saç düzümləri və geyimləri birləşdirin, təmiz SVG və PNG ixrac edin.",

@@ -1,14 +1,12 @@
 import React from "react";
 import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
+import { Modern2ColTemplate } from "./Modern2ColTemplate";
+import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
 import { Sb2novTemplate } from "./Sb2novTemplate";
 import { ModerncvTemplate } from "./ModerncvTemplate";
 import { OnyxTemplate } from "./OnyxTemplate";
-import { LeafishTemplate } from "./LeafishTemplate";
-import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
-import { Modern2ColTemplate } from "./Modern2ColTemplate";
 import { SoftBannerTemplate } from "./SoftBannerTemplate";
 import { ClassicHarvardTemplate } from "./ClassicHarvardTemplate";
-import { ModernTechTemplate } from "./ModernTechTemplate";
 
 interface ResumePreviewProps {
   data: ResumeData;
@@ -31,31 +29,28 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
   const renderTemplate = () => {
     switch (theme.template) {
-      case "sb2nov":
-        return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "moderncv":
-        return <ModerncvTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "onyx":
-        return <OnyxTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "leafish":
-        return <LeafishTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "dark-sidebar":
-        return <DarkSidebarTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "modern-2col":
+      case "modern-cv":
         return <Modern2ColTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "soft-banner":
+      case "professional-cv":
+        return <DarkSidebarTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "executive-cv":
+        return <ModerncvTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "creative-cv":
+        return <OnyxTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "nordic-cv":
         return <SoftBannerTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "classic-harvard":
+      case "minimal-cv":
         return <ClassicHarvardTemplate data={data} theme={theme} />;
-      case "modern-tech":
+      case "blank-cv":
+      case "tech-cv":
       default:
-        return <ModernTechTemplate data={data} theme={theme} />;
+        return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;
     }
   };
 
   return (
     <>
-      {/* Dedicated Print Media Stylesheet */}
+      {/* Dedicated Print Media Stylesheet with Safe Zone Control */}
       <style>{`
         @media print {
           body * {
@@ -77,7 +72,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
             color: black !important;
           }
           @page {
-            size: ${theme.paperSize === "letter" ? "letter" : "A4"};
+            size: A4 portrait;
             margin: 0;
           }
         }
@@ -89,6 +84,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
         style={{
           fontFamily: getFontFamily(),
           minHeight: "1050px",
+          boxSizing: "border-box",
         }}
       >
         {renderTemplate()}

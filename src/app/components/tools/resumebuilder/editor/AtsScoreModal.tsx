@@ -1,6 +1,7 @@
 import React from "react";
 import { AtsCheckResult } from "../atsEngine";
 import { CheckCircle2, AlertCircle, X, ShieldCheck, Zap } from "lucide-react";
+import { useLanguage } from "../../../../../lib/i18n/LanguageContext";
 
 interface Props {
   result: AtsCheckResult;
@@ -8,13 +9,18 @@ interface Props {
 }
 
 export const AtsScoreModal: React.FC<Props> = ({ result, onClose }) => {
+  const { language } = useLanguage();
+  const isAz = language === "az";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in">
       <div className="relative w-full max-w-lg rounded-3xl border border-white/15 bg-neutral-900/95 p-6 shadow-2xl space-y-5 text-foreground max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-2">
             <ShieldCheck size={20} className="text-primary" />
-            <h3 className="text-base font-bold">ATS Compatibility & Recruiter Audit</h3>
+            <h3 className="text-base font-bold">
+              {isAz ? "ATS Uyğunluq & HR Auditi" : "ATS Compatibility & Recruiter Audit"}
+            </h3>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-white p-1 cursor-pointer">
             <X size={18} />
@@ -24,14 +30,22 @@ export const AtsScoreModal: React.FC<Props> = ({ result, onClose }) => {
         {/* Score & Grade Display */}
         <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10">
           <div>
-            <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Estimated ATS Score</span>
+            <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">
+              {isAz ? "Təxmini ATS Xalı" : "Estimated ATS Score"}
+            </span>
             <div className="text-3xl font-extrabold text-primary tracking-tight mt-0.5">
               {result.score} <span className="text-sm text-neutral-400 font-normal">/ 100</span>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Rating</span>
-            <div className={`text-sm font-bold mt-0.5 ${result.score >= 80 ? "text-emerald-400" : result.score >= 60 ? "text-amber-400" : "text-red-400"}`}>
+            <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">
+              {isAz ? "Reytinq Dərəcəsi" : "Rating"}
+            </span>
+            <div
+              className={`text-sm font-bold mt-0.5 ${
+                result.score >= 80 ? "text-emerald-400" : result.score >= 60 ? "text-amber-400" : "text-red-400"
+              }`}
+            >
               {result.grade}
             </div>
           </div>
@@ -40,18 +54,22 @@ export const AtsScoreModal: React.FC<Props> = ({ result, onClose }) => {
         {/* Metrics & Verbs Detected */}
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
-            <div className="text-muted-foreground font-mono text-[10px] uppercase">Power Action Verbs</div>
+            <div className="text-muted-foreground font-mono text-[10px] uppercase">
+              {isAz ? "Güclü Fəaliyyət Felləri" : "Power Action Verbs"}
+            </div>
             <div className="text-lg font-bold text-foreground mt-1 flex items-center gap-1.5">
               <Zap size={14} className="text-amber-400" />
-              <span>{result.actionVerbCount} detected</span>
+              <span>{result.actionVerbCount} {isAz ? "ədəd" : "detected"}</span>
             </div>
           </div>
 
           <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
-            <div className="text-muted-foreground font-mono text-[10px] uppercase">Measurable Metrics (%, $)</div>
+            <div className="text-muted-foreground font-mono text-[10px] uppercase">
+              {isAz ? "Ölçülə Bilən Metriklər (%, $)" : "Measurable Metrics (%, $)"}
+            </div>
             <div className="text-lg font-bold text-foreground mt-1 flex items-center gap-1.5">
               <Zap size={14} className="text-emerald-400" />
-              <span>{result.metricCount} detected</span>
+              <span>{result.metricCount} {isAz ? "ədəd" : "detected"}</span>
             </div>
           </div>
         </div>
@@ -60,7 +78,7 @@ export const AtsScoreModal: React.FC<Props> = ({ result, onClose }) => {
         {result.passedChecks.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-              <CheckCircle2 size={14} /> Passed ATS Criteria ({result.passedChecks.length})
+              <CheckCircle2 size={14} /> {isAz ? `Uğurla Keçən Kriteriyalar (${result.passedChecks.length})` : `Passed ATS Criteria (${result.passedChecks.length})`}
             </h4>
             <div className="space-y-1.5">
               {result.passedChecks.map((item) => (
@@ -77,7 +95,7 @@ export const AtsScoreModal: React.FC<Props> = ({ result, onClose }) => {
         {result.failedChecks.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <AlertCircle size={14} /> Recommended Improvements ({result.failedChecks.length})
+              <AlertCircle size={14} /> {isAz ? `Tövsiyə Olunan Təkmilləşdirmələr (${result.failedChecks.length})` : `Recommended Improvements (${result.failedChecks.length})`}
             </h4>
             <div className="space-y-1.5">
               {result.failedChecks.map((item) => (
@@ -95,7 +113,7 @@ export const AtsScoreModal: React.FC<Props> = ({ result, onClose }) => {
             onClick={onClose}
             className="w-full py-2.5 rounded-xl bg-primary text-black font-bold text-xs font-mono hover:bg-primary/90 transition-all cursor-pointer"
           >
-            GOT IT, CONTINUE EDITING
+            {isAz ? "BAŞA DÜŞDÜM, REDAKTƏYƏ DAVAM ET" : "GOT IT, CONTINUE EDITING"}
           </button>
         </div>
       </div>

@@ -4,10 +4,12 @@ import {
   useResumeEditor,
 } from "./resumebuilder/context/ResumeEditorContext";
 import {
-  SOFTWARE_ENGINEER_PRESET,
+  TECH_CV_PRESET,
+  UNIFIED_TEMPLATES,
   TemplateId,
 } from "./resumebuilder/resumeTypes";
 import { calculateAtsScore } from "./resumebuilder/atsEngine";
+import { downloadResumeAsPdf } from "./resumebuilder/converters/pdfExporter";
 import {
   exportToRenderCvYaml,
   exportToReactiveResumeJson,
@@ -30,9 +32,9 @@ import {
   ZoomOut,
   ShieldCheck,
   ChevronDown,
-  FileCode,
   MousePointerClick,
-  Sparkles,
+  FileCheck,
+  Loader2,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
@@ -49,22 +51,31 @@ const ResumeEditorCanvasInner: React.FC = () => {
     canRedo,
     zoom,
     setZoom,
-    updateFieldByPath,
     setData,
     setTheme,
   } = useResumeEditor();
 
   const { language } = useLanguage();
+  const isAz = language === "az";
+
   const [showAtsModal, setShowAtsModal] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   // ATS Score Calculation
   const atsResult = useMemo(() => calculateAtsScore(data), [data]);
 
-  // Print / PDF Download
-  const handlePrintPdf = () => {
-    window.print();
+  // Direct PDF Download (< 300KB, visually 1:1)
+  const handleDownloadPdf = async () => {
+    setIsGeneratingPdf(true);
+    const cleanName = data.personalInfo.fullName
+      ? data.personalInfo.fullName.replace(/[^a-zA-Z0-9_-]/g, "_")
+      : "Resume";
+    const filename = `${cleanName}_CV.pdf`;
+
+    await downloadResumeAsPdf("printable-resume", filename);
+    setIsGeneratingPdf(false);
   };
 
   // Helper download
@@ -111,7 +122,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
     );
   };
 
-  // Universal Import (RenderCV YAML, Reactive Resume JSON, or Native JSON)
+  // Universal Import
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -122,12 +133,12 @@ const ResumeEditorCanvasInner: React.FC = () => {
         const parsed = importUniversalResume(content);
         if (parsed) {
           setData((prev) => ({ ...prev, ...parsed }));
-          alert("Resume imported successfully! All content mapped.");
+          alert(isAz ? "CV uğurla yükləndi! Bütün məlumatlar bərpa olundu." : "Resume imported successfully!");
         } else {
-          alert("Could not recognize file format. Please upload valid JSON or YAML.");
+          alert(isAz ? "Fayl formatı tanınmadı. Zəhmət olmasa JSON və ya YAML seçin." : "Invalid file format.");
         }
       } catch (err) {
-        alert("Invalid file format.");
+        alert(isAz ? "Xətalı fayl." : "Invalid file.");
       }
     };
     reader.readAsText(file);
@@ -167,16 +178,16 @@ const ResumeEditorCanvasInner: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col min-h-[90vh] bg-neutral-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
-      {/* ── TOP APP HEADER BAR (Canva Style) ── */}
+      {/* ── TOP APP HEADER BAR ── */}
       <header className="h-14 bg-neutral-900 border-b border-white/10 px-4 md:px-6 flex items-center justify-between gap-3 text-white shrink-0 z-40">
         {/* Left: Document Title & Undo/Redo */}
         <div className="flex items-center gap-3">
           <input
             type="text"
-            value={data.personalInfo.fullName ? `${data.personalInfo.fullName} - Resume` : "My Resume"}
-            onChange={(e) => {}}
-            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[160px] sm:max-w-xs truncate"
-            title="Resume Name"
+            value={data.personalInfo.fullName ? `${data.personalInfo.fullName} - CV` : (isAz ? "Mənim CV-m" : "My Resume")}
+            onChange={() => {}}
+            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[150px] sm:max-w-xs truncate"
+            title="Resume Title"
           />
 
           <div className="h-4 w-px bg-white/15" />
@@ -208,44 +219,56 @@ const ResumeEditorCanvasInner: React.FC = () => {
           </div>
         </div>
 
-        {/* Center: ATS Score Badge */}
-        <div className="hidden md:flex items-center gap-2">
-          <button
-            onClick={() => setShowAtsModal(true)}
-            className="flex items-center gap-2 px-3 py-1 rounded-full border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
-            title="Click to view ATS Score Analysis"
-          >
-            <ShieldCheck size={14} className="text-primary group-hover:scale-110 transition-transform" />
-            <span className="text-xs font-mono font-bold">
-              ATS Score:{" "}
-              <strong className={atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"}>
-                {atsResult.score}/100
-              </strong>
-            </span>
-          </button>
+        {/* Center: Template Quick Switcher Pills */}
+        <div className="hidden lg:flex items-center gap-1 bg-black/40 border border-white/10 p-1 rounded-2xl text-xs font-mono">
+          {UNIFIED_TEMPLATES.slice(0, 5).map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTheme((prev) => ({ ...prev, template: t.id, accentColor: t.defaultColor }))}
+              className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
+                theme.template === t.id
+                  ? "bg-primary text-black font-bold shadow-sm"
+                  : "text-muted-foreground hover:text-white hover:bg-white/5"
+              }`}
+            >
+              {isAz ? t.name_az : t.name}
+            </button>
+          ))}
         </div>
 
-        {/* Right: Export & PDF Download */}
+        {/* Right: ATS Score, Export & Direct PDF Download */}
         <div className="flex items-center gap-2">
+          {/* ATS Score Indicator */}
+          <button
+            onClick={() => setShowAtsModal(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
+            title={isAz ? "ATS Analizini Göstər" : "View ATS Compliance Audit"}
+          >
+            <ShieldCheck size={13} className="text-primary group-hover:scale-110 transition-transform" />
+            <span className="text-xs font-mono font-bold">
+              ATS: <strong className={atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"}>{atsResult.score}%</strong>
+            </span>
+          </button>
+
           {/* Copy Plain Text */}
           <button
             onClick={handleCopyPlainText}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
-            title="Copy plain text"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
+            title={isAz ? "Mətni kopyala" : "Copy plain text"}
           >
             {copiedText ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            <span>{copiedText ? "COPIED" : "TEXT"}</span>
+            <span>{copiedText ? (isAz ? "KOPYALANDI" : "COPIED") : (isAz ? "MƏTN" : "TEXT")}</span>
           </button>
 
           {/* Export Code Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowExportMenu(!showExportMenu)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
             >
               <Download size={12} />
-              <span className="hidden sm:inline">EXPORT</span>
-              <ChevronDown size={11} />
+              <span className="hidden sm:inline">{isAz ? "KOD" : "EXPORT"}</span>
+              <ChevronDown size={10} />
             </button>
 
             {showExportMenu && (
@@ -254,41 +277,43 @@ const ResumeEditorCanvasInner: React.FC = () => {
                   onClick={handleExportJson}
                   className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer"
                 >
-                  <span>Native Backup (.json)</span>
-                  <span className="text-[10px] text-muted-foreground">JSON</span>
+                  <span>JSON Backup</span>
+                  <span className="text-[10px] text-muted-foreground">.json</span>
                 </button>
                 <button
                   onClick={handleExportRenderCvYaml}
                   className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-emerald-400"
                 >
-                  <span>RenderCV YAML (.yaml)</span>
-                  <span className="text-[10px] text-emerald-400">YAML</span>
+                  <span>RenderCV YAML</span>
+                  <span className="text-[10px] text-emerald-400">.yaml</span>
                 </button>
                 <button
                   onClick={handleExportReactiveResumeJson}
                   className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-sky-400"
                 >
-                  <span>Reactive Resume v4 (.json)</span>
-                  <span className="text-[10px] text-sky-400">JSON</span>
+                  <span>Reactive Resume v4</span>
+                  <span className="text-[10px] text-sky-400">.json</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* Universal Import */}
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer">
+          {/* Import Button */}
+          <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer">
             <Upload size={12} />
-            <span className="hidden sm:inline">IMPORT</span>
+            <span className="hidden sm:inline">{isAz ? "İDXAL" : "IMPORT"}</span>
             <input type="file" accept=".json,.yaml,.yml" onChange={handleImportFile} className="hidden" />
           </label>
 
-          {/* Print PDF Download */}
+          {/* Direct PDF Download (< 300KB) */}
           <button
-            onClick={handlePrintPdf}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0"
+            onClick={handleDownloadPdf}
+            disabled={isGeneratingPdf}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0 disabled:opacity-70"
+            title={isAz ? "A4 PDF Kimi Endir (< 300KB)" : "Download A4 PDF (< 300KB)"}
           >
-            <Printer size={13} />
-            <span>PDF</span>
+            {isGeneratingPdf ? <Loader2 size={13} className="animate-spin" /> : <Printer size={13} />}
+            <span>{isGeneratingPdf ? (isAz ? "YÜKLƏNİR..." : "GENERATING...") : (isAz ? "PDF YÜKLƏ" : "DOWNLOAD PDF")}</span>
           </button>
         </div>
       </header>
@@ -310,20 +335,20 @@ const ResumeEditorCanvasInner: React.FC = () => {
           <div className="mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-mono text-primary flex items-center gap-2 shadow-inner print:hidden">
             <MousePointerClick size={13} className="animate-bounce" />
             <span>
-              {language === "az"
-                ? "💡 CV üzərində istənilən mətnə iki dəfə klik edərək dərhal yaza və dəyişdirə bilərsiniz!"
-                : "💡 Direct Canvas Editor: Double-click any text directly on the resume to type and edit in place!"}
+              {isAz
+                ? "💡 CV üzərində istənilən mətnə iki dəfə klik edərək birbaşa redaktə edə bilərsiniz!"
+                : "💡 Direct Canvas Editor: Double-click any text on the resume to edit in place!"}
             </span>
           </div>
 
-          {/* The A4 Resume Document Sheet Container */}
+          {/* The A4 Resume Document Sheet Container with Safe Zone Padding */}
           <div
             style={{
               transform: `scale(${zoom})`,
               transformOrigin: "top center",
               transition: "transform 0.15s ease-out",
             }}
-            className="w-full max-w-[850px] shadow-2xl relative"
+            className="w-full max-w-[850px] shadow-2xl relative print:shadow-none print:transform-none"
           >
             <ResumePreview data={data} theme={theme} onUpdate={setData} />
           </div>
@@ -368,19 +393,19 @@ const ResumeEditorCanvasInner: React.FC = () => {
 export default function ResumeBuilder() {
   const [initialData] = useState<any>(() => {
     try {
-      const saved = localStorage.getItem("rvan_ats_resume_data_v3");
+      const saved = localStorage.getItem("rvan_ats_resume_data_v4");
       if (saved) return JSON.parse(saved);
     } catch {}
-    return SOFTWARE_ENGINEER_PRESET;
+    return TECH_CV_PRESET;
   });
 
   const [initialTheme] = useState<any>(() => {
     try {
-      const savedTheme = localStorage.getItem("rvan_ats_resume_theme_v3");
+      const savedTheme = localStorage.getItem("rvan_ats_resume_theme_v4");
       if (savedTheme) return JSON.parse(savedTheme);
     } catch {}
     return {
-      template: "sb2nov",
+      template: "tech-cv",
       accentColor: "#111827",
       fontFamily: "sans",
       density: "standard",
