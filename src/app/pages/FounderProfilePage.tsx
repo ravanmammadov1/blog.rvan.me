@@ -11,8 +11,9 @@ import {
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
-import { fetchSiteSettings } from "../../lib/sanityQueries";
-import { SiteSettings } from "../../types/cms";
+import { fetchAboutSection, fetchSiteSettings } from "../../lib/sanityQueries";
+import { AboutSection, SiteSettings } from "../../types/cms";
+import { urlFor } from "../../lib/sanityClient";
 import SEO from "../components/SEO";
 import SiteHeader from "../components/SiteHeader";
 import Footer from "../components/Footer";
@@ -110,6 +111,7 @@ const realExperience = [
 
 export default function FounderProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [aboutData, setAboutData] = useState<AboutSection | null>(null);
   const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
@@ -117,7 +119,18 @@ export default function FounderProfilePage() {
     fetchSiteSettings().then((data) => {
       if (data) setSiteSettings(data);
     });
+    fetchAboutSection().then((data) => {
+      if (data) setAboutData(data);
+    });
   }, []);
+
+  const sanityPortraitUrl = aboutData?.profilePhoto
+    ? urlFor(aboutData.profilePhoto)?.width(1200).height(1200).url()
+    : null;
+
+  const activeExperience = (aboutData?.experience && aboutData.experience.length > 0)
+    ? aboutData.experience
+    : realExperience;
 
   const displayProjects = PORTFOLIO_FALLBACK_PROJECTS.map((project) => ({
     _id: project.slug,
@@ -226,17 +239,29 @@ export default function FounderProfilePage() {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-white/10 pb-8">
                   <div className="h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1 shadow-[0_0_30px_rgba(97,197,173,0.25)] shrink-0">
                     <picture>
-                      <source
-                        srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
-                        type="image/webp"
-                      />
-                      <img
-                        src={RavanPortrait1200}
-                        alt="Ravan Mammadov — Founder of Rvan.me"
-                        width={1200}
-                        height={1200}
-                        className="h-full w-full object-cover object-center rounded-2xl"
-                      />
+                      {sanityPortraitUrl ? (
+                        <img
+                          src={sanityPortraitUrl}
+                          alt="Ravan Mammadov — Founder of Rvan.me"
+                          width={1200}
+                          height={1200}
+                          className="h-full w-full object-cover object-center rounded-2xl"
+                        />
+                      ) : (
+                        <>
+                          <source
+                            srcSet={`${RavanPortrait400} 400w, ${RavanPortrait800} 800w, ${RavanPortrait1200} 1200w`}
+                            type="image/webp"
+                          />
+                          <img
+                            src={RavanPortrait1200}
+                            alt="Ravan Mammadov — Founder of Rvan.me"
+                            width={1200}
+                            height={1200}
+                            className="h-full w-full object-cover object-center rounded-2xl"
+                          />
+                        </>
+                      )}
                     </picture>
                   </div>
 
@@ -266,19 +291,19 @@ export default function FounderProfilePage() {
 
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      FOCUS & STRATEGY
+                      CORE MISSION
                     </span>
                     <p className="text-xs font-bold text-foreground leading-snug">
-                      Brand Identity · Motion Design · AI Products
+                      High-Utility Creative & Developer Tools
                     </p>
                   </div>
 
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      KEY INDUSTRIES
+                      INDUSTRY TRACK RECORD
                     </span>
                     <p className="text-xs font-bold text-foreground leading-snug">
-                      Automotive · Luxury Retail · Technology
+                      Automotive · Luxury · FMCG · Tech
                     </p>
                   </div>
 
@@ -291,6 +316,29 @@ export default function FounderProfilePage() {
                     </p>
                   </div>
                 </div>
+
+                {/* Direct Action Inside Card */}
+                <div className="pt-8 flex flex-col sm:flex-row items-center gap-3">
+                  <Button
+                    to={getLocalizedPath("/contact")}
+                    variant="primary"
+                    size="md"
+                    className="w-full sm:w-1/2"
+                    icon={<ArrowUpRight size={14} />}
+                  >
+                    Get in Touch
+                  </Button>
+                  <Button
+                    href="https://www.linkedin.com/in/ravanmammadov1/"
+                    external
+                    variant="secondary"
+                    size="md"
+                    className="w-full sm:w-1/2"
+                    icon={<ArrowUpRight size={13} />}
+                  >
+                    LinkedIn
+                  </Button>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -298,7 +346,7 @@ export default function FounderProfilePage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          2. CAREER TIMELINE & EXPERIENCE
+          2. AUTHENTIC PROFESSIONAL EXPERIENCE
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
@@ -310,7 +358,7 @@ export default function FounderProfilePage() {
           </div>
 
           <div className="space-y-5">
-            {realExperience.map((exp, idx) => (
+            {activeExperience.map((exp, idx) => (
               <div
                 key={idx}
                 className="p-6 md:p-7 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card transition-all duration-300 hover:border-primary/40"
@@ -324,26 +372,30 @@ export default function FounderProfilePage() {
                       <Building2 size={15} className="text-primary" /> {exp.company}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {exp.brands.map((b) => (
-                      <span
-                        key={b}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold text-foreground/80 mono uppercase"
-                      >
-                        {b}
-                      </span>
-                    ))}
-                  </div>
+                  {exp.brands && exp.brands.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {exp.brands.map((b) => (
+                        <span
+                          key={b}
+                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold text-foreground/80 mono uppercase"
+                        >
+                          {b}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 text-xs text-muted-foreground font-medium">
-                  {exp.responsibilities.map((resp, rIdx) => (
-                    <div key={rIdx} className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                      <span>{resp}</span>
-                    </div>
-                  ))}
-                </div>
+                {exp.responsibilities && exp.responsibilities.length > 0 && (
+                  <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 text-xs text-muted-foreground font-medium">
+                    {exp.responsibilities.map((resp, rIdx) => (
+                      <div key={rIdx} className="flex items-center gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                        <span>{resp}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

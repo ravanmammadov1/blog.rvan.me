@@ -155,10 +155,10 @@ export default function ContactPage() {
                   {t("contactBadge", "GET IN TOUCH")}
                 </p>
                 <h1 className="text-4xl font-semibold tracking-[-.05em] sm:text-5xl lg:text-6xl text-foreground leading-[1.08] uppercase">
-                  {t("contactHeading", "LET'S TALK.")}
+                  {siteSettings?.contactHeading || t("contactHeading", "LET'S TALK.")}
                 </h1>
                 <p className="mt-6 text-base sm:text-lg text-muted-foreground/90 leading-relaxed max-w-md font-medium">
-                  {t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.")}
+                  {siteSettings?.contactSubtext || t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.")}
                 </p>
               </div>
 
