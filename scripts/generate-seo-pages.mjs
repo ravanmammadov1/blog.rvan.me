@@ -358,7 +358,7 @@ async function fetchDynamicPages() {
   const endpoint = `https://${projectId}.api.sanity.io/v2025-01-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
 
   try {
-    const response = await fetch(endpoint, { signal: AbortSignal.timeout(10000) });
+    const response = await fetch(endpoint, { signal: AbortSignal.timeout(30000) });
     if (!response.ok) return { enPages: [], azPages: [] };
     const payload = await response.json();
     const enPages = [];

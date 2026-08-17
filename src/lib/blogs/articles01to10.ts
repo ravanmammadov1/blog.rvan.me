@@ -1,1613 +1,400 @@
 import { BlogPost } from "../../types/blog";
 
+function createBlock(text: string, style = "normal", key = Math.random().toString(36).substring(7)) {
+  return {
+    _key: key,
+    _type: "block",
+    style,
+    markDefs: [],
+    children: [{ _key: `${key}-c`, _type: "span", marks: [], text }],
+  };
+}
+
 export const ARTICLES_01_TO_10: BlogPost[] = [
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 01 — VISUAL HIERARCHY
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 1. VISUAL HIERARCHY
   {
     _id: "blog-visual-hierarchy-masterclass",
     title: "Why Do Your Eyes Look at Certain Things First?",
-    slug: { current: "visual-hierarchy-masterclass" },
-    category: "Design",
-    tags: ["Visual Hierarchy", "Gestalt Psychology", "Eye Tracking", "Layout", "Attention Architecture"],
+    title_az: "Gözlərimiz Niyə İlk Olaraq Müəyyən Elementlərə Baxır?",
+    slug: { _type: "slug", current: "why-eyes-look-at-certain-things-first" },
+    slug_az: { _type: "slug", current: "gozler-niye-ilk-baxir" },
+    originalSlug: "visual-hierarchy-masterclass",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "The science of visual hierarchy: How human biology, evolutionary survival reflexes, and scanning patterns dictate where our attention lands in the first 50 milliseconds.",
+    excerpt_az: "Vizual iyerarxiya elmi: İnsan biologiyası, təkamül refleksləri və skan etmə nümunələri ilk 50 millisaniyədə diqqətimizi necə idarə edir.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-hierarchy-cover" },
+      alt: "Heatmap scan path tracking user eye movement across digital interface",
+      url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-01",
+    readTime: "8 min read",
     featured: true,
-    publishDate: "2026-07-25",
+    tags: ["Visual Hierarchy", "Design Psychology", "Eye Tracking", "UX Design", "Cognitive Science"],
+    body: [
+      createBlock("Why Do Your Eyes Look at Certain Things First?", "h2"),
+      createBlock("Before you consciously decide to read a headline, analyze an image, or click a button, your visual cortex has already made hundreds of subconscious decisions. Within the first 50 milliseconds of landing on a webpage or viewing a poster, your brain processes spatial layout, luminance contrast, and dominant focal points. This is not accidental—it is the direct consequence of millions of years of evolutionary survival mechanisms applied to modern interface design."),
+      createBlock("1. The 50-Millisecond Biological Filter", "h3"),
+      createBlock("Human vision is not a camera that captures an entire scene with uniform clarity. Only the fovea centralis—a tiny 1.5mm region in the center of the retina—possesses the photoreceptor density required for sharp, high-resolution focus. Everything outside this narrow 2-degree cone is processed in low resolution by peripheral vision, tuned specifically to detect high contrast, motion, and sudden anomalies."),
+      createBlock("When a user encounters a digital composition, their peripheral vision scans the canvas for contrast anchors. Elements with high luminance contrast, large physical scale, or human faces trigger immediate saccadic eye movements. Designers who understand this biological filter do not ask users to search; they command the subconscious eye to land on the primary focal point instantly."),
+      createBlock("2. The Gutenberg Diagram and Western Reading Gravity", "h3"),
+      createBlock("In cultures that read left-to-right and top-to-bottom, visual processing follows a predictable path termed Reading Gravity. First described by Gutenberg, this natural eye flow moves from the Primary Optical Area (top-left) diagonally across the page toward the Terminal Area (bottom-right)."),
+      createBlock("When design elements align with reading gravity, cognitive friction drops to near zero. Placing critical value propositions in the top-left and primary calls-to-action (CTAs) in the terminal bottom-right creates a frictionless reading momentum that feels entirely natural to the reader."),
+      createBlock("3. F-Patterns, Z-Patterns, and Visual Scanners", "h3"),
+      createBlock("Pioneering eye-tracking research conducted by Nielsen Norman Group revealed that users rarely read web pages word-for-word. Instead, they scan in distinct geometric patterns:"),
+      createBlock("• The F-Pattern: Common on text-dense editorial and documentation layouts. Users scan horizontally across the top headline, move down the left margin to read a shorter horizontal bar, and finally scan vertically down the left edge."),
+      createBlock("• The Z-Pattern: Dominant on visual landing pages and promotional banners. The eye sweeps horizontally across the header, cuts diagonally across the central hero illustration, and completes its journey along the bottom CTA bar."),
+      createBlock("4. The Six Levers of Visual Weight", "h3"),
+      createBlock("To control the order in which information is digested, master designers manipulate six fundamental properties of visual weight:"),
+      createBlock("1. Scale and Proportion: Larger elements command attention first, establishing the root node of the cognitive hierarchy."),
+      createBlock("2. Luminance and Contrast: High-contrast elements against deep backgrounds trigger immediate retinal activation."),
+      createBlock("3. Chromatic Isolation (The Von Restorff Effect): An accent color surrounded by neutral tones creates an unignorable anomaly."),
+      createBlock("4. Spatial Proximity and Whitespace: Generous whitespace around an object isolates it, magnifying its perceived importance."),
+      createBlock("5. Gaze Direction and Faces: Human beings are hardwired to look where other humans are looking. An image of a face gazing at a headline will reflexively cause the user to look at that exact headline."),
+      createBlock("6. Depth and Layering: Drop shadows, z-index elevation, and blur gradients indicate priority in the third visual dimension."),
+      createBlock("Conclusion: Designing for the Biological Eye", "h3"),
+      createBlock("Mastering visual hierarchy is not about making headlines bigger or adding bright colors arbitrarily. It is about orchestrating an intentional visual journey where the viewer never has to wonder what to look at next. When hierarchy is executed with surgical precision, design ceases to be decoration and becomes effortless communication."),
+    ],
+  },
+
+  // 2. TYPOGRAPHY / GOTHAM / LUXURY FONTS
+  {
+    _id: "blog-the-art-of-typographic-pairing",
+    title: "Why Do Some Fonts Feel Expensive and Others Feel Cheap?",
+    title_az: "Niyə Bəzi Şriftlər Bahalı, Bəziləri isə Ucuz Təsir Bağışlayır?",
+    slug: { _type: "slug", current: "why-some-fonts-feel-expensive-gotham-typography" },
+    slug_az: { _type: "slug", current: "bahali-ve-ucuz-sriftler" },
+    originalSlug: "the-art-of-typographic-pairing",
+    category: "Typography",
+    category_az: "Tipoqrafika",
+    excerpt: "From Tobias Frere-Jones's New York architectural research to Obama's 2008 campaign: Why Gotham and high-end geometric typefaces convey power, luxury, and institutional trust.",
+    excerpt_az: "Tobias Frere-Jones-un Nyu-York memarlıq araşdırmalarından Obama 2008 kampaniyasına qədər: Gotham və həndəsi şriftlər niyə lüks, etibar və siyasi güc aşılayır.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-gotham-cover" },
+      alt: "Gotham and luxury typography specimen on architectural concrete background",
+      url: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-03",
+    readTime: "11 min read",
+    featured: true,
+    tags: ["Gotham", "Typography", "Political Branding", "Luxury Design", "Font Psychology"],
+    body: [
+      createBlock("Why Do Some Fonts Feel Expensive and Others Feel Cheap?", "h2"),
+      createBlock("When you walk past a luxury boutique like Chanel, Rolex, or Saint Laurent, you don't need to read the price tag to know the products inside cost thousands of dollars. The typography alone communicates authority, heritage, and refined taste. Conversely, poorly spaced lettering on a storefront immediately signals discount retail. Why does letterform geometry evoke such visceral psychological associations?"),
+      createBlock("1. The Anatomy of Perceived Value", "h3"),
+      createBlock("Typography communicates on two distinct channels simultaneously: the semantic channel (what the words say) and the visual-aesthetic channel (how the letterforms feel). Psychological studies in crossmodal correspondence demonstrate that high-contrast serifs with razor-thin hairlines (like Didot and Bodoni) are subconsciously associated with elegance, delicacy, and high fashion, while wide geometric sans-serifs convey structural solidity and institutional permanence."),
+      createBlock("Cheap-feeling fonts often suffer from inconsistent stroke weight, crowded letter-spacing, or exaggerated decorative quirks that feel trendy rather than timeless. Expensive fonts, by contrast, exhibit mathematical harmony, disciplined optical kerning, and generous internal counter-spaces."),
+      createBlock("2. The Story of Gotham: From Port Authority to the Presidency", "h3"),
+      createBlock("To understand how a single typeface can reshape national perception, one must examine Gotham. Commissioned in 2000 by GQ magazine and designed by legendary type designer Tobias Frere-Jones, Gotham was born not from European modernism, but from the raw urban landscape of mid-20th-century New York City."),
+      createBlock("Frere-Jones spent months walking through Manhattan, photographing vernacular signage on municipal buildings, warehouses, and the iconic Port Authority Bus Terminal. These signs were not drawn by trained typographers; they were engineered by draftsmen, lithographers, and stonecutters who favored plain, geometric, unembellished capitals."),
+      createBlock("3. Why Do So Many U.S. Political Campaigns Use Gotham?", "h3"),
+      createBlock("In 2008, the presidential campaign of Barack Obama made a historic design choice: they abandoned the traditional patriotic serif fonts (like Times New Roman and Century Schoolbook) and chose Gotham as the campaign's core typeface. The iconic 'HOPE' posters and 'CHANGE WE CAN BELIEVE IN' banners established a new visual language in political communication."),
+      createBlock("Why did Gotham work so powerfully?"),
+      createBlock("• Civic Authority without Elitism: Gotham feels institutional and strong, yet distinctly democratic and modern."),
+      createBlock("• Architectural Stability: Its wide circular proportions and sturdy vertical stems project unshakeable confidence."),
+      createBlock("• Bipartisan Neutrality: Because it evolved from American municipal architecture rather than corporate boardroom branding, it felt uniquely authentic and trustworthy."),
+      createBlock("Following the success of the 2008 campaign, political campaigns and governmental bodies worldwide adopted Gotham and its geometric descendants, cementing its reputation as the visual voice of modern leadership."),
+      createBlock("4. Tracking and Kerning: The Secret Sauce of Luxury", "h3"),
+      createBlock("Even the most beautiful font will look cheap if it is improperly tracked. Luxury fashion houses (Balenciaga, Bottega Veneta, Saint Laurent) almost universally set their logotypes with generous tracking (letter-spacing: 0.15em to 0.3em). Wide tracking signals that the brand is not in a hurry—it possesses the luxury of space."),
+      createBlock("Conclusion: Typeface as Character and Trust", "h3"),
+      createBlock("Fonts are never neutral vessels. They carry the cultural DNA of the eras in which they were created. Choosing the right typeface is not merely an aesthetic preference; it is the deliberate construction of perceived value and institutional credibility."),
+    ],
+  },
+
+  // 3. ICONOGRAPHY / NOTIFICATION BELL / SKEUOMORPHISM
+  {
+    _id: "blog-iconography-and-vector-precision",
+    title: "Why Does the Notification Icon Look Like a Bell?",
+    title_az: "Bildiriş İkonu Niyə Zəng Şəklindədir?",
+    slug: { _type: "slug", current: "why-notification-icon-is-a-bell" },
+    slug_az: { _type: "slug", current: "bildiris-ikonu-niye-zengdir" },
+    originalSlug: "iconography-and-vector-precision",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "From physical church towers and town criers to modern mobile push alerts: The fascinating history of how physical objects became permanent digital visual metaphors.",
+    excerpt_az: "Kilsə zənglərindən və qədim qapı zənglərindən müasir push bildirişlərinə: Fiziki əşyaların rəqəmsal vizual metaforalara çevrilməsinin heyranedici tarixi.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-bell-cover" },
+      alt: "Antique brass bell transforming into glowing modern digital notification bell icon",
+      url: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-05",
     readTime: "9 min read",
-    excerpt:
-      "Before you consciously decide what to read on a screen, your ocular saccades and subconscious brain have already ranked every element in milliseconds.",
-    coverImage: {
-      asset: { _ref: "image-visual-hierarchy-cover" },
-      alt: "Visual hierarchy diagram showing focal point saccades and contrast weight",
-      caption: "Eye-tracking heatmaps prove that attention follows contrast, scale, and spatial isolation before content comprehension.",
-    },
+    featured: true,
+    tags: ["Iconography", "Skeuomorphism", "Design History", "Visual Metaphors", "UI Icons"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "You open a website, pick up a magazine, or look at a billboard at a highway intersection. Within 50 milliseconds—faster than a conscious blink—your visual cortex has already made half a dozen decisions about where your eyes will travel next. You believe you are browsing freely, but you are walking down an invisible corridor built entirely of scale, contrast, and spatial tension.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Your Eyes Don't Read a Design Randomly" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Human vision is not an omnidirectional video camera; it is a foveal spotlight. The center of our retina, the fovea centralis, covers only two degrees of the visual field—roughly the size of your thumbnail held at arm's length. Everything outside that tiny circle is blurry, low-resolution peripheral data. To construct a coherent mental picture of a layout, our eyes perform rapid, ballistic jumps called saccades, pausing for 200 to 300 milliseconds on fixations.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When eye-tracking pioneer Alfred Yarbus conducted his seminal 1967 experiments, he demonstrated that saccades are never stochastic. They are ruthlessly prioritized by visual salience—the mathematical distinctiveness of a point relative to its neighbors. In design, visual hierarchy is the deliberate manipulation of this salience map to guide the reader through an engineered sequence of thoughts.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Size Is a Command, Not a Suggestion" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Scale communicates urgency. In perceptual psychology, the Ebbinghaus and Titchener illusions reveal that our judgment of an object's importance is intrinsically linked to its relative scale. When a headline is set at 72 points above body copy at 16 points, the brain does not merely register a size difference; it interprets an editorial verdict: 'This is the premise; that is the footnote.'",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "However, beginner designers often make everything large to make everything feel 'important.' When every headline, button, badge, and quote screams at maximum volume, the result is acoustic feedback—visual noise where nothing gets heard. True dominance requires extreme dynamic range: a massive focal anchor balanced by restrained, quiet secondary elements.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Contrast Interrupts the Autopilot Brain" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Contrast is the biological trigger for edge detection. Our photoreceptors (rods and cones) are wired for lateral inhibition—neighboring neurons suppress one another, amplifying our sensitivity to boundaries where light meets dark or sharp meets soft. A lime-green button on a deep charcoal surface does not merely look modern; it triggers a hardwired orienting reflex in the superior colliculus.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Contrast operates along four primary axes: tonal luminance (light vs. dark), chromatic saturation (vibrant vs. muted), geometric form (organic vs. orthogonal), and typographical density (heavy bold sans-serif vs. light serif italic). When these axes align on a single focal element, looking away requires deliberate cognitive effort.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Position Changes Meaning Before Words Are Read" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In Western reading cultures, scanning patterns traditionally follow the Gutenberg diagram, the Z-pattern (for display-dense landing pages), or the F-pattern (for text-heavy interfaces). The top-left corner is the 'primary optical area'—the place where orientation begins. The bottom-right is the 'terminal area'—the natural resting spot where action or conclusion is anticipated.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Placing a call-to-action in the top-left frequently underperforms because the reader has encountered no value proposition yet. Placing it in the terminal zone catches the reader at the exact moment their scan completes, converting ocular momentum into physical interaction.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Typography Has Weight and Velocity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A typeface is not just a carrier of literal words; it is a structural beam. A tight, condensed black grotesque typeface (like Impact or Druk) carries crushing visual gravity. A light, tracked-out geometric sans-serif floats. When you pair an ultra-heavy header with a spacious, high-contrast monospace caption, you create a cadence that accelerates and decelerates the reading pace.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Empty Space Is Part of the Hierarchy" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Whitespace is not empty; it is a pressurized container. The Gestalt law of proximity dictates that elements separated by vast negative space are perceived as independent intellectual entities. Surrounding a single word or object with an ocean of emptiness forces the eye directly into its center. In luxury branding, whitespace is the ultimate currency of confidence.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. How Designers Build an Attention Path" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Consider the classic 1960 Volkswagen 'Think Small' ad designed by Helmut Krone and Julian Koenig at DDB. The composition: three-quarters of the page is pure, uninterrupted grey whitespace. In the top-left sits a tiny, isolated Beetle automobile. In the lower third: a crisp, unadorned bold serif headline ('Think Small.'), followed by three columns of meticulous, justified body text.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The path is mathematically inevitable: 1. Tiny car isolated in whitespace (Surprise / Scale tension) → 2. 'Think Small.' headline (Resolution) → 3. Body copy (Rational justification). You cannot read the ad in any other sequence. That is visual hierarchy in its purest form.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. The Practical Blur Test" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "To test whether your design possesses a resilient hierarchy, apply a 20-pixel Gaussian blur in Figma or squint your eyes until all letters become illegible. Does the composition still tell a story? Can you instantly identify the primary anchor, the secondary support, and the action trigger? If the blurred canvas looks like a formless soup of equal grey lumps, your hierarchy has failed. Re-architect the scale, strip away non-essential elements, and let one dominant force command the room.",
-          },
-        ],
-      },
+      createBlock("Why Does the Notification Icon Look Like a Bell?", "h2"),
+      createBlock("Look at the top of your smartphone or browser screen right now. If you have unread messages or activity, you are greeted by a small icon shaped like a brass clapper bell. Why a bell? In an era where notifications are silent haptic pulses or glowing OLED badges, why do billions of people instantly recognize a medieval acoustic signaling instrument as a symbol for 'You have a new comment'?"),
+      createBlock("1. The Acoustic Archetype: From Church Towers to Schoolyards", "h3"),
+      createBlock("For thousands of years of human civilization, the bell was the sole technology capable of broadcasting urgent information over vast distances simultaneously. Church bells announced weddings, funerals, and daily time; tower bells warned of impending fires or invading armies; school bells dictated behavioral shifts; and dinner bells summoned workers from distant fields."),
+      createBlock("The acoustic profile of a bell is unique: a sudden, high-energy transient spike that instantly cuts through ambient background noise, followed by an exponential decay. When human software engineers in the 1970s and 1980s needed a sensory prompt for urgent user interrupts, they programmed terminals to output an ASCII Control Character (ASCII 07) designated as '\\a' (Alert/Bell), which triggered an audible hardware bell inside early teletype machines."),
+      createBlock("2. Skeuomorphism and the Graphic User Interface Revolution", "h3"),
+      createBlock("When Xerox PARC, Apple, and Microsoft introduced graphical user interfaces (GUIs), designers faced a monumental challenge: how do you teach millions of office workers to operate an abstract digital computer?"),
+      createBlock("The solution was Skeuomorphism—designing digital interface elements to look and behave like their physical office equivalents:"),
+      createBlock("• The Notification Bell: Borrowed from the physical call-bell found on hotel reception desks."),
+      createBlock("• The Floppy Disk: The universal symbol for 'Save', despite millions of Gen-Z users having never touched a 3.5-inch magnetic diskette."),
+      createBlock("• The Paper Envelope: The universal symbol for digital email messages."),
+      createBlock("• The Trash Can / Recycling Bin: The universal affordance for data deletion."),
+      createBlock("• The Magnifying Glass: The universal visual metaphor for database search."),
+      createBlock("• The Rotary Telephone Handset: The universal icon for digital voice calls."),
+      createBlock("3. Semiotics: Why the Metaphor Outlived the Physical Object", "h3"),
+      createBlock("In semiotic theory, a sign begins as an 'Icon' (a direct visual representation of a real object) and gradually evolves into a 'Symbol' (an abstract convention whose meaning is learned culturally). The floppy disk and the bell have crossed this semiotic threshold."),
+      createBlock("Even a child who has never heard a physical town bell immediately understands that a bell badge with a red dot means 'New event'. The icon no longer represents the brass instrument; it represents the abstract concept of *Attention Required*."),
+      createBlock("Conclusion: The Immortality of Good Visual Metaphors", "h3"),
+      createBlock("Great iconography is not about drawing what an object is; it is about capturing what an action means. The bell endures because human psychology craves tangible physical anchors in an increasingly abstract digital world."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 02 — MULTIDISCIPLINARY CREATIVES
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-the-future-of-multidisciplinary-creators",
-    title: "Why Being \"Good at One Thing\" Is Becoming a Problem for Creatives",
-    slug: { current: "the-future-of-multidisciplinary-creators" },
-    category: "Creative Culture",
-    tags: ["Multidisciplinary", "Design Strategy", "Creative Direction", "T-Shaped", "Hybrid Skills"],
-    featured: false,
-    publishDate: "2026-06-23",
-    readTime: "9 min read",
-    excerpt:
-      "The era of the ultra-narrow specialist who only draws vector icons or only writes microcopy is fading. The highest-leverage designers of the next decade are hybrid synthesizers.",
-    coverImage: {
-      asset: { _ref: "image-multidisciplinary-cover" },
-      alt: "Diagram of T-shaped and Pi-shaped creative skill convergence",
-      caption: "When technical execution is commoditized by toolchains, the designer's primary value becomes cross-domain synthesis and strategic taste.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "For the past two decades, the tech industry operated on assembly-line hyperspecialization. One person built design system tokens, another wrote microcopy, a third animated UI transitions, a fourth managed analytics dashboards, and a fifth orchestrated marketing funnels. This division worked because tool friction was immense: mastering Cinema 4D, After Effects, Figma, and React each required thousands of hours of manual training.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Specialist Era and Its Limits" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Hyperspecialization created silos where brilliant UI screens failed to convert because the designer had zero marketing empathy, or where conversion-focused ad creatives looked visually repulsive because the marketer had zero typographic training. When problems crossed discipline borders, teams required endless meetings to translate vocabulary.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Why Creative Work Is Becoming More Connected" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Today, brand identity, frontend performance, customer psychology, and motion mechanics are not separate departments; they are simultaneous facets of the same customer experience. When a user taps a button, they experience brand tone (copywriting), spatial responsiveness (motion physics), visual hierarchy (layout), and latency (engineering) in a single unified moment.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Design + Marketing + Motion + Strategy" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When a designer understands customer acquisition cost (CAC), they stop designing pretty screens that fail to convert. When a motion designer understands cognitive load and frontend performance budgets, their transitions feel tactile rather than bloated. The greatest creative breakthroughs occur at the intersection of disciplines.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. What AI Actually Changes" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "AI does not replace human creative vision; it obliterates the mechanical cost of tool execution. Tasks that previously required two junior production artists for three days—such as generating 30 layout iterations, vectorizing sketches, or writing boilerplate CSS—can now be executed in seconds. The bottleneck shifts from execution speed to editorial judgment.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Why Taste Is Harder to Automate" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Generative tools create infinite volume, but infinite volume without curation is visual sewage. 'Taste' is not an abstract mystery; it is an internalized index of cultural references, historical typography, spatial rhythm, and empathetic understanding of human behavior. The hybrid creative acts as an editor-in-chief: rejecting 99% of possible variations to curate the one solution that carries cultural resonance.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. The Rise of the Hybrid Creative" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The modern hybrid creator does not need to write production backend microservices or manually keyframe 500 layers in Maya. Instead, they possess 'full-stack creative literacy'—they can conceive the brand strategy, direct the visual identity, prototype the kinetic motion, write the high-converting copy, and ship the product live.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. T-Shaped vs. Pi-Shaped Creatives" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The traditional model celebrated the 'T-shaped' professional: broad general knowledge across the top, with a single deep vertical spike. In the modern creative economy, the most resilient operators are 'Pi-shaped' (π)—they possess two or three deep vertical anchors (for example, Brand Identity + React Engineering, or Motion Design + Copywriting Psychology) tied together by broad strategic literacy.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. What Creatives Should Actually Learn Next" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "If you are a visual designer, do not spend the next year mastering another shortcut menu. Learn behavioral economics. Study why certain pricing structures work. Learn how browser engines parse DOM nodes. If you are a copywriter, learn visual hierarchy and spatial rhythm. The future belongs not to the person who can click a button faster, but to the synthesizer who can connect the dots across an entire product ecosystem.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 03 — AI IMAGES
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-ai-image-generation-pipelines",
-    title: "Why AI Images Often Look Expensive but Still Feel Wrong",
-    slug: { current: "ai-image-generation-pipelines" },
-    category: "AI",
-    tags: ["AI Art", "Art Direction", "Visual Criticism", "Midjourney", "Aesthetic Fatigue"],
-    featured: false,
-    publishDate: "2026-07-28",
-    readTime: "8 min read",
-    excerpt:
-      "Ultra-detailed volumetric lighting and 8K surface textures cannot compensate for the lack of a central idea. Why technical complexity without art direction produces visual plastic.",
-    coverImage: {
-      asset: { _ref: "image-ai-images-critique-cover" },
-      alt: "Visual critique comparison between over-detailed AI rendering and restrained art-directed photography",
-      caption: "High polygon counts, chromatic aberration, and volumetric fog are often used to camouflage a complete void of concept.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "We have all seen it: a portrait of an astronaut with individual pores visible on their nose, subsurface scattering glowing through their ears, golden hour rim lighting bouncing off their visor, and eight billion raindrops shimmering on their suit. It looks like a multimillion-dollar Hollywood VFX frame. And yet, after half a second, you feel absolutely nothing. You scroll past.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Expensive-Looking AI Image" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "For a century, photographic detail was a proxy for budget and intentionality. If an image possessed perfect rim lighting, large format depth of field, and immaculate studio grading, it meant a crew of twenty professionals spent ten hours with Broncolor strobes and Hasselblad sensors crafting it. The brain learned to equate surface fidelity with value.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Technical Quality Is Not Art Direction" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Diffusion models broke this correlation overnight. In 2026, rendering ultra-detailed ambient occlusion and cinematic god rays requires 4 seconds of GPU compute. When detail becomes free, detail ceases to signal value. In fact, hyper-detail has become the signature marker of cheapness—a giveaway that an image was generated by an uncurated machine defaulting to maximalist noise.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Composition Before Detail" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A master photographer like Henri Cartier-Bresson could capture an unforgettable image on a grainy, low-resolution 35mm Leica because the geometry of the frame—the decisive moment, the golden ratio, the diagonal tension—was structurally flawless. AI models frequently generate jaw-dropping micro-textures over structurally chaotic, unanchored compositions.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Why Lighting Alone Cannot Save an Image" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "AI prompts frequently append 'cinematic golden hour volumetric ray tracing.' But when every object in a scene glows with its own independent theatrical rim light, the laws of spatial physics collapse. The viewer's brain recognizes that the light sources make no physical sense, triggering subconscious alienation.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Visual Consistency and Brand Cohesion" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The greatest failure of unguided generative assets is inconsistency: a marketing campaign where image 1 looks like a 1970s Polaroid, image 2 looks like a 3D Pixar render, and image 3 looks like an oil painting. Brands require uniform visual grammar: consistent lens focal lengths, color gamuts, and shadow treatments.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. The Problem With Generic AI Aesthetics" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "AI engines default to the statistical mean of their training data: smooth, waxy skin; neon teal-and-orange color grading; and overly symmetrical, floating compositions. This 'Midjourney sheen' has become as recognizable—and fatiguing—as 1990s stock photography.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Human Direction vs. Prompt Randomness" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Typing a prompt and hoping for a lucky roll of the stochastic dice is gambling, not designing. Art direction means establishing strict constraints: limiting color palettes to two Pantone swatches, specifying exact 85mm lens compression, and rejecting 50 generations until the concept speaks with clarity.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. What Makes an AI Image Feel Designed?" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The images that stop viewers in 2026 are those directed with strict editorial discipline: a single unified light source, purposeful negative space, restrained color palettes, and above all, a clear conceptual metaphor. If you cannot explain what your image means in one sentence without mentioning its visual effects, no amount of prompt engineering will save it.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 04 — GENERIC MODERN WEBSITES
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-generative-ui-and-automated-layout-engines",
-    title: "Why Do So Many Websites Look the Same Now?",
-    slug: { current: "generative-ui-and-automated-layout-engines" },
-    category: "Design",
-    tags: ["Web Design", "Homogenization", "Design Systems", "UI Trends", "Aesthetics"],
-    featured: false,
-    publishDate: "2026-07-02",
-    readTime: "8 min read",
-    excerpt:
-      "Dark mode hero, glowing radial gradient, Inter font, 3-column bento box with subtle border glow, and a floating badge. How the SaaS formula conquered the web.",
-    coverImage: {
-      asset: { _ref: "image-generic-websites-cover" },
-      alt: "Deconstructed wireframe of the universal modern SaaS website formula",
-      caption: "When component libraries and conversion optimization metrics converge on the same local maximum, every brand begins to look like the exact same software company.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Close your eyes and picture a modern tech startup website built between 2023 and 2026. You already know every single pixel before you even type the URL: A dark slate-black background (#09090b). A purple-to-cyan radial glow hovering behind a pill-shaped badge with a pulsing green dot ('v2.0 is now live →'). A bold headline set in Inter or Geist with the last two words styled in a soft gradient. Below that, two buttons (one glowing white, one transparent with a 1px border). Below that, a row of desaturated logos of companies that definitely never gave explicit permission. And below that? The ubiquitous Bento Box grid.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The New Visual Uniformity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The internet was once a chaotic wild west of brutalist experiments, Flash animations, skeuomorphic textures, and idiosyncratic personal homepages. Today, whether you are buying an AI calendar app, enterprise cloud security, or boutique coffee beans, the digital store looks identical. We have entered the era of the monoculture interface.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The SaaS Website Formula" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The formula is mathematically codified: 1. Hero headline promising 10x productivity, 2. Interactive product mockup floating in space with glassmorphic cards, 3. Social proof logo marquee, 4. Three-column feature grid with glowing icons, 5. Bento box showing speed/security, 6. Testimonial carousel, 7. Pricing table with middle tier highlighted, 8. Final CTA with dark background. Deviating from this formula feels economically terrifying to founders.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Design Systems and Component Libraries" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "This homogeneity did not happen because designers lost their imagination. It happened because the economic incentives of web creation underwent a massive structural shift. Component libraries like Tailwind CSS, shadcn/ui, and Radix UI solved the grueling problem of cross-browser accessibility and responsive layout architecture. Why spend three weeks hand-crafting a bespoke modal when you can copy a battle-tested accessible component in three seconds?",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Templates Changed the Web" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Framers, Webflows, and Next.js boilerplate templates enabled solo engineers to launch polished websites in 24 hours. But because everyone buys the same 10 top-selling templates on Framer Supply, thousands of companies end up wearing the exact same off-the-rack visual suit.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. AI Website Builders Accelerate Convergence" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Generative layout engines synthesize the statistical average of existing landing pages. When an AI tool builds a landing page, it pulls from the SaaS formula because that is what exists in its training weights. The feedback loop compounds: AI trains on identical websites to generate more identical websites.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Why Similarity Is Convenient" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Jakob's Law of Internet User Experience states: 'Users spend most of their time on other sites. This means that users prefer your site to work the same way as all the other sites they already know.' Familiarity reduces cognitive load. When navigation and forms work predictably, users do not get lost.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. When Consistency Becomes Boring" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Usability is the baseline; distinctiveness is the brand. When your website looks identical to 500 competitors, your product becomes a commodity. The customer perceives no pricing power, no cultural point of view, and zero emotional resonance.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. How to Build Something Distinctive" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Distinctiveness does not require confusing your users. Keep the navigation and checkout predictable, but inject unrepeatable personality into art direction: custom editorial typography, unexpected spatial scale, bespoke motion curves, bespoke photography with real human texture, and brave editorial copywriting that takes an actual stance. If a customer can replace your logo with your competitor's logo and not notice a single visual difference, you have no brand.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 05 — CONTENT / RESOURCE ECOSYSTEMS
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-content-strategy-hubs",
-    title: "Why Some Websites Become the Place Everyone Keeps Coming Back To",
-    slug: { current: "content-strategy-hubs" },
-    category: "Marketing",
-    tags: ["Resource Hubs", "Product-Led SEO", "Tool Marketing", "Audience Retention", "Platform Strategy"],
-    featured: false,
-    publishDate: "2026-07-19",
-    readTime: "8 min read",
-    excerpt:
-      "A portfolio is a trophy case; an ecosystem is a daily utility. Why building free interactive tools, font catalogs, and curated resources builds unshakeable digital gravity.",
-    coverImage: {
-      asset: { _ref: "image-resource-ecosystem-cover" },
-      alt: "Diagram showing traffic loops between interactive tools, curated resources, and core agency services",
-      caption: "Websites that provide ongoing functional utility transform passive one-time visitors into an active, returning community.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Most portfolio websites are digital mausoleums. A prospective client visits once, browses three mockups, decides whether to send an email, and never returns. The traffic decay curve is brutal: without continuous paid advertising or relentless social media posting, visits plummet to near zero.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. A Website Can Be More Than a Portfolio" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A portfolio showcases what you did in the past; an ecosystem delivers immediate value in the present. When you expand your digital property from a static brochure into a living creative platform, you fundamentally change your relationship with the audience.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Content Is Not the Same as Value" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Publishing 500-word generic SEO blog posts ('Top 5 Tips for Great Design') generates zero authority. Real value is dense, actionable, and permanent: deeply researched editorial critiques, verified open-source directories, and interactive calculators.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. The Resource Effect" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When a designer discovers a curated library of 2,000 Google Fonts with live specimen pairing tools and direct OTF downloads, they don't just read it—they bookmark it, save it to their team Slack channel, and return three times a week during active client projects.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Tools Create Repeat Visits" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Interactive utilities (like CSS Grid generators, color contrast checkers, or vector SVG exporters) turn passive readers into active users. Every interaction builds cognitive familiarity and trust with the underlying creator.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Building Authority Through Useful Content" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Authority is not earned by boasting about awards; it is demonstrated by generosity. By giving away high-utility assets and frameworks for free, you prove mastery without needing a sales pitch.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Why People Bookmark Certain Websites" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A bookmark is an investment in future productivity. Users bookmark sites that reduce future friction. When your domain becomes the fastest way to solve a design challenge, you own a piece of the user's daily workflow.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. From One Article to an Ecosystem" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "An article about typography naturally links to a live font specimen viewer, which links to an interactive fluid type-scale calculator, which links to a case study demonstrating typographic branding in action. The interconnected graph keeps visitors exploring for 20 minutes instead of 20 seconds.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Designing a Website People Return To" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Stop thinking like an advertiser buying billboard space. Start thinking like a civic architect building a public library. Build digital tools and knowledge that compound in value every single month.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 06 — BRAND POSITIONING
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-brand-positioning-matrix",
-    title: "Why Being \"Better\" Isn't Enough to Make People Choose Your Brand",
-    slug: { current: "brand-positioning-matrix" },
-    category: "Marketing",
-    tags: ["Brand Positioning", "Category Creation", "Differentiation", "Strategy", "Perception"],
-    featured: false,
-    publishDate: "2026-07-24",
-    readTime: "8 min read",
-    excerpt:
-      "When you claim to be 'faster, cheaper, and higher quality,' customers hear 'generic.' True positioning is about owning a distinct concept in the prospect's mind.",
-    coverImage: {
-      asset: { _ref: "image-brand-positioning-cover" },
-      alt: "2x2 positioning matrix demonstrating category divergence versus linear comparison",
-      caption: "Positioning is not about shouting louder on the same axis; it is about drawing an entirely new axis of comparison.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 1981, advertising titans Al Ries and Jack Trout published 'Positioning: The Battle for Your Mind.' Their core premise remains the most violated principle in modern business: 'Positioning is not what you do to a product. Positioning is what you do to the mind of the prospect.'",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Better Is a Dangerous Word" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When you tell a client that your studio or product is 'better than Competitor X,' you immediately validate Competitor X as the benchmark. You force the customer into an exhausting feature-by-feature spreadsheet comparison where you are arguing over 5% speed improvements or marginal cost savings. The customer's brain defaults to skepticism.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Problem With Generic Differentiation" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Every agency claims they have 'passion for craft,' 'data-driven results,' and 'client-first focus.' These are table stakes, not differentiators. If your unique selling proposition applies to every competitor in the phone book, it is completely meaningless.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. How Customers Compare Brands" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The human brain is an energy-saving machine. It organizes information into simple conceptual ladders. In the rental car category: Hertz is #1, Avis is #2. When Avis launched their historic campaign 'We Try Harder,' they didn't claim to be bigger than Hertz—they positioned themselves as the hungry, hardworking underdog.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Positioning Creates Context" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Positioning determines what category you are judged against. If you position your service as 'graphic design,' clients compare your rate to a $50 Fiverr gig. If you position your service as 'growth-stage conversion architecture,' they compare your fee to a $250,000 executive salary.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Why Category Matters" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "It is vastly easier to be the first in a new subcategory than to dislodge the entrenched leader of an existing category. Red Bull did not launch as a 'better cola'; they created and dominated the 'Energy Drink' category.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Being Different vs. Being Relevant" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Divergence without relevance is merely eccentric circus behavior. True positioning pairs a sharp, unmistakable angle with a deep, urgent commercial problem that clients are desperate to solve.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Examples of Strong Positioning" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Consider Volvo (Safety), Liquid Death (Punk Rock Canned Water), or Basecamp (Calm, anti-overwork project management). None of these brands tried to appeal to everyone; they staked a definitive philosophical claim.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. The Question Every Brand Should Answer" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Complete this sentence without using the words 'quality', 'passion', 'innovative', or 'experienced': 'We are the only _____ that _____ for _____ who _____.' If your answer could be copied and pasted onto your top three competitors' websites without causing confusion, your positioning is non-existent. Choose a single sharp angle and have the courage to repel everyone else.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 07 — AIDA
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-aida-framework-performance-creative-attention-action",
-    title: "AIDA: The 4-Step Formula Behind Thousands of Ads",
-    slug: { current: "the-aida-framework" },
-    category: "Marketing",
-    tags: ["AIDA Formula", "Advertising Psychology", "Direct Response", "Copywriting", "Funnel Architecture"],
-    featured: false,
-    publishDate: "2026-07-27",
-    readTime: "8 min read",
-    excerpt:
-      "Elias St. Elmo Lewis mapped it in 1898. Over a century later, from Apple keynotes to TikTok performance ads, the 4-step sequence remains the backbone of human persuasion.",
-    coverImage: {
-      asset: { _ref: "image-aida-framework-cover" },
-      alt: "Visual breakdown of Attention, Interest, Desire, and Action in modern digital creative",
-      caption: "Persuasion is an ordered circuit: you cannot stimulate Desire before securing raw Attention, nor can you demand Action before building Interest.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 1898, Philadelphia advertising pioneer Elias St. Elmo Lewis formulated a simple principle for life insurance sales: 'Attract attention, maintain interest, create desire, and get action.' Over 125 years later, through print, radio, television, banners, and algorithmic video feeds, Lewis's AIDA framework remains unbroken.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Attention Comes Before Persuasion" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Attention is not persuasion; it is the prerequisite for consciousness. In digital feeds, users scroll with sub-second thumb velocity. To stop this involuntary motor reflex, you must introduce a 'pattern interrupt'—an unexpected spatial scale, an abrasive color contrast, a provocative opening question, or an unnatural visual physics cue that forces the brain out of default mode network.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. A — Attention (The First Half-Second)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The hook is the gatekeeper. If the first 500 milliseconds fail to arrest eye movement, the remaining 59 seconds of your brilliant video or carefully crafted body text simply do not exist in the universe.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. I — Interest (The Bridge of Relevance)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Once attention is hooked, you have approximately 2 seconds before the user resumes scrolling. Interest is maintained by immediately reflecting the viewer's unspoken pain point or worldview back to them. If the hook was 'Why Do Your Eyes Look at Certain Things First?', the interest phase explains the biological reality of eye-tracking saccades.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. D — Desire (Emotional Transmutation)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Logic makes people think; emotion makes them act. Desire is generated by painting the contrast between the customer's current frustrated state and their aspirational future state. You show the tangible relief, status elevation, or speed gained by adopting the solution.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. A — Action (Removing the Final Friction)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The final step must be unambiguous, low-risk, and immediate. A vague call-to-action ('Learn more about our comprehensive solutions') destroys the accumulated momentum. A crisp, high-clarity command ('Download the 2026 Typography Specimen Kit →') closes the circuit.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Why the Order Matters" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "AIDA is a non-negotiable chemical reaction. If you ask for Action before generating Desire, you are spam. If you try to build Desire before securing Attention, you are talking to an empty room.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. AIDA in a Real Advertisement" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Look at Steve Jobs introducing the iPod in 2001: Attention (pulling a tiny device from a jeans pocket), Interest (explaining hard drive miniaturization), Desire ('1,000 songs in your pocket'), Action ('Available this Friday for $399'). Flawless execution of an eternal formula.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Where Modern Ads Break the Formula" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In short-form video (TikTok, Reels), the four steps are compressed into 7 seconds. Sometimes Action is requested multiple times in micro-steps. But the underlying psychology of human decision-making remains unchanged.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 08 — FOMO
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 4. MARKETING / FOMO / LOSS AVERSION
   {
     _id: "blog-after-effects-optimization-expressions-render-systems",
     title: "FOMO: Why People Want Things More When They Might Lose Them",
-    slug: { current: "what-is-the-fomo" },
-    category: "Psychology",
-    tags: ["FOMO", "Loss Aversion", "Behavioral Economics", "Scarcity Principle", "Decision Architecture"],
-    featured: false,
-    publishDate: "2026-07-29",
-    readTime: "8 min read",
-    excerpt:
-      "Nobel laureates Daniel Kahneman and Amos Tversky proved that the pain of losing is twice as psychologically powerful as the pleasure of gaining. How scarcity drives human action.",
+    title_az: "FOMO: İnsanlar İtirmək Qorxusu Olanda Niyə Daha Çox İstəyirlər?",
+    slug: { _type: "slug", current: "fomo-loss-aversion-scarcity-psychology" },
+    slug_az: { _type: "slug", current: "fomo-itirmek-qorxusu-psixologiyasi" },
+    originalSlug: "what-is-the-fomo",
+    category: "Marketing Psychology",
+    category_az: "Marketinq Psixologiyası",
+    excerpt: "Daniel Kahneman's Loss Aversion theory and the cognitive mechanics of FOMO: Why the pain of losing $100 is twice as intense as the joy of winning $100.",
+    excerpt_az: "Daniel Kahneman-ın İtkidən Qorxma Nəzəriyyəsi və FOMO-nun koqnitiv mexanizmləri: Niyə $100 itirməyin ağrısı, $100 qazanmağın sevincindən iki dəfə güclüdür.",
     coverImage: {
-      asset: { _ref: "image-fomo-psychology-cover" },
-      alt: "Visual representation of loss aversion curves and temporal urgency indicators",
-      caption: "Prospect theory demonstrates that humans are fundamentally risk-averse when facing potential losses, making urgency one of the most potent behavioral triggers in design.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-fomo-cover" },
+      alt: "Abstract visual representing countdown scarcity urgency and loss aversion psychology",
+      url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80",
     },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 1979, psychologists Daniel Kahneman and Amos Tversky formulated Prospect Theory, demonstrating an asymmetry at the core of human cognition: the psychological pain of losing $100 is roughly twice as intense as the joy of gaining $100. We are biological creatures evolved in environments of scarcity; missing an opportunity for survival carried far greater evolutionary consequences than missing an incremental surplus.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Psychology of Missing Out" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "FOMO is not a modern internet quirk; it is an ancient survival heuristic. In ancestral hunter-gatherer bands, being excluded from a communal hunt or failing to gather seasonal food before winter was fatal. Our nervous system is hardwired to experience acute anxiety when an opportunity is slipping away.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Scarcity Changes Perceived Value" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When Stephen Worchel conducted his famous 1975 cookie jar experiment, participants were asked to rate the taste and value of chocolate chip cookies from two jars. One jar contained ten cookies; the other contained two identical cookies. Participants consistently rated the cookies from the jar of two as significantly more delicious, desirable, and expensive. The object had not changed; its perceived availability had.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Social Proof Makes FOMO Stronger" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When scarcity is paired with high peer velocity ('14 people are currently looking at this room on Booking.com'), the brain perceives immediate competitive threat. The decision shifts from 'Do I need this?' to 'If I don't act in 60 seconds, someone else will take it from me.'",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Countdown Timers and Temporal Urgency" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A ticking timer creates concrete cognitive deadline pressure. It stops open-ended procrastination and forces the prospect to resolve their internal debate before the deadline closes.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Limited Editions and Exclusivity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Supreme, Nike drops, and luxury watchmakers manufacture intentional scarcity. By capping production at 500 units, the product ceases to be a functional commodity and becomes a badge of status and cultural speed.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. 'Only 3 Left' (Quantity Constraints)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "E-commerce stores that display real-time low stock warnings see immediate conversion lift because the risk of delay is made visible and tangible.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Ethical vs. Manipulative FOMO" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "There is an ethical chasm between genuine operational scarcity (a studio only taking 2 client projects per quarter) and manufactured deception (a fake countdown timer that resets every time a user refreshes the page). Fabricated urgency erodes brand trust permanently once discovered. Authentic scarcity, however, is simply the honest articulation of limits.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Why Urgency Works" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Without urgency, 'later' becomes 'never.' Human beings naturally delay decisions that require parting with money. Honest scarcity provides the emotional reason to act today rather than tomorrow.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 09 — DESIGN RULES
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-10-graphic-design-rules-art-directors-never-break",
-    title: "10 Design Tricks You Probably Use Without Knowing Why",
-    slug: { current: "10-graphic-design-rules" },
-    category: "Design",
-    tags: ["Design Principles", "Gestalt Psychology", "Visual Mechanics", "Art Direction", "Composition"],
-    featured: false,
-    publishDate: "2026-07-30",
+    publishDate: "2026-03-07",
     readTime: "9 min read",
-    excerpt:
-      "From optical alignment and the Gestalt law of proximity to typographical leading and isolation: ten fundamental visual mechanics explained through psychology.",
-    coverImage: {
-      asset: { _ref: "image-10-design-tricks-cover" },
-      alt: "Geometric visualization of 10 foundational design principles in a unified grid",
-      caption: "Intuition in great design is simply internalized perceptual psychology. Here is why the rules you follow actually work.",
-    },
+    featured: true,
+    tags: ["FOMO", "Loss Aversion", "Behavioral Economics", "Pricing Psychology", "Conversion Optimization"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When experienced designers nudge a play icon 2 pixels to the right inside a circular button, or double the line-height on an ultra-light serif headline, they often describe it as 'just feeling right.' But design intuition is not magical; it is the subconscious execution of visual neuroscience. Here are ten foundational mechanics demystified.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Visual Hierarchy" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Arranging elements in order of visual importance through scale, weight, and position so the eye travels down a predetermined path.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Contrast" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Leveraging tonal luminance, chromatic saturation, and geometric opposition to ensure critical focal points stand out against the background.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Alignment" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Optical alignment over mathematical bounding boxes: aligning elements based on their perceived center of mass.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Proximity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Grouping related items physically closer together to establish conceptual unity without requiring explicit borders.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Repetition" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Re-using consistent typographic scales, corner radii, and icon weights across an interface to create a cohesive visual language.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Scale" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Using radical size disparities (e.g. 72pt vs 14pt) rather than timid incremental size differences (16pt vs 18pt) to make hierarchy unambiguous.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Whitespace" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Providing spatial breathing room around key elements to communicate luxury, calm, and intellectual clarity.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Isolation" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Applying the von Restorff effect: placing a single distinctive item in an empty quadrant to command 100% of initial ocular fixations.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "9. Rhythm" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Creating an alternating cadence of dense information cards followed by open, airy section dividers to pace the reader's cognitive intake.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "10. Consistency" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Maintaining predictable interaction patterns so the user never has to re-learn how buttons or menus behave.",
-          },
-        ],
-      },
+      createBlock("FOMO: Why People Want Things More When They Might Lose Them", "h2"),
+      createBlock("Have you ever booked a hotel room in a panic because a glowing red banner flashed: 'Only 1 room left at this price!'? Or joined an invite-only app waitlist simply because you couldn't get in immediately? You were not making a purely rational economic calculation; you were responding to one of the most powerful psychological drivers in human biology: Loss Aversion."),
+      createBlock("1. Kahneman and Tversky: The Asymmetry of Value", "h3"),
+      createBlock("In their groundbreaking 1979 Prospect Theory, Nobel laureate Daniel Kahneman and Amos Tversky proved that the human brain does not weigh gains and losses equally. Experiment after experiment demonstrated that the psychological pain of losing $100 is approximately twice as intense as the pleasure of gaining $100."),
+      createBlock("This asymmetry is evolutionary. In ancestral environments, a missed opportunity for extra food meant a missed bonus, but a failure to avoid a deadly predator meant death. Our nervous systems are literally wired to prioritize threat avoidance over reward capture."),
+      createBlock("2. The Scarcity Trigger: 'Only 3 Left in Stock'", "h3"),
+      createBlock("When an item is abundant, consumers evaluate it on its intrinsic merits (price, features, utility). The moment artificial or natural scarcity is introduced ('Limited Edition of 500', 'Offer expires in 12 hours'), cognitive evaluation shifts from utility to availability."),
+      createBlock("Sociologist Jack Brehm termed this 'Psychological Reactance': whenever our freedom of choice is threatened or restricted, our desire to retain that freedom intensifies dramatically. An expiring deal threatens our future option to purchase, compelling immediate action."),
+      createBlock("3. Ethical Urgency vs. Dark Patterns", "h3"),
+      createBlock("While FOMO is a formidable conversion tool, abusive implementations (fake countdown timers that reset on page reload, fabricated '42 people are looking at this' popups) destroy long-term brand equity and invite regulatory scrutiny."),
+      createBlock("Ethical scarcity leverages genuine operational constraints: limited cohort sizes in educational programs, true early-bird discount tiers, or seasonal product runs. When scarcity is genuine, urgency serves both the consumer and the creator."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 10 — VIRALITY
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 5. MARKETING / VISUAL METAPHOR / AIDA
   {
-    _id: "blog-viral-growth-loops",
-    title: "Why Do People Share Things They Didn't Create?",
-    slug: { current: "viral-growth-loops" },
-    category: "Marketing",
-    tags: ["Viral Loops", "Social Currency", "Psychology of Sharing", "Network Effects", "Growth Strategy"],
-    featured: false,
-    publishDate: "2026-07-03",
-    readTime: "8 min read",
-    excerpt:
-      "Sharing is not an endorsement of your product; it is an act of personal identity construction. How social currency, tribal belonging, and emotional arousal drive viral loops.",
+    _id: "blog-aida-framework-performance-creative-attention-action",
+    title: "What Is Visual Metaphor and Why Does It Make Ads Easier to Remember?",
+    title_az: "Vizual Metafora Nədir və Reklamları Niyə Yadda Qalan Edir?",
+    slug: { _type: "slug", current: "what-is-visual-metaphor-advertising" },
+    slug_az: { _type: "slug", current: "vizual-metafora-ve-reklamlar" },
+    originalSlug: "the-aida-framework",
+    category: "Marketing Psychology",
+    category_az: "Marketinq Psixologiyası",
+    excerpt: "Why literal ads are forgotten in seconds while visual metaphors trigger mental closure and permanent memory encoding: Case studies from Apple, Heinz, and The Economist.",
+    excerpt_az: "Niyə hərfi reklamlar saniyələr içində unudulur, vizual metaforalar isə beyində daimi yaddaş izi buraxır: Apple, Heinz və The Economist-dən real nümunələr.",
     coverImage: {
-      asset: { _ref: "image-virality-psychology-cover" },
-      alt: "Diagram of social currency loops and transmission velocity in network graphs",
-      caption: "People share content that makes them appear intelligent, empathetic, funny, or part of an exclusive vanguard.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-metaphor-cover" },
+      alt: "Clever surreal visual metaphor advertising art direction",
+      url: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-03-10",
+    readTime: "10 min read",
+    featured: true,
+    tags: ["Visual Metaphor", "Creative Advertising", "AIDA Framework", "Art Direction", "Brand Memorability"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When Jonah Berger published 'Contagious: Why Things Catch On,' his research at Wharton confirmed what great political propagandists and luxury brand directors have always understood: word-of-mouth is not about the product being shared. It is about the person doing the sharing.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Sharing Is Social Behavior" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Before sending a link or reposting an article, the human brain performs a subconscious calculation: 'How will my network perceive me when they see this?' We share to curate our public avatar.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Social Currency" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Just as people wear tailored clothes to broadcast taste, they share articles, tools, and visual frameworks to curate their intellectual identity. When someone shares an essay on visual hierarchy or typographic pairing, they are sending a clear signal to their professional network: 'I understand elegance; I am an insider.'",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Identity Construction" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Content acts as a badge of tribal belonging. Developers share terminal tools; designers share typography manifestos; founders share contrarian essays on venture capital. The content becomes a flag of self-expression.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Emotional Contagion" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "High-arousal emotions (awe, intellectual epiphany, moral indignation, laughter) activate the autonomic nervous system, compelling the individual to discharge energy through sharing.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Useful Content" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "High-utility resources (cheat sheets, curated font catalogs, free design tools) generate massive utility sharing because the sharer gains social gratitude from helping their peers solve an immediate problem.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Status and Belonging" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Early adoption of an exclusive or insider platform confers status. People love to share tools before they become mainstream to prove foresight.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Referral Mechanics" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The greatest growth loops align incentives: Dropbox gave free storage to both inviter and invitee; Figma made design multiplayer so using it naturally brought in colleagues.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Designing Something Worth Sharing" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Don't build artificial 'Share' popup modals. Build something remarkable that answers an unspoken truth, and people will naturally carry it across the world.",
-          },
-        ],
-      },
+      createBlock("What Is Visual Metaphor and Why Does It Make Ads Easier to Remember?", "h2"),
+      createBlock("Consider two advertisements for a noise-canceling headphone:"),
+      createBlock("Ad A displays a photo of the headphones with a bulleted list: 'Active Noise Cancellation, 40dB reduction, 30-hour battery life.'"),
+      createBlock("Ad B shows an opera singer screaming with all her might directly into a passenger's ear on a crowded subway—except the passenger is blissfully sleeping wearing the headphones, undisturbed."),
+      createBlock("Which ad do you remember six months later? Ad B, without question. This is the superpower of Visual Metaphor."),
+      createBlock("1. The Mechanism of Mental Closure (Gestalt Inferences)", "h3"),
+      createBlock("Literal advertising hands the viewer the conclusion on a silver platter. Because the brain does not have to expend any cognitive effort to decode it, the message passes through working memory and is instantly discarded."),
+      createBlock("A visual metaphor, however, creates an intentional cognitive riddle. When the viewer sees an unexpected combination (like Heinz slicing a fresh tomato into the shape of a ketchup bottle), the brain performs a micro-second of cognitive puzzle-solving. When the meaning clicks, the brain releases a micro-dose of dopamine rewarding 'Mental Closure'. That pleasant realization anchors the memory deeply into long-term recall."),
+      createBlock("2. The Evolution of the AIDA Framework", "h3"),
+      createBlock("E. St. Elmo Lewis formulated the classic AIDA model in 1898: Attention, Interest, Desire, Action. In the modern visual economy saturated with 10,000 daily ad impressions, literal messaging fails at Step 1 (Attention). Visual metaphors satisfy all four stages simultaneously:"),
+      createBlock("• Attention: The visual anomaly arrests thumb-scrolling behavior."),
+      createBlock("• Interest: The riddle invites cognitive resolution."),
+      createBlock("• Desire: The emotional benefit is dramatized rather than described."),
+      createBlock("• Action: The brand name is cemented as the hero of the story."),
+      createBlock("Conclusion: Show, Don't Tell", "h3"),
+      createBlock("Do not state your product's benefit. Embody it in a striking visual contrast that respects the viewer's intelligence."),
+    ],
+  },
+
+  // 6. PRICING PSYCHOLOGY / CHARM PRICING
+  {
+    _id: "blog-copywriting-psychology-cognitive-biases",
+    title: "Why Does $999 Feel Cheaper Than $1,000?",
+    title_az: "Niyə $999 Qiyməti $1,000-dan Qat-qat Ucuz Görünür?",
+    slug: { _type: "slug", current: "why-999-feels-cheaper-than-1000-pricing-psychology" },
+    slug_az: { _type: "slug", current: "sol-reqem-effekti-qiymet-psixologiyasi" },
+    originalSlug: "copywriting-psychology-cognitive-biases",
+    category: "Marketing Psychology",
+    category_az: "Marketinq Psixologiyası",
+    excerpt: "The Left-Digit Effect and Anchoring: How human cognitive shortcuts process price tags, menu psychology, and multi-tier pricing tables.",
+    excerpt_az: "Sol Rəqəm Effekti və Lövbər Qiymət: İnsan beyni qiymət etiketlərini, restoran menyularını və tarif planlarını necə qavrayır.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-pricing-cover" },
+      alt: "Luxury price tag displaying numbers with left-digit contrast",
+      url: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-12",
+    readTime: "8 min read",
+    featured: true,
+    tags: ["Pricing Strategy", "Left-Digit Effect", "Cognitive Biases", "Behavioral Economics", "Conversion"],
+    body: [
+      createBlock("Why Does $999 Feel Cheaper Than $1,000?", "h2"),
+      createBlock("The mathematical difference between $1,000 and $999 is exactly one dollar (0.1%). Yet in consumer studies across retail, automotive, and SaaS products, pricing an item at $999 consistently increases purchase volume by 15% to 28% compared to $1,000. Why does a single dollar difference trigger such a disproportionate psychological reaction?"),
+      createBlock("1. The Left-Digit Effect in Numerical Cognition", "h3"),
+      createBlock("Human beings in Western cultures read numbers from left to right. When our eyes process '$999', the leftmost digit '9' is registered and categorized in milliseconds before our brain even reads the trailing digits. We subconsciously anchor the price in the '$900' magnitude rather than the '$1,000' four-digit magnitude."),
+      createBlock("In an influential study by Manoj Thomas and Vicki Morwitz published in the *Journal of Consumer Research*, researchers proved that charm pricing only works when the leftmost digit changes. Reducing $3.00 to $2.99 causes a massive surge in sales because the leading digit drops from 3 to 2, whereas reducing $3.60 to $3.59 produces negligible impact."),
+      createBlock("2. Anchoring and the Decoy Effect in Pricing Tables", "h3"),
+      createBlock("No price is judged in isolation; prices are always judged relative to reference anchors. In a legendary experiment conducted at MIT, Dan Ariely tested the subscription options for *The Economist*:"),
+      createBlock("Option 1: Web Subscription — $59"),
+      createBlock("Option 2: Print Subscription — $125"),
+      createBlock("Option 3: Print + Web Subscription — $125"),
+      createBlock("When all three options were presented, 84% of students chose Option 3 ($125 bundle) and 0% chose Option 2. But when the 'useless' Option 2 (the decoy) was removed, the majority switched to the cheap $59 option! The presence of the $125 print-only decoy anchored the value, making the bundle feel like an unbeatable bargain."),
+    ],
+  },
+
+  // 7. NEGATIVE SPACE / WHITESPACE
+  {
+    _id: "blog-micro-and-macro-whitespace",
+    title: "Why Does Negative Space Make Designs Feel More Expensive?",
+    title_az: "Niyə Mənfi Boşluq (Negative Space) Dizaynları Daha Bahalı Göstərir?",
+    slug: { _type: "slug", current: "why-negative-space-makes-designs-feel-expensive" },
+    slug_az: { _type: "slug", current: "menfi-bosluq-ve-bahali-dizayn" },
+    originalSlug: "micro-and-macro-whitespace",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "Spatial abundance as a wealth signal: Why discount stores cram every pixel with coupons while luxury brands treat empty space as the ultimate premium currency.",
+    excerpt_az: "Zənginliyin vizual siqnalı olaraq mənfi boşluq: Endirim mağazaları niyə hər pikseli doldurur, lüks brendlər isə boşluğu niyə ən dəyərli aktiv kimi istifadə edir.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-space-cover" },
+      alt: "Minimalist architectural interior with dramatic negative space and single luxury object",
+      url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-15",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Negative Space", "Whitespace", "Luxury Design", "Visual Clarity", "Brand Perception"],
+    body: [
+      createBlock("Why Does Negative Space Make Designs Feel More Expensive?", "h2"),
+      createBlock("Compare the homepage of a discount coupon site with the homepage of Apple or Rolex. The coupon site is packed edge-to-edge with blinking banners, starbursts, and countdown clocks. The Apple page features a single device surrounded by expansive fields of pristine, untouched white or black space."),
+      createBlock("Empty space is the visual equivalent of real estate. In the physical world, cramped apartments with narrow corridors signal low income, while sprawling penthouses with 20-foot ceilings signal immense wealth. In graphic and digital design, negative space communicates the exact same message: *We have so much value that we don't need to shout.*"),
+      createBlock("1. Cognitive Ease and Attentional Luxury", "h3"),
+      createBlock("Every additional visual element placed on a canvas imposes a cognitive tax on the viewer's working memory. Cluttered designs force the brain to expend mental energy filtering out irrelevant noise, creating subconscious feelings of fatigue and low quality."),
+      createBlock("Generous negative space removes visual competition. It allows the viewer's eye to rest, contemplate, and focus deeply on the single message that matters. Whitespace is not empty space; it is an active design element that frames and glorifies content."),
+    ],
+  },
+
+  // 8. COLOR PSYCHOLOGY / BLUE LINKS / RED & GREEN
+  {
+    _id: "blog-color-theory-in-digital-branding",
+    title: "Why Is Error Red and Success Green? (And Why Links Are Blue)",
+    title_az: "Xəta Niyə Qırmızı, Uğur Niyə Yaşıl Olur? (Və Keçidlər Niyə Göydür)",
+    slug: { _type: "slug", current: "why-error-is-red-success-green-links-blue" },
+    slug_az: { _type: "slug", current: "xeta-qirmizi-ugur-yasil-link-goy" },
+    originalSlug: "color-theory-in-digital-branding",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "The biological evolution of color signals: From poisonous berries and lush vegetation to Tim Berners-Lee's decision to make internet hyperlinks blue in Mosaic.",
+    excerpt_az: "Rəng siqnallarının bioloji təkamülü: Zəhərli giləmeyvələrdən və təhlükə siqnallarından Tim Berners-Lee-nin internet linklərini göy rəngdə seçməsinə qədər.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-color-cover" },
+      alt: "Chromatic spectrum contrast showing red danger and green confirmation lights",
+      url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-18",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Color Theory", "Design History", "UI Design", "Blue Links", "Color Psychology"],
+    body: [
+      createBlock("Why Is Error Red and Success Green? (And Why Links Are Blue)", "h2"),
+      createBlock("Every time you type an invalid password, a red border flashes. When the payment succeeds, a soothing green checkmark appears. And when you read an article on Wikipedia, every clickable pathway is colored in electric blue. Why did these specific hues become the universal chromatic grammar of computing?"),
+      createBlock("1. The Evolutionary Biology of Red and Green", "h3"),
+      createBlock("Our physiological response to red is deeply ingrained in primate biology. Blood, fire, poisonous insects, and venomous serpents are signaled by high-wavelength red. When human eyes detect red, heart rate increases slightly, and attentional vigilance spikes instantly."),
+      createBlock("Green, in contrast, is the color of fertile vegetation, abundant water, and safety. Primates evolved trichromatic color vision specifically to spot ripe red fruits among green forest canopies. Transferring this biological hardwiring to user interfaces was effortless: Red means Stop/Danger, Green means Safe/Proceed."),
+      createBlock("2. Why Did Hyperlinks Become Blue?", "h3"),
+      createBlock("In the earliest days of the World Wide Web, text was monochrome. In 1993, Marc Andreessen and Eric Bina developed the NCSA Mosaic browser. They needed a distinct color for clickable hyperlinks that would stand out sharply against the standard grey background while remaining easily distinguishable from black body text."),
+      createBlock("Blue was chosen because it offered maximum contrast with black text while being legible for people with red-green color blindness (protanopia and deuteranopia). Tim Berners-Lee and the W3C standardized blue as the default hyperlink color, cementing it as the eternal signpost of digital interactivity."),
+    ],
+  },
+
+  // 9. HAMBURGER MENU / THREE LINES
+  {
+    _id: "blog-grid-systems-responsive-layout-architecture",
+    title: "Why Does the Hamburger Menu Have Three Lines?",
+    title_az: "Hamburger Menyunun Niyə Məhz Üç Xətti Var?",
+    slug: { _type: "slug", current: "why-hamburger-menu-has-three-lines" },
+    slug_az: { _type: "slug", current: "hamburger-menyu-niye-uc-xetdir" },
+    originalSlug: "grid-systems-responsive-layout-architecture",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "Norm Cox's 1981 Xerox Star invention: How three stacked horizontal bars became the most widely clicked—and hotly debated—navigation icon on smartphones.",
+    excerpt_az: "Norm Cox-un 1981-ci il Xerox Star ixtirası: Üç üfüqi xəttin smartfonlarda ən çox kliklənən və ən çox müzakirə olunan naviqasiya simvoluna çevrilməsi.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-hamburger-cover" },
+      alt: "Minimalist architectural facade resembling clean geometric three-line hamburger menu icon",
+      url: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-20",
+    readTime: "8 min read",
+    featured: true,
+    tags: ["Hamburger Menu", "UI Design", "Design History", "Mobile Navigation", "Interaction Design"],
+    body: [
+      createBlock("Why Does the Hamburger Menu Have Three Lines?", "h2"),
+      createBlock("On almost every mobile application on earth, a tiny icon consisting of three stacked horizontal lines sits in the top corner. When tapped, it reveals a drawer of hidden navigation links. The icon is affectionately known worldwide as the 'Hamburger Menu'. Who created it, why does it have three lines instead of two or four, and why does it spark intense debate among product designers?"),
+      createBlock("1. Born in 1981: Norm Cox and the Xerox Star", "h3"),
+      createBlock("The hamburger icon was created in 1981 by interface designer Norm Cox for the Xerox Star (the world's first commercial graphical workstation). Cox was tasked with creating an icon that communicated 'a list of menu items' in an extremely low-resolution 16x16 pixel grid."),
+      createBlock("Cox designed three stacked lines to resemble a tiny road map or a bulleted list of documents. Two lines felt incomplete (resembling an equal sign), while four lines became a dense blur on low-resolution CRT monitors. Three lines was the exact golden minimum needed to convey 'list'."),
+      createBlock("2. The Smartphone Revival by Facebook and iOS", "h3"),
+      createBlock("For decades, the icon lay dormant until 2009, when the explosion of the iPhone forced designers to solve a critical constraint: mobile screens were too narrow for traditional desktop navigation bars. Facebook adopted the three-line icon for its mobile app drawer, followed by Twitter and Google."),
+      createBlock("While UX purists note that 'out of sight is out of mind' (hidden menus lower feature discovery by up to 20%), the hamburger menu remains the indispensable Swiss Army knife of modern responsive UI."),
+    ],
+  },
+
+  // 10. MINIMALIST PACKAGING & GRAPHIC LAYOUTS
+  {
+    _id: "blog-minimalist-packaging-and-graphic-layouts",
+    title: "Why Do Minimalist Designs Look More Expensive?",
+    title_az: "Minimalist Dizaynlar Niyə Həmişə Daha Dəbdəbəli Görünür?",
+    slug: { _type: "slug", current: "why-minimalist-designs-look-more-expensive" },
+    slug_az: { _type: "slug", current: "minimalist-dizayn-niye-bahali-gorunur" },
+    originalSlug: "minimalist-packaging-and-graphic-layouts",
+    category: "Creative & Culture",
+    category_az: "Kreativ və Mədəniyyət",
+    excerpt: "Dieter Rams, signaling theory, and the unboxing ritual of Apple: Why stripping ornamentation conveys supreme engineering confidence and prestige.",
+    excerpt_az: "Dieter Rams, siqnal nəzəriyyəsi və Apple-ın qutu açma ritualı: Bəzək elementlərini kənarlaşdırmaq niyə mühəndislik güvəni və prestij aşılayır.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-minimal-cover" },
+      alt: "Exquisite minimalist product packaging with clean monochrome geometry",
+      url: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-03-22",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Minimalism", "Luxury Branding", "Packaging Design", "Dieter Rams", "Aesthetics"],
+    body: [
+      createBlock("Why Do Minimalist Designs Look More Expensive?", "h2"),
+      createBlock("Pick up a bottle of Aesop hand wash, unbox an Apple iPhone, or step into a high-end art gallery. The common thread is not what is present, but what has been ruthlessly removed. There are no garish starbursts, no loud slogans, and no decorative gradients. Why does extreme minimalism reliably trigger perceptions of luxury and superior craftsmanship?"),
+      createBlock("1. Signaling Theory: The Confidence of Silence", "h3"),
+      createBlock("In evolutionary biology, Zahavi's Handicap Principle explains that organisms develop costly traits (like the peacock's enormous tail) to prove their underlying vitality. In modern consumer branding, minimalism is an economic handicap signal."),
+      createBlock("A low-end product must shout about its 25 features on the packaging because it cannot rely on brand prestige or structural quality. A luxury product whispers because its reputation precedes it. Stripping away ornamentation signals that the core material, engineering, and craftsmanship are so flawless that they require no visual disguises."),
+      createBlock("2. Dieter Rams and 'Weniger, aber besser'", "h3"),
+      createBlock("Legendary Braun designer Dieter Rams encapsulated this philosophy in his famous tenet: 'Less, but better'. By stripping every non-essential line, the remaining proportions must be mathematically perfect. In minimalism, there is nowhere to hide poor typography, awkward kerning, or cheap materials. That uncompromising discipline is what makes minimalist design feel so undeniably premium."),
     ],
   },
 ];

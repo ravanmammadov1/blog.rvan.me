@@ -1,855 +1,319 @@
 import { BlogPost } from "../../types/blog";
 
+function createBlock(text: string, style = "normal", key = Math.random().toString(36).substring(7)) {
+  return {
+    _key: key,
+    _type: "block",
+    style,
+    markDefs: [],
+    children: [{ _key: `${key}-c`, _type: "span", marks: [], text }],
+  };
+}
+
+function createImageBlock(url: string, alt: string, caption?: string) {
+  return {
+    _key: Math.random().toString(36).substring(7),
+    _type: "image",
+    asset: { _type: "reference", _ref: "image-manual" },
+    alt,
+    caption,
+    url,
+  };
+}
+
 export const ARTICLES_31_TO_39: BlogPost[] = [
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 31 — COLOR
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-color-theory-in-digital-branding",
-    title: "Why Is Error Red and Success Green?",
-    slug: { current: "color-theory-in-digital-branding" },
-    category: "Psychology",
-    tags: ["Color Psychology", "UI Conventions", "Learned Associations", "Accessibility", "Visual Semiotics"],
-    featured: false,
-    publishDate: "2026-07-21",
-    readTime: "8 min read",
-    excerpt:
-      "Color psychology is not universal; it is heavily shaped by cultural and industrial history. How 19th-century railway signals and evolutionary biology created global UI conventions.",
-    coverImage: {
-      asset: { _ref: "image-color-semiotics-cover" },
-      alt: "Chromatic spectrum showing cultural color mappings, warning wavelengths, and accessibility contrast standards",
-      caption: "Our visceral reaction to red and green is a blend of biological edge-detection wavelengths and 150 years of industrial signaling history.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When a form submission fails on your phone, the input border glows red. When the upload completes, a green checkmark appears. We take this color mapping for granted as if it were a law of physics. But why did red become error and green become success?",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Colors We Learn Through Cultural Conditioning" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Human beings are not born with a genetic predisposition to click green buttons. Our color associations are learned through childhood toys, road signage, and continuous cultural conditioning.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Why Red Feels Urgent (The Physics of Wavelength)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In the electromagnetic spectrum, red light has the longest wavelength (~620–750 nm) of all visible light. Long wavelengths experience the least Rayleigh scattering through atmospheric fog, dust, and rain. In the 1830s, railway engineers selected red for stop signals because a red lantern could be seen from the greatest distance in storm conditions.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Why Green Became a Success Signal" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Originally on 19th-century British railways, green meant 'caution' and clear white light meant 'go.' But when a white lens fell out of a red lantern, a train driver mistook a broken red stop signal for a clear signal, causing a fatal collision. Green was promptly designated as 'go / safe,' and amber was introduced for caution.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Traffic Lights and Industrial Semiotics" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The 1968 Vienna Convention on Road Signs and Signals standardized red, amber, and green worldwide, cementing the color triad into the global subconscious.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. UI Design Conventions" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When personal computers emerged, designers inherited the traffic light metaphor: red for destructive actions (Delete, Cancel), green for affirmative actions (Save, Confirm).",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Accessibility and Color Blindness (WCAG Standards)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Approximately 8% of men experience red-green color vision deficiency (deuteranomaly). Elite interface designers never rely on color alone: every error state must pair chromatic color with an explicit icon and descriptive error text.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. When Color Meanings Change Across Cultures" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In Chinese stock exchanges, red signifies price growth, luck, and prosperity, while green signifies decline. Designing global products requires understanding localized semiotics.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Designing With Learned Associations" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Do not attempt to be clever by making your 'Delete Account' button friendly sky blue. Respect established cognitive pathways so users never make irreversible mistakes.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 32 — CREATIVE DIRECTION
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-building-custom-gpts-and-specialized-knowledge-bases",
-    title: "Why AI Tools Still Need a Good Creative Director",
-    slug: { current: "building-custom-gpts-and-specialized-knowledge-bases" },
-    category: "AI",
-    tags: ["Creative Direction", "AI Curation", "Brand Taste", "Art Direction", "Human Judgment"],
-    featured: false,
-    publishDate: "2026-07-27",
-    readTime: "8 min read",
-    excerpt:
-      "Generative software can produce 1,000 variations in 60 seconds. But knowing which 999 variations to discard is the irreplaceable job of the Creative Director.",
-    coverImage: {
-      asset: { _ref: "image-creative-director-ai-cover" },
-      alt: "Conceptual illustration of an Art Director's magnifying glass selecting the single resonant visual among hundreds of AI iterations",
-      caption: "Creative direction is not about generation; it is the strategic exercise of taste, cultural context, and editorial veto power.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When photography was invented in 1839, portrait painters panicked, believing the human hand was obsolete. Instead, photography liberated painting from literal replication, sparking Impressionism, Cubism, and Modernism. The photographer became an artist not by grinding pigments, but by choosing where to stand, when to press the shutter, and what to frame.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. AI Can Generate. Can It Decide?" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Generative models produce probabilistic variations; they have no consciousness of cultural irony, brand heritage, or human vulnerability. Generation is computation; decision is taste.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Nature of Taste" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Taste is the internalized index of visual history, emotional empathy, and aesthetic restraint. It is knowing when a layout is finished, and more importantly, knowing what to remove.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Context and Cultural Nuance" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "An image that looks visually stunning in isolation may be tone-deaf or culturally inappropriate for a specific brand narrative. Creative directors provide the essential contextual tether.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Brand Direction and Strategic Continuity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Without strong creative direction, a marketing campaign fragments into discordant visual styles. The Director enforces brand unity across video, packaging, and digital interfaces.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Choosing What NOT to Generate" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Restraint is the ultimate sign of mastery. The ability to reject 99% of synthetic noise and champion a single quiet, resonant concept is the Director's core superpower.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Human Judgment Under Ambiguity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When a creative brief is contradictory or market conditions shift unexpectedly, human directors synthesize intuition and experience to navigate the unknown.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. The Creative Director's New Role" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The modern Creative Director is no longer a task assigner; they are an orchestra conductor, curating generative engines, motion artists, and strategists toward a singular vision.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 33 — LOGO MEMORY
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-brand-identity-design-systems",
-    title: "Why Are Some Logos Impossible to Forget?",
-    slug: { current: "brand-identity-design-systems" },
-    category: "Design",
-    tags: ["Logo Design", "Visual Memory", "Simplicity", "Brand Identity", "Iconic Marks"],
-    featured: false,
-    publishDate: "2026-07-22",
-    readTime: "8 min read",
-    excerpt:
-      "The Nike Swoosh, the Apple bitten apple, the McDonald's golden arches. Why radical geometric simplicity and distinct silhouette beat complex illustrative heraldry every time.",
-    coverImage: {
-      asset: { _ref: "image-logo-memory-cover" },
-      alt: "Silhouette recognition test demonstrating the immediate recall of legendary minimalist logo marks",
-      caption: "A great logo is not a complex visual illustration; it is a mnemonic signature designed for effortless mental encoding.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 2017, branding studio Signs.com asked 156 Americans to draw 10 famous logos from memory. While almost no one could recall the complex heraldic details of the Starbucks siren, over 80% drew the Apple silhouette and the Nike Swoosh with near-perfect geometric accuracy.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Recognition Before Meaning" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The brain decodes geometric silhouette in the visual cortex before higher-order cognitive processing assigns semantic meaning. A distinctive shape wins the race for attention.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Radical Simplicity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Rob Janoff's Apple logo is an apple with a single bite taken out (originally created so it wouldn't be mistaken for a cherry). Carolyn Davidson's Nike Swoosh is a fluid checkmark suggesting wing motion. Neither logo required complex ornamentation.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Distinctiveness and Silhouette" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "If you render your logo in solid 100% black on white paper at 16x16 pixels, is it still unmistakably unique? That is the ultimate test of iconic durability.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Shape Psychology" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Circles communicate community and infinity; squares communicate stability and trust; sharp upward diagonals communicate velocity and ambition.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Single-Color Memorability" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Target Red, Tiffany Blue, Hermès Orange. A brand that owns a single, unmistakable color code in the public mind enjoys instant mental recall.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Repetition Across Decades" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Consistency across 40 years builds compounding neural pathways. Avoid the temptation to redesign your mark every 3 years for novelty's sake.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 34 — CREATIVE AUTOMATION
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 31. WHY SETTINGS IS A MECHANICAL GEAR
   {
     _id: "blog-automating-creative-workflows-with-ai-agents",
-    title: "What Happens When Designers Stop Doing the Boring Parts?",
-    slug: { current: "automating-creative-workflows-with-ai-agents" },
-    category: "Creative Culture",
-    tags: ["Creative Automation", "Workflow Design", "Design Ops", "Productivity", "Future of Work"],
-    featured: false,
-    publishDate: "2026-07-01",
-    readTime: "8 min read",
-    excerpt:
-      "Exporting 48 banner aspect ratios, renaming layers, and writing component specs used to eat 60% of a designer's week. How autonomous workflows return creatives to high-level thinking.",
+    title: "Why Is the Settings Icon a Mechanical Gear?",
+    title_az: "Tənzimləmələr İkonu Niyə Mexaniki Dişli Çarx Şəklindədir?",
+    slug: { _type: "slug", current: "why-settings-icon-is-a-mechanical-gear" },
+    slug_az: { _type: "slug", current: "tenzimlemeler-niye-disli-carxdir" },
+    originalSlug: "automating-creative-workflows-with-ai-agents",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "The Industrial Revolution metaphor: How interlocking cogs and clockwork machinery became the universal digital symbol for system configuration.",
+    excerpt_az: "Sənaye İnqilabı metaforası: Bir-birinə keçən dişli çarxların və saat mexanizmlərinin sistem tənzimləmələrinin qlobal simvoluna çevrilməsi.",
     coverImage: {
-      asset: { _ref: "image-creative-automation-cover" },
-      alt: "Workflow pipeline diagram illustrating automated asset resizing, token exports, and human creative oversight",
-      caption: "Automating mechanical production tasks allows designers to spend their mental energy on strategy, narrative, and conceptual breakthroughs.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-gear-cover" },
+      alt: "Precision engineered brass clockwork gears interlocking with mathematical precision",
+      url: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-05-04",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Iconography", "Settings UI", "Design History", "Skeuomorphism", "Affordance"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Ask any senior art director what they spent their time doing five years ago, and they will confess a grim truth: at least 25 hours a week were consumed by mechanical toil. Resizing the same creative asset into 16 different social ad dimensions, manually exporting SVG icons, color-coding spec sheets, and tracking down missing hex codes.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Boring Work Nobody Talks About" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Mechanical production tasks exhaust creative dopamine reserves. When designers spend their morning renaming Figma frames, their afternoon conceptual energy is depleted.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Autonomous Asset Resizing and Localization" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Automated pipelines can now re-render responsive typography and visual crops across 40 dimensions in 3 seconds, preserving perfect focal point bounding boxes.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. What Humans Should Keep Doing" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Humans excel at empathy, cultural subversion, humor, and strategic synthesis. Freeing designers from production toil allows them to focus 100% on conceptual mastery.",
-          },
-        ],
-      },
+      createBlock("Why Is the Settings Icon a Mechanical Gear?", "h2"),
+      createBlock("When you want to calibrate your display, change your Wi-Fi password, or toggle notifications, you tap an icon featuring a toothed wheel—a mechanical gear cog. In software composed entirely of invisible semiconductor electrons, why do we use an 18th-century Industrial Revolution clockwork component to represent configuration?"),
+      createBlock("1. The Mechanics Behind the Metaphor", "h3"),
+      createBlock("Before digital electronics, adjusting a machine meant opening its outer casing and adjusting the physical transmission gears, springs, or levers that dictated its timing and speed. A gear was the visible engine of adjustment."),
+      createBlock("When GUI pioneers needed an icon that communicated 'the internal mechanisms that control how this application runs', the interlocking cog wheel was the perfect mental shortcut."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 35 — ZEIGARNIK EFFECT
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 32. WHY DELETE IS A TRASH CAN
   {
-    _id: "blog-automated-email-funnels",
-    title: "Why \"You're Almost Done\" Works So Well",
-    slug: { current: "automated-email-funnels" },
-    category: "Psychology",
-    tags: ["Zeigarnik Effect", "Onboarding Psychology", "Progress Bars", "Gamification", "Task Completion"],
-    featured: false,
-    publishDate: "2026-07-08",
-    readTime: "8 min read",
-    excerpt:
-      "Soviet psychologist Bluma Zeigarnik discovered that unfinished tasks occupy working memory until resolved. How progress bars and 80% starting points drive completion.",
+    _id: "blog-generative-ui-and-automated-layout-engines",
+    title: "Why Is the Delete Action a Trash Can?",
+    title_az: "Silmə Əməliyyatı Niyə Məhz Zibil Qutusu İkonudur?",
+    slug: { _type: "slug", current: "why-delete-action-is-a-trash-can" },
+    slug_az: { _type: "slug", current: "silme-niye-zibil-qutusudur" },
+    originalSlug: "generative-ui-and-automated-layout-engines",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "Tim Mott and Larry Tesler's desktop metaphor at Xerox and Apple: How the trash can provided both an intuitive deletion affordance and a psychological safety net.",
+    excerpt_az: "Tim Mott və Larry Tesler-in masaüstü metaforası: Zibil qutusunun silmə əməliyyatına həm aydınlıq, həm də psixoloji geri qaytarma güvəni verməsi.",
     coverImage: {
-      asset: { _ref: "image-zeigarnik-effect-cover" },
-      alt: "Visual representation of the Zeigarnik Effect showing open cognitive loops and progress bar momentum",
-      caption: "The human brain experiences mental tension from incomplete tasks, compelling users to push progress bars to 100%.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-trash-cover" },
+      alt: "Minimalist stainless steel wastebasket in bright modern studio space",
+      url: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-05-06",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Iconography", "Apple History", "Desktop Metaphor", "UX Safety", "Interaction Design"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In the 1920s, Lithuanian psychologist Bluma Zeigarnik was sitting in a bustling Berlin cafe when she noticed an intriguing phenomenon: the waiters could remember complex, unpaid orders from dozens of tables with flawless accuracy. But the moment the bill was paid, the waiter completely forgot the entire order. The open task had closed, and the brain purged the data.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Tension of the Unfinished Task" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "An incomplete goal generates subconscious cognitive tension that persists in working memory until resolution is achieved.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Endowed Progress Effect (Nunes & Dreze)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Starting a user at 'Step 2 of 4 (50% complete)' rather than 'Step 0 of 3 (0% complete)' dramatically increases onboarding completion rates because the user feels invested momentum.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Designing Completion Without Manipulation" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Never fabricate fake progress that traps users in endless surprise forms. Use progress bars honestly to provide transparency, clear milestones, and satisfying closure.",
-          },
-        ],
-      },
+      createBlock("Why Is the Delete Action a Trash Can?", "h2"),
+      createBlock("In command-line computing (MS-DOS, Unix), deleting a file meant typing `rm document.txt`. If you hit Enter, the file was instantly, irreversibly erased from disk. There was no visual feedback and no second chance."),
+      createBlock("In the early 1980s, Xerox PARC and Apple designed the Lisa and Macintosh desktop interfaces. They introduced the Trash Can (designed by Susan Kare). Why was this breakthrough so revolutionary?"),
+      createBlock("1. The Psychological Safety Net", "h3"),
+      createBlock("In an actual office, when you throw a draft into the wastebasket next to your desk, it is not incinerated immediately. You can reach down and pull it out if you change your mind, until the janitor empties the bin at night."),
+      createBlock("By simulating this physical reality—allowing files to sit in the Trash until the user explicitly selects 'Empty Trash'—software engineers eliminated the paralyzing anxiety of accidental deletion, making computers approachable for billions of everyday humans."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 36 — MICRO TOOLS
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 33. LUXURY EMPTY SPACE & CONSPICUOUS CONSUMPTION
   {
     _id: "blog-ai-micro-saas-blueprint",
-    title: "Why Tiny Tools Sometimes Beat Huge Products",
-    slug: { current: "ai-micro-saas-blueprint" },
-    category: "UX",
-    tags: ["Micro Tools", "Single-Purpose SaaS", "Product Utility", "Frictionless UX", "Developer Tools"],
-    featured: false,
-    publishDate: "2026-07-12",
-    readTime: "8 min read",
-    excerpt:
-      "A massive enterprise platform with 500 features often loses to a single-purpose web tool that does one job flawlessly in 3 seconds without a login wall.",
+    title: "Why Do Luxury Brands Use So Much Empty Space?",
+    title_az: "Lüks Brendlər Niyə Bu Qədər Çox Boş Məkandan İstifadə Edirlər?",
+    slug: { _type: "slug", current: "why-luxury-brands-use-so-much-empty-space" },
+    slug_az: { _type: "slug", current: "luks-brendler-ve-bos-mekan-psixologiyasi" },
+    originalSlug: "ai-micro-saas-blueprint",
+    category: "Creative & Culture",
+    category_az: "Kreativ və Mədəniyyət",
+    excerpt: "Thorstein Veblen's Conspicuous Consumption: Why spatial abundance in flagship retail stores and digital flagships signals extreme wealth and anti-commercial elegance.",
+    excerpt_az: "Thorstein Veblen-in Nümayişkaranə İstehlak nəzəriyyəsi: Məkansal bolluğun lüks brendlərdə zənginlik və anti-kommersiya zərifliyi siqnalı verməsi.",
     coverImage: {
-      asset: { _ref: "image-micro-tools-cover" },
-      alt: "Visual comparison of bloated multi-tier software versus high-velocity single-purpose micro-utilities",
-      caption: "Single-purpose utilities solve friction instantly, earning permanent bookmarks and viral word-of-mouth.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-luxury-space-cover" },
+      alt: "Sprawling minimalist luxury boutique showroom with vast open travertine marble space",
+      url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-05-08",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Luxury Branding", "Veblen Goods", "Spatial Design", "Negative Space", "Architecture"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Why do millions of designers and developers bookmark single-page tools like SVG wave generators, color format converters, or box-shadow builders instead of opening heavy design software? Because friction kills momentum. When a tool requires no login, no credit card, and solves a hyper-specific pain point in two clicks, it wins on pure velocity.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Power of One Job (The Unix Philosophy)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Doug McIlroy's classic Unix philosophy: 'Write programs that do one thing and do it well.' A single-purpose tool eliminates all feature bloat and cognitive friction.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Economics of Micro-Tools in Brand Building" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Building free interactive utilities on your website (like our free ATS Resume Builder or Font Specimen Generator) creates high-intent inbound organic search loops that compound forever.",
-          },
-        ],
-      },
+      createBlock("Why Do Luxury Brands Use So Much Empty Space?", "h2"),
+      createBlock("Walk into a Walmart or a discount supermarket: aisles are dense, shelves are stacked to the ceiling, and promotional placards hang from every beam. Every square foot of commercial real estate must generate maximum revenue per minute."),
+      createBlock("Now walk into the flagship boutique of Celine or Bottega Veneta on Madison Avenue: a 4,000-square-foot room made of hand-poured Italian terrazzo contains exactly three handbags resting on stone plinths. Why do luxury brands intentionally 'waste' valuable space?"),
+      createBlock("1. Spatial Abundance as a Wealth Display", "h3"),
+      createBlock("In his classic 1899 treatise *The Theory of the Leisure Class*, sociologist Thorstein Veblen introduced 'Conspicuous Waste'. High status is proven not by utility, but by the ability to squander costly resources without economic anxiety."),
+      createBlock("Leaving 90% of a multimillion-dollar retail space completely empty is the ultimate power move. In digital interfaces, treating the screen with expansive whitespace communicates the exact same aristocratic detachment from vulgar sales pressure."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 37 — AI IMAGE DIRECTION
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 34. CHANGING A FONT CHANGES BRAND PERSONALITY
   {
-    _id: "blog-prompt-engineering-for-designers",
-    title: "Why AI Images Look Better When You Stop Treating AI Like a Camera",
-    slug: { current: "prompt-engineering-for-designers" },
-    category: "AI",
-    tags: ["AI Art Direction", "Visual Prompting", "Composition Directives", "Generative Vision", "Style Systems"],
-    featured: false,
-    publishDate: "2026-07-26",
-    readTime: "8 min read",
-    excerpt:
-      "Typing 'photorealistic 8k octane render' is amateur prompting. How specifying optical focal lengths, lighting ratios, and art historical references creates museum-grade imagery.",
+    _id: "blog-building-custom-gpts-and-specialized-knowledge-bases",
+    title: "Why Does Changing a Font Completely Change a Brand's Personality?",
+    title_az: "Şrifti Dəyişmək Bir Brendin Xarakterini Niyə Kökündən Dəyişir?",
+    slug: { _type: "slug", current: "why-changing-a-font-changes-brand-personality" },
+    slug_az: { _type: "slug", current: "srift-deyisikliyi-ve-brend-xarakteri" },
+    originalSlug: "building-custom-gpts-and-specialized-knowledge-bases",
+    category: "Typography",
+    category_az: "Tipoqrafika",
+    excerpt: "Typographic semiotics: How subtle changes in stroke terminal angle, x-height, and contrast transform an authoritative law firm into a playful children's toy brand.",
+    excerpt_az: "Tipoqrafik semiotika: Şrift xətlərinin bucağı, hündürlüyü və kontrastının bir brendi necə rəsmi hüquq firmasından uşaq oyuncağı markasına çevirə bilməsi.",
     coverImage: {
-      asset: { _ref: "image-ai-direction-camera-cover" },
-      alt: "Lighting diagrams and optical lens directive comparisons in advanced generative art direction",
-      caption: "Directing generative AI requires communicating in the visual language of cinematographers, lighting directors, and classical painters.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-font-person-cover" },
+      alt: "Comparative typography specimen showing serif authority versus sans-serif modernism",
+      url: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-05-10",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Typography", "Brand Personality", "Semiotics", "Font Psychology", "Visual Identity"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The biggest mistake designers make with generative image engines is treating them like a magical search bar where you type generic adjectives ('beautiful, ultra-realistic, highly detailed'). These buzzwords are statistical white noise. True art direction requires speaking in the precise technical vocabulary of visual craft.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Prompting vs. Art Direction" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Amateur prompting describes the subject ('a cool sneaker'). Professional art direction specifies the medium, camera optics, key-to-fill lighting ratios, color gamut, and spatial negative space.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Language of Cinematography" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Direct the machine using precise terminology: 85mm anamorphic lens, shallow f/1.8 depth of field, high-key diffused northern daylight, Kodachrome 64 grain emulation, and Bauhaus geometric composition.",
-          },
-        ],
-      },
+      createBlock("Why Does Changing a Font Completely Change a Brand's Personality?", "h2"),
+      createBlock("Take the word 'TRUST'."),
+      createBlock("Render it in Baskerville with sharp serifs and high stroke contrast: it feels like an established 200-year-old British private bank. Render it in Futura Bold: it feels like an avant-garde architectural studio or a German sports brand. Render it in Comic Sans: it feels like an elementary school bake sale."),
+      createBlock("The letters contain the exact same five ASCII characters. Yet their emotional resonance is completely polarized. Why?"),
+      createBlock("1. The Social History of Letterforms", "h3"),
+      createBlock("Every font family carries hundreds of years of cultural associations:"),
+      createBlock("• Roman Serifs (Garamond, Caslon): Evoke academic scholarship, classical literature, and judicial authority."),
+      createBlock("• Geometric Sans-Serifs (Futura, Avant Garde): Evoke Bauhaus industrialism, progressivism, and utopian geometry."),
+      createBlock("• Humanist Sans-Serifs (Gill Sans, Frutiger, Open Sans): Evoke democratic clarity, public transportation, and accessible warmth."),
+      createBlock("When a brand selects a typeface, it is adopting the entire social and historical baggage of that typographic lineage."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 38 — PERSONALIZATION
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 35. WHY EMAIL IS AN ENVELOPE WITH A TRIANGLE FLAP
+  {
+    _id: "blog-llm-integration-in-saas-products",
+    title: "Why Is Email Represented by a Paper Envelope with a Triangular Flap?",
+    title_az: "E-poçt Niyə Üçbucaqlı Qapağı Olan Kağız Zərf İkonudur?",
+    slug: { _type: "slug", current: "why-email-is-a-paper-envelope-icon" },
+    slug_az: { _type: "slug", current: "e-poct-niye-kagiz-zerf-ikonudur" },
+    originalSlug: "llm-integration-in-saas-products",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "From Ray Tomlinson's 1971 ARPANET protocol to Gmail's iconic red-and-white envelope: How a Victorian postal wrapper became the immortal emblem of digital text messages.",
+    excerpt_az: "1971-ci il ARPANET protokolundan Gmail-in ikonik qırmızı-ağ zərfinə qədər: 19-cu əsrin poçt kağızının rəqəmsal rabitənin əbədi simvoluna çevrilməsi.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-envelope-cover" },
+      alt: "Vintage sealed kraft paper envelope with red sealing wax stamp",
+      url: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-05-12",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Iconography", "Email History", "Gmail", "Design History", "Skeuomorphism"],
+    body: [
+      createBlock("Why Is Email Represented by a Paper Envelope with a Triangular Flap?", "h2"),
+      createBlock("An electronic mail message is a packet of binary ASCII bytes routed over SMTP port 587 through fiber optic undersea cables. It has no physical mass, no glue, and no folded paper corners."),
+      createBlock("Yet across every mail client on earth (Gmail, Apple Mail, Outlook), the symbol for email is a classic rectangular paper envelope with an inverted triangular flap. Why did this specific form become immortal?"),
+      createBlock("1. The Affordance of Privacy and Containment", "h3"),
+      createBlock("Before the invention of the envelope in the 1830s, postal letters were folded sheets of paper sealed with hot wax. The envelope represented a revolutionary social contract: **Privacy.** It meant no postal carrier or intermediary could read the contents without visibly breaking the seal."),
+      createBlock("When digital mail was introduced, designers needed to convey that your private message was secure, addressed to a specific person, and contained inside a digital vessel. The envelope was the most trusted visual metaphor in human communication."),
+    ],
+  },
+
+  // 36. WHY CONTRAST MAKES DESIGNS IMPOSSIBLE TO IGNORE (VON RESTORFF)
   {
     _id: "blog-ai-driven-hyper-personalization",
-    title: "Why Personalized Ads Can Feel Creepy Instead of Clever",
-    slug: { current: "ai-driven-hyper-personalization" },
-    category: "Marketing",
-    tags: ["Personalization", "Psychological Reactance", "Surveillance Marketing", "Ad Fatigue", "Consumer Trust"],
-    featured: false,
-    publishDate: "2026-07-05",
-    readTime: "8 min read",
-    excerpt:
-      "When an ad mentions your exact city, your recent search query, and your job title, it triggers psychological reactance. The fine line between helpful relevance and intrusive surveillance.",
+    title: "Why Does Contrast Make Some Designs Completely Impossible to Ignore?",
+    title_az: "Kontrast Niyə Bəzi Dizaynları Görməzdən Gəlməyi İmkansız Edir?",
+    slug: { _type: "slug", current: "why-contrast-makes-designs-impossible-to-ignore-von-restorff" },
+    slug_az: { _type: "slug", current: "kontrast-ve-von-restorff-effekti" },
+    originalSlug: "ai-driven-hyper-personalization",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "Hedwig von Restorff's Isolation Effect: How the human visual cortex processes anomalies, salience maps, and why breaking visual patterns forces instant focus.",
+    excerpt_az: "Hedwig von Restorff-un Təcrid Effekti: Vizual qabıq anomaliyaları necə emal edir və mövcud vizual naxışı qırmaq niyə ani diqqət cəlb edir.",
     coverImage: {
-      asset: { _ref: "image-creepy-personalization-cover" },
-      alt: "Visual representation of psychological reactance boundary in hyper-targeted advertising",
-      caption: "When consumer personalization crosses from contextual helpfulness into explicit tracking, conversion collapses into distrust.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-contrast-cover" },
+      alt: "Single bright electric yellow object isolated among sea of dark matte gray spheres",
+      url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-05-14",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Contrast", "Von Restorff Effect", "Visual Salience", "Design Psychology", "UI Focus"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 1966, psychologist Jack Brehm formulated the theory of Psychological Reactance: when individuals perceive that their freedom of choice or privacy is being threatened or manipulated, an unpleasant motivational arousal is triggered, forcing them to actively reject the persuasion attempt.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. When Relevance Becomes Surveillance" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "There is a vast difference between contextual relevance (showing winter coats to someone browsing ski gear) and surveillance personalization ('Hey John in Baku, we saw you looking at sneakers at 11:42 PM'). Explicit tracking triggers acute privacy alarm.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Designing Respectful Personalization" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Personalize on user intent and declared preferences rather than covert behavioral surveillance. When personalization feels helpful and transparent, trust flourishes.",
-          },
-        ],
-      },
+      createBlock("Why Does Contrast Make Some Designs Completely Impossible to Ignore?", "h2"),
+      createBlock("In 1933, German pediatrician and psychologist Hedwig von Restorff conducted a series of memory experiments. She presented participants with a long list of similar items (such as two-digit numbers) with a single unexpected outlier (such as a three-letter word printed in bold red)."),
+      createBlock("When tested, participants remembered the outlier at a rate over 400% higher than the surrounding items. This phenomenon became known in cognitive science as the **Von Restorff Isolation Effect**."),
+      createBlock("1. The Evolutionary Salience Map", "h3"),
+      createBlock("Our visual cortex generates a subconscious 'Salience Map' of our environment. Because the brain cannot process all visual stimuli simultaneously, it uses neural inhibition to suppress redundant visual information (a field of uniform green grass) while sounding an immediate alarm when it detects an anomalous contrast spike (a bright yellow flower or a predator's eye)."),
+      createBlock("In digital product design, contrast is the primary lever of user action. A call-to-action button that uses an accent color found nowhere else on the page creates an intentional visual anomaly that the human eye cannot physically ignore."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 39 — AI WRITING
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 37. PSYCHOLOGY OF DARK MODE
   {
-    _id: "blog-ai-copywriting-and-tone-calibration",
-    title: "Why AI Writing Sounds So Similar",
-    slug: { current: "ai-copywriting-and-tone-calibration" },
-    category: "AI",
-    tags: ["AI Copywriting", "Tone Calibration", "Brand Voice", "Editorial Craft", "Linguistic Uniformity"],
-    featured: false,
-    publishDate: "2026-07-28",
-    readTime: "8 min read",
-    excerpt:
-      "'In today's fast-paced digital landscape, unlocking seamless synergies is crucial.' Why language models default to safe corporate clichés, and how to inject human cadence.",
+    _id: "blog-dark-mode-ui-architecture",
+    title: "The Psychology of Dark Mode: Why Developers and Night Owls Love OLED Blacks",
+    title_az: "Qaranlıq Rejim Psixologiyası: Proqramçılar Niyə OLED Qaralarını Bu Qədər Sevir?",
+    slug: { _type: "slug", current: "psychology-of-dark-mode-oled-black-ui" },
+    slug_az: { _type: "slug", current: "qaranliq-rejim-psixologiyasi-oled" },
+    originalSlug: "dark-mode-ui-architecture",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "CRT phosphor nostalgia, photopic vs scotopic vision, and the aesthetic elevation of neon syntax: Why dark mode conquered IDEs, code editors, and luxury mobile apps.",
+    excerpt_az: "Köhnə CRT monitor nostaljisi, görmə biologiyası və parlaq sintaksisin estetik cazibəsi: Qaranlıq rejimin proqramçıları və istifadəçiləri necə fəth etdiyi.",
     coverImage: {
-      asset: { _ref: "image-ai-writing-similarity-cover" },
-      alt: "Linguistic frequency chart illustrating the repetitive corporate buzzwords of default LLM text",
-      caption: "Default AI writing converges on the mathematical median of corporate press releases. Distinctive brand voice requires human idiosyncrasy and rhythm.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-dark-mode-cover" },
+      alt: "Sleek glowing dark mode code editor interface displaying neon syntax highlighting",
+      url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-05-16",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Dark Mode", "OLED UI", "Visual Ergonomics", "Developer Culture", "Color Contrast"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "You can spot default AI prose from fifty paces away: every paragraph begins with a grand platitude ('In today's dynamic digital era...'), every solution 'delves into seamless synergies,' every sentence uses a balanced tri-colon rhythm, and every conclusion offers a bland, motivational pep talk. It sounds like an executive committee wrote a press release inside a sensory deprivation tank.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Sound of Generic AI" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Because language models predict the next most probable word based on broad web training data, unguided output converges on the mathematical median of corporate communications: risk-averse, adjective-heavy, and rhythmically monotonous.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Banned Clichés" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Phrases like 'beacon of hope,' 'testament to innovation,' 'ever-evolving landscape,' and 'game-changing solution' are markers of zero editorial thought. Strip them ruthlessly from your copy.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Injecting Human Cadence and Specificity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Human writing has varied sentence lengths: short, sharp punches followed by long, flowing narrative descriptions. It uses concrete nouns ('a 400gsm linen cardstock') rather than abstract fluff ('premium high-quality materials').",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Making AI Writing Sound Like Someone" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Calibrate AI by providing strict negative constraints (what words never to use) and feeding distinctive writing samples. Treat AI as a fast first-draft transcriptionist, and spend your human effort on fearless editorial surgery.",
-          },
-        ],
-      },
+      createBlock("The Psychology of Dark Mode: Why Developers and Night Owls Love OLED Blacks", "h2"),
+      createBlock("In the 1970s, every computer screen on earth was dark mode. Early cathode-ray tubes (CRTs) could only illuminate individual green or amber phosphor pixels against a dark vacuum tube."),
+      createBlock("When Apple and Xerox introduced the desktop metaphor in the 1980s, they flipped screens to blinding white to imitate physical paper. Yet forty years later, developers, designers, and millions of everyday users have enthusiastically retreated back into the dark."),
+      createBlock("1. Visual Ergonomics in Low-Ambient Environments", "h3"),
+      createBlock("Staring at a 500-nit white screen in a dimly lit room forces the human pupil to constrict, causing ciliary muscle fatigue. Dark mode reduces overall luminous flux, easing photopic glare and preventing eye strain during 12-hour coding marathons."),
+      createBlock("2. The Aesthetic Elevation of Contrast", "h3"),
+      createBlock("Against a deep OLED black canvas (`#000000` or `#0a0a0c`), colors do not merely appear—they *glow*. Neon accents, syntax tokens, and glowing gradients feel vibrant, high-tech, and cinematic, creating an immersive flow state that light mode can rarely match."),
+    ],
+  },
+
+  // 38. GESTALT PROXIMITY & VISUAL CHUNKING
+  {
+    _id: "blog-design-tokens-and-system-architecture",
+    title: "Why Do We Group Things Together? (The Secret Power of Gestalt Proximity)",
+    title_az: "Biz Niyə Əşyaları Qruplaşdırırıq? (Gestalt Yaxınlıq Qanununun Gizli Gücü)",
+    slug: { _type: "slug", current: "why-we-group-things-together-gestalt-proximity" },
+    slug_az: { _type: "slug", current: "gestalt-yaxinliq-qanunu-ve-qruplasma" },
+    originalSlug: "design-tokens-and-system-architecture",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "Max Wertheimer's 1923 Gestalt law of proximity: How spatial spacing between input labels, buttons, and cards creates invisible cognitive clusters.",
+    excerpt_az: "Max Wertheimer-in 1923-cü il Gestalt yaxınlıq qanunu: Elementlər arasındakı məsafənin beyində görünməz məntiqi qruplar yaratması.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-gestalt-cover" },
+      alt: "Clean geometric dots grouped in rhythmic clusters illustrating Gestalt proximity",
+      url: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-05-18",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Gestalt Psychology", "Proximity", "UI Layout", "Visual Chunking", "Spatial Hierarchy"],
+    body: [
+      createBlock("Why Do We Group Things Together? (The Secret Power of Gestalt Proximity)", "h2"),
+      createBlock("In 1923, founder of Gestalt psychology Max Wertheimer published his foundational research on perceptual organization. He placed a series of uniform black dots on a white paper. When the dots were spaced evenly, viewers saw a single mass. But the second he pushed pairs of dots closer together, viewers instantly perceived distinct couples."),
+      createBlock("This is the **Law of Proximity**: Objects that are physically close to each other are perceived as sharing a common function or identity."),
+      createBlock("1. The Most Common UI Bug: The Floating Label", "h3"),
+      createBlock("Look at a poorly designed form: An input label sits equidistant between the input box above it and the input box below it (e.g., 16px margin top and 16px margin bottom). The user's visual cortex experiences a micro-second of confusion: *'Does this label describe the box above or the box below?'*"),
+      createBlock("Master UI designers use mathematical proximity ratios: An input label should have an 8px margin to its corresponding field, and a 24px margin to the preceding unrelated field. Proximity establishes instant, unmistakable cognitive grouping without needing a single border line."),
+    ],
+  },
+
+  // 39. THE PSYCHOLOGY OF GOOGLE SEARCH
+  {
+    _id: "blog-seo-fundamentals-for-creatives",
+    title: "The Psychology of Google Search: Why We Trust the #1 Result Blindly",
+    title_az: "Google Axtarış Psixologiyası: Niyə 1-ci Nəticəyə Kor-koranə İnanırıq?",
+    slug: { _type: "slug", current: "psychology-of-google-search-position-bias" },
+    slug_az: { _type: "slug", current: "google-axtaris-ve-movqe-psixologiyasi" },
+    originalSlug: "seo-fundamentals-for-creatives",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "Position Bias and the Google Golden Triangle: How human cognitive ease and the authority heuristic funnel 39.8% of all global clicks to a single search result.",
+    excerpt_az: "Mövqe qərəzi və Google-un Qızıl Üçbucağı: Koqnitiv asanlıq və nüfuz təsiri bütün qlobal axtarış kliklərinin 39.8%-ni niyə məhz 1-ci nəticəyə yönəldir.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-google-search-cover" },
+      alt: "Digital search query input box reflecting in glasses of user in dark room",
+      url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-05-20",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Search Psychology", "Position Bias", "Cognitive Ease", "Authority Heuristic", "Google SERP"],
+    body: [
+      createBlock("The Psychology of Google Search: Why We Trust the #1 Result Blindly", "h2"),
+      createBlock("Across billions of daily searches on Google, a consistent statistical reality emerges:"),
+      createBlock("• The #1 organic result captures **39.8% of all clicks**."),
+      createBlock("• The #2 result captures 18.7%."),
+      createBlock("• By the time you reach #10 (the bottom of page one), click-through rate drops to less than 1.4%."),
+      createBlock("Why do human beings place such overwhelming, blind faith in whichever link appears at the very top of the list?"),
+      createBlock("1. The Authority Heuristic and Cognitive Ease", "h3"),
+      createBlock("In Nobel laureate Daniel Kahneman's model of cognition, the human brain constantly seeks the path of least cognitive resistance. Evaluating multiple articles requires mental energy (System 2)."),
+      createBlock("Over twenty-five years, Google built unprecedented cultural trust. Our brains now use a cognitive shortcut: *'If Google placed it at #1, their multibillion-dollar algorithm already evaluated every other website on earth and determined this is the best one.'* The user clicks not because they evaluated the content, but because they outsource evaluation to the machine."),
     ],
   },
 ];

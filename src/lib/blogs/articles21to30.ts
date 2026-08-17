@@ -1,1143 +1,363 @@
 import { BlogPost } from "../../types/blog";
 
+function createBlock(text: string, style = "normal", key = Math.random().toString(36).substring(7)) {
+  return {
+    _key: key,
+    _type: "block",
+    style,
+    markDefs: [],
+    children: [{ _key: `${key}-c`, _type: "span", marks: [], text }],
+  };
+}
+
+function createImageBlock(url: string, alt: string, caption?: string) {
+  return {
+    _key: Math.random().toString(36).substring(7),
+    _type: "image",
+    asset: { _type: "reference", _ref: "image-manual" },
+    alt,
+    caption,
+    url,
+  };
+}
+
 export const ARTICLES_21_TO_30: BlogPost[] = [
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 21 — AI COPYRIGHT
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 21. WHY MODERN WEBSITES LOOK THE SAME
   {
-    _id: "blog-legal-ethics-and-licensing-in-ai-art",
-    title: "The AI Image Looks Perfect. Can You Actually Use It?",
-    slug: { current: "legal-ethics-and-licensing-in-ai-art" },
-    category: "AI",
-    tags: ["AI Copyright", "Commercial Licensing", "Intellectual Property", "Legal Ethics", "Fair Use"],
-    featured: false,
-    publishDate: "2026-07-04",
-    readTime: "8 min read",
-    excerpt:
-      "A stunning generative render does not automatically come with clear commercial copyright. The legal realities, human authorship requirements, and enterprise liabilities of AI assets.",
+    _id: "blog-performance-creative-frameworks",
+    title: "Why Do Modern Websites All Look the Same?",
+    title_az: "Müasir Vebsaytlar Niyə Bir-birinin Eynisi Görünür?",
+    slug: { _type: "slug", current: "why-modern-websites-all-look-the-same" },
+    slug_az: { _type: "slug", current: "vebsaytlar-niye-eyni-gorunur" },
+    originalSlug: "performance-creative-frameworks",
+    category: "Creative & Culture",
+    category_az: "Kreativ və Mədəniyyət",
+    excerpt: "Design system homogenization, Tailwind CSS, Figma component kits, and mobile constraints: How the pursuit of conversion optimization led to global aesthetic convergence.",
+    excerpt_az: "Dizayn sistemi standartlaşması, Tailwind CSS, Figma şablonları və mobil məhdudiyyətlər: Konversiya axtarışının qlobal estetik eyniliyə necə gətirib çıxardığı.",
     coverImage: {
-      asset: { _ref: "image-ai-copyright-cover" },
-      alt: "Legal gavel and digital vector watermark diagram illustrating commercial AI usage rights",
-      caption: "Under current U.S. and EU copyright frameworks, works generated purely by artificial intelligence without substantial human creative input cannot claim copyright protection.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-web-same-cover" },
+      alt: "Abstract grid of recurring modern SaaS landing page UI cards with identical layouts",
+      url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-04-14",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Web Design", "Design Systems", "Aesthetics", "Tailwind CSS", "UX Homogenization"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "You generate an exceptional brand key visual using a diffusion model. It matches the creative brief flawlessly, the lighting is breathtaking, and your client is thrilled. But before you deploy it across 500 national billboards, a crucial legal question arises: Who actually owns the intellectual property?",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Beautiful Does Not Mean Legally Safe" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Visual aesthetics have zero correlation with legal ownership. An image generated from a model trained on copyrighted artist portfolios without consent carries unresolved legal liabilities in commercial broadcast advertising.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Human Authorship Requirement in Copyright Law" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In the United States (affirmed in landmark rulings like Thaler v. Perlmutter and the U.S. Copyright Office's 2023 guidance), copyright law protects only the output of human creative minds. Prompts are legal instructions, not human authorship.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Commercial Licensing Terms" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Read the terms of service: free-tier generative tools often grant the platform a perpetual, irrevocable license to reuse your outputs publicly, while paid enterprise tiers provide commercial exclusivity.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Commercial Usage vs. Editorial Fair Use" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Using an AI image in an educational critique article is protected under Fair Use; using that same image on a retail perfume bottle packaging requires ironclad commercial indemnity.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. The Public Domain Trap for Brands" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "If an artwork is unprotectable by copyright, a competitor can legally copy your hero visual and place it on their website without committing copyright infringement.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Training Data Provenance and Model Ethics" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Enterprise brands increasingly mandate 'clean data' models (trained exclusively on licensed stock libraries or public domain archives) to protect against future statutory damages.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Client Contracts and AI Disclosures" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Modern agency contracts require explicit disclosure warranties regarding whether generative AI was utilized in brand identity creation.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Practical Checks Before Client Delivery" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Always perform reverse image lookups, transform the generative output with substantial human digital illustration, and maintain an audit log of prompt revisions and software licenses.",
-          },
-        ],
-      },
+      createBlock("Why Do Modern Websites All Look the Same?", "h2"),
+      createBlock("Centered bold sans-serif headline. Subtle pill badge with a pulsing dot. Dark mode glassmorphic background with a soft purple or cyan radial gradient. Three Bento Box cards with rounded corners. An interactive pricing toggle (Monthly / Yearly - Save 20%). A carousel of gray client logos."),
+      createBlock("You have visited this website a thousand times across a hundred different startups. Why has the vast, infinite canvas of the World Wide Web converged onto a single, standardized aesthetic template?"),
+      createBlock("1. The Tyranny of Mobile-First Responsive Constraints", "h3"),
+      createBlock("In the 2000s, websites were designed for wide desktop monitors with Flash animations, experimental asymmetric navigation, and chaotic bespoke layouts. But when mobile traffic surpassed desktop traffic in 2016, designers were forced to adhere to a rigid physical reality: a vertical rectangular glass screen 390 pixels wide."),
+      createBlock("On a narrow mobile screen, there are only so many ergonomic ways to stack information: Header → Headline → Hero Image → 1-Column Cards → Footer. Creativity was inevitably channeled into standardized vertical rails."),
+      createBlock("2. Component Libraries and Design System Monoculture", "h3"),
+      createBlock("Frameworks like Tailwind CSS, shadcn/ui, and Figma UI kits dramatically accelerated engineering speed. A single developer can now assemble a world-class landing page in an afternoon. But the unintended byproduct of shared design tokens, identical border-radii (`rounded-2xl`), and identical typography (`Inter`, `Geist`) is visual homogenization."),
+      createBlock("3. A/B Testing and Cargo-Cult Conversion", "h3"),
+      createBlock("When Stripe or Linear invents a striking new design pattern (like dark-mode command menus or glowing border strokes), metrics show it converts well. Within weeks, thousands of other startups copy the layout pixel-for-pixel, assuming the visual design was the magic variable rather than the product itself."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 22 — CREATOR MARKETING
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 22. HELVETICA & CORPORATE AMERICA
+  {
+    _id: "blog-content-strategy-hubs",
+    title: "Why Did Helvetica Become the Official Font of Corporate America?",
+    title_az: "Helvetica Niyə Korporativ Amerikanın Rəsmi Şriftinə Çevrildi?",
+    slug: { _type: "slug", current: "why-helvetica-became-the-font-of-corporate-america" },
+    slug_az: { _type: "slug", current: "helvetica-ve-korporativ-amerika" },
+    originalSlug: "content-strategy-hubs",
+    category: "Typography",
+    category_az: "Tipoqrafika",
+    excerpt: "Max Miedinger's 1957 Neue Haas Grotesk: How Swiss modernist neutrality conquered American Airlines, Target, BMW, the NYC Subway, and corporate identity.",
+    excerpt_az: "Max Miedinger-in 1957-ci il şedevri: İsveçrə modernizminin neytrallığı American Airlines, Target, BMW və Nyu-York metrosunu necə fəth etdi.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-helvetica-cover" },
+      alt: "Iconic Helvetica bold typography specimen on clean Swiss modernist poster",
+      url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-04-16",
+    readTime: "9 min read",
+    featured: false,
+    tags: ["Helvetica", "Typography", "Swiss Design", "Corporate Identity", "Design History"],
+    body: [
+      createBlock("Why Did Helvetica Become the Official Font of Corporate America?", "h2"),
+      createBlock("In 1957, Swiss designer Max Miedinger and Eduard Hoffmann set out to create a typeface that contained no intrinsic meaning of its own—a font so balanced, neutral, and clear that it functioned like crystal-clear glass, allowing the content to shine without distortion. They called it Neue Haas Grotesk, later renamed Helvetica (from *Helvetia*, the Latin name for Switzerland)."),
+      createBlock("Within two decades, this humble Swiss typeface had taken over the most powerful corporations on the planet: American Airlines, Jeep, Lufthansa, Target, Panasonic, Toyota, and the entire signage system of the New York City Subway."),
+      createBlock("1. The Post-War Corporate Identity Crisis", "h3"),
+      createBlock("In the 1960s, American conglomerates were expanding globally. They needed visual identities that felt modern, efficient, transparent, and international. The decorative serif fonts of the Victorian era felt dusty and provincial."),
+      createBlock("Helvetica offered the ultimate corporate superpower: **Radical Neutrality**. Because Helvetica carries no historical baggage or decorative flourish, it can represent a healthcare provider, an airline, a luxury department store, or an industrial chemical manufacturer with equal authority."),
+    ],
+  },
+
+  // 23. NEVER TELL YOUR PRICE TOO EARLY
+  {
+    _id: "blog-automated-email-funnels",
+    title: "Never Tell a Client Your Price Too Early: The Psychology of Value Framing",
+    title_az: "Müştəriyə Qiyməti Heç Vaxt Tez Deməyin: Dəyər Çərçivəsi Psixologiyası",
+    slug: { _type: "slug", current: "never-tell-a-client-your-price-too-early-value-framing" },
+    slug_az: { _type: "slug", current: "qiymeti-tez-demeyin-deyer-psixologiyasi" },
+    originalSlug: "automated-email-funnels",
+    category: "Marketing Psychology",
+    category_az: "Marketinq Psixologiyası",
+    excerpt: "The Framing Effect in B2B consulting: Why quoting a number before discovering business pain anchors your work as an expense rather than a high-ROI investment.",
+    excerpt_az: "B2B konsaltinqdə Çərçivələmə Effekti: Problemi və biznes hədəflərini tam kəşf etmədən əvvəl qiymət demək xidmətinizi investisiya yox, niyə xərc kimi göstərir.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-price-frame-cover" },
+      alt: "Executive business consultation meeting in modern architectural boardroom",
+      url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-04-18",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Pricing Strategy", "Client Negotiation", "Value Framing", "Consulting", "Sales Psychology"],
+    body: [
+      createBlock("Never Tell a Client Your Price Too Early: The Psychology of Value Framing", "h2"),
+      createBlock("A prospective client sends an email: *'Hi, we love your portfolio! How much do you charge for a full website redesign and brand identity?'*"),
+      createBlock("The inexperienced designer immediately replies: *'Our website redesigns start at $15,000.'*"),
+      createBlock("The client never replies. Why? Because the designer committed the cardinal sin of pricing psychology: **Anchoring a cost before establishing perceived value.**"),
+      createBlock("1. Price in Isolation Is Always an Expense", "h3"),
+      createBlock("When a number is quoted without context, the human brain automatically evaluates it against current bank account balances. '$15,000' sounds like a lot of money to take out of a company's treasury."),
+      createBlock("However, if the designer first conducts a diagnostic discovery session and reveals that the client's current broken checkout flow is losing $600,000 in annual revenue, the cognitive context shifts completely. In that frame, a $15,000 investment that recovers $600,000 is not an expense—it is a 4,000% return on investment."),
+      createBlock("2. The Diagnostic Doctor vs. The Order Taker", "h3"),
+      createBlock("Imagine walking into a surgeon's office and asking: *'How much for an operation?'* A professional doctor would never name a price without an examination, an MRI, and a diagnosis. Elite creative professionals operate as diagnostic authorities, uncovering the true business problem before ever prescribing a financial solution."),
+    ],
+  },
+
+  // 24. PERSONALIZED ADS & THE UNCANNY VALLEY
   {
     _id: "blog-influencer-and-creator-partnerships",
-    title: "Why Small Creators Can Sell More Than Celebrities",
-    slug: { current: "influencer-and-creator-partnerships" },
-    category: "Marketing",
-    tags: ["Creator Marketing", "Micro-Influencers", "Parasocial Relationships", "Trust Economics", "Niche Communities"],
-    featured: false,
-    publishDate: "2026-07-05",
-    readTime: "8 min read",
-    excerpt:
-      "A celebrity with 10 million followers acts as a broadcast billboard; a niche creator with 15,000 subscribers acts as a trusted peer. The power of high-affinity parasocial trust.",
+    title: "Why Can Personalized Ads Sometimes Feel Deeply Creepy?",
+    title_az: "Fərdiləşdirilmiş Reklamlar Niyə Bəzən Dəhşətli Dərəcədə Qorxulu Hiss Etdirir?",
+    slug: { _type: "slug", current: "why-personalized-ads-feel-creepy-privacy-paradox" },
+    slug_az: { _type: "slug", current: "ferdi-reklamlar-ve-qorxu-hissi" },
+    originalSlug: "influencer-and-creator-partnerships",
+    category: "Marketing Psychology",
+    category_az: "Marketinq Psixologiyası",
+    excerpt: "The Uncanny Valley of AdTech: Why hyper-specific targeting crosses the threshold from helpful recommendation into perceived invasive digital surveillance.",
+    excerpt_az: "AdTech-in 'Qorxunc Vadi' effekti: Həddindən artıq dəqiq hədəfləmənin faydalı tövsiyədən qorxulu rəqəmsal izlənmə hissinə necə keçdiyi.",
     coverImage: {
-      asset: { _ref: "image-creator-marketing-cover" },
-      alt: "Comparative graph of audience scale versus high-affinity conversion velocity in creator marketing",
-      caption: "Trust density compounds in tight vertical niches, yielding conversion rates that dwarf generic celebrity endorsements.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-privacy-cover" },
+      alt: "Digital biometric data visualization representing algorithmic ad surveillance",
+      url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-04-20",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Personalization", "Privacy Paradox", "AdTech", "Consumer Psychology", "Surveillance"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "If you pay a mainstream celebrity $200,000 to hold a bespoke mechanical keyboard in an Instagram photo, their followers understand the transaction instantly: it is paid theater. But when a passionate hardware designer with 8,000 YouTube subscribers spends twenty minutes dissecting the switch acoustics and gasket mount, their recommendation feels like advice from an obsessed friend.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Reach Isn't the Same as Trust" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Reach is a measure of eyeball quantity; trust is a measure of behavioral influence. A million passive impressions will not sell out a niche SaaS product, but 5,000 hyper-focused true fans will.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Power of Niche Audiences" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Micro-communities (specializing in typography, generative motion, Rust programming, or high-end mechanical watches) possess shared vocabulary and intense domain passion.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Authenticity Cannot Be Faked" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Audiences have developed instant immune responses to polished corporate teleprompter reads. They trust creators who openly criticize product flaws while praising genuine utility.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Parasocial Relationships and Dunbar's Number" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Because smaller creators actively reply to comments and remember community members by name, viewers feel a two-way social connection that mirrors real-life friendship.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Community as a Moat" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Products promoted by trusted community leaders receive constructive feedback, active advocacy, and word-of-mouth defense against competitors.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Engagement Quality Over Follower Quantity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A creator with 10,000 followers and a 12% comment engagement rate delivers 10x higher ROI than an account with 500,000 followers and bot-inflated engagement.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. When Big Influencers Actually Win" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Mega-influencers are effective for broad FMCG consumer goods (soft drinks, fast food, mainstream streaming services) where product differentiation is low and mass awareness is key.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. Choosing the Right Creator Partner" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Select creators who are already paying customers or passionate organic advocates of your product category before you ever offer a sponsorship check.",
-          },
-        ],
-      },
+      createBlock("Why Can Personalized Ads Sometimes Feel Deeply Creepy?", "h2"),
+      createBlock("You casually mention to a friend over dinner that you're thinking about adopting a golden retriever puppy. The next morning, your Instagram feed displays an ad for a hypoallergenic puppy crate. You feel an immediate chill: *'Is my phone listening to me?'*"),
+      createBlock("In reality, ad algorithms rarely need to listen to microphone audio; their predictive modeling across location data, browsing history, and lookalike social graphs is so terrifyingly precise that it anticipates our desires before we even realize them."),
+      createBlock("1. The Marketing Uncanny Valley", "h3"),
+      createBlock("Roboticist Masahiro Mori introduced the 'Uncanny Valley' in 1970 to describe human revulsion when a humanoid robot looks almost, but not quite, human. In digital marketing, there is an equivalent threshold:"),
+      createBlock("• Broad Relevance: Useful (e.g., seeing winter coats in December)."),
+      createBlock("• Moderate Personalization: Convenient (e.g., Amazon suggesting a book based on your previous reading)."),
+      createBlock("• Hyper-Specific Surveillance: Creepy (e.g., an ad mentioning your exact zip code, your relationship status, and a brand you looked at 4 minutes ago on another device)."),
+      createBlock("When personalization exposes the invisible surveillance machinery of the internet, trust collapses and defense mechanisms activate."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 23 — ICONOGRAPHY
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 25. ROUNDED CORNERS & BABY SCHEMA
   {
-    _id: "blog-iconography-and-vector-precision",
-    title: "Why Does the Notification Icon Look Like a Bell?",
-    slug: { current: "iconography-and-vector-precision" },
-    category: "UX",
-    tags: ["Iconography", "Skeuomorphism", "Visual Metaphor", "UI History", "Semiotics"],
-    featured: true,
-    publishDate: "2026-07-16",
+    _id: "blog-the-future-of-multidisciplinary-creators",
+    title: "Why Do Rounded Shapes Feel Friendlier Than Sharp Corners?",
+    title_az: "Dairəvi Formalar Niyə İti Künclərdən Daha Mehriban Və İsti Görünür?",
+    slug: { _type: "slug", current: "why-rounded-shapes-feel-friendlier-corner-radius-psychology" },
+    slug_az: { _type: "slug", current: "dairevi-formalar-ve-kunclerin-psixologiyasi" },
+    originalSlug: "the-future-of-multidisciplinary-creators",
+    category: "Design Psychology",
+    category_az: "Dizayn Psixologiyası",
+    excerpt: "Evolutionary threat avoidance, Konrad Lorenz's Kindchenschema, and Apple's squircle: Why rounded corners soothe the human nervous system.",
+    excerpt_az: "Təkamül qorunma instinktləri, Konrad Lorenz-in körpə sxemi və Apple-ın dairəvi künc fəlsəfəsi: Yuvarlaq formalar sinir sistemini niyə sakitləşdirir.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-rounded-cover" },
+      alt: "Smooth tactile organic pebble with soft curvature against soft ambient light",
+      url: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-04-22",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Corner Radius", "Design Psychology", "Apple Squircles", "Ergonomics", "UI Aesthetics"],
+    body: [
+      createBlock("Why Do Rounded Shapes Feel Friendlier Than Sharp Corners?", "h2"),
+      createBlock("In 1981, Steve Jobs took Apple engineer Bill Atkinson on a three-block walk around Apple's Cupertino campus. Jobs pointed out stop signs, cars, windows, and trash cans, insisting: *'Look, rounded rectangles are everywhere! You can't live without them.'* Atkinson went back and wrote the mathematical algorithm for `RoundRect` that defined the visual identity of Macintosh and later iOS."),
+      createBlock("Why are human beings so instinctively comfortable with rounded corners?"),
+      createBlock("1. Evolutionary Threat Avoidance", "h3"),
+      createBlock("In nature, sharp angles signal physical danger: predator fangs, thorns, jagged rocks, and broken bones. Neuroimaging studies conducted at Harvard Medical School revealed that viewing sharp, jagged geometry triggers activation in the amygdala—the brain's fear and vigilance center."),
+      createBlock("Rounded contours, conversely, signal organic safety: smooth river pebbles, ripe fruit, and human flesh."),
+      createBlock("2. Kindchenschema and the Tactile Squircle", "h3"),
+      createBlock("Ethologist Konrad Lorenz identified *Kindchenschema* (Baby Schema): human infants have soft, rounded facial features that trigger nurturing, protective instincts in adults. When an interface adopts smooth continuous curvature (such as Apple's continuous Bézier squircles), the software feels approachable, touchable, and safe."),
+    ],
+  },
+
+  // 26. WHY AI IMAGES LOOK EXPENSIVE BUT WRONG
+  {
+    _id: "blog-ai-image-generation-pipelines",
+    title: "Why Do AI Images Look Expensive but Still Feel Wrong?",
+    title_az: "Süni İntellekt Şəkilləri Niyə Bahalı Görünür Amma Yenə Də Saxta Hiss Etdirir?",
+    slug: { _type: "slug", current: "why-ai-images-look-expensive-but-feel-wrong" },
+    slug_az: { _type: "slug", current: "ai-sekilleri-niye-saxta-gorunur" },
+    originalSlug: "ai-image-generation-pipelines",
+    category: "Creative & Culture",
+    category_az: "Kreativ və Mədəniyyət",
+    excerpt: "The Visual AI Uncanny Valley: Hyper-perfection without human intent, unnatural subsurface scattering, and the absence of authentic photographic flaws.",
+    excerpt_az: "Vizual AI-ın Qorxunc Vadisi: İnsan niyyəti olmadan yaradılmış ifrat mükəmməllik və təbii fotoqrafik qüsurların olmamasının yaratdığı saxtalıq hissi.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-ai-wrong-cover" },
+      alt: "Surreal hyper-rendered portrait displaying subtle synthetic perfection artifacts",
+      url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-04-24",
     readTime: "9 min read",
-    excerpt:
-      "Why do digital interfaces still rely on 19th-century physical objects? From church tower bells and 3.5-inch floppy disks to envelopes and rotary telephone handsets.",
-    coverImage: {
-      asset: { _ref: "image-notification-bell-cover" },
-      alt: "Evolution diagram of the notification bell from physical brass object to modern minimalist vector glyph",
-      caption: "Digital iconography relies on cultural fossil metaphors: symbols whose original physical mechanisms are obsolete, but whose cognitive meaning is permanent.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Look at the top corner of your screen. When a new message arrives, a small brass bell icon displays a red badge. But when was the last time you heard an actual mechanical brass bell ring to alert you of an email? Probably never. Why has this centuries-old physical instrument survived as the universal symbol of digital alerts?",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Why Do We Need Visual Metaphors?" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Computing involves invisible, abstract electronic operations: writing binary bits to magnetic disk platters or opening socket connections. Visual metaphors anchor these abstract phenomena in physical everyday reality.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Physical Bell: A 1,000-Year History of Alerting" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "For a millennium in European and Asian towns, the church bell or temple gong was the sole broadcast system: warning of incoming fires, signaling curfew, and calling citizens to communal gathering.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. From Physical Object to Digital Symbol" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When 1980s computer interfaces needed a signifier for system alerts (like the ASCII BEL character code 0x07), the brass bell was the natural, culturally understood choice.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. The Era of Skeuomorphism" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Early iOS and OS X designed realistic 3D bells with metallic reflections and cast shadows. As digital literacy matured, the icon was reduced to its essential geometric silhouette.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Why the Bell Became the Universal Notification" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Social networks (Facebook, YouTube, Twitter) standardized the bell as the hub for all social interactions, locking the convention in place for billions of global users.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Modern Notification Icon Design" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Today's icon is an ultra-minimalist vector: a truncated parabola, an arc clapper, and a top loop. It scales down to 12x12 pixels while remaining instantly recognizable.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Why Familiar Symbols Survive (The Network Effect of Semiotics)" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Once a symbol is understood by 5 billion people, replacing it creates massive global confusion. The cost of changing the symbol outweighs any theoretical aesthetic improvement.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. The Six Immortal Physical Metaphors in Tech" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "• Floppy Disk = Save (A magnetic plastic square obsolete for 20 years, still saving files worldwide)\n• Envelope = Email (A folded paper pouch representing electronic packets)\n• Trash Can = Delete (A physical wastepaper bin preventing accidental data loss)\n• Magnifying Glass = Search (A Victorian optical lens querying database indices)\n• Gear = Settings (An industrial mechanical cog configuring software preferences)\n• Telephone Handset = Call (A 1950s curved bakelite receiver initiating digital VoIP audio)",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 24 — GRIDS
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-grid-systems-responsive-layout-architecture",
-    title: "Why Do Designers Keep Dividing Everything Into Grids?",
-    slug: { current: "grid-systems-responsive-layout-architecture" },
-    category: "Design",
-    tags: ["Grid Systems", "Swiss Style", "Müller-Brockmann", "Layout Architecture", "Responsive Design"],
-    featured: false,
-    publishDate: "2026-07-21",
-    readTime: "8 min read",
-    excerpt:
-      "Josef Müller-Brockmann revolutionized graphic design in 1961 by showing that true creative freedom begins with mathematical constraint. Why 12-column grids rule modern screens.",
-    coverImage: {
-      asset: { _ref: "image-grid-systems-cover" },
-      alt: "Modular Swiss grid overlay on a modern responsive web layout",
-      caption: "Grids provide structural scaffolding that brings order, rhythm, and cognitive tranquility to complex information systems.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 1961, Swiss graphic master Josef Müller-Brockmann published 'Grid Systems in Graphic Design.' His philosophy was radical: a grid is not a prison that restricts artistic expression; it is the scaffolding that makes coherent communication possible.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Why Order Feels Good to the Human Mind" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The human visual cortex is an alignment engine. When elements share common vertical axes and horizontal baselines, cognitive processing requires minimal energy.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The History of Grid Systems" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "From medieval manuscript margins designed with Villard de Honnecourt's harmonic canons to Bauhaus rationalism, grids have structured human knowledge for centuries.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Swiss Design and Rationalist Clarity" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Post-war Swiss designers (Armin Hofmann, Max Bill) rejected decorative ornamentation in favor of objective, grid-aligned typography and structured asymmetry.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Editorial Design and Column Architecture" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Magazines like The New Yorker and Vogue use multi-column modular grids to interleave photography, pull quotes, and narrative text without structural collapse.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. The 12-Column Responsive Web Grid" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The number 12 divides evenly into 1, 2, 3, 4, and 6 columns, allowing fluid responsive reconfiguration from 1200px desktop monitors down to 375px mobile screens.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "6. Alignment and Baseline Grid Typography" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Locking all typographic line-heights to an 8px baseline grid ensures that adjacent columns maintain flawless horizontal alignment.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "7. Spatial Rhythm and Gutter Harmony" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Consistent gutters (e.g. 24px or 32px) establish structural cadence between cards, ensuring visual elements never crowd or drift.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "8. When Breaking the Grid Works" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A rule must be mastered before it can be broken. When one hero image purposefully spills across the outer grid margin, it creates dramatic visual tension.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 25 — BRAND CONSISTENCY
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-design-tokens-and-system-architecture",
-    title: "Why Do Great Brands Look Consistent Everywhere?",
-    slug: { current: "design-tokens-and-system-architecture" },
-    category: "Design",
-    tags: ["Brand Consistency", "Design Systems", "Design Tokens", "Brand Strategy", "Multi-Platform"],
-    featured: false,
-    publishDate: "2026-07-18",
-    readTime: "8 min read",
-    excerpt:
-      "Whether on an Apple Watch notification, a massive airport billboard, or a mobile app onboarding modal, elite brands feel instantly recognizable through strict design token governance.",
-    coverImage: {
-      asset: { _ref: "image-brand-consistency-cover" },
-      alt: "Cross-platform design token architecture flowing from Figma variables to React codebase",
-      caption: "Brand recognition happens in the subconscious in under 100 milliseconds through unified typography, corner radii, and color tokens.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When you receive a receipt from Uber, open the Airbnb app on an iPad, or look at an Apple product package, you do not need to read the logo to know which brand you are interacting with. The visual DNA is baked into every corner radius, typographic line-height, and surface elevation.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Recognition Happens Before Reading" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The subconscious brain recognizes color palettes and spatial proportions in under 50ms, long before semantic reading of text begins.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Dimensions of Visual Consistency" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Consistency is maintained across four pillars: Typography (consistent hierarchy), Color (exact HSL tokens), Spacing (strict 8pt scale), and Components (reusable atomic blocks).",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Design Tokens as the Single Source of Truth" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Design tokens translate design decisions into platform-agnostic JSON variables (color-primary: #61c5ad) that feed iOS, Android, and Web applications synchronously.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Repetition Builds Long-Term Memory" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Hermann Ebbinghaus proved that retention increases with repeated exposure. Encountering the exact same visual cues builds indestructible brand memory.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Designing a Brand That Survives Different Formats" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A resilient brand identity scales effortlessly from a 16x16px browser favicon to a 50-foot highway billboard without losing its distinct personality.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 26 — MARKETING METRICS
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-data-driven-marketing-analytics",
-    title: "Why Numbers Can Make Bad Marketing Look Smart",
-    slug: { current: "data-driven-marketing-analytics" },
-    category: "Marketing",
-    tags: ["Marketing Analytics", "Goodhart's Law", "Vanity Metrics", "CAC Payback", "Attribution"],
-    featured: false,
-    publishDate: "2026-07-10",
-    readTime: "8 min read",
-    excerpt:
-      "When a metric becomes a target, it ceases to be a good metric. How vanity clickthroughs and flawed last-click attribution models destroy long-term brand equity.",
-    coverImage: {
-      asset: { _ref: "image-marketing-metrics-cover" },
-      alt: "Analytical chart demonstrating the divergence between vanity click metrics and true customer lifetime value",
-      caption: "Optimizing purely for short-term conversion metrics frequently erodes long-term brand trust and pricing power.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "British economist Charles Goodhart formulated his famous rule in 1975: 'When a measure becomes a target, it ceases to be a good measure.' In digital marketing, when a team is evaluated solely on cost-per-click, they will deploy clickbait hooks that generate millions of visits from people who will never spend a dollar.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Seduction of Dashboards" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A dashboard full of green upward-trending charts creates an intoxicating illusion of progress, even while enterprise profitability is secretly burning.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Vanity Metrics vs. Value Metrics" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Pageviews, impressions, and social followers are vanity metrics. Net retention rate, customer lifetime value (LTV), and CAC payback months are real business metrics.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. The Flaw of Last-Click Attribution" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Giving 100% of the credit to the final search ad is like giving 100% of the credit for a goal to the soccer striker's shoe, completely ignoring the 10 passes that built the play.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. Correlation vs. Causation" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Just because users who visited the 'About' page converted at 3x the rate does not mean forcing every user to read the 'About' page will triple company revenue.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. Asking Better Marketing Questions" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Stop asking 'How many clicks did this ad get?' Start asking 'Did this campaign make our brand more defensible and increase organic search volume?'",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 27 — DARK MODE
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-dark-mode-ui-architecture",
-    title: "Why Does Dark Design Sometimes Feel More Premium?",
-    slug: { current: "dark-mode-ui-architecture" },
-    category: "Design",
-    tags: ["Dark Mode", "OLED UI", "Color Luminance", "Luxury Aesthetics", "Surface Elevation"],
-    featured: false,
-    publishDate: "2026-07-23",
-    readTime: "8 min read",
-    excerpt:
-      "Dark themes are not just inverted white pages. The physics of OLED contrast, luxury nightclub aesthetics, and luminance layering that make dark interfaces feel high-end.",
-    coverImage: {
-      asset: { _ref: "image-dark-mode-cover" },
-      alt: "Layered dark mode UI surface architecture showing elevation tiers and subtle border highlights",
-      caption: "True premium dark UI avoids pure #000000 black in favor of deep chromatic grays with calculated surface luminance.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "From luxury Swiss timepieces exhibited in dark velvet cases to elite creative toolchains (Figma, Blender, Cinema 4D), dark environments carry an undeniable aura of precision, focus, and exclusivity. But designing a truly premium dark interface is far more complex than setting the background to pure hex #000000.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Dark Mode Is More Than Inverting Colors" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Pure white text (#ffffff) on pure pitch-black (#000000) causes visual halation and eye strain. Premium dark interfaces use off-white text (#f0f0f5) on deep charcoal surfaces (#0d1117).",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Surface Elevation Through Luminance" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In light mode, elevation is communicated with drop shadows. In dark mode, drop shadows are invisible: elevation must be communicated by making elevated cards slightly lighter in surface luminance (5% to 10% white overlay).",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. OLED Physics and Color Vibrancy" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "On OLED panels where black pixels emit zero photons, saturated brand accents (like mint #61c5ad or electric violet) glow with immense visual electricity.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 28 — CUSTOMER RETENTION
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-customer-lifetime-value-ltv",
-    title: "Why Getting a Customer Is Sometimes Less Important Than Keeping One",
-    slug: { current: "customer-lifetime-value-ltv" },
-    category: "Marketing",
-    tags: ["Customer Retention", "LTV", "Churn Reduction", "Brand Loyalty", "Product Experience"],
-    featured: false,
-    publishDate: "2026-07-14",
-    readTime: "8 min read",
-    excerpt:
-      "Acquiring a new customer costs 5 to 7 times more than retaining an existing one. How post-purchase onboarding and delightful micro-interactions build compounding enterprise value.",
-    coverImage: {
-      asset: { _ref: "image-retention-ltv-cover" },
-      alt: "Cohort retention curves comparing high churn acquisition with compounding customer lifetime value",
-      caption: "The economics of digital products are decided not at the point of first acquisition, but on the 90-day retention curve.",
-    },
-    body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Silicon Valley is obsessed with top-of-funnel acquisition: spending millions on paid performance ads to dump thousands of users into a product. But if the product experience is confusing and leaky, acquiring more users is simply pouring expensive water into a colander.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Compounding Math of Retention" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "A 5% increase in customer retention can increase overall corporate profits by 25% to 95% (Bain & Company research) because loyal customers spend more and refer colleagues for free.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. Designing for the Second Purchase" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "True brand building begins the millisecond after checkout: the packaging unboxing experience, the welcome email sequence, and immediate time-to-value onboarding.",
-          },
-        ],
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 29 — CLIENT PRICING
-  // ─────────────────────────────────────────────────────────────────────────────
-  {
-    _id: "blog-copywriting-psychology-cognitive-biases",
-    title: "Never Tell a Client Your Price Too Early",
-    slug: { current: "copywriting-psychology-cognitive-biases" },
-    category: "Psychology",
-    tags: ["Pricing Psychology", "Anchoring Effect", "Value-Based Pricing", "Freelance Strategy", "Client Negotiation"],
     featured: true,
-    publishDate: "2026-07-20",
-    readTime: "9 min read",
-    excerpt:
-      "When a client asks 'How much do you charge?' in the first 2 minutes, giving a number instantly reduces your entire strategic value to a commodity expense. How anchoring works.",
-    coverImage: {
-      asset: { _ref: "image-client-pricing-cover" },
-      alt: "Conceptual diagram showing price anchoring, perceived value divergence, and diagnostic discovery",
-      caption: "Price is not a mathematical absolute; it is an emotional evaluation formed entirely by the context in which it is introduced.",
-    },
+    tags: ["AI Art", "Generative AI", "Uncanny Valley", "Photography", "Visual Aesthetics"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "It happens on every first discovery call. Five minutes in, before you have discussed their market share, their customer acquisition challenges, or the economic upside of the project, the client asks: 'So, roughly what's your ballpark price for a website rebrand?'",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. The Danger of the Unanchored Number" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "If you answer '$25,000' immediately, the client's brain does not evaluate the return on investment. Because they have not yet articulated the multimillion-dollar business problem they need solved, their brain compares '$25,000' against arbitrary costs: their monthly payroll, a car, or a junior freelancer on Upwork. The price feels enormous because there is no value context to hold it.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Physician's Diagnostic Framework" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "Imagine walking into a surgeon's office and asking, 'How much does surgery cost?' No competent doctor will give a price without first running MRIs, blood panels, and understanding your symptoms. Treat creative strategy as surgery: diagnose the commercial ailment thoroughly before prescribing a financial commitment.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "3. Anchoring and Perceived Value" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The first number mentioned in any negotiation sets the cognitive anchor. If you establish that their current checkout friction is costing them $500,000 a year in lost revenue, an investment of $45,000 is perceived not as an expense, but as an obvious 10x ROI asset.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "4. When You SHOULD Give the Price Immediately" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "If you sell standardized micro-products, fixed-scope audit templates, or monthly software subscriptions, state the price transparently on your landing page to filter unqualified leads. But for custom enterprise consulting, discovery must precede the number.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "5. A Better Way to Discuss Creative Services" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "When asked for price early, reply calmly: 'Our engagements typically range from $15,000 to $60,000 depending on the scope of commercial transformation required. Let's spend 15 minutes understanding your specific bottlenecks to see if we are the right partner for this challenge.'",
-          },
-        ],
-      },
+      createBlock("Why Do AI Images Look Expensive but Still Feel Wrong?", "h2"),
+      createBlock("You open your social feed and see an image: A hyper-detailed cyberpunk street in Tokyo with volumetric orange fog, ultra-crisp neon reflections in every puddle, and cinematic depth of field. At first glance, it looks like a $50,000 Hollywood production frame."),
+      createBlock("Yet within two seconds, your brain feels an unmistakable sense of plastic fatigue. You immediately know it was generated by Midjourney or Flux. Why does hyper-detailed AI imagery trigger this visual skepticism?"),
+      createBlock("1. The Flaw of Flawlessness", "h3"),
+      createBlock("Real cameras have optical physics: lens aberration, subtle chromatic fringing, sensor grain, focal plane falloff, and exposure imperfections. Real physical worlds have dirt, asymmetrical wear, and accidental clutter."),
+      createBlock("Diffusion models generate imagery by statistical averaging across millions of high-aesthetic photos. The result is hyper-smoothed skin, unnaturally uniform subsurface scattering, and an uncanny absence of real-world friction."),
+      createBlock("2. Absence of Human Intentionality", "h3"),
+      createBlock("A master photographer places a shadow in a specific corner to conceal a mystery or symbolize grief. An AI model places a shadow because the statistical weights of surrounding pixels suggested a gradient. The human eye subconsciously senses when visual complexity lacks underlying narrative purpose."),
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 30 — PRICING PAGES
-  // ─────────────────────────────────────────────────────────────────────────────
+  // 27. WHY SEARCH IS A MAGNIFYING GLASS
   {
-    _id: "blog-conversion-rate-optimization-cro",
-    title: "Why Pricing Pages Make You Compare Instead of Think",
-    slug: { current: "conversion-rate-optimization-cro" },
-    category: "Psychology",
-    tags: ["Pricing Pages", "Decoy Effect", "Choice Architecture", "Conversion Optimization", "SaaS Pricing"],
-    featured: false,
-    publishDate: "2026-07-26",
-    readTime: "8 min read",
-    excerpt:
-      "The Decoy Effect, price anchoring, and center-tier visual elevation: how pricing tables guide your choice through calculated contrast rather than objective deliberation.",
+    _id: "blog-prompt-engineering-for-designers",
+    title: "Why Is Search Represented by a Magnifying Glass?",
+    title_az: "Axtarış Düyməsi Niyə Məhz Böyüdücü Şüşə İkonudur?",
+    slug: { _type: "slug", current: "why-search-is-a-magnifying-glass" },
+    slug_az: { _type: "slug", current: "axtaris-niye-boyuducu-susedir" },
+    originalSlug: "prompt-engineering-for-designers",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "From Sherlock Holmes and 19th-century detective fiction to early 1980s GUI design: How an optical lens became the universal symbol for finding information.",
+    excerpt_az: "Şerlok Holmsdan və 19-cu əsr dedektiv ədəbiyyatından 1980-ci illərin kompüterlərinə: Optik şüşənin məlumat axtarışının qlobal simvoluna çevrilməsi.",
     coverImage: {
-      asset: { _ref: "image-pricing-pages-cover" },
-      alt: "3-tier pricing architecture highlighting the Decoy Effect and visual dominance mechanics",
-      caption: "Pricing tiers are engineered choice architectures designed to make the target plan feel like the only rational decision.",
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-search-glass-cover" },
+      alt: "Vintage brass magnifying glass resting on open antique encyclopedia",
+      url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop&q=80",
     },
+    publishDate: "2026-04-26",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Iconography", "Search UI", "Design History", "Affordance", "Visual Metaphors"],
     body: [
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "In 2008, behavioral economist Dan Ariely ran a famous study at MIT using subscription pricing from The Economist magazine. When offered: 1. Web-only subscription: $59, 2. Print-only: $125, 3. Print + Web: $125. 84% of students chose the Print + Web bundle. When the 'useless' Print-only decoy was removed, 68% reverted to the cheap $59 option. The decoy changed everything.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "1. Why Three Plans Are So Common" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "The Compromise Effect (Simonson, 1989) proves that when consumers are faced with an array of choices, they naturally avoid extreme options (the cheapest and the most expensive) and gravitate toward the middle ground.",
-          },
-        ],
-      },
-      {
-        _type: "block",
-        style: "h2",
-        children: [{ _type: "span", text: "2. The Decoy Effect in SaaS" }],
-      },
-      {
-        _type: "block",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            text: "An asymmetrical decoy tier makes the target tier look like an overwhelming bargain by comparison, removing cognitive buyer remorse.",
-          },
-        ],
-      },
+      createBlock("Why Is Search Represented by a Magnifying Glass?", "h2"),
+      createBlock("In the physical world, a magnifying glass does not find anything. It does not index databases, filter keywords, or crawl web pages. It simply magnifies small physical objects on a page."),
+      createBlock("Why, then, does every search bar from Google to Spotify feature a 45-degree tilted magnifying glass icon?"),
+      createBlock("1. The Detective Archetype: Inspection and Discovery", "h3"),
+      createBlock("The visual link between magnifying glasses and 'investigation' was forged in 19th-century Victorian literature, most notably in Sir Arthur Conan Doyle's *Sherlock Holmes*. Illustrators depicted Holmes examining crime scene clues with a handheld glass, establishing a permanent cultural association: **Magnifying Glass = Finding the Hidden Truth.**"),
+      createBlock("When early software pioneers at Xerox and Apple needed a compact icon that meant 'Examine document for details', the magnifying glass was culturally primed and universally understood."),
+    ],
+  },
+
+  // 28. WHY AI WRITING SOUNDS SO SIMILAR
+  {
+    _id: "blog-ai-copywriting-and-tone-calibration",
+    title: "Why Does AI Writing Sound So Painfully Similar?",
+    title_az: "Süni İntellekt Mətnləri Niyə Hamısı Eyni Darıxdırıcı Tonda Səslənir?",
+    slug: { _type: "slug", current: "why-ai-writing-sounds-so-similar-rlhf-homogenization" },
+    slug_az: { _type: "slug", current: "ai-metnleri-niye-eyni-seslenir" },
+    originalSlug: "ai-copywriting-and-tone-calibration",
+    category: "Creative & Culture",
+    category_az: "Kreativ və Mədəniyyət",
+    excerpt: "RLHF alignment, statistical risk aversion, and telltale cliches: Why language models default to 'delve', 'tapestry', 'testament', and 'unleash'.",
+    excerpt_az: "RLHF tənzimləməsi və statistik risk qorxusu: Dil modellərinin niyə eyni darıxdırıcı şablon ifadələrə sığındığı və fərdi səs tapmağın yolları.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-ai-writing-cover" },
+      alt: "Vintage mechanical typewriter with single sheet of paper emerging",
+      url: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-04-28",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["AI Copywriting", "LLM Tone", "RLHF", "Content Strategy", "Writing Craft"],
+    body: [
+      createBlock("Why Does AI Writing Sound So Painfully Similar?", "h2"),
+      createBlock("'In today's fast-paced digital landscape, it is essential to delve into the intricate tapestry of modern innovation. This stands as a testament to the power of...'"),
+      createBlock("Within two sentences, any seasoned reader instantly detects the synthetic hand of an uncalibrated Large Language Model. Why do AI models across OpenAI, Anthropic, and Google naturally gravitate toward the exact same monotonous corporate cadence?"),
+      createBlock("1. The Trap of RLHF and Safety Averaging", "h3"),
+      createBlock("Reinforcement Learning from Human Feedback (RLHF) trains models to be polite, balanced, non-offensive, and universally agreeable. But great writing requires strong opinions, unexpected rhythms, idiosyncratic vocabulary, and emotional vulnerability."),
+      createBlock("By optimizing for the mathematical median of human preference, RLHF strips away colloquial grit, leaving behind a sterile, overly formal tone characterized by pseudo-academic transition words ('delve', 'moreover', 'pivotal', 'foster')."),
+      createBlock("2. How to Reclaim Human Voice", "h3"),
+      createBlock("To make AI writing sing, editors must ban cliché vocabulary, enforce sentence length variance (mixing 4-word punchlines with 25-word narrative arcs), and inject authentic human anecdotes that no statistical model could fabricate."),
+    ],
+  },
+
+  // 29. WHY PHONE ICON IS AN OLD 1960S RECEIVER
+  {
+    _id: "blog-synthetic-media-and-video-ai",
+    title: "Why Is the Phone Call Icon Still an Old 1960s Telephone Receiver?",
+    title_az: "Zəng İkonu Niyə Hələ Də 1960-cı İllərin Köhnə Telefon Dəstəyidir?",
+    slug: { _type: "slug", current: "why-phone-icon-is-a-1960s-telephone-receiver" },
+    slug_az: { _type: "slug", current: "zeng-ikonu-niye-kohne-destekdir" },
+    originalSlug: "synthetic-media-and-video-ai",
+    category: "Design History",
+    category_az: "Dizayn Tarixi",
+    excerpt: "The Western Electric Model 500 silhouette: Why modern flat touchscreen rectangles fail as voice communication icons while the ergonomic curved handset endures.",
+    excerpt_az: "1960-cı illərin Western Electric Model 500 telefon dəstəyi: Düzbucaqlı smartfonların səsli zəng simvolu kimi niyə uğursuz olduğu və əyri dəstəyin əbədi qələbəsi.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-phone-cover" },
+      alt: "Classic 1960s rotary telephone handset in vivid retro teal against modern background",
+      url: "https://images.unsplash.com/photo-1520923642038-b4259acecbd7?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-04-30",
+    readTime: "8 min read",
+    featured: false,
+    tags: ["Iconography", "Design History", "Telephony", "Affordance", "Skeuomorphism"],
+    body: [
+      createBlock("Why Is the Phone Call Icon Still an Old 1960s Telephone Receiver?", "h2"),
+      createBlock("Your smartphone is a flat, seamless slab of aluminum and glass. When you make a voice call, you tap a curved green icon shaped like a chunky plastic handset from 1955. An entire generation of smartphone users has never held a real landline telephone handset to their ear, yet the icon remains instantly recognizable."),
+      createBlock("Why can't we just use an icon of a modern smartphone?"),
+      createBlock("1. The Failure of the Rectangle as a Sign", "h3"),
+      createBlock("A modern smartphone is simply a rounded rectangle with a screen. If you use a simple rectangle icon, what does it mean? A tablet? An e-reader? A credit card? A calculator? A window? A blank sheet of paper?"),
+      createBlock("The silhouette of the classic Western Electric Model 500 handset—with its distinct flared earpiece, central ergonomic grip, and angled mouthpiece—possesses a singular, unambiguous semantic meaning: **This device connects human voices across distance.**"),
+    ],
+  },
+
+  // 30. COMIC SANS & TYPOGRAPHIC DECORUM
+  {
+    _id: "blog-legal-ethics-and-licensing-in-ai-art",
+    title: "Why Is Comic Sans the Most Hated Font in Human History?",
+    title_az: "Comic Sans Niyə Bəşər Tarixinin Ən Nifrət Edilən Şriftidir?",
+    slug: { _type: "slug", current: "why-comic-sans-is-the-most-hated-font-in-history" },
+    slug_az: { _type: "slug", current: "comic-sans-niye-en-nifret-edilen-sriftdir" },
+    originalSlug: "legal-ethics-and-licensing-in-ai-art",
+    category: "Typography",
+    category_az: "Tipoqrafika",
+    excerpt: "Vincent Connare's 1994 Microsoft Bob design: How a font engineered for speech bubbles in children's software was misused on tombstones, legal contracts, and cancer diagnoses.",
+    excerpt_az: "Vincent Connare-nin 1994-cü il ixtirası: Uşaqlar üçün yaradılmış şriftin məhkəmə sənədlərində, qəbirlərdə və tibbi diaqnozlarda səhv istifadəsinin yaratdığı qəzəb.",
+    coverImage: {
+      _type: "image",
+      asset: { _type: "reference", _ref: "image-comic-cover" },
+      alt: "Vintage comic book speech bubble illustrating typography in narrative context",
+      url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80",
+    },
+    publishDate: "2026-05-02",
+    readTime: "8 min read",
+    featured: true,
+    tags: ["Comic Sans", "Typography", "Design History", "Typographic Decorum", "Culture"],
+    body: [
+      createBlock("Why Is Comic Sans the Most Hated Font in Human History?", "h2"),
+      createBlock("There are thousands of poorly designed typefaces in the world. Yet only one has inspired international boycott movements, parody websites (Ban Comic Sans), and universal rage across the global graphic design community: Comic Sans."),
+      createBlock("Is Comic Sans truly that terrible, or did human culture simply misunderstand its intended purpose?"),
+      createBlock("1. The Origin: Rover the Dog in Microsoft Bob (1994)", "h3"),
+      createBlock("In 1994, Microsoft typographer Vincent Connare saw an early beta of Microsoft Bob, a software suite designed for novice computer users. A cartoon dog named Rover spoke through speech bubbles set in formal Times New Roman."),
+      createBlock("Connare thought: *'Dogs don't talk in Times New Roman!'* Inspired by the hand-lettered lettering in comic books like *Watchmen* and *The Dark Knight Returns*, he quickly sketched Comic Sans as a playful, casual alternative specifically for cartoon speech balloons."),
+      createBlock("2. The Sin of Misplaced Context", "h3"),
+      createBlock("When Microsoft included Comic Sans as a default system font in Windows 95, millions of untrained computer users suddenly gained access to a friendly-looking font. They began using it for everything: eviction notices, defibrillator instructions, academic research papers, corporate terminations, and church tombstones."),
+      createBlock("Comic Sans is not inherently broken; it was simply thrust into solemn, serious contexts where its playful informality felt insulting and absurd. It stands as a cautionary tale in typographic decorum."),
     ],
   },
 ];
