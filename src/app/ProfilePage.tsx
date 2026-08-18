@@ -30,12 +30,12 @@ import AuthModal from "./components/AuthModal";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  visible: (delay = 0) => ({
+  hidden: { opacity: 0, y: 20 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: EASE },
-  }),
+    transition: { duration: 0.5, ease: EASE },
+  },
 };
 
 export default function ProfilePage() {
@@ -44,7 +44,16 @@ export default function ProfilePage() {
   const [photoSuccessMsg, setPhotoSuccessMsg] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { user, signOut, userPhoto, customAvatar, updateCustomAvatar } = useAuth();
+  const {
+    user,
+    signOut,
+    userPhoto,
+    customAvatar,
+    updateCustomAvatar,
+    avatarConfig,
+    updateAvatarConfig,
+    randomizeAvatar,
+  } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, switchLanguage, t, getLocalizedPath } = useLanguage();
 
@@ -74,9 +83,18 @@ export default function ProfilePage() {
     reader.readAsDataURL(file);
   };
 
+  const handleRandomizeCharacter = () => {
+    randomizeAvatar();
+    if (customAvatar) {
+      updateCustomAvatar(null);
+    }
+    setPhotoSuccessMsg(language === "az" ? "Yeni xarakter avatarı təsadüfi yaradıldı və yadda saxlanıldı!" : "New character avatar generated & saved to profile!");
+    setTimeout(() => setPhotoSuccessMsg(""), 3500);
+  };
+
   const handleResetPhoto = () => {
     updateCustomAvatar(null);
-    setPhotoSuccessMsg(t("profileReset", "Reset to default profile photo."));
+    setPhotoSuccessMsg(language === "az" ? "Xarakter avatarına qaytarıldı." : "Switched back to your vector character avatar.");
     setTimeout(() => setPhotoSuccessMsg(""), 3500);
   };
 
@@ -131,14 +149,14 @@ export default function ProfilePage() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 md:p-6 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+              className="mb-8 rounded-2xl border border-primary/30 bg-primary/5 p-4 md:p-6 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
             >
               <div>
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">
-                  <ShieldCheck size={16} /> {t("authRequired", "Authentication Required")}
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary uppercase tracking-wider">
+                  <ShieldCheck size={16} /> {t("guestProfileBanner", "Guest Session Avatar Active")}
                 </div>
                 <p className="mt-1 text-xs md:text-sm text-muted-foreground font-medium">
-                  {t("authRequiredDesc", "You are currently browsing as a Guest. Sign in with Google to save custom profile photo preferences and sync account settings.")}
+                  {t("guestProfileDesc", "Your browsing session is represented by a unique vector character. Sign in with Google to sync your character identity permanently across all devices.")}
                 </p>
               </div>
               <Button
@@ -157,7 +175,7 @@ export default function ProfilePage() {
             <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <UserIcon size={14} /> {t("profileCardTitle", "PROFILE")}
+                  <UserIcon size={14} /> {t("profileCardTitle", "PROFILE & AVATAR")}
                 </div>
 
                 {/* Profile Photo Display */}
@@ -167,32 +185,28 @@ export default function ProfilePage() {
                       <img
                         src={userPhoto}
                         alt={userName}
-                        className="h-16 w-16 rounded-2xl object-cover border-2 border-primary/60 shadow-[0_0_20px_rgba(97,197,173,0.3)] shrink-0"
+                        className="h-20 w-20 rounded-2xl object-cover border-2 border-primary/60 shadow-[0_0_25px_rgba(97,197,173,0.3)] shrink-0 bg-[#09090b]"
                       />
                     ) : (
-                      <div className="h-16 w-16 rounded-2xl bg-primary text-black font-extrabold flex items-center justify-center text-xl shadow-[0_0_20px_rgba(97,197,173,0.3)] shrink-0">
+                      <div className="h-20 w-20 rounded-2xl bg-primary text-black font-extrabold flex items-center justify-center text-xl shadow-[0_0_20px_rgba(97,197,173,0.3)] shrink-0">
                         {userInitial}
                       </div>
                     )}
-                    {user && (
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-lg bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
-                        title={t("changeProfilePhoto", "Change Profile Photo")}
-                      >
-                        <Camera size={12} />
-                      </button>
-                    )}
+                    <button
+                      onClick={handleRandomizeCharacter}
+                      className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-lg bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
+                      title={language === "az" ? "Təsadüfi Avatar Yarat" : "Randomize Avatar"}
+                    >
+                      <Sparkles size={13} />
+                    </button>
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <p className="text-base font-bold text-white truncate">{userName}</p>
                     <p className="text-xs text-muted-foreground truncate mono mt-0.5">{userEmail}</p>
-                    {user && customAvatar && (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-mono text-emerald-400 font-bold mt-1">
-                        <Check size={10} /> {t("customPhoto", "Custom Photo")}
-                      </span>
-                    )}
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-bold mt-1.5 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <Check size={10} /> {customAvatar ? (language === "az" ? "Xüsusi Foto" : "Custom Photo") : (language === "az" ? "Xarakter Avatarı" : "Character Avatar")}
+                    </span>
                   </div>
                 </div>
 
@@ -203,29 +217,49 @@ export default function ProfilePage() {
                 )}
 
                 {/* Hidden File Input */}
-                {user && (
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/png, image/jpeg, image/webp, image/gif"
-                    onChange={handlePhotoUpload}
-                    className="hidden"
-                  />
-                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png, image/jpeg, image/webp, image/gif"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
 
                 {/* Action Buttons */}
                 <div className="space-y-2">
+                  <Button
+                    onClick={handleRandomizeCharacter}
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    icon={<Sparkles size={14} className="text-primary" />}
+                    iconPosition="left"
+                  >
+                    {language === "az" ? "TƏSADÜFİ AVATAR 🎲" : "RANDOMIZE CHARACTER 🎲"}
+                  </Button>
+
+                  <Button
+                    to={getLocalizedPath("/tools/open-peeps")}
+                    variant="secondary"
+                    size="sm"
+                    className="w-full"
+                    icon={<ArrowUpRight size={14} className="text-primary" />}
+                    iconPosition="right"
+                  >
+                    {language === "az" ? "STUDİODA FƏRDLƏŞDİR" : "CUSTOMIZE IN AVATAR STUDIO"}
+                  </Button>
+
                   {user ? (
                     <>
                       <Button
                         onClick={() => fileInputRef.current?.click()}
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="w-full"
-                        icon={<Camera size={14} />}
+                        className="w-full text-xs text-muted-foreground hover:text-white"
+                        icon={<Camera size={13} />}
                         iconPosition="left"
                       >
-                        {t("changeProfilePhoto", "Change Profile Photo")}
+                        {t("changeProfilePhoto", "Upload Custom Image")}
                       </Button>
 
                       {customAvatar && (
@@ -233,11 +267,11 @@ export default function ProfilePage() {
                           onClick={handleResetPhoto}
                           variant="ghost"
                           size="sm"
-                          className="w-full text-muted-foreground"
+                          className="w-full text-xs text-primary hover:text-white"
                           icon={<RotateCcw size={13} />}
                           iconPosition="left"
                         >
-                          {t("resetPhoto", "Reset Photo")}
+                          {language === "az" ? "Xarakter Avatarına Qayıt" : "Reset to Vector Avatar"}
                         </Button>
                       )}
                     </>
@@ -246,7 +280,7 @@ export default function ProfilePage() {
                       onClick={() => setAuthModalOpen(true)}
                       variant="primary"
                       size="sm"
-                      className="w-full"
+                      className="w-full mt-2"
                     >
                       {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
                     </Button>
@@ -256,13 +290,13 @@ export default function ProfilePage() {
 
               <div className="mt-6 pt-4 border-t border-white/10">
                 <Button
-                  to={getLocalizedPath("/profile")}
+                  to={getLocalizedPath("/tools/open-peeps")}
                   variant="secondary"
                   size="md"
                   className="w-full justify-between"
                   icon={<ArrowUpRight size={14} className="text-primary" />}
                 >
-                  {t("viewMyProfile", "View My Profile")}
+                  {language === "az" ? "Xarakter Redaktorunu Aç" : "Open Character Builder"}
                 </Button>
               </div>
             </div>

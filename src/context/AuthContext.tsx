@@ -2,14 +2,26 @@ import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth, isKeyConfigured } from "../lib/firebase";
 import { signInWithGoogle, logout } from "../services/auth";
+import { PeepConfig, generateRandomPeep } from "../app/components/tools/openpeeps/peepsAssets";
+import {
+  getGuestAvatarConfig,
+  saveGuestAvatarConfig,
+  getUserAvatarConfig,
+  saveUserAvatarConfig,
+  peepConfigToSvgDataUri,
+} from "../lib/avatarEngine";
 
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
   customAvatar: string | null;
-  userPhoto: string | null;
+  avatarConfig: PeepConfig;
+  avatarSvgUri: string;
+  userPhoto: string;
   updateCustomAvatar: (avatarUrl: string | null) => void;
+  updateAvatarConfig: (config: PeepConfig) => void;
+  randomizeAvatar: () => PeepConfig;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
@@ -26,11 +38,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [customAvatar, setCustomAvatar] = useState<string | null>(null);
+  const [avatarConfig, setAvatarConfig] = useState<PeepConfig>(() => getGuestAvatarConfig());
 
   useEffect(() => {
     if (!auth || !isKeyConfigured) {
       setUser(null);
       setCustomAvatar(null);
+      setAvatarConfig(getGuestAvatarConfig());
       setLoading(false);
       return;
     }
@@ -42,13 +56,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(currentUser);
         if (currentUser?.uid) {
           try {
-            const savedAvatar = localStorage.getItem(`rvan_user_avatar_${currentUser.uid}`);
-            setCustomAvatar(savedAvatar);
+            const savedCustomPhoto = localStorage.getItem(`rvan_user_avatar_${currentUser.uid}`);
+            setCustomAvatar(savedCustomPhoto);
+
+            const userPeep = getUserAvatarConfig(currentUser.uid, currentUser.email || undefined);
+            setAvatarConfig(userPeep);
           } catch (e) {
             setCustomAvatar(null);
+            setAvatarConfig(getUserAvatarConfig(currentUser.uid));
           }
         } else {
           setCustomAvatar(null);
+          setAvatarConfig(getGuestAvatarConfig());
         }
         setLoading(false);
       },
@@ -57,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setError(err.message);
         setUser(null);
         setCustomAvatar(null);
+        setAvatarConfig(getGuestAvatarConfig());
         setLoading(false);
       }
     );
@@ -77,6 +97,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setCustomAvatar(avatarUrl);
   };
 
+  const updateAvatarConfig = (newConfig: PeepConfig) => {
+    setAvatarConfig(newConfig);
+    if (user?.uid) {
+      saveUserAvatarConfig(user.uid, newConfig);
+    } else {
+      saveGuestAvatarConfig(newConfig);
+    }
+  };
+
+  const randomizeAvatar = (): PeepConfig => {
+    const random = generateRandomPeep();
+    updateAvatarConfig(random);
+    return random;
+  };
+
   const handleSignIn = async () => {
     setError(null);
     try {
@@ -92,6 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await logout();
       setUser(null);
       setCustomAvatar(null);
+      setAvatarConfig(getGuestAvatarConfig());
     } catch (err: any) {
       setError(err?.message || "Sign out failed.");
     }
@@ -99,8 +135,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const clearError = () => setError(null);
 
-  // If unauthenticated (user === null), userPhoto MUST be null.
-  const userPhoto = user ? customAvatar || user.photoURL || null : null;
+  // Compute active SVG Data URI
+  const avatarSvgUri = peepConfigToSvgDataUri(avatarConfig);
+
+  // Active user photo: Custom uploaded base64 photo if available, otherwise the character avatar SVG
+  const userPhoto = customAvatar || avatarSvgUri;
 
   return (
     <AuthContext.Provider
@@ -109,8 +148,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         loading,
         error,
         customAvatar,
+        avatarConfig,
+        avatarSvgUri,
         userPhoto,
         updateCustomAvatar,
+        updateAvatarConfig,
+        randomizeAvatar,
         signIn: handleSignIn,
         signOut: handleSignOut,
         clearError,

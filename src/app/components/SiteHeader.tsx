@@ -111,14 +111,24 @@ function UserAuthMenu() {
                 </div>
               </div>
 
-              <Link
-                to={getLocalizedPath("/ravan-mammadov")}
-                onClick={() => setDropdownOpen(false)}
-                className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs font-medium text-foreground hover:bg-white/10 transition-colors"
-              >
-                <span>{t("viewStudioProfile", "View Founder Biography")}</span>
-                <ArrowUpRight size={13} className="text-muted-foreground" />
-              </Link>
+              <div className="space-y-1.5">
+                <Link
+                  to={getLocalizedPath("/profile")}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs font-medium text-foreground hover:bg-white/10 transition-colors"
+                >
+                  <span>{t("settingsAndAvatar", "Settings & Avatar Customizer")}</span>
+                  <ArrowUpRight size={13} className="text-muted-foreground" />
+                </Link>
+                <Link
+                  to={getLocalizedPath("/ravan-mammadov")}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors"
+                >
+                  <span>{t("viewStudioProfile", "View Founder Biography")}</span>
+                  <ArrowUpRight size={13} className="text-muted-foreground" />
+                </Link>
+              </div>
             </div>
 
             {/* 2. THEME SECTION */}
