@@ -237,7 +237,7 @@ const ResumeEditorCanvasInner: React.FC<{
           <FloatingFormatToolbar />
 
           {/* Canvas Direct Editing Hint Pill */}
-          <div className="mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-mono text-primary flex items-center gap-2 shadow-inner print:hidden">
+          <div className="mb-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-mono text-primary flex items-center gap-2 shadow-inner print:hidden">
             <MousePointerClick size={13} className="animate-bounce" />
             <span>
               {isAz
@@ -245,6 +245,21 @@ const ResumeEditorCanvasInner: React.FC<{
                 : "💡 Direct Canvas Editor: Double-click any text on the resume to edit in place!"}
             </span>
           </div>
+
+          {/* ATS-First Template Image Recommendation */}
+          {(theme.template === "tech-cv" ||
+            theme.template === "minimal-cv" ||
+            theme.template === "compact-ats-cv" ||
+            theme.template === "corporate-cv") &&
+            data.personalInfo.showPhoto && (
+              <div className="mb-3 px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] font-mono text-amber-300 flex items-center gap-1.5 print:hidden">
+                <span>
+                  {isAz
+                    ? "💡 Profil şəkli seçimə bağlıdır. ATS sistemləri üçün təmiz mətn formatı tövsiyə olunur."
+                    : "💡 Profile images are optional. For ATS-focused applications, a text-first layout is recommended."}
+                </span>
+              </div>
+            )}
 
           {/* The A4 Resume Document Sheet Container with Safe Zone Padding */}
           <div

@@ -58,7 +58,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
   return (
     <>
-      {/* Dedicated Print Media Stylesheet with Safe Zone Control */}
+      {/* Dedicated Print Media & Page Break Protection Stylesheet */}
       <style>{`
         @media print {
           body * {
@@ -83,6 +83,27 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
             size: A4 portrait;
             margin: 0;
           }
+        }
+        /* Orphan & Break Protection for Clean Multi-page Export */
+        #printable-resume h1,
+        #printable-resume h2,
+        #printable-resume h3,
+        #printable-resume [data-section-header] {
+          break-after: avoid !important;
+          page-break-after: avoid !important;
+        }
+        #printable-resume article,
+        #printable-resume .resume-item-card,
+        #printable-resume [data-item-card] {
+          break-inside: avoid !important;
+          page-break-inside: avoid !important;
+        }
+        #printable-resume ul {
+          break-inside: auto !important;
+        }
+        #printable-resume li {
+          break-inside: avoid !important;
+          page-break-inside: avoid !important;
         }
       `}</style>
 
