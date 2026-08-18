@@ -71,17 +71,6 @@ export function PageFilterBar({
                   aria-selected={isActive}
                 >
                   <span>{cat.label}</span>
-                  {cat.count !== undefined && (
-                    <span
-                      className={`text-[10px] ml-1.5 px-1.5 py-0.5 rounded-full ${
-                        isActive
-                          ? "bg-white/20 text-white font-bold"
-                          : "bg-white/5 text-muted-foreground"
-                      }`}
-                    >
-                      {cat.count}
-                    </span>
-                  )}
                 </Button>
               );
             })}

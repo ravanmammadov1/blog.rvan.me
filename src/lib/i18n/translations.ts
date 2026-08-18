@@ -62,7 +62,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // News Archive & Detail
     newsArchiveTitle: "Industry News & Technical Insights",
     newsArchiveSubtitle: "Real-time coverage across Design, AI, Frontend, Dev, Marketing, and Motion. Unified real-time feed.",
-    allNews: "All News",
+    allNews: "All",
     designNews: "Design",
     aiNews: "AI & ML",
     marketingNews: "Marketing",
@@ -351,7 +351,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // News Archive & Detail
     newsArchiveTitle: "Sahə Xəbərləri Və Texniki İcmallar",
     newsArchiveSubtitle: "Dizayn, Süni İntellekt, Frontend, Marketinq və Motion sahəsində canlı xəbər və analitik lent.",
-    allNews: "Bütün xəbərlər",
+    allNews: "Hamısı",
     designNews: "Dizayn",
     aiNews: "Süni intellekt",
     marketingNews: "Marketinq",

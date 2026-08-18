@@ -7,7 +7,6 @@ import { fetchAllBlogs, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import BlogCard from "./components/blog/BlogCard";
-import ApcaBlogPromo from "./components/blog/ApcaBlogPromo";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -264,15 +263,11 @@ export default function BlogArchive() {
           </motion.div>
         )}
 
-        {/* 3. Lightweight APCA Utility Promotion */}
-        <ApcaBlogPromo />
-
-        {/* 4. Article Categories & Search Discovery */}
+        {/* 3. Article Categories & Search Discovery */}
         <PageFilterBar
           categories={categories.map((cat) => ({
             key: cat,
-            label: cat === "All" ? t("allNews", "All") : cat,
-            count: categoryCounts[cat],
+            label: cat === "All" ? (isAz ? "HAMISI" : "ALL") : cat.toUpperCase(),
           }))}
           activeCategory={activeCategory}
           onSelectCategory={setActiveCategory}
