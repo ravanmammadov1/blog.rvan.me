@@ -9,15 +9,16 @@ gantt
     section Phase 0
     Phase 0 - AI Control & Repository Memory       :done, p0, 2026-08-18, 1d
     section Phase 1
-    Phase 1 - SEO Architecture, Sitemap & Interlinking :active, p1, 2026-08-18, 5d
+    Phase 1.1 - P0 SEO Foundation, Sitemap & Canonical :done, p1a, 2026-08-18, 1d
+    Phase 1.2 - P1 Ecosystem Interlinking Engine       :active, p1b, 2026-08-19, 4d
     section Phase 2
-    Phase 2 - High-Utility Creative Tools Suite    :p2, 2026-08-23, 10d
+    Phase 2 - High-Utility Creative Tools Suite        :p2, 2026-08-23, 10d
     section Phase 3
-    Phase 3 - Resource Discovery & Specimen Engines :p3, 2026-09-02, 7d
+    Phase 3 - Resource Discovery & Specimen Engines     :p3, 2026-09-02, 7d
     section Phase 4
-    Phase 4 - User Accounts & Creative Workbench   :p4, 2026-09-09, 10d
+    Phase 4 - User Accounts & Creative Workbench       :p4, 2026-09-09, 10d
     section Phase 5
-    Phase 5 - Content Expansion & CMS Automation   :p5, 2026-09-19, 14d
+    Phase 5 - Content Expansion & CMS Automation       :p5, 2026-09-19, 14d
 ```
 
 ---
@@ -31,13 +32,21 @@ gantt
 
 ---
 
-## Phase 1: SEO Architecture, Sitemap Unification & Ecosystem Interlinking (CURRENT)
-* **Goal**: Maximize search crawl efficiency, resolve sitemap edge delivery conflicts, and interconnect all 39 master essays with relevant tools and resources.
+## Phase 1.1: P0 Organic SEO Foundation & Sitemap Unification (COMPLETED)
+* **Goal**: Fix sitemap divergence, consolidate canonical URLs, protect admin routes with `noindex`, and implement two-tier font indexation.
+* **Deliverables**:
+  - [x] `SITEMAP-01` (P0): Removed proxy rewrite in `vercel.json`; serve unified `dist/sitemap.xml` with 1,095 high-value indexable URLs across EN & AZ with exact `hreflang` tags.
+  - [x] `CANONICAL-01` (P0): 301 permanent redirects from `/profile` and `/ravanmammadov` to `/ravan-mammadov` (and `/az` equivalents); internal links updated across header, footer, project detail, and work sections.
+  - [x] `ADMIN-01` (P0): Injected `<meta name="robots" content="noindex, nofollow" />` on `/admin/linkedin` and `/az/admin/linkedin` and removed them from sitemap.
+  - [x] `FONT-TIER-01` (P0): Curated Top 200 Google Fonts for indexation with rich localized metadata, while marking long-tail fonts `noindex, follow` to protect crawl budget.
+  - [x] Documented architecture in `ADR-008`.
+
+---
+
+## Phase 1.2: P1 Ecosystem Interlinking Engine & Performance (NEXT SPRINT)
+* **Goal**: Maximize user dwell time and crawl depth by interconnecting all 39 master essays with relevant tools and resources.
 * **Key Tasks**:
-  - [ ] `SITEMAP-01` (P0): Unify `api/sitemap.ts` and `scripts/generate-seo-pages.mjs` to ensure production bots receive all 39 EN/AZ essays, tools, and curated resources with `hreflang` alternates.
-  - [ ] `CANONICAL-01` (P0): Consolidate duplicate founder profile URLs (`/profile`, `/ravanmammadov` → `/ravan-mammadov`) and inject `<meta name="robots" content="noindex" />` on admin routes (`/admin/linkedin`).
-  - [ ] `INTERLINK-01` (P1): Embed contextual "Interactive Utility Bridge" cards inside all 39 master essays connecting each article to related tools and resources.
-  - [ ] `FONT-TIER-01` (P1): Implement two-tier font indexation (Index Top 200 high-search fonts in sitemap; serve long-tail catalog via dynamic SPA to protect crawl budget).
+  - [ ] `INTERLINK-01` (P1): Build `EcosystemBridgeCard.tsx` and inject contextual tool & resource links into all 39 master essays.
   - [ ] `BUNDLE-OPT-01` (P2): Split root `index.js` into sub-route chunks to optimize mobile Core Web Vitals (LCP).
 
 ---

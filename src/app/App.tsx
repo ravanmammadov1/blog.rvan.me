@@ -41,8 +41,8 @@ function AppRoutes() {
       {/* English Default Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/ravanmammadov" element={<FounderProfilePage />} />
+      <Route path="/profile" element={<Navigate to="/ravan-mammadov" replace />} />
+      <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
       <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/work" element={<WorkArchive />} />
       <Route path="/work/:slug" element={<ProjectDetail />} />
@@ -67,8 +67,8 @@ function AppRoutes() {
       {/* Azerbaijani (/az) Parallel Routes */}
       <Route path="/az" element={<HomePage />} />
       <Route path="/az/about" element={<AboutPage />} />
-      <Route path="/az/profile" element={<ProfilePage />} />
-      <Route path="/az/ravanmammadov" element={<FounderProfilePage />} />
+      <Route path="/az/profile" element={<Navigate to="/az/ravan-mammadov" replace />} />
+      <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
       <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/work" element={<WorkArchive />} />
       <Route path="/az/work/:slug" element={<ProjectDetail />} />

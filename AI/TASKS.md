@@ -1,17 +1,18 @@
 # PROJECT TASK MANAGEMENT
 
-## Active Phase: Phase 1 — SEO Architecture, Sitemap & Interlinking
+## Active Phase: Phase 1 — Organic Growth & SEO Architecture
 
 ---
 
-## 1. Phase 1 Sprint Tasks (Immediate Execution)
+## 1. Phase 1 Sprint Tasks
 
 | Task ID | Description | Category | Priority | Status | Owner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `SITEMAP-01` | Unify `api/sitemap.ts` and `generate-seo-pages.mjs` to serve all 39 EN/AZ essays, tools, and curated resources with hreflang | SEO | P0 | Ready | Primary Agent |
-| `CANONICAL-01` | Canonicalize duplicate profile routes (`/profile`, `/ravanmammadov` → `/ravan-mammadov`) & add noindex to `/admin/linkedin` | SEO / Security | P0 | Ready | Primary Agent |
+| `SITEMAP-01` | Fix sitemap divergence: serve unified, authoritative `dist/sitemap.xml` with 39 EN/AZ essays, tools, and Tier 1 fonts | SEO | P0 | **Done** | Primary Agent |
+| `CANONICAL-01` | Canonicalize duplicate profile routes (`/profile`, `/ravanmammadov` → `/ravan-mammadov`) & update internal links | SEO | P0 | **Done** | Primary Agent |
+| `ADMIN-01` | Inject `noindex, nofollow` on `/admin/linkedin` and `/az/admin/linkedin` and exclude from sitemap | Security / SEO | P0 | **Done** | Primary Agent |
+| `FONT-TIER-01` | Implement 2-tier font indexation (Top 200 curated in sitemap; long-tail marked `noindex, follow`) | SEO / Crawl | P0 | **Done** | Primary Agent |
 | `INTERLINK-01` | Build `EcosystemBridgeCard.tsx` and inject contextual tool & resource links into all 39 master essays | UX / SEO | P1 | Ready | Primary Agent |
-| `FONT-TIER-01` | Implement 2-tier font indexation (Top 200 curated in sitemap; long-tail rendered dynamically via SPA) | SEO / Perf | P1 | Ready | Primary Agent |
 | `BUNDLE-OPT-01` | Split root `index.js` bundle to improve mobile LCP Core Web Vitals | Performance | P2 | Ready | Primary Agent |
 
 ---

@@ -58,20 +58,6 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
-    path: "/ravanmammadov",
-    title: "Ravan Mammadov — Founder & Senior Creative Designer",
-    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
-    type: "profile",
-    lastmod: todayIso,
-  },
-  {
-    path: "/profile",
-    title: "Ravan Mammadov — Founder & Senior Creative Designer",
-    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
-    type: "profile",
-    lastmod: todayIso,
-  },
-  {
     path: "/resources",
     title: "Creative Resources — Open Source Fonts, Icons & Tools | Rvan.me",
     description: "Discover open-source font families, developer tools, vector assets, mockups, and UI kits for designers and developers.",
@@ -106,14 +92,56 @@ const staticPages = [
     type: "website",
     lastmod: todayIso,
   },
-  { path: "/privacy-policy", title: "Privacy Policy — Ravan Mammadov", description: "Privacy policy and user data protections for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
-  { path: "/cookie-policy", title: "Cookie Policy — Ravan Mammadov", description: "Cookie policy and consent preferences for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
-  { path: "/terms", title: "Terms of Service — Ravan Mammadov", description: "Terms of service and intellectual property notice for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
-  { path: "/admin/linkedin", title: "LinkedIn Admin Control Panel — Rvan.me", description: "LinkedIn OAuth 2.0 and personal profile publishing admin control panel.", type: "website", lastmod: todayIso },
-
-  { path: "/work/wuling-creative-campaign", title: "Wuling Creative Campaign — Motion Design Case Study | Ravan Mammadov", description: "Explore the Wuling creative campaign case study combining automotive art direction, motion design, and marketing campaign assets.", type: "website", lastmod: "2026-07-15" },
-  { path: "/work/limitless-drive", title: "Limitless Drive — 3D Brand Identity Case Study | Ravan Mammadov", description: "Explore the Limitless Drive automotive brand identity and 3D design case study by Ravan Mammadov.", type: "website", lastmod: "2026-07-20" },
-  { path: "/work/omoda-jaecoo", title: "Omoda & Jaecoo — Motion Design Case Study | Ravan Mammadov", description: "Explore the Omoda and Jaecoo creative suite and motion system case study by Ravan Mammadov.", type: "website", lastmod: "2026-07-25" },
+  {
+    path: "/privacy-policy",
+    title: "Privacy Policy — Ravan Mammadov",
+    description: "Privacy policy and user data protections for the Ravan Mammadov portfolio and publication.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/cookie-policy",
+    title: "Cookie Policy — Ravan Mammadov",
+    description: "Cookie policy and consent preferences for the Ravan Mammadov portfolio and publication.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/terms",
+    title: "Terms of Service — Ravan Mammadov",
+    description: "Terms of service and intellectual property notice for the Ravan Mammadov portfolio and publication.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/admin/linkedin",
+    title: "LinkedIn Admin Control Panel — Rvan.me",
+    description: "LinkedIn OAuth 2.0 and personal profile publishing admin control panel.",
+    type: "website",
+    lastmod: todayIso,
+    noindex: true,
+  },
+  {
+    path: "/work/wuling-creative-campaign",
+    title: "Wuling Creative Campaign — Motion Design Case Study | Ravan Mammadov",
+    description: "Explore the Wuling creative campaign case study combining automotive art direction, motion design, and marketing campaign assets.",
+    type: "website",
+    lastmod: "2026-07-15",
+  },
+  {
+    path: "/work/limitless-drive",
+    title: "Limitless Drive — 3D Brand Identity Case Study | Ravan Mammadov",
+    description: "Explore the Limitless Drive automotive brand identity and 3D design case study by Ravan Mammadov.",
+    type: "website",
+    lastmod: "2026-07-20",
+  },
+  {
+    path: "/work/omoda-jaecoo",
+    title: "Omoda & Jaecoo — Motion Design Case Study | Ravan Mammadov",
+    description: "Explore the Omoda and Jaecoo creative suite and motion system case study by Ravan Mammadov.",
+    type: "website",
+    lastmod: "2026-07-25",
+  },
 ];
 
 function escapeHtml(value) {
@@ -186,10 +214,10 @@ function createGraph(page) {
         "Brand Identity",
         "UI/UX Design",
         "Creative Strategy",
-        "3D Product Visualization"
+        "3D Product Visualization",
       ],
       worksFor: {
-        "@id": orgId
+        "@id": orgId,
       },
       sameAs: [
         "https://www.behance.net/mammadovravan",
@@ -233,7 +261,7 @@ function createGraph(page) {
     },
   ];
 
-  if (page.path !== "/" && page.path !== "/az" && page.path !== "/ravan-mammadov") {
+  if (page.path !== "/" && page.path !== "/az" && page.path !== "/ravan-mammadov" && page.path !== "/az/ravan-mammadov") {
     graph.push({
       "@type": "BreadcrumbList",
       itemListElement: [
@@ -302,10 +330,14 @@ function applyPageMetadata(html, page) {
   const canonical = canonicalFor(page.path);
   const hreflangs = getHreflangTags(page.path);
   const imageUrl = getSanityImageUrl(page.coverImage);
+  const robotsDirective = page.noindex
+    ? "noindex, nofollow"
+    : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
   const replacements = [
     [/<title>[^<]*<\/title>/i, `<title>${escapeHtml(page.title)}</title>`],
     [/name="description" content="[^"]*"/i, `name="description" content="${escapeHtml(page.description)}"`],
+    [/name="robots" content="[^"]*"/i, `name="robots" content="${robotsDirective}"`],
     [/property="og:url" content="[^"]*"/i, `property="og:url" content="${canonical}"`],
     [/property="og:title" content="[^"]*"/i, `property="og:title" content="${escapeHtml(page.title)}"`],
     [/property="og:description" content="[^"]*"/i, `property="og:description" content="${escapeHtml(page.description)}"`],
@@ -320,8 +352,8 @@ function applyPageMetadata(html, page) {
   let output = html;
   for (const [pattern, replacement] of replacements) output = output.replace(pattern, replacement);
 
-  // Inject hreflang alternate tags right after canonical tag
-  if (!output.includes('hreflang="az"')) {
+  // Inject hreflang alternate tags right after canonical tag (for indexable pages)
+  if (!page.noindex && !output.includes('hreflang="az"')) {
     output = output.replace(
       `<link rel="canonical" href="${canonical}" />`,
       `<link rel="canonical" href="${canonical}" />\n    ${hreflangs}`
@@ -381,6 +413,7 @@ async function fetchDynamicPages() {
         coverImage: item.coverImage,
         body: item.body,
         lastmod: lastmodDate,
+        noindex: false,
       });
 
       // AZ Page (Localized)
@@ -399,6 +432,7 @@ async function fetchDynamicPages() {
         coverImage: item.coverImage,
         body: item.body_az || item.body,
         lastmod: lastmodDate,
+        noindex: false,
       });
 
       // If AZ slug is different from EN slug, also generate the /az/blog/original-slug route as alias
@@ -414,6 +448,7 @@ async function fetchDynamicPages() {
           coverImage: item.coverImage,
           body: item.body_az || item.body,
           lastmod: lastmodDate,
+          noindex: false,
         });
       }
     }
@@ -430,23 +465,63 @@ async function fetchFontPages() {
     const catalogPath = path.join(projectRoot, "src", "lib", "googleFontsCatalog.json");
     const raw = await fs.readFile(catalogPath, "utf8");
     const catalog = JSON.parse(raw);
-    return catalog.map((font) => {
+
+    // Sort by trending score and style count to identify Tier 1 curated fonts
+    const sorted = [...catalog].sort((a, b) =>
+      (b.trendingScore || 0) - (a.trendingScore || 0) ||
+      (b.stylesCount || 0) - (a.stylesCount || 0)
+    );
+
+    const TOP_TIER_COUNT = 200;
+    const tier1Set = new Set(sorted.slice(0, TOP_TIER_COUNT).map((f) => f.id));
+
+    const enPages = [];
+    const azPages = [];
+
+    for (const font of sorted) {
       const slug = font.family
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
-      return {
+
+      const isTier1 = tier1Set.has(font.id);
+
+      // EN Font Page
+      enPages.push({
         path: `/fonts/${slug}`,
-        title: `${font.family} Font Family — Free Download & Specimen | Rvan.me`,
-        description: font.description || `${font.family} is a ${font.category?.toLowerCase() || "typography"} typeface family designed by ${font.designer || "Open Source Foundry"}. Explore live specimen previews, styles, license details, and free download.`,
+        title: isTier1
+          ? `${font.family} Font Family — Free Specimen, Styles & Download | Rvan.me`
+          : `${font.family} Font Specimen — Free Download | Rvan.me`,
+        description: isTier1
+          ? `${font.family} is a high-utility ${font.category?.toLowerCase() || "typography"} typeface by ${font.designer || "Open Source Foundry"}. Features ${font.stylesCount} styles${font.isVariable ? ", variable axes" : ""}, interactive specimen testing, CSS @import snippet, and commercial-free SIL Open Font license.`
+          : font.description || `${font.family} is a ${font.category?.toLowerCase() || "typography"} typeface by ${font.designer}. Explore live specimen preview, styles, and download.`,
         type: "website",
         lastmod: "2026-08-01",
-      };
-    });
+        isTier1,
+        noindex: !isTier1,
+      });
+
+      // AZ Font Page
+      azPages.push({
+        path: `/az/fonts/${slug}`,
+        title: isTier1
+          ? `${font.family} Şrift Ailəsi — Pulsuz Yükləmə və Canlı Test | Rvan.me`
+          : `${font.family} Şrift Testi — Pulsuz Yükləmə | Rvan.me`,
+        description: isTier1
+          ? `${font.family} — ${font.designer || "Open Source"} tərəfindən hazırlanmış ${font.category?.toLowerCase() || "mətn"} şrift ailəsi. ${font.stylesCount} üslub${font.isVariable ? ", dəyişən (variable) oxlar" : ""}, canlı test interfeysi və pulsuz lisenziya.`
+          : `${font.family} — ${font.category || "Dizayn"} şrift ailəsi. Canlı test və pulsuz yükləmə.`,
+        type: "website",
+        lastmod: "2026-08-01",
+        isTier1,
+        noindex: !isTier1,
+      });
+    }
+
+    return { enPages, azPages };
   } catch (error) {
     console.warn("SEO prerender skipped font pages:", error?.message || error);
-    return [];
+    return { enPages: [], azPages: [] };
   }
 }
 
@@ -479,17 +554,17 @@ const staticAzTranslations = {
     title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
     description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
   },
-  "/ravanmammadov": {
-    title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
-    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
-  },
-  "/profile": {
-    title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
-    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
-  },
   "/resources": {
     title: "Kreativ Resurslar — Açıq Mənbəli Şriftlər, İkonlar və Alətlər | Rvan.me",
     description: "Dizaynerlər və proqramçılar üçün açıq mənbəli şrift ailələri, vektor aktivləri və UI dəstləri.",
+  },
+  "/ai-tools": {
+    title: "AI Alətləri və Avtomatlaşdırma Kataloqu — Rəvan Məmmədov",
+    description: "Yüksək faydalı AI generatorları və dizayn iş axını avtomatlaşdırma alətləri kataloqu.",
+  },
+  "/opportunities": {
+    title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
+    description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
   },
   "/tools/resume-builder": {
     title: "Pulsuz ATS CV Hazırlayıcı — HR Təsdiqli Vektor PDF Generatoru | Rvan.me",
@@ -499,10 +574,27 @@ const staticAzTranslations = {
     title: "Personaj Quraşdırıcı Aləti — Pulsuz Vektor İllüstrasiya Generatoru | Rvan.me",
     description: "Modul personaj quraşdırıcı ilə xüsusi əl ilə çəkilmiş illüstrasiyalar yaradın. Üz ifadələri, saç düzümləri və geyimləri birləşdirin, təmiz SVG və PNG ixrac edin.",
   },
+  "/privacy-policy": {
+    title: "Məxfilik Siyasəti — Rəvan Məmmədov",
+    description: "Rəvan Məmmədov platformasının istifadəçi məlumatlarının qorunması və məxfilik siyasəti.",
+  },
+  "/cookie-policy": {
+    title: "Kuki Siyasəti — Rəvan Məmmədov",
+    description: "Kuki siyasəti və razılıq tənzimləmələri.",
+  },
+  "/terms": {
+    title: "İstifadə Şərtləri — Rəvan Məmmədov",
+    description: "Rəvan Məmmədov platformasının rəsmi istifadə şərtləri və hüquqi bildirişləri.",
+  },
+  "/admin/linkedin": {
+    title: "LinkedIn İdarəetmə Paneli — Rvan.me",
+    description: "LinkedIn OAuth 2.0 və şəxsi profil nəşr idarəetmə paneli.",
+    noindex: true,
+  },
 };
 
 const template = await fs.readFile(path.join(distRoot, "index.html"), "utf8");
-const fontPages = await fetchFontPages();
+const { enPages: fontEnPages, azPages: fontAzPages } = await fetchFontPages();
 const { enPages: dynamicEnPages, azPages: dynamicAzPages } = await fetchDynamicPages();
 
 const staticAzPages = staticPages.map((p) => {
@@ -515,21 +607,16 @@ const staticAzPages = staticPages.map((p) => {
     path: p.path === "/" ? "/az" : `/az${p.path}`,
     title: azMeta.title,
     description: azMeta.description,
+    noindex: p.noindex || azMeta.noindex || false,
   };
 });
-
-const fontAzPages = fontPages.map((p) => ({
-  ...p,
-  path: `/az${p.path}`,
-  title: `${p.title} — Rvan.me (AZ)`,
-}));
 
 const allPages = [
   ...staticPages,
   ...staticAzPages,
   ...dynamicEnPages,
   ...dynamicAzPages,
-  ...fontPages,
+  ...fontEnPages,
   ...fontAzPages,
 ];
 
@@ -541,10 +628,13 @@ for (const page of allPages) {
 
 console.log(`Generated SEO-ready HTML for ${allPages.length} routes (EN + AZ).`);
 
-// Generate dist/sitemap.xml with <lastmod> and xhtml:link hreflangs
+// Generate dist/sitemap.xml with canonical indexable routes only
+// Excludes noindex routes (admin routes, tier-2 font routes)
+const sitemapPages = allPages.filter((p) => !p.noindex && !p.path.includes("/admin") && p.isTier1 !== false);
+
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${allPages
+${sitemapPages
   .map((p) => {
     const isAz = p.path === "/az" || p.path.startsWith("/az/");
     const cleanPath = isAz ? p.path.replace(/^\/az/, "") || "/" : p.path;
@@ -552,8 +642,20 @@ ${allPages
     const enUrl = `${domain}${cleanPath === "/" ? "/" : cleanPath.replace(/\/+$/, "")}`;
     const azUrl = `${domain}${cleanPath === "/" ? "/az" : `/az${cleanPath.replace(/\/+$/, "")}`}`;
     const lastmod = p.lastmod || todayIso;
-    const priority = p.path === "/" || p.path === "/az" ? "1.0" : p.path.startsWith("/blog") || p.path.startsWith("/work") ? "0.9" : p.path.includes("/fonts/") ? "0.7" : "0.8";
-    const changefreq = p.path.startsWith("/blog") || p.path.startsWith("/news") ? "daily" : "weekly";
+    const priority =
+      p.path === "/" || p.path === "/az"
+        ? "1.0"
+        : p.path.startsWith("/blog") || p.path.startsWith("/az/blog") || p.path.startsWith("/tools") || p.path.startsWith("/az/tools")
+        ? "0.9"
+        : p.path.startsWith("/work") || p.path.startsWith("/az/work") || p.path === "/ravan-mammadov" || p.path === "/az/ravan-mammadov"
+        ? "0.8"
+        : p.path.includes("/fonts/")
+        ? "0.7"
+        : "0.8";
+    const changefreq =
+      p.path.startsWith("/blog") || p.path.startsWith("/az/blog") || p.path.startsWith("/news")
+        ? "daily"
+        : "weekly";
 
     return `  <url>
     <loc>${url}</loc>
@@ -569,4 +671,4 @@ ${allPages
 </urlset>`;
 
 await fs.writeFile(path.join(distRoot, "sitemap.xml"), sitemapXml.trim(), "utf8");
-console.log(`Generated sitemap.xml with ${allPages.length} URLs (including lastmod and hreflang tags).`);
+console.log(`Generated authoritative sitemap.xml with ${sitemapPages.length} indexable URLs (including lastmod and hreflang tags).`);

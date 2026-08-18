@@ -111,7 +111,7 @@ function UserAuthMenu() {
               </div>
 
               <Link
-                to={getLocalizedPath("/profile")}
+                to={getLocalizedPath("/ravan-mammadov")}
                 onClick={() => setDropdownOpen(false)}
                 className="w-full flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-3 py-2.5 text-xs font-medium text-foreground hover:bg-white/10 hover:border-primary/50 transition-all text-left mono"
               >

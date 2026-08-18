@@ -6,10 +6,6 @@
       "destination": "https://rvan-2796c.firebaseapp.com/__/auth/:path*"
     },
     {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
       "source": "/about",
       "destination": "/about/index.html"
     },
@@ -48,10 +44,6 @@
     {
       "source": "/ravan-mammadov",
       "destination": "/ravan-mammadov/index.html"
-    },
-    {
-      "source": "/ravanmammadov",
-      "destination": "/ravanmammadov/index.html"
     },
     {
       "source": "/privacy-policy",
@@ -93,6 +85,26 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/profile",
+      "destination": "/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/ravanmammadov",
+      "destination": "/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/az/profile",
+      "destination": "/az/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/az/ravanmammadov",
+      "destination": "/az/ravan-mammadov",
+      "permanent": true
+    },
     {
       "source": "/terms-of-service",
       "destination": "/terms",

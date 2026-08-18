@@ -7,7 +7,7 @@
 * **Decision**: Maintain Vite + React Router v7 SPA architecture combined with a custom post-build Node.js crawler script (`scripts/generate-seo-pages.mjs`). The script injects pre-rendered static HTML with full meta tags, OpenGraph cards, JSON-LD schemas, and hreflang tags into `dist/`.
 * **Consequences**:
   - *Pros*: Zero server hosting costs, instant edge caching on Vercel, perfect SEO crawlability, lightning-fast development cycle with Vite HMR.
-  - *Cons*: Build time takes ~30-40 seconds to write 4,700+ files to disk.
+  - *Cons*: Build time takes ~20-30 seconds to write pre-rendered files to disk.
 
 ---
 
@@ -76,3 +76,23 @@
 * **Consequences**:
   - *Pros*: Complete continuity across agent sessions, zero reliance on transient chat logs, single source of truth.
   - *Cons*: Requires disciplined maintenance at the end of every feature phase.
+
+---
+
+## ADR-008: Authoritative Unified Sitemap & Two-Tier Font Indexation Model
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**:
+  1. `vercel.json` rewrote `/sitemap.xml` to `api/sitemap.ts`, which truncated the sitemap to ~10 URLs and omitted all Azerbaijani routes, tools, and font pages.
+  2. Generating 4,600 thin font specimen pages in the primary sitemap risked Google "thin programmatic content" penalties and crawl budget exhaustion.
+  3. Duplicate URLs existed for founder profile (`/profile`, `/ravanmammadov`, `/ravan-mammadov`), and admin consoles (`/admin/linkedin`) were exposed in search results.
+* **Decision**:
+  1. Remove `/sitemap.xml` rewrite from `vercel.json`, allowing Vercel edge to serve the pre-rendered `dist/sitemap.xml` directly as a static file.
+  2. Implement 301 permanent redirects from `/profile` and `/ravanmammadov` to canonical `/ravan-mammadov` (and `/az` equivalents).
+  3. Mark `/admin/linkedin` with `<meta name="robots" content="noindex, nofollow" />` and exclude from sitemaps.
+  4. Implement a Two-Tier Font strategy:
+     - **Tier 1 (Top 200 Curated Fonts)**: Fully indexable, rich localized titles/descriptions, included in `sitemap.xml` (~400 URLs with EN/AZ pairs).
+     - **Tier 2 (Long-Tail ~1,800 Fonts)**: Pre-rendered with `<meta name="robots" content="noindex, follow" />`, excluded from `sitemap.xml`, fully accessible to users in the client application.
+* **Consequences**:
+  - *Pros*: Completely unified single source of truth for sitemap; protects domain authority from thin content penalties; ensures 100% crawl coverage for 39 master essays, tools, and top fonts; eliminates duplicate content issues.
+  - *Cons*: Long-tail fonts do not compete individually in search rankings, but are discovered through the high-ranking curated catalog.

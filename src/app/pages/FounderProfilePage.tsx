@@ -149,9 +149,9 @@ export default function FounderProfilePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Founder & Creative Director"
-        description="Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."
-        url="https://www.rvan.me/ravanmammadov"
+        title={language === "az" ? "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli" : "Ravan Mammadov — Founder & Creative Director"}
+        description={language === "az" ? "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri." : "Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."}
+        url={language === "az" ? "https://www.rvan.me/az/ravan-mammadov" : "https://www.rvan.me/ravan-mammadov"}
       />
 
       <SiteHeader siteSettings={siteSettings} />
