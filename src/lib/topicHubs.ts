@@ -48,11 +48,11 @@ export const TOPIC_HUBS: TopicHubDefinition[] = [
     seoDescription: "Explore responsive typography systems, mathematical type scales, CSS clamp() token generators, and master editorial essays on typographic hierarchy and font psychology.",
     seoDescription_az: "Responsiv tipoqrafiya sistemləri, riyazi şrift miqyasları, CSS clamp() generatorları və tipoqrafik iyerarxiya üzrə elmi məqalələri kəşf edin.",
     featuredArticleSlugs: [
+      "guide-responsive-fluid-typography-css-clamp",
       "why-some-fonts-feel-expensive-gotham-typography",
       "why-helvetica-became-the-font-of-corporate-america",
       "why-changing-a-font-changes-brand-personality",
       "why-comic-sans-is-the-most-hated-font-in-history",
-      "typography-pairing-editorial-product"
     ],
     toolIds: ["typography-scale", "contrast-matrix"],
     resourceSlugs: [

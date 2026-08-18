@@ -40,6 +40,50 @@ export interface ArticleRelationship {
 }
 
 export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
+  // 00. Complete Guide to Responsive Fluid Typography with CSS clamp()
+  "guide-responsive-fluid-typography-css-clamp": {
+    slug: "guide-responsive-fluid-typography-css-clamp",
+    cluster: "Typography & Brand Semantics",
+    primaryTopic: {
+      en: "Fluid Typography & CSS clamp() Math",
+      az: "Elastik Tipoqrafiya və CSS clamp() Riyaziyyatı",
+    },
+    toolBridge: {
+      type: "tool",
+      path: "/tools/typography-scale",
+      badge: { en: "CORE WORKBENCH", az: "ƏSAS ALƏT" },
+      title: {
+        en: "Calculate Fluid clamp() Scale Online",
+        az: "Onlayn Elastik clamp() Miqyası Qurun",
+      },
+      description: {
+        en: "Generate mathematically precise CSS clamp() tokens, customize modular ratios, and test live responsive font sizes in real time.",
+        az: "Dəqiq riyazi CSS clamp() tokenləri yaradın, modul nisbətləri seçin və canlı ekran simulyatorunda şriftləri test edin.",
+      },
+      ctaText: { en: "Launch Scale Calculator", az: "Kalkulyatoru Başlat" },
+    },
+    resourceBridge: {
+      type: "resource",
+      path: "/fonts/inter",
+      badge: { en: "TYPE SPECIMEN", az: "ŞRİFT NÜMUNƏSİ" },
+      title: {
+        en: "Inter Variable Font Family",
+        az: "Inter Dəyişən (Variable) Şrift Ailəsi",
+      },
+      description: {
+        en: "Test fluid clamp() typography with Inter's 9 optical weights and variable font axis.",
+        az: "Inter şriftinin 9 optik çəkisi və dəyişən oxu ilə elastik tipoqrafiyanı canlı sınaqdan keçirin.",
+      },
+      ctaText: { en: "Explore Inter Specimen", az: "Inter Nümunəsini Aç" },
+    },
+    relatedSlugs: [
+      "why-some-fonts-feel-expensive-gotham-typography",
+      "why-helvetica-became-the-font-of-corporate-america",
+      "why-changing-a-font-changes-brand-personality",
+      "why-contrast-makes-designs-impossible-to-ignore-von-restorff",
+    ],
+  },
+
   // 01. Visual Hierarchy & Eye-Tracking
   "why-eyes-look-at-certain-things-first": {
     slug: "why-eyes-look-at-certain-things-first",

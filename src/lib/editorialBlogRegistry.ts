@@ -1,4 +1,5 @@
 import { BlogPost } from "../types/blog";
+import { GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY } from "./blogs/articleResponsiveTypographyGuide";
 import { ARTICLES_01_TO_10 } from "./blogs/articles01to10";
 import { ARTICLES_11_TO_20 } from "./blogs/articles11to20";
 import { ARTICLES_21_TO_30 } from "./blogs/articles21to30";
@@ -6,20 +7,20 @@ import { ARTICLES_31_TO_39 } from "./blogs/articles31to39";
 
 /**
  * Master Editorial Blog Registry
- * Contains all 39 deeply-researched publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
- * Strictly preserves all 39 Sanity Document IDs and URL slugs.
+ * Contains the publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
  */
 export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
+  GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY,
   ...ARTICLES_01_TO_10,
   ...ARTICLES_11_TO_20,
   ...ARTICLES_21_TO_30,
   ...ARTICLES_31_TO_39,
 ];
 
-// Verify that the count is exactly 39
-if (MASTER_EDITORIAL_BLOGS.length !== 39) {
+// Verify that the count is at least 40
+if (MASTER_EDITORIAL_BLOGS.length < 40) {
   console.warn(
-    `[editorialBlogRegistry] Expected exactly 39 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
+    `[editorialBlogRegistry] Expected at least 40 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
   );
 }
 

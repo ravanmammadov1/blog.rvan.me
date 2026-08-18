@@ -114,6 +114,14 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/blog/guide-responsive-fluid-typography-css-clamp",
+    title: "Complete Guide to Responsive Fluid Typography with CSS clamp() — Rvan.me",
+    description: "The comprehensive architectural guide to modern responsive typography: How linear interpolation equations, modular harmonic scales, and CSS clamp() eliminate breakpoint jumps.",
+    type: "article",
+    schemaType: "BlogPosting",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/resume-builder",
     title: "Free ATS Resume & CV Builder — HR-Approved Vector PDF Generator",
     description: "Create professional ATS-compliant resumes with real-time preview, ATS score checker, and instant high-quality vector PDF download. Built for engineers, designers, and executives.",
@@ -511,8 +519,65 @@ async function fetchDynamicPages() {
 
     return { enPages, azPages };
   } catch (error) {
-    console.warn("SEO prerender skipped dynamic CMS pages:", error?.message || error);
-    return { enPages: [], azPages: [] };
+    console.warn("SEO prerender dynamic CMS fetch fallback:", error?.message || error);
+    const enPages = [];
+    const azPages = [];
+    try {
+      const blogsDir = path.join(projectRoot, "src", "lib", "blogs");
+      const files = await fs.readdir(blogsDir);
+      for (const file of files) {
+        if (!file.endsWith(".ts")) continue;
+        const content = await fs.readFile(path.join(blogsDir, file), "utf8");
+        const blogBlocks = content.split(/{\s*_id:\s*"/);
+        for (let i = 1; i < blogBlocks.length; i++) {
+          const b = blogBlocks[i];
+          const title = (b.match(/title:\s*"([^"]+)"/) || [])[1];
+          const title_az = (b.match(/title_az:\s*"([^"]+)"/) || [])[1];
+          const slug = (b.match(/current:\s*"([^"]+)"/) || [])[1];
+          const slug_azMatch = b.match(/slug_az:\s*\{\s*_type:\s*"slug",\s*current:\s*"([^"]+)"\s*\}/);
+          const slug_az = slug_azMatch ? slug_azMatch[1] : slug;
+          const excerpt = (b.match(/excerpt:\s*"([^"]+)"/) || [])[1];
+          const excerpt_az = (b.match(/excerpt_az:\s*"([^"]+)"/) || [])[1];
+
+          if (slug && title) {
+            enPages.push({
+              path: `/blog/${slug}`,
+              title: `${title} — Ravan Mammadov`,
+              description: excerpt || `Explore ${title} by Senior Creative Designer Ravan Mammadov.`,
+              type: "article",
+              schemaType: "BlogPosting",
+              lastmod: todayIso,
+              noindex: false,
+            });
+            if (slug_az) {
+              azPages.push({
+                path: `/az/blog/${slug_az}`,
+                title: `${title_az || title} — Rəvan Məmmədov`,
+                description: excerpt_az || excerpt || `${title_az || title} haqqında oxuyun.`,
+                type: "article",
+                schemaType: "BlogPosting",
+                lastmod: todayIso,
+                noindex: false,
+              });
+              if (slug_az !== slug) {
+                azPages.push({
+                  path: `/az/blog/${slug}`,
+                  title: `${title_az || title} — Rəvan Məmmədov`,
+                  description: excerpt_az || excerpt || `${title_az || title} haqqında oxuyun.`,
+                  type: "article",
+                  schemaType: "BlogPosting",
+                  lastmod: todayIso,
+                  noindex: false,
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Local blog fallback error:", e?.message || e);
+    }
+    return { enPages, azPages };
   }
 }
 
@@ -641,6 +706,10 @@ const staticAzTranslations = {
   "/topics/accessibility": {
     title: "Rəqəmsal Əlçatanlıq, APCA Kontrast və İnklyuziv Dizayn Mərkəzi — Rvan.me",
     description: "Müasir rəng əlçatanlığı, W3C Silver APCA 0.98G standartı, tipoqrafik oxunaqlıq hədləri və əlçatan dizayn sistemi iş axınları.",
+  },
+  "/blog/guide-responsive-fluid-typography-css-clamp": {
+    title: "CSS clamp() ilə Responsiv Elastik Tipoqrafiyanın Tam Bələdçisi — Rvan.me",
+    description: "Müasir elastik tipoqrafiyanın hərtərəfli arxitektura bələdçisi: Xətti interpolyasiya riyaziyyatı, harmonik modul miqyaslar və CSS clamp() ilə media query tullanışlarına son qoyun.",
   },
   "/tools/persuasion-analyzer": {
     title: "Marketinq və Persuasiya Mətn Analizatoru — Rvan.me",
