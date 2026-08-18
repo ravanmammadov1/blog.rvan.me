@@ -42,8 +42,10 @@ export async function downloadResumeAsPdf(
     }, 2000);
 
     return true;
-  } catch (error) {
-    console.error("PDF generation failed:", error);
+  } catch (error: any) {
+    console.error("[PDF EXPORT ERROR]", error);
+    console.error("[PDF EXPORT ERROR MESSAGE]", error?.message);
+    console.error("[PDF EXPORT ERROR STACK]", error?.stack);
     throw error;
   }
 }

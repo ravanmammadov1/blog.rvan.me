@@ -2,16 +2,7 @@ import React from "react";
 import { Document, Page, Text, View, StyleSheet, Image, Font } from "@react-pdf/renderer";
 import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
 
-// Register Standard Open-Source Web Fonts for Vector PDF Rendering
-Font.register({
-  family: "Geist",
-  fonts: [
-    { src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2", fontWeight: 400 },
-    { src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fAZ9hiA.woff2", fontWeight: 600 },
-    { src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hiA.woff2", fontWeight: 700 },
-  ],
-});
-
+// Uses built-in PDF standard Type 1 fonts (Helvetica, Times-Roman, Courier) - 0 network dependency
 interface ResumePdfProps {
   data: ResumeData;
   theme: ResumeThemeConfig;

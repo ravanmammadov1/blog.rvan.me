@@ -79,8 +79,10 @@ const ResumeEditorCanvasInner: React.FC<{
 
     try {
       await downloadResumeAsPdf(data, theme, filename);
-    } catch (e) {
-      console.error("PDF export error:", e);
+    } catch (e: any) {
+      console.error("[PDF EXPORT ERROR]", e);
+      console.error("[PDF EXPORT ERROR MESSAGE]", e?.message);
+      console.error("[PDF EXPORT ERROR STACK]", e?.stack);
       alert(isAz ? "PDF yüklənməsi zamanı xəta baş verdi." : "Could not generate PDF. Please try again.");
     } finally {
       setIsGeneratingPdf(false);
