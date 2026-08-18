@@ -292,6 +292,46 @@
       "source": "/blog/why-ad-campaigns-fail-creative-fatigue",
       "destination": "/blog/why-ad-campaigns-fail-fatigue",
       "permanent": true
+    },
+    {
+      "source": "/blog/why-search-is-a-magnifying-glass",
+      "destination": "/blog/why-notification-icon-is-a-bell",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/axtaris-niye-boyuducu-susedir",
+      "destination": "/az/blog/bildiris-ikonu-niye-zengdir",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-phone-icon-is-a-1960s-telephone-receiver",
+      "destination": "/blog/why-save-icon-is-still-a-floppy-disk",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/zeng-ikonu-niye-kohne-destekdir",
+      "destination": "/az/blog/yadda-saxla-ikonu-niye-diskisdir",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-settings-icon-is-a-mechanical-gear",
+      "destination": "/blog/why-hamburger-menu-has-three-lines",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/tenzimlemeler-niye-disli-carxdir",
+      "destination": "/az/blog/hamburger-menyu-niye-uc-xetdir",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-email-is-a-paper-envelope-icon",
+      "destination": "/blog/why-notification-icon-is-a-bell",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/e-poct-niye-kagiz-zerf-ikonudur",
+      "destination": "/az/blog/bildiris-ikonu-niye-zengdir",
+      "permanent": true
     }
   ],
   "headers": [

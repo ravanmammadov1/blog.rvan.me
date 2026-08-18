@@ -328,9 +328,9 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     relatedSlugs: [
       "why-save-icon-is-still-a-floppy-disk",
-      "why-search-is-a-magnifying-glass",
-      "why-phone-icon-is-a-1960s-telephone-receiver",
-      "why-settings-icon-is-a-mechanical-gear",
+      "why-notification-icon-is-a-bell",
+      "why-save-icon-is-still-a-floppy-disk",
+      "why-hamburger-menu-has-three-lines",
     ],
   },
 
@@ -522,9 +522,9 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     relatedSlugs: [
       "why-save-icon-is-still-a-floppy-disk",
-      "why-search-is-a-magnifying-glass",
       "why-notification-icon-is-a-bell",
-      "why-settings-icon-is-a-mechanical-gear",
+      "why-notification-icon-is-a-bell",
+      "why-hamburger-menu-has-three-lines",
     ],
   },
 
@@ -806,9 +806,9 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     relatedSlugs: [
       "why-notification-icon-is-a-bell",
-      "why-search-is-a-magnifying-glass",
-      "why-phone-icon-is-a-1960s-telephone-receiver",
-      "why-settings-icon-is-a-mechanical-gear",
+      "why-notification-icon-is-a-bell",
+      "why-save-icon-is-still-a-floppy-disk",
+      "why-hamburger-menu-has-three-lines",
     ],
   },
 
@@ -1108,36 +1108,6 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     ],
   },
 
-  // 27. Search Magnifying Glass
-  "why-search-is-a-magnifying-glass": {
-    slug: "why-search-is-a-magnifying-glass",
-    cluster: "Design History",
-    primaryTopic: {
-      en: "Search Affordances & Detective Metaphors",
-      az: "Axtarış Nişanı və Detektiv Metaforaları",
-    },
-    resourceBridge: {
-      type: "resource",
-      path: "/resources?category=icons",
-      badge: { en: "SEARCH ICONS", az: "AXTARIŞ İKONLARI" },
-      title: {
-        en: "Explore Search & Filter Vector Glyphs",
-        az: "Axtarış və Filtr Vektor İkonlarını Kəşf Edin",
-      },
-      description: {
-        en: "Download magnifying glass, zoom, scan, and filter vector icons ready for your search experiences.",
-        az: "Axtarış sistemləriniz üçün lupa, böyütmə və filtr vektor ikonlarını endirin.",
-      },
-      ctaText: { en: "View Search Icons", az: "Axtarış İkonlarına Bax" },
-    },
-    relatedSlugs: [
-      "psychology-of-google-search-position-bias",
-      "why-notification-icon-is-a-bell",
-      "why-save-icon-is-still-a-floppy-disk",
-      "why-settings-icon-is-a-mechanical-gear",
-    ],
-  },
-
   // 28. AI Writing RLHF Homogenization
   "why-ai-writing-sounds-so-similar-rlhf-homogenization": {
     slug: "why-ai-writing-sounds-so-similar-rlhf-homogenization",
@@ -1165,36 +1135,6 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
       "why-modern-websites-all-look-the-same",
       "why-small-creators-sell-more-than-celebrities",
       "why-changing-a-font-changes-brand-personality",
-    ],
-  },
-
-  // 29. Phone Call 1960s Receiver
-  "why-phone-icon-is-a-1960s-telephone-receiver": {
-    slug: "why-phone-icon-is-a-1960s-telephone-receiver",
-    cluster: "Design History",
-    primaryTopic: {
-      en: "Telephony Iconography & Historic Affordances",
-      az: "Telefon İkonoqrafiyası və Tarixi Vərdişlər",
-    },
-    resourceBridge: {
-      type: "resource",
-      path: "/resources?category=icons",
-      badge: { en: "COMMUNICATION ICONS", az: "ƏLAQƏ İKONLARI" },
-      title: {
-        en: "Explore Communication & Audio Glyphs",
-        az: "Ünsiyyət və Səs İkonlarını Kəşf Edin",
-      },
-      description: {
-        en: "Download telephone, message, mic, and headset icons built for modern mobile and desktop software.",
-        az: "Müasir mobil və masaüstü proqramlar üçün hazırlanmış telefon, mesaj və qulaqlıq ikonlarını yükləyin.",
-      },
-      ctaText: { en: "Browse Communication Icons", az: "İkonlara Bax" },
-    },
-    relatedSlugs: [
-      "why-notification-icon-is-a-bell",
-      "why-email-is-a-paper-envelope-icon",
-      "why-save-icon-is-still-a-floppy-disk",
-      "why-delete-action-is-a-trash-can",
     ],
   },
 
@@ -1242,36 +1182,6 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     ],
   },
 
-  // 31. Settings Mechanical Gear
-  "why-settings-icon-is-a-mechanical-gear": {
-    slug: "why-settings-icon-is-a-mechanical-gear",
-    cluster: "Design History",
-    primaryTopic: {
-      en: "Mechanical Metaphors & Configuration UI",
-      az: "Mexaniki Metaforalar və Tənzimləmə İnterfeysləri",
-    },
-    resourceBridge: {
-      type: "resource",
-      path: "/resources?category=icons",
-      badge: { en: "SYSTEM ICONS", az: "SİSTEM İKONLARI" },
-      title: {
-        en: "Explore Gear, Sliders & Preference Icons",
-        az: "Dişli Çarx, Slayder və Tənzimləmə İkonları",
-      },
-      description: {
-        en: "Download clean mechanical and slider icons for system configuration and user account settings.",
-        az: "Sistem konfiqurasiyası və istifadəçi tənzimləmələri üçün təmiz vektor ikonları yükləyin.",
-      },
-      ctaText: { en: "Explore System Icons", az: "Sistem İkonlarına Bax" },
-    },
-    relatedSlugs: [
-      "why-notification-icon-is-a-bell",
-      "why-save-icon-is-still-a-floppy-disk",
-      "why-search-is-a-magnifying-glass",
-      "why-delete-action-is-a-trash-can",
-    ],
-  },
-
   // 32. Delete Trash Can
   "why-delete-action-is-a-trash-can": {
     slug: "why-delete-action-is-a-trash-can",
@@ -1297,8 +1207,8 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     relatedSlugs: [
       "why-error-is-red-success-green-links-blue",
       "why-save-icon-is-still-a-floppy-disk",
-      "why-phone-icon-is-a-1960s-telephone-receiver",
-      "why-settings-icon-is-a-mechanical-gear",
+      "why-save-icon-is-still-a-floppy-disk",
+      "why-hamburger-menu-has-three-lines",
     ],
   },
 
@@ -1387,36 +1297,6 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
       "why-helvetica-became-the-font-of-corporate-america",
       "why-comic-sans-is-the-most-hated-font-in-history",
       "why-some-logos-are-impossible-to-forget",
-    ],
-  },
-
-  // 35. Email Paper Envelope
-  "why-email-is-a-paper-envelope-icon": {
-    slug: "why-email-is-a-paper-envelope-icon",
-    cluster: "Design History",
-    primaryTopic: {
-      en: "Postal Metaphors & Digital Mail UX",
-      az: "Poçt Zərfi Metaforası və Rəqəmsal Məktub UX-i",
-    },
-    resourceBridge: {
-      type: "resource",
-      path: "/resources?category=icons",
-      badge: { en: "MAIL ICONS", az: "POÇT İKONLARI" },
-      title: {
-        en: "Explore Mail, Send & Inbox Vector Glyphs",
-        az: "Məktub, Göndərmə və Gələnlər Qutusu İkonları",
-      },
-      description: {
-        en: "Download envelope, paper plane, inbox, and communication icons with consistent stroke weight.",
-        az: "Vahid xətt qalınlığı ilə hazırlanmış zərf, kağız təyyarə və gələnlər qutusu vektor ikonlarını endirin.",
-      },
-      ctaText: { en: "Explore Mail Glyphs", az: "İkonlara Bax" },
-    },
-    relatedSlugs: [
-      "why-phone-icon-is-a-1960s-telephone-receiver",
-      "why-notification-icon-is-a-bell",
-      "why-save-icon-is-still-a-floppy-disk",
-      "why-search-is-a-magnifying-glass",
     ],
   },
 
@@ -1590,7 +1470,7 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     relatedSlugs: [
       "why-eyes-look-at-certain-things-first",
-      "why-search-is-a-magnifying-glass",
+      "why-notification-icon-is-a-bell",
       "why-most-popular-works-on-pricing-tables",
       "why-youre-almost-done-works-zeigarnik-effect",
     ],
@@ -1624,15 +1504,11 @@ const AZ_SLUG_TO_EN_MAP: Record<string, string> = {
   "ferdi-reklamlar-ve-qorxu-hissi": "why-personalized-ads-feel-creepy-privacy-paradox",
   "dairevi-formalar-ve-kunclerin-psixologiyasi": "why-rounded-shapes-feel-friendlier-corner-radius-psychology",
   "ai-sekilleri-niye-saxta-gorunur": "why-ai-images-look-expensive-but-feel-wrong",
-  "axtaris-niye-boyuducu-susedir": "why-search-is-a-magnifying-glass",
   "ai-metnleri-niye-eyni-seslenir": "why-ai-writing-sounds-so-similar-rlhf-homogenization",
-  "zeng-ikonu-niye-kohne-destekdir": "why-phone-icon-is-a-1960s-telephone-receiver",
   "comic-sans-niye-en-nifret-edilen-sriftdir": "why-comic-sans-is-the-most-hated-font-in-history",
-  "tenzimlemeler-niye-disli-carxdir": "why-settings-icon-is-a-mechanical-gear",
   "silme-niye-zibil-qutusudur": "why-delete-action-is-a-trash-can",
   "luks-brendler-ve-bos-mekan-psixologiyasi": "why-luxury-brands-use-so-much-empty-space",
   "srift-deyisikliyi-ve-brend-xarakteri": "why-changing-a-font-changes-brand-personality",
-  "e-poct-niye-kagiz-zerf-ikonudur": "why-email-is-a-paper-envelope-icon",
   "kontrast-ve-von-restorff-effekti": "why-contrast-makes-designs-impossible-to-ignore-von-restorff",
   "qaranliq-rejim-psixologiyasi-oled": "psychology-of-dark-mode-oled-black-ui",
   "gestalt-yaxinliq-qanunu-ve-qruplasma": "why-we-group-things-together-gestalt-proximity",

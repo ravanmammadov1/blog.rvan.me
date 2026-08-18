@@ -23,10 +23,10 @@ export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   ...ARTICLES_31_TO_39,
 ];
 
-// Verify that the count is at least 43
-if (MASTER_EDITORIAL_BLOGS.length < 43) {
+// Verify that the count is at least 39
+if (MASTER_EDITORIAL_BLOGS.length < 39) {
   console.warn(
-    `[editorialBlogRegistry] Expected at least 43 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
+    `[editorialBlogRegistry] Expected at least 39 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
   );
 }
 
