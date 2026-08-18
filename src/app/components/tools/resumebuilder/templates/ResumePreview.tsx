@@ -8,6 +8,10 @@ import { OnyxTemplate } from "./OnyxTemplate";
 import { SoftBannerTemplate } from "./SoftBannerTemplate";
 import { ClassicHarvardTemplate } from "./ClassicHarvardTemplate";
 import { QuotationTemplate } from "./QuotationTemplate";
+import { DeveloperCompactTemplate } from "./DeveloperCompactTemplate";
+import { SwissEditorialTemplate } from "./SwissEditorialTemplate";
+import { CorporateCleanTemplate } from "./CorporateCleanTemplate";
+import { CompactAtsTemplate } from "./CompactAtsTemplate";
 import { FONT_FAMILY_CONFIG } from "../themeTokens";
 
 interface ResumePreviewProps {
@@ -23,6 +27,14 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
   const renderTemplate = () => {
     switch (theme.template) {
+      case "developer-cv":
+        return <DeveloperCompactTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "editorial-cv":
+        return <SwissEditorialTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "corporate-cv":
+        return <CorporateCleanTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "compact-ats-cv":
+        return <CompactAtsTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "quotation-cv":
         return <QuotationTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "modern-cv":

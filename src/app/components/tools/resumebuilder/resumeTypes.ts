@@ -1,12 +1,16 @@
 export type TemplateId =
+  | "tech-cv"
+  | "minimal-cv"
   | "modern-cv"
   | "professional-cv"
-  | "tech-cv"
-  | "executive-cv"
-  | "minimal-cv"
-  | "creative-cv"
+  | "developer-cv"
   | "quotation-cv"
+  | "editorial-cv"
+  | "corporate-cv"
+  | "executive-cv"
+  | "creative-cv"
   | "nordic-cv"
+  | "compact-ats-cv"
   | "blank-cv";
 
 export type ResumeFont = "sans" | "serif" | "mono";
@@ -120,10 +124,15 @@ export interface TemplateDefinition {
   id: TemplateId;
   name: string;
   name_az: string;
+  category: "classic" | "modern" | "tech" | "creative";
   description: string;
   description_az: string;
+  supportedAccents: string[];
+  defaultAccent: string;
+  layoutType: "single-column" | "two-column" | "sidebar" | "banner";
+  supportsProfileImage: boolean;
+  atsScore: number;
   presetData: ResumeData;
-  defaultColor: string;
 }
 
 export const COLOR_OPTIONS = [
@@ -529,87 +538,188 @@ export const BLANK_CV_PRESET: ResumeData = {
   references: [],
 };
 
-// Unified Templates Definition
+// Unified Templates Definition (12 distinct professional templates with exact supported accents)
 export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
   {
-    id: "modern-cv",
-    name: "Modern CV",
-    name_az: "Müasir CV",
-    description: "2-Column layout with skill badges, strengths, and rating dots.",
-    description_az: "Bacarıq nişanları, güclü tərəflər və dil reytinqi olan 2 sütunlu format.",
-    presetData: MODERN_CV_PRESET,
-    defaultColor: "#0284c7",
-  },
-  {
-    id: "professional-cv",
-    name: "Professional CV",
-    name_az: "Peşəkar CV",
-    description: "Executive split layout with dark sidebar, photo, and timeline.",
-    description_az: "Qaranlıq yan sütun, şəkil və zaman xətti olan rəhbər formatı.",
-    presetData: PROFESSIONAL_CV_PRESET,
-    defaultColor: "#1e3a8a",
-  },
-  {
     id: "tech-cv",
-    name: "Tech CV",
-    name_az: "Texniki CV",
-    description: "ATS gold standard engineering layout (RenderCV sb2nov).",
+    name: "Modern Tech",
+    name_az: "Müasir Texniki",
+    category: "tech",
+    description: "ATS gold standard engineering layout (LaTeX sb2nov style).",
     description_az: "FAANG və mühəndislər üçün ATS uyğun qızıl standart (sb2nov).",
+    supportedAccents: ["#111827", "#1e3a8a", "#059669", "#0284c7", "#4338ca"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 100,
     presetData: TECH_CV_PRESET,
-    defaultColor: "#111827",
-  },
-  {
-    id: "executive-cv",
-    name: "Executive CV",
-    name_az: "Rəhbər CV",
-    description: "LaTeX moderncv layout with left date metadata columns.",
-    description_az: "Sol tərəfdə tarix sütunları olan LaTeX moderncv formatı.",
-    presetData: TECH_CV_PRESET,
-    defaultColor: "#1e3a8a",
   },
   {
     id: "minimal-cv",
-    name: "Minimal CV",
-    name_az: "Minimal CV",
+    name: "Harvard Classic",
+    name_az: "Harvard Klassik",
+    category: "classic",
     description: "Clean single-column Harvard ATS standard format.",
     description_az: "Təmiz 1 sütunlu klassik Harvard ATS formatı.",
+    supportedAccents: ["#111827", "#1e3a8a", "#881337", "#2c2d30"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 100,
     presetData: TECH_CV_PRESET,
-    defaultColor: "#111827",
   },
   {
-    id: "creative-cv",
-    name: "Creative CV",
-    name_az: "Kreativ CV",
-    description: "Reactive Resume Onyx style with modern header badge.",
-    description_az: "Müasir başlıq və texnologiya kartları olan Onyx formatı.",
+    id: "modern-cv",
+    name: "Modern 2-Column",
+    name_az: "Müasir 2-Sütun",
+    category: "modern",
+    description: "2-Column layout with skill badges, strengths, and rating dots.",
+    description_az: "Bacarıq nişanları, güclü tərəflər və dil reytinqi olan 2 sütunlu format.",
+    supportedAccents: ["#0284c7", "#1e3a8a", "#059669", "#4338ca", "#d97706"],
+    defaultAccent: "#0284c7",
+    layoutType: "two-column",
+    supportsProfileImage: true,
+    atsScore: 95,
     presetData: MODERN_CV_PRESET,
-    defaultColor: "#1e3a8a",
+  },
+  {
+    id: "professional-cv",
+    name: "Executive Sidebar",
+    name_az: "Rəhbər Yan Sütun",
+    category: "classic",
+    description: "Executive split layout with dark sidebar, photo, and timeline.",
+    description_az: "Qaranlıq yan sütun, şəkil və zaman xətti olan rəhbər formatı.",
+    supportedAccents: ["#1e3a8a", "#059669", "#2c2d30", "#881337", "#0284c7"],
+    defaultAccent: "#1e3a8a",
+    layoutType: "sidebar",
+    supportsProfileImage: true,
+    atsScore: 92,
+    presetData: PROFESSIONAL_CV_PRESET,
+  },
+  {
+    id: "developer-cv",
+    name: "Developer Compact",
+    name_az: "Proqramçı Sıx",
+    category: "tech",
+    description: "Terminal-styled dense engineering layout with tech stack badges.",
+    description_az: "Terminal üslublu sıx mühəndislik formatı və texnoloji nişanlar.",
+    supportedAccents: ["#059669", "#0284c7", "#111827", "#4338ca"],
+    defaultAccent: "#059669",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 98,
+    presetData: TECH_CV_PRESET,
   },
   {
     id: "quotation-cv",
-    name: "Quotation",
+    name: "Quotation & Lead",
     name_az: "Sitat və Liderlik",
+    category: "creative",
     description: "Executive quotation hero block with 2-column asymmetric layout (Resumify).",
     description_az: "Böyük sitat bloku və 2 sütunlu asimmetrik liderlik formatı.",
+    supportedAccents: ["#d97706", "#1e3a8a", "#059669", "#881337"],
+    defaultAccent: "#d97706",
+    layoutType: "two-column",
+    supportsProfileImage: true,
+    atsScore: 94,
     presetData: MODERN_CV_PRESET,
-    defaultColor: "#d97706",
+  },
+  {
+    id: "editorial-cv",
+    name: "Swiss Editorial",
+    name_az: "İsveçrə Redaksiyası",
+    category: "modern",
+    description: "High-typography modernist Swiss grid layout with disciplined hierarchy.",
+    description_az: "Yüksək tipoqrafiyalı İsveçrə modernist şəbəkə formatı.",
+    supportedAccents: ["#111827", "#1e3a8a", "#881337", "#0284c7"],
+    defaultAccent: "#111827",
+    layoutType: "two-column",
+    supportsProfileImage: false,
+    atsScore: 95,
+    presetData: MODERN_CV_PRESET,
+  },
+  {
+    id: "corporate-cv",
+    name: "Clean Corporate",
+    name_az: "Təmiz Korporativ",
+    category: "classic",
+    description: "Traditional executive divider structure with core competency grid.",
+    description_az: "Əsas bacarıqlar şəbəkəsi olan ənənəvi korporativ format.",
+    supportedAccents: ["#1e3a8a", "#111827", "#059669", "#881337"],
+    defaultAccent: "#1e3a8a",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 99,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "executive-cv",
+    name: "Moderncv Timeline",
+    name_az: "Moderncv Zaman Xətti",
+    category: "classic",
+    description: "LaTeX moderncv layout with left date metadata columns.",
+    description_az: "Sol tərəfdə tarix sütunları olan LaTeX moderncv formatı.",
+    supportedAccents: ["#1e3a8a", "#0284c7", "#111827", "#059669"],
+    defaultAccent: "#1e3a8a",
+    layoutType: "two-column",
+    supportsProfileImage: false,
+    atsScore: 96,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "creative-cv",
+    name: "Onyx Creative",
+    name_az: "Onyx Kreativ",
+    category: "creative",
+    description: "Reactive Resume Onyx style with bold colored header banner.",
+    description_az: "Müasir rəngli başlıq və texnologiya kartları olan Onyx formatı.",
+    supportedAccents: ["#1e3a8a", "#4338ca", "#059669", "#d97706"],
+    defaultAccent: "#1e3a8a",
+    layoutType: "banner",
+    supportsProfileImage: true,
+    atsScore: 90,
+    presetData: MODERN_CV_PRESET,
   },
   {
     id: "nordic-cv",
-    name: "Nordic CV",
-    name_az: "Nordik CV",
+    name: "Nordic Soft Banner",
+    name_az: "Nordik Pastel",
+    category: "creative",
     description: "Pastel header banner with career quote & 2-column split.",
     description_az: "Pastel göy başlıq zolağı və 2 sütunlu zərif format.",
+    supportedAccents: ["#3b82f6", "#0284c7", "#059669", "#4338ca"],
+    defaultAccent: "#3b82f6",
+    layoutType: "banner",
+    supportsProfileImage: true,
+    atsScore: 92,
     presetData: NORDIC_CV_PRESET,
-    defaultColor: "#3b82f6",
+  },
+  {
+    id: "compact-ats-cv",
+    name: "Compact Plain ATS",
+    name_az: "Sıx Sadə ATS",
+    category: "tech",
+    description: "Dense, plain-text parser compliant single-page format.",
+    description_az: "Maksimum sıx və avtomatlaşdırılmış oxucular üçün tam uyğun format.",
+    supportedAccents: ["#111827", "#1e3a8a", "#2c2d30"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 100,
+    presetData: TECH_CV_PRESET,
   },
   {
     id: "blank-cv",
-    name: "Clean Blank",
+    name: "Clean Canvas",
     name_az: "Təmiz Kətan",
+    category: "classic",
     description: "Fresh blank canvas to create your custom resume.",
     description_az: "Öz CV-nizi sıfırdan yaratmaq üçün təmiz kətan.",
+    supportedAccents: ["#111827", "#1e3a8a", "#0284c7"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 95,
     presetData: BLANK_CV_PRESET,
-    defaultColor: "#111827",
   },
 ];

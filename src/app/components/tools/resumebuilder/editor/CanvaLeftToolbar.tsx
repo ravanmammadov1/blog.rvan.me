@@ -1,18 +1,17 @@
 import React from "react";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { useAuth } from "../../../../../hooks/useAuth";
 import {
   UNIFIED_TEMPLATES,
-  COLOR_OPTIONS,
   FONT_OPTIONS,
   TemplateId,
-  ResumeFont,
   ResumeDensity,
 } from "../resumeTypes";
 import {
   LayoutTemplate,
   Layers,
-  Camera,
   Sliders,
+  Camera,
   X,
   Briefcase,
   GraduationCap,
@@ -21,7 +20,9 @@ import {
   Users,
   Plus,
   Check,
-  RotateCcw,
+  Sparkles,
+  RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { useLanguage } from "../../../../../lib/i18n/LanguageContext";
 
@@ -45,6 +46,7 @@ export const CanvaLeftToolbar: React.FC = () => {
 
   const { language } = useLanguage();
   const isAz = language === "az";
+  const { randomizeAvatar, avatarSvgUri } = useAuth();
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,13 +60,29 @@ export const CanvaLeftToolbar: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSelectTemplate = (templateId: TemplateId, presetData?: any, defaultColor?: string) => {
+  const handleApplyCharacter = () => {
+    if (avatarSvgUri) {
+      updatePhoto(avatarSvgUri);
+    }
+  };
+
+  const handleRegenerateCharacter = () => {
+    randomizeAvatar();
+    if (avatarSvgUri) {
+      updatePhoto(avatarSvgUri);
+    }
+  };
+
+  const handleSelectTemplate = (templateId: TemplateId, defaultColor?: string) => {
     setTheme((prev) => ({
       ...prev,
       template: templateId,
       accentColor: defaultColor || prev.accentColor,
     }));
   };
+
+  // Find currently active template definition
+  const currentTemplateDef = UNIFIED_TEMPLATES.find((t) => t.id === theme.template) || UNIFIED_TEMPLATES[0];
 
   return (
     <div className="flex h-full print:hidden">
@@ -121,7 +139,7 @@ export const CanvaLeftToolbar: React.FC = () => {
 
       {/* ── EXPANDABLE SLIM DRAWER ── */}
       {activeDrawer && (
-        <div className="w-80 bg-neutral-900/98 backdrop-blur-2xl border-r border-white/10 p-5 overflow-y-auto z-20 space-y-5 text-foreground shadow-2xl animate-in slide-in-from-left duration-200">
+        <div className="w-80 bg-neutral-900/98 backdrop-blur-2xl border-r border-white/10 p-5 overflow-y-auto z-20 space-y-5 text-foreground shadow-2xl animate-in slide-in-from-left duration-200 custom-scrollbar">
           {/* Drawer Header */}
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
@@ -137,13 +155,13 @@ export const CanvaLeftToolbar: React.FC = () => {
             </button>
           </div>
 
-          {/* 1. TEMPLATES (Merged Themes & Presets) */}
+          {/* 1. TEMPLATES (12 distinct options with exact supported accents) */}
           {activeDrawer === "templates" && (
             <div className="space-y-3">
               <p className="text-[11px] text-muted-foreground">
                 {isAz
                   ? "İstənilən şablonu seçin. Mətnləriniz və dəyişiklikləriniz saxlanılır."
-                  : "Switch template layout anytime. Your content stays 100% intact."}
+                  : "Switch template layout anytime. Your entered content stays 100% intact."}
               </p>
               <div className="space-y-2">
                 {UNIFIED_TEMPLATES.map((t) => (
@@ -157,7 +175,7 @@ export const CanvaLeftToolbar: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <button
-                        onClick={() => handleSelectTemplate(t.id, t.presetData, t.defaultColor)}
+                        onClick={() => handleSelectTemplate(t.id, t.defaultAccent)}
                         className="text-xs font-bold text-foreground hover:text-primary transition-colors text-left cursor-pointer flex-1"
                       >
                         {isAz ? t.name_az : t.name}
@@ -169,24 +187,31 @@ export const CanvaLeftToolbar: React.FC = () => {
                     <p className="text-[10px] text-muted-foreground leading-tight">
                       {isAz ? t.description_az : t.description}
                     </p>
-                    <div className="flex gap-2 pt-1 border-t border-white/5">
+
+                    {/* Template Color Swatches */}
+                    <div className="flex items-center justify-between pt-1 border-t border-white/5">
+                      <div className="flex items-center gap-1.5">
+                        {t.supportedAccents.map((hex) => (
+                          <button
+                            key={hex}
+                            onClick={() => setTheme((prev) => ({ ...prev, template: t.id, accentColor: hex }))}
+                            className={`w-3.5 h-3.5 rounded-full border border-white/20 cursor-pointer ${
+                              theme.template === t.id && theme.accentColor === hex
+                                ? "ring-2 ring-primary ring-offset-1 ring-offset-neutral-900 scale-110"
+                                : "opacity-70 hover:opacity-100"
+                            }`}
+                            style={{ backgroundColor: hex }}
+                            title={hex}
+                          />
+                        ))}
+                      </div>
+
                       <button
                         type="button"
-                        onClick={() => handleSelectTemplate(t.id, t.presetData, t.defaultColor)}
-                        className="flex-1 py-1 rounded-lg bg-white/10 hover:bg-primary hover:text-black text-[10px] font-mono font-bold transition-all cursor-pointer text-center"
+                        onClick={() => handleSelectTemplate(t.id, t.defaultAccent)}
+                        className="px-2.5 py-0.5 rounded-lg bg-white/10 hover:bg-primary hover:text-black text-[10px] font-mono font-bold transition-all cursor-pointer"
                       >
-                        {isAz ? "Stili Tətbiq Et" : "Apply Style"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setData(t.presetData);
-                          handleSelectTemplate(t.id, t.presetData, t.defaultColor);
-                        }}
-                        className="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-[10px] font-mono text-muted-foreground hover:text-white transition-all cursor-pointer"
-                        title={isAz ? "Nümunə məlumatları yüklə" : "Load sample data"}
-                      >
-                        {isAz ? "Nümunə" : "Load Sample"}
+                        {isAz ? "Seç" : "Apply"}
                       </button>
                     </div>
                   </div>
@@ -195,13 +220,13 @@ export const CanvaLeftToolbar: React.FC = () => {
             </div>
           )}
 
-          {/* 2. SECTIONS & ELEMENTS */}
+          {/* 2. SECTIONS & PROFILE IMAGE */}
           {activeDrawer === "elements" && (
             <div className="space-y-4">
-              {/* Photo Management */}
-              <div className="p-3 rounded-2xl border border-white/10 bg-white/5 space-y-2">
+              {/* Profile Photo & Open Peeps Character */}
+              <div className="p-3.5 rounded-2xl border border-white/10 bg-white/5 space-y-2.5">
                 <div className="text-xs font-bold text-foreground flex items-center justify-between">
-                  <span>{isAz ? "Profil Şəkli" : "Profile Photo"}</span>
+                  <span>{isAz ? "Profil Şəkli / Avatar" : "Profile Photo / Character"}</span>
                   <button
                     type="button"
                     onClick={togglePhoto}
@@ -210,25 +235,58 @@ export const CanvaLeftToolbar: React.FC = () => {
                     {data.personalInfo.showPhoto ? (isAz ? "Gizlət" : "Hide") : (isAz ? "Göstər" : "Show")}
                   </button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="toolbar-photo-upload" className="flex-1 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-xs flex items-center justify-center gap-1 hover:bg-primary/90 transition-all cursor-pointer">
-                    <Camera size={12} />
-                    <span>{isAz ? "Şəkil Yüklə" : "Upload Photo"}</span>
-                    <input id="toolbar-photo-upload" name="toolbarPhotoUpload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handleApplyCharacter}
+                    className="py-1.5 px-2 rounded-xl bg-primary text-black font-mono font-bold text-[10px] flex items-center justify-center gap-1 hover:bg-primary/90 transition-all cursor-pointer"
+                  >
+                    <Sparkles size={11} />
+                    <span>Avatar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleRegenerateCharacter}
+                    className="py-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] flex items-center justify-center gap-1 transition-all cursor-pointer"
+                  >
+                    <RefreshCw size={11} />
+                    <span>Regen 🎲</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <label
+                    htmlFor="toolbar-photo-upload"
+                    className="flex-1 py-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] flex items-center justify-center gap-1 transition-all cursor-pointer"
+                  >
+                    <Camera size={11} />
+                    <span>{isAz ? "Foto Yüklə" : "Upload Photo"}</span>
+                    <input
+                      id="toolbar-photo-upload"
+                      name="toolbarPhotoUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
                   </label>
+
                   {data.personalInfo.photoUrl && (
                     <button
                       type="button"
                       onClick={removePhoto}
-                      className="px-2.5 py-1.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/20 text-xs font-mono cursor-pointer"
+                      className="px-2 py-1.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[10px] font-mono cursor-pointer"
+                      title="Remove"
                     >
-                      {isAz ? "Sil" : "Remove"}
+                      <Trash2 size={11} />
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Quick Section Adders */}
+              {/* Section Adders */}
               <div className="space-y-1.5">
                 <button
                   type="button"
@@ -236,7 +294,7 @@ export const CanvaLeftToolbar: React.FC = () => {
                   className="w-full text-left p-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 text-xs font-bold text-foreground flex items-center justify-between transition-all cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <Briefcase size={14} className="text-primary" /> {isAz ? "İş Təcrübəsi Əlavə Et" : "Add Work Experience"}
+                    <Briefcase size={14} className="text-primary" /> {isAz ? "İş Təcrübəsi Əlavə Et" : "Add Experience"}
                   </span>
                   <Plus size={12} className="text-muted-foreground" />
                 </button>
@@ -291,23 +349,23 @@ export const CanvaLeftToolbar: React.FC = () => {
           {/* 3. STYLES & TYPOGRAPHY */}
           {activeDrawer === "styles" && (
             <div className="space-y-4 text-xs font-mono">
-              {/* Accent Color */}
+              {/* Accent Color from Supported Accents */}
               <div className="space-y-2">
                 <label className="text-[11px] font-bold text-muted-foreground uppercase">
-                  {isAz ? "Əsas Rəng" : "Accent Theme Color"}
+                  {isAz ? "Əsas Rəng (Şablon Üçün)" : "Template Accent Color"}
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {COLOR_OPTIONS.map((c) => (
+                  {currentTemplateDef.supportedAccents.map((hex) => (
                     <button
-                      key={c.hex}
-                      onClick={() => setTheme((prev) => ({ ...prev, accentColor: c.hex }))}
+                      key={hex}
+                      onClick={() => setTheme((prev) => ({ ...prev, accentColor: hex }))}
                       className={`h-7 w-7 rounded-xl transition-all cursor-pointer ${
-                        theme.accentColor === c.hex
+                        theme.accentColor === hex
                           ? "ring-2 ring-white ring-offset-2 ring-offset-neutral-900 scale-110"
                           : "opacity-75 hover:opacity-100"
                       }`}
-                      style={{ backgroundColor: c.hex }}
-                      title={c.label}
+                      style={{ backgroundColor: hex }}
+                      title={hex}
                     />
                   ))}
                 </div>

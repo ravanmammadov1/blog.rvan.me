@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useResumeEditor } from "../context/ResumeEditorContext";
-import { Camera, Trash2, User } from "lucide-react";
+import { useAuth } from "../../../../../hooks/useAuth";
+import { Camera, Trash2, User, Sparkles } from "lucide-react";
 
 interface CanvasPhotoProps {
   className?: string;
@@ -14,6 +15,7 @@ export const CanvasPhoto: React.FC<CanvasPhotoProps> = ({
   shape = "circle",
 }) => {
   const { data, updatePhoto, removePhoto, selectedElement, selectElement } = useResumeEditor();
+  const { randomizeAvatar, avatarSvgUri } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isSelected = selectedElement?.id === "profile-photo";
 
@@ -30,6 +32,14 @@ export const CanvasPhoto: React.FC<CanvasPhotoProps> = ({
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleRandomizeCharacter = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    randomizeAvatar();
+    if (avatarSvgUri) {
+      updatePhoto(avatarSvgUri);
+    }
   };
 
   const getShapeClass = () => {
@@ -76,18 +86,27 @@ export const CanvasPhoto: React.FC<CanvasPhotoProps> = ({
         </div>
       </div>
 
-      {/* Small Contextual Floating Toolbar on Click / Selection */}
+      {/* Floating Action Toolbar on Selection */}
       {isSelected && (
-        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-neutral-900 border border-white/20 p-1 rounded-xl shadow-2xl z-40 text-xs font-mono text-white print:hidden whitespace-nowrap animate-in fade-in zoom-in-95">
+        <div className="absolute -bottom-11 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-neutral-900 border border-white/20 p-1 rounded-xl shadow-2xl z-40 text-xs font-mono text-white print:hidden whitespace-nowrap animate-in fade-in zoom-in-95">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               fileInputRef.current?.click();
             }}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-all cursor-pointer"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold transition-all cursor-pointer"
+            title="Upload real photo"
           >
-            <Camera size={11} /> Replace
+            <Camera size={11} /> Photo
+          </button>
+          <button
+            type="button"
+            onClick={handleRandomizeCharacter}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-all cursor-pointer"
+            title="Generate Character Avatar"
+          >
+            <Sparkles size={11} /> Avatar
           </button>
           <button
             type="button"
@@ -96,8 +115,9 @@ export const CanvasPhoto: React.FC<CanvasPhotoProps> = ({
               removePhoto();
             }}
             className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-red-500/20 text-red-400 transition-all cursor-pointer"
+            title="Remove"
           >
-            <Trash2 size={11} /> Remove
+            <Trash2 size={11} />
           </button>
         </div>
       )}
@@ -105,7 +125,7 @@ export const CanvasPhoto: React.FC<CanvasPhotoProps> = ({
       {/* Hidden File Input */}
       <input
         id="canvas-photo-file-input"
-        name="profilePhotoFile"
+        name="canvasPhotoFile"
         ref={fileInputRef}
         type="file"
         accept="image/*"

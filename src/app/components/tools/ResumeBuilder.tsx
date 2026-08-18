@@ -1,6 +1,4 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useSearchParams, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   ResumeEditorProvider,
   useResumeEditor,
@@ -17,11 +15,8 @@ import { FloatingFormatToolbar } from "./resumebuilder/editor/FloatingFormatTool
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
 import { TemplateGalleryView } from "./resumebuilder/templates/TemplateGalleryView";
-import {
-  saveUserCv,
-  getUserCvs,
-  generateCvSlug,
-} from "../../../lib/cvStorage";
+import { useAuth } from "../../../hooks/useAuth";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 import {
   Download,
@@ -32,20 +27,8 @@ import {
   ShieldCheck,
   MousePointerClick,
   Loader2,
-  Share2,
-  Cloud,
-  Check,
-  ExternalLink,
-  Sparkles,
   LayoutGrid,
-  BarChart3,
-  Eye,
-  Clock,
-  MousePointer,
-  X,
 } from "lucide-react";
-import { useLanguage } from "../../../lib/i18n/LanguageContext";
-import { useAuth } from "../../../hooks/useAuth";
 
 /**
  * Inner Canvas Editor Component
@@ -64,47 +47,25 @@ const ResumeEditorCanvasInner: React.FC<{
     setZoom,
     setData,
     setTheme,
+    updatePhoto,
   } = useResumeEditor();
 
-  const { language, getLocalizedPath } = useLanguage();
+  const { language } = useLanguage();
   const isAz = language === "az";
-  const { user, signIn } = useAuth();
-  const [searchParams] = useSearchParams();
+  const { avatarSvgUri } = useAuth();
 
   const [showAtsModal, setShowAtsModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [activeShareTab, setActiveShareTab] = useState<"link" | "analytics">("link");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [isSavingCloud, setIsSavingCloud] = useState(false);
-  const [savedSuccess, setSavedSuccess] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
 
-  // Cloud & Public Link State
-  const [publicSlug, setPublicSlug] = useState(() =>
-    generateCvSlug(data.personalInfo.fullName || "resume")
-  );
-  const [isPublic, setIsPublic] = useState(true);
-  const [isDiscoverable, setIsDiscoverable] = useState(false);
+  // Automatically assign character avatar if photo is missing and template supports it
+  useEffect(() => {
+    if (!data.personalInfo.photoUrl && avatarSvgUri) {
+      updatePhoto(avatarSvgUri);
+    }
+  }, [avatarSvgUri]);
 
   // ATS Score Calculation
   const atsResult = useMemo(() => calculateAtsScore(data), [data]);
-
-  // Load existing CV if query param cvId exists
-  useEffect(() => {
-    const cvId = searchParams.get("cvId");
-    if (cvId && user?.uid) {
-      getUserCvs(user.uid).then((records) => {
-        const found = records.find((r) => r.id === cvId);
-        if (found) {
-          setData(found.resumeData);
-          setTheme(found.theme);
-          if (found.publicSlug) setPublicSlug(found.publicSlug);
-          setIsPublic(Boolean(found.isPublic));
-          setIsDiscoverable(Boolean(found.isDiscoverable));
-        }
-      });
-    }
-  }, [searchParams, user?.uid, setData, setTheme]);
 
   // Direct PDF Download (< 300KB, visually 1:1, selectable text)
   const handleDownloadPdf = async () => {
@@ -123,50 +84,12 @@ const ResumeEditorCanvasInner: React.FC<{
     }
   };
 
-  // Save to Cloud & Generate Public Web Version
-  const handleSaveAndPublish = async () => {
-    setIsSavingCloud(true);
-    try {
-      const uid = user?.uid || "guest_user";
-      await saveUserCv(uid, data, theme, {
-        cvId: searchParams.get("cvId") || undefined,
-        title: data.personalInfo.fullName || "My Resume",
-        publicSlug,
-        isPublic,
-        isDiscoverable,
-        userDisplayName: user?.displayName || undefined,
-        userEmail: user?.email || undefined,
-        userPhoto: user?.photoURL || undefined,
-      });
-      setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 2500);
-    } catch (e) {
-      console.warn("Save CV:", e);
-      // Fallback local save
-      try {
-        localStorage.setItem(`rvan_cv_${publicSlug}`, JSON.stringify({ data, theme }));
-        setSavedSuccess(true);
-        setTimeout(() => setSavedSuccess(false), 2500);
-      } catch (err) {}
-    } finally {
-      setIsSavingCloud(false);
-    }
-  };
-
-  const handleCopyLink = () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://www.rvan.me";
-    const url = `${origin}${isAz ? "/az" : ""}/cv/${publicSlug}`;
-    navigator.clipboard.writeText(url);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
-
   return (
     <div className="w-full flex flex-col min-h-[90vh] bg-neutral-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
       {/* ── TOP APP HEADER BAR ── */}
       <header className="h-14 bg-neutral-900 border-b border-white/10 px-4 md:px-6 flex items-center justify-between gap-3 text-white shrink-0 z-40">
         {/* Left: Document Title, Switch Template & Undo/Redo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={onOpenGallery}
@@ -237,7 +160,7 @@ const ResumeEditorCanvasInner: React.FC<{
                 setTheme((prev) => ({
                   ...prev,
                   template: t.id,
-                  accentColor: t.defaultColor,
+                  accentColor: t.defaultAccent,
                 }))
               }
               className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
@@ -251,12 +174,12 @@ const ResumeEditorCanvasInner: React.FC<{
           ))}
         </div>
 
-        {/* Right: ATS Score, Public Web Link & Primary PDF Download */}
+        {/* Right: ATS Score & Primary PDF Download */}
         <div className="flex items-center gap-2.5">
           {/* ATS Score Indicator */}
           <button
             onClick={() => setShowAtsModal(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
             title={isAz ? "ATS Analizini Göstər" : "View ATS Compliance Audit"}
           >
             <ShieldCheck
@@ -272,18 +195,6 @@ const ResumeEditorCanvasInner: React.FC<{
               >
                 {atsResult.score}%
               </strong>
-            </span>
-          </button>
-
-          {/* Public Trackable Web CV & Analytics */}
-          <button
-            onClick={() => setShowShareModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/20 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer"
-            title="Create trackable link & view analytics"
-          >
-            <Share2 size={13} className="text-primary" />
-            <span className="hidden sm:inline">
-              {isAz ? "İZLƏMƏ & LİNK" : "TRACKABLE LINK"}
             </span>
           </button>
 
@@ -379,201 +290,6 @@ const ResumeEditorCanvasInner: React.FC<{
       {showAtsModal && (
         <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />
       )}
-
-      {/* ── PUBLIC TRACKABLE CV & AUDIENCE ANALYTICS MODAL ── */}
-      <AnimatePresence>
-        {showShareModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-lg rounded-3xl border border-white/20 bg-neutral-900 p-6 md:p-8 shadow-2xl space-y-6 text-foreground relative"
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setActiveShareTab("link")}
-                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
-                      activeShareTab === "link"
-                        ? "bg-primary text-black"
-                        : "text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    {isAz ? "Ağıllı İzləmə Linki" : "Trackable Smart Link"}
-                  </button>
-                  <button
-                    onClick={() => setActiveShareTab("analytics")}
-                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center gap-1.5 ${
-                      activeShareTab === "analytics"
-                        ? "bg-primary text-black"
-                        : "text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    <BarChart3 size={13} />
-                    <span>{isAz ? "Canlı Analitika" : "Live Analytics"}</span>
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setShowShareModal(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* TAB 1: TRACKABLE SMART LINK */}
-              {activeShareTab === "link" && (
-                <div className="space-y-5">
-                  <div className="space-y-2">
-                    <label htmlFor="resume-public-slug-input" className="text-xs font-mono text-muted-foreground block">
-                      {isAz ? "CV-niz üçün Unikal İzləmə URL-i:" : "Your Trackable Public URL:"}
-                    </label>
-                    <div className="flex items-center rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-xs font-mono text-foreground">
-                      <span className="text-muted-foreground select-none">https://www.rvan.me/cv/</span>
-                      <input
-                        id="resume-public-slug-input"
-                        name="publicSlug"
-                        type="text"
-                        value={publicSlug}
-                        onChange={(e) => setPublicSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ""))}
-                        className="flex-1 bg-transparent border-none focus:outline-none text-primary font-bold pl-1"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Discoverability Options */}
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-mono font-bold text-foreground">
-                          {isAz ? "Axtarış Sistemlərində Kəşf Edilmə" : "Search Engine Discoverability"}
-                        </span>
-                        <p className="text-[11px] text-muted-foreground">
-                          {isDiscoverable
-                            ? (isAz ? "CV Google və axtarış sistemlərində indekslənəcək." : "CV will be indexable by Google.")
-                            : (isAz ? "CV noindex qorunmasındadır (yalnız linki olanlar görəcək)." : "Protected with noindex (only people with link can view).")}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setIsDiscoverable(!isDiscoverable)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
-                          isDiscoverable
-                            ? "bg-emerald-500 text-black"
-                            : "bg-white/10 text-muted-foreground"
-                        }`}
-                      >
-                        {isDiscoverable ? "INDEXABLE" : "NOINDEX"}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <button
-                      onClick={handleCopyLink}
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/20 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
-                    >
-                      {copiedLink ? <Check size={13} className="text-emerald-400" /> : <Share2 size={13} />}
-                      <span>{copiedLink ? (isAz ? "KOPYALANDI" : "COPIED") : (isAz ? "LİNKİ KOPYALA" : "COPY LINK")}</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <Link
-                        to={getLocalizedPath(`/cv/${publicSlug}`)}
-                        target="_blank"
-                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono font-bold text-foreground hover:bg-white/20 transition-all cursor-pointer"
-                      >
-                        <span>{isAz ? "BAX" : "VIEW"}</span>
-                        <ExternalLink size={13} />
-                      </Link>
-
-                      <button
-                        onClick={handleSaveAndPublish}
-                        disabled={isSavingCloud}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-black font-mono font-extrabold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-70 shadow-md shadow-primary/20"
-                      >
-                        {isSavingCloud ? (
-                          <Loader2 size={13} className="animate-spin" />
-                        ) : savedSuccess ? (
-                          <Check size={13} className="text-black" />
-                        ) : (
-                          <Cloud size={13} />
-                        )}
-                        <span>
-                          {isSavingCloud
-                            ? isAz
-                              ? "YADDA SAXLANILIR..."
-                              : "SAVING..."
-                            : savedSuccess
-                            ? isAz
-                              ? "YADDA SAXLANILDI!"
-                              : "SAVED!"
-                            : isAz
-                            ? "CANLI YAYIMLA"
-                            : "PUBLISH LINK"}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: LIVE AUDIENCE ANALYTICS */}
-              {activeShareTab === "analytics" && (
-                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-neutral-400 uppercase">
-                        {isAz ? "CV Statusu:" : "Resume Status:"}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-mono font-bold">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        {isAz ? "İzləmə Aktivdir" : "Tracking Active"}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 pt-2">
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
-                        <Eye size={16} className="text-primary mx-auto mb-1" />
-                        <span className="text-[10px] text-neutral-400 block font-mono uppercase">{isAz ? "Baxış" : "Views"}</span>
-                        <span className="text-lg font-bold text-white font-mono">0</span>
-                      </div>
-
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
-                        <Clock size={16} className="text-primary mx-auto mb-1" />
-                        <span className="text-[10px] text-neutral-400 block font-mono uppercase">{isAz ? "Orta Vaxt" : "Dwell"}</span>
-                        <span className="text-lg font-bold text-white font-mono">0s</span>
-                      </div>
-
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
-                        <MousePointer size={16} className="text-primary mx-auto mb-1" />
-                        <span className="text-[10px] text-neutral-400 block font-mono uppercase">{isAz ? "Kliklər" : "Clicks"}</span>
-                        <span className="text-lg font-bold text-white font-mono">0</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 text-xs text-neutral-300 space-y-1">
-                    <p className="font-bold text-white">
-                      {isAz ? "🎯 Bu necə işləyir?" : "🎯 How Tracking Works:"}
-                    </p>
-                    <p className="text-[11px] text-neutral-400 leading-relaxed">
-                      {isAz
-                        ? "CV linkinizi şirkətlərə və ya HR-a göndərdiyiniz zaman səhifə açıldıqda, oxunma müddəti və kliklənən layihə linkləri real vaxt rejimində burada qeyd olunacaq."
-                        : "When recruiters open your trackable web CV link or scan your PDF QR code, reading dwell time and portfolio clicks will be logged in real time."}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

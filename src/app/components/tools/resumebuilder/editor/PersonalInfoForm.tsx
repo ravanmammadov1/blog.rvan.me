@@ -1,6 +1,7 @@
 import React from "react";
 import { ResumeData } from "../resumeTypes";
-import { User, Mail, Phone, MapPin, Globe, Linkedin, Github, Camera, Trash2, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../../../../../hooks/useAuth";
+import { User, Mail, Phone, MapPin, Globe, Linkedin, Github, Camera, Trash2, Eye, EyeOff, Sparkles, RefreshCw } from "lucide-react";
 
 interface Props {
   data: ResumeData;
@@ -9,6 +10,7 @@ interface Props {
 
 export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
   const info = data.personalInfo;
+  const { randomizeAvatar, avatarSvgUri } = useAuth();
 
   const handleChange = (field: keyof typeof info, val: any) => {
     onChange({
@@ -34,6 +36,21 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
     reader.readAsDataURL(file);
   };
 
+  const handleApplyCharacter = () => {
+    if (avatarSvgUri) {
+      handleChange("photoUrl", avatarSvgUri);
+      handleChange("showPhoto", true);
+    }
+  };
+
+  const handleRegenerateCharacter = () => {
+    randomizeAvatar();
+    if (avatarSvgUri) {
+      handleChange("photoUrl", avatarSvgUri);
+      handleChange("showPhoto", true);
+    }
+  };
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -57,7 +74,7 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </button>
       </div>
 
-      {/* Profile Photo Uploader */}
+      {/* Profile Photo & Character System */}
       {info.showPhoto && (
         <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col sm:flex-row items-center gap-4">
           <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-primary/40 bg-neutral-800 shrink-0 shadow-lg">
@@ -71,14 +88,33 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
           </div>
 
           <div className="space-y-1.5 flex-1 text-center sm:text-left">
-            <div className="text-xs font-bold text-foreground">Profile Headshot Photo</div>
+            <div className="text-xs font-bold text-foreground">Profile Image & Character Avatar</div>
             <p className="text-[11px] text-muted-foreground">
-              Upload a professional portrait image (JPG or PNG). Auto-scaled & cropped.
+              Use your customized Open Peeps character avatar or upload a real headshot photo.
             </p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
-              <label htmlFor="personal-photo-upload" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-[11px] hover:bg-primary/90 transition-all cursor-pointer">
+              <button
+                type="button"
+                onClick={handleApplyCharacter}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-[11px] hover:bg-primary/90 transition-all cursor-pointer"
+              >
+                <Sparkles size={12} />
+                <span>Use Character</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleRegenerateCharacter}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-[11px] transition-all cursor-pointer"
+                title="Create a new character style"
+              >
+                <RefreshCw size={11} />
+                <span>Regenerate 🎲</span>
+              </button>
+
+              <label htmlFor="personal-photo-upload" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-[11px] transition-all cursor-pointer">
                 <Camera size={12} />
-                <span>Upload New Photo</span>
+                <span>Upload Real Photo</span>
                 <input id="personal-photo-upload" name="personalPhotoUpload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
               </label>
 
