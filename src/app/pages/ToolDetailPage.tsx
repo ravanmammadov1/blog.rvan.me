@@ -14,6 +14,7 @@ const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
 const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator"));
 const ApcaContrastCalculator = lazy(() => import("../components/tools/contrast/ApcaContrastCalculator"));
 const PersuasionAnalyzer = lazy(() => import("../components/tools/persuasion/PersuasionAnalyzer"));
+const VisualMetaphorCanvas = lazy(() => import("../components/tools/metaphor/VisualMetaphorCanvas"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -65,6 +66,10 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
+      case "visual-metaphor-canvas":
+      case "metaphor-engine":
+      case "gestalt-canvas":
+        return <VisualMetaphorCanvas />;
       case "persuasion-analyzer":
         return <PersuasionAnalyzer />;
       case "contrast-matrix":

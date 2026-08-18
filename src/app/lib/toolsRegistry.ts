@@ -28,6 +28,22 @@ export const TOOL_CATEGORIES: { id: string; label: string; label_az: string }[] 
 
 export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
   {
+    id: "visual-metaphor-canvas",
+    slug: "visual-metaphor-canvas",
+    name: "Gestalt & Visual Metaphor Canvas",
+    name_az: "Gestalt və Görsel Metafora Kanvası",
+    category: "Creative",
+    description: "Synthesize abstract concepts into high-impact visual metaphors using Figure-Ground Inversion, Shared Contour, and Mental Closure. Export clean vector SVGs and editorial posters.",
+    description_az: "Rubinin Şəkil-Zəmin, Ortaq Kontur və Sürreal Birləşmə prinsipləri ilə iki fərqli anlayışı tək bir ikonik vizual metaforada birləşdirin. Təmiz SVG və editoryal posterlər ixrac edin.",
+    icon: "✨",
+    path: "/tools/visual-metaphor-canvas",
+    status: "live",
+    featured: true,
+    seoTitle: "Gestalt & Visual Metaphor Canvas — Cognitive Art Direction Studio",
+    seoDescription: "Synthesize abstract values into iconic visual metaphors using Gestalt figure-ground inversion, negative space masking, and semantic closure. Free in-browser vector generator.",
+    tags: ["visual-metaphor", "gestalt", "negative-space", "art-direction", "advertising", "vector-generator", "conceptual-design", "mental-closure"],
+  },
+  {
     id: "persuasion-analyzer",
     slug: "persuasion-analyzer",
     name: "Marketing & Persuasion Copy Analyzer",
