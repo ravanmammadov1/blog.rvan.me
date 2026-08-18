@@ -146,13 +146,6 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
-    path: "/tools/visual-metaphor-canvas",
-    title: "Gestalt & Visual Metaphor Canvas — Cognitive Art Direction Studio",
-    description: "Synthesize abstract values into iconic visual metaphors using Gestalt figure-ground inversion, negative space masking, and semantic closure. Free in-browser vector generator.",
-    type: "website",
-    lastmod: todayIso,
-  },
-  {
     path: "/tools/resume-builder",
     title: "Free ATS Resume & CV Builder — HR-Approved Vector PDF Generator",
     description: "Create professional ATS-compliant resumes with real-time preview, ATS score checker, and instant high-quality vector PDF download. Built for engineers, designers, and executives.",
