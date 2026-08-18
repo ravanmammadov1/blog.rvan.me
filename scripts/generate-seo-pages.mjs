@@ -617,8 +617,22 @@ async function fetchFontPages() {
       (b.stylesCount || 0) - (a.stylesCount || 0)
     );
 
-    const TOP_TIER_COUNT = 200;
+    const TOP_TIER_COUNT = 250;
     const tier1Set = new Set(sorted.slice(0, TOP_TIER_COUNT).map((f) => f.id));
+
+    // Guarantee all Search Console high-intent performers are indexable
+    const GSC_OPPORTUNITY_SLUGS = [
+      "general-sans", "syne", "plus-jakarta-sans", "plus-jakarta-display",
+      "montenegrin-gothic-one", "federo", "faustina", "karantina",
+      "open-sans", "luckiest-guy", "pacifico", "playfair-display",
+      "cormorant-garamond", "league-spartan", "inter", "roboto", "outfit"
+    ];
+    for (const f of catalog) {
+      const s = f.family.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      if (GSC_OPPORTUNITY_SLUGS.includes(s) || GSC_OPPORTUNITY_SLUGS.includes(f.id)) {
+        tier1Set.add(f.id);
+      }
+    }
 
     const enPages = [];
     const azPages = [];
@@ -633,16 +647,16 @@ async function fetchFontPages() {
       const isTier1 = tier1Set.has(font.id);
 
       // EN Font Page
+      const isVariable = font.isVariable;
+      const stylesCount = font.stylesCount || 1;
+      const category = font.category || "Sans Serif";
+
       enPages.push({
         path: `/fonts/${slug}`,
-        title: isTier1
-          ? `${font.family} Font Family — Free Specimen, Styles & Download | Rvan.me`
-          : `${font.family} Font Specimen — Free Download | Rvan.me`,
-        description: isTier1
-          ? `${font.family} is a high-utility ${font.category?.toLowerCase() || "typography"} typeface by ${font.designer || "Open Source Foundry"}. Features ${font.stylesCount} styles${font.isVariable ? ", variable axes" : ""}, interactive specimen testing, CSS @import snippet, and commercial-free SIL Open Font license.`
-          : font.description || `${font.family} is a ${font.category?.toLowerCase() || "typography"} typeface by ${font.designer}. Explore live specimen preview, styles, and download.`,
+        title: `${font.family} Font Family: Specimen, CSS & Free Download — Rvan.me`,
+        description: `Download ${font.family} font family for free (${font.license || "SIL Open Font License"}). Features ${stylesCount} style${stylesCount > 1 ? "s" : ""}${isVariable ? ", variable axes" : ""}, live specimen tester, Fontsource/Google Fonts CSS code snippets, and fluid clamp() scale calculator.`,
         type: "website",
-        lastmod: "2026-08-01",
+        lastmod: "2026-08-18",
         isTier1,
         noindex: !isTier1,
       });
@@ -650,14 +664,10 @@ async function fetchFontPages() {
       // AZ Font Page
       azPages.push({
         path: `/az/fonts/${slug}`,
-        title: isTier1
-          ? `${font.family} Şrift Ailəsi — Pulsuz Yükləmə və Canlı Test | Rvan.me`
-          : `${font.family} Şrift Testi — Pulsuz Yükləmə | Rvan.me`,
-        description: isTier1
-          ? `${font.family} — ${font.designer || "Open Source"} tərəfindən hazırlanmış ${font.category?.toLowerCase() || "mətn"} şrift ailəsi. ${font.stylesCount} üslub${font.isVariable ? ", dəyişən (variable) oxlar" : ""}, canlı test interfeysi və pulsuz lisenziya.`
-          : `${font.family} — ${font.category || "Dizayn"} şrift ailəsi. Canlı test və pulsuz yükləmə.`,
+        title: `${font.family} Şrift Ailəsi: Nümunə, CSS və Pulsuz Yüklə — Rvan.me`,
+        description: `${font.family} şrift ailəsini pulsuz yükləyin (${font.license || "SIL Açıq Şrift Lisenziyası"}). ${stylesCount} şrift çəkisi${isVariable ? ", variativ oxlar" : ""}, canlı nümayiş redaktoru, CSS kodları və elastik clamp() kalkulyatoru ilə.`,
         type: "website",
-        lastmod: "2026-08-01",
+        lastmod: "2026-08-18",
         isTier1,
         noindex: !isTier1,
       });
