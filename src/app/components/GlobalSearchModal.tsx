@@ -148,6 +148,8 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
             resultType: selected.type,
             targetPath: selected.path,
             hasQuery: Boolean(query.trim()),
+            queryLength: query.trim().length,
+            resultCount: filteredResults.length,
           });
           navigate(getLocalizedPath(selected.path));
           onClose();
@@ -216,6 +218,8 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
                       resultType: item.type,
                       targetPath: item.path,
                       hasQuery: Boolean(query.trim()),
+                      queryLength: query.trim().length,
+                      resultCount: filteredResults.length,
                     });
                     navigate(getLocalizedPath(item.path));
                     onClose();

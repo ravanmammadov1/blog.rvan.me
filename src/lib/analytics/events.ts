@@ -99,6 +99,8 @@ export function trackToolUsage(
 
 /**
  * Tracks global ecosystem search discovery actions (Cmd+K).
+ * Strict Privacy: Never stores raw user-entered query strings.
+ * Only collects aggregate anonymous signals: queryLength, resultCount, hasQuery.
  */
 export function trackSearchDiscovery(
   action: "search_opened" | "result_selected",
@@ -106,6 +108,8 @@ export function trackSearchDiscovery(
     resultType?: "ARTICLE" | "TOOL" | "TOPIC" | "RESOURCE";
     targetPath?: string;
     hasQuery?: boolean;
+    queryLength?: number;
+    resultCount?: number;
   } = {}
 ): void {
   trackEvent({
@@ -113,7 +117,13 @@ export function trackSearchDiscovery(
     category: "search_discovery",
     action: action,
     label: metadata.resultType || "search",
-    metadata,
+    metadata: {
+      has_query: Boolean(metadata.hasQuery),
+      query_length: metadata.queryLength ?? 0,
+      result_count: metadata.resultCount ?? 0,
+      target_path: metadata.targetPath || "",
+      result_type: metadata.resultType || "",
+    },
   });
 }
 
