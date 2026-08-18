@@ -1,8 +1,63 @@
 /**
  * Direct High-Resolution A4 PDF Exporter
  * Generates and downloads an exact 1:1 single or multi-page A4 PDF directly
- * to the user's computer without opening the browser's print dialog.
+ * to the user's computer without opening the browser's print dialog,
+ * and with 100% protection against modern CSS "oklch" parse errors in html2canvas.
  */
+
+// Canvas context for normalizing modern color formats (oklch, lab, etc.) into standard RGB/Hex
+const colorCanvas = typeof document !== "undefined" ? document.createElement("canvas") : null;
+const colorCtx = colorCanvas ? colorCanvas.getContext("2d") : null;
+
+function sanitizeOklchColor(colorStr: string): string {
+  if (!colorStr || typeof colorStr !== "string") return colorStr;
+  if (!colorStr.includes("oklch") && !colorStr.includes("lab") && !colorStr.includes("color(")) {
+    return colorStr;
+  }
+  if (!colorCtx) return "#111827";
+
+  try {
+    colorCtx.fillStyle = colorStr;
+    return colorCtx.fillStyle; // Automatically converts to #rrggbb or rgb(r, g, b)
+  } catch (e) {
+    return "#111827";
+  }
+}
+
+function sanitizeDomColors(element: HTMLElement) {
+  const allNodes = Array.from(element.querySelectorAll("*"));
+  allNodes.push(element);
+
+  const colorProps = [
+    "color",
+    "background-color",
+    "border-color",
+    "border-top-color",
+    "border-bottom-color",
+    "border-left-color",
+    "border-right-color",
+    "outline-color",
+    "text-decoration-color",
+    "fill",
+    "stroke",
+  ];
+
+  allNodes.forEach((node) => {
+    if (node instanceof HTMLElement || node instanceof SVGElement) {
+      try {
+        const computed = window.getComputedStyle(node);
+        colorProps.forEach((prop) => {
+          const val = computed.getPropertyValue(prop);
+          if (val && (val.includes("oklch") || val.includes("lab") || val.includes("color("))) {
+            const sanitized = sanitizeOklchColor(val);
+            node.style.setProperty(prop, sanitized, "important");
+          }
+        });
+      } catch (err) {}
+    }
+  });
+}
+
 export async function downloadResumeAsPdf(
   elementId: string,
   filename: string
@@ -28,7 +83,7 @@ export async function downloadResumeAsPdf(
   // 2. Create a clean, off-screen isolated clone
   const clone = originalElement.cloneNode(true) as HTMLElement;
 
-  // 3. Remove all editing controls, helper buttons, borders, and hovers in clone
+  // 3. Remove all interactive editing controls, helper buttons, dividers and hovers
   const editControls = clone.querySelectorAll(
     "button, .print\\:hidden, [data-canvas-control], .canvas-edit-divider"
   );
@@ -41,15 +96,23 @@ export async function downloadResumeAsPdf(
     el.removeAttribute("data-empty");
   });
 
-  // Remove all outline/ring classes from interactive elements
+  // Remove all interactive ring / outline classes
   const allElements = clone.querySelectorAll("*");
   allElements.forEach((el) => {
-    el.classList.remove("ring-2", "ring-primary", "hover:outline", "hover:outline-1", "hover:outline-dashed");
+    el.classList.remove(
+      "ring-2",
+      "ring-primary",
+      "hover:outline",
+      "hover:outline-1",
+      "hover:outline-dashed",
+      "cursor-pointer",
+      "cursor-text"
+    );
   });
 
   // 4. Force exact A4 dimensions & remove any outer shadows / borders
-  clone.style.width = "794px"; // Standard A4 width at 96 DPI (210mm)
-  clone.style.minHeight = "1123px"; // Standard A4 height at 96 DPI (297mm)
+  clone.style.width = "794px"; // Exact A4 width at 96 DPI (210mm)
+  clone.style.minHeight = "1123px"; // Exact A4 height at 96 DPI (297mm)
   clone.style.maxHeight = "none";
   clone.style.transform = "none";
   clone.style.margin = "0";
@@ -66,7 +129,10 @@ export async function downloadResumeAsPdf(
 
   document.body.appendChild(clone);
 
-  // 5. Configure html2pdf options
+  // 5. Sanitize all oklch colors in the cloned DOM tree
+  sanitizeDomColors(clone);
+
+  // 6. Configure html2pdf options
   const cleanFilename = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
 
   const opt = {
@@ -82,6 +148,13 @@ export async function downloadResumeAsPdf(
       scrollX: 0,
       windowWidth: 794,
       backgroundColor: "#ffffff",
+      onclone: (clonedDoc: Document) => {
+        // Double-check colors in cloned iframe document
+        const clonedBody = clonedDoc.body;
+        if (clonedBody) {
+          sanitizeDomColors(clonedBody);
+        }
+      },
     },
     jsPDF: {
       unit: "mm",

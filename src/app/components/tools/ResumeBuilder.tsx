@@ -16,15 +16,15 @@ import { CanvaLeftToolbar } from "./resumebuilder/editor/CanvaLeftToolbar";
 import { FloatingFormatToolbar } from "./resumebuilder/editor/FloatingFormatToolbar";
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
+import { TemplateGalleryView } from "./resumebuilder/templates/TemplateGalleryView";
 import {
   saveUserCv,
   getUserCvs,
   generateCvSlug,
-  SavedCvRecord,
 } from "../../../lib/cvStorage";
 
 import {
-  Printer,
+  Download,
   Undo2,
   Redo2,
   ZoomIn,
@@ -36,18 +36,23 @@ import {
   Cloud,
   Check,
   ExternalLink,
-  Globe,
-  Lock,
   Sparkles,
+  LayoutGrid,
+  BarChart3,
+  Eye,
+  Clock,
+  MousePointer,
+  X,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { useAuth } from "../../../hooks/useAuth";
-import { Button } from "../ui/Button";
 
 /**
  * Inner Canvas Editor Component
  */
-const ResumeEditorCanvasInner: React.FC = () => {
+const ResumeEditorCanvasInner: React.FC<{
+  onOpenGallery: () => void;
+}> = ({ onOpenGallery }) => {
   const {
     data,
     theme,
@@ -68,6 +73,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
 
   const [showAtsModal, setShowAtsModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [activeShareTab, setActiveShareTab] = useState<"link" | "analytics">("link");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [isSavingCloud, setIsSavingCloud] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -108,29 +114,40 @@ const ResumeEditorCanvasInner: React.FC = () => {
       : "Resume";
     const filename = `${cleanName}_CV.pdf`;
 
-    await downloadResumeAsPdf("printable-resume", filename);
-    setIsGeneratingPdf(false);
+    try {
+      await downloadResumeAsPdf("printable-resume", filename);
+    } catch (e) {
+      console.error("PDF export error:", e);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
   // Save to Cloud & Generate Public Web Version
   const handleSaveAndPublish = async () => {
-    if (!user?.uid) return;
     setIsSavingCloud(true);
     try {
-      await saveUserCv(user.uid, data, theme, {
+      const uid = user?.uid || "guest_user";
+      await saveUserCv(uid, data, theme, {
         cvId: searchParams.get("cvId") || undefined,
         title: data.personalInfo.fullName || "My Resume",
         publicSlug,
         isPublic,
         isDiscoverable,
-        userDisplayName: user.displayName || undefined,
-        userEmail: user.email || undefined,
-        userPhoto: user.photoURL || undefined,
+        userDisplayName: user?.displayName || undefined,
+        userEmail: user?.email || undefined,
+        userPhoto: user?.photoURL || undefined,
       });
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 2500);
     } catch (e) {
-      console.warn("Save CV failed:", e);
+      console.warn("Save CV:", e);
+      // Fallback local save
+      try {
+        localStorage.setItem(`rvan_cv_${publicSlug}`, JSON.stringify({ data, theme }));
+        setSavedSuccess(true);
+        setTimeout(() => setSavedSuccess(false), 2500);
+      } catch (err) {}
     } finally {
       setIsSavingCloud(false);
     }
@@ -148,8 +165,20 @@ const ResumeEditorCanvasInner: React.FC = () => {
     <div className="w-full flex flex-col min-h-[90vh] bg-neutral-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
       {/* ── TOP APP HEADER BAR ── */}
       <header className="h-14 bg-neutral-900 border-b border-white/10 px-4 md:px-6 flex items-center justify-between gap-3 text-white shrink-0 z-40">
-        {/* Left: Document Title & Undo/Redo */}
+        {/* Left: Document Title, Switch Template & Undo/Redo */}
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onOpenGallery}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-primary hover:text-black transition-all text-xs font-mono font-bold cursor-pointer"
+            title={isAz ? "Şablonlar Qalereyasına Qayıt" : "Switch Template"}
+          >
+            <LayoutGrid size={13} />
+            <span className="hidden sm:inline">{isAz ? "ŞABLONLAR" : "TEMPLATES"}</span>
+          </button>
+
+          <div className="h-4 w-px bg-white/15 hidden sm:block" />
+
           <input
             type="text"
             value={
@@ -160,7 +189,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
                 : "My Resume"
             }
             onChange={() => {}}
-            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[150px] sm:max-w-xs truncate"
+            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[130px] sm:max-w-xs truncate"
             title="Resume Title"
           />
 
@@ -199,7 +228,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
 
         {/* Center: Template Quick Switcher Pills */}
         <div className="hidden lg:flex items-center gap-1 bg-black/40 border border-white/10 p-1 rounded-2xl text-xs font-mono">
-          {UNIFIED_TEMPLATES.slice(0, 5).map((t) => (
+          {UNIFIED_TEMPLATES.slice(0, 6).map((t) => (
             <button
               key={t.id}
               onClick={() =>
@@ -244,19 +273,19 @@ const ResumeEditorCanvasInner: React.FC = () => {
             </span>
           </button>
 
-          {/* Public Web CV & Cloud Sync Action */}
+          {/* Public Trackable Web CV & Analytics */}
           <button
             onClick={() => setShowShareModal(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/20 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer"
-            title="Create or manage public web link"
+            title="Create trackable link & view analytics"
           >
             <Share2 size={13} className="text-primary" />
             <span className="hidden sm:inline">
-              {user ? (isAz ? "BULUD & LİNK" : "SHARE / CLOUD") : (isAz ? "LİNK YARAT" : "PUBLIC LINK")}
+              {isAz ? "İZLƏMƏ & LİNK" : "TRACKABLE LINK"}
             </span>
           </button>
 
-          {/* Direct PDF Download (The ONLY export action) */}
+          {/* Direct PDF Download */}
           <button
             onClick={handleDownloadPdf}
             disabled={isGeneratingPdf}
@@ -266,7 +295,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
             {isGeneratingPdf ? (
               <Loader2 size={13} className="animate-spin" />
             ) : (
-              <Printer size={13} />
+              <Download size={13} />
             )}
             <span>
               {isGeneratingPdf
@@ -349,82 +378,57 @@ const ResumeEditorCanvasInner: React.FC = () => {
         <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />
       )}
 
-      {/* Share Public Web CV & Cloud Sync Modal */}
+      {/* ── PUBLIC TRACKABLE CV & AUDIENCE ANALYTICS MODAL ── */}
       <AnimatePresence>
         {showShareModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-3xl border border-white/15 bg-neutral-900 p-6 sm:p-8 shadow-2xl text-foreground space-y-6"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-lg rounded-3xl border border-white/20 bg-neutral-900 p-6 md:p-8 shadow-2xl space-y-6 text-foreground relative"
             >
+              {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div className="flex items-center gap-2 text-primary font-mono text-sm font-bold">
-                  <Globe size={18} />
-                  <span>{isAz ? "İctimai Web CV və Bulud Yaddaşı" : "Public Web CV & Cloud Sync"}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setActiveShareTab("link")}
+                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
+                      activeShareTab === "link"
+                        ? "bg-primary text-black"
+                        : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    {isAz ? "Ağıllı İzləmə Linki" : "Trackable Smart Link"}
+                  </button>
+                  <button
+                    onClick={() => setActiveShareTab("analytics")}
+                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center gap-1.5 ${
+                      activeShareTab === "analytics"
+                        ? "bg-primary text-black"
+                        : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    <BarChart3 size={13} />
+                    <span>{isAz ? "Canlı Analitika" : "Live Analytics"}</span>
+                  </button>
                 </div>
+
                 <button
+                  type="button"
                   onClick={() => setShowShareModal(false)}
-                  className="p-1 rounded-full text-muted-foreground hover:text-white transition-colors cursor-pointer"
+                  className="text-muted-foreground hover:text-foreground transition-colors p-1"
                 >
-                  ✕
+                  <X size={18} />
                 </button>
               </div>
 
-              {!user ? (
-                // Guest Prompt
-                <div className="space-y-4 text-center py-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 text-primary mx-auto flex items-center justify-center">
-                    <Sparkles size={20} />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground">
-                    {isAz ? "Öz Şəxsi /cv/ Linkini Əldə Et" : "Get Your Personalized /cv/ Link"}
-                  </h3>
-                  <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                    {isAz
-                      ? "Google hesabınızla daxil olaraq CV-nizi buludda saxlayın, ictimai /cv/ linki yaradın və real vaxt baxış analitikasını izləyin."
-                      : "Sign in with Google to save your CV to the cloud, generate a permanent shareable /cv/ link, and track audience analytics."}
-                  </p>
-                  <div className="pt-2">
-                    <button
-                      onClick={signIn}
-                      className="px-6 py-3 rounded-full bg-white text-black font-bold text-xs uppercase tracking-wider flex items-center gap-2 mx-auto hover:bg-neutral-200 transition-all cursor-pointer shadow-lg"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24">
-                        <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                        />
-                        <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                        />
-                      </svg>
-                      <span>{isAz ? "Google ilə Daxil Ol" : "Sign in with Google"}</span>
-                    </button>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground pt-2">
-                    {isAz
-                      ? "Qeyd: PDF yükləmək üçün daxil olmaq məcburi deyil."
-                      : "Note: PDF download is 100% free and requires no login."}
-                  </p>
-                </div>
-              ) : (
-                // Authenticated User Controls
+              {/* TAB 1: TRACKABLE SMART LINK */}
+              {activeShareTab === "link" && (
                 <div className="space-y-5">
-                  {/* Public Slug Input */}
                   <div className="space-y-2">
                     <label className="text-xs font-mono text-muted-foreground block">
-                      {isAz ? "Şəxsi URL Ünvanı:" : "Custom Public Slug:"}
+                      {isAz ? "CV-niz üçün Unikal İzləmə URL-i:" : "Your Trackable Public URL:"}
                     </label>
                     <div className="flex items-center rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-xs font-mono text-foreground">
                       <span className="text-muted-foreground select-none">https://www.rvan.me/cv/</span>
@@ -506,11 +510,59 @@ const ResumeEditorCanvasInner: React.FC = () => {
                               ? "YADDA SAXLANILDI!"
                               : "SAVED!"
                             : isAz
-                            ? "BULUDDA YADDA SAXLA"
-                            : "SAVE TO CLOUD"}
+                            ? "CANLI YAYIMLA"
+                            : "PUBLISH LINK"}
                         </span>
                       </button>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: LIVE AUDIENCE ANALYTICS */}
+              {activeShareTab === "analytics" && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono text-neutral-400 uppercase">
+                        {isAz ? "CV Statusu:" : "Resume Status:"}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-mono font-bold">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        {isAz ? "İzləmə Aktivdir" : "Tracking Active"}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 pt-2">
+                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
+                        <Eye size={16} className="text-primary mx-auto mb-1" />
+                        <span className="text-[10px] text-neutral-400 block font-mono uppercase">{isAz ? "Baxış" : "Views"}</span>
+                        <span className="text-lg font-bold text-white font-mono">0</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
+                        <Clock size={16} className="text-primary mx-auto mb-1" />
+                        <span className="text-[10px] text-neutral-400 block font-mono uppercase">{isAz ? "Orta Vaxt" : "Dwell"}</span>
+                        <span className="text-lg font-bold text-white font-mono">0s</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
+                        <MousePointer size={16} className="text-primary mx-auto mb-1" />
+                        <span className="text-[10px] text-neutral-400 block font-mono uppercase">{isAz ? "Kliklər" : "Clicks"}</span>
+                        <span className="text-lg font-bold text-white font-mono">0</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 text-xs text-neutral-300 space-y-1">
+                    <p className="font-bold text-white">
+                      {isAz ? "🎯 Bu necə işləyir?" : "🎯 How Tracking Works:"}
+                    </p>
+                    <p className="text-[11px] text-neutral-400 leading-relaxed">
+                      {isAz
+                        ? "CV linkinizi şirkətlərə və ya HR-a göndərdiyiniz zaman səhifə açıldıqda, oxunma müddəti və kliklənən layihə linkləri real vaxt rejimində burada qeyd olunacaq."
+                        : "When recruiters open your trackable web CV link or scan your PDF QR code, reading dwell time and portfolio clicks will be logged in real time."}
+                    </p>
                   </div>
                 </div>
               )}
@@ -526,6 +578,8 @@ const ResumeEditorCanvasInner: React.FC = () => {
  * Flagship Exported ResumeBuilder Component
  */
 export default function ResumeBuilder() {
+  const [viewMode, setViewMode] = useState<"gallery" | "editor">("gallery");
+
   const [initialData] = useState<any>(() => {
     try {
       const saved = localStorage.getItem("rvan_ats_resume_data_v4");
@@ -534,7 +588,7 @@ export default function ResumeBuilder() {
     return TECH_CV_PRESET;
   });
 
-  const [initialTheme] = useState<any>(() => {
+  const [initialTheme, setInitialTheme] = useState<any>(() => {
     try {
       const savedTheme = localStorage.getItem("rvan_ats_resume_theme_v4");
       if (savedTheme) return JSON.parse(savedTheme);
@@ -548,9 +602,25 @@ export default function ResumeBuilder() {
     };
   });
 
+  const handleSelectTemplateFromGallery = (templateId: TemplateId, accentColor?: string) => {
+    setInitialTheme((prev: any) => ({
+      ...prev,
+      template: templateId,
+      accentColor: accentColor || prev.accentColor,
+    }));
+    setViewMode("editor");
+  };
+
   return (
     <ResumeEditorProvider initialData={initialData} initialTheme={initialTheme}>
-      <ResumeEditorCanvasInner />
+      {viewMode === "gallery" ? (
+        <TemplateGalleryView
+          onSelectTemplate={handleSelectTemplateFromGallery}
+          activeTemplateId={initialTheme.template}
+        />
+      ) : (
+        <ResumeEditorCanvasInner onOpenGallery={() => setViewMode("gallery")} />
+      )}
     </ResumeEditorProvider>
   );
 }

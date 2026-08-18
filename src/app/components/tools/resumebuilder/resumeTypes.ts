@@ -5,6 +5,7 @@ export type TemplateId =
   | "executive-cv"
   | "minimal-cv"
   | "creative-cv"
+  | "quotation-cv"
   | "nordic-cv"
   | "blank-cv";
 
@@ -583,6 +584,15 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     description_az: "Müasir başlıq və texnologiya kartları olan Onyx formatı.",
     presetData: MODERN_CV_PRESET,
     defaultColor: "#1e3a8a",
+  },
+  {
+    id: "quotation-cv",
+    name: "Quotation",
+    name_az: "Sitat və Liderlik",
+    description: "Executive quotation hero block with 2-column asymmetric layout (Resumify).",
+    description_az: "Böyük sitat bloku və 2 sütunlu asimmetrik liderlik formatı.",
+    presetData: MODERN_CV_PRESET,
+    defaultColor: "#d97706",
   },
   {
     id: "nordic-cv",

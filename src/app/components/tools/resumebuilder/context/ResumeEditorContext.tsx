@@ -91,6 +91,12 @@ export const ResumeEditorProvider: React.FC<ProviderProps> = ({ initialData, ini
   const [data, setDataInternal] = useState<ResumeData>(initialData);
   const [theme, setTheme] = useState<ResumeThemeConfig>(initialTheme);
 
+  useEffect(() => {
+    if (initialTheme) {
+      setTheme(initialTheme);
+    }
+  }, [initialTheme]);
+
   // Undo / Redo Stacks
   const [history, setHistory] = useState<ResumeData[]>([initialData]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);

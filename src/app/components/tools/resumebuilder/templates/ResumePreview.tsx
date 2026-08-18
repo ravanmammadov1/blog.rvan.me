@@ -7,6 +7,7 @@ import { ModerncvTemplate } from "./ModerncvTemplate";
 import { OnyxTemplate } from "./OnyxTemplate";
 import { SoftBannerTemplate } from "./SoftBannerTemplate";
 import { ClassicHarvardTemplate } from "./ClassicHarvardTemplate";
+import { QuotationTemplate } from "./QuotationTemplate";
 
 interface ResumePreviewProps {
   data: ResumeData;
@@ -29,6 +30,8 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
   const renderTemplate = () => {
     switch (theme.template) {
+      case "quotation-cv":
+        return <QuotationTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "modern-cv":
         return <Modern2ColTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "professional-cv":
@@ -85,6 +88,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
           fontFamily: getFontFamily(),
           minHeight: "1050px",
           boxSizing: "border-box",
+          ["--resume-accent" as any]: theme.accentColor || "#111827",
         }}
       >
         {renderTemplate()}
