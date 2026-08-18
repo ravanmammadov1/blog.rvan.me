@@ -11,6 +11,7 @@ import PersuasionDimensionCards from "./PersuasionDimensionCards";
 import PersuasionSuggestions from "./PersuasionSuggestions";
 import PersuasionEditorialGuide from "./PersuasionEditorialGuide";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
+import { trackToolUsage } from "../../../../lib/analytics/events";
 
 export default function PersuasionAnalyzer() {
   const { language } = useLanguage();
@@ -26,9 +27,18 @@ export default function PersuasionAnalyzer() {
     [inputText, copyType]
   );
 
+  const handleCopyTypeChange = (type: CopyType) => {
+    setCopyType(type);
+    trackToolUsage("persuasion-analyzer", "mode_switched", { mode: type });
+  };
+
   const handleSelectPreset = (preset: PersuasionPreset) => {
     setCopyType(preset.type);
     setInputText(preset.text);
+    trackToolUsage("persuasion-analyzer", "preset_loaded", {
+      mode: preset.type,
+      score_tier: preset.expectedScore >= 80 ? "high" : preset.expectedScore >= 60 ? "medium" : "low",
+    });
   };
 
   const handleClear = () => {
@@ -43,7 +53,7 @@ export default function PersuasionAnalyzer() {
         inputText={inputText}
         wordCount={analysis.wordCount}
         charCount={analysis.charCount}
-        onCopyTypeChange={setCopyType}
+        onCopyTypeChange={handleCopyTypeChange}
         onInputChange={setInputText}
         onSelectPreset={handleSelectPreset}
         onClear={handleClear}

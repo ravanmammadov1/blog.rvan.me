@@ -11,6 +11,7 @@ import TypeScaleCodeExporter from "./TypeScaleCodeExporter";
 import TypeScaleEditorialGuide from "./TypeScaleEditorialGuide";
 import { Sliders, Eye, Code, Gauge, Sparkles } from "lucide-react";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
+import { trackToolUsage } from "../../../../lib/analytics/events";
 
 export default function TypographyScaleCalculator() {
   const { language } = useLanguage();
@@ -22,12 +23,19 @@ export default function TypographyScaleCalculator() {
   const result = useMemo(() => calculateTypeScale(config), [config]);
 
   const handleConfigChange = (updated: Partial<TypeScaleConfig>) => {
-    setConfig((prev) => ({ ...prev, ...updated }));
+    setConfig((prev) => {
+      const next = { ...prev, ...updated };
+      if (updated.ratioKey && updated.ratioKey !== prev.ratioKey) {
+        trackToolUsage("typography-scale", "ratio_selected", { ratio: updated.ratioKey });
+      }
+      return next;
+    });
   };
 
   const handleReset = () => {
     setConfig(DEFAULT_TYPE_CONFIG);
     setSimulatedWidth(1024);
+    trackToolUsage("typography-scale", "reset_defaults");
   };
 
   return (

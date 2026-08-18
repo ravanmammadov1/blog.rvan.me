@@ -9,6 +9,7 @@ import ApcaCodeExporter from "./ApcaCodeExporter";
 import ApcaEditorialGuide from "./ApcaEditorialGuide";
 import { Grid, Layout, Layers, Code, Sparkles } from "lucide-react";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
+import { trackToolUsage } from "../../../../lib/analytics/events";
 
 type ViewTab = "matrix" | "specimen" | "tokens" | "code";
 
@@ -29,11 +30,18 @@ export default function ApcaContrastCalculator() {
     const temp = fgColor;
     setFgColor(bgColor);
     setBgColor(temp);
+    trackToolUsage("contrast-matrix", "polarity_swapped");
   };
 
   const handleSelectPreset = (preset: ContrastPreset) => {
     setFgColor(preset.fg);
     setBgColor(preset.bg);
+    trackToolUsage("contrast-matrix", "preset_selected", { name: preset.name });
+  };
+
+  const handleTabChange = (tab: ViewTab) => {
+    setActiveTab(tab);
+    trackToolUsage("contrast-matrix", "tab_switched", { tab });
   };
 
   return (
@@ -56,7 +64,7 @@ export default function ApcaContrastCalculator() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
           <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.02] p-1.5 backdrop-blur-md">
             <button
-              onClick={() => setActiveTab("matrix")}
+              onClick={() => handleTabChange("matrix")}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all mono ${
                 activeTab === "matrix"
                   ? "bg-primary text-black shadow-md"
@@ -68,7 +76,7 @@ export default function ApcaContrastCalculator() {
             </button>
 
             <button
-              onClick={() => setActiveTab("specimen")}
+              onClick={() => handleTabChange("specimen")}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all mono ${
                 activeTab === "specimen"
                   ? "bg-primary text-black shadow-md"
@@ -80,7 +88,7 @@ export default function ApcaContrastCalculator() {
             </button>
 
             <button
-              onClick={() => setActiveTab("tokens")}
+              onClick={() => handleTabChange("tokens")}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all mono ${
                 activeTab === "tokens"
                   ? "bg-primary text-black shadow-md"
@@ -92,7 +100,7 @@ export default function ApcaContrastCalculator() {
             </button>
 
             <button
-              onClick={() => setActiveTab("code")}
+              onClick={() => handleTabChange("code")}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all mono ${
                 activeTab === "code"
                   ? "bg-primary text-black shadow-md"

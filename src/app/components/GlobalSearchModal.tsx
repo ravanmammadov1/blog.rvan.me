@@ -5,6 +5,7 @@ import { INTERACTIVE_TOOLS } from "../lib/toolsRegistry";
 import { TOPIC_HUBS } from "../../lib/topicHubs";
 import { MASTER_EDITORIAL_BLOGS } from "../../lib/editorialBlogRegistry";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { trackSearchDiscovery } from "../../lib/analytics/events";
 
 interface SearchItem {
   id: string;
@@ -115,11 +116,12 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
       .slice(0, 10);
   }, [query, searchCorpus]);
 
-  // Focus input on open
+  // Focus input on open & track search opened
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
       setSelectedIndex(0);
+      trackSearchDiscovery("search_opened");
     } else {
       setQuery("");
     }
@@ -140,8 +142,14 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
         setSelectedIndex((prev) => (prev - 1 + filteredResults.length) % Math.max(1, filteredResults.length));
       } else if (e.key === "Enter") {
         e.preventDefault();
-        if (filteredResults[selectedIndex]) {
-          navigate(getLocalizedPath(filteredResults[selectedIndex].path));
+        const selected = filteredResults[selectedIndex];
+        if (selected) {
+          trackSearchDiscovery("result_selected", {
+            resultType: selected.type,
+            targetPath: selected.path,
+            hasQuery: Boolean(query.trim()),
+          });
+          navigate(getLocalizedPath(selected.path));
           onClose();
         }
       }
@@ -149,7 +157,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, filteredResults, selectedIndex, navigate, getLocalizedPath, onClose]);
+  }, [isOpen, filteredResults, selectedIndex, navigate, getLocalizedPath, onClose, query]);
 
   if (!isOpen) return null;
 
@@ -204,6 +212,11 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
                 <button
                   key={item.id}
                   onClick={() => {
+                    trackSearchDiscovery("result_selected", {
+                      resultType: item.type,
+                      targetPath: item.path,
+                      hasQuery: Boolean(query.trim()),
+                    });
                     navigate(getLocalizedPath(item.path));
                     onClose();
                   }}

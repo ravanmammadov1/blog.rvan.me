@@ -1,7 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowUpRight, Sparkles, Wrench, Compass, BookOpen, Layers } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
+import { trackContentBridgeClick } from "../../../lib/analytics/events";
 
 export interface EcosystemBridgeProps {
   type: "tool" | "resource" | "article";
@@ -25,6 +26,7 @@ export default function EcosystemBridgeCard({
   className = "",
 }: EcosystemBridgeProps) {
   const { getLocalizedPath, language } = useLanguage();
+  const location = useLocation();
 
   const isAz = language === "az";
 
@@ -102,6 +104,9 @@ export default function EcosystemBridgeCard({
         <div className="shrink-0 pt-2 sm:pt-0">
           <Link
             to={localizedHref}
+            onClick={() => {
+              trackContentBridgeClick(location.pathname, href, type);
+            }}
             className={`group inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold tracking-wider mono uppercase transition-all duration-200 ${meta.buttonBg} shadow-md`}
           >
             <span>{resolvedCta}</span>
