@@ -10,17 +10,6 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
   };
 }
 
-function createImageBlock(url: string, alt: string, caption?: string) {
-  return {
-    _key: Math.random().toString(36).substring(7),
-    _type: "image",
-    asset: { _type: "reference", _ref: "image-manual" },
-    alt,
-    caption,
-    url,
-  };
-}
-
 export const ARTICLES_21_TO_30: BlogPost[] = [
   // 21. WHY MODERN WEBSITES LOOK THE SAME
   {
@@ -56,6 +45,18 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
       createBlock("3. A/B Testing and Cargo-Cult Conversion", "h3"),
       createBlock("When Stripe or Linear invents a striking new design pattern (like dark-mode command menus or glowing border strokes), metrics show it converts well. Within weeks, thousands of other startups copy the layout pixel-for-pixel, assuming the visual design was the magic variable rather than the product itself."),
     ],
+    body_az: [
+      createBlock("Müasir Vebsaytlar Niyə Bir-birinin Eynisi Görünür?", "h2"),
+      createBlock("Mərkəzə düzülmüş qalın sans-serif başlığı. Üzərində yanıb-sönən nöqtəsi olan zərif nişan. Bənövşəyi və ya mavi radial qradiyentli qaranlıq şüşə fon. Üç ədəd Bento Box kartı. 'Aylıq / İllik - 20% Qənaət' qiymət düyməsi və boz müştəri loqolarının karuseli."),
+      createBlock("Siz bu vebsaytı yüzlərlə fərqli startapda min dəfə görmüsünüz. İnternetin sonsuz yaradıcılıq kətanı niyə tək bir standart estetik şablona çevrildi?"),
+      createBlock("1. Mobil Ekran Məhdudiyyətləri", "h3"),
+      createBlock("2000-ci illərdə vebsaytlar geniş masaüstü monitorlar üçün eksperimental və sərbəst tərtibatla hazırlanırdı. Lakin 2016-cı ildə mobil trafik masaüstünü üstələyəndə dizaynerlər sərt fiziki reallığa uyğunlaşmağa məcbur oldular: 390 piksel enində şaquli şüşə ekran."),
+      createBlock("Dar mobil ekranda məlumatı erqonomik yerləşdirməyin yolları məhduddur: Başlıq → Əsas Mətn → Şəkil → Tək Sütunlu Kartlar → Footer. Yaradıcılıq qaçılmaz olaraq standart relslərə yönəldi."),
+      createBlock("2. Komponent Kitabxanaları Və Monomədəniyyət", "h3"),
+      createBlock("Tailwind CSS, shadcn/ui və Figma şablonları mühəndislik sürətini artırdı. Bir proqramçı artıq bir günə mükəmməl açılış səhifəsi yığa bilir. Lakin eyni dizayn tokenlərinin, eyni künc radiuslarının (`rounded-2xl`) və eyni şriftlərin (`Inter`, `Geist`) yan təsiri vizual eynilik oldu."),
+      createBlock("3. A/B Testləri Və Kor-təbii Təqlid", "h3"),
+      createBlock("Stripe və ya Linear yeni bir dizayn modeli tətbiq edəndə (məsələn, parıldayan haşiyələr), metrikalar yaxşı nəticə göstərir. Bir neçə həftə ərzində minlərlə startap həmin dizaynı piksel-piksel kopyalayır və uğurun sirrinin məhsulda deyil, vizual dizaynda olduğunu zənn edir."),
+    ],
   },
 
   // 22. HELVETICA & CORPORATE AMERICA
@@ -84,23 +85,36 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
       createBlock("Why Did Helvetica Become the Official Font of Corporate America?", "h2"),
       createBlock("In 1957, in the Haas Type Foundry in Münchenstein, Switzerland, designer Max Miedinger and foundry director Eduard Hoffmann set out to create a typeface that contained no intrinsic voice of its own. They sought pure optical balance: a letterform structure so clear, disciplined, and objective that it functioned like crystal-clear glass."),
       createBlock("They named it Neue Haas Grotesk, rechristened in 1960 as **Helvetica** (derived from *Helvetia*, the Latin designation for Switzerland). Within two decades, this humble Swiss neo-grotesque had conquered the corporate capitals of the Western world: American Airlines, Lufthansa, Target, Panasonic, Toyota, BMW, Jeep, and the entire signage network of the New York City Subway."),
-
       createBlock("1. The Post-War Crisis of Corporate Identity", "h3"),
       createBlock("During the 1960s economic boom, American conglomerates were rapidly transforming into global multi-divisional enterprises. They faced an unprecedented visual identity crisis: the fussy, decorative serif typefaces of the late Victorian era felt provincial, dusty, and sluggish."),
       createBlock("Helvetica delivered the ultimate post-war superpower: **Radical Institutional Neutrality**. Because Helvetica carried no historical baggage or religious ornament, it could represent an aerospace defense contractor, an international commercial airline, a pharmaceutical research lab, or a department store with identical administrative authority."),
-
       createBlock("2. The Philosophy of the Crystal Goblet & Massimo Vignelli", "h3"),
       createBlock("In her seminal 1930 essay *The Crystal Goblet*, typographer Beatrice Warde argued that great typography should be like clear crystal—allowing the reader to savor the vintage without being distracted by the container. Swiss Modernism turned this aesthetic philosophy into corporate orthodoxy."),
       createBlock("When Italian modernist master Massimo Vignelli and Bob Noorda produced the iconic 1970 *New York City Transit Authority Graphic Standards Manual*, they selected Helvetica for its uncompromising legibility in dark, high-motion transit tunnels. White Helvetica lettering against solid black baked-enamel panels brought rational, mathematical order to an overwhelming subterranean labyrinth."),
-
       createBlock("3. From Modernist Purity to Corporate Monotony", "h3"),
       createBlock("By the late 1980s, Helvetica's relentless ubiquity triggered intense creative backlash. Post-modern designers like David Carson and Stefan Sagmeister rejected its sterile corporate perfection in favor of grunge, raw textures, and expressive chaos."),
       createBlock("Yet in digital product architecture, the neo-grotesque foundation endures. Modern operating system fonts (Apple's San Francisco, Google's Roboto, Inter) are direct philosophical descendants of Miedinger's 1957 geometry, engineered for high-density legibility across pixel displays."),
-
       createBlock("4. When to Deploy Neo-Grotesque Neutrality", "h3"),
       createBlock("For modern interface designers and brand architects, the lesson of Helvetica is about contextual intentionality:"),
       createBlock("• High-Density Data Interfaces: Use neutral neo-grotesques when users must process complex analytics, financial ledgers, or technical code without typographic distraction."),
       createBlock("• Expressive Brand Identities: Avoid default neutrality when your brand's primary commercial asset is cultural distinctiveness, warmth, or artisanal craftsmanship."),
+    ],
+    body_az: [
+      createBlock("Helvetica Niyə Korporativ Amerikanın Rəsmi Şriftinə Çevrildi?", "h2"),
+      createBlock("1957-ci ildə İsveçrənin Haas şrift tökmə emalatxanasında dizayner Max Miedinger və direktor Eduard Hoffmann özünəməxsus səsi olmayan təmiz bir şrift yaratmaq qərarına gəldilər. Onlar saf optik balans axtarırdılar: şüşə kimi aydın, nizamlı və obyektiv hərf quruluşu."),
+      createBlock("Əvvəlcə Neue Haas Grotesk adlandırılan, 1960-cı ildə isə **Helvetica** (İsveçrənin latınca adı olan *Helvetia*-dan) olaraq yenidən adlandırılan bu şrift iki onillik ərzində qərb dünyasının korporativ mərkəzlərini fəth etdi: American Airlines, Lufthansa, Target, Panasonic, BMW və Nyu-York Metrosunun bütün işarə sistemi."),
+      createBlock("1. Müharibədən Sonrakı Korporativ Kimlik Böhranı", "h3"),
+      createBlock("1960-cı illərin iqtisadi yüksəlişi zamanı Amerika holdinqləri qlobal transmilli şirkətlərə çevrilirdi. Onlar vizual kimlik böhranı ilə üzləşmişdilər: Viktoriya dövrünün bəzəkli serif şriftləri köhnəlmiş və ləng görünürdü."),
+      createBlock("Helvetica müharibədən sonrakı ən böyük gücü təqdim etdi: **Radikal İnstitusional Neytrallıq**. Tarixi və ya dini ornamentlərdən azad olduğu üçün o, hərbi aerokosmik şirkəti də, beynəlxalq aviaşirkəti də, əczaçılıq laboratoriyasını da eyni inzibati nüfuzla təmsil edə bilirdi."),
+      createBlock("2. Büllur Qədəh Fəlsəfəsi Və Massimo Vignelli", "h3"),
+      createBlock("Tipoqraf Beatrice Warde 1930-cu il essesi *Büllur Qədəh*də qeyd edirdi ki, böyük tipoqrafiya şəffaf büllur kimi olmalıdır — oxucuya qabın özünə aludə olmadan şərabın dadını çıxarmağa imkan verməlidir."),
+      createBlock("İtalyan modernisti Massimo Vignelli 1970-ci ildə *Nyu-York Nəqliyyat İdarəsinin Qrafik Standartlar Kitabı*nı hazırlayarkən qaranlıq tunellərdə qüsursuz oxunaqlılığına görə Helvetica-nı seçdi. Qara emal panellər üzərindəki ağ Helvetica hərfləri yeraltı labirintə rasional riyazi nizam gətirdi."),
+      createBlock("3. Modernist Saflıqdan Korporativ Monotonluğa", "h3"),
+      createBlock("1980-ci illərin sonunda Helvetica-nın həddən artıq yayılması yaradıcı etirazlara səbəb oldu. David Carson və Stefan Sagmeister kimi post-modernistlər onun steril mükəmməlliyindən imtina edərək qranj və ekspressiv xaosu seçdilər."),
+      createBlock("Lakin rəqəmsal məhsul arxitekturasında neo-qrotesk bünövrəsi yaşayır. Müasir əməliyyat sistemi şriftləri (Apple-ın San Francisco, Google-ın Roboto, Inter) Miedinger-in 1957-ci il həndəsəsinin birbaşa fəlsəfi davamçılarıdır."),
+      createBlock("4. Neo-Qrotesk Neytrallığı Nə Vaxt İstifadə Edilməlidir?", "h3"),
+      createBlock("• Yüksək Sıxlıqlı Məlumat İnterfeysləri: İstifadəçilər analitika, maliyyə və ya kod emal edərkən tipoqrafik diqqət yayındırmasından qaçmaq üçün neytral neo-qrotesklərdən istifadə edin."),
+      createBlock("• Ekspressiv Brend Kimlikləri: Brendinizin əsas dəyəri mədəni fərqlilik, istilik və ya sənətkarlıq olduqda standart neytrallıqdan çəkinin."),
     ],
   },
 
@@ -128,14 +142,25 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
     tags: ["Pricing Strategy", "Client Negotiation", "Value Framing", "Consulting", "Sales Psychology"],
     body: [
       createBlock("Never Tell a Client Your Price Too Early: The Psychology of Value Framing", "h2"),
-      createBlock("A prospective client sends an email: *'Hi, we love your portfolio! How much do you charge for a full website redesign and brand identity?'*"),
-      createBlock("The inexperienced designer immediately replies: *'Our website redesigns start at $15,000.'*"),
-      createBlock("The client never replies. Why? Because the designer committed the cardinal sin of pricing psychology: **Anchoring a cost before establishing perceived value.**"),
+      createBlock("A prospective client sends an email: 'Hi, we love your portfolio! How much do you charge for a full website redesign and brand identity?'"),
+      createBlock("The inexperienced designer immediately replies: 'Our website redesigns start at $15,000.'"),
+      createBlock("The client never replies. Why? Because the designer committed the cardinal sin of pricing psychology: Anchoring a cost before establishing perceived value."),
       createBlock("1. Price in Isolation Is Always an Expense", "h3"),
       createBlock("When a number is quoted without context, the human brain automatically evaluates it against current bank account balances. '$15,000' sounds like a lot of money to take out of a company's treasury."),
       createBlock("However, if the designer first conducts a diagnostic discovery session and reveals that the client's current broken checkout flow is losing $600,000 in annual revenue, the cognitive context shifts completely. In that frame, a $15,000 investment that recovers $600,000 is not an expense—it is a 4,000% return on investment."),
       createBlock("2. The Diagnostic Doctor vs. The Order Taker", "h3"),
-      createBlock("Imagine walking into a surgeon's office and asking: *'How much for an operation?'* A professional doctor would never name a price without an examination, an MRI, and a diagnosis. Elite creative professionals operate as diagnostic authorities, uncovering the true business problem before ever prescribing a financial solution."),
+      createBlock("Imagine walking into a surgeon's office and asking: 'How much for an operation?' A professional doctor would never name a price without an examination, an MRI, and a diagnosis. Elite creative professionals operate as diagnostic authorities, uncovering the true business problem before ever prescribing a financial solution."),
+    ],
+    body_az: [
+      createBlock("Müştəriyə Qiyməti Heç Vaxt Tez Deməyin: Dəyər Çərçivəsi Psixologiyası", "h2"),
+      createBlock("Potensial müştəri e-poçt yazır: 'Salam, işlərinizi bəyəndik! Tam vebsayt yeniləməsi və brendinq üçün nə qədər qiymət tələb edirsiniz?'"),
+      createBlock("Təcrübəsiz dizayner dərhal cavab verir: 'Vebsayt layihələrimiz $15,000-dan başlayır.'"),
+      createBlock("Müştəri bir daha cavab yazmır. Səbəb? Çünki dizayner qiymət psixologiyasının ən böyük səhvini etdi: Dəyəri təsdiqləmədən əvvəl xərci lövbərlədi."),
+      createBlock("1. Təcrid Olunmuş Qiymət Həmişə Xərcdir", "h3"),
+      createBlock("Bir rəqəm kontekstsiz deyiləndə insan beyni onu dərhal bank hesabındakı pulla müqayisə edir. Şirkət büdcəsindən çıxacaq '$15,000' böyük pul kimi görünür."),
+      createBlock("Lakin dizayner əvvəlcə diaqnostik araşdırma aparsa və aşkar etsə ki, müştərinin hazırkı qüsurlu ödəniş səhifəsi ildə $600,000 gəlir itirir, kontekst dərhal dəyişir. Həmin çərçivədə $600,000 gəliri xilas edən $15,000-lıq investisiya xərc deyil, 4,000%-lik sərmayə gəliridir."),
+      createBlock("2. Diaqnostik Həkim və Sifariş Qəbul Edən", "h3"),
+      createBlock("Cərrahın yanına gedib 'Əməliyyat neçəyədir?' soruşduğunuzu təsəvvür edin. Peşəkar həkim müayinə və diaqnoz qoymadan heç vaxt qiymət deməz. Yüksək səviyyəli peşəkarlar da diaqnostik ekspert kimi çalışır — maliyyə həlli təklif etməzdən əvvəl əsas biznes problemini aşkar edirlər."),
     ],
   },
 
@@ -163,9 +188,8 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
     tags: ["Personalization", "Privacy Paradox", "AdTech", "Consumer Psychology", "Surveillance", "Product Design"],
     body: [
       createBlock("Why Hyper-Personalized Ads Feel Creepy: The Privacy Paradox in Product Design", "h2"),
-      createBlock("You casually discuss replacing your office desk chair over lunch with a coworker. Two hours later, your social feed serves an advertisement for the exact ergonomic lumbar support model you discussed. The immediate human reaction is visceral paranoia: *'Is my smartphone microphone listening to my private conversations?'*"),
+      createBlock("You casually discuss replacing your office desk chair over lunch with a coworker. Two hours later, your social feed serves an advertisement for the exact ergonomic lumbar support model you discussed. The immediate human reaction is visceral paranoia: 'Is my smartphone microphone listening to my private conversations?'"),
       createBlock("In reality, adtech infrastructure rarely needs to waste battery and bandwidth transcribing ambient audio. Cross-device lookalike modeling, IP collocation, Wi-Fi graph mapping, and collaborative behavioral filtering predict consumer intent with statistical accuracy that feels supernatural."),
-
       createBlock("1. The AdTech Uncanny Valley", "h3"),
       createBlock("In 1970, roboticist Masahiro Mori formulated the 'Uncanny Valley' to explain the sudden shift from human empathy to acute revulsion when an android closely mimics, but fails to authentically match, human reality."),
       createBlock("Digital personalization exhibits an identical psychological curve:"),
@@ -173,16 +197,33 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
       createBlock("• Helpful On-Platform Utility: Convenient and frictionless (e.g. Spotify recommending tracks based on your listening history)."),
       createBlock("• Hyper-Specific Surveillance: Triggers immediate alarm (e.g. an ad displaying your exact residential zip code, an unshared medical query searched on a private device, or a product discussed near a coworker's Bluetooth beacon)."),
       createBlock("The moment personalization exposes the invisible surveillance machinery of the internet, psychological comfort collapses."),
-
       createBlock("2. The Privacy Paradox & Psychological Reactance", "h3"),
-      createBlock("Behavioral economists identify this tension as the **Privacy Paradox**: users consistently report in surveys that they fiercely guard their digital privacy, yet readily surrender biometric and location permissions in exchange for minor conveniences."),
-      createBlock("However, when an algorithm makes that surveillance overt, it triggers **Psychological Reactance** (Jack Brehm, 1966). The human nervous system perceives the hyper-targeted ad not as helpful assistance, but as an aggressive violation of personal autonomy, provoking ad-blocker adoption and brand hostility."),
-
+      createBlock("Behavioral economists identify this tension as the Privacy Paradox: users consistently report in surveys that they fiercely guard their digital privacy, yet readily surrender biometric and location permissions in exchange for minor conveniences."),
+      createBlock("However, when an algorithm makes that surveillance overt, it triggers Psychological Reactance (Jack Brehm, 1966). The human nervous system perceives the hyper-targeted ad not as helpful assistance, but as an aggressive violation of personal autonomy, provoking ad-blocker adoption and brand hostility."),
       createBlock("3. Ethical Framework: Contextual Utility vs. Opaque Stalking", "h3"),
       createBlock("For product designers, engineers, and growth leaders, the boundary between empowering personalization and creepy surveillance is defined by three rules:"),
       createBlock("• First-Party Contextual Grounding: Personalize based on explicit actions taken within your immediate product interface—never from shadowy third-party data broker trails."),
-      createBlock("• Transparent Explainability: Provide clear algorithmic reasoning (e.g. *'Recommended because you created a Fluid Typography token'*)."),
+      createBlock("• Transparent Explainability: Provide clear algorithmic reasoning (e.g. 'Recommended because you created a Fluid Typography token')."),
       createBlock("• Symmetric Value Exchange: Ensure every tailored recommendation delivers disproportionate utility to the user, rather than purely extractive monetization for the platform."),
+    ],
+    body_az: [
+      createBlock("Həddən Artıq Fərdiləşdirilmiş Reklamlar Niyə Qorxulu Hiss Etdirir? Məhsul Dizaynında Məxfilik Paradoksu", "h2"),
+      createBlock("Nahar vaxtı həmkarınızla ofis kreslosunu dəyişdirməkdən danışırsınız. İki saat sonra sosial şəbəkənizdə həmin erqonomik kreslo modelinin reklamı çıxır. İlk reaksiya təşviş olur: 'Telefonum gizli söhbətlərimə qulaq asır?'"),
+      createBlock("Əslində reklam sistemləri səsinizi yazmağa ehtiyac duymur. Çarpaz cihaz modelləşdirməsi, eyni IP ünvanı, Wi-Fi qrafikləri və davranış filtrləri istehlakçı niyyətini fövqəltəbii dəqiqliklə proqnozlaşdırır."),
+      createBlock("1. Reklam Texnologiyasının Qorxunc Vadisi (Uncanny Valley)", "h3"),
+      createBlock("1970-ci ildə robototexnik Masahiro Mori robotların insana həddən artıq bənzəməsinin rəğbət əvəzinə qorxu və ikrah yaratdığını izah etmək üçün 'Qorxunc Vadi' konsepsiyasını irəli sürdü."),
+      createBlock("Rəqəmsal fərdiləşdirmə də eyni psixoloji əyrini nümayiş etdirir:"),
+      createBlock("• Geniş Kontekstual Uyğunluq: Təbii və xoş qarşılanır (məsələn, foto dərsliklərinə baxarkən kamera obyektivi reklamı görmək)."),
+      createBlock("• Faydalı Platforma Tövsiyələri: Rahat və maneəsizdir (məsələn, Spotify-ın dinləmə tarixinə əsasən mahnı tövsiyə etməsi)."),
+      createBlock("• İfrat İzlənmə Hissi: Dərhal həyəcan yaradır (məsələn, şəxsi cihazda axtarılmış tibbi sualın və ya həmkarınızın yanında danışdığınız məhsulun dərhal qarşınıza çıxması)."),
+      createBlock("Fərdiləşdirmə arxadakı görünməz izləmə mexanizmini büruzə verən andan etibarən psixoloji güvən məhv olur."),
+      createBlock("2. Məxfilik Paradoksu Və Psixoloji Müqavimət", "h3"),
+      createBlock("Davranış iqtisadçıları bunu Məxfilik Paradoksu adlandırırlar: istifadəçilər sorğularda məxfiliyə çox önəm verdiklərini deyirlər, lakin kiçik rahatlıqlar üçün icazələri asanlıqla verirlər."),
+      createBlock("Lakin alqoritm bu izlənməni aşkar nümayiş etdirdikdə Psixoloji Müqavimət (Jack Brehm, 1966) işə düşür. Beyin bunu kömək kimi deyil, şəxsi muxtariyyətə təcavüz kimi qəbul edir və brendə qarşı nifrət yaradır."),
+      createBlock("3. Etik Çərçivə: Fayda və İzlənmə Arasındakı Sərhəd", "h3"),
+      createBlock("• Birinci Tərəf Konteksti: Fərdiləşdirməni üçüncü tərəf məlumat alverçilərindən deyil, istifadəçinin öz məhsulunuzda etdiyi açıq hərəkətlərə əsaslandırın."),
+      createBlock("• Şəffaf İzah: Tövsiyənin səbəbini aydın bildirin (məsələn: 'Tipoqrafiya tokeni yaratdığınız üçün tövsiyə edilir')."),
+      createBlock("• Simmetrik Dəyər Mübadiləsi: Hər bir fərdi təklifin istifadəçiyə həqiqi fayda verməsini təmin edin."),
     ],
   },
 
@@ -210,13 +251,23 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
     tags: ["Corner Radius", "Design Psychology", "Apple Squircles", "Ergonomics", "UI Aesthetics"],
     body: [
       createBlock("Why Do Rounded Shapes Feel Friendlier Than Sharp Corners?", "h2"),
-      createBlock("In 1981, Steve Jobs took Apple engineer Bill Atkinson on a three-block walk around Apple's Cupertino campus. Jobs pointed out stop signs, cars, windows, and trash cans, insisting: *'Look, rounded rectangles are everywhere! You can't live without them.'* Atkinson went back and wrote the mathematical algorithm for `RoundRect` that defined the visual identity of Macintosh and later iOS."),
+      createBlock("In 1981, Steve Jobs took Apple engineer Bill Atkinson on a three-block walk around Apple's Cupertino campus. Jobs pointed out stop signs, cars, windows, and trash cans, insisting: 'Look, rounded rectangles are everywhere! You can't live without them.' Atkinson went back and wrote the mathematical algorithm for RoundRect that defined the visual identity of Macintosh and later iOS."),
       createBlock("Why are human beings so instinctively comfortable with rounded corners?"),
       createBlock("1. Evolutionary Threat Avoidance", "h3"),
       createBlock("In nature, sharp angles signal physical danger: predator fangs, thorns, jagged rocks, and broken bones. Neuroimaging studies conducted at Harvard Medical School revealed that viewing sharp, jagged geometry triggers activation in the amygdala—the brain's fear and vigilance center."),
       createBlock("Rounded contours, conversely, signal organic safety: smooth river pebbles, ripe fruit, and human flesh."),
       createBlock("2. Kindchenschema and the Tactile Squircle", "h3"),
-      createBlock("Ethologist Konrad Lorenz identified *Kindchenschema* (Baby Schema): human infants have soft, rounded facial features that trigger nurturing, protective instincts in adults. When an interface adopts smooth continuous curvature (such as Apple's continuous Bézier squircles), the software feels approachable, touchable, and safe."),
+      createBlock("Ethologist Konrad Lorenz identified Kindchenschema (Baby Schema): human infants have soft, rounded facial features that trigger nurturing, protective instincts in adults. When an interface adopts smooth continuous curvature (such as Apple's continuous Bézier squircles), the software feels approachable, touchable, and safe."),
+    ],
+    body_az: [
+      createBlock("Dairəvi Formalar Niyə İti Künclərdən Daha Mehriban Və İsti Görünür?", "h2"),
+      createBlock("1981-ci ildə Stiv Cobs Apple mühəndisi Bill Atkinson ilə Kupertino şəhərciyində gəzintiyə çıxdı. Cobs yol nişanlarını, avtomobilləri və zibil qutularını göstərərək dedi: 'Bax, yuvarlaq künclü dördbucaqlılar hər yerdədir! Onlarsız yaşamaq olmaz.' Atkinson geri qayıtdı və Macintosh və iOS-un vizual dilini təyin edən RoundRect alqoritmini yazdı."),
+      createBlock("İnsanlar yuvarlaq küncləri niyə instinktiv olaraq bu qədər rahat qəbul edir?"),
+      createBlock("1. Təkamül Təhlükə Qorunması", "h3"),
+      createBlock("Təbiətdə iti bucaqlar fiziki təhlükə siqnalıdır: yırtıcı dişləri, tikanlar, sıldırım qayalar və qırıq sümüklər. Harvard Tibb Məktəbində aparılan neyrovizualizasiya araşdırmaları göstərdi ki, iti həndəsəyə baxmaq beynin qorxu mərkəzi olan amiqdalanı aktivləşdirir."),
+      createBlock("Yuvarlaq xətlər isə təbii təhlükəsizliyi ifadə edir: hamar çay daşları, yetişmiş meyvələr və insan bədəni."),
+      createBlock("2. Körpə Sxemi Və Apple 'Squircle' Fəlsəfəsi", "h3"),
+      createBlock("Etoloq Konrad Lorenz Körpə Sxemini (Kindchenschema) müəyyən etdi: körpələrin yumşaq, dairəvi üz cizgiləri yetkinlərdə qoruma və qayğı instinktlərini oyadır. İnterfeys axıcı dairəvi əyriləri (Apple-ın Bézier squircle həndəsəsi kimi) mənimsədikdə, proqram təminatı toxunula bilən, isti və təhlükəsiz hiss olunur."),
     ],
   },
 
@@ -252,9 +303,19 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
       createBlock("2. Absence of Human Intentionality", "h3"),
       createBlock("A master photographer places a shadow in a specific corner to conceal a mystery or symbolize grief. An AI model places a shadow because the statistical weights of surrounding pixels suggested a gradient. The human eye subconsciously senses when visual complexity lacks underlying narrative purpose."),
     ],
+    body_az: [
+      createBlock("Süni İntellekt Şəkilləri Niyə Bahalı Görünür Amma Yenə Də Saxta Hiss Etdirir?", "h2"),
+      createBlock("Sosial şəbəkədə bir şəkil görürsünüz: Tokioda kiberpank küçəsi, narıncı duman, gölməçələrdə ultra-dəqiq neon əksləri və kinematoqrafik dərinlik. İlk baxışda 50,000 dollarlıq Hollivud kadrına bənzəyir."),
+      createBlock("Lakin iki saniyə içində beyniniz plastik süni yorğunluq hiss edir. Şəklin Midjourney və ya Flux tərəfindən yaradıldığını dərhal anlayırsınız. Həddən artıq detallı süni intellekt şəkilləri niyə bu skeptisizmi oyadır?"),
+      createBlock("1. Qüsursuzluğun Qüsuru", "h3"),
+      createBlock("Real kameraların optik fizikası var: linza aberasiyası, sensor dənəvərliyi, fokus kənarları və təbii ekspozisiya qüsurları. Real fiziki dünyada isə toz, asimmetriya və təsadüfi detallar mövcuddur."),
+      createBlock("Diffuziya modelləri milyonlarla şəklin statistik ortalamasını çıxararaq təsvir yaradır. Nəticədə həddən artıq hamarlanmış dəri, qeyri-təbii parıltı və real dünya sürtünməsinin olmaması yaranır."),
+      createBlock("2. İnsan Niyyətinin Yoxluğu", "h3"),
+      createBlock("Usta fotoqraf kölgəni küncə sirri gizlətmək və ya kədəri simvolizə etmək üçün qoyur. Süni intellekt isə kölgəni ətrafdakı piksellərin statistik ehtimalına görə yerləşdirir. İnsan gözü vizual mürəkkəbliyin arxasında hekayə niyyəti olmadıqda bunu dərhal şüuraltı olaraq hiss edir."),
+    ],
   },
 
-  // 28. WHY AI WRITING SOUNDS SO SIMILAR
+  // 27. WHY AI WRITING SOUNDS SO SIMILAR
   {
     _id: "blog-ai-copywriting-and-tone-calibration",
     title: "Why Does AI Writing Sound So Painfully Similar?",
@@ -278,7 +339,7 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
     tags: ["AI Copywriting", "LLM Tone", "RLHF", "Content Strategy", "Writing Craft"],
     body: [
       createBlock("Why Does AI Writing Sound So Painfully Similar?", "h2"),
-      createBlock("'In today's fast-paced digital landscape, it is essential to delve into the intricate tapestry of modern innovation. This stands as a testament to the power of...'"),
+      createBlock("Consider the opening cadence of an unedited machine-generated essay: A sweeping proclamation declaring that modern innovation stands as a vibrant tapestry, followed by an urgent invitation to delve into pivotal paradigms."),
       createBlock("Within two sentences, any seasoned reader instantly detects the synthetic hand of an uncalibrated Large Language Model. Why do AI models across OpenAI, Anthropic, and Google naturally gravitate toward the exact same monotonous corporate cadence?"),
       createBlock("1. The Trap of RLHF and Safety Averaging", "h3"),
       createBlock("Reinforcement Learning from Human Feedback (RLHF) trains models to be polite, balanced, non-offensive, and universally agreeable. But great writing requires strong opinions, unexpected rhythms, idiosyncratic vocabulary, and emotional vulnerability."),
@@ -286,9 +347,19 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
       createBlock("2. How to Reclaim Human Voice", "h3"),
       createBlock("To make AI writing sing, editors must ban cliché vocabulary, enforce sentence length variance (mixing 4-word punchlines with 25-word narrative arcs), and inject authentic human anecdotes that no statistical model could fabricate."),
     ],
+    body_az: [
+      createBlock("Süni İntellekt Mətnləri Niyə Hamısı Eyni Darıxdırıcı Tonda Səslənir?", "h2"),
+      createBlock("Redaktə olunmamış maşın mətninin tipik başlanğıcını nəzərdən keçirin: Müasir innovasiyaların zəngin bir xalça olduğunu bəyan edən təntənəli giriş və əsas paradiqmalara dərindən nəzər salmaq çağırışı."),
+      createBlock("İki cümlədən sonra istənilən təcrübəli oxucu tənzimlənməmiş Dil Modelinin sintetik toxunuşunu hiss edir. OpenAI, Anthropic və Google-ın süni intellekt modelləri niyə eyni monoton korporativ tona yuvarlanır?"),
+      createBlock("1. RLHF Və Təhlükəsizlik Ortalaması Tələsi", "h3"),
+      createBlock("İnsan Əks-əlaqəsi ilə Gücləndirilmiş Öyrənmə (RLHF) modelləri nəzakətli, balanslı, heç kimi incitməyən və universal razılaşdırılmış olmağa öyrədir. Lakin yaxşı yazı güclü mövqelər, gözlənilməz ritmlər və emosional cəsarət tələb edir."),
+      createBlock("İnsan seçimlərinin riyazi medianını hədəfləyərək RLHF canlı üslubu təmizləyir və geridə qondarma akademik keçid sözləri ilə dolu steril bir ton qoyur."),
+      createBlock("2. İnsan Səsini Necə Geri Qaytarmaq Olar?", "h3"),
+      createBlock("Süni intellekt yazılarını canlandırmaq üçün redaktorlar şablon sözləri qadağan etməli, cümlə uzunluqlarını dəyişdirməli (4 sözlük vurğuları 25 sözlük hekayələrlə qarışdırmalı) və heç bir statistik modelin uydura bilməyəcəyi real həyat təcrübələrini əlavə etməlidirlər."),
+    ],
   },
 
-  // 30. COMIC SANS & TYPOGRAPHIC DECORUM
+  // 28. COMIC SANS & TYPOGRAPHIC DECORUM
   {
     _id: "blog-legal-ethics-and-licensing-in-ai-art",
     title: "Why Is Comic Sans the Most Hated Font in Human History?",
@@ -316,10 +387,21 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
       createBlock("Is Comic Sans truly that terrible, or did human culture simply misunderstand its intended purpose?"),
       createBlock("1. The Origin: Rover the Dog in Microsoft Bob (1994)", "h3"),
       createBlock("In 1994, Microsoft typographer Vincent Connare saw an early beta of Microsoft Bob, a software suite designed for novice computer users. A cartoon dog named Rover spoke through speech bubbles set in formal Times New Roman."),
-      createBlock("Connare thought: *'Dogs don't talk in Times New Roman!'* Inspired by the hand-lettered lettering in comic books like *Watchmen* and *The Dark Knight Returns*, he quickly sketched Comic Sans as a playful, casual alternative specifically for cartoon speech balloons."),
+      createBlock("Connare thought: 'Dogs don't talk in Times New Roman!' Inspired by the hand-lettered lettering in comic books like Watchmen and The Dark Knight Returns, he quickly sketched Comic Sans as a playful, casual alternative specifically for cartoon speech balloons."),
       createBlock("2. The Sin of Misplaced Context", "h3"),
       createBlock("When Microsoft included Comic Sans as a default system font in Windows 95, millions of untrained computer users suddenly gained access to a friendly-looking font. They began using it for everything: eviction notices, defibrillator instructions, academic research papers, corporate terminations, and church tombstones."),
       createBlock("Comic Sans is not inherently broken; it was simply thrust into solemn, serious contexts where its playful informality felt insulting and absurd. It stands as a cautionary tale in typographic decorum."),
+    ],
+    body_az: [
+      createBlock("Comic Sans Niyə Bəşər Tarixinin Ən Nifrət Edilən Şriftidir?", "h2"),
+      createBlock("Dünyada minlərlə zəif dizayn edilmiş şrift var. Lakin yalnız biri beynəlxalq boykot hərəkatlarına, parodiya saytlarına ('Ban Comic Sans') və qlobal dizayn ictimaiyyətinin qəzəbinə səbəb olub: Comic Sans."),
+      createBlock("Comic Sans həqiqətənmi bu qədər bərbaddır, yoxsa insan mədəniyyəti onun təyinatını səhv anladı?"),
+      createBlock("1. Mənşəyi: Microsoft Bob-dakı İt Rover (1994)", "h3"),
+      createBlock("1994-cü ildə Microsoft tipoqrafı Vincent Connare kompüterə yeni başlayanlar üçün hazırlanmış Microsoft Bob proqramını gördü. Oradakı cizgi iti Rover rəsmi Times New Roman şrifti ilə danışırdı."),
+      createBlock("Connare düşündü: 'İtlər Times New Roman ilə danışmır!' Watchmen kimi komikslərdəki əl yazı xətlərindən ilhamlanaraq, o, sırf cizgi filmi qabarcıqları üçün əyləncəli Comic Sans şriftini yaratdı."),
+      createBlock("2. Yanlış Kontekst Günahı", "h3"),
+      createBlock("Microsoft Comic Sans-ı Windows 95-in standart şriftlərinə daxil edəndə milyonlarla istifadəçi bu şriftdən hər yerdə istifadə etməyə başladı: məhkəmə bildirişlərində, akademik məqalələrdə, işdən çıxarılma əmrlərində və qəbir daşlarında."),
+      createBlock("Comic Sans mahiyyətcə qüsurlu deyil; o, sadəcə olaraq qeyri-ciddi təbiətinin təhqiramiz göründüyü rəsmi kontekstlərə salındı. Bu, tipoqrafik etikaya dair ən böyük dərsdir."),
     ],
   },
 ];

@@ -10,19 +10,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
   };
 }
 
-function createImageBlock(url: string, alt: string, caption?: string) {
-  return {
-    _key: Math.random().toString(36).substring(7),
-    _type: "image",
-    asset: { _type: "reference", _ref: "image-manual" },
-    alt,
-    caption,
-    url,
-  };
-}
-
 export const ARTICLES_31_TO_39: BlogPost[] = [
-  // 32. WHY DELETE IS A TRASH CAN
+  // 31. WHY DELETE IS A TRASH CAN
   {
     _id: "blog-generative-ui-and-automated-layout-engines",
     title: "Why Is the Delete Action a Trash Can?",
@@ -52,9 +41,17 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
       createBlock("In an actual office, when you throw a draft into the wastebasket next to your desk, it is not incinerated immediately. You can reach down and pull it out if you change your mind, until the janitor empties the bin at night."),
       createBlock("By simulating this physical reality—allowing files to sit in the Trash until the user explicitly selects 'Empty Trash'—software engineers eliminated the paralyzing anxiety of accidental deletion, making computers approachable for billions of everyday humans."),
     ],
+    body_az: [
+      createBlock("Silmə Əməliyyatı Niyə Məhz Zibil Qutusu İkonudur?", "h2"),
+      createBlock("Əmr sətri dövründə (MS-DOS, Unix) faylı silmək üçün `rm sened.txt` yazmaq tələb olunurdu. Enter düyməsini basan kimi fayl bərpa olunmaz şəkildə dərhal silinirdi. Heç bir vizual əks-əlaqə və ikinci şans yox idi."),
+      createBlock("1980-ci illərin əvvəllərində Xerox PARC və Apple Lisa və Macintosh masaüstü interfeyslərini hazırlayarkən Susan Kare tərəfindən dizayn edilmiş Zibil Qutusu ikonunu təqdim etdilər. Bu kəşf niyə inqilabi idi?"),
+      createBlock("1. Psixoloji Təhlükəsizlik Toru", "h3"),
+      createBlock("Həqiqi ofisdə qaralamanı masanın yanındakı zibil qutusuna atanda o dərhal yanmır. Fikrinizi dəyişsəniz, axşam təmizlik işçisi qutunu boşaldana qədər kağızı çıxara bilərsiniz."),
+      createBlock("Bu fiziki reallığı simulyasiya edərək — istifadəçi 'Zibil Qutusunu Təmizlə' seçənə qədər faylları orada saxlamaqla — proqram mühəndisləri təsadüfi silinmə qorxusunu aradan qaldırdılar və kompüterləri milyardlarla insan üçün əlçatan etdilər."),
+    ],
   },
 
-  // 33. WHY LUXURY BRANDS USE SO MUCH EMPTY SPACE
+  // 32. WHY LUXURY BRANDS USE SO MUCH EMPTY SPACE
   {
     _id: "blog-ai-micro-saas-blueprint",
     title: "Why Do Luxury Brands Use So Much Empty Space? The Architecture of Restraint",
@@ -80,30 +77,46 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
       createBlock("Why Do Luxury Brands Use So Much Empty Space? The Architecture of Restraint", "h2"),
       createBlock("Step inside a high-volume discount warehouse: aisles are densely packed, shelves climb to the ceiling, and yellow promotional placards scream from every beam. Every square foot of commercial real estate must generate maximum transaction volume per hour."),
       createBlock("Now step into an architectural flagship boutique on Avenue Montaigne: a 5,000-square-foot room of hand-troweled lime plaster features exactly three leather bags resting in silent isolation on carved basalt blocks. Why do high-end brands intentionally 'waste' valuable space?"),
-
       createBlock("1. The Economics of Non-Utilitarian Space (Veblen's Conspicuous Waste)", "h3"),
       createBlock("In his foundational 1899 sociological treatise *The Theory of the Leisure Class*, Thorstein Veblen introduced the concept of 'Conspicuous Waste': elite social status is demonstrated not by productive efficiency, but by the ability to consume expensive resources without economic anxiety."),
       createBlock("In commercial real estate, where prime retail space costs hundreds of dollars per square foot per month, leaving 85% of a room completely empty is a formidable financial power signal. It communicates that the brand is completely detached from the frantic necessity of immediate sales pressure."),
-
       createBlock("2. Translating Spatial Abundance to Digital Interfaces", "h3"),
       createBlock("A digital screen has no physical rent, yet the exact same cognitive signaling dictates user perception:"),
       createBlock("• Discount Marketplaces (Amazon, Shein, Temu): Maximize density above the fold with coupon banners, countdown tickers, related product carousels, and flash-sale badges. High density signals transactional urgency and budget abundance."),
       createBlock("• Luxury & High-End Digital Flagships (Apple, Hermès, Polestar, Teenage Engineering): Embrace vast negative space and disciplined focal isolation. A single product is framed in dramatic silence with ample margins, signaling: *'This object possesses sufficient intrinsic value that it does not require decorative noise to hold your attention.'*"),
-
       createBlock("3. Empty Space vs. Intentional Space: The Crucial Boundary", "h3"),
       createBlock("Simply inflating CSS margins does not automatically make a website look like luxury. Uncontrolled whitespace feels lazy, clumsy, and barren:"),
       createBlock("• Accidental / Cheap Emptiness: Large blank voids between disconnected elements, lack of modular grid pacing, default typography, and unresolved visual tension."),
       createBlock("• Disciplined Intentional Space: Spatial breathing room engineered around strict proportional grid ratios (e.g. 64px container padding vs 8px micro-label gaps), asymmetric anchor points, and mathematical typographic hierarchy."),
-
       createBlock("4. The Practical Spatial Hierarchy Framework", "h3"),
       createBlock("When designing high-end digital products or editorial platforms, apply these three spatial principles:"),
       createBlock("• The Single Dominant Focal Anchor: Allow one primary visual element (a hero asset or editorial title) to command the viewport before introducing secondary metadata."),
       createBlock("• Extreme Contrast in Micro vs. Macro Pacing: Keep internal component elements (badges, labels, metadata tokens) tightly grouped via Gestalt proximity (4px to 8px), while separating major conceptual sections with expansive breathing room (80px to 140px)."),
       createBlock("• Elimination of Redundant Borders: Replace heavy bounding boxes and divider lines with pure spatial separation. When negative space does the work of dividing content, the interface feels weightless and sophisticated."),
     ],
+    body_az: [
+      createBlock("Lüks Brendlər Niyə Bu Qədər Çox Boş Məkandan İstifadə Edirlər? Təmkin Arxitekturası", "h2"),
+      createBlock("Böyük həcmli endirim anbarına daxil olun: keçidlər sıxdır, rəflər tavana çatır və sarı reklam lövhələri hər yerdən qışqırır. Ticarət sahəsinin hər kvadrat metri saatda maksimum satış həcmi yaratmalıdır."),
+      createBlock("İndi isə Parisin Avenue Montaigne küçəsindəki flaqman butikinə daxil olun: 500 kvadrat metrlik əl işi gips otaqda bazalt bloklar üzərində tənha yerləşdirilmiş cəmi üç dəri çanta var. Yüksək səviyyəli brendlər dəyərli məkanı niyə bilərəkdən 'israf' edirlər?"),
+      createBlock("1. Qeyri-Utilitar Məkanın İqtisadiyyatı (Veblen-in Nümayişkaranə İsrafı)", "h3"),
+      createBlock("1899-cu ildə sosioloq Thorstein Veblen *Asudə Sinfin Nəzəriyyəsi* əsərində 'Nümayişkaranə İsraf' anlayışını təqdim etdi: elit sosial status məhsuldarlıqla deyil, bahalı resursları iqtisadi təşviş olmadan istifadə edə bilməklə nümayiş olunur."),
+      createBlock("Kvadrat metri yüzlərlə dollara olan ticarət məkanının 85%-ni boş buraxmaq böyük maliyyə gücü siqnalıdır. Bu, brendin təcili satış təzyiqindən tamamilə azad olduğunu göstərir."),
+      createBlock("2. Məkan Bolluğunun Rəqəmsal İnterfeysə Köçürülməsi", "h3"),
+      createBlock("Rəqəmsal ekranda fiziki icarə haqqı olmasa da, eyni idrak mexanizmi istifadəçi qavrayışını idarə edir:"),
+      createBlock("• Endirim Saytları (Amazon, Shein, Temu): Səhifənin yuxarı hissəsini kuponlar, karusellər və taymerlərlə maksimum doldururlar. Yüksək sıxlıq təciliyyət və ucuzluq siqnalıdır."),
+      createBlock("• Lüks Rəqəmsal Flaqmanlar (Apple, Hermès, Polestar): Geniş mənfi boşluğu və tək fokus təcridini mənimsəyirlər. Tək bir məhsul geniş kənarlarla çərçivəyə alınır və bu mesajı verir: *'Bu obyektin daxili dəyəri o qədər yüksəkdir ki, diqqətinizi saxlamaq üçün dekorativ səs-küyə ehtiyac yoxdur.'*"),
+      createBlock("3. Boşluq Və Düşünülmüş Məkan Arasındakı Fərq", "h3"),
+      createBlock("Sadəcə CSS kənarlarını şişirtmək vebsaytı lüks etmir. Nəzarətsiz boşluq tənbəl və cansız görünür:"),
+      createBlock("• Təsadüfi Boşluq: Elementlər arasında böyük əlaqəsiz boşluqlar və standart şriftlər."),
+      createBlock("• Düşünülmüş Lüks Məkan: Dəqiq modul şəbəkə proporsiyaları (məsələn, 64px blok boşluğu və 8px mikro-etiket aralığı) və riyazi tipoqrafik iyerarxiya."),
+      createBlock("4. Praktiki Məkan İyerarxiyası", "h3"),
+      createBlock("• Tək Dominant Fokus Lövbəri: İkinci dərəcəli məlumatları təqdim etməzdən əvvəl bir əsas vizual elementin ekrana hakim olmasına icazə verin."),
+      createBlock("• Mikro və Makro Addımlarda Kəskin Kontrast: Komponent elementlərini (nişanlar, etiketlər) Gestalt yaxınlığı ilə sıx saxlayın (4px-8px), əsas bölmələri isə geniş nəfəs alma məkanı ilə ayırın (80px-140px)."),
+      createBlock("• Artıq Çərçivələrin Ləğvi: Məzmunu bölmək üçün çərçivələri çıxarıb sırf məkan məsafəsindən istifadə edin."),
+    ],
   },
 
-  // 34. CHANGING A FONT CHANGES BRAND PERSONALITY
+  // 33. CHANGING A FONT CHANGES BRAND PERSONALITY
   {
     _id: "blog-building-custom-gpts-and-specialized-knowledge-bases",
     title: "Why Does Changing a Font Completely Change a Brand's Personality?",
@@ -129,32 +142,48 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
       createBlock("Why Does Changing a Font Completely Change a Brand's Personality?", "h2"),
       createBlock("Set the single word 'TRUST' in three typefaces on a solid white background: first in Baskerville, second in Futura Bold, and third in Comic Sans. Without adding an illustration, color gradient, or tagline, the human visual cortex registers three completely distinct institutions: an 18th-century heritage private bank, an aggressive 1960s space-race engineering lab, and a kindergarten classroom."),
       createBlock("Why does the subtle curvature of a stem or the angle of a serif fundamentally dictate human brand perception?"),
-
       createBlock("1. The Physical Semiotics of Letterforms", "h3"),
       createBlock("Typefaces are not abstract digital pixels; they are cultural artifacts carved with centuries of physical memory:"),
       createBlock("• High-Contrast Didone Serifs (Didot, Bodoni): Born from precision copperplate engraving during the late Enlightenment. Extreme stroke contrast signals luxury, Parisian haute couture, and editorial exclusivity."),
       createBlock("• Geometric Sans-Serifs (Futura, Avant Garde): Direct descendants of the 1920s Bauhaus movement and industrial constructivism. Clean circles and sharp angles project architectural clarity, utopian modernity, and technical precision."),
       createBlock("• Humanist Grotesques (Frutiger, Inter): Engineered with open apertures and organic stroke modulations. They communicate transparent empathy, civic legibility, and effortless digital utility."),
-
       createBlock("2. The Great Sans-Serif 'Blanding' Wave & The Modern Rebound", "h3"),
       createBlock("Between 2017 and 2021, luxury fashion heritage houses (Burberry, Balenciaga, Saint Laurent, Berluti) abandoned their centuries-old idiosyncratic logotypes in favor of nearly identical geometric neo-grotesques. Why did this homogenization occur?"),
       createBlock("• The Technical Imperative: High-density smartphone displays and favicon constraints favored monolithic, low-contrast letterforms that scale down to 12 pixels without stroke collapse."),
       createBlock("• The Modernist Cultural Rebound: Once every luxury brand adopted the exact same sans-serif skeleton, individuality evaporated. In response, houses like Burberry restored their archival equestrian serif heritage, proving that distinctive typographic idiosyncrasy remains the ultimate antidote to corporate homogenization."),
-
       createBlock("3. Crossmodal Associations: Weight, Sound, and Value Perception", "h3"),
       createBlock("Psychological research in crossmodal correspondence demonstrates that human observers naturally map typographic features onto sensory experiences:"),
       createBlock("• Light weights and razor-thin hairlines feel physically light, quiet, and expensive (fragrance bottles, luxury watches)."),
       createBlock("• Heavy, condensed, slab-serif letterforms feel physical, loud, and durable (heavy machinery, construction tools, discount retail banners)."),
-
       createBlock("4. The Practical Typographic Personality Audit", "h3"),
       createBlock("Before committing a typeface to a design system or brand identity, run it through this 3-step diagnostic stress test:"),
       createBlock("• The Silhouette Isolation Test: Set your logotype in solid black (#000000) on solid white (#FFFFFF) with zero color, gradients, or photography. Does the raw letterform geometry still communicate your core brand attributes?"),
       createBlock("• The Extreme Scale Polarity Test: Test the typeface at 12px on an entry-level mobile screen and at 120px on an outdoor billboard. Does low-size stroke thinning destroy legibility, or does high-size letter-spacing feel unrefined?"),
       createBlock("• The Value-Perception Alignment Test: Present the standalone typeface to 20 unbiased evaluators without revealing your product. If an enterprise cybersecurity tool is mistaken for a playful wellness app, your typographic geometry is in direct conflict with your positioning."),
     ],
+    body_az: [
+      createBlock("Şrifti Dəyişmək Bir Brendin Xarakterini Niyə Kökündən Dəyişir?", "h2"),
+      createBlock("Ağ fonda tək bir 'GÜVƏN' sözünü üç fərqli şriftlə yazın: əvvəlcə Baskerville, sonra Futura Bold, sonra isə Comic Sans ilə. Heç bir şəkil və ya şüar əlavə etmədən beyin dərhal üç tamamilə fərqli qurum qəbul edir: 18-ci əsrə aid şəxsi irs bankı, 1960-cı illərin kosmik mühəndislik laboratoriyası və uşaq bağçası."),
+      createBlock("Hərfin kiçik bir əyriliyi və ya küncünün forması brend qavrayışını niyə bu qədər dəyişir?"),
+      createBlock("1. Hərf Formalarının Fiziki Semiotikası", "h3"),
+      createBlock("Şriftlər sadəcə piksellər deyil; onlar əsrlərin fiziki yaddaşını daşıyan mədəniyyət nümunələridir:"),
+      createBlock("• Yüksək Kontrastlı Didone Şriftləri (Didot, Bodoni): Qravüra sənətindən yaranıb. Kəskin xətt kontrastı lüks, Paris yüksək dəbi və eksklüzivlik siqnalıdır."),
+      createBlock("• Həndəsi Sans-Seriflər (Futura, Avant Garde): 1920-ci illərin Bauhaus hərəkatının davamçılarıdır. Dəqiq dairələr və iti bucaqlar memarlıq aydınlığı və texniki dəqiqlik aşılayır."),
+      createBlock("• Humanist Qrotesklər (Frutiger, Inter): Açıq həndəsi strukturları ilə rəqəmsal aydınlıq və şəffaf empatiya nümayiş etdirir."),
+      createBlock("2. 'Blanding' Dalğası Və Fərqlilik Axtarışı", "h3"),
+      createBlock("2017-2021-ci illərdə Burberry və Balenciaga kimi lüks moda evləri öz tarixi loqolarından imtina edərək bir-birinin eyni olan həndəsi sans-seriflərə keçdilər."),
+      createBlock("Lakin hər brend eyni şrifti seçəndə fərdilik yox oldu. Cavab olaraq Burberry öz arxiv serif loqosunu bərpa etdi və sübut etdi ki, unikal tipoqrafik xarakter korporativ eyniliyin ən güclü çarəsidir."),
+      createBlock("3. Çarpaz Modal Qavrayış: Çəki Və Səs", "h3"),
+      createBlock("• İncə ştrixlər fiziki olaraq yüngül, sakit və bahalı hiss olunur (ətir şüşələri, lüks saatlar)."),
+      createBlock("• Ağır və sıx ştrixlər davamlı, səsli və möhkəm qəbul edilir (ağır texnika, tikinti alətləri)."),
+      createBlock("4. Tipoqrafik Xarakterin 3 Addımlıq Testi", "h3"),
+      createBlock("• Siluet Təcrid Testi: Loqonu heç bir rəng və fon olmadan təmiz qara-ağ rəngdə yoxlayın. Hərf forması hələ də brend dəyərlərini çatdırırmı?"),
+      createBlock("• Kəskin Miqyas Testi: Şrifti həm kiçik mobil ekranda (12px), həm də böyük lövhədə (120px) sınaqdan keçirin."),
+      createBlock("• Dəyər Uyğunluğu Testi: Şrifti məhsulunuzu bilməyən insanlara göstərin. Əgər kibertəhlükəsizlik aləti uşaq tətbiqi kimi qəbul edilirsə, tipoqrafiyanız mövqeyinizlə ziddiyyət təşkil edir."),
+    ],
   },
 
-  // 36. WHY CONTRAST MAKES DESIGNS IMPOSSIBLE TO IGNORE (VON RESTORFF)
+  // 34. WHY CONTRAST MAKES DESIGNS IMPOSSIBLE TO IGNORE (VON RESTORFF)
   {
     _id: "blog-ai-driven-hyper-personalization",
     title: "Why Contrast Makes Designs Impossible to Ignore: The Von Restorff Isolation Effect",
@@ -180,28 +209,42 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
       createBlock("Why Contrast Makes Designs Impossible to Ignore: The Von Restorff Isolation Effect", "h2"),
       createBlock("Look at an ordered grid of 100 identical dark charcoal cubes. If a single cube in the lower right is rendered in luminous electric cobalt blue or scaled to double size, your visual cortex locks onto that anomaly in under 50 milliseconds."),
       createBlock("Before your conscious brain can identify what the object is, your evolutionary survival apparatus sounds an immediate neural alarm: an unexpected pattern break has occurred."),
-
       createBlock("1. The Laboratory Discovery: Hedwig von Restorff (1933)", "h3"),
       createBlock("In 1933, German pediatrician and psychologist Hedwig von Restorff conducted a series of landmark memory experiments. She presented subjects with long, uniform lists of categorical items (such as two-digit numbers) containing a single distinct outlier (such as a three-letter word printed in bold red)."),
-      createBlock("In subsequent recall tests, participants remembered the outlier at rates over 300% higher than the surrounding uniform items. This phenomenon—the **Isolation Effect**—demonstrated that human memory encoding is driven not by passive repetition, but by relative visual and semantic distinctiveness."),
-
+      createBlock("In subsequent recall tests, participants remembered the outlier at rates over 300% higher than the surrounding uniform items. This phenomenon—the Isolation Effect—demonstrated that human memory encoding is driven not by passive repetition, but by relative visual and semantic distinctiveness."),
       createBlock("2. The Neurobiology of Bottom-Up Visual Salience Maps", "h3"),
-      createBlock("The human visual cortex processes incoming retinal signals in parallel before routing information to the conscious frontal lobe. Neuroscientists (including Christof Koch and Laurent Itti) demonstrated that the brain constructs a subconscious **Salience Map** based on low-level feature contrasts: luminance disparity, color opponency, edge orientation, and spatial isolation."),
+      createBlock("The human visual cortex processes incoming retinal signals in parallel before routing information to the conscious frontal lobe. Neuroscientists (including Christof Koch and Laurent Itti) demonstrated that the brain constructs a subconscious Salience Map based on low-level feature contrasts: luminance disparity, color opponency, edge orientation, and spatial isolation."),
       createBlock("When an interface presents twelve competing visual elements with equal color saturation and equal size, the salience map experiences noise overload. The user suffers cognitive paralysis and abandons the interface."),
-
       createBlock("3. The 3 Rules of Intentional Contrast in Product Design", "h3"),
       createBlock("Master UI designers deploy contrast as a precise optical scalpel:"),
       createBlock("• The Solitary Accent Rule: Reserve your highest-chroma primary brand color strictly for primary interactive anchors and conversion actions. When every card, badge, and link is saturated in brand color, the Von Restorff effect collapses to zero."),
-      createBlock("• Luminance Contrast Over Hue Disparity: Human edge detection and reading acuity are driven by perceptual lightness difference (APCA $L_c$ / WCAG luminance), not hue opposites. A pastel yellow button on a white background has high hue difference but near-zero luminance contrast, rendering it invisible to pre-attentive scanning."),
+      createBlock("• Luminance Contrast Over Hue Disparity: Human edge detection and reading acuity are driven by perceptual lightness difference (APCA Lc / WCAG luminance), not hue opposites. A pastel yellow button on a white background has high hue difference but near-zero luminance contrast, rendering it invisible to pre-attentive scanning."),
       createBlock("• Spatial Isolation as a Salience Multiplier: Surrounding a high-contrast element with generous negative space prevents surrounding clutter from competing on the brain's salience map."),
-
       createBlock("4. Conversion Applications in SaaS & E-Commerce", "h3"),
       createBlock("• Pricing Tier Isolation: Elevating the recommended plan with a subtle border glow and 8px scale boost immediately triggers the Von Restorff effect, guiding 60%+ of selection volume."),
       createBlock("• Checkout Funnel Clarity: Suppressing global headers and sidebar navigation during checkout removes secondary salience distractions, funneling 100% of cognitive energy into the completion button."),
     ],
+    body_az: [
+      createBlock("Kontrast Niyə Dizaynı Görməzdən Gəlməyi İmkansız Edir? Von Restorff Təcrid Effekti", "h2"),
+      createBlock("100 ədəd eyni tünd kömür rəngli kubdan ibarət şəbəkəyə baxın. Əgər aşağı sağdakı tək bir kub parlaq kobalt mavisi rəngindədirsə və ya ikiqat böyükdürsə, vizual qabığınız 50 millisaniyədən az müddətdə həmin anomaliyaya kilidlənir."),
+      createBlock("Şüurlu beyniniz obyektin nə olduğunu anlamağa macal tapmamış təkamül müdafiə sisteminiz dərhal həyəcan siqnalı çalır: nizam pozuldu."),
+      createBlock("1. Hedwig von Restorff-un 1933-cü İl Kəşfi", "h3"),
+      createBlock("1933-cü ildə alman həkimi və psixoloqu Hedwig von Restorff yaddaş təcrübələri apardı. O, iştirakçılara eyni kateqoriyadan olan elementlərin siyahısını təqdim etdi və arasına tək bir fərqli elementi (məsələn, qırmızı rəngdə söz) yerləşdirdi."),
+      createBlock("Nəticədə fərqli element ətrafdakı eyni elementlərlə müqayisədə 300% daha yaxşı xatırlandı. Bu hadisə — **Təcrid Effekti** — sübut etdi ki, yaddaşa həkk olunma passiv təkrarlama ilə deyil, vizual və semantik fərqliliklə idarə olunur."),
+      createBlock("2. Beynin Şüuraltı Diqqət Xəritələri (Salience Maps)", "h3"),
+      createBlock("İnsan vizual qabığı daxil olan siqnalları şüurlu düşüncəyə çatdırmazdan əvvəl paralel emal edir. Neyroelm sübut edir ki, beyin parlaqlıq fərqinə və məkan təcridinə əsaslanan şüuraltı bir **Diqqət Xəritəsi** qurur."),
+      createBlock("İnterfeysdə eyni parlaqlıqda və eyni ölçüdə on iki rəqabət aparan element olduqda, diqqət xəritəsi ifrat yüklənir və istifadəçi qərar verə bilməyib səhifəni tərk edir."),
+      createBlock("3. Düşünülmüş Kontrastın 3 Qaydası", "h3"),
+      createBlock("• Tək Vurğu Rəngi Qaydası: Əsas brend rənginizi yalnız kritik fəaliyyət düymələri üçün saxlayın. Hər bir kart və keçid eyni rəngdə olduqda, Von Restorff effekti sıfıra enir."),
+      createBlock("• Parlaqlıq Kontrastı Üstünlüyü: İnsan gözü rəng tonlarından çox, işıqlıq fərqini (APCA / WCAG parlaqlığı) aşkar edir. Ağ fonda açıq sarı düymə görməzdən gəlinir."),
+      createBlock("• Məkan Təcridi: Yüksək kontrastlı elementi boşluqla əhatə etmək onun diqqət xəritəsindəki gücünü artırır."),
+      createBlock("4. SaaS Və E-Ticarət Nümunələri", "h3"),
+      createBlock("• Tövsiyə Edilən Planın Təcridi: Əsas tarifi zərif işıq effekti ilə qabartmaq Von Restorff effektini işə salır və seçimlərin 60%-dən çoxunu həmin karta yönəldir."),
+      createBlock("• Səbət Səhifəsində Sadəlik: Ödəniş zamanı menyuları gizlətmək diqqəti 100% tamamlama düyməsinə fokuslayır."),
+    ],
   },
 
-  // 37. PSYCHOLOGY OF DARK MODE
+  // 35. PSYCHOLOGY OF DARK MODE
   {
     _id: "blog-dark-mode-ui-architecture",
     title: "The Psychology of Dark Mode: Why Developers and Night Owls Love OLED Blacks",
@@ -230,11 +273,20 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
       createBlock("1. Visual Ergonomics in Low-Ambient Environments", "h3"),
       createBlock("Staring at a 500-nit white screen in a dimly lit room forces the human pupil to constrict, causing ciliary muscle fatigue. Dark mode reduces overall luminous flux, easing photopic glare and preventing eye strain during 12-hour coding marathons."),
       createBlock("2. The Aesthetic Elevation of Contrast", "h3"),
-      createBlock("Against a deep OLED black canvas (`#000000` or `#0a0a0c`), colors do not merely appear—they *glow*. Neon accents, syntax tokens, and glowing gradients feel vibrant, high-tech, and cinematic, creating an immersive flow state that light mode can rarely match."),
+      createBlock("Against a deep OLED black canvas (`#000000` or `#0a0a0c`), colors do not merely appear—they glow. Neon accents, syntax tokens, and glowing gradients feel vibrant, high-tech, and cinematic, creating an immersive flow state that light mode can rarely match."),
+    ],
+    body_az: [
+      createBlock("Qaranlıq Rejim Psixologiyası: Proqramçılar Niyə OLED Qaralarını Bu Qədər Sevir?", "h2"),
+      createBlock("1970-ci illərdə dünyadakı bütün kompüter ekranları qaranlıq rejimdə idi. İlk elektron-şüa borulu (CRT) monitorlar yalnız qaranlıq vakuum borusunda fərdi yaşıl və ya kəhrəba piksellərini işıqlandıra bilirdi."),
+      createBlock("1980-ci illərdə Apple və Xerox masaüstü metaforasını təqdim edəndə kağızı təqlid etmək üçün ekranları ağ rəngə çevirdilər. Lakin qırx il sonra proqramçılar, dizaynerlər və milyonlarla istifadəçi həvəslə yenidən qaranlığa qayıtdılar."),
+      createBlock("1. Aşağı İşıqlı Mühitlərdə Vizual Erqonomika", "h3"),
+      createBlock("Qaranlıq otaqda 500-nit parlaqlığa malik ağ ekrana baxmaq göz bəbəyini sıxılmağa məcbur edir və əzələ yorğunluğu yaradır. Qaranlıq rejim ümumi işıq axınını azaldır və uzun kodlaşdırma saatlarında göz gərginliyinin qarşısını alır."),
+      createBlock("2. Kontrastın Estetik Cazibəsi", "h3"),
+      createBlock("Dərin OLED qara fonunda (`#000000` və ya `#0a0a0c`) rənglər sadəcə görünmür — onlar parıldayır. Neon vurğular və sintaksis tokenləri yüksək texnoloji və kinematoqrafik hiss olunur, işıqlı rejimin nadir hallarda təmin edə bildiyi immersiv diqqət mühiti yaradır."),
     ],
   },
 
-  // 38. GESTALT PROXIMITY & VISUAL CHUNKING
+  // 36. GESTALT PROXIMITY & VISUAL CHUNKING
   {
     _id: "blog-design-tokens-and-system-architecture",
     title: "Why We Group Things Together: The Secret Power of Gestalt Proximity in UI Architecture",
@@ -258,30 +310,44 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
     tags: ["Gestalt Psychology", "Proximity", "UI Layout", "Visual Chunking", "Spatial Hierarchy", "Design Systems"],
     body: [
       createBlock("Why We Group Things Together: The Secret Power of Gestalt Proximity in UI Architecture", "h2"),
-      createBlock("Examine a broken form layout: An input label sits with an equal 16px margin to the input field above it and an equal 16px margin to the input field below it. In that fraction of a second, the user's visual cortex experiences immediate cognitive friction: *'Does this label describe the box above or the box below?'*"),
+      createBlock("Examine a broken form layout: An input label sits with an equal 16px margin to the input field above it and an equal 16px margin to the input field below it. In that fraction of a second, the user's visual cortex experiences immediate cognitive friction: 'Does this label describe the box above or the box below?'"),
       createBlock("A four-pixel spacing ambiguity forces the brain to halt smooth reading and perform active spatial deduction. Why is spatial proximity such an overwhelming perceptual force?"),
-
       createBlock("1. The 1923 Gestalt Discovery: Max Wertheimer", "h3"),
-      createBlock("In 1923, German psychologist and Gestalt pioneer Max Wertheimer published his foundational research on perceptual organization (*Untersuchungen zur Lehre von der Gestalt II*). He placed a matrix of uniform black dots on a white surface. When spaced evenly, viewers perceived a single undifferentiated field. But the instant pairs of dots were nudged closer together, subjects instantly and involuntarily perceived distinct couples."),
-      createBlock("This is the **Law of Proximity (Gesetz der Nähe)**: Objects physically close to one another are perceived as sharing a common identity and functional relationship. Proximity is a pre-attentive visual force that operates before conscious analysis begins."),
-
+      createBlock("In 1923, German psychologist and Gestalt pioneer Max Wertheimer published his foundational research on perceptual organization. He placed a matrix of uniform black dots on a white surface. When spaced evenly, viewers perceived a single undifferentiated field. But the instant pairs of dots were nudged closer together, subjects instantly and involuntarily perceived distinct couples."),
+      createBlock("This is the Law of Proximity (Gesetz der Nähe): Objects physically close to one another are perceived as sharing a common identity and functional relationship. Proximity is a pre-attentive visual force that operates before conscious analysis begins."),
       createBlock("2. The Mathematical Spacing Ratio (1:3 Spatial Pacing)", "h3"),
       createBlock("Master design system architects do not guess margins; they apply strict proportional spacing rules:"),
       createBlock("• Internal Association Gap: The distance between an input label and its corresponding text field is tight (6px to 8px)."),
       createBlock("• External Separation Gap: The distance between that input group and the preceding unrelated group is broad (24px to 32px)—maintaining a strict 1:3 or 1:4 proximity ratio."),
       createBlock("This mathematical contrast creates instant, unmistakable visual clusters without requiring a single background card, border line, or divider box."),
-
       createBlock("3. Gestalt Grouping Hierarchy: Proximity vs. Common Region vs. Similarity", "h3"),
       createBlock("When building complex dashboards, understanding the relative strength of Gestalt laws is crucial:"),
       createBlock("• Proximity vs. Similarity: Proximity routinely overpowers similarity of shape or color. Two different shapes placed 4px apart will be grouped faster than two identical shapes placed 40px apart."),
       createBlock("• The Container Crutch (Common Region): Inexperienced designers frequently wrap every section in a heavy bordered container card because their internal spacing is broken. Elite interface designers let clean Gestalt proximity do 100% of the grouping work, eliminating visual clutter."),
-
       createBlock("4. The Practical 'Squint Test' for UI Architecture", "h3"),
-      createBlock("To audit your interface for Gestalt compliance, perform the **Squint Test**: blur your eyes until text is unreadable. If the functional sections, button groups, and data chunks remain distinct and easily navigable through spatial clustering alone, your interface architecture is mathematically sound."),
+      createBlock("To audit your interface for Gestalt compliance, perform the Squint Test: blur your eyes until text is unreadable. If the functional sections, button groups, and data chunks remain distinct and easily navigable through spatial clustering alone, your interface architecture is mathematically sound."),
+    ],
+    body_az: [
+      createBlock("Biz Niyə Əşyaları Qruplaşdırırıq? İnterfeys Arxitekturasında Gestalt Yaxınlıq Qanununun Gizli Gücü", "h2"),
+      createBlock("Qüsurlu bir form tərtibatını nəzərdən keçirin: Mətn başlığı yuxarıdakı xanaya da 16px məsafədədir, aşağıdakı xanaya da 16px məsafədədir. Həmin saniyədə istifadəçinin beyni tərəddüd yaşayır: 'Bu başlıq yuxarıdakı xanaya aiddir, yoxsa aşağıdakına?'"),
+      createBlock("Dörd piksellik qeyri-müəyyənlik beyni oxunu dayandırmağa və fəza təhlili aparmağa məcbur edir. Məsafə yaxınlığı niyə bu qədər güclü qavrayış qüvvəsidir?"),
+      createBlock("1. 1923-cü İl Gestalt Kəşfi: Max Wertheimer", "h3"),
+      createBlock("1923-cü ildə alman psixoloqu Max Wertheimer qavrayış təşkili üzrə fundamental tədqiqatlarını dərc etdirdi. O, ağ səthə bərabər məsafədə qara nöqtələr düzdü. Məsafələr eyni olanda insanlar tək bir ümumi sahə görürdülər. Lakin nöqtələr cüt-cüt bir-birinə yaxınlaşdırılan kimi, insanlar qeyri-ixtiyari olaraq cütlüklər qavramağa başladılar."),
+      createBlock("Bu, **Yaxınlıq Qanunudur (Law of Proximity)**: Bir-birinə fiziki olaraq yaxın olan obyektlər ortaq funksional əlaqəyə malik kimi qəbul edilir. Yaxınlıq şüurlu təhlildən əvvəl işləyən avtomatik vizual qüvvədir."),
+      createBlock("2. Riyazi Boşluq Nisbəti (1:3 Məkan Addımı)", "h3"),
+      createBlock("Usta dizayn sistemi mühəndisləri kənarları təxmin etmirlər; onlar dəqiq proporsional qaydalar tətbiq edirlər:"),
+      createBlock("• Daxili Əlaqə Boşluğu: Başlıq ilə aid olduğu daxiletmə xanası arasındakı məsafə sıxdır (6px - 8px)."),
+      createBlock("• Xarici Ayrılma Boşluğu: Həmin qrup ilə əlaqəsiz digər elementlər arasındakı məsafə genişdir (24px - 32px) — sərt 1:3 və ya 1:4 nisbətini qoruyur."),
+      createBlock("Bu riyazi fərq heç bir çərçivə və ya xətt olmadan ani və aydın vizual qruplar yaradır."),
+      createBlock("3. Gestalt İyerarxiyası: Yaxınlıq, Oxşarlıq və Çərçivələr", "h3"),
+      createBlock("• Yaxınlıq və Oxşarlıq: Yaxınlıq forma və ya rəng oxşarlığını hər zaman üstələyir. 4px məsafədə qoyulmuş iki fərqli forma, 40px məsafədəki iki eyni formadan daha tez bir qrup kimi qavranılır."),
+      createBlock("• Çərçivə Asılılığı: Təcrübəsiz dizaynerlər daxili boşluqları nizamlaya bilmədikləri üçün hər şeyi qalın çərçivə kartlarına bükürlər. Peşəkar dizaynerlər isə bütün qruplaşdırma işini təmiz Gestalt yaxınlığına həvalə edir."),
+      createBlock("4. UI Arxitekturası Üçün Praktiki Qıyma Testi", "h3"),
+      createBlock("İnterfeysinizi yoxlamaq üçün gözlərinizi qıyın ki, mətnlər oxunmasın. Əgər funksional bölmələr və düymə qrupları yalnız məsafə nizamı ilə hələ də aydın seçilirsə, dizayn arxitekturanız riyazi olaraq mükəmməldir."),
     ],
   },
 
-  // 39. THE PSYCHOLOGY OF GOOGLE SEARCH
+  // 37. THE PSYCHOLOGY OF GOOGLE SEARCH
   {
     _id: "blog-seo-fundamentals-for-creatives",
     title: "The Psychology of Search Interfaces: Why Position Dictates Perceived Authority",
@@ -307,25 +373,40 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
       createBlock("The Psychology of Search Interfaces: Why Position Dictates Perceived Authority", "h2"),
       createBlock("Type a complex technical question or clinical symptom into a search engine. Within 200 milliseconds, an index returns hundreds of thousands of candidate documents. The overwhelming majority of users will click the first or second link without ever evaluating the remaining options."),
       createBlock("Why do human beings place nearly absolute cognitive trust in the topmost ranking position of an automated software index?"),
-
       createBlock("1. From the 'Golden Triangle' to the Pinball Scanning Era", "h3"),
       createBlock("In 2005, early eye-tracking research (notably the pioneering Enquiro/Did-it study) revealed the rigid 'Google Golden Triangle': user gaze locked onto the top-left corner of the traditional 10-blue-link page in a strict F-shaped scanning pattern."),
-      createBlock("In modern multi-modal search interfaces, eye-tracking demonstrates an evolution into what researchers call the **Pinball Pattern**: gaze bounces non-linearly between interactive rich cards, People Also Ask accordions, video carousels, and AI-generated synthesis summaries. Yet despite this visual complexity, position bias remains extraordinarily resilient: top placement continues to capture the dominant share of non-ad interactions."),
-
+      createBlock("In modern multi-modal search interfaces, eye-tracking demonstrates an evolution into what researchers call the Pinball Pattern: gaze bounces non-linearly between interactive rich cards, People Also Ask accordions, video carousels, and AI-generated synthesis summaries. Yet despite this visual complexity, position bias remains extraordinarily resilient: top placement continues to capture the dominant share of non-ad interactions."),
       createBlock("2. Cognitive Offloading & The Authority Heuristic", "h3"),
       createBlock("In Daniel Kahneman's dual-system framework of cognition, active verification is mentally expensive (System 2 thinking). Reading five competing technical articles to determine which author possesses superior engineering rigor requires sustained working memory and skepticism."),
-      createBlock("Over decades of highly reliable search results, human users developed a powerful adaptive shortcut: **Cognitive Offloading**. Users outsource the exhausting task of editorial vetting to the ranking engine, operating on the subconscious heuristic: *'If the system placed this at the top, millions of algorithmic signals have already validated its accuracy.'*"),
-
+      createBlock("Over decades of highly reliable search results, human users developed a powerful adaptive shortcut: Cognitive Offloading. Users outsource the exhausting task of editorial vetting to the ranking engine, operating on the subconscious heuristic: 'If the system placed this at the top, millions of algorithmic signals have already validated its accuracy.'"),
       createBlock("3. The Snippet as a Trust Anchor (Cognitive Fluency)", "h3"),
       createBlock("While ranking position guarantees visual impressions, the snippet architecture dictates whether impressions convert into clicks:"),
       createBlock("• Cognitive Fluency: When a title and meta description directly mirror the user's underlying search intent with concise, precise terminology, the brain experiences instant cognitive ease, accelerating the decision to click."),
       createBlock("• The Jargon Hesitation: When a snippet is stuffed with clumsy keyword repetitions or vague marketing hype, the user experiences cognitive friction, bypassing position #1 in search of a clearer specialist source."),
-
       createBlock("4. Design Implications for Modern Knowledge Ecosystems", "h3"),
       createBlock("For designers, technical writers, and content architects, understanding search psychology reveals crucial interface principles:"),
       createBlock("• Structure Content for Immediate Intent Resolution: Lead with concrete answers, formulas, or code snippets before expanding into historical or theoretical context."),
       createBlock("• Treat Metadata as an Executive Summary: Write titles and descriptions not as keyword stuffing buckets, but as authoritative diagnostic summaries that resolve user ambiguity in under 3 seconds."),
       createBlock("• Respect Scannability: Use descriptive subheadings, structured tables, and bolded anchor terms so readers navigating from search can verify relevance in a single visual pass."),
+    ],
+    body_az: [
+      createBlock("Axtarış İnterfeyslərinin Psixologiyası: Mövqe Niyə Nüfuz Təsiri Yaradır?", "h2"),
+      createBlock("Axtarış sisteminə mürəkkəb texniki sual və ya simptom yazın. 200 millisaniyə ərzində sistem yüz minlərlə sənəd qaytarır. İstifadəçilərin böyük əksəriyyəti digər variantları heç qiymətləndirmədən birinci və ya ikinci linkə klikləyir."),
+      createBlock("İnsanlar avtomatlaşdırılmış axtarış sisteminin ən yuxarı nəticəsinə niyə demək olar ki, mütləq idrak etibarı göstərirlər?"),
+      createBlock("1. 'Qızıl Üçbucaq'dan Pinbol Skaninqinə", "h3"),
+      createBlock("2005-ci ildə aparılan erkən göz izləmə araşdırmaları ənənəvi 10 mavi link səhifəsində sərt 'Google Qızıl Üçbucağı'nı üzə çıxardı: istifadəçilər yuxarı sol küncə F-şəkilli naxışla baxırdılar."),
+      createBlock("Müasir axtarışda isə baxışlar Pinbol Naxışı ilə zəngin kartlar, video karuselləri və Süni İntellekt icmalları arasında qeyri-xətti sıçrayır. Lakin buna baxmayaraq, mövqe üstünlüyü hələ də dominant qalır: ilk yerlər ən böyük klik payını toplayır."),
+      createBlock("2. İdrakın Kənara Ötürülməsi (Cognitive Offloading) Və Nüfuz Qısayolu", "h3"),
+      createBlock("Daniel Kahneman-ın idrak modelində aktiv yoxlama zehni baxımdan baha başa gəlir (Sistem 2 düşüncəsi). Hansı müəllifin daha dəqiq olduğunu müəyyən etmək üçün beş məqalə oxumaq böyük enerji tələb edir."),
+      createBlock("İstifadəçilər bu yorucu yoxlama işini axtarış mühərrikinə ötürərək şüuraltı qısayoldan istifadə edirlər: *'Əgər sistem bunu ən yuxarı qoyubsa, milyonlarla alqoritmik siqnal artıq onun dəqiqliyini təsdiqləyib.'*"),
+      createBlock("3. Snippet Etibar Lövbəri Kimi", "h3"),
+      createBlock("Mövqe təəssüratı təmin etsə də, klikə çevrilməni başlıq və təsvirin strukturu həll edir:"),
+      createBlock("• İdrak Axıcılığı (Cognitive Fluency): Başlıq və meta təsvir istifadəçinin niyyətini dəqiq əks etdirdikdə, beyin asanlıq hiss edir və klik qərarı sürətlənir."),
+      createBlock("• Qeyri-müəyyənlik Maneəsi: Snippet açar sözlərlə və ya şişirdilmiş marketinq ifadələri ilə doldurulduqda, istifadəçi 1-ci mövqeni keçib daha aydın mütəxəssis mənbəsinə yönəlir."),
+      createBlock("4. Müasir Məzmun Ekosistemləri Üçün Nəticələr", "h3"),
+      createBlock("• Məzmunu Ani Həll Üçün Qurun: Nəzəriyyəyə keçməzdən əvvəl dəqiq cavabları və ya kod nümunələrini əvvəldə təqdim edin."),
+      createBlock("• Metaməlumatlara İcraçı Xülasəsi Kimi Baxın: Başlıqları açar söz yığını kimi deyil, istifadəçi qeyri-müəyyənliyini 3 saniyədə aradan qaldıran diaqnostik xülasə kimi yazın."),
+      createBlock("• Rahat Skan Olunmanı Təmin Edin: Axtarışdan gələn oxucuların tək bir baxışla uyğunluğu yoxlaya bilməsi üçün təsviri alt başlıqlardan və qalınlaşdırılmış terminlərdən istifadə edin."),
     ],
   },
 ];

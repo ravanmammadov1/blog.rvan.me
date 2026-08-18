@@ -622,24 +622,41 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
 
     // Merge: Prefer editorial registry's deep researched chapters while respecting Sanity overrides
     const base = editorialBlog || data || getLocalBlogBySlug(cleanSlug) || null;
-    if (base && data) {
+    if (base) {
+      const isAzPost = isAz;
+      const localizedBody = (isAzPost && Array.isArray(base.body_az) && base.body_az.length > 0)
+        ? base.body_az
+        : (Array.isArray(base.body) && base.body.length > 0 ? base.body : (data?.body || []));
+      const localizedTitle = (isAzPost && base.title_az) ? base.title_az : (base.title || data?.title || "");
+      const localizedExcerpt = (isAzPost && base.excerpt_az) ? base.excerpt_az : (base.excerpt || data?.excerpt || "");
+      const localizedCategory = (isAzPost && base.category_az) ? base.category_az : (base.category || data?.category || "");
+
       return {
         ...base,
-        ...data,
-        // If Sanity body is sparse or older format, ensure deep editorial body is preserved
-        body: (Array.isArray(editorialBlog?.body) && editorialBlog.body.length > 0)
-          ? editorialBlog.body
-          : data.body || base.body,
-        title: editorialBlog?.title || data.title || base.title,
-        category: editorialBlog?.category || data.category || base.category,
-        excerpt: editorialBlog?.excerpt || data.excerpt || base.excerpt,
-        tags: editorialBlog?.tags || data.tags || base.tags,
+        ...(data || {}),
+        title: localizedTitle,
+        category: localizedCategory,
+        excerpt: localizedExcerpt,
+        tags: base.tags || data?.tags,
+        body: localizedBody,
+        readTime: base.readTime || data?.readTime,
+        featured: base.featured ?? data?.featured,
       };
     }
     return base;
   } catch (error) {
     console.error("Error fetching blog by slug from Sanity:", error);
-    return editorialBlog || getLocalBlogBySlug(cleanSlug) || null;
+    const fallback = editorialBlog || getLocalBlogBySlug(cleanSlug) || null;
+    if (fallback && isAz) {
+      return {
+        ...fallback,
+        title: fallback.title_az || fallback.title,
+        category: fallback.category_az || fallback.category,
+        excerpt: fallback.excerpt_az || fallback.excerpt,
+        body: (Array.isArray(fallback.body_az) && fallback.body_az.length > 0) ? fallback.body_az : fallback.body,
+      };
+    }
+    return fallback;
   }
 }
 
@@ -647,7 +664,7 @@ export async function fetchAllBlogs(lang: string = "en") {
   const editorialMap = new Map(MASTER_EDITORIAL_BLOGS.map((b) => [b.slug.current, b]));
 
   try {
-    const isAz = lang === "az";
+    const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
     const data = await client.fetch(
       `
       *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
@@ -675,22 +692,36 @@ export async function fetchAllBlogs(lang: string = "en") {
         if (ed) {
           return {
             ...item,
-            title: ed.title,
-            category: ed.category,
-            excerpt: ed.excerpt,
+            title: (isAz && ed.title_az) ? ed.title_az : ed.title,
+            category: (isAz && ed.category_az) ? ed.category_az : ed.category,
+            excerpt: (isAz && ed.excerpt_az) ? ed.excerpt_az : ed.excerpt,
             tags: ed.tags || item.tags,
             readTime: ed.readTime || item.readTime,
             featured: ed.featured ?? item.featured,
+            body: (isAz && Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
           };
         }
         return item;
       });
     }
 
-    return getAllEditorialBlogs();
+    return getAllEditorialBlogs().map((ed) => isAz ? {
+      ...ed,
+      title: ed.title_az || ed.title,
+      category: ed.category_az || ed.category,
+      excerpt: ed.excerpt_az || ed.excerpt,
+      body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+    } : ed);
   } catch (error) {
     console.error("Error fetching all blogs from Sanity:", error);
-    return getAllEditorialBlogs();
+    const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
+    return getAllEditorialBlogs().map((ed) => isAz ? {
+      ...ed,
+      title: ed.title_az || ed.title,
+      category: ed.category_az || ed.category,
+      excerpt: ed.excerpt_az || ed.excerpt,
+      body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+    } : ed);
   }
 }
 

@@ -10,17 +10,6 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
   };
 }
 
-function createImageBlock(url: string, alt: string, caption?: string) {
-  return {
-    _key: Math.random().toString(36).substring(7),
-    _type: "image",
-    asset: { _type: "reference", _ref: "image-manual" },
-    alt,
-    caption,
-    url,
-  };
-}
-
 export const ARTICLES_11_TO_20: BlogPost[] = [
   // 11. RULE OF THREE
   {
@@ -57,6 +46,19 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("• Tier 2 (Pro - The Anchor/Target): Highlighted as 'Most Popular' and engineered for 70%+ adoption."),
       createBlock("• Tier 3 (Enterprise): Serves as the luxury price anchor, making Tier 2 look remarkably reasonable."),
     ],
+    body_az: [
+      createBlock("Niyə '3 Qaydası' Dizaynda Və Mətndə Hər Yerdə Qarşımıza Çıxır?", "h2"),
+      createBlock("'Gəldim, gördüm, qələbə çaldım.' 'Həyat, Azadlıq və Xoşbəxtlik axtarışı.' Üç qardaş nağılları. Başlanğıc, Standart və Korporativ tarif paketləri. Üç sütunlu dizayn şəbəkəsi."),
+      createBlock("İnsanlıq tarixi boyunca ədəbiyyatda, natiqlikdə və vizual dizaynda 3 rəqəmi heyrətamiz tezliklə qarşımıza çıxır. Qədim romalılar hüquqi və ritorik bir prinsip yaratmışdılar: *Omne trium perfectum* — üçlüklə gələn hər şey mükəmməldir. İdrak arxitekturamız niyə üçlüklərə bu qədər güclü bağlanıb?"),
+      createBlock("1. Naxış Yaratmağın Riyazi Minimumu", "h3"),
+      createBlock("Koqnitiv psixologiyada bir element sadəcə nöqtədir. İki element xətt və ya müqayisədir. Üç element isə insan beyninin tanına bilən bir naxış (pattern) qura bilməsi üçün tələb olunan ən kiçik riyazi saydır."),
+      createBlock("İnsan beyni fasiləsiz naxış axtaran mühərrikdir. Üç elementlə qarşılaşdıqda beynimiz bunu belə qeyd edir: Giriş, Davam və Təsdiq. Bu ritmik baxımdan tam və yadda saxlanması asan hiss olunur."),
+      createBlock("2. Üçpilləli Qiymətləndirmə Və Qızıl Seçim Nisbəti", "h3"),
+      createBlock("SaaS və məhsul marketinqində üç seçim seçmək iflici ilə ikili məcburiyyət arasındakı qızıl ortanı təmsil edir:"),
+      createBlock("• Pillə 1 (Başlanğıc): Büdcəsi az olan istifadəçilərin itirilməsinin qarşısını alır."),
+      createBlock("• Pillə 2 (Pro - Əsas Hədəf): 'Ən Məşhur' kimi vurğulanır və 70%+ qəbul üçün hazırlanır."),
+      createBlock("• Pillə 3 (Enterprise): Lüks qiymət lövbəri rolunu oynayır və Pillə 2-ni inanılmaz dərəcədə sərfəli göstərir."),
+    ],
   },
 
   // 12. LOGO MEMORABILITY & GESTALT
@@ -90,6 +92,16 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("That 'Aha!' moment permanently encodes the logo into episodic memory. The brain loves solving small visual riddles, and when a brand offers that reward, the symbol becomes indelible."),
       createBlock("2. Radical Reducibility: The 5-Second Billboard Test", "h3"),
       createBlock("Legendary designer Paul Rand noted: 'A logo does not sell; it identifies.' The most memorable logos on earth are radically simple geometric silhouettes that survive at 16x16 pixels on a smartwatch screen or on a highway billboard viewed at 70 mph for half a second."),
+    ],
+    body_az: [
+      createBlock("Bəzi Loqolar Niyə Heç Vaxt Yaddan Çıxmır?", "h2"),
+      createBlock("Nike-ın qanadını (Swoosh) xatırlayın. Apple-ın dişlənmiş almasını xatırlayın. FedEx-də 'E' və 'x' arasındakı gizli oxu xatırlayın. Siz bu simvolları iki saniyə içində salfet üzərində çəkə bilərsiniz. İndi isə yerli sığorta şirkətinizin loqosunu çəkməyə çalışın — çox güman ki, formasını belə xatırlamırsınız."),
+      createBlock("Bəzi vizual işarələr milyardlarla insanın beynində daimi neyron yuvası qurduğu halda, digərləri niyə dərhal yaddaşdan silinir?"),
+      createBlock("1. Gestalt Qapanma Qanunu (Kəşfin Gizli Mükafatı)", "h3"),
+      createBlock("1994-cü ildə Lindon Leader tərəfindən dizayn edilmiş FedEx loqosu Gestalt Qapanma qanununun şah əsəridir. Böyük 'E' və kiçik 'x' arasındakı mənfi boşluq irəliyə yönəlmiş iti ox formalaşdırır. İzləyici bu gizli oxu ilk dəfə görəndə beyni xoş idrak həzzi yaşayır."),
+      createBlock("Həmin 'Aha!' anı loqonu epizodik yaddaşa həmişəlik həkk edir. Beyin kiçik vizual tapmacaları həll etməyi sevir və bir brend bu mükafatı təqdim etdikdə simvol silinməz olur."),
+      createBlock("2. Radikal Sadələşdirmə: 5 Saniyəlik Lövhə Testi", "h3"),
+      createBlock("Əfsanəvi dizayner Paul Rand qeyd edirdi: 'Loqo satmır; o, tanıdır.' Dünyanın ən yaddaqalan loqoları saat ekranında 16x16 piksel ölçüsündə də, magistral yolda saatda 100 km sürətlə ötüb keçərkən də aydın tanınan radikal sadə həndəsi siluetlərdir."),
     ],
   },
 
@@ -125,6 +137,16 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("2. Omitting Dollar Signs ($)", "h3"),
       createBlock("Cornell University researchers proved that menus that omit dollar signs (e.g., printing '38' instead of '$38') cause diners to spend 8.1% more on average. The currency symbol activates the 'Pain of Paying' in the brain's insular cortex. Removing the symbol decouples the gastronomic enjoyment from financial loss."),
     ],
+    body_az: [
+      createBlock("Restoranlar Menyuya Niyə Gülünc Dərəcədə Bahalı Bir Yemək Qoyurlar?", "h2"),
+      createBlock("Yüksək səviyyəli restoran menyusunu açdıqda gözünüz çox vaxt həddən artıq bahalı bir təklifə sataşır: 180 dollarlıq Dəniz Məhsulları Qabı və ya 220 dollarlıq Qızıl Vərəqli Tomahawk Steyk."),
+      createBlock("Menyu mühəndisliyinin gizli sirri budur: Restoran əslində qonaqların çoxunun həmin 180 dollarlıq yeməyi sifariş edəcəyini gözləmir. Onun əsas məqsədi kulinariya deyil, sırf psixolojidir — bu, 'Qiymət Lövbəri'dir."),
+      createBlock("1. Rəqəmlərin Nisbiliyi Və Kontrast", "h3"),
+      createBlock("Əgər menyunun ən bahalı yeməyi 45 dollarlıq steykdirsə, 45 dollar ödəmək baha hiss olunur. Lakin göz əvvəlcə yuxarıda 180 dollarlıq lövbərlə qarşılaşdıqda, 45 dollarlıq steyk dərhal onunla müqayisədə təvazökar, məntiqli və təhlükəsiz görünür."),
+      createBlock("Bu, Kontrast Effektidir. İnsanlar mütləq rəqəmləri qiymətləndirməkdə zəifdir, lakin müqayisəli fərqləri qavramaqda son dərəcə bacarıqlıdırlar. Miqyasın ən yuxarısını yüksək rəqəmlə lövbərləməklə, altındakı hər şey 'məqbul' idrak zonasına daxil olur."),
+      createBlock("2. Valyuta İşarələrinin Çıxarılması", "h3"),
+      createBlock("Cornell Universitetinin tədqiqatçıları sübut etdilər ki, valyuta işarələrini menyudan çıxarmaq (məsələn, '$38' əvəzinə sadəcə '38' yazmaq) qonaqların orta hesabla 8.1% daha çox xərcləməsinə səbəb olur. Valyuta simvolu beyində 'Ödəmə Ağrısı'nı oyadır; simvolu çıxarmaq isə qastronomik zövqü maliyyə itkisi hissindən ayırır."),
+    ],
   },
 
   // 14. MOTION DESIGN MECHANICS & UI PHYSICS
@@ -158,6 +180,15 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("2. Functional vs. Decorative Motion", "h3"),
       createBlock("Great motion is invisible. It does not distract; it communicates spatial relationships, clarifies parent-child hierarchies, and confirms state changes before the user has to guess what just happened."),
     ],
+    body_az: [
+      createBlock("Yaxşı Animasiya Niyə Təbii Hiss Etdirir? (UI-ın Görünməz Fizikası)", "h2"),
+      createBlock("Fiziki dünyada hərəkət edən bir əşya — atılan tennis topu, açılan qapı və ya budaqdan düşən alma — heç vaxt sıfır anından qəfil dayanmaya qədər sabit sürətlə hərəkət etmir. O, ətaləti dəf etməli, rəvan sürətlənməli və sürtünmə nəticəsində tədricən yavaşlamalıdır."),
+      createBlock("Lakin həvəskar interfeyslərdə elementlər tez-tez ekranda `transition: all 0.3s linear` ilə hərəkət edir. İnsan beyni xətti hərəkətdən dərhal narahat olur, çünki bu, sinir sistemimizin öyrəndiyi bütün fizika qanunlarına ziddir."),
+      createBlock("1. Cubic-Bezier Və Yay Dinamikasının Gözəlliyi", "h3"),
+      createBlock("Təbii hərəkət qeyri-xətti yavaşlama əyrilərinə əsaslanır. Ease-out əyrisi (`cubic-bezier(0.16, 1, 0.3, 1)`) istifadəçi toxunuşuna ani reaksiya ilə başlayır və sakitcə son mövqeyinə oturur. Framer Motion kimi müasir alətlər kütlə və elastiklik kimi yay fizikasını dəstəkləyərək elementlərə toxunma hissi verir."),
+      createBlock("2. Funksional Və Dekorativ Hərəkət", "h3"),
+      createBlock("Yaxşı animasiya görünməzdir. O, diqqəti yayındırmır; məkan əlaqələrini izah edir, valideyn-övlad iyerarxiyasını aydınlaşdırır və vəziyyət dəyişikliklərini istifadəçi düşünməzdən əvvəl təsdiqləyir."),
+    ],
   },
 
   // 15. ZEIGARNIK EFFECT & "YOU'RE ALMOST DONE"
@@ -186,27 +217,44 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("Why Does 'You're Almost Done' Work So Well? (The UX of Open Loops)", "h2"),
       createBlock("Present a user with a blank 6-field registration form on a single screen, and drop-off rates routinely climb. Break that exact same form into a 3-step progressive wizard with a header reading 'Step 1 of 3: Account Created (33% Complete)', and completion velocity surges."),
       createBlock("The actual cognitive workload has not decreased by a single keystroke. What changed is the human brain's internal ledger of open obligations: an active cognitive loop was initiated, and our nervous system possesses an ancient evolutionary bias to close it."),
-
       createBlock("1. The Laboratory Foundations: Zeigarnik (1927) & Hull (1932)", "h3"),
       createBlock("In 1927, psychologist Bluma Zeigarnik conducted a series of controlled memory experiments inspired by a Vienna café observation: waiters remembered complex unpaid dining orders with flawless recall, yet completely forgot them the instant the bill was settled. Zeigarnik proved that uninterrupted tasks achieve cognitive closure and are rapidly pruned from working memory, whereas interrupted or unfinished tasks maintain persistent neural activation."),
       createBlock("Five years later, behavioral psychologist Clark Hull formulated the Goal Gradient Hypothesis: organismal effort, speed, and focus accelerate non-linearly as the perceived distance to a goal diminishes. The closer a user feels to the finish line, the more friction they are willing to absorb to achieve completion."),
-
       createBlock("2. The Endowed Progress Illusion: The Power of Artificial Momentum", "h3"),
       createBlock("In their classic 2006 field study, researchers Joseph Nunes and Xavier Drèze distributed loyalty stamp cards to 300 car wash customers:"),
       createBlock("• Group A (Baseline): Received a card requiring 8 stamps for a free wash (0% initial progress)."),
       createBlock("• Group B (Endowed): Received a card requiring 10 stamps, but with 2 stamps pre-punched as a complimentary head-start (20% initial progress)."),
       createBlock("Mathematically, both cohorts needed exactly 8 paid washes. Psychologically, their behavior diverged drastically: the pre-endowed cohort achieved nearly double the completion rate (34% vs 19%) and returned significantly faster between visits. Giving users credit for starting fundamentally transforms the subjective framing from 'a daunting hurdle' to 'momentum in motion'."),
-
       createBlock("3. Product Deconstruction: Where Open Loops Drive Adoption", "h3"),
       createBlock("• The LinkedIn Profile Strength Meter: By labeling a profile as 'Intermediate (70%)' and prominently displaying an empty slot for a missing portfolio link, LinkedIn leverages open-loop tension to collect rich profile metadata without intrusive modals."),
       createBlock("• Multi-Step SaaS Setup Checklists: Modern product onboarding flows (Linear, Notion, Figma) pre-populate setup checklists with 'Create Account' and 'Name Workspace' already checked off, delivering immediate endowed progress dopamine."),
       createBlock("• Milestone Micro-Copy: Replacing generic 'Next' button labels with active milestone copy ('Next: Set Your Team URL (Almost Done!)') continuously feeds the goal gradient instinct."),
-
       createBlock("4. When Progress Indicators Backfire into Abandonment", "h3"),
       createBlock("Progress visualization is not an infallible conversion silver bullet. It collapses into immediate user abandonment under three specific failure modes:"),
       createBlock("• The False Horizon Anti-Pattern: A wizard that advertises 'Step 3 of 3', only to reveal sub-steps 3A, 3B, and 3C upon submission. Breaking user trust in the goal gradient triggers immediate rage quits."),
       createBlock("• Indeterminate Ambiguity: Vague animated spinners or non-quantified progress bars that fail to clarify the true remaining cognitive investment."),
       createBlock("• The Sunk-Cost Paywall Trap: Forcing users through 10 tedious setup steps before revealing an unexpected mandatory credit card requirement. While short-term completion may spike, downstream refund requests and customer hostility multiply."),
+    ],
+    body_az: [
+      createBlock("Niyə 'Demək Olar Ki Bitirdiniz' Bildirişi Bu Qədər Güclüdür? (Açıq Dövrələrin UX-i)", "h2"),
+      createBlock("İstifadəçiyə eyni səhifədə 6 xanalı boş qeydiyyat forması təqdim etdikdə imtina faizləri kəskin yüksəlir. Həmin formanı 'Addım 1/3: Hesab Yaradıldı (33% Tamamlandı)' başlığı ilə 3 addımlıq axına böldükdə isə tamamlama sürəti artır."),
+      createBlock("Faktiki olaraq görülən iş bir simvol belə azalmayıb. Dəyişən yeganə şey beynin daxili öhdəliklər dəftəridir: aktiv bir idrak dövrəsi başladı və sinir sistemimiz onu qapatmağa təbii meyillidir."),
+      createBlock("1. Laboratoriya Əsasları: Zeigarnik (1927) Və Hull (1932)", "h3"),
+      createBlock("1927-ci ildə psixoloq Bluma Zeigarnik Vyana kafesindəki müşahidəsindən ilhamlanaraq yaddaş təcrübələri apardı: ofisiantlar ödənilməmiş mürəkkəb sifarişləri dəqiqliklə xatırlayır, lakin hesab bağlanan kimi dərhal unudurdular. Zeigarnik sübut etdi ki, tamamlanmış tapşırıqlar yaddaşdan tez silinir, yarımçıq qalanlar isə beyində aktiv neyron gərginliyi saxlayır."),
+      createBlock("Beş il sonra Clark Hull Məqsəd Qradiyenti hipotezini irəli sürdü: orqanizmin səyi və sürəti məqsədə yaxınlaşdıqca qeyri-xətti şəkildə artır. İstifadəçi finiş xəttinə nə qədər yaxın olduğunu hiss edərsə, maneələri dəf etməyə bir o qədər hazır olur."),
+      createBlock("2. Qazanılmış İrəliləyiş İllüziyası: Süni İmpulsun Gücü", "h3"),
+      createBlock("2006-cı ildə Joseph Nunes və Xavier Drèze 300 avtomobil yuma müştərisi arasında maraqlı təcrübə apardılar:"),
+      createBlock("• Qrup A: Pulsuz yuma üçün 8 möhür tələb olunan boş kart aldı (0% ilkin irəliləyiş)."),
+      createBlock("• Qrup B: 10 möhür tələb olunan, lakin 2 möhürü əvvəlcədən vurulmuş kart aldı (20% ilkin irəliləyiş)."),
+      createBlock("Riyazi olaraq hər iki qrup 8 dəfə maşın yumalı idi. Lakin əvvəlcədən 2 möhürlə hədiyyə edilmiş qrup ikiqat daha çox tamamlama faizi göstərdi (34% vs 19%). Başlanğıc üçün istifadəçiyə kredit vermək baryeri 'hərəkətdə olan impulsa' çevirir."),
+      createBlock("3. Məhsul Nümunələri: Açıq Dövrələrin Gücü", "h3"),
+      createBlock("• LinkedIn Profil Gücü Şkalası: Profili 'Orta Səviyyə (70%)' kimi etiketləyərək LinkedIn profil məlumatlarını bezdirici pəncərələr olmadan toplayır."),
+      createBlock("• SaaS Quraşdırma Siyahıları: Notion və Figma kimi alətlər quraşdırma siyahısında 'Hesab yaratmaq' bəndini artıq tamamlanmış göstərərək ilkin dopamin təmin edir."),
+      createBlock("• Mərhələ Mikro-Mətnləri: 'Növbəti' əvəzinə 'Növbəti: Komanda URL-ni seçin (Demək olar ki, bitirdiniz!)' yazmaq məqsəd qradiyentini gücləndirir."),
+      createBlock("4. İrəliləyiş Göstəriciləri Nə Vaxt Zərər Verir?", "h3"),
+      createBlock("• Saxta Üfüq Xətası: 'Addım 3/3' vəd edib sonra 3A, 3B alt-addımlarını açmaq istifadəçi inamını sarsıdır."),
+      createBlock("• Qeyri-müəyyənlik: Qalan vaxtı dəqiq bildirməyən animasiyalı çarxlar."),
+      createBlock("• Tələyə Salınmış Ödəniş: 10 yorucu addımdan sonra qəfil kart məlumatı tələb etmək uzunmüddətli narazılıq yaradır."),
     ],
   },
 
@@ -242,6 +290,16 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("2. The Power of the Default Effect", "h3"),
       createBlock("Human beings possess a strong bias toward the default option. By elevating the target tier with distinct visual hierarchy (a subtle border glow, a slightly larger scale, and a pre-selected radio button), the designer transforms that tier into the natural cognitive default."),
     ],
+    body_az: [
+      createBlock("Qiymət Cədvəllərində 'Ən Məşhur' Nişanı Niyə Bu Qədər Yaxşı İşləyir?", "h2"),
+      createBlock("Müştərilər bir neçə abunəlik paketi ilə qarşılaşdıqda ($19/ay, $49/ay, $199/ay) tərəddüd edirlər: *'Yüksək paketi alsam artıq pul ödəyəcəyəmmi? Aşağı paketdə vacib funksiyalar çatışmayacaqmı?'*"),
+      createBlock("Dizayner orta kartı vizual olaraq qabardıb üzərinə 'Ən Məşhur' nişanı qoyan kimi həmin paketin konversiyası 40%-ə qədər artır. Səbəb nədir?"),
+      createBlock("1. Təkamül Qısayolu Kimi Sosial Sübut", "h3"),
+      createBlock("Dr. Robert Cialdini-nin məşhur *Təsir Psixologiyası* kitabında Sosial Sübut qeyri-müəyyənlik zamanı insan qərarlarını istiqamətləndirən əsas prinsiplərdən biri kimi göstərilir. Nə edəcəyimizdən əmin olmadıqda, seçimimizi təsdiqləmək üçün başqalarının hərəkətlərinə baxırıq."),
+      createBlock("'Ən Məşhur' nişanı alıcını arxayın edir ki, yüzlərlə digər ağıllı insan artıq bu paketi sınaqdan keçirib. Bu, təkbaşına səhv etmək qorxusunu aradan qaldırır."),
+      createBlock("2. Standart Seçim (Default) Effekti", "h3"),
+      createBlock("İnsanlar standart olaraq təklif edilən varianta üstünlük verməyə meyillidirlər. Hədəf paketi fərqli vizual iyerarxiya ilə (parlaq haşiyə, bir qədər böyük miqyas) qabartmaqla dizayner onu təbii idrak standartına çevirir."),
+    ],
   },
 
   // 17. CREATOR AUTHENTICITY VS CELEBRITIES
@@ -270,23 +328,36 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("Why Small Creators Convert Better Than Celebrities: The Mechanics of Niche Trust", "h2"),
       createBlock("A multinational watch brand pays an A-list movie star $3 million to hold a chronograph in a glamorous 30-second television spot. Meanwhile, an independent horology creator with 35,000 YouTube subscribers uploads an unscripted 15-minute macro teardown of a microbrand dive watch—and drives 800 direct pre-orders in forty-eight hours."),
       createBlock("In modern commerce, raw distribution scale has decoupled from the psychological power of conversion. Why does niche community trust consistently outperform broadcast fame?"),
-
       createBlock("1. The Erosion of Glossy Commercial Fiction", "h3"),
       createBlock("Over decades of ubiquitous advertising, modern consumers developed acute cognitive resistance to staged endorsements. Audiences intuitively understand that a celebrity does not drive that family crossover or write code in that browser; they were compensated to read a script."),
       createBlock("When a message is perceived as purely extractive, the brain activates defensive skepticism (Psychological Reactance). The endorsement communicates financial transaction, not qualitative endorsement."),
-
       createBlock("2. Parasocial Intimacy & The Architecture of Trust", "h3"),
       createBlock("In 1956, sociologists Donald Horton and R. Richard Wohl formulated the concept of 'Parasocial Interaction' to describe the psychological bond formed between media consumers and consistent, conversational broadcasters."),
       createBlock("In specialized digital niches (UI design systems, mechanical keyboards, spatial computing, indie filmmaking), this dynamic is profoundly horizontal. A creator streams their live workflow, shares their design failures, and answers technical comments by name. The audience perceives their relationship not as distant admiration, but as a trusted peer consultation."),
-
       createBlock("3. Reputational Skin in the Game", "h3"),
       createBlock("The critical differentiator between celebrity endorsements and specialized creator partnerships is reputational risk:"),
       createBlock("• The Celebrity: Suffers zero structural consequence if an endorsed product underperforms, because their primary equity lies in cinematic or athletic performance."),
       createBlock("• The Specialist Creator: Lives and dies by audience trust. Recommending a flawed SaaS tool, poorly engineered hardware, or deceptive course permanently destroys years of carefully cultivated community goodwill. That visible vulnerability is precisely what makes their endorsement authoritative."),
-
       createBlock("4. Contextual Congruence: Precision Over Diffusion", "h3"),
       createBlock("High conversion is not a function of raw impression volume; it is governed by **Contextual Congruence**. Reaching 8,000 practicing frontend engineers who actively seek tooling recommendations is infinitely more valuable than displaying an impression to 4 million unfocused television viewers."),
       createBlock("When a recommendation fits naturally into a creator's daily workflow, friction evaporates: the product is evaluated not as a commercial interrupt, but as an indispensable instrument of the craft."),
+    ],
+    body_az: [
+      createBlock("Kiçik Yaradıcılar Niyə Məşhurlardan Daha Yaxşı Nəticə Verir? Niş Güvənin Mexanikası", "h2"),
+      createBlock("Qlobal saat brendi məşhur Hollivud aktyoruna 30 saniyəlik reklamda qol saatını göstərməsi üçün 3 milyon dollar ödəyir. Eyni vaxtda 35,000 izləyicisi olan müstəqil saat mütəxəssisi yeni dalğıc saatının 15 dəqiqəlik səmimi təhlilini paylaşır və 48 saat ərzində 800 birbaşa ilkin sifariş toplayır."),
+      createBlock("Müasir ticarətdə böyük yayım miqyası psixoloji inandırma gücündən ayrılmışdır. Niş icma etibarı niyə kütləvi şöhrəti hər zaman üstələyir?"),
+      createBlock("1. Parlaq Kommersiya İllüziyasının Aşınması", "h3"),
+      createBlock("Müasir istehlakçılar səhnələşdirilmiş reklamlara qarşı güclü idrak müqaviməti inkişaf etdiriblər. İzləyicilər anlayır ki, məşhur şəxs həmin avtomobili sürmür və ya həmin proqramda kod yazmır; o, sadəcə ssenarini oxumaq üçün pul alıb."),
+      createBlock("Mesaj sırf pul qazanmaq məqsədilə edildikdə beyin müdafiə skeptisizmini işə salır. Bu, məhsulun keyfiyyətini deyil, yalnız maliyyə əməliyyatını ifadə edir."),
+      createBlock("2. Parasosial Yaxınlıq Və Güvən Arxitekturası", "h3"),
+      createBlock("1956-cı ildə Donald Horton və R. Richard Wohl media izləyiciləri ilə səmimi yayımçılar arasında formalaşan psixoloji bağı izah etmək üçün 'Parasosial Əlaqə' konsepsiyasını yaratdılar."),
+      createBlock("İxtisaslaşmış rəqəmsal sahələrdə (UI dizayn sistemləri, mexaniki klaviaturalar, müstəqil film istehsalı) bu əlaqə tamamilə üfüqidir. Yaradıcı öz iş axınını canlı yayımlayır, uğursuzluqlarını bölüşür və şərhlərə adı ilə cavab verir. Auditoriya bunu uzaqdan heyranlıq kimi deyil, etibarlı həmkar məsləhəti kimi qəbul edir."),
+      createBlock("3. Nüfuz Məsuliyyəti (Skin in the Game)", "h3"),
+      createBlock("Əsas fərq reputasiya riskindədir:"),
+      createBlock("• Məşhur: Reklam etdiyi məhsul zəif çıxarsa heç bir itki ilə üzləşmir, çünki onun əsas kapitalı kino və ya idmandadır."),
+      createBlock("• Niş Yaradıcı: Auditoriya etibarı ilə yaşayır. Qüsurlu bir aləti və ya keyfiyyətsiz kursu tövsiyə etmək illərlə toplanmış icma etibarını dərhal məhv edir. Məhz bu şəxsi məsuliyyət onun sözünü güclü və etibarlı edir."),
+      createBlock("4. Kontekstual Uyğunluq: Yayılma Yox, Dəqiqlik", "h3"),
+      createBlock("Yüksək konversiya baxış sayından deyil, Kontekstual Uyğunluqdan asılıdır. Alət tövsiyəsi axtaran 8,000 praktiki mühəndisə çatmaq, 4 milyon diqqətsiz televiziya izləyicisinə reklam göstərməkdən qat-qat dəyərlidir."),
     ],
   },
 
@@ -320,6 +391,15 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("Once an arbitrary visual mark achieves global consensus across billions of users and thousands of software applications, the cost of changing it becomes astronomical. If Microsoft, Apple, and Google decided tomorrow to change the Save icon to a downward cloud arrow, hundreds of millions of users would experience immediate disorientation."),
       createBlock("2. From Skeuomorphic Affordance to Pure Semiotic Glyphs", "h3"),
       createBlock("In linguistics, words frequently outlive their etymological origins (we still say 'dial a number' on touchscreens and 'roll up the window' in electric cars). The floppy disk icon has completed this journey: it is no longer an image of magnetic plastic; it is a hieroglyphic character meaning 'Save'."),
+    ],
+    body_az: [
+      createBlock("2026-cı İldə Yadda Saxla İkonu Niyə Hələ Də Diskətdir?", "h2"),
+      createBlock("14 yaşlı yeniyetmədən fiziki 3.5 düymlük disketi tanımasını istəsəniz, o bunu 'Yadda Saxla düyməsinin 3D çap edilmiş modeli' adlandıra bilər. Bu, müasir texnologiyanın ən maraqlı paradokslarından biridir: iyirmi ildir köhnəlmiş bir əşya hələ də məlumatı qeyd etməyin qlobal simvolu olaraq qalır."),
+      createBlock("Niyə heç bir dizayner onu bulud, ox və ya sərt disk ilə əvəz edə bilmədi?"),
+      createBlock("1. Universal Simvolları Yenidən Öyrənməyin Böyük Qiyməti", "h3"),
+      createBlock("Bir vizual işarə milyardlarla istifadəçi və minlərlə proqram arasında qlobal konsensusa çatdıqdan sonra onu dəyişdirməyin bədəli həddən artıq yüksək olur. Əgər Microsoft, Apple və Google sabah 'Yadda saxla' ikonunu bulud oxu ilə əvəzləsə, yüz milyonlarla istifadəçi çaşqınlıq yaşayacaq."),
+      createBlock("2. Skeomorfizmdən Təmiz Semiotik İşarəyə", "h3"),
+      createBlock("Dilçilikdə sözlər çox vaxt öz etimoloji mənşələrindən daha çox yaşayır (biz hələ də sensor ekranda 'nömrə yığmaq' və ya elektrik maşınında 'şüşəni qaldırmaq' deyirik). Diskət ikonu da bu yolu tamamladı: o artıq maqnit plastik təsviri deyil; o, 'Yadda saxla' mənasını verən heroqlif xarakterli simvoldur."),
     ],
   },
 
@@ -359,6 +439,20 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("When something costs even 1 single cent, the brain must perform a cost-benefit calculation: *'Is this worth paying for?'* There is always a risk of buyer's remorse."),
       createBlock("When the price drops to ZERO, the perceived risk vanishes entirely. The brain views 'Free' not as a numerical price, but as an emotional trigger that signals pure upside with zero downside. That is why people will wait in line for 45 minutes for a free scoop of ice cream they wouldn't cross the street to buy for $1."),
     ],
+    body_az: [
+      createBlock("'Pulsuz' Sözü İnsanlara Niyə Heç Vaxt İstəmədikləri Şeyləri Aldırır?", "h2"),
+      createBlock("MIT davranış iqtisadçısı Dan Ariely *Gözlənilən Qeyri-rasionallıq* kitabında iki növ şokoladla insan qərarlarını sınaqdan keçirdi:"),
+      createBlock("• Lüks Lindt şokoladı (adətən 50 sent) 15 sentə təklif olundu."),
+      createBlock("• Sadə Hershey's şokoladı (adətən 5 sent) 1 sentə təklif olundu."),
+      createBlock("Bu qiymətlərlə insanların 73%-i Lindt şokoladını seçdi. Onlar 50 sentlik lüks şokoladı 15 sentə almağın çox sərfəli olduğunu hesabladılar."),
+      createBlock("Sonra Ariely hər iki qiyməti cəmi 1 sent endirdi:"),
+      createBlock("• Lindt şokoladı 14 sent oldu."),
+      createBlock("• Hershey's şokoladı isə PULSUZ (0 sent) oldu."),
+      createBlock("İki şokolad arasındakı fərq yenə də 14 sent olaraq qaldı. İnsanlar tam rasional olsaydı, seçim dəyişməməli idi. Əvəzində insanların 69%-i qəfil Hershey's şokoladını seçdi!"),
+      createBlock("1. Sıfır Riskin Emosional Dalğası", "h3"),
+      createBlock("Bir şey hətta 1 sentə başa gələndə belə, beyin qazanc-xərc hesabı aparmalıdır: *'Buna pul verməyə dəyərmi?'* Həmişə peşmanlıq riski qalır."),
+      createBlock("Qiymət SIFIRA düşəndə isə risk tamamilə yox olur. Beyin 'Pulsuz' sözünü rəqəmsal qiymət kimi deyil, heç bir itkisi olmayan təmiz qazanc kimi qavrayır. Məhz buna görə insanlar 1 dollara almaq istəmədikləri dondurma üçün pulsuz paylananda 45 dəqiqə növbədə gözləyirlər."),
+    ],
   },
 
   // 20. "ONLY 3 LEFT IN STOCK" / SCARCITY HEURISTIC
@@ -392,6 +486,16 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
       createBlock("When a digital interface displays 'Only 3 left', it triggers that ancestral threat network. We subconsciously perceive other unseen buyers competing for our desired item, bypassing slow analytical thinking (System 2) and activating fast emotional action (System 1)."),
       createBlock("2. The Scarcity Heuristic: 'Rare Equals Valuable'", "h3"),
       createBlock("In consumer psychology, we use scarcity as an automatic heuristic for quality: If an item is almost sold out, it must be exceptionally desirable. When e-commerce brands deploy this ethically based on real inventory levels, it remains one of the highest-converting signals in commerce."),
+    ],
+    body_az: [
+      createBlock("'Yalnız 3 Ədəd Qaldı' Yazısı Niyə Ani Alış Panikası Yaradır?", "h2"),
+      createBlock("Bəyəndiyiniz bir idman ayaqqabısı tapırsınız. Bir neçə gün düşünmək üçün səhifəni yaddaşda saxlamaq istəyirsiniz. Qəfil ölçü seçiminin altında kiçik sarı bildiriş görürsünüz: *'Bu qiymətə cəmi 2 ədəd qaldı!'*"),
+      createBlock("Ürək döyüntünüz artır və dərhal kart məlumatlarınızı daxil edirsiniz. Rahat düşüncədən təcili fəaliyyətə keçidi hansı nevroloji mexanizmlər tətiklədi?"),
+      createBlock("1. Təkamül Beyni: Resurs Rəqabəti", "h3"),
+      createBlock("İnsanlıq tarixinin 99%-də resurslar (sığınacaq, yemək, alətlər, təmiz su) olduqca məhdud idi. Başqa bir primatın məhdud resursa yaxınlaşdığını görmək 'İndi götür, yoxsa ac qalarsan' siqnalı demək idi."),
+      createBlock("Rəqəmsal interfeysdə 'Yalnız 3 ədəd qaldı' yazısı görünəndə həmin qədim təhlükə şəbəkəsi işə düşür. Biz şüuraltı olaraq görünməz digər alıcıların bizimlə rəqabət apardığını hiss edir, yavaş analitik düşüncəni (Sistem 2) keçərək sürətli emosional fəaliyyətə (Sistem 1) keçirik."),
+      createBlock("2. Qıtlıq Evristikası: 'Nadir Olan Dəyərlidir'", "h3"),
+      createBlock("İstehlakçı psixologiyasında qıtlıq keyfiyyət üçün avtomatik qısayoldur: Əgər məhsul demək olar ki, tükənibsə, deməli olduqca dəyərlidir. E-ticarət brendləri real anbar məlumatlarına əsaslanaraq bunu tətbiq etdikdə, bu ən yüksək konversiya gətirən siqnallardan biri olur."),
     ],
   },
 ];

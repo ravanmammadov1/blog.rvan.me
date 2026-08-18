@@ -10,7 +10,7 @@ import { ARTICLES_31_TO_39 } from "./blogs/articles31to39";
 
 /**
  * Master Editorial Blog Registry
- * Contains the publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
+ * Contains the 39 publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
  */
 export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY,
@@ -36,13 +36,25 @@ const BLOG_BY_ID = new Map<string, BlogPost>();
 
 MASTER_EDITORIAL_BLOGS.forEach((post) => {
   BLOG_BY_SLUG.set(post.slug.current, post);
+  if (post.slug_az?.current) {
+    BLOG_BY_SLUG.set(post.slug_az.current, post);
+  }
+  if (post.originalSlug) {
+    BLOG_BY_SLUG.set(post.originalSlug, post);
+  }
   BLOG_BY_ID.set(post._id, post);
 });
 
 export function getEditorialBlogBySlug(slug: string): BlogPost | null {
   if (!slug) return null;
-  const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
-  return BLOG_BY_SLUG.get(cleanSlug) || BLOG_BY_ID.get(cleanSlug) || null;
+  const cleanSlug = slug.replace(/^\/+|\/+$/g, "").toLowerCase();
+  for (const [key, val] of BLOG_BY_SLUG.entries()) {
+    if (key.toLowerCase() === cleanSlug) return val;
+  }
+  for (const [key, val] of BLOG_BY_ID.entries()) {
+    if (key.toLowerCase() === cleanSlug) return val;
+  }
+  return null;
 }
 
 export function getEditorialBlogById(id: string): BlogPost | null {
@@ -52,6 +64,13 @@ export function getEditorialBlogById(id: string): BlogPost | null {
 
 export function getAllEditorialBlogs(): BlogPost[] {
   return MASTER_EDITORIAL_BLOGS;
+}
+
+export function getAllEditorialSlugs(): { en: string; az?: string }[] {
+  return MASTER_EDITORIAL_BLOGS.map((post) => ({
+    en: post.slug.current,
+    az: post.slug_az?.current,
+  }));
 }
 
 export function getRelatedEditorialBlogs(currentSlug: string, count = 3): BlogPost[] {
