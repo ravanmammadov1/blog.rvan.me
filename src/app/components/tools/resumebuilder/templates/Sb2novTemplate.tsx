@@ -38,7 +38,7 @@ export const Sb2novTemplate: React.FC<TemplateProps> = () => {
   const accent = theme.accentColor || "#111827";
 
   return (
-    <div className="p-8 md:p-10 text-neutral-900 bg-white min-h-[1050px] leading-snug text-left space-y-4 font-sans">
+    <div className="px-8 py-7 text-neutral-900 bg-white min-h-[1050px] leading-snug text-left space-y-3.5 font-sans">
       {/* ── SB2NOV HEADER: DIRECT EDITABLE NAME & CONTACT BAR ── */}
       <header className="text-center space-y-1 pb-1">
         <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wide text-neutral-950 font-serif">
