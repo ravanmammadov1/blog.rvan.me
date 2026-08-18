@@ -13,6 +13,7 @@ const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder
 const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
 const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator"));
 const ApcaContrastCalculator = lazy(() => import("../components/tools/contrast/ApcaContrastCalculator"));
+const PersuasionAnalyzer = lazy(() => import("../components/tools/persuasion/PersuasionAnalyzer"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -64,6 +65,8 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
+      case "persuasion-analyzer":
+        return <PersuasionAnalyzer />;
       case "contrast-matrix":
         return <ApcaContrastCalculator />;
       case "typography-scale":

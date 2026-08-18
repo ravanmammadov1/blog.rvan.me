@@ -676,17 +676,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools",
-      badge: { en: "CREATIVE HUB", az: "KREATİV MƏRKƏZ" },
+      path: "/tools/persuasion-analyzer",
+      badge: { en: "HEURISTIC AUDIT", az: "HEVRİSTİK AUDİT" },
       title: {
-        en: "Access Our Open-Access Designer Stack",
-        az: "Açıq Girişli Dizayn Alətlərindən Yararlanın",
+        en: "Audit Scarcity & Urgency Copy Triggers",
+        az: "Qıtlıq və Təciliyyət Siqnallarını Analiz Edin",
       },
       description: {
-        en: "Build your visual assets with our un-gated suite of design, illustration, and career tools.",
-        az: "Qeydiyyatsız və məhdudiyyətsiz dizayn, illüstrasiya və karyera alətlərimizlə işinizi sürətləndirin.",
+        en: "Evaluate whether your headlines and CTA buttons use constructive psychological urgency or trigger spam fatigue.",
+        az: "Başlıq və düymələrinizin konstruktiv psixoloji təkan yaratdığını və ya süni bezdiricilik daşıdığını dərhal yoxlayın.",
       },
-      ctaText: { en: "Explore Creative Suite", az: "Alətləri Kəşf Et" },
+      ctaText: { en: "Analyze Copy Triggers", az: "Mətni Analiz Et" },
     },
     relatedSlugs: [
       "fomo-loss-aversion-scarcity-psychology",
@@ -972,17 +972,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools/resume-builder",
-      badge: { en: "AUTHENTIC CV COPY", az: "ORİJİNAL CV MƏTNİ" },
+      path: "/tools/persuasion-analyzer",
+      badge: { en: "COGNITIVE COPY AUDIT", az: "KOQNİTİV MƏTN AUDİTİ" },
       title: {
-        en: "Write High-Impact Human Career Accomplishments",
-        az: "Təsirli və Orijinal Karyera Nailiyyətləri Yazın",
+        en: "Audit Copy for AI Homogenization & Specificity",
+        az: "Mətni AI Şablonçuluğuna və Dəqiqliyə Görə Yoxlayın",
       },
       description: {
-        en: "Avoid repetitive AI jargon. Frame your achievements with precise action verbs and concrete engineering metrics.",
-        az: "Şablon AI cümlələrindən qaçın. Nailiyyətlərinizi dəqiq fəaliyyət felləri və ölçülə bilən mühəndislik nəticələri ilə yazın.",
+        en: "Detect empty corporate buzzwords and evaluate customer-centric framing with transparent persuasion heuristics.",
+        az: "Boş reklam sözlərini aşkarlayın və müştəriyə yönəlik təsir dərəcəsini şəffaf hevristik meyarlarla ölçün.",
       },
-      ctaText: { en: "Craft Human Resume", az: "CV-ni Tərtib Et" },
+      ctaText: { en: "Analyze Marketing Copy", az: "Mətni Analiz Et" },
     },
     relatedSlugs: [
       "why-ai-images-look-expensive-but-feel-wrong",

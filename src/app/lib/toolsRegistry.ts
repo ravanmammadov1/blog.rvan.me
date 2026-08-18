@@ -19,14 +19,30 @@ export interface InteractiveToolDefinition {
 
 export const TOOL_CATEGORIES: { id: string; label: string; label_az: string }[] = [
   { id: "All", label: "All Tools", label_az: "Hamısı" },
+  { id: "Marketing", label: "Marketing", label_az: "Marketinq" },
   { id: "Design", label: "Design", label_az: "Dizayn" },
   { id: "Developer", label: "Developer", label_az: "Developer" },
   { id: "Creative", label: "Creative", label_az: "Kreativ" },
-  { id: "Marketing", label: "Marketing", label_az: "Marketinq" },
   { id: "Visual", label: "Visual", label_az: "Vizual" },
 ];
 
 export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
+  {
+    id: "persuasion-analyzer",
+    slug: "persuasion-analyzer",
+    name: "Marketing & Persuasion Copy Analyzer",
+    name_az: "Marketinq və Persuasiya Mətn Analizatoru",
+    category: "Marketing",
+    description: "Evaluate headlines, value propositions, and CTA buttons across 8 cognitive marketing psychology dimensions. Get instant clarity scores, friction reduction tips, and empirical rewrite levers.",
+    description_az: "Başlıqlar, dəyər təklifləri və CTA düymələrini 8 koqnitiv marketinq psixologiyası meyarı üzrə analiz edin. Dəqiq təsir xalları, müqavimət azaldılması və aydın tövsiyələr əldə edin.",
+    icon: "🧠",
+    path: "/tools/persuasion-analyzer",
+    status: "live",
+    featured: true,
+    seoTitle: "Marketing & Persuasion Copy Analyzer — Cognitive Conversion Heuristics",
+    seoDescription: "Analyze marketing headlines, value propositions, and CTA buttons for cognitive fluency, empirical specificity, risk reversal, and loss aversion. 100% private in-browser copywriting analyzer.",
+    tags: ["persuasion-analyzer", "copywriting-tool", "conversion-rate-optimization", "cro", "headline-analyzer", "marketing-psychology", "cta-optimizer", "value-proposition"],
+  },
   {
     id: "contrast-matrix",
     slug: "contrast-matrix",
@@ -95,6 +111,9 @@ export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
 
 export function getToolById(id: string): InteractiveToolDefinition | undefined {
   const cleanId = (id || "").toLowerCase().trim();
+  if (cleanId === "persuasion-analyzer" || cleanId === "headline-analyzer" || cleanId === "persuasion" || cleanId === "copy-analyzer" || cleanId === "headline") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "persuasion-analyzer");
+  }
   if (cleanId === "contrast-matrix" || cleanId === "apca" || cleanId === "contrast" || cleanId === "apca-contrast" || cleanId === "contrast-checker") {
     return INTERACTIVE_TOOLS.find((t) => t.id === "contrast-matrix");
   }

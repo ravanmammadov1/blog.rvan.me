@@ -60,57 +60,52 @@
 ## ADR-006: Serverless LinkedIn Content Publishing Pipeline
 * **Date**: 2026-08
 * **Status**: ACCEPTED & IMPLEMENTED
-* **Context**: Automate organic social distribution of editorial essays to LinkedIn without external third-party scheduling SaaS.
-* **Decision**: Implement native Vercel Serverless endpoints (`api/linkedin/*`) with OAuth token handling, automated cron dispatchers, and state management.
+* **Context**: Maintain continuous social syndication of master editorial blog essays to LinkedIn without manual publishing overhead.
+* **Decision**: Implement a Vercel Serverless Function (`api/linkedin/pipeline.ts`) triggered via Vercel Cron at `0 12 * * *`. The pipeline selects a queue item, authenticates via OAuth2, formats rich text, attaches cover graphics, and publishes to the LinkedIn UGC API.
 * **Consequences**:
-  - *Pros*: Native integration, zero monthly SaaS costs, complete control over publication scheduling.
-  - *Cons*: Requires active LinkedIn OAuth refresh tokens.
+  - *Pros*: Autonomous organic distribution, zero server maintenance, rate-limited and idempotent execution.
+  - *Cons*: Requires active OAuth refresh token rotation.
 
 ---
 
-## ADR-007: AI Project Control Suite in Repository Memory
+## ADR-007: Authoritative Single-Source-of-Truth Sitemap Architecture
 * **Date**: 2026-08-18
 * **Status**: ACCEPTED & IMPLEMENTED
-* **Context**: AI context windows are finite. Relying on conversation history causes architectural drift and hallucinations across multi-turn sessions.
-* **Decision**: Maintain authoritative documentation in the `AI/` directory (`PROJECT_CONTEXT.md`, `PRODUCT_VISION.md`, `ARCHITECTURE.md`, `DESIGN_SYSTEM.md`, `ROADMAP.md`, `CURRENT_STATE.md`, `DECISIONS.md`, `RULES.md`, `TASKS.md`, `AUDITS/`). Every session reads and updates these files.
-* **Consequences**:
-  - *Pros*: Complete continuity across agent sessions, zero reliance on transient chat logs, single source of truth.
-  - *Cons*: Requires disciplined maintenance at the end of every feature phase.
-
----
-
-## ADR-008: Authoritative Unified Sitemap & Two-Tier Font Indexation Model
-* **Date**: 2026-08-18
-* **Status**: ACCEPTED & IMPLEMENTED
-* **Context**:
-  1. `vercel.json` rewrote `/sitemap.xml` to `api/sitemap.ts`, which truncated the sitemap to ~10 URLs and omitted all Azerbaijani routes, tools, and font pages.
-  2. Generating 4,600 thin font specimen pages in the primary sitemap risked Google "thin programmatic content" penalties and crawl budget exhaustion.
-  3. Duplicate URLs existed for founder profile (`/profile`, `/ravanmammadov`, `/ravan-mammadov`), and admin consoles (`/admin/linkedin`) were exposed in search results.
+* **Context**: Divergence between build-time static sitemap generation and serverless `/api/sitemap.ts` rewrite caused production crawlers to receive incomplete route lists.
 * **Decision**:
-  1. Remove `/sitemap.xml` rewrite from `vercel.json`, allowing Vercel edge to serve the pre-rendered `dist/sitemap.xml` directly as a static file.
-  2. Implement 301 permanent redirects from `/profile` and `/ravanmammadov` to canonical `/ravan-mammadov` (and `/az` equivalents).
-  3. Mark `/admin/linkedin` with `<meta name="robots" content="noindex, nofollow" />` and exclude from sitemaps.
-  4. Implement a Two-Tier Font strategy:
-     - **Tier 1 (Top 200 Curated Fonts)**: Fully indexable, rich localized titles/descriptions, included in `sitemap.xml` (~400 URLs with EN/AZ pairs).
-     - **Tier 2 (Long-Tail ~1,800 Fonts)**: Pre-rendered with `<meta name="robots" content="noindex, follow" />`, excluded from `sitemap.xml`, fully accessible to users in the client application.
+  1. Remove the serverless `/sitemap.xml` rewrite from `vercel.json`.
+  2. Generate a comprehensive static `dist/sitemap.xml` via `scripts/generate-seo-pages.mjs` containing 1,099+ verified, indexable routes with exact `<lastmod>`, `<changefreq>`, `<priority>`, and reciprocal `xhtml:link` hreflang tags.
+  3. Ensure serverless `api/sitemap.ts` reads directly from the static file as an API gateway.
 * **Consequences**:
-  - *Pros*: Completely unified single source of truth for sitemap; protects domain authority from thin content penalties; ensures 100% crawl coverage for 39 master essays, tools, and top fonts; eliminates duplicate content issues.
-  - *Cons*: Long-tail fonts do not compete individually in search rankings, but are discovered through the high-ranking curated catalog.
+  - *Pros*: 100% parity across production builds, staging environments, and edge CDNs; eliminates stale routes and incomplete indexing.
+  - *Cons*: None.
 
 ---
 
-## ADR-009: Ecosystem Relationship Graph & Contextual Interlinking Engine
+## ADR-008: Two-Tier Curated Font Indexation Strategy
 * **Date**: 2026-08-18
 * **Status**: ACCEPTED & IMPLEMENTED
-* **Context**: Editorial essays previously ended with arbitrary slice-based related posts, resulting in isolated content silos with zero contextual discovery of interactive tools (ATS Resume Builder, Open Peeps) and curated typography resources.
+* **Context**: 2,009 Google Font routes created massive sitemap bloat with near-duplicate thin content for obscure font families.
 * **Decision**:
-  1. Create a structured semantic relationship graph in `src/lib/ecosystemRelationshipMap.ts` mapping all 39 master essays to topic clusters, contextual interactive tool bridges, curated resource bridges, and 4 reciprocal related essays.
-  2. Implement `EcosystemBridgeCard.tsx` rendering non-intrusive, editorial callouts for tools, typography specimens, and case studies.
-  3. Upgrade `RelatedPosts.tsx` to pull curated semantic relationships rather than arbitrary array slices.
-  4. Support full bilingual routing and localized copy across English and Azerbaijani.
+  1. Select the top 200 high-utility curated fonts as **Tier 1** (e.g. Inter, Roboto, Playfair Display, Montserrat, Fira Code, Outfit, Space Grotesk). Include only Tier 1 in `sitemap.xml` with priority 0.7.
+  2. Mark Tier 2 long-tail fonts (1,809 routes) with `<meta name="robots" content="noindex, follow" />` and exclude them from `sitemap.xml`.
 * **Consequences**:
-  - *Pros*: Eliminates all orphan content (0 orphan essays); distributes PageRank deeply into tools and resources; dramatically increases session duration and utility discovery; 100% build-time resolution with zero runtime overhead.
-  - *Cons*: Adding new articles in future requires adding a corresponding entry to `ecosystemRelationshipMap.ts`.
+  - *Pros*: Protects platform crawl budget, concentrates domain authority on high-value specimen pages, prevents Google thin-content penalties.
+  - *Cons*: Tier 2 fonts are accessible via internal search but will not rank individually in Google SERPs.
+
+---
+
+## ADR-009: Contextual Ecosystem Interlinking Graph (Zero Orphan Content)
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: The 39 master editorial blog essays were isolated endpoints without clear onward paths to interactive tools or curated design resources.
+* **Decision**:
+  1. Implement a structured semantic relationship graph in `src/lib/ecosystemRelationshipMap.ts`.
+  2. Map all 39 essays to 4 topical clusters with curated related articles, tool discovery bridges (`toolBridge`), and resource discovery bridges (`resourceBridge`).
+  3. Render contextual bridge cards via `EcosystemBridgeCard.tsx` at the conclusion of every article.
+* **Consequences**:
+  - *Pros*: 0 orphan articles; improves session depth, topical authority, and internal PageRank flow; guides readers naturally from theory to interactive utilities.
+  - *Cons*: New articles must be registered in the relationship graph.
 
 ---
 
@@ -142,4 +137,21 @@
   5. Deploy on `/tools/contrast-matrix` and `/az/tools/contrast-matrix` with full static pre-rendering, sitemap registration, and ecosystem cross-links.
 * **Consequences**:
   - *Pros*: Zero runtime dependencies; 44.67KB code-split bundle; mathematically validated benchmark outputs (+106 for black on white, -107.9 for white on black); establishes platform authority in design accessibility.
+  - *Cons*: None.
+
+---
+
+## ADR-012: Deterministic Cognitive Marketing & Persuasion Analysis Engine
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: Marketers and product designers need transparent, explainable heuristic analysis for copywriting (headlines, value props, CTAs) without sending private draft copy to external AI APIs or dealing with unpredictable LLM hallucinations.
+* **Decision**:
+  1. Implement a pure client-side deterministic analysis engine (`src/lib/marketing/persuasionEngine.ts`) evaluating 8 core psychological dimensions: Clarity & Cognitive Load, Specificity & Concreteness, Value & Benefit Orientation, Friction & Risk Reversal, Momentum & Urgency, Social Proof & Authority.
+  2. Support 3 distinct copy modes (`headline`, `cta`, `value_prop`) with specialized length, verb potency, and friction weighting.
+  3. Detect linguistic and psychological signals: high-impact power verbs, high-friction commitment triggers, vague corporate buzzwords, and customer-centric pronoun ratios (You/Your vs. We/Our).
+  4. Provide concrete, actionable rewrite recommendations and exemplar transformation templates.
+  5. Connect with master essays on conversion rate optimization, pricing psychology, and cognitive bias.
+  6. Deploy on `/tools/persuasion-analyzer` and `/az/tools/persuasion-analyzer` with full static pre-rendering and sitemap inclusion.
+* **Consequences**:
+  - *Pros*: 100% client-side privacy; zero external AI API costs or latency; fully explainable heuristic scoring; 41.41KB code-split chunk; deepens the **USE** pillar of the platform.
   - *Cons*: None.

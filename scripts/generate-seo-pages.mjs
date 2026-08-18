@@ -86,6 +86,13 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/tools/persuasion-analyzer",
+    title: "Marketing & Persuasion Copy Analyzer — Cognitive Conversion Heuristics",
+    description: "Analyze marketing headlines, value propositions, and CTA buttons for cognitive fluency, empirical specificity, risk reversal, and loss aversion. 100% private in-browser copywriting analyzer.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/contrast-matrix",
     title: "APCA Contrast Matrix & Color Accessibility Checker — W3C Silver Calculator",
     description: "Calculate perceptual lightness contrast (Lc) using APCA 0.98G and compare with WCAG 2.1 ratios. Features live typography compliance matrix, UI component sandbox, and design system token audits.",
@@ -579,6 +586,10 @@ const staticAzTranslations = {
   "/opportunities": {
     title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
     description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
+  },
+  "/tools/persuasion-analyzer": {
+    title: "Marketinq və Persuasiya Mətn Analizatoru — Rvan.me",
+    description: "Başlıqlar, dəyər təklifləri və CTA düymələrini 8 koqnitiv marketinq psixologiyası meyarı üzrə analiz edin. Dəqiq təsir xalları və aydın tövsiyələr əldə edin.",
   },
   "/tools/contrast-matrix": {
     title: "APCA Kontrast Matrisi və Rəng Əlçatanlığı Yoxlayıcısı — Rvan.me",
