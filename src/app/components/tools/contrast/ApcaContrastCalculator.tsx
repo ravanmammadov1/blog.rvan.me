@@ -62,7 +62,7 @@ export default function ApcaContrastCalculator() {
       {/* 3. Interactive Workspaces: Tab Navigation */}
       <section aria-labelledby="workspace-tabs" className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
-          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.02] p-1.5 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.02] p-1.5 backdrop-blur-md overflow-x-auto max-w-full">
             <button
               onClick={() => handleTabChange("matrix")}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all mono ${
