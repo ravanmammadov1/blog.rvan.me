@@ -17,7 +17,6 @@ import HeroAtmosphere from "./components/HeroAtmosphere";
 // Lazy-loaded section components matching exact requested hierarchy
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const HeroParticles = lazy(() => import("./components/HeroParticles"));
-const WorkSection = lazy(() => import("./components/home/WorkSection"));
 const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
@@ -130,17 +129,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 3. PRIMARY WORK / CREDIBILITY (Featured Projects) ── */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING SELECTED WORK...</div>}>
-        <WorkSection />
-      </Suspense>
-
-      {/* ── 4. USEFUL TOOLS (Interactive In-Browser Engines) ── */}
+      {/* ── 3. USEFUL TOOLS (Interactive In-Browser Engines) ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CREATIVE TOOLS...</div>}>
         <ToolsSection />
       </Suspense>
 
-      {/* ── 5. EDITORIAL THINKING (Master Essays & Research) ── */}
+      {/* ── 4. EDITORIAL THINKING (Master Essays & Research) ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING EDITORIAL BLOG...</div>}>
         <BlogSection />
       </Suspense>

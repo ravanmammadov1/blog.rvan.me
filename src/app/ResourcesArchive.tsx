@@ -194,12 +194,12 @@ export default function ResourcesArchive() {
             {/* Font Toolbar */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               {/* Category Pills */}
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
                 {["all", "sans-serif", "serif", "display", "monospace", "handwriting"].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setFontCategorySubfilter(cat)}
-                    className={`rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    className={`rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                       fontCategorySubfilter === cat
                         ? "bg-primary text-black"
                         : "text-muted-foreground hover:text-white hover:bg-white/5"
@@ -211,16 +211,16 @@ export default function ResourcesArchive() {
               </div>
 
               {/* Custom Preview Text & Size */}
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4 shrink-0">
                 <input
                   type="text"
                   value={previewText}
                   onChange={(e) => setPreviewText(e.target.value)}
                   placeholder="Type preview text..."
-                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none w-56 md:w-72"
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none w-full sm:w-56 md:w-72"
                 />
 
-                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase">
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase shrink-0">
                   <span>{fontSizePx}px</span>
                   <input
                     type="range"

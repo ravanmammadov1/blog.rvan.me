@@ -24,8 +24,10 @@ export interface PageFilterBarProps {
 
 /**
  * Master PageFilterBar Component
- * Enforces standardized side-by-side (Categories Left, Search Right) layout logic
- * across News, Resources, Tools, and Blog listing pages.
+ * Enforces responsive layout logic:
+ * - Desktop (lg+): Flex-wrap category pills on the left, fixed search on the right. No clipping or hiding.
+ * - Tablet (md): Clean stacking/wrapping so controls never collide.
+ * - Mobile (<md): Full-width search bar on top, touch-smooth horizontal scrollable pill track below with edge padding.
  */
 export function PageFilterBar({
   categories,
@@ -36,59 +38,83 @@ export function PageFilterBar({
   searchPlaceholder = "Search...",
   searchId = "page-filter-search",
   className = "",
-  stickyTopClass = "top-20",
+  stickyTopClass = "top-[58px] md:top-[68px]",
   children,
 }: PageFilterBarProps) {
   return (
     <section
-      className={`sticky ${stickyTopClass} z-30 px-6 py-4 md:px-10 bg-background/80 backdrop-blur-xl border-y border-border ${className}`}
+      className={`sticky ${stickyTopClass} z-30 px-4 sm:px-6 md:px-10 py-3.5 bg-background/90 backdrop-blur-xl border-y border-border/80 transition-all ${className}`}
     >
-      <div className="mx-auto max-w-[1600px] flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
-        {/* LEFT: Category Filter Buttons */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat.key;
-            return (
-              <Button
-                key={cat.key}
-                variant="filter"
-                size="sm"
-                active={isActive}
-                onClick={() => onSelectCategory(cat.key)}
-                icon={cat.icon}
-                iconPosition="left"
-              >
-                <span>{cat.label}</span>
-                {cat.count !== undefined && (
-                  <span className={`text-[10px] ml-1 ${isActive ? "text-white/90" : "text-muted-foreground"}`}>
-                    ({cat.count})
-                  </span>
-                )}
-              </Button>
-            );
-          })}
+      <div className="mx-auto max-w-[1600px] flex flex-col md:flex-row md:items-center justify-between gap-3.5 md:gap-6">
+        {/* CATEGORY FILTERS:
+            - Mobile: single-line horizontal scrollable track
+            - Tablet/Desktop: flexible wrapping pill group */}
+        <div className="flex-1 min-w-0 w-full">
+          <div
+            className="flex items-center md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible scrollbar-none py-1 px-0.5 scroll-smooth touch-pan-x"
+            role="tablist"
+            aria-label="Category filters"
+          >
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat.key;
+              return (
+                <Button
+                  key={cat.key}
+                  variant="filter"
+                  size="sm"
+                  active={isActive}
+                  onClick={() => onSelectCategory(cat.key)}
+                  icon={cat.icon}
+                  iconPosition="left"
+                  className="shrink-0 whitespace-nowrap text-xs cursor-pointer"
+                  role="tab"
+                  aria-selected={isActive}
+                >
+                  <span>{cat.label}</span>
+                  {cat.count !== undefined && (
+                    <span
+                      className={`text-[10px] ml-1.5 px-1.5 py-0.5 rounded-full ${
+                        isActive
+                          ? "bg-white/20 text-white font-bold"
+                          : "bg-white/5 text-muted-foreground"
+                      }`}
+                    >
+                      {cat.count}
+                    </span>
+                  )}
+                </Button>
+              );
+            })}
+            {/* Trailing spacer so the last pill is never clipped flush on mobile touch scroll */}
+            <div className="w-4 shrink-0 md:hidden" aria-hidden="true" />
+          </div>
         </div>
 
-        {/* RIGHT: Standardized Search Field */}
-        <div className="relative w-full md:w-80 shrink-0">
+        {/* SEARCH FIELD:
+            - Mobile: Full width
+            - Tablet/Desktop: Independent shrink-0 container with dedicated width */}
+        <div className="w-full md:w-72 lg:w-80 shrink-0 relative">
           <label htmlFor={searchId} className="sr-only">
             {searchPlaceholder}
           </label>
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none" size={15} />
+          <Search
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
+            size={15}
+          />
           <input
             id={searchId}
             type="search"
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-full border border-border bg-card pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
+            className="w-full rounded-full border border-border bg-card/90 pl-10 pr-9 py-2.5 text-xs font-medium text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:outline-none transition-all duration-300 glass-sm"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
               aria-label="Clear search"
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 cursor-pointer"
             >
               <X size={13} />
             </button>

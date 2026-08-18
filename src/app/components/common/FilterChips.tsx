@@ -20,14 +20,14 @@ export const FilterChips: React.FC<FilterChipsProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`flex flex-wrap gap-2 overflow-x-auto pb-1 no-scrollbar ${className}`}>
+    <div className={`flex items-center gap-2 overflow-x-auto scrollbar-none py-1 scroll-smooth touch-pan-x min-w-0 ${className}`}>
       {options.map((opt) => {
         const isActive = activeKey === opt.key;
         return (
           <button
             key={opt.key}
             onClick={() => onSelect(opt.key)}
-            className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap ${
+            className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               isActive
                 ? "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)]"
                 : "border border-white/10 bg-white/5 hover:border-[#61c5ad]/50 text-muted-foreground hover:text-foreground glass-sm"
@@ -38,7 +38,7 @@ export const FilterChips: React.FC<FilterChipsProps> = ({
                 : {}
             }
           >
-            {opt.icon && <span>{opt.icon}</span>}
+            {opt.icon && <span className="shrink-0">{opt.icon}</span>}
             <span>{opt.label}</span>
           </button>
         );
