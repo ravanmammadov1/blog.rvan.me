@@ -96,3 +96,18 @@
 * **Consequences**:
   - *Pros*: Completely unified single source of truth for sitemap; protects domain authority from thin content penalties; ensures 100% crawl coverage for 39 master essays, tools, and top fonts; eliminates duplicate content issues.
   - *Cons*: Long-tail fonts do not compete individually in search rankings, but are discovered through the high-ranking curated catalog.
+
+---
+
+## ADR-009: Ecosystem Relationship Graph & Contextual Interlinking Engine
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: Editorial essays previously ended with arbitrary slice-based related posts, resulting in isolated content silos with zero contextual discovery of interactive tools (ATS Resume Builder, Open Peeps) and curated typography resources.
+* **Decision**:
+  1. Create a structured semantic relationship graph in `src/lib/ecosystemRelationshipMap.ts` mapping all 39 master essays to topic clusters, contextual interactive tool bridges, curated resource bridges, and 4 reciprocal related essays.
+  2. Implement `EcosystemBridgeCard.tsx` rendering non-intrusive, editorial callouts for tools, typography specimens, and case studies.
+  3. Upgrade `RelatedPosts.tsx` to pull curated semantic relationships rather than arbitrary array slices.
+  4. Support full bilingual routing and localized copy across English and Azerbaijani.
+* **Consequences**:
+  - *Pros*: Eliminates all orphan content (0 orphan essays); distributes PageRank deeply into tools and resources; dramatically increases session duration and utility discovery; 100% build-time resolution with zero runtime overhead.
+  - *Cons*: Adding new articles in future requires adding a corresponding entry to `ecosystemRelationshipMap.ts`.

@@ -1,10 +1,10 @@
 # CURRENT REPOSITORY STATE
 
 **Last Updated**: 2026-08-18  
-**Current Phase**: Phase 1 — P0 Organic SEO Foundation (COMPLETED)  
-**Production Build Status**: PASSING (Vite v6.3.5, 4,715 SEO routes pre-rendered, 1,095 authoritative indexable sitemap URLs generated in ~12.20s)  
-**Active Git Branch**: `main` (Checkpoint: `e3c05e7`)  
-**Latest Architectural Decision**: [`ADR-008: Authoritative Unified Sitemap & Two-Tier Font Indexation Model`](file:///C:/Project/ReplicateGitHubPortfolioSite-main/AI/DECISIONS.md)
+**Current Phase**: Phase 1.2 — Ecosystem Internal Linking Engine (COMPLETED)  
+**Production Build Status**: PASSING (Vite v6.3.5, 4,715 SEO routes pre-rendered, 1,095 authoritative indexable sitemap URLs generated in ~12.93s)  
+**Active Git Branch**: `main` (Checkpoint: `a2987a9`)  
+**Latest Architectural Decision**: [`ADR-009: Ecosystem Relationship Graph & Contextual Interlinking Engine`](file:///C:/Project/ReplicateGitHubPortfolioSite-main/AI/DECISIONS.md)
 
 ---
 
@@ -12,10 +12,13 @@
 
 ### Key Statistics
 * **Pre-rendered HTML Routes**: 4,715 (Full static pre-rendering across EN & AZ)
-* **Authoritative Sitemap URLs**: 1,095 high-value, deduplicated, indexable routes (including exact `<lastmod>`, `<changefreq>`, `<priority>`, and `xhtml:link` alternates)
-* **Master Editorial Blog Essays**: 39 deeply researched articles with dual-language support (100% indexable in EN & AZ)
-* **Interactive Tools**: 2 live production tools (ATS Resume Builder & Open Peeps Character Generator, 100% indexable)
-* **Font Catalog**: 2,009 fonts total (Top 200 Tier 1 curated fonts indexable in sitemap; Tier 2 long-tail marked `noindex, follow` to protect crawl budget)
+* **Authoritative Sitemap URLs**: 1,095 high-value, deduplicated, indexable routes
+* **Master Editorial Blog Essays**: 39 deeply researched articles with dual-language support (100% interconnected, 0 orphan articles)
+* **Curated Inter-Article Links**: 156 reciprocal topical relationships (average 4.0 related essays per article)
+* **Tool Discovery Bridges**: 28 of 39 essays (72%) contextually link to ATS Resume Builder (`/tools/resume-builder`), Open Peeps (`/tools/open-peeps`), or Tools Stack (`/tools`)
+* **Resource Discovery Bridges**: 26 of 39 essays (67%) contextually link to curated Google Fonts specimens (`/fonts/inter`, `/fonts/playfair-display`, etc.) or Icon Library (`/resources?category=icons`)
+* **Interactive Tools**: 2 live production tools (ATS Resume Builder & Open Peeps Character Generator)
+* **Font Catalog**: 2,009 fonts total (Top 200 Tier 1 curated fonts indexable in sitemap; Tier 2 long-tail marked `noindex, follow`)
 * **Admin Routes**: `/admin/linkedin` & `/az/admin/linkedin` strictly marked `noindex, nofollow` and excluded from sitemap
 
 ---
@@ -25,7 +28,8 @@
 | Module | Location | Status | Assessment |
 | :--- | :--- | :--- | :--- |
 | **Home Page** | `src/app/HomePage.tsx` | Healthy | Atmospheric hero, 3D particles, curated blog showcase, resources showcase, tools showcase, contact CTA |
-| **Blog & Editorial Engine** | `src/app/BlogArchive.tsx`, `BlogDetail.tsx`, `src/lib/blogs/` | Healthy | 39 master essays, dual EN/AZ content, reading time estimates, table of contents |
+| **Blog & Editorial Engine** | `src/app/BlogArchive.tsx`, `BlogDetail.tsx`, `src/lib/blogs/` | Healthy | 39 master essays, dual EN/AZ content, reading time estimates, table of contents, contextual ecosystem bridges |
+| **Ecosystem Interlinking** | `src/app/components/blog/EcosystemBridgeCard.tsx`, `src/lib/ecosystemRelationshipMap.ts` | Healthy | Full bidirectional graph across 39 essays, tools, and resources with 0 orphans |
 | **ATS Resume Builder** | `src/app/components/tools/resumebuilder/` | Healthy | Live split-screen, ATS scoring, 5 templates, print safe margins, vector PDF export (<300KB) |
 | **Character Builder** | `src/app/components/tools/OpenPeepsBuilder.tsx` | Healthy | SVG vector customizer for Open Peeps illustration library with SVG/EPS/PNG multi-format export |
 | **Resources Archive** | `src/app/ResourcesArchive.tsx`, `ResourceDetail.tsx` | Healthy | Category filters (Fonts, Icons), fuzzy search, external link verify |
@@ -37,15 +41,16 @@
 
 ---
 
-## 3. Verified P0 Organic SEO Improvements
+## 3. Verified Ecosystem Interlinking Improvements (`INTERLINK-01`)
 
-1. **Sitemap Divergence Resolved (`SITEMAP-01`)**: Removed the proxy rewrite in `vercel.json`. The edge now serves `dist/sitemap.xml` directly, guaranteeing 100% crawl visibility for all 39 EN/AZ essays, tools, and Tier 1 fonts.
-2. **Canonical Profile Consolidation (`CANONICAL-01`)**: Enforced 301 permanent redirects from `/profile` and `/ravanmammadov` to `/ravan-mammadov` (and `/az` equivalents). Updated all internal links in `SiteHeader.tsx`, `ProjectDetail.tsx`, and `WorkSection.tsx`.
-3. **Admin Protection (`ADMIN-NOINDEX`)**: Injected `<meta name="robots" content="noindex, nofollow" />` on `/admin/linkedin` and `/az/admin/linkedin` and removed them from `dist/sitemap.xml`.
-4. **Two-Tier Font Strategy (`FONT-TIER-01`)**: Curated Top 200 Google Fonts for indexation with rich localized metadata, while marking the remaining ~1,800 long-tail font pages `noindex, follow` to prevent thin-content penalties.
+1. **Created `EcosystemBridgeCard.tsx`**: Lightweight, accessible, dark/light mode responsive component supporting Tool, Resource, and Article recommendation types.
+2. **Mapped All 39 Master Essays (`ecosystemRelationshipMap.ts`)**: Structured semantic graph with 156 inter-article relationships, 28 contextual tool bridges, 26 curated resource bridges, and 100% bilingual EN & AZ support.
+3. **Zero Orphan Content**: Verified 0 articles with 0 incoming links and 0 articles with 0 outgoing links.
+4. **Upgraded `RelatedPosts.tsx` & `BlogDetail.tsx`**: Replaced arbitrary slicing with curated topological cluster recommendations.
 
 ---
 
-## 4. Next Actions (Phase 1 P1 Backlog)
-1. `INTERLINK-01`: Build `EcosystemBridgeCard.tsx` and inject contextual tool & resource links into all 39 master essays.
-2. `BUNDLE-OPT-01`: Split root `index.js` bundle into sub-route chunks to improve mobile LCP.
+## 4. Next Actions (Phase 2 Backlog)
+1. `TOOL-TYPE-01`: Build **Fluid Typography Scale & Clamp Calculator** (`/tools/typography-scale`).
+2. `TOOL-APCA-01`: Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`).
+3. `BUNDLE-OPT-01`: Split root `index.js` bundle to improve mobile LCP.
