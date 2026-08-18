@@ -1,42 +1,29 @@
 # CURRENT REPOSITORY STATE
 
 **Last Updated**: 2026-08-18  
-**Current Phase**: Phase 2.2 — Blog Rendering Restoration & APCA Blog Promo Optimization (COMPLETED)  
-**Production Build Status**: PASSING (Vite v6.3.5, 4,719 SEO routes pre-rendered, 1,099 authoritative indexable sitemap URLs generated in ~13.44s)  
+**Current Phase**: Focused Security & CSP Resolution (COMPLETED)  
+**Production Build Status**: PASSING (Vite v6.3.5, 4,719 SEO routes pre-rendered, 1,099 authoritative indexable sitemap URLs generated in ~13.41s)  
 **Active Git Branch**: `main`  
 **Latest Architectural Decision**: [`ADR-011: APCA 0.98G Deterministic Contrast Solver & Accessibility Matrix`](file:///C:/Project/ReplicateGitHubPortfolioSite-main/AI/DECISIONS.md)
 
 ---
 
-## 1. Production Issue Resolution: Blog Rendering & APCA Promo Optimization
+## 1. Content Security Policy (CSP) & Clarity Resolution
 
-### Root Cause Analysis
-1. **React Lazy Loading & Export Boundaries**: Investigated React error #306 (which occurs when a dynamic `import()` resolves to a module without a proper React default component or returns an invalid promise/object). Verified all 21 route-level lazy import targets to ensure strict default export signatures (`export default Component`).
-2. **APCA Promotion Overhead Prevention**: Prevented the heavy APCA interactive calculator bundle (44.67 kB, mathematical solver, 2D matrix, canvas preview) from being loaded on the `/blog` archive page.
-3. **Three.js / WebGL Context Isolation**: Verified that Three.js WebGL rendering is isolated strictly to `HeroParticles.jsx` on `HomePage.tsx` behind an error boundary/suspense container and is never initialized on `/blog`.
-
-### Fix Implementation
-1. **Lightweight APCA Discovery Component (`ApcaBlogPromo.tsx`)**: Created a dedicated, lightweight static card that promotes the APCA utility on `/blog` without importing `apcaEngine.ts` or any heavy calculation dependencies.
-2. **Refined Blog Archive Hierarchy**: Structured `BlogArchive.tsx` to match the exact canonical layout:
-   - Hero / introduction (`PageHero`)
-   - Featured / highlighted essay (`featuredPost` banner)
-   - APCA utility promotion (`ApcaBlogPromo`)
-   - Article categories / search discovery (`PageFilterBar`)
-   - Progressive article grid (`BlogCard` list)
-3. **Chunk Splitting & Bundle Isolation**: Verified that `BlogArchive` produces a compact 10.38 kB (gzip: 4.12 kB) chunk with 0 heavy calculator or WebGL dependencies.
-
-### Validation
-* Pre-rendered HTML verified on `/blog` and `/az/blog` (valid canonical, hreflang, indexable).
-* Pre-rendered HTML verified on `/tools/contrast-matrix` and `/az/tools/contrast-matrix`.
-* Automated test `scratch/verifyBlogRuntime.mjs` passed 100% with zero defects.
-* Full production build (`npm run build`) passed in 13.44s.
+* **CSP Source**: Authoritative HTTP header configured in `vercel.json` under `headers` for `"source": "/(.*)"`.
+* **Clarity Decision**: Microsoft Clarity is intentionally enabled for user session analytics when consent is granted. The minimal required origins (`https://www.clarity.ms https://*.clarity.ms` in `script-src` and `https://*.clarity.ms https://c.clarity.ms` in `connect-src`) were added to `vercel.json`.
+* **Eval Source & Cause**: No first-party application code uses `eval()`. Third-party tag managers (GTM) or external tools that attempt string evaluation remain intentionally blocked by strict CSP without `'unsafe-eval'`. React does not crash and the policy is not weakened.
+* **Final CSP Header**:
+  ```text
+  default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://vercel.live https://*.vercel-scripts.com https://*.vercel-insights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; media-src 'self' blob: https:; connect-src 'self' https: wss: https://*.clarity.ms https://c.clarity.ms; frame-src 'self' https:; object-src 'none'; base-uri 'self'
+  ```
 
 ---
 
 ## 2. Codebase Inventory & Metrics
 
 ### Key Statistics
-* **Pre-rendered HTML Routes**: 4,719 (Full static pre-rendering across EN & AZ including new `/tools/contrast-matrix` and `/tools/typography-scale`)
+* **Pre-rendered HTML Routes**: 4,719 (Full static pre-rendering across EN & AZ including `/tools/contrast-matrix` and `/tools/typography-scale`)
 * **Authoritative Sitemap URLs**: 1,099 high-value, deduplicated, indexable routes
 * **Interactive Tools**: 4 live production tools (ATS Resume Builder, Open Peeps Character Generator, Typography Scale Calculator, and APCA Contrast Matrix)
 * **Master Editorial Blog Essays**: 39 deeply researched articles with dual-language support (100% interconnected, 0 orphan articles)
