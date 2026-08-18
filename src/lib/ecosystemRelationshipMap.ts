@@ -1254,17 +1254,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools/resume-builder",
-      badge: { en: "CONTRAST APPLIED", az: "KONTRAST TƏTBİQİ" },
+      path: "/tools/contrast-matrix",
+      badge: { en: "ACCESSIBILITY & CONTRAST TOOL", az: "ƏLÇATANLIQ VƏ KONTRAST ALƏTİ" },
       title: {
-        en: "Make Your Key Skills Impossible to Miss",
-        az: "Əsas Bacarıqlarınızı Dərhal Nəzərəçarpan Edin",
+        en: "Evaluate Perceptual Contrast & APCA Ratios",
+        az: "Perseptual Kontrast və APCA Dərəcəsini Yoxlayın",
       },
       description: {
-        en: "Use high-contrast visual skill pills and bold typography to make critical career strengths stand out immediately.",
-        az: "Yüksək kontrastlı bacarıq nişanları və güclü tipoqrafiya ilə əsas peşəkar üstünlüklərinizi dərhal vurğulayın.",
+        en: "Test color salience and WCAG 2.1 vs. APCA compliance across headings, body copy, and UI components with a 2D typography matrix.",
+        az: "2D şrift matrisi ilə başlıqlar, mətnlər və düymələr üzrə rəng fərqliliyini və APCA əlçatanlıq səviyyəsini dəqiq hesablayın.",
       },
-      ctaText: { en: "Create Standout Resume", az: "Seçilən CV Yarat" },
+      ctaText: { en: "Test APCA Contrast", az: "APCA Kontrastı Yoxla" },
     },
     resourceBridge: {
       type: "resource",
@@ -1312,17 +1312,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools/resume-builder",
-      badge: { en: "DARK WORKSPACE", az: "QARANLIQ İŞ REJİMİ" },
+      path: "/tools/contrast-matrix",
+      badge: { en: "DARK MODE APCA AUDIT", az: "QARANLIQ REJİM APCA AUDİTİ" },
       title: {
-        en: "Build in Dark Mode, Export for High-Contrast Print",
-        az: "Qaranlıq Rejimdə Qurun, Çap Üçün Ağ-Qara İxrac Edin",
+        en: "Test Reverse Polarity on OLED & Dark Themes",
+        az: "OLED və Qaranlıq Mövzularda Tərs Polyarlığı Yoxlayın",
       },
       description: {
-        en: "Work comfortably in dark mode while producing crisp, print-standard monochrome A4 PDF vectors.",
-        az: "Qaranlıq rejimdə rahatlıqla işləyin, eyni zamanda printer üçün mükəmməl ağ-qara A4 PDF ixrac edin.",
+        en: "Evaluate optical flare, haloing, and required font weights on dark backgrounds using APCA's reverse polarity equation.",
+        az: "APCA-nın tərs polyarlıq düsturu ilə tünd fonlarda işıq saçması, göz yorğunluğu və tələb olunan şrift çəkilərini dəqiq təhlil edin.",
       },
-      ctaText: { en: "Build in Dark Canvas", az: "Qaranlıq Rejimdə CV Yarat" },
+      ctaText: { en: "Audit Dark Mode", az: "Qaranlıq Rejimi Yoxla" },
     },
     relatedSlugs: [
       "why-contrast-makes-designs-impossible-to-ignore-von-restorff",

@@ -21,7 +21,7 @@
 | Task ID | Description | Category | Priority | Status | Owner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `TOOL-TYPE-01` | Build **Fluid Typography Scale & Clamp Calculator** (`/tools/typography-scale`) with live simulator & multi-format export | Interactive Tool | P1 | **Done** | Primary Agent |
-| `TOOL-APCA-01` | Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`) | Interactive Tool | P1 | Backlog | Primary Agent |
+| `TOOL-APCA-01` | Build **APCA Contrast Matrix & Accessibility Tool** (`/tools/contrast-matrix`) with 2D compliance grid & token audit | Interactive Tool | P1 | **Done** | Primary Agent |
 | `TOOL-CTA-01` | Build **Marketing Headline & CTA Impact Analyzer** (`/tools/headline-analyzer`) | Interactive Tool | P2 | Backlog | Primary Agent |
 | `TOOL-RESUME-01` | Add section drag-and-drop reordering & JSON backup to **ATS Resume Builder** | Tool Upgrade | P2 | Backlog | Primary Agent |
 | `BUNDLE-OPT-01` | Split root `index.js` bundle to improve mobile LCP Core Web Vitals | Performance | P2 | Backlog | Primary Agent |

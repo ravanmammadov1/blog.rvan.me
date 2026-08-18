@@ -12,6 +12,7 @@ import { Button } from "../components/ui/Button";
 const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
 const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
 const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator"));
+const ApcaContrastCalculator = lazy(() => import("../components/tools/contrast/ApcaContrastCalculator"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -63,6 +64,8 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
+      case "contrast-matrix":
+        return <ApcaContrastCalculator />;
       case "typography-scale":
         return <TypographyScaleCalculator />;
       case "resume-builder":

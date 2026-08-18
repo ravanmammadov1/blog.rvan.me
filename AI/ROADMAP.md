@@ -13,7 +13,8 @@ gantt
     Phase 1.2 - P1 Ecosystem Interlinking Engine       :done, p1b, 2026-08-18, 1d
     section Phase 2
     Phase 2.1 - Flagship Typography Scale Calculator   :done, p2a, 2026-08-18, 1d
-    Phase 2.2 - Color Contrast & APCA Evaluator        :active, p2b, 2026-08-19, 5d
+    Phase 2.2 - Flagship APCA Contrast Matrix Tool     :done, p2b, 2026-08-18, 1d
+    Phase 2.3 - Headline & CTA Analyzer                :active, p2c, 2026-08-19, 5d
     section Phase 3
     Phase 3 - Resource Discovery & Specimen Engines     :p3, 2026-08-29, 7d
     section Phase 4
@@ -68,10 +69,24 @@ gantt
 
 ---
 
-## Phase 2.2: Color Contrast & APCA Matrix Evaluator (UPCOMING)
-* **Goal**: Build an advanced color contrast matrix tool supporting WCAG 2.2 and APCA algorithms with theme token exporter.
+## Phase 2.2: Flagship APCA Contrast Matrix & Accessibility Tool (COMPLETED)
+* **Goal**: Launch a professional perceptual contrast workspace based on the APCA 0.98G standard with 2D compliance grid and design system token audit.
+* **Deliverables**:
+  - [x] `TOOL-APCA-01` (P1): Deterministic APCA-0.98G solver (`apcaEngine.ts`) with soft flare compensation, normal/reverse polarity detection, and comparative WCAG 2.1 ratio calculator.
+  - [x] Interactive color controls (`ApcaColorControls.tsx`) with color picker, HEX inputs, 1-click swap, and curated preset combinations.
+  - [x] Prominent $L_c$ score card (`ApcaScoreCard.tsx`) with visual meter, qualitative threshold tag, and WCAG AA/AAA compliance status.
+  - [x] 2D Typography Compliance Matrix (`ApcaTypographyMatrix.tsx`) mapping 7 font sizes ($12\text{px}$–$48\text{px}$) against 5 font weights ($300$–$700$).
+  - [x] Live UI Component Sandbox (`ApcaLiveUiSpecimen.tsx`) and Semantic Design Token Evaluator (`ApcaTokenMatrix.tsx`).
+  - [x] Multi-format code exporter (`ApcaCodeExporter.tsx`) for CSS variables, Tailwind, and JSON tokens.
+  - [x] In-depth educational guide with FAQ and reciprocal ecosystem cross-links.
+  - [x] Full static pre-rendering on `/tools/contrast-matrix` and `/az/tools/contrast-matrix`, registered in `sitemap.xml`.
+  - [x] Documented architecture in `ADR-011`.
+
+---
+
+## Phase 2.3: Marketing Headline & CTA Impact Analyzer (UPCOMING)
+* **Goal**: Build a cognitive headline & CTA effectiveness evaluator for marketing designers and copywriters.
 * **Key Tasks**:
-  - [ ] `TOOL-APCA-01` (P1): Color Contrast & APCA Matrix Evaluator (`/tools/contrast-matrix`).
   - [ ] `TOOL-CTA-01` (P2): Marketing Headline & CTA Impact Analyzer (`/tools/headline-analyzer`).
   - [ ] `TOOL-RESUME-01` (P2): ATS Resume Builder drag-and-drop reordering.
   - [ ] `BUNDLE-OPT-01` (P2): Split root `index.js` into sub-route chunks.

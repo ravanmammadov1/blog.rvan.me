@@ -86,6 +86,13 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/tools/contrast-matrix",
+    title: "APCA Contrast Matrix & Color Accessibility Checker — W3C Silver Calculator",
+    description: "Calculate perceptual lightness contrast (Lc) using APCA 0.98G and compare with WCAG 2.1 ratios. Features live typography compliance matrix, UI component sandbox, and design system token audits.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/typography-scale",
     title: "Fluid Typography Scale & CSS Clamp Calculator — Responsive Type Generator",
     description: "Calculate harmonic modular typography scales and generate instant, copyable CSS clamp() values. Features live viewport simulation, rem conversions, and multi-format CSS/Tailwind exports.",
@@ -572,6 +579,10 @@ const staticAzTranslations = {
   "/opportunities": {
     title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
     description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
+  },
+  "/tools/contrast-matrix": {
+    title: "APCA Kontrast Matrisi və Rəng Əlçatanlığı Yoxlayıcısı — Rvan.me",
+    description: "APCA-0.98G alqoritmi və WCAG 2.1 nisbətləri ilə perseptual rəng kontrastını yoxlayın. 2D şrift matrisi, canlı interfeys nümunəsi və dizayn sistemi tokenləri auditi.",
   },
   "/tools/typography-scale": {
     title: "Elastik Tipoqrafiya Miqyası və CSS Clamp Kalkulyatoru — Rvan.me",

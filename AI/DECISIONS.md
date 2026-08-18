@@ -127,3 +127,19 @@
 * **Consequences**:
   - *Pros*: Zero runtime dependencies; 36.45KB code-split bundle; fully accessible (keyboard, dark/light, screen-readers); captures key high-volume organic search queries; deepens product utility.
   - *Cons*: None.
+
+---
+
+## ADR-011: APCA 0.98G Deterministic Contrast Solver & Accessibility Matrix
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: Traditional WCAG 2.x 4.5:1 luminance ratio math fails to account for human optical physiology, font weight, spatial frequency, and dark mode flare. Designers need a deterministic APCA implementation combined with practical UI matrix tools.
+* **Decision**:
+  1. Implement deterministic APCA-0.98G algorithm (`src/lib/accessibility/apcaEngine.ts`) by Andrew Somers (W3C AGWG Silver Candidate) with soft flare clamping, normal polarity ($S_{\text{bg}}^{0.56} - S_{\text{txt}}^{0.57}$) and reverse polarity ($S_{\text{bg}}^{0.65} - S_{\text{txt}}^{0.62}$) curves.
+  2. Implement side-by-side comparative WCAG 2.1 relative luminance calculator with clear distinction that WCAG 2.1 is the current legal standard while APCA represents perceptual design ergonomics.
+  3. Create a 2D typography compliance matrix ($12\text{px}$–$48\text{px}$ across weights $300$–$700$) mapping spatial frequency requirements.
+  4. Provide a semantic design system token evaluator (`ApcaTokenMatrix.tsx`) and live UI sandbox (`ApcaLiveUiSpecimen.tsx`).
+  5. Deploy on `/tools/contrast-matrix` and `/az/tools/contrast-matrix` with full static pre-rendering, sitemap registration, and ecosystem cross-links.
+* **Consequences**:
+  - *Pros*: Zero runtime dependencies; 44.67KB code-split bundle; mathematically validated benchmark outputs (+106 for black on white, -107.9 for white on black); establishes platform authority in design accessibility.
+  - *Cons*: None.

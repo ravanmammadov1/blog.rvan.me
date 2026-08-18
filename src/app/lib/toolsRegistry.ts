@@ -28,6 +28,22 @@ export const TOOL_CATEGORIES: { id: string; label: string; label_az: string }[] 
 
 export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
   {
+    id: "contrast-matrix",
+    slug: "contrast-matrix",
+    name: "APCA Contrast Matrix & Accessibility Checker",
+    name_az: "APCA Kontrast Matrisi və Əlçatanlıq Aləti",
+    category: "Design",
+    description: "Evaluate perceptual color contrast with mathematical precision using the APCA-0.98G algorithm and WCAG 2.1 ratios. Features a 2D typography compliance matrix and design token evaluator.",
+    description_az: "APCA-0.98G alqoritmi və WCAG 2.1 nisbətləri ilə perseptual rəng kontrastını yoxlayın. 2D şrift matrisi, canlı interfeys nümunəsi və dizayn sistemi tokenləri auditi.",
+    icon: "👁️",
+    path: "/tools/contrast-matrix",
+    status: "live",
+    featured: true,
+    seoTitle: "APCA Contrast Matrix & Color Accessibility Checker — W3C Silver Calculator",
+    seoDescription: "Calculate perceptual lightness contrast (Lc) using APCA 0.98G and compare with WCAG 2.1 ratios. Features live typography compliance matrix, UI component sandbox, and design system token audits.",
+    tags: ["apca-contrast", "color-contrast-checker", "contrast-matrix", "accessible-colors", "wcag-contrast", "apca-calculator", "ui-accessibility", "design-system-tokens"],
+  },
+  {
     id: "typography-scale",
     slug: "typography-scale",
     name: "Typography Scale & Clamp Calculator",
@@ -79,6 +95,9 @@ export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
 
 export function getToolById(id: string): InteractiveToolDefinition | undefined {
   const cleanId = (id || "").toLowerCase().trim();
+  if (cleanId === "contrast-matrix" || cleanId === "apca" || cleanId === "contrast" || cleanId === "apca-contrast" || cleanId === "contrast-checker") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "contrast-matrix");
+  }
   if (cleanId === "typography-scale" || cleanId === "type-scale" || cleanId === "clamp" || cleanId === "typographyscale" || cleanId === "clamp-calculator") {
     return INTERACTIVE_TOOLS.find((t) => t.id === "typography-scale");
   }
