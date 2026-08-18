@@ -26,7 +26,7 @@ export const GUIDE_VISUAL_HIERARCHY: BlogPost = {
     _type: "image",
     asset: { _type: "reference", _ref: "image-manual-hierarchy" },
     alt: "Visual hierarchy eye-tracking scanpath diagram showing focal anchors and Gestalt chunking on digital layouts",
-    url: "https://cdn.sanity.io/images/0lqwkcmg/production/35f291a056702bbc7354aee2e0378a7ab73a9781-1600x1067.jpg",
+    url: "/covers/visual-hierarchy-3-second-framework-cover.webp",
   },
   publishDate: "2026-08-18",
   readTime: "13 min read",
