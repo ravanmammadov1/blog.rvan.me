@@ -19,11 +19,14 @@ export const translations: Record<Language, Record<string, string>> = {
     collaborate: "COLLABORATE",
 
     // Hero Section
-    heroBadge: "STUDIO VISION & CREATIVE ENGINE",
-    heroEyebrowTag: "DESIGN • TECH • CREATIVE",
-    heroTitle1: "Design that moves.",
-    heroTitle2: "Ideas that matter.",
-    heroSubtitle: "A creative studio and digital platform exploring design, marketing, technology, and the tools shaping the digital world.",
+    heroBadge: "DESIGN RESEARCH · IN-BROWSER WORKFLOWS · TYPOGRAPHY ARCHIVE",
+    heroEyebrow: "DESIGN RESEARCH · IN-BROWSER WORKFLOWS · TYPOGRAPHY ARCHIVE",
+    heroEyebrowTag: "DESIGN RESEARCH · IN-BROWSER WORKFLOWS · TYPOGRAPHY ARCHIVE",
+    heroTitle1: "Deconstructing visual logic.",
+    heroTitle2: "Engineering practical tools.",
+    heroSubtitle: "A digital laboratory combining in-browser design utilities, deep editorial research on cognitive mechanics, and an open-source typography library — created by Ravan Mammadov.",
+    btnExploreTools: "EXPLORE TOOLS",
+    btnReadEssays: "READ THE ESSAYS",
     btnExploreResources: "EXPLORE RESOURCES",
     btnReadNews: "READ INDUSTRY NEWS",
 
@@ -305,11 +308,14 @@ export const translations: Record<Language, Record<string, string>> = {
     collaborate: "ƏMƏKDAŞLIQ",
 
     // Hero Section
-    heroBadge: "PLATFORMANIN VİZYONU VƏ MİSSİYASI",
-    heroEyebrowTag: "YARADICI STUDİO VƏ RƏQƏMSAL PLATFORMA",
-    heroTitle1: "Fikirləri dizayn et.",
-    heroTitle2: "Gələcəyi qur.",
-    heroSubtitle: "Rəqəmsal dünyanı formalaşdıran dizayn, marketinq, texnologiya və alətləri kəşf edən yaradıcı studiya və rəqəmsal platforma.",
+    heroBadge: "DİZAYN TƏDQİQATI · BRAUZER ALƏTLƏRİ · TİPOQRAFİYA ARXİVİ",
+    heroEyebrow: "DİZAYN TƏDQİQATI · BRAUZER ALƏTLƏRİ · TİPOQRAFİYA ARXİVİ",
+    heroEyebrowTag: "DİZAYN TƏDQİQATI · BRAUZER ALƏTLƏRİ · TİPOQRAFİYA ARXİVİ",
+    heroTitle1: "Dizayn məntiqini anlamaq.",
+    heroTitle2: "Funksional alətlər yaratmaq.",
+    heroSubtitle: "Brauzer əsaslı dizayn alətləri, vizual qavrayış üzrə dərin redaksiya tədqiqatları və açıq mənbəli tipoqrafiya bazasını birləşdirən rəqəmsal laboratoriya — Rəvan Məmmədov tərəfindən yaradılmışdır.",
+    btnExploreTools: "ALƏTLƏRİ KƏŞF ET",
+    btnReadEssays: "ESSERLƏRİ OXU",
     btnExploreResources: "RESURSLARI KƏŞF ET",
     btnReadNews: "SAHƏ XƏBƏRLƏRİNİ OXU",
 

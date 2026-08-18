@@ -10,6 +10,7 @@ import SEO from "./components/SEO";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { Button } from "./components/ui/Button";
+import { Eyebrow } from "./components/Eyebrow";
 
 import HeroAtmosphere from "./components/HeroAtmosphere";
 
@@ -73,45 +74,33 @@ export default function HomePage() {
               animate="visible"
               className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
+              <Eyebrow className="mb-6 text-primary tracking-[.2em]">
+                {t("heroEyebrow", "DESIGN RESEARCH · IN-BROWSER WORKFLOWS · TYPOGRAPHY ARCHIVE")}
+              </Eyebrow>
+
               <h1
                 className="font-bold tracking-[-.04em] leading-[1.05] text-foreground mb-8 w-full"
                 style={{ fontSize: "clamp(2.5rem, 6vw, 6.2rem)" }}
               >
-                {siteSettings?.heroTitle ? (
-                  siteSettings.heroTitle.includes("\n") ? (
-                    <>
-                      {siteSettings.heroTitle.split("\n")[0]}<br />
-                      <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
-                        {siteSettings.heroTitle.split("\n").slice(1).join(" ")}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
-                      {siteSettings.heroTitle}
-                    </span>
-                  )
-                ) : (
-                  <>
-                    {t("heroTitle1", "Design that moves.")}<br />
-                    <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
-                      {t("heroTitle2", "Ideas that matter.")}
-                    </span>
-                  </>
-                )}
+                {t("heroTitle1", "Deconstructing visual logic.")}
+                <br />
+                <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
+                  {t("heroTitle2", "Engineering practical tools.")}
+                </span>
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground/90 font-medium max-w-2xl leading-relaxed mb-10">
-                {siteSettings?.heroSubtitle || t("heroSubtitle", "A curated creative ecosystem for designers and developers — open-source resources, interactive tools, typography, and in-depth insights.")}
+                {t("heroSubtitle", "A digital laboratory combining in-browser design utilities, deep editorial research on cognitive mechanics, and an open-source typography library — created by Ravan Mammadov.")}
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
                 <Button
-                  to={getLocalizedPath("/resources")}
+                  to={getLocalizedPath("/tools")}
                   variant="primary"
                   size="lg"
                   icon={<ArrowUpRight size={16} />}
                 >
-                  {t("btnExploreResources", "EXPLORE RESOURCES")}
+                  {t("btnExploreTools", "EXPLORE TOOLS")}
                 </Button>
 
                 <Button
@@ -120,7 +109,7 @@ export default function HomePage() {
                   size="lg"
                   icon={<ArrowDownRight size={16} />}
                 >
-                  {t("exploreAllArticles", "READ BLOG & ARTICLES")}
+                  {t("btnReadEssays", "READ THE ESSAYS")}
                 </Button>
               </div>
             </motion.div>

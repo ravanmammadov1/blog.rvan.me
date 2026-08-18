@@ -1,6 +1,7 @@
 import React from "react";
 import { TypeScaleConfig, MODULAR_SCALE_PRESETS } from "../../../../lib/typography/typeScaleEngine";
 import { Sliders, Monitor, Smartphone, Type, Settings2, Sparkles } from "lucide-react";
+import { ShareToolButton } from "../ShareToolButton";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
 
 interface TypeScaleControlsProps {
@@ -36,7 +37,7 @@ export default function TypeScaleControls({
 
   return (
     <div className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl shadow-xl">
-      {/* Section 1: Header with Reset Button */}
+      {/* Section 1: Header with Reset Button and Share Action */}
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div className="flex items-center gap-2">
           <Sliders size={18} className="text-primary" />
@@ -44,13 +45,16 @@ export default function TypeScaleControls({
             {isAz ? "TİPOQRAFİYA PARAMETRLƏRİ" : "SCALE CONFIGURATION"}
           </h2>
         </div>
-        <button
-          onClick={onReset}
-          className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors mono uppercase"
-          title="Reset to default settings"
-        >
-          {isAz ? "İlkin Vəziyyətə Qaytar" : "Reset Defaults"}
-        </button>
+        <div className="flex items-center gap-2">
+          <ShareToolButton size="sm" />
+          <button
+            onClick={onReset}
+            className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors mono uppercase"
+            title="Reset to default settings"
+          >
+            {isAz ? "İlkin Vəziyyət" : "Reset"}
+          </button>
+        </div>
       </div>
 
       {/* Section 2: Font Family Preview Selector */}

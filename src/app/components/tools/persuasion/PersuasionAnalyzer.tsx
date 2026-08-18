@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   CopyType,
   analyzePersuasion,
@@ -13,14 +14,47 @@ import PersuasionEditorialGuide from "./PersuasionEditorialGuide";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
 import { trackToolUsage } from "../../../../lib/analytics/events";
 
+function parseCopyTypeParam(param: string | null): CopyType {
+  if (param === "headline" || param === "cta" || param === "value_prop") {
+    return param;
+  }
+  return "headline";
+}
+
 export default function PersuasionAnalyzer() {
   const { language } = useLanguage();
   const isAz = language === "az";
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const defaultPreset = PERSUASION_PRESETS[0];
 
-  const [copyType, setCopyType] = useState<CopyType>(defaultPreset.type);
-  const [inputText, setInputText] = useState<string>(defaultPreset.text);
+  const [copyType, setCopyType] = useState<CopyType>(() =>
+    parseCopyTypeParam(searchParams.get("mode"))
+  );
+  const [inputText, setInputText] = useState<string>(() => {
+    const initialMode = parseCopyTypeParam(searchParams.get("mode"));
+    const matchedPreset = PERSUASION_PRESETS.find((p) => p.type === initialMode);
+    return matchedPreset ? matchedPreset.text : defaultPreset.text;
+  });
+
+  // Sync mode when URL changes externally (e.g. Back/Forward navigation)
+  useEffect(() => {
+    const modeParam = searchParams.get("mode");
+    if (modeParam) {
+      const parsed = parseCopyTypeParam(modeParam);
+      if (parsed !== copyType) {
+        setCopyType(parsed);
+      }
+    }
+  }, [searchParams]);
+
+  // Sync mode to URL query parameters on user change
+  useEffect(() => {
+    const currentMode = searchParams.get("mode");
+    if (currentMode !== copyType) {
+      setSearchParams({ mode: copyType }, { replace: true });
+    }
+  }, [copyType, setSearchParams, searchParams]);
 
   const analysis = useMemo(
     () => analyzePersuasion(inputText, copyType),

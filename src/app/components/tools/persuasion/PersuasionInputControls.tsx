@@ -5,6 +5,7 @@ import {
   PersuasionPreset,
 } from "../../../../lib/marketing/persuasionEngine";
 import { Type, MousePointerClick, MessageSquare, Sparkles, RotateCcw, PenTool } from "lucide-react";
+import { ShareToolButton } from "../ShareToolButton";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
 
 interface PersuasionInputControlsProps {
@@ -42,43 +43,47 @@ export default function PersuasionInputControls({
           </h2>
         </div>
 
-        {/* Copy Type Segmented Switcher */}
-        <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 p-1">
-          <button
-            onClick={() => onCopyTypeChange("headline")}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all mono ${
-              copyType === "headline"
-                ? "bg-primary text-black shadow-md"
-                : "text-muted-foreground hover:text-white"
-            }`}
-          >
-            <Type size={13} />
-            <span>{isAz ? "Başlıq" : "Headline"}</span>
-          </button>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Copy Type Segmented Switcher */}
+          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 p-1">
+            <button
+              onClick={() => onCopyTypeChange("headline")}
+              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all mono ${
+                copyType === "headline"
+                  ? "bg-primary text-black shadow-md"
+                  : "text-muted-foreground hover:text-white"
+              }`}
+            >
+              <Type size={13} />
+              <span>{isAz ? "Başlıq" : "Headline"}</span>
+            </button>
 
-          <button
-            onClick={() => onCopyTypeChange("cta")}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all mono ${
-              copyType === "cta"
-                ? "bg-primary text-black shadow-md"
-                : "text-muted-foreground hover:text-white"
-            }`}
-          >
-            <MousePointerClick size={13} />
-            <span>{isAz ? "CTA Düyməsi" : "CTA Button"}</span>
-          </button>
+            <button
+              onClick={() => onCopyTypeChange("cta")}
+              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all mono ${
+                copyType === "cta"
+                  ? "bg-primary text-black shadow-md"
+                  : "text-muted-foreground hover:text-white"
+              }`}
+            >
+              <MousePointerClick size={13} />
+              <span>{isAz ? "CTA Düyməsi" : "CTA Button"}</span>
+            </button>
 
-          <button
-            onClick={() => onCopyTypeChange("value_prop")}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all mono ${
-              copyType === "value_prop"
-                ? "bg-primary text-black shadow-md"
-                : "text-muted-foreground hover:text-white"
-            }`}
-          >
-            <MessageSquare size={13} />
-            <span>{isAz ? "Dəyər Təklifi" : "Value Prop"}</span>
-          </button>
+            <button
+              onClick={() => onCopyTypeChange("value_prop")}
+              className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all mono ${
+                copyType === "value_prop"
+                  ? "bg-primary text-black shadow-md"
+                  : "text-muted-foreground hover:text-white"
+              }`}
+            >
+              <MessageSquare size={13} />
+              <span>{isAz ? "Dəyər Təklifi" : "Value Prop"}</span>
+            </button>
+          </div>
+
+          <ShareToolButton size="sm" />
         </div>
       </div>
 

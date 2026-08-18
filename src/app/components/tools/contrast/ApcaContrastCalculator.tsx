@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from "react";
-import { evaluateContrast, ContrastPreset } from "../../../../lib/accessibility/apcaEngine";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { evaluateContrast, ContrastPreset, isValidHex, normalizeHex } from "../../../../lib/accessibility/apcaEngine";
 import ApcaColorControls from "./ApcaColorControls";
 import ApcaScoreCard from "./ApcaScoreCard";
 import ApcaTypographyMatrix from "./ApcaTypographyMatrix";
@@ -7,19 +8,86 @@ import ApcaLiveUiSpecimen from "./ApcaLiveUiSpecimen";
 import ApcaTokenMatrix from "./ApcaTokenMatrix";
 import ApcaCodeExporter from "./ApcaCodeExporter";
 import ApcaEditorialGuide from "./ApcaEditorialGuide";
+import { ShareToolButton } from "../ShareToolButton";
 import { Grid, Layout, Layers, Code, Sparkles } from "lucide-react";
 import { useLanguage } from "../../../../lib/i18n/LanguageContext";
 import { trackToolUsage } from "../../../../lib/analytics/events";
 
 type ViewTab = "matrix" | "specimen" | "tokens" | "code";
 
+function parseHexParam(param: string | null, fallback: string): string {
+  if (!param) return fallback;
+  const clean = param.trim().startsWith("#") ? param.trim() : `#${param.trim()}`;
+  return isValidHex(clean) ? normalizeHex(clean) : fallback;
+}
+
+function parseTabParam(param: string | null): ViewTab {
+  if (param === "specimen" || param === "tokens" || param === "code") {
+    return param;
+  }
+  return "matrix";
+}
+
 export default function ApcaContrastCalculator() {
   const { language } = useLanguage();
   const isAz = language === "az";
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [fgColor, setFgColor] = useState<string>("#FFFFFF");
-  const [bgColor, setBgColor] = useState<string>("#0F172A");
-  const [activeTab, setActiveTab] = useState<ViewTab>("matrix");
+  const [fgColor, setFgColor] = useState<string>(() =>
+    parseHexParam(searchParams.get("fg"), "#FFFFFF")
+  );
+  const [bgColor, setBgColor] = useState<string>(() =>
+    parseHexParam(searchParams.get("bg"), "#0F172A")
+  );
+  const [activeTab, setActiveTab] = useState<ViewTab>(() =>
+    parseTabParam(searchParams.get("tab"))
+  );
+
+  // Sync state when URL searchParams change (e.g. Back/Forward or fresh navigation)
+  useEffect(() => {
+    const fgP = searchParams.get("fg");
+    const bgP = searchParams.get("bg");
+    const tabP = searchParams.get("tab");
+
+    if (fgP) {
+      const parsedFg = parseHexParam(fgP, "#FFFFFF");
+      if (parsedFg.toUpperCase() !== fgColor.toUpperCase()) {
+        setFgColor(parsedFg);
+      }
+    }
+    if (bgP) {
+      const parsedBg = parseHexParam(bgP, "#0F172A");
+      if (parsedBg.toUpperCase() !== bgColor.toUpperCase()) {
+        setBgColor(parsedBg);
+      }
+    }
+    if (tabP) {
+      const parsedTab = parseTabParam(tabP);
+      if (parsedTab !== activeTab) {
+        setActiveTab(parsedTab);
+      }
+    }
+  }, [searchParams]);
+
+  // Sync state to URL search parameters on user changes
+  useEffect(() => {
+    const cleanFg = fgColor.replace("#", "");
+    const cleanBg = bgColor.replace("#", "");
+    const currentFg = searchParams.get("fg");
+    const currentBg = searchParams.get("bg");
+    const currentTab = searchParams.get("tab") || "matrix";
+
+    if (
+      currentFg?.toLowerCase() !== cleanFg.toLowerCase() ||
+      currentBg?.toLowerCase() !== cleanBg.toLowerCase() ||
+      currentTab !== activeTab
+    ) {
+      setSearchParams(
+        { fg: cleanFg, bg: cleanBg, tab: activeTab },
+        { replace: true }
+      );
+    }
+  }, [fgColor, bgColor, activeTab, setSearchParams, searchParams]);
 
   const evaluation = useMemo(
     () => evaluateContrast(fgColor, bgColor),
@@ -112,8 +180,11 @@ export default function ApcaContrastCalculator() {
             </button>
           </div>
 
-          <div className="text-[11px] text-muted-foreground mono hidden sm:block">
-            {isAz ? `Seçilmiş cütlük: ${evaluation.fgHex} / ${evaluation.bgHex}` : `Pair: ${evaluation.fgHex} on ${evaluation.bgHex}`}
+          <div className="flex items-center gap-3">
+            <div className="text-[11px] text-muted-foreground mono hidden sm:block">
+              {isAz ? `Seçilmiş cütlük: ${evaluation.fgHex} / ${evaluation.bgHex}` : `Pair: ${evaluation.fgHex} on ${evaluation.bgHex}`}
+            </div>
+            <ShareToolButton size="sm" />
           </div>
         </div>
 
