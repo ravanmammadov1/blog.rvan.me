@@ -332,6 +332,30 @@ export default function FontDetailPage() {
                   0 1 2 3 4 5 6 7 8 9 ! @ # $ % ^ & * ( ) _ + - = [ ]
                 </p>
               </div>
+
+              {/* Azerbaijani Latin Special Glyphs */}
+              <div className="pt-2 border-t border-white/5">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <p className="text-[10px] text-muted-foreground mono uppercase">
+                    {language === "az" ? "Azərbaycan Latın Əlifbası (Xüsusi Qliflər)" : "Azerbaijani Latin Special Glyphs"}
+                  </p>
+                  {font.supportsAzerbaijani ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 mono">
+                      <CheckCircle2 size={11} /> {language === "az" ? "Dəstəklənir (100% Tam Dəstək)" : "Azerbaijani Supported"}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-400/80 mono">
+                      {language === "az" ? "Standart Latın Qlifləri" : "Standard Latin Coverage"}
+                    </span>
+                  )}
+                </div>
+                <p
+                  style={{ fontFamily: `"${font.family}", system-ui, sans-serif` }}
+                  className="text-2xl md:text-3xl text-foreground tracking-wider break-words"
+                >
+                  Ə ə · Ğ ğ · İ ı · Ö ö · Ş ş · Ü ü · Ç ç
+                </p>
+              </div>
             </div>
           </div>
 
@@ -350,11 +374,17 @@ export default function FontDetailPage() {
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
-              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("typeArchitecture", "TYPE ARCHITECTURE")}</span>
-              <p className="mt-2 text-base font-bold text-cyan-400">
-                {font.isVariable ? t("variableFontAxes", "Variable Font (Axes Supported)") : t("staticFamily", "Static Family")}
+              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">
+                {language === "az" ? "AZƏRBAYCAN DİLİ" : "AZERBAIJANI LANGUAGE"}
+              </span>
+              <p className={`mt-2 text-base font-bold ${font.supportsAzerbaijani ? "text-emerald-400" : "text-amber-400"}`}>
+                {font.supportsAzerbaijani
+                  ? (language === "az" ? "Tam Dəstək (Ə, ğ, ı, ö, ş, ü, ç)" : "Verified (Ə, ğ, ı, ö, ş, ü, ç)")
+                  : (language === "az" ? "Standart Latın" : "Standard Latin")}
               </p>
-              <p className="text-xs text-muted-foreground mono mt-0.5">Format: WOFF2 / TTF / OTF</p>
+              <p className="text-xs text-muted-foreground mono mt-0.5">
+                {font.supportsAzerbaijani ? "Schwa (Ə/ə) + Latin-Ext A" : "Basic Latin"}
+              </p>
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">

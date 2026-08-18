@@ -653,8 +653,12 @@ async function fetchFontPages() {
 
       enPages.push({
         path: `/fonts/${slug}`,
-        title: `${font.family} Font Family: Specimen, CSS & Free Download — Rvan.me`,
-        description: `Download ${font.family} font family for free (${font.license || "SIL Open Font License"}). Features ${stylesCount} style${stylesCount > 1 ? "s" : ""}${isVariable ? ", variable axes" : ""}, live specimen tester, Fontsource/Google Fonts CSS code snippets, and fluid clamp() scale calculator.`,
+        title: font.supportsAzerbaijani
+          ? `${font.family} Font Family (Azerbaijani Supported): Specimen, CSS & Free Download — Rvan.me`
+          : `${font.family} Font Family: Specimen, CSS & Free Download — Rvan.me`,
+        description: font.supportsAzerbaijani
+          ? `Download ${font.family} font family with verified Azerbaijani Latin glyphs (Ə, ğ, ı, ö, ş, ü, ç) for free (${font.license || "SIL Open Font License"}). Features ${stylesCount} styles, live specimen tester, and CSS code snippets.`
+          : `Download ${font.family} font family for free (${font.license || "SIL Open Font License"}). Features ${stylesCount} style${stylesCount > 1 ? "s" : ""}${isVariable ? ", variable axes" : ""}, live specimen tester, Fontsource/Google Fonts CSS code snippets, and fluid clamp() scale calculator.`,
         type: "website",
         lastmod: "2026-08-18",
         isTier1,
@@ -664,8 +668,12 @@ async function fetchFontPages() {
       // AZ Font Page
       azPages.push({
         path: `/az/fonts/${slug}`,
-        title: `${font.family} Şrift Ailəsi: Nümunə, CSS və Pulsuz Yüklə — Rvan.me`,
-        description: `${font.family} şrift ailəsini pulsuz yükləyin (${font.license || "SIL Açıq Şrift Lisenziyası"}). ${stylesCount} şrift çəkisi${isVariable ? ", variativ oxlar" : ""}, canlı nümayiş redaktoru, CSS kodları və elastik clamp() kalkulyatoru ilə.`,
+        title: font.supportsAzerbaijani
+          ? `${font.family} Şrift Ailəsi (Azərbaycan Dili Dəstəkli): Nümunə və Pulsuz Yüklə — Rvan.me`
+          : `${font.family} Şrift Ailəsi: Nümunə, CSS və Pulsuz Yüklə — Rvan.me`,
+        description: font.supportsAzerbaijani
+          ? `${font.family} şrift ailəsini pulsuz yükləyin. Azərbaycan latın qlifləri (Ə, ğ, ı, ö, ş, ü, ç), ${stylesCount} şrift çəkisi, canlı nümayiş və CSS kodları ilə.`
+          : `${font.family} şrift ailəsini pulsuz yükləyin (${font.license || "SIL Açıq Şrift Lisenziyası"}). ${stylesCount} şrift çəkisi${isVariable ? ", variativ oxlar" : ""}, canlı nümayiş redaktoru, CSS kodları və elastik clamp() kalkulyatoru ilə.`,
         type: "website",
         lastmod: "2026-08-18",
         isTier1,

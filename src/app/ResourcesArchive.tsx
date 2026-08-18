@@ -54,7 +54,7 @@ export default function ResourcesArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { t } = useLanguage();
+  const { t, language, isAz } = useLanguage();
 
   // Font Specimen Interactive Controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
@@ -113,7 +113,9 @@ export default function ResourcesArchive() {
   const filteredFonts = useMemo(() => {
     let list = fontCatalog;
 
-    if (fontCategorySubfilter !== "all") {
+    if (fontCategorySubfilter === "azerbaijani") {
+      list = list.filter((f) => f.supportsAzerbaijani);
+    } else if (fontCategorySubfilter !== "all") {
       list = list.filter((f) => f.category?.toLowerCase() === fontCategorySubfilter.toLowerCase());
     }
 
@@ -122,8 +124,12 @@ export default function ResourcesArchive() {
       list = list.filter(
         (f) =>
           f.family.toLowerCase().includes(q) ||
+          f.name.toLowerCase().includes(q) ||
           f.designer?.toLowerCase().includes(q) ||
-          f.category?.toLowerCase().includes(q)
+          f.category?.toLowerCase().includes(q) ||
+          f.foundry?.toLowerCase().includes(q) ||
+          f.aliases?.some((a) => a.toLowerCase().includes(q)) ||
+          (q === "calibri" && f.family.toLowerCase() === "carlito")
       );
     }
 
@@ -195,17 +201,32 @@ export default function ResourcesArchive() {
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               {/* Category Pills */}
               <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
-                {["all", "sans-serif", "serif", "display", "monospace", "handwriting"].map((cat) => (
+                {[
+                  { key: "all", label: isAz ? "HAMISI" : "ALL" },
+                  { key: "azerbaijani", label: isAz ? "AZƏRBAYCAN DİLİ (Ə)" : "AZERBAIJANI (Ə)" },
+                  { key: "sans-serif", label: "SANS SERIF" },
+                  { key: "serif", label: "SERIF" },
+                  { key: "display", label: "DISPLAY" },
+                  { key: "monospace", label: "MONOSPACE" },
+                  { key: "handwriting", label: "HANDWRITING" },
+                ].map((item) => (
                   <button
-                    key={cat}
-                    onClick={() => setFontCategorySubfilter(cat)}
-                    className={`rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
-                      fontCategorySubfilter === cat
-                        ? "bg-primary text-black"
+                    key={item.key}
+                    onClick={() => {
+                      setFontCategorySubfilter(item.key);
+                      if (item.key === "azerbaijani" && !previewText) {
+                        setPreviewText("Dizayn sistemləri və tipoqrafiya arxitekturası — Ə, ğ, ı, ö, ş, ü, ç.");
+                      }
+                    }}
+                    className={`rounded-xl px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                      fontCategorySubfilter === item.key
+                        ? item.key === "azerbaijani"
+                          ? "bg-emerald-400 text-black font-extrabold"
+                          : "bg-primary text-black"
                         : "text-muted-foreground hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    {cat}
+                    {item.label}
                   </button>
                 ))}
               </div>
