@@ -1,6 +1,6 @@
 # PROJECT TASK MANAGEMENT
 
-## Active Phase: Phase 1 — Organic Growth & SEO Architecture (COMPLETED)
+## Active Phase: Phase 2 — High-Utility Creative Tools Suite Expansion
 
 ---
 
@@ -13,18 +13,18 @@
 | `ADMIN-01` | Inject `noindex, nofollow` on `/admin/linkedin` and `/az/admin/linkedin` and exclude from sitemap | Security / SEO | P0 | **Done** | Primary Agent |
 | `FONT-TIER-01` | Implement 2-tier font indexation (Top 200 curated in sitemap; long-tail marked `noindex, follow`) | SEO / Crawl | P0 | **Done** | Primary Agent |
 | `INTERLINK-01` | Build `EcosystemBridgeCard.tsx`, map all 39 master essays to tools/resources/related articles with 0 orphans | UX / SEO | P1 | **Done** | Primary Agent |
-| `BUNDLE-OPT-01` | Split root `index.js` bundle to improve mobile LCP Core Web Vitals | Performance | P2 | Ready | Primary Agent |
 
 ---
 
-## 2. Phase 2 Backlog: High-Utility Creative Tools Suite
+## 2. Phase 2 Sprint Tasks: High-Utility Creative Tools Suite
 
-| Task ID | Description | Category | Priority | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| `TOOL-TYPE-01` | Build **Fluid Typography Scale & Clamp Calculator** (`/tools/typography-scale`) | Interactive Tool | P1 | Backlog |
-| `TOOL-APCA-01` | Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`) | Interactive Tool | P1 | Backlog |
-| `TOOL-CTA-01` | Build **Marketing Headline & CTA Impact Analyzer** (`/tools/headline-analyzer`) | Interactive Tool | P2 | Backlog |
-| `TOOL-RESUME-01` | Add section drag-and-drop reordering & JSON backup to **ATS Resume Builder** | Tool Upgrade | P2 | Backlog |
+| Task ID | Description | Category | Priority | Status | Owner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `TOOL-TYPE-01` | Build **Fluid Typography Scale & Clamp Calculator** (`/tools/typography-scale`) with live simulator & multi-format export | Interactive Tool | P1 | **Done** | Primary Agent |
+| `TOOL-APCA-01` | Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`) | Interactive Tool | P1 | Backlog | Primary Agent |
+| `TOOL-CTA-01` | Build **Marketing Headline & CTA Impact Analyzer** (`/tools/headline-analyzer`) | Interactive Tool | P2 | Backlog | Primary Agent |
+| `TOOL-RESUME-01` | Add section drag-and-drop reordering & JSON backup to **ATS Resume Builder** | Tool Upgrade | P2 | Backlog | Primary Agent |
+| `BUNDLE-OPT-01` | Split root `index.js` bundle to improve mobile LCP Core Web Vitals | Performance | P2 | Backlog | Primary Agent |
 
 ---
 
@@ -54,13 +54,3 @@
 | :--- | :--- | :--- | :--- | :--- |
 | `CMS-01` | Upgrade Sanity schemas with formal references for Authors, Related Tools, and Topic Clusters | CMS Schema | P3 | Backlog |
 | `AUTO-01` | Automate LinkedIn publishing queue via scheduled Vercel cron endpoints | Automation | P3 | Backlog |
-
----
-
-## Task Completion Protocol
-When completing a task:
-1. Ensure the deliverable satisfies the **Definition of Done** in `AI/RULES.md`.
-2. Run `npm run build` to verify production compilation and route generation.
-3. Mark task as `Done` in `AI/TASKS.md`.
-4. Update `AI/CURRENT_STATE.md`.
-5. Create a descriptive Git checkpoint commit.

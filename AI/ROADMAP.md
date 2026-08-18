@@ -7,12 +7,13 @@ gantt
     title Product Transformation Roadmap
     dateFormat  YYYY-MM-DD
     section Phase 0
-    Phase 0 - AI Control & Repository Memory       :done, p0, 2026-08-18, 1d
+    Phase 0 - AI Control & Baseline Memory             :done, p0, 2026-08-18, 1d
     section Phase 1
-    Phase 1.1 - P0 SEO Foundation, Sitemap & Canonical :done, p1a, 2026-08-18, 1d
+    Phase 1.1 - P0 SEO Foundation & Unified Sitemap    :done, p1a, 2026-08-18, 1d
     Phase 1.2 - P1 Ecosystem Interlinking Engine       :done, p1b, 2026-08-18, 1d
     section Phase 2
-    Phase 2 - High-Utility Creative Tools Suite        :active, p2, 2026-08-19, 10d
+    Phase 2.1 - Flagship Typography Scale Calculator   :done, p2a, 2026-08-18, 1d
+    Phase 2.2 - Color Contrast & APCA Evaluator        :active, p2b, 2026-08-19, 5d
     section Phase 3
     Phase 3 - Resource Discovery & Specimen Engines     :p3, 2026-08-29, 7d
     section Phase 4
@@ -54,37 +55,23 @@ gantt
 
 ---
 
-## Phase 2: High-Utility Creative Tools Suite Expansion (UPCOMING)
-* **Goal**: Expand the **USE** pillar with production-grade, zero-fluff utilities that attract high-intent organic search queries.
-* **Key Tasks**:
-  - [ ] `TOOL-TYPE-01` (P1): Build **Fluid Typography & Clamp Calculator** (`/tools/typography-scale`) with live visual scaler, modular scale presets, and CSS export.
-  - [ ] `TOOL-APCA-01` (P1): Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`) with WCAG 2.2 / APCA scoring and Tailwind export.
-  - [ ] `TOOL-CTA-01` (P2): Build **Marketing Headline & CTA Impact Analyzer** (`/tools/headline-analyzer`) with cognitive scoring.
-  - [ ] `TOOL-RESUME-01` (P2): Add section drag-and-drop reordering and JSON backup to **ATS Resume Builder**.
-  - [ ] `BUNDLE-OPT-01` (P2): Split root `index.js` into sub-route chunks to optimize mobile Core Web Vitals (LCP).
+## Phase 2.1: Flagship Typography Scale & Clamp Calculator (COMPLETED)
+* **Goal**: Launch a production-grade, mathematically harmonic responsive type scale and CSS clamp() generator.
+* **Deliverables**:
+  - [x] `TOOL-TYPE-01` (P1): Pure client-side mathematical calculation engine (`typeScaleEngine.ts`) with 8 modular scale presets and exact rem-based `clamp()` expressions.
+  - [x] Interactive controls panel (`TypeScaleControls.tsx`) with range inputs, custom ratios, base font sizes, and typeface switcher.
+  - [x] Live editable typography specimen canvas (`TypeScaleHierarchyPreview.tsx`) and simulated viewport ruler (`TypeScaleViewportSimulator.tsx`).
+  - [x] Multi-format code exporter (`TypeScaleCodeExporter.tsx`) for CSS variables, utility classes, and Tailwind config with copy and download.
+  - [x] Educational SEO landing page with deep guidance on modular scales, clamp math, accessibility zoom, and reciprocal ecosystem links.
+  - [x] Full static pre-rendering on `/tools/typography-scale` and `/az/tools/typography-scale`, registered in `sitemap.xml`.
+  - [x] Documented architecture in `ADR-010`.
 
 ---
 
-## Phase 3: Resource Discovery & Specimen Engine Deepening
-* **Goal**: Turn the **DISCOVER** pillar into the most intuitive, fast creative resource catalog on the web.
+## Phase 2.2: Color Contrast & APCA Matrix Evaluator (UPCOMING)
+* **Goal**: Build an advanced color contrast matrix tool supporting WCAG 2.2 and APCA algorithms with theme token exporter.
 * **Key Tasks**:
-  - [ ] `DISCOVERY-01` (P1): Implement global command palette / fuzzy search (`Cmd/Ctrl + K`) across all tools, articles, and fonts.
-  - [ ] `SPECIMEN-01` (P2): Add variable font axis sliders (Weight, Width, Slant, Optical Size) and curated font pairing recommendations on font detail pages.
-  - [ ] `ICON-01` (P2): Add direct one-click code copy (SVG, React JSX snippet, Tailwind class) to Lucide icon specimen cards.
-
----
-
-## Phase 4: User Accounts & Creative Workbench (Value-Driven Auth)
-* **Goal**: Transform Google Authentication into a high-value personalization feature.
-* **Key Tasks**:
-  - [ ] `AUTH-01` (P2): Enable users to bookmark articles and save custom font pairings.
-  - [ ] `AUTH-02` (P2): Enable cloud synchronization for ATS Resume Builder drafts linked to user Google account with local storage fallback.
-  - [ ] `AUTH-03` (P3): Create "My Creative Workbench" profile dashboard.
-
----
-
-## Phase 5: Editorial Content Expansion & Sanity CMS Automation
-* **Goal**: Deepen topical authority with ongoing high-caliber essays and automated syndication.
-* **Key Tasks**:
-  - [ ] `CMS-01` (P3): Upgrade Sanity schemas to include formal relational references for Authors, Related Tools, and Topic Clusters.
-  - [ ] `AUTO-01` (P3): Automate LinkedIn publishing queue via scheduled Vercel cron endpoints.
+  - [ ] `TOOL-APCA-01` (P1): Color Contrast & APCA Matrix Evaluator (`/tools/contrast-matrix`).
+  - [ ] `TOOL-CTA-01` (P2): Marketing Headline & CTA Impact Analyzer (`/tools/headline-analyzer`).
+  - [ ] `TOOL-RESUME-01` (P2): ATS Resume Builder drag-and-drop reordering.
+  - [ ] `BUNDLE-OPT-01` (P2): Split root `index.js` into sub-route chunks.

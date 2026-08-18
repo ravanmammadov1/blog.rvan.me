@@ -111,3 +111,19 @@
 * **Consequences**:
   - *Pros*: Eliminates all orphan content (0 orphan essays); distributes PageRank deeply into tools and resources; dramatically increases session duration and utility discovery; 100% build-time resolution with zero runtime overhead.
   - *Cons*: Adding new articles in future requires adding a corresponding entry to `ecosystemRelationshipMap.ts`.
+
+---
+
+## ADR-010: Flagship Responsive Typography Scale & Clamp Calculator
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: The platform required a flagship utility for the **USE** pillar targeting high-intent organic search queries around fluid typography, CSS clamp calculation, and responsive design systems.
+* **Decision**:
+  1. Build a pure client-side mathematical solver (`src/lib/typography/typeScaleEngine.ts`) calculating modular harmonic ratios and linear interpolation equations ($y = mx + b$) to generate exact rem-based CSS `clamp()` tokens.
+  2. Implement interactive controls (`TypeScaleControls.tsx`) supporting 8 modular scale presets (Minor Second to Golden Ratio) plus custom ratios, mobile/desktop base font sizes, and font family preview switching.
+  3. Provide a real-time viewport simulator (`TypeScaleViewportSimulator.tsx`) with 320px–1600px slider and breakpoint buttons, coupled with an editable live specimen canvas (`TypeScaleHierarchyPreview.tsx`).
+  4. Implement a multi-tab exporter (`TypeScaleCodeExporter.tsx`) generating CSS Variables (`:root`), utility classes, and Tailwind config with one-click copy and file download.
+  5. Deploy on canonical indexable routes `/tools/typography-scale` and `/az/tools/typography-scale`, including JSON-LD `WebApplication` schema, sitemap registration, and bi-directional links with editorial typography essays.
+* **Consequences**:
+  - *Pros*: Zero runtime dependencies; 36.45KB code-split bundle; fully accessible (keyboard, dark/light, screen-readers); captures key high-volume organic search queries; deepens product utility.
+  - *Cons*: None.

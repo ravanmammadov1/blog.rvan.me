@@ -19,14 +19,30 @@ export interface InteractiveToolDefinition {
 
 export const TOOL_CATEGORIES: { id: string; label: string; label_az: string }[] = [
   { id: "All", label: "All Tools", label_az: "Hamısı" },
-  { id: "Creative", label: "Creative", label_az: "Kreativ" },
   { id: "Design", label: "Design", label_az: "Dizayn" },
+  { id: "Developer", label: "Developer", label_az: "Developer" },
+  { id: "Creative", label: "Creative", label_az: "Kreativ" },
   { id: "Marketing", label: "Marketing", label_az: "Marketinq" },
   { id: "Visual", label: "Visual", label_az: "Vizual" },
-  { id: "Developer", label: "Developer", label_az: "Developer" },
 ];
 
 export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
+  {
+    id: "typography-scale",
+    slug: "typography-scale",
+    name: "Typography Scale & Clamp Calculator",
+    name_az: "Tipoqrafiya Miqyası və Clamp Kalkulyatoru",
+    category: "Design",
+    description: "Generate harmonious responsive typography hierarchies with exact mathematical modular scales and instant CSS clamp() code tokens. Free in-browser generator with live viewport testing.",
+    description_az: "Riyazi modul miqyaslar və CSS clamp() ilə tam elastik tipoqrafiya iyerarxiyaları qurun. Canlı ekran simulyatoru və bir kliklə CSS dəyişənlərini kopyalama imkanı.",
+    icon: "📐",
+    path: "/tools/typography-scale",
+    status: "live",
+    featured: true,
+    seoTitle: "Fluid Typography Scale & CSS Clamp Calculator — Responsive Type Generator",
+    seoDescription: "Calculate harmonic modular typography scales and generate instant, copyable CSS clamp() values. Features live viewport simulation, rem conversions, and multi-format CSS/Tailwind exports.",
+    tags: ["typography-scale", "type-scale", "css-clamp", "fluid-typography", "responsive-font-size", "modular-scale", "tailwind-typography", "css-generator"],
+  },
   {
     id: "resume-builder",
     slug: "resume-builder",
@@ -63,6 +79,9 @@ export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
 
 export function getToolById(id: string): InteractiveToolDefinition | undefined {
   const cleanId = (id || "").toLowerCase().trim();
+  if (cleanId === "typography-scale" || cleanId === "type-scale" || cleanId === "clamp" || cleanId === "typographyscale" || cleanId === "clamp-calculator") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "typography-scale");
+  }
   if (cleanId === "openpeeps" || cleanId === "peeps" || cleanId === "character-builder") {
     return INTERACTIVE_TOOLS.find((t) => t.id === "open-peeps");
   }

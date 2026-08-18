@@ -11,6 +11,7 @@ import { Button } from "../components/ui/Button";
 // Lazy-load individual tools
 const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
 const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
+const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator"));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -43,10 +44,10 @@ export const ToolDetailPage: React.FC = () => {
   const jsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": tool.name,
+    "name": language === "az" ? (tool.name_az || tool.name) : tool.name,
     "description": tool.seoDescription,
-    "url": `https://www.rvan.me${tool.path}`,
-    "applicationCategory": "DeveloperApplication",
+    "url": `https://www.rvan.me${language === "az" ? `/az${tool.path}` : tool.path}`,
+    "applicationCategory": "DesignApplication",
     "operatingSystem": "All",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
     "offers": {
@@ -62,6 +63,8 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
+      case "typography-scale":
+        return <TypographyScaleCalculator />;
       case "resume-builder":
         return <ResumeBuilder />;
       case "open-peeps":

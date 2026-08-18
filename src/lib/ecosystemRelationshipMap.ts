@@ -94,17 +94,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools/resume-builder",
-      badge: { en: "TYPOGRAPHIC WORKBENCH", az: "TİPOQRAFİK ALƏT" },
+      path: "/tools/typography-scale",
+      badge: { en: "PRACTICAL APPLICATION", az: "PRAKTİK TƏTBİQ" },
       title: {
-        en: "Apply Executive Typography to Your Career",
-        az: "Karyeranıza Premium Tipoqrafiya Tətbiq Edin",
+        en: "Generate Responsive Type Scales & CSS Clamp",
+        az: "Elastik Tipoqrafiya Miqyası və CSS Clamp Hesablayın",
       },
       description: {
-        en: "Test high-end geometric sans and serif fonts directly on your professional resume templates in real-time.",
-        az: "Peşəkar CV şablonlarınızda həndəsi sans və klassik serif şriftlərini birbaşa sınaqdan keçirin.",
+        en: "Calculate harmonic modular scales and copy exact, production-ready CSS clamp() expressions for fluid headlines and body copy.",
+        az: "Harmonik modul miqyaslar hesablayın və başlıqlar ilə mətnlər üçün hazır CSS clamp() kodlarını əldə edin.",
       },
-      ctaText: { en: "Format Executive CV", az: "Premium CV Yarat" },
+      ctaText: { en: "Launch Type Scale Tool", az: "Tipoqrafiya Alətini Başlat" },
     },
     resourceBridge: {
       type: "resource",
@@ -764,17 +764,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools/resume-builder",
-      badge: { en: "SWISS STYLE CV", az: "İSVEÇRƏ ÜSLUBLU CV" },
+      path: "/tools/typography-scale",
+      badge: { en: "SWISS TYPOGRAPHY UTILITY", az: "İSVEÇRƏ TİPOQRAFİYA ALƏTİ" },
       title: {
-        en: "Apply Swiss Grid Principles to Your CV",
-        az: "CV-nizə İsveçrə Qrid Prinsiplərini Tətbiq Edin",
+        en: "Build a Swiss Modular Type Scale",
+        az: "İsveçrə Modul Şrift Miqyası Qurun",
       },
       description: {
-        en: "Build clean, neutral, and authoritative career documents formatted according to strict typographic hierarchy.",
-        az: "Dəqiq tipoqrafik iyerarxiya əsasında təmiz, neytral və mötəbər karyera sənədləri formalaşdırın.",
+        en: "Generate mathematically rigorous, neutral typographic hierarchies with instant CSS clamp() and rem tokens.",
+        az: "Riyazi cəhətdən dəqiq və neytral tipoqrafik iyerarxiyaları CSS clamp() və rem vahidləri ilə formalaşdırın.",
       },
-      ctaText: { en: "Format Clean CV", az: "İsveçrə Üslublu CV Yarat" },
+      ctaText: { en: "Calculate Scale", az: "Miqyası Hesabla" },
     },
     relatedSlugs: [
       "why-some-fonts-feel-expensive-gotham-typography",
@@ -1194,17 +1194,17 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     },
     toolBridge: {
       type: "tool",
-      path: "/tools/resume-builder",
-      badge: { en: "FONT PAIRING ENGINE", az: "ŞRİFT CÜTLÜK ALƏTİ" },
+      path: "/tools/typography-scale",
+      badge: { en: "TYPOGRAPHY SCALE ENGINE", az: "TİPOQRAFİYA MİQYAS ALƏTİ" },
       title: {
-        en: "Match Your Resume Font to Your Target Industry",
-        az: "CV Şriftinizi Hədəf Sahənizə Uyğunlaşdırın",
+        en: "Test Brand Typography Scales Live",
+        az: "Brend Tipoqrafiya Miqyasını Canlı Test Edin",
       },
       description: {
-        en: "Switch between modern tech grotesques, executive serifs, and clean sans-serifs with one click.",
-        az: "Bir kliklə müasir texnoloji qrotesklər və rəhbər serifləri arasında keçid edərək CV-nizin tonunu dəyişin.",
+        en: "Switch between modern sans, luxury serifs, and editorial scales with immediate CSS clamp() token generation.",
+        az: "Müasir sans, premium serif və redaksion miqyaslar arasında keçid edərək dərhal CSS clamp() dəyişənlərini əldə edin.",
       },
-      ctaText: { en: "Pair Resume Fonts", az: "CV Şrifti Seç" },
+      ctaText: { en: "Test Brand Scale", az: "Brend Miqyasını Sına" },
     },
     relatedSlugs: [
       "why-some-fonts-feel-expensive-gotham-typography",

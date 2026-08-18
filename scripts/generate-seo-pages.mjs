@@ -86,6 +86,13 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/tools/typography-scale",
+    title: "Fluid Typography Scale & CSS Clamp Calculator — Responsive Type Generator",
+    description: "Calculate harmonic modular typography scales and generate instant, copyable CSS clamp() values. Features live viewport simulation, rem conversions, and multi-format CSS/Tailwind exports.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/open-peeps",
     title: "Character Builder Tool — Free Vector Avatar & Illustration Generator",
     description: "Create custom hand-drawn character illustrations with the modular character builder. Mix facial expressions, hairstyles, poses, clothing, and export clean SVG or high-res PNG.",
@@ -565,6 +572,10 @@ const staticAzTranslations = {
   "/opportunities": {
     title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
     description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
+  },
+  "/tools/typography-scale": {
+    title: "Elastik Tipoqrafiya Miqyası və CSS Clamp Kalkulyatoru — Rvan.me",
+    description: "Riyazi modul miqyaslar və CSS clamp() ilə tam elastik tipoqrafiya iyerarxiyaları qurun. Canlı ekran simulyatoru və bir kliklə CSS dəyişənlərini kopyalama imkanı.",
   },
   "/tools/resume-builder": {
     title: "Pulsuz ATS CV Hazırlayıcı — HR Təsdiqli Vektor PDF Generatoru | Rvan.me",
