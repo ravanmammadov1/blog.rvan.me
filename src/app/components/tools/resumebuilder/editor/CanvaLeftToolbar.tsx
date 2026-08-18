@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useResumeEditor } from "../context/ResumeEditorContext";
 import { useAuth } from "../../../../../hooks/useAuth";
 import {
-  UNIFIED_TEMPLATES,
   FONT_OPTIONS,
   TemplateId,
   ResumeDensity,
 } from "../resumeTypes";
+import {
+  TEMPLATE_LIST,
+  TEMPLATE_REGISTRY,
+} from "../resumeTemplates";
 import {
   LayoutTemplate,
   FileText,
@@ -28,8 +31,10 @@ import {
   Globe,
   Award,
   ShieldCheck,
+  LayoutGrid,
 } from "lucide-react";
 import { useLanguage } from "../../../../../lib/i18n/LanguageContext";
+import { TemplateGalleryView } from "../templates/TemplateGalleryView";
 
 export const CanvaLeftToolbar: React.FC = () => {
   const {
@@ -52,6 +57,7 @@ export const CanvaLeftToolbar: React.FC = () => {
   const { language } = useLanguage();
   const isAz = language === "az";
   const { randomizeAvatar, avatarSvgUri } = useAuth();
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,23 +92,23 @@ export const CanvaLeftToolbar: React.FC = () => {
     }));
   };
 
-  // Find currently active template definition
-  const currentTemplateDef = UNIFIED_TEMPLATES.find((t) => t.id === theme.template) || UNIFIED_TEMPLATES[0];
+  // Find currently active template definition from single registry
+  const currentTemplateDef = TEMPLATE_REGISTRY[theme.template] || TEMPLATE_REGISTRY["tech-cv"];
 
   return (
-    <div className="flex h-full print:hidden">
+    <div className="flex h-full print:hidden relative">
       {/* ── NARROW ICON STRIP (DESIGN, CONTENT, STYLE) ── */}
       <aside className="w-16 bg-neutral-900 border-r border-white/10 flex flex-col items-center py-4 space-y-4 shrink-0 z-30">
         {/* 1. DESIGN */}
         <button
           type="button"
-          onClick={() => setActiveDrawer(activeDrawer === "design" || activeDrawer === "templates" ? null : "design")}
+          onClick={() => setActiveDrawer(activeDrawer === "design" ? null : "design")}
           className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all cursor-pointer ${
-            activeDrawer === "design" || activeDrawer === "templates"
+            activeDrawer === "design"
               ? "bg-primary text-black font-bold shadow-md shadow-primary/20"
               : "text-neutral-400 hover:text-white hover:bg-white/5"
           }`}
-          title={isAz ? "Dizayn & Şablonlar" : "Design & Templates"}
+          title={isAz ? "Dizayn" : "Design"}
         >
           <LayoutTemplate size={20} />
           <span className="text-[9px] font-mono uppercase tracking-wider font-bold">
@@ -113,13 +119,13 @@ export const CanvaLeftToolbar: React.FC = () => {
         {/* 2. CONTENT */}
         <button
           type="button"
-          onClick={() => setActiveDrawer(activeDrawer === "content" || activeDrawer === "elements" ? null : "content")}
+          onClick={() => setActiveDrawer(activeDrawer === "content" ? null : "content")}
           className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all cursor-pointer ${
-            activeDrawer === "content" || activeDrawer === "elements"
+            activeDrawer === "content"
               ? "bg-primary text-black font-bold shadow-md shadow-primary/20"
               : "text-neutral-400 hover:text-white hover:bg-white/5"
           }`}
-          title={isAz ? "Məzmun & Bölmələr" : "Content & Sections"}
+          title={isAz ? "Məzmun" : "Content"}
         >
           <FileText size={20} />
           <span className="text-[9px] font-mono uppercase tracking-wider font-bold">
@@ -130,13 +136,13 @@ export const CanvaLeftToolbar: React.FC = () => {
         {/* 3. STYLE */}
         <button
           type="button"
-          onClick={() => setActiveDrawer(activeDrawer === "style" || activeDrawer === "styles" ? null : "style")}
+          onClick={() => setActiveDrawer(activeDrawer === "style" ? null : "style")}
           className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all cursor-pointer ${
-            activeDrawer === "style" || activeDrawer === "styles"
+            activeDrawer === "style"
               ? "bg-primary text-black font-bold shadow-md shadow-primary/20"
               : "text-neutral-400 hover:text-white hover:bg-white/5"
           }`}
-          title={isAz ? "Üslub & Rənglər" : "Style & Fonts"}
+          title={isAz ? "Üslub" : "Style"}
         >
           <Palette size={20} />
           <span className="text-[9px] font-mono uppercase tracking-wider font-bold">
@@ -145,17 +151,17 @@ export const CanvaLeftToolbar: React.FC = () => {
         </button>
       </aside>
 
-      {/* ── EXPANDABLE DRAWER PANEL ── */}
+      {/* ── EXPANDABLE DRAWER PANEL (Clean Canva-like flyout) ── */}
       {activeDrawer && (
         <div className="w-80 bg-neutral-900/98 border-r border-white/10 flex flex-col h-full z-20 shadow-2xl animate-in slide-in-from-left-2 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <h3 className="text-xs font-mono font-bold tracking-wider text-neutral-300 uppercase">
-              {activeDrawer === "design" || activeDrawer === "templates"
-                ? isAz ? "Dizayn & Şablonlar" : "Design Templates (17)"
-                : activeDrawer === "content" || activeDrawer === "elements"
+              {activeDrawer === "design"
+                ? isAz ? "Dizayn & Şablon" : "Design & Layout"
+                : activeDrawer === "content"
                 ? isAz ? "Məzmun Bölmələri" : "Resume Content"
-                : isAz ? "Üslub & Tipoqrafiya" : "Styles & Layout"}
+                : isAz ? "Üslub & Rənglər" : "Styles & Colors"}
             </h3>
             <button
               onClick={() => setActiveDrawer(null)}
@@ -167,58 +173,58 @@ export const CanvaLeftToolbar: React.FC = () => {
 
           {/* Body Content */}
           <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar text-xs">
-            {/* ────────────── TAB 1: DESIGN (TEMPLATES) ────────────── */}
-            {(activeDrawer === "design" || activeDrawer === "templates") && (
+            {/* ────────────── TAB 1: DESIGN ────────────── */}
+            {activeDrawer === "design" && (
               <div className="space-y-4">
-                <p className="text-[11px] text-neutral-400">
-                  {isAz
-                    ? "İstədiyiniz şablonu seçin. Bütün məlumatlarınız avtomatik qorunur."
-                    : "Select any template. All your entered resume data is preserved 100%."}
-                </p>
+                {/* Active Template Card */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-muted-foreground uppercase font-bold">
+                      {isAz ? "Aktiv Şablon" : "Active Template"}
+                    </span>
+                    <span className="text-[10px] font-mono text-primary font-bold">
+                      {currentTemplateDef.source}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {UNIFIED_TEMPLATES.map((t) => {
-                    const isSelected = theme.template === t.id;
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => handleSelectTemplate(t.id, t.defaultAccent)}
-                        className={`flex flex-col text-left p-2.5 rounded-xl border transition-all cursor-pointer ${
-                          isSelected
-                            ? "border-primary bg-primary/10 shadow-md ring-1 ring-primary"
-                            : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/5"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className="font-bold text-white truncate">{isAz ? t.name_az : t.name}</span>
-                          {isSelected && <Check size={12} className="text-primary shrink-0" />}
-                        </div>
-                        <div className="flex items-center justify-between w-full mt-1">
-                          <span className="text-[9px] font-mono text-muted-foreground uppercase">{t.category}</span>
-                          <span className="text-[9px] font-mono text-emerald-400 font-bold">ATS {t.atsScore}%</span>
-                        </div>
-                        {/* Real Supported Colors Dots */}
-                        <div className="flex items-center gap-1 mt-2">
-                          {t.supportedAccents.slice(0, 4).map((hex) => (
-                            <span
-                              key={hex}
-                              className="w-2.5 h-2.5 rounded-full border border-white/20"
-                              style={{ backgroundColor: hex }}
-                            />
-                          ))}
-                        </div>
-                      </button>
-                    );
-                  })}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-white">
+                      {isAz ? currentTemplateDef.name_az : currentTemplateDef.name}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {currentTemplateDef.supportedAccents.map((hex) => (
+                        <button
+                          key={hex}
+                          type="button"
+                          onClick={() => setTheme((prev) => ({ ...prev, accentColor: hex }))}
+                          className={`w-3.5 h-3.5 rounded-full transition-transform cursor-pointer ${
+                            theme.accentColor.toLowerCase() === hex.toLowerCase()
+                              ? "ring-2 ring-white scale-110"
+                              : "opacity-70 hover:opacity-100"
+                          }`}
+                          style={{ backgroundColor: hex }}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
+
+                {/* Primary Button to Open Single Universal Template Gallery */}
+                <button
+                  type="button"
+                  onClick={() => setShowGalleryModal(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary text-black font-bold text-xs font-mono transition-all hover:bg-primary/90 shadow-lg cursor-pointer"
+                >
+                  <LayoutGrid size={15} />
+                  <span>{isAz ? "Bütün Şablonlara Bax" : "Browse All Templates"}</span>
+                </button>
               </div>
             )}
 
-            {/* ────────────── TAB 2: CONTENT (PROFILE PHOTO & SECTIONS) ────────────── */}
-            {(activeDrawer === "content" || activeDrawer === "elements") && (
+            {/* ────────────── TAB 2: CONTENT ────────────── */}
+            {activeDrawer === "content" && (
               <div className="space-y-6">
-                {/* 1. Profile Photo & Character System */}
+                {/* Profile Photo / Avatar System */}
                 <div className="space-y-3 p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-white flex items-center gap-1.5">
@@ -292,10 +298,10 @@ export const CanvaLeftToolbar: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 2. Add New Resume Section Items */}
+                {/* Add New Sections */}
                 <div className="space-y-2">
                   <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-bold">
-                    {isAz ? "Yeni Bölmə / Qeyd Əlavə Et" : "Add Content Item"}
+                    {isAz ? "Yeni Bölmə Əlavə Et" : "Add Content Item"}
                   </span>
 
                   <div className="grid grid-cols-1 gap-2">
@@ -363,14 +369,14 @@ export const CanvaLeftToolbar: React.FC = () => {
               </div>
             )}
 
-            {/* ────────────── TAB 3: STYLE (ACCENTS, TYPOGRAPHY, DENSITY) ────────────── */}
-            {(activeDrawer === "style" || activeDrawer === "styles") && (
+            {/* ────────────── TAB 3: STYLE ────────────── */}
+            {activeDrawer === "style" && (
               <div className="space-y-6">
-                {/* 1. Accent Colors */}
+                {/* Accent Colors */}
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-muted-foreground uppercase font-bold">
-                      {isAz ? "Vurğu Rəngi (Şablona Uyğun)" : "Template Accent Color"}
+                      {isAz ? "Vurğu Rəngi" : "Accent Color"}
                     </span>
                     <span className="text-[10px] font-mono text-neutral-400">{theme.accentColor}</span>
                   </div>
@@ -396,58 +402,53 @@ export const CanvaLeftToolbar: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 2. Typography Selection */}
+                {/* Typography Selection */}
                 <div className="space-y-2.5">
                   <span className="text-[10px] font-mono text-muted-foreground uppercase font-bold">
-                    {isAz ? "Şrift / Tipoqrafiya" : "Typography Family"}
+                    {isAz ? "Şrift Ailəsi" : "Typography"}
                   </span>
-
-                  <div className="space-y-1.5">
+                  <div className="grid grid-cols-1 gap-2">
                     {FONT_OPTIONS.map((f) => {
-                      const isActive = theme.fontFamily === f.id;
+                      const isSelected = theme.fontFamily === f.id;
                       return (
                         <button
                           key={f.id}
                           type="button"
                           onClick={() => setTheme((prev) => ({ ...prev, fontFamily: f.id }))}
-                          className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                            isActive
+                          className={`flex items-center justify-between p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
+                            isSelected
                               ? "border-primary bg-primary/10 text-white font-bold"
-                              : "border-white/10 bg-white/[0.02] text-neutral-300 hover:border-white/20 hover:bg-white/5"
+                              : "border-white/10 text-neutral-400 hover:text-white hover:bg-white/5"
                           }`}
                         >
                           <span style={{ fontFamily: f.fontFamily }}>{f.label}</span>
-                          {isActive && <Check size={14} className="text-primary shrink-0" />}
+                          {isSelected && <Check size={14} className="text-primary" />}
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* 3. Spacing Density */}
+                {/* Density Selection */}
                 <div className="space-y-2.5">
                   <span className="text-[10px] font-mono text-muted-foreground uppercase font-bold">
-                    {isAz ? "Səhifə Sıxlığı / Aralıq" : "Page Spacing Density"}
+                    {isAz ? "Səhifə Sıxlığı" : "Information Density"}
                   </span>
-
                   <div className="grid grid-cols-3 gap-2">
-                    {(["compact", "standard", "relaxed"] as ResumeDensity[]).map((d) => {
-                      const isActive = theme.density === d;
-                      return (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => setTheme((prev) => ({ ...prev, density: d }))}
-                          className={`py-2 px-1 rounded-xl border text-center font-mono text-[10px] uppercase font-bold transition-all cursor-pointer ${
-                            isActive
-                              ? "border-primary bg-primary text-black"
-                              : "border-white/10 bg-white/[0.02] text-neutral-400 hover:border-white/20 hover:text-white"
-                          }`}
-                        >
-                          {d}
-                        </button>
-                      );
-                    })}
+                    {(["compact", "standard", "relaxed"] as ResumeDensity[]).map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => setTheme((prev) => ({ ...prev, density: d }))}
+                        className={`py-2 text-center rounded-xl border text-[11px] font-mono capitalize transition-all cursor-pointer ${
+                          theme.density === d
+                            ? "border-primary bg-primary/10 text-primary font-bold"
+                            : "border-white/10 text-neutral-400 hover:text-white hover:bg-white/5"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -455,6 +456,30 @@ export const CanvaLeftToolbar: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ── SINGLE UNIVERSAL TEMPLATE PICKER MODAL (ZERO DUPLICATION) ── */}
+      {showGalleryModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-200"
+          onClick={() => setShowGalleryModal(false)}
+        >
+          <div
+            className="relative w-full max-w-5xl bg-neutral-900 border border-white/15 rounded-3xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TemplateGalleryView
+              isModal={true}
+              onCloseModal={() => setShowGalleryModal(false)}
+              onSelectTemplate={(templateId, color) => {
+                handleSelectTemplate(templateId, color);
+                setShowGalleryModal(false);
+              }}
+              activeTemplateId={theme.template}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+export default CanvaLeftToolbar;

@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import {
-  UNIFIED_TEMPLATES,
-  TemplateId,
-  ResumeThemeConfig,
-} from "../resumeTypes";
+import { TemplateId, ResumeThemeConfig } from "../resumeTypes";
+import { TEMPLATE_LIST, MASTER_SAMPLE_RESUME } from "../resumeTemplates";
 import { useLanguage } from "../../../../../lib/i18n/LanguageContext";
 import { Eye, Check, X, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { ResumePreview } from "./ResumePreview";
@@ -11,11 +8,15 @@ import { ResumePreview } from "./ResumePreview";
 interface TemplateGalleryViewProps {
   onSelectTemplate: (templateId: TemplateId, accentColor?: string) => void;
   activeTemplateId?: TemplateId;
+  isModal?: boolean;
+  onCloseModal?: () => void;
 }
 
 export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   onSelectTemplate,
   activeTemplateId = "tech-cv",
+  isModal = false,
+  onCloseModal,
 }) => {
   const { language } = useLanguage();
   const isAz = language === "az";
@@ -25,7 +26,7 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   // Per-template active accent color selection
   const [templateColors, setTemplateColors] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
-    UNIFIED_TEMPLATES.forEach((t) => {
+    TEMPLATE_LIST.forEach((t) => {
       initial[t.id] = t.defaultAccent;
     });
     return initial;
@@ -37,44 +38,65 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   };
 
   // Modal navigation
-  const currentPreviewIdx = UNIFIED_TEMPLATES.findIndex((t) => t.id === previewTemplateId);
-  const currentPreviewTemplate = currentPreviewIdx !== -1 ? UNIFIED_TEMPLATES[currentPreviewIdx] : null;
+  const currentPreviewIdx = TEMPLATE_LIST.findIndex((t) => t.id === previewTemplateId);
+  const currentPreviewTemplate = currentPreviewIdx !== -1 ? TEMPLATE_LIST[currentPreviewIdx] : null;
 
   const handlePrevTemplate = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (currentPreviewIdx > 0) {
-      setPreviewTemplateId(UNIFIED_TEMPLATES[currentPreviewIdx - 1].id);
+      setPreviewTemplateId(TEMPLATE_LIST[currentPreviewIdx - 1].id);
     } else {
-      setPreviewTemplateId(UNIFIED_TEMPLATES[UNIFIED_TEMPLATES.length - 1].id);
+      setPreviewTemplateId(TEMPLATE_LIST[TEMPLATE_LIST.length - 1].id);
     }
   };
 
   const handleNextTemplate = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (currentPreviewIdx < UNIFIED_TEMPLATES.length - 1) {
-      setPreviewTemplateId(UNIFIED_TEMPLATES[currentPreviewIdx + 1].id);
+    if (currentPreviewIdx < TEMPLATE_LIST.length - 1) {
+      setPreviewTemplateId(TEMPLATE_LIST[currentPreviewIdx + 1].id);
     } else {
-      setPreviewTemplateId(UNIFIED_TEMPLATES[0].id);
+      setPreviewTemplateId(TEMPLATE_LIST[0].id);
     }
   };
 
   return (
-    <div className="w-full flex flex-col items-center py-12 px-4 md:px-8 max-w-7xl mx-auto selection:bg-primary selection:text-black">
-      {/* ── QUIET EDITORIAL HERO ── */}
-      <div className="text-center space-y-2.5 max-w-xl mb-12">
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white font-sans">
-          {isAz ? "CV şablonu seçin." : "Select a resume template."}
-        </h1>
-        <p className="text-sm md:text-base text-neutral-400 font-medium">
-          {isAz
-            ? "İşinizə uyğun şablon seçin. İstənilən vaxt dəyişə bilərsiniz."
-            : "Choose a layout that fits your work. You can change it anytime."}
-        </p>
-      </div>
+    <div className={`w-full flex flex-col items-center max-w-7xl mx-auto selection:bg-primary selection:text-black ${isModal ? "p-6" : "py-12 px-4 md:px-8"}`}>
+      {/* ── QUIET EDITORIAL HERO (Only in standalone page mode) ── */}
+      {!isModal ? (
+        <div className="text-center space-y-2.5 max-w-xl mb-12">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white font-sans">
+            {isAz ? "CV şablonu seçin." : "Select a resume template."}
+          </h1>
+          <p className="text-sm md:text-base text-neutral-400 font-medium">
+            {isAz
+              ? "İşinizə uyğun şablon seçin. İstənilən vaxt dəyişə bilərsiniz."
+              : "Choose a layout that fits your work. You can change it anytime."}
+          </p>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between w-full mb-6 pb-4 border-b border-white/10">
+          <div>
+            <h2 className="text-xl font-bold text-white font-sans">
+              {isAz ? "Şablonu Dəyişin" : "Change Template"}
+            </h2>
+            <p className="text-xs text-neutral-400 mt-0.5">
+              {isAz ? "Məlumatlarınız 100% qorunur." : "Your content is preserved seamlessly."}
+            </p>
+          </div>
+          {onCloseModal && (
+            <button
+              onClick={onCloseModal}
+              className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
+      )}
 
       {/* ── TEMPLATES GALLERY GRID (3-Column Desktop / 2-Column Tablet / 1-Column Mobile) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 w-full">
-        {UNIFIED_TEMPLATES.map((template) => {
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 w-full ${isModal ? "max-h-[70vh] overflow-y-auto pr-2" : ""}`}>
+        {TEMPLATE_LIST.map((template) => {
           const activeColor = templateColors[template.id] || template.defaultAccent;
           const isSelected = activeTemplateId === template.id;
 
@@ -97,7 +119,7 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
                   : "border-white/10 hover:border-white/25 hover:shadow-2xl hover:-translate-y-1"
               }`}
             >
-              {/* ── A4 LIVE MINIATURE PREVIEW (Full Realistic Data Fill) ── */}
+              {/* ── A4 LIVE MINIATURE PREVIEW (Full Realistic Data with Avatar) ── */}
               <div className="relative w-full aspect-[210/297] bg-white overflow-hidden select-none">
                 <div
                   className="absolute inset-0 origin-top-left pointer-events-none"
@@ -108,8 +130,9 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
                   }}
                 >
                   <ResumePreview
-                    data={template.presetData}
+                    data={MASTER_SAMPLE_RESUME}
                     theme={previewTheme}
+                    isThumbnail={true}
                   />
                 </div>
 
@@ -238,7 +261,7 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
             <div className="flex-1 overflow-y-auto p-6 md:p-8 flex justify-center bg-neutral-950/60">
               <div className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 shadow-2xl rounded-sm overflow-hidden">
                 <ResumePreview
-                  data={currentPreviewTemplate.presetData}
+                  data={MASTER_SAMPLE_RESUME}
                   theme={{
                     template: currentPreviewTemplate.id,
                     accentColor: templateColors[currentPreviewTemplate.id] || currentPreviewTemplate.defaultAccent,
@@ -262,7 +285,7 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
               </button>
 
               <span>
-                {currentPreviewIdx + 1} / {UNIFIED_TEMPLATES.length}
+                {currentPreviewIdx + 1} / {TEMPLATE_LIST.length}
               </span>
 
               <button

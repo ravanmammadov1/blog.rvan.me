@@ -4,10 +4,12 @@ import {
   useResumeEditor,
 } from "./resumebuilder/context/ResumeEditorContext";
 import {
-  TECH_CV_PRESET,
-  UNIFIED_TEMPLATES,
   TemplateId,
 } from "./resumebuilder/resumeTypes";
+import {
+  MASTER_SAMPLE_RESUME,
+  TEMPLATE_REGISTRY,
+} from "./resumebuilder/resumeTemplates";
 import { calculateAtsScore } from "./resumebuilder/atsEngine";
 import { downloadResumeAsPdf } from "./resumebuilder/converters/pdfExporter";
 import { CanvaLeftToolbar } from "./resumebuilder/editor/CanvaLeftToolbar";
@@ -15,6 +17,7 @@ import { FloatingFormatToolbar } from "./resumebuilder/editor/FloatingFormatTool
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
 import { TemplateGalleryView } from "./resumebuilder/templates/TemplateGalleryView";
+import { TemplateErrorBoundary } from "./resumebuilder/editor/TemplateErrorBoundary";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
@@ -27,11 +30,13 @@ import {
   ShieldCheck,
   MousePointerClick,
   Loader2,
-  LayoutGrid,
+  ArrowLeft,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 
 /**
- * Inner Canvas Editor Component
+ * Inner Canvas Editor Component (Canva-style clean workspace)
  */
 const ResumeEditorCanvasInner: React.FC<{
   onOpenGallery: () => void;
@@ -56,6 +61,7 @@ const ResumeEditorCanvasInner: React.FC<{
 
   const [showAtsModal, setShowAtsModal] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   // Automatically assign character avatar once on load if photo is missing
   useEffect(() => {
@@ -67,7 +73,7 @@ const ResumeEditorCanvasInner: React.FC<{
   // Dynamic ATS Score Calculation
   const atsResult = useMemo(() => calculateAtsScore(data), [data]);
 
-  // Robust Native Vector PDF Download via @react-pdf/renderer
+  // Native Vector PDF Download via @react-pdf/renderer
   const handleDownloadPdf = async () => {
     if (isGeneratingPdf) return;
     setIsGeneratingPdf(true);
@@ -79,11 +85,20 @@ const ResumeEditorCanvasInner: React.FC<{
 
     try {
       await downloadResumeAsPdf(data, theme, filename);
+      setToastMessage({
+        text: isAz ? "✓ PDF uğurla yükləndi!" : "✓ PDF downloaded successfully!",
+        type: "success",
+      });
+      setTimeout(() => setToastMessage(null), 3500);
     } catch (e: any) {
       console.error("[PDF EXPORT ERROR]", e);
       console.error("[PDF EXPORT ERROR MESSAGE]", e?.message);
       console.error("[PDF EXPORT ERROR STACK]", e?.stack);
-      alert(isAz ? "PDF yüklənməsi zamanı xəta baş verdi." : "Could not generate PDF. Please try again.");
+      setToastMessage({
+        text: isAz ? "Xəta: PDF generasiya edilə bilmədi." : "Error: PDF could not be generated.",
+        type: "error",
+      });
+      setTimeout(() => setToastMessage(null), 4000);
     } finally {
       setIsGeneratingPdf(false);
     }
@@ -91,18 +106,18 @@ const ResumeEditorCanvasInner: React.FC<{
 
   return (
     <div className="w-full flex flex-col min-h-[90vh] bg-neutral-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
-      {/* ── TOP APP HEADER BAR ── */}
+      {/* ── TOP APP HEADER BAR (Canva-like clean simplicity) ── */}
       <header className="h-14 bg-neutral-900 border-b border-white/10 px-4 md:px-6 flex items-center justify-between gap-3 text-white shrink-0 z-40">
-        {/* Left: Document Title, Switch Template & Undo/Redo */}
+        {/* Left: Back to Templates, Resume Name, Undo/Redo */}
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={onOpenGallery}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-primary hover:text-black transition-all text-xs font-mono font-bold cursor-pointer"
-            title={isAz ? "Şablonlar Qalereyasına Qayıt" : "Switch Template"}
+            title={isAz ? "Bütün Şablonlar" : "Templates"}
           >
-            <LayoutGrid size={13} />
-            <span className="hidden sm:inline">{isAz ? "ŞABLONLAR" : "TEMPLATES"}</span>
+            <ArrowLeft size={13} />
+            <span>{isAz ? "Şablonlar" : "Templates"}</span>
           </button>
 
           <div className="h-4 w-px bg-white/15 hidden sm:block" />
@@ -156,30 +171,7 @@ const ResumeEditorCanvasInner: React.FC<{
           </div>
         </div>
 
-        {/* Center: Template Quick Switcher */}
-        <div className="hidden lg:flex items-center gap-1 bg-black/40 border border-white/10 p-1 rounded-2xl text-xs font-mono">
-          {UNIFIED_TEMPLATES.slice(0, 6).map((t) => (
-            <button
-              key={t.id}
-              onClick={() =>
-                setTheme((prev) => ({
-                  ...prev,
-                  template: t.id,
-                  accentColor: t.defaultAccent || prev.accentColor,
-                }))
-              }
-              className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
-                theme.template === t.id
-                  ? "bg-primary text-black font-bold shadow"
-                  : "text-neutral-400 hover:text-white"
-              }`}
-            >
-              {isAz ? t.name_az : t.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Right: ATS Score & Primary PDF Download */}
+        {/* Right: ATS Score Audit & Native Vector PDF Download */}
         <div className="flex items-center gap-2.5">
           {/* ATS Score Indicator */}
           <button
@@ -228,6 +220,20 @@ const ResumeEditorCanvasInner: React.FC<{
         </div>
       </header>
 
+      {/* ── IN-APP NOTIFICATION TOAST ── */}
+      {toastMessage && (
+        <div
+          className={`absolute top-16 right-6 z-50 px-4 py-2 rounded-xl text-xs font-mono font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ${
+            toastMessage.type === "success"
+              ? "bg-emerald-950/90 text-emerald-300 border border-emerald-500/30"
+              : "bg-red-950/90 text-red-300 border border-red-500/30"
+          }`}
+        >
+          {toastMessage.type === "success" ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+          <span>{toastMessage.text}</span>
+        </div>
+      )}
+
       {/* ── WORKSPACE BODY (DESIGN/CONTENT/STYLE Left Toolbar + Center A4 Canvas) ── */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Canva Tools Strip & Drawer */}
@@ -251,21 +257,6 @@ const ResumeEditorCanvasInner: React.FC<{
             </span>
           </div>
 
-          {/* ATS-First Template Image Recommendation */}
-          {(theme.template === "tech-cv" ||
-            theme.template === "minimal-cv" ||
-            theme.template === "compact-ats-cv" ||
-            theme.template === "corporate-cv") &&
-            data.personalInfo.showPhoto && (
-              <div className="mb-3 px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] font-mono text-amber-300 flex items-center gap-1.5 print:hidden">
-                <span>
-                  {isAz
-                    ? "💡 Profil şəkli seçimə bağlıdır. ATS sistemləri üçün təmiz mətn formatı tövsiyə olunur."
-                    : "💡 Profile images are optional. For ATS-focused applications, a text-first layout is recommended."}
-                </span>
-              </div>
-            )}
-
           {/* The A4 Resume Document Sheet Container */}
           <div
             style={{
@@ -275,7 +266,9 @@ const ResumeEditorCanvasInner: React.FC<{
             }}
             className="w-full max-w-[850px] shadow-2xl relative print:shadow-none print:transform-none"
           >
-            <ResumePreview data={data} theme={theme} onUpdate={setData} />
+            <TemplateErrorBoundary fallbackTemplateId="tech-cv">
+              <ResumePreview data={data} theme={theme} onUpdate={setData} />
+            </TemplateErrorBoundary>
           </div>
 
           {/* Bottom Floating Canvas Zoom Controls */}
@@ -317,8 +310,8 @@ const ResumeEditorCanvasInner: React.FC<{
  */
 export const ResumeBuilder: React.FC = () => {
   const [currentView, setCurrentView] = useState<"gallery" | "editor">("gallery");
-  const [activeTemplate, setActiveTemplate] = useState<TemplateId>("tech-cv");
-  const [activeColor, setActiveColor] = useState<string>("#111827");
+  const [activeTemplate, setActiveTemplate] = useState<TemplateId>("awesome-cv");
+  const [activeColor, setActiveColor] = useState<string>("#dc2626");
 
   const initialTheme = useMemo(
     () => ({
@@ -338,25 +331,26 @@ export const ResumeBuilder: React.FC = () => {
   };
 
   return (
-    <ResumeEditorProvider
-      initialData={TECH_CV_PRESET}
-      initialTheme={initialTheme}
-    >
-      <div className="w-full">
-        {currentView === "gallery" ? (
-          <TemplateGalleryView
-            onSelectTemplate={handleSelectFromGallery}
-            activeTemplateId={activeTemplate}
-          />
-        ) : (
-          <ResumeEditorCanvasInner
-            onOpenGallery={() => setCurrentView("gallery")}
-          />
-        )}
-      </div>
-    </ResumeEditorProvider>
+    <TemplateErrorBoundary fallbackTemplateId="awesome-cv">
+      <ResumeEditorProvider
+        initialData={MASTER_SAMPLE_RESUME}
+        initialTheme={initialTheme}
+      >
+        <div className="w-full">
+          {currentView === "gallery" ? (
+            <TemplateGalleryView
+              onSelectTemplate={handleSelectFromGallery}
+              activeTemplateId={activeTemplate}
+            />
+          ) : (
+            <ResumeEditorCanvasInner
+              onOpenGallery={() => setCurrentView("gallery")}
+            />
+          )}
+        </div>
+      </ResumeEditorProvider>
+    </TemplateErrorBoundary>
   );
 };
 
 export default ResumeBuilder;
-
