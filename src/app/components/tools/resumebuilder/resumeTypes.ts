@@ -1,4 +1,7 @@
 export type TemplateId =
+  | "awesome-cv"
+  | "deedy-cv"
+  | "altacv"
   | "tech-cv"
   | "minimal-cv"
   | "classic-ats-cv"
@@ -379,13 +382,57 @@ export const MODERN_CV_PRESET: ResumeData = {
   references: [],
 };
 
-// Unified Templates Definition (17 distinct professional templates)
+// Unified Templates Definition (Distinct Open-Source Adapted Templates)
 export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
-  // ── 1. ATS / CLASSIC ──
+  {
+    id: "awesome-cv",
+    name: "Awesome-CV",
+    name_az: "Awesome-CV",
+    category: "tech",
+    atsLevel: "excellent",
+    description: "Iconic Posquit0 Awesome-CV LaTeX layout with 2-tone name and accent divider rules.",
+    description_az: "Məşhur Posquit0 Awesome-CV LaTeX dizaynı və ikirəngli başlıq.",
+    supportedAccents: ["#dc2626", "#1e3a8a", "#059669", "#7c3aed", "#111827"],
+    defaultAccent: "#dc2626",
+    layoutType: "single-column",
+    supportsProfileImage: true,
+    atsScore: 98,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "deedy-cv",
+    name: "Deedy 2-Column",
+    name_az: "Deedy 2-Sütun",
+    category: "tech",
+    atsLevel: "good",
+    description: "World-famous Debarghya Das asymmetric 2-column LaTeX resume layout.",
+    description_az: "Dünyaca məşhur Debarghya Das asimmetrik 2-sütunlu LaTeX CV formatı.",
+    supportedAccents: ["#2563eb", "#dc2626", "#059669", "#111827", "#7c3aed"],
+    defaultAccent: "#2563eb",
+    layoutType: "two-column",
+    supportsProfileImage: false,
+    atsScore: 95,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "altacv",
+    name: "AltaCV",
+    name_az: "AltaCV",
+    category: "modern",
+    atsLevel: "good",
+    description: "LianTze Lim AltaCV layout with circular avatar, colored section badges, and skill pills.",
+    description_az: "LianTze Lim AltaCV formatı: dairəvi profil şəkli və rəngli bölmə nişanları.",
+    supportedAccents: ["#059669", "#1e3a8a", "#2563eb", "#d97706", "#7c3aed"],
+    defaultAccent: "#059669",
+    layoutType: "two-column",
+    supportsProfileImage: true,
+    atsScore: 94,
+    presetData: MODERN_CV_PRESET,
+  },
   {
     id: "tech-cv",
-    name: "Modern Tech",
-    name_az: "Müasir Texniki",
+    name: "RenderCV sb2nov",
+    name_az: "RenderCV sb2nov",
     category: "classic",
     atsLevel: "excellent",
     description: "RenderCV sb2nov engineering standard with high-density quantified bullets.",

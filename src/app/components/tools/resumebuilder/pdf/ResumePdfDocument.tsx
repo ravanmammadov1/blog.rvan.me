@@ -163,6 +163,8 @@ export const ResumePdfDocument: React.FC<ResumePdfProps> = ({ data, theme }) => 
 
   const isTwoColumn =
     theme.template === "modern-cv" ||
+    theme.template === "deedy-cv" ||
+    theme.template === "altacv" ||
     theme.template === "editorial-cv" ||
     theme.template === "quotation-cv" ||
     theme.template === "clean-modern-cv";

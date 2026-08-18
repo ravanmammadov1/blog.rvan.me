@@ -1,5 +1,8 @@
 import React from "react";
 import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
+import { AwesomeCvTemplate } from "./AwesomeCvTemplate";
+import { DeedyResumeTemplate } from "./DeedyResumeTemplate";
+import { AltaCvTemplate } from "./AltaCvTemplate";
 import { Modern2ColTemplate } from "./Modern2ColTemplate";
 import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
 import { Sb2novTemplate } from "./Sb2novTemplate";
@@ -31,6 +34,14 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
   const renderTemplate = () => {
     switch (theme.template) {
+      // 0. Premier Open-Source LaTeX & Modern Adaptations
+      case "awesome-cv":
+        return <AwesomeCvTemplate data={data} theme={theme} />;
+      case "deedy-cv":
+        return <DeedyResumeTemplate data={data} theme={theme} />;
+      case "altacv":
+        return <AltaCvTemplate data={data} theme={theme} />;
+
       // 1. ATS / Classic
       case "tech-cv":
         return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;

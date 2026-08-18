@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import {
   UNIFIED_TEMPLATES,
   TemplateId,
-  ResumeData,
   ResumeThemeConfig,
 } from "../resumeTypes";
 import { useLanguage } from "../../../../../lib/i18n/LanguageContext";
-import { Sparkles, Eye, Check, ShieldCheck, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Check, X, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { ResumePreview } from "./ResumePreview";
 
 interface TemplateGalleryViewProps {
@@ -21,7 +20,6 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   const { language } = useLanguage();
   const isAz = language === "az";
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [previewTemplateId, setPreviewTemplateId] = useState<TemplateId | null>(null);
 
   // Per-template active accent color selection
@@ -33,24 +31,10 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
     return initial;
   });
 
-  const categories = [
-    { id: "all", label: isAz ? "Bütün Şablonlar (17)" : "All Templates (17)" },
-    { id: "classic", label: isAz ? "ATS & Klassik" : "ATS & Classic" },
-    { id: "modern", label: isAz ? "Müasir Dizayn" : "Modern Design" },
-    { id: "tech", label: isAz ? "Mühəndis & Texniki" : "Tech & Engineering" },
-    { id: "executive", label: isAz ? "Rəhbər & Liderlik" : "Executive & Leadership" },
-    { id: "creative", label: isAz ? "Kreativ & Portfel" : "Creative & Portfolio" },
-  ];
-
   const handleColorChange = (e: React.MouseEvent, templateId: string, color: string) => {
     e.stopPropagation();
     setTemplateColors((prev) => ({ ...prev, [templateId]: color }));
   };
-
-  const filteredTemplates = UNIFIED_TEMPLATES.filter((t) => {
-    if (selectedCategory === "all") return true;
-    return t.category === selectedCategory;
-  });
 
   // Modal navigation
   const currentPreviewIdx = UNIFIED_TEMPLATES.findIndex((t) => t.id === previewTemplateId);
@@ -75,43 +59,22 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center py-8 px-4 md:px-8 max-w-7xl mx-auto">
-      {/* ── HERO HEADER ── */}
-      <div className="text-center space-y-3 max-w-2xl mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono">
-          <Sparkles size={13} />
-          <span>{isAz ? "17 PEŞƏKAR CV ŞABLONU • 100% PULSUZ & A4 PDF" : "17 PRO RESUME TEMPLATES • FREE A4 PDF"}</span>
-        </div>
-        <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white">
-          {isAz ? "Peşəkar CV Şablonunuzu Seçin" : "Select Your Resume Template"}
+    <div className="w-full flex flex-col items-center py-12 px-4 md:px-8 max-w-7xl mx-auto selection:bg-primary selection:text-black">
+      {/* ── QUIET EDITORIAL HERO ── */}
+      <div className="text-center space-y-2.5 max-w-xl mb-12">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white font-sans">
+          {isAz ? "CV şablonu seçin." : "Select a resume template."}
         </h1>
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm md:text-base text-neutral-400 font-medium">
           {isAz
-            ? "Məlumatlarınızı bir dəfə daxil edin və istənilən vaxt şablonlar arasında keçid edin. Real vaxtda redaktə və təmiz vektor PDF ixracı."
-            : "Enter your information once and switch seamlessly between templates anytime. Live inline canvas editing with instant vector PDF export."}
+            ? "İşinizə uyğun şablon seçin. İstənilən vaxt dəyişə bilərsiniz."
+            : "Choose a layout that fits your work. You can change it anytime."}
         </p>
-
-        {/* Category Filter Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-3">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
-                selectedCategory === cat.id
-                  ? "bg-primary text-black shadow-lg shadow-primary/20 scale-105"
-                  : "bg-neutral-900 border border-white/10 text-neutral-300 hover:text-white hover:bg-neutral-800"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* ── TEMPLATES GALLERY GRID ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
-        {filteredTemplates.map((template) => {
+      {/* ── TEMPLATES GALLERY GRID (3-Column Desktop / 2-Column Tablet / 1-Column Mobile) ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 w-full">
+        {UNIFIED_TEMPLATES.map((template) => {
           const activeColor = templateColors[template.id] || template.defaultAccent;
           const isSelected = activeTemplateId === template.id;
 
@@ -127,99 +90,80 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
             <div
               key={template.id}
               data-template-id={template.id}
-              className={`group flex flex-col rounded-2xl bg-neutral-900/90 border transition-all duration-200 overflow-hidden ${
+              onClick={() => onSelectTemplate(template.id, activeColor)}
+              className={`group relative flex flex-col rounded-2xl bg-neutral-900/90 border transition-all duration-200 cursor-pointer overflow-hidden ${
                 isSelected
                   ? "border-primary shadow-xl shadow-primary/10 ring-1 ring-primary"
-                  : "border-white/10 hover:border-white/30 hover:shadow-2xl"
+                  : "border-white/10 hover:border-white/25 hover:shadow-2xl hover:-translate-y-1"
               }`}
             >
-              {/* Card Thumbnail Preview Container */}
-              <div
-                className="relative w-full aspect-[210/297] bg-white overflow-hidden cursor-pointer"
-                onClick={() => onSelectTemplate(template.id, activeColor)}
-              >
-                {/* Scaled Render of Sample Preset Resume */}
+              {/* ── A4 LIVE MINIATURE PREVIEW (Full Realistic Data Fill) ── */}
+              <div className="relative w-full aspect-[210/297] bg-white overflow-hidden select-none">
                 <div
-                  className="w-[800px] origin-top-left pointer-events-none select-none"
+                  className="absolute inset-0 origin-top-left pointer-events-none"
                   style={{
-                    transform: "scale(0.35)",
-                    transformOrigin: "0 0",
+                    width: "210mm",
+                    height: "297mm",
+                    transform: "scale(0.48)", // Clean sharp scale to fill container
                   }}
                 >
-                  <ResumePreview data={template.presetData} theme={previewTheme} />
+                  <ResumePreview
+                    data={template.presetData}
+                    theme={previewTheme}
+                  />
                 </div>
 
                 {/* Subtle Hover Action Overlay */}
-                <div className="absolute inset-0 bg-neutral-950/70 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-4">
+                <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-3 p-4">
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setPreviewTemplateId(template.id);
                     }}
-                    className="w-full max-w-[140px] py-2 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-white border border-white/15 text-xs font-mono font-bold transition-all shadow-lg cursor-pointer"
                   >
                     <Eye size={13} />
-                    <span>{isAz ? "BÖYÜK BAXIŞ" : "PREVIEW"}</span>
+                    <span>{isAz ? "Bax" : "Preview"}</span>
                   </button>
 
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelectTemplate(template.id, activeColor);
                     }}
-                    className="w-full max-w-[140px] py-2 rounded-xl bg-primary text-black hover:bg-primary/90 text-xs font-mono font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-lg"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-black font-bold text-xs font-mono transition-all shadow-lg cursor-pointer"
                   >
-                    <Sparkles size={13} />
-                    <span>{isAz ? "BU ŞABLONU SEÇ" : "USE TEMPLATE"}</span>
+                    <span>{isAz ? "Bu Şablonu Seç" : "Use Template"}</span>
+                    <ArrowRight size={13} />
                   </button>
-                </div>
-
-                {/* ATS Badge in top-right */}
-                <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-mono font-bold border border-white/15 text-white">
-                  <ShieldCheck size={11} className={template.atsScore >= 95 ? "text-emerald-400" : "text-amber-400"} />
-                  <span>ATS {template.atsScore}%</span>
                 </div>
               </div>
 
-              {/* Card Footer Details */}
-              <div className="p-4 flex flex-col justify-between flex-1 gap-3 bg-neutral-900 border-t border-white/10">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors">
-                      {isAz ? template.name_az : template.name}
-                    </h3>
-                    <span className="text-[10px] font-mono uppercase text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
-                      {template.category}
-                    </span>
-                  </div>
-                  <p className="text-xs text-neutral-400 line-clamp-2">
-                    {isAz ? template.description_az : template.description}
-                  </p>
-                </div>
+              {/* ── CARD FOOTER: NAME & ACCENT SWATCHES ── */}
+              <div className="p-4 bg-neutral-900 border-t border-white/10 flex items-center justify-between gap-3">
+                <span className="font-bold text-sm text-neutral-200 tracking-tight font-sans">
+                  {isAz ? template.name_az || template.name : template.name}
+                </span>
 
-                {/* Real Supported Accent Colors Selector */}
-                <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                  <span className="text-[10px] font-mono uppercase text-neutral-400">
-                    {isAz ? "Rənglər" : "Accents"}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {template.supportedAccents.map((hex) => {
-                      const isHexActive = activeColor.toLowerCase() === hex.toLowerCase();
-                      return (
-                        <button
-                          key={hex}
-                          onClick={(e) => handleColorChange(e, template.id, hex)}
-                          className={`w-4 h-4 rounded-full transition-transform cursor-pointer border ${
-                            isHexActive
-                              ? "ring-2 ring-primary scale-125 border-white"
-                              : "border-black/40 hover:scale-110 opacity-70 hover:opacity-100"
-                          }`}
-                          style={{ backgroundColor: hex }}
-                          title={hex}
-                        />
-                      );
-                    })}
-                  </div>
+                {/* Exact Supported Accent Dots */}
+                <div className="flex items-center gap-1.5">
+                  {template.supportedAccents.map((hex) => {
+                    const isColorActive = activeColor === hex;
+                    return (
+                      <button
+                        key={hex}
+                        type="button"
+                        onClick={(e) => handleColorChange(e, template.id, hex)}
+                        title={hex}
+                        className={`w-3.5 h-3.5 rounded-full transition-transform cursor-pointer ${
+                          isColorActive ? "ring-2 ring-white ring-offset-2 ring-offset-neutral-900 scale-110" : "hover:scale-125 opacity-80 hover:opacity-100"
+                        }`}
+                        style={{ backgroundColor: hex }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -227,67 +171,72 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
         })}
       </div>
 
-      {/* ── FULL SCREEN PREVIEW MODAL ── */}
-      {currentPreviewTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/85 backdrop-blur-md animate-in fade-in">
-          <div className="relative w-full max-w-4xl bg-neutral-900 border border-white/20 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[92vh]">
+      {/* ── FULLSCREEN PREVIEW MODAL ── */}
+      {previewTemplateId && currentPreviewTemplate && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-200"
+          onClick={() => setPreviewTemplateId(null)}
+        >
+          {/* Modal Container */}
+          <div
+            className="relative w-full max-w-4xl max-h-[95vh] bg-neutral-900 border border-white/15 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div className="h-14 bg-neutral-950 border-b border-white/10 px-6 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={handlePrevTemplate}
-                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-white transition-all cursor-pointer"
-                    title="Previous"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button
-                    onClick={handleNextTemplate}
-                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-white transition-all cursor-pointer"
-                    title="Next"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <span>{isAz ? currentPreviewTemplate.name_az : currentPreviewTemplate.name}</span>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                      ATS {currentPreviewTemplate.atsScore}%
-                    </span>
-                  </h2>
-                  <p className="text-xs text-neutral-400">
-                    {isAz ? currentPreviewTemplate.description_az : currentPreviewTemplate.description}
-                  </p>
+                <span className="font-bold text-white text-base font-sans">
+                  {isAz ? currentPreviewTemplate.name_az || currentPreviewTemplate.name : currentPreviewTemplate.name}
+                </span>
+
+                {/* Accent Color Selector inside Modal */}
+                <div className="flex items-center gap-1.5 ml-4 pl-4 border-l border-white/15">
+                  {currentPreviewTemplate.supportedAccents.map((hex) => {
+                    const activeColor = templateColors[currentPreviewTemplate.id] || currentPreviewTemplate.defaultAccent;
+                    const isColorActive = activeColor === hex;
+                    return (
+                      <button
+                        key={hex}
+                        type="button"
+                        onClick={(e) => handleColorChange(e, currentPreviewTemplate.id, hex)}
+                        className={`w-4 h-4 rounded-full transition-transform cursor-pointer ${
+                          isColorActive ? "ring-2 ring-white ring-offset-2 ring-offset-neutral-950 scale-110" : "hover:scale-125 opacity-70 hover:opacity-100"
+                        }`}
+                        style={{ backgroundColor: hex }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
 
+              {/* Action Buttons & Close */}
               <div className="flex items-center gap-3">
                 <button
+                  type="button"
                   onClick={() => {
-                    const color = templateColors[currentPreviewTemplate.id] || currentPreviewTemplate.defaultAccent;
-                    onSelectTemplate(currentPreviewTemplate.id, color);
+                    const activeColor = templateColors[currentPreviewTemplate.id] || currentPreviewTemplate.defaultAccent;
+                    onSelectTemplate(currentPreviewTemplate.id, activeColor);
                     setPreviewTemplateId(null);
                   }}
-                  className="px-4 py-2 rounded-xl bg-primary text-black font-extrabold text-xs font-mono hover:bg-primary/90 transition-all cursor-pointer shadow-lg shadow-primary/20 flex items-center gap-1.5"
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-black font-bold text-xs font-mono transition-all cursor-pointer"
                 >
-                  <Sparkles size={13} />
-                  <span>{isAz ? "BU ŞABLONU İSTİFADƏ ET" : "USE THIS TEMPLATE"}</span>
+                  <Check size={14} />
+                  <span>{isAz ? "Bu Şablonu Seç" : "Use This Template"}</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setPreviewTemplateId(null)}
-                  className="p-2 rounded-xl bg-white/5 text-neutral-400 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
+                  className="p-1.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
             </div>
 
-            {/* Modal Body: Crisp A4 Preview */}
-            <div className="flex-1 overflow-auto py-6 flex justify-center custom-scrollbar">
-              <div className="w-full max-w-[800px] shadow-2xl bg-white text-black rounded-lg overflow-hidden">
+            {/* Modal Body: A4 Scrollable Viewport */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 flex justify-center bg-neutral-950/60">
+              <div className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 shadow-2xl rounded-sm overflow-hidden">
                 <ResumePreview
                   data={currentPreviewTemplate.presetData}
                   theme={{
@@ -300,9 +249,35 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
                 />
               </div>
             </div>
+
+            {/* Modal Footer Navigation */}
+            <div className="h-12 bg-neutral-950 border-t border-white/10 px-6 flex items-center justify-between text-neutral-400 text-xs font-mono shrink-0">
+              <button
+                type="button"
+                onClick={handlePrevTemplate}
+                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+              >
+                <ChevronLeft size={16} />
+                <span>{isAz ? "Əvvəlki" : "Previous"}</span>
+              </button>
+
+              <span>
+                {currentPreviewIdx + 1} / {UNIFIED_TEMPLATES.length}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleNextTemplate}
+                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+              >
+                <span>{isAz ? "Növbəti" : "Next"}</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 };
+export default TemplateGalleryView;

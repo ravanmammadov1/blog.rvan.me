@@ -58,6 +58,27 @@ copies or substantial portions of the Software.
 
 ---
 
-## 3. JSON Resume Schema
+## 3. JSON Resume
 - **Repository:** https://github.com/jsonresume/jsonresume.org
 - **License:** MIT License
+
+---
+
+## 4. Awesome-CV
+- **Repository:** https://github.com/posquit0/Awesome-CV
+- **Author:** Byungjin Park (posquit0)
+- **License:** MIT License
+
+---
+
+## 5. Deedy-Resume
+- **Repository:** https://github.com/deedy/Deedy-Resume
+- **Author:** Debarghya Das
+- **License:** Apache License 2.0
+
+---
+
+## 6. AltaCV
+- **Repository:** https://github.com/liantze/AltaCV
+- **Author:** LianTze Lim
+- **License:** LaTeX Project Public License (LPPL) / MIT-Compatible Adaptations
