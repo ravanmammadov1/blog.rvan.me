@@ -107,8 +107,10 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Job Title *</label>
+                <label htmlFor={`exp-title-${expIdx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Job Title *</label>
                 <input
+                  id={`exp-title-${expIdx}`}
+                  name={`jobTitle_${expIdx}`}
                   type="text"
                   value={exp.title}
                   onChange={(e) => handleUpdateField(expIdx, "title", e.target.value)}
@@ -118,8 +120,10 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Company / Organization *</label>
+                <label htmlFor={`exp-company-${expIdx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Company / Organization *</label>
                 <input
+                  id={`exp-company-${expIdx}`}
+                  name={`company_${expIdx}`}
                   type="text"
                   value={exp.company}
                   onChange={(e) => handleUpdateField(expIdx, "company", e.target.value)}
@@ -129,8 +133,10 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Location</label>
+                <label htmlFor={`exp-location-${expIdx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Location</label>
                 <input
+                  id={`exp-location-${expIdx}`}
+                  name={`location_${expIdx}`}
                   type="text"
                   value={exp.location}
                   onChange={(e) => handleUpdateField(expIdx, "location", e.target.value)}
@@ -141,8 +147,10 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
 
               <div className="flex items-center gap-2">
                 <div className="flex-1">
-                  <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Start Date</label>
+                  <label htmlFor={`exp-start-date-${expIdx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Start Date</label>
                   <input
+                    id={`exp-start-date-${expIdx}`}
+                    name={`startDate_${expIdx}`}
                     type="text"
                     value={exp.startDate}
                     onChange={(e) => handleUpdateField(expIdx, "startDate", e.target.value)}
@@ -152,8 +160,10 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
                 </div>
 
                 <div className="flex-1">
-                  <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">End Date</label>
+                  <label htmlFor={`exp-end-date-${expIdx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">End Date</label>
                   <input
+                    id={`exp-end-date-${expIdx}`}
+                    name={`endDate_${expIdx}`}
                     type="text"
                     disabled={exp.current}
                     value={exp.current ? "Present" : exp.endDate}
@@ -169,6 +179,7 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
               <input
                 type="checkbox"
                 id={`current-${expIdx}`}
+                name={`current_${expIdx}`}
                 checked={exp.current}
                 onChange={(e) => handleUpdateField(expIdx, "current", e.target.checked)}
                 className="h-3.5 w-3.5 accent-primary rounded cursor-pointer"
@@ -198,6 +209,8 @@ export const ExperienceForm: React.FC<Props> = ({ data, onChange }) => {
                   <div className="flex items-center gap-2">
                     <span className="text-primary font-bold text-xs">•</span>
                     <input
+                      id={`exp-${expIdx}-bullet-${bIdx}`}
+                      name={`bullet_${expIdx}_${bIdx}`}
                       type="text"
                       value={bullet}
                       onChange={(e) => handleUpdateBullet(expIdx, bIdx, e.target.value)}

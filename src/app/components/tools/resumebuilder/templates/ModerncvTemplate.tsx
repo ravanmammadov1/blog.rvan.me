@@ -4,6 +4,7 @@ import { CanvasText } from "../editor/CanvasText";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 import { Trash2 } from "lucide-react";
 
 interface TemplateProps {
@@ -26,9 +27,10 @@ export const ModerncvTemplate: React.FC<TemplateProps> = () => {
 
   const { personalInfo, summary, experiences, education, skills, certifications, languages } = data;
   const accent = theme.accentColor || "#1e3a8a";
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="p-8 md:p-12 text-neutral-900 bg-white min-h-[1050px] leading-relaxed text-left space-y-6 font-sans">
+    <div className={`${density.containerPadding} ${density.sectionGap} ${density.lineHeight} ${density.bodyFontSize} text-neutral-900 bg-white min-h-[1050px] text-left font-[inherit]`}>
       {/* ── MODERNCV HEADER ── */}
       <header className="flex justify-between items-end border-b-2 pb-4" style={{ borderColor: accent }}>
         <div>

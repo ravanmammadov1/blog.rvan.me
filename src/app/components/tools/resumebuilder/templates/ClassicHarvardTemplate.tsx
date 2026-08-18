@@ -4,6 +4,7 @@ import { CanvasText } from "../editor/CanvasText";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 import { Trash2 } from "lucide-react";
 
 interface TemplateProps {
@@ -30,9 +31,10 @@ export const ClassicHarvardTemplate: React.FC<TemplateProps> = () => {
 
   const { personalInfo, summary, experiences, education, skills, projects, certifications } = data;
   const accent = theme.accentColor || "#111827";
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="p-8 md:p-10 text-neutral-950 bg-white min-h-[1050px] leading-relaxed text-left space-y-4 font-serif">
+    <div className={`${density.containerPadding} ${density.sectionGap} ${density.lineHeight} ${density.bodyFontSize} text-neutral-950 bg-white min-h-[1050px] text-left font-[inherit]`}>
       {/* Centered Classic Harvard Header */}
       <header className="text-center pb-2 border-b-2 border-neutral-900 space-y-1">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight uppercase text-neutral-950">

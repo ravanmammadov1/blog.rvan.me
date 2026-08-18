@@ -104,6 +104,8 @@ export const CanvasPhoto: React.FC<CanvasPhotoProps> = ({
 
       {/* Hidden File Input */}
       <input
+        id="canvas-photo-file-input"
+        name="profilePhotoFile"
         ref={fileInputRef}
         type="file"
         accept="image/*"

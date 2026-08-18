@@ -76,10 +76,10 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
               Upload a professional portrait image (JPG or PNG). Auto-scaled & cropped.
             </p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
-              <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-[11px] hover:bg-primary/90 transition-all cursor-pointer">
+              <label htmlFor="personal-photo-upload" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-[11px] hover:bg-primary/90 transition-all cursor-pointer">
                 <Camera size={12} />
                 <span>Upload New Photo</span>
-                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                <input id="personal-photo-upload" name="personalPhotoUpload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
               </label>
 
               {info.photoUrl && (
@@ -98,10 +98,13 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase">Full Name *</label>
+          <label htmlFor="personal-full-name" className="text-[11px] font-mono font-bold text-muted-foreground uppercase">Full Name *</label>
           <div className="relative mt-1">
             <input
+              id="personal-full-name"
+              name="fullName"
               type="text"
+              autoComplete="name"
               value={info.fullName}
               onChange={(e) => handleChange("fullName", e.target.value)}
               placeholder="e.g. Richard Sanchez"
@@ -111,10 +114,13 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase">Professional Title *</label>
+          <label htmlFor="personal-title" className="text-[11px] font-mono font-bold text-muted-foreground uppercase">Professional Title *</label>
           <div className="relative mt-1">
             <input
+              id="personal-title"
+              name="title"
               type="text"
+              autoComplete="organization-title"
               value={info.title}
               onChange={(e) => handleChange("title", e.target.value)}
               placeholder="e.g. Accounting Executive / Project Manager"
@@ -124,12 +130,15 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
+          <label htmlFor="personal-email" className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
             <Mail size={11} /> Email Address *
           </label>
           <div className="relative mt-1">
             <input
+              id="personal-email"
+              name="email"
               type="email"
+              autoComplete="email"
               value={info.email}
               onChange={(e) => handleChange("email", e.target.value)}
               placeholder="e.g. richard@example.com"
@@ -139,12 +148,15 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
+          <label htmlFor="personal-phone" className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
             <Phone size={11} /> Phone Number *
           </label>
           <div className="relative mt-1">
             <input
+              id="personal-phone"
+              name="phone"
               type="tel"
+              autoComplete="tel"
               value={info.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
               placeholder="e.g. +1 (555) 234-5678"
@@ -154,12 +166,15 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
+          <label htmlFor="personal-location" className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
             <MapPin size={11} /> Location (City, Country / State) *
           </label>
           <div className="relative mt-1">
             <input
+              id="personal-location"
+              name="location"
               type="text"
+              autoComplete="address-level2"
               value={info.location}
               onChange={(e) => handleChange("location", e.target.value)}
               placeholder="e.g. New York, NY or London, UK"
@@ -169,12 +184,15 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
+          <label htmlFor="personal-website" className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
             <Globe size={11} /> Portfolio / Website URL
           </label>
           <div className="relative mt-1">
             <input
+              id="personal-website"
+              name="website"
               type="url"
+              autoComplete="url"
               value={info.website}
               onChange={(e) => handleChange("website", e.target.value)}
               placeholder="e.g. https://richardsanchez.com"
@@ -184,11 +202,13 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
+          <label htmlFor="personal-linkedin" className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
             <Linkedin size={11} /> LinkedIn URL / Profile
           </label>
           <div className="relative mt-1">
             <input
+              id="personal-linkedin"
+              name="linkedin"
               type="text"
               value={info.linkedin}
               onChange={(e) => handleChange("linkedin", e.target.value)}
@@ -199,11 +219,13 @@ export const PersonalInfoForm: React.FC<Props> = ({ data, onChange }) => {
         </div>
 
         <div>
-          <label className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
+          <label htmlFor="personal-github" className="text-[11px] font-mono font-bold text-muted-foreground uppercase flex items-center gap-1">
             <Github size={11} /> GitHub / Repository URL
           </label>
           <div className="relative mt-1">
             <input
+              id="personal-github"
+              name="github"
               type="text"
               value={info.github}
               onChange={(e) => handleChange("github", e.target.value)}

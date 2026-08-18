@@ -72,6 +72,8 @@ export const CertificationsForm: React.FC<Props> = ({ data, onChange }) => {
           {certifications.map((c, idx) => (
             <div key={c.id || idx} className="p-3 rounded-2xl border border-white/10 bg-white/[0.02] flex items-center gap-2">
               <input
+                id={`cert-name-${idx}`}
+                name={`certName_${idx}`}
                 type="text"
                 value={c.name}
                 onChange={(e) => handleUpdateCert(idx, "name", e.target.value)}
@@ -79,6 +81,8 @@ export const CertificationsForm: React.FC<Props> = ({ data, onChange }) => {
                 className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none"
               />
               <input
+                id={`cert-issuer-${idx}`}
+                name={`certIssuer_${idx}`}
                 type="text"
                 value={c.issuer}
                 onChange={(e) => handleUpdateCert(idx, "issuer", e.target.value)}
@@ -86,6 +90,8 @@ export const CertificationsForm: React.FC<Props> = ({ data, onChange }) => {
                 className="w-36 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none"
               />
               <input
+                id={`cert-date-${idx}`}
+                name={`certDate_${idx}`}
                 type="text"
                 value={c.date}
                 onChange={(e) => handleUpdateCert(idx, "date", e.target.value)}
@@ -124,6 +130,8 @@ export const CertificationsForm: React.FC<Props> = ({ data, onChange }) => {
           {languages.map((l, idx) => (
             <div key={l.id || idx} className="p-3 rounded-2xl border border-white/10 bg-white/[0.02] flex items-center gap-2">
               <input
+                id={`lang-name-${idx}`}
+                name={`langName_${idx}`}
                 type="text"
                 value={l.language}
                 onChange={(e) => handleUpdateLang(idx, "language", e.target.value)}
@@ -131,6 +139,8 @@ export const CertificationsForm: React.FC<Props> = ({ data, onChange }) => {
                 className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none"
               />
               <select
+                id={`lang-prof-${idx}`}
+                name={`langProficiency_${idx}`}
                 value={l.proficiency}
                 onChange={(e) => handleUpdateLang(idx, "proficiency", e.target.value)}
                 className="rounded-xl border border-white/10 bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer"

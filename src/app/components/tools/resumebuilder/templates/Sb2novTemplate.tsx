@@ -4,6 +4,7 @@ import { CanvasText } from "../editor/CanvasText";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 import { Plus, Trash2 } from "lucide-react";
 
 interface TemplateProps {
@@ -36,9 +37,10 @@ export const Sb2novTemplate: React.FC<TemplateProps> = () => {
 
   const { personalInfo, summary, experiences, education, skills, projects, certifications } = data;
   const accent = theme.accentColor || "#111827";
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="px-8 py-7 text-neutral-900 bg-white min-h-[1050px] leading-snug text-left space-y-3.5 font-[inherit]">
+    <div className={`${density.containerPadding} ${density.sectionGap} ${density.lineHeight} ${density.bodyFontSize} text-neutral-900 bg-white min-h-[1050px] text-left font-[inherit]`}>
       {/* ── SB2NOV HEADER: DIRECT EDITABLE NAME & CONTACT BAR ── */}
       <header className="text-center space-y-1 pb-1">
         <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wide text-neutral-950 font-serif">

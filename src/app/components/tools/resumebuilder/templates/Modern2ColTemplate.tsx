@@ -6,6 +6,7 @@ import { CanvasPhoto } from "../editor/CanvasPhoto";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 
 interface TemplateProps {
   data: ResumeData;
@@ -33,6 +34,7 @@ export const Modern2ColTemplate: React.FC<TemplateProps> = () => {
 
   const { personalInfo, summary, experiences, education, skills, strengths, languages } = data;
   const accent = theme.accentColor || "#0284c7";
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   const getStrengthIcon = (iconName?: string) => {
     switch (iconName) {
@@ -47,7 +49,7 @@ export const Modern2ColTemplate: React.FC<TemplateProps> = () => {
   };
 
   return (
-    <div className="p-8 md:p-12 space-y-6 text-neutral-900 bg-white min-h-[1050px] leading-relaxed text-left font-sans">
+    <div className={`${density.containerPadding} ${density.sectionGap} ${density.lineHeight} ${density.bodyFontSize} text-neutral-900 bg-white min-h-[1050px] text-left font-[inherit]`}>
       {/* ── TOP HEADER (NAME, SUBTITLE, CONTACT & TOP-RIGHT PHOTO) ── */}
       <header className="flex justify-between items-start gap-6 border-b-2 border-neutral-900 pb-5">
         <div className="space-y-1.5 flex-1">

@@ -180,6 +180,8 @@ const ResumeEditorCanvasInner: React.FC<{
           <div className="h-4 w-px bg-white/15 hidden sm:block" />
 
           <input
+            id="resume-header-title"
+            name="resumeTitle"
             type="text"
             value={
               data.personalInfo.fullName
@@ -427,12 +429,14 @@ const ResumeEditorCanvasInner: React.FC<{
               {activeShareTab === "link" && (
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-mono text-muted-foreground block">
+                    <label htmlFor="resume-public-slug-input" className="text-xs font-mono text-muted-foreground block">
                       {isAz ? "CV-niz üçün Unikal İzləmə URL-i:" : "Your Trackable Public URL:"}
                     </label>
                     <div className="flex items-center rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-xs font-mono text-foreground">
                       <span className="text-muted-foreground select-none">https://www.rvan.me/cv/</span>
                       <input
+                        id="resume-public-slug-input"
+                        name="publicSlug"
                         type="text"
                         value={publicSlug}
                         onChange={(e) => setPublicSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ""))}

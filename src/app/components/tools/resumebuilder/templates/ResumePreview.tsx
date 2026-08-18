@@ -8,6 +8,7 @@ import { OnyxTemplate } from "./OnyxTemplate";
 import { SoftBannerTemplate } from "./SoftBannerTemplate";
 import { ClassicHarvardTemplate } from "./ClassicHarvardTemplate";
 import { QuotationTemplate } from "./QuotationTemplate";
+import { FONT_FAMILY_CONFIG } from "../themeTokens";
 
 interface ResumePreviewProps {
   data: ResumeData;
@@ -17,15 +18,7 @@ interface ResumePreviewProps {
 
 export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpdate }) => {
   const getFontFamily = () => {
-    switch (theme.fontFamily) {
-      case "serif":
-        return "'Merriweather', 'Georgia', serif";
-      case "mono":
-        return "'JetBrains Mono', 'Fira Code', monospace";
-      case "sans":
-      default:
-        return "'Geist', 'Inter', system-ui, -apple-system, sans-serif";
-    }
+    return FONT_FAMILY_CONFIG[theme.fontFamily] || FONT_FAMILY_CONFIG.sans;
   };
 
   const renderTemplate = () => {

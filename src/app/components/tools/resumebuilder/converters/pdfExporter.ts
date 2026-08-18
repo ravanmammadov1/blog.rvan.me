@@ -77,7 +77,7 @@ export async function downloadResumeAsPdf(
     html2pdf = module.default || module;
   } catch (err) {
     console.error("Failed to load html2pdf module:", err);
-    return false;
+    throw new Error("Failed to initialize PDF generator module.");
   }
 
   // 2. Create a clean, off-screen isolated clone
@@ -149,7 +149,6 @@ export async function downloadResumeAsPdf(
       windowWidth: 794,
       backgroundColor: "#ffffff",
       onclone: (clonedDoc: Document) => {
-        // Double-check colors in cloned iframe document
         const clonedBody = clonedDoc.body;
         if (clonedBody) {
           sanitizeDomColors(clonedBody);
@@ -166,11 +165,26 @@ export async function downloadResumeAsPdf(
   };
 
   try {
-    await html2pdf().set(opt).from(clone).save();
+    // Generate as Blob -> Object URL -> direct browser download trigger -> revoke
+    const pdfBlob: Blob = await html2pdf().set(opt).from(clone).output("blob");
+    const blobUrl = URL.createObjectURL(pdfBlob);
+
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.href = blobUrl;
+    downloadAnchor.download = cleanFilename;
+    downloadAnchor.style.display = "none";
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+
+    setTimeout(() => {
+      URL.revokeObjectURL(blobUrl);
+    }, 2500);
+
     return true;
   } catch (error) {
     console.error("PDF generation failed:", error);
-    return false;
+    throw error;
   } finally {
     if (document.body.contains(clone)) {
       document.body.removeChild(clone);

@@ -211,10 +211,10 @@ export const CanvaLeftToolbar: React.FC = () => {
                   </button>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="flex-1 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-xs flex items-center justify-center gap-1 hover:bg-primary/90 transition-all cursor-pointer">
+                  <label htmlFor="toolbar-photo-upload" className="flex-1 py-1.5 rounded-xl bg-primary text-black font-mono font-bold text-xs flex items-center justify-center gap-1 hover:bg-primary/90 transition-all cursor-pointer">
                     <Camera size={12} />
                     <span>{isAz ? "Şəkil Yüklə" : "Upload Photo"}</span>
-                    <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                    <input id="toolbar-photo-upload" name="toolbarPhotoUpload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                   </label>
                   {data.personalInfo.photoUrl && (
                     <button

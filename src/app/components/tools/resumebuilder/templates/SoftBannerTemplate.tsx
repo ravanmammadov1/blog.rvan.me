@@ -6,6 +6,7 @@ import { CanvasPhoto } from "../editor/CanvasPhoto";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 
 interface TemplateProps {
   data: ResumeData;
@@ -29,9 +30,10 @@ export const SoftBannerTemplate: React.FC<TemplateProps> = () => {
   const { personalInfo, summary, experiences, education, skills, certifications, languages } = data;
   const accent = theme.accentColor || "#3b82f6";
   const bannerBg = "#dbeafe"; // Light soft pastel blue
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="bg-white text-neutral-900 min-h-[1050px] leading-relaxed text-left font-sans">
+    <div className={`bg-white text-neutral-900 min-h-[1050px] text-left font-[inherit] ${density.lineHeight} ${density.bodyFontSize}`}>
       {/* ── TOP SOFT PASTEL BANNER ── */}
       <header className="p-8 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6" style={{ backgroundColor: bannerBg }}>
         {/* Left: Avatar Photo */}

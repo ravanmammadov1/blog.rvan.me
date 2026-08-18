@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Trash2 } from "lucide-react";
 import { CanvasText } from "../editor/CanvasText";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 
 interface TemplateProps {
   data: ResumeData;
@@ -26,9 +27,10 @@ export const OnyxTemplate: React.FC<TemplateProps> = () => {
 
   const { personalInfo, summary, experiences, education, skills } = data;
   const accent = theme.accentColor || "#1e3a8a";
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="text-neutral-900 bg-white min-h-[1050px] leading-relaxed text-left font-sans">
+    <div className={`text-neutral-900 bg-white min-h-[1050px] text-left font-[inherit] ${density.lineHeight} ${density.bodyFontSize}`}>
       {/* ── ONYX HEADER BANNER ── */}
       <header className="p-8 text-white space-y-3" style={{ backgroundColor: accent }}>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

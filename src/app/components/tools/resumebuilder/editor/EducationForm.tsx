@@ -68,8 +68,10 @@ export const EducationForm: React.FC<Props> = ({ data, onChange }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Institution / University *</label>
+                <label htmlFor={`edu-inst-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Institution / University *</label>
                 <input
+                  id={`edu-inst-${idx}`}
+                  name={`educationInstitution_${idx}`}
                   type="text"
                   value={edu.institution}
                   onChange={(e) => handleUpdate(idx, "institution", e.target.value)}
@@ -79,8 +81,10 @@ export const EducationForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Degree *</label>
+                <label htmlFor={`edu-degree-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Degree *</label>
                 <input
+                  id={`edu-degree-${idx}`}
+                  name={`educationDegree_${idx}`}
                   type="text"
                   value={edu.degree}
                   onChange={(e) => handleUpdate(idx, "degree", e.target.value)}
@@ -90,8 +94,10 @@ export const EducationForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Major / Field of Study *</label>
+                <label htmlFor={`edu-field-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Major / Field of Study *</label>
                 <input
+                  id={`edu-field-${idx}`}
+                  name={`educationField_${idx}`}
                   type="text"
                   value={edu.field}
                   onChange={(e) => handleUpdate(idx, "field", e.target.value)}
@@ -101,8 +107,10 @@ export const EducationForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Location</label>
+                <label htmlFor={`edu-location-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Location</label>
                 <input
+                  id={`edu-location-${idx}`}
+                  name={`educationLocation_${idx}`}
                   type="text"
                   value={edu.location}
                   onChange={(e) => handleUpdate(idx, "location", e.target.value)}
@@ -112,8 +120,10 @@ export const EducationForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Graduation Year / Date</label>
+                <label htmlFor={`edu-end-date-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Graduation Year / Date</label>
                 <input
+                  id={`edu-end-date-${idx}`}
+                  name={`educationEndDate_${idx}`}
                   type="text"
                   value={edu.endDate}
                   onChange={(e) => handleUpdate(idx, "endDate", e.target.value)}
@@ -123,8 +133,10 @@ export const EducationForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">GPA / Honors (Optional)</label>
+                <label htmlFor={`edu-gpa-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">GPA / Honors (Optional)</label>
                 <input
+                  id={`edu-gpa-${idx}`}
+                  name={`educationGpa_${idx}`}
                   type="text"
                   value={edu.gpa || ""}
                   onChange={(e) => handleUpdate(idx, "gpa", e.target.value)}

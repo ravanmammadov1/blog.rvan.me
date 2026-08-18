@@ -64,8 +64,10 @@ export const ReferencesForm: React.FC<Props> = ({ data, onChange }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Referee Name *</label>
+                <label htmlFor={`ref-name-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Referee Name *</label>
                 <input
+                  id={`ref-name-${idx}`}
+                  name={`refName_${idx}`}
                   type="text"
                   value={ref.name}
                   onChange={(e) => handleUpdate(idx, "name", e.target.value)}
@@ -75,8 +77,10 @@ export const ReferencesForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Company / Organization *</label>
+                <label htmlFor={`ref-company-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Company / Organization *</label>
                 <input
+                  id={`ref-company-${idx}`}
+                  name={`refCompany_${idx}`}
                   type="text"
                   value={ref.company}
                   onChange={(e) => handleUpdate(idx, "company", e.target.value)}
@@ -86,8 +90,10 @@ export const ReferencesForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Position / Title</label>
+                <label htmlFor={`ref-position-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Position / Title</label>
                 <input
+                  id={`ref-position-${idx}`}
+                  name={`refPosition_${idx}`}
                   type="text"
                   value={ref.position}
                   onChange={(e) => handleUpdate(idx, "position", e.target.value)}
@@ -97,9 +103,11 @@ export const ReferencesForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Contact Phone & Email</label>
+                <label htmlFor={`ref-phone-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Contact Phone & Email</label>
                 <div className="flex gap-2 mt-1">
                   <input
+                    id={`ref-phone-${idx}`}
+                    name={`refPhone_${idx}`}
                     type="text"
                     value={ref.phone}
                     onChange={(e) => handleUpdate(idx, "phone", e.target.value)}
@@ -107,6 +115,8 @@ export const ReferencesForm: React.FC<Props> = ({ data, onChange }) => {
                     className="w-1/2 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none"
                   />
                   <input
+                    id={`ref-email-${idx}`}
+                    name={`refEmail_${idx}`}
                     type="email"
                     value={ref.email}
                     onChange={(e) => handleUpdate(idx, "email", e.target.value)}

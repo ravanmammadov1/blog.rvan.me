@@ -3,6 +3,7 @@ import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
 import { CanvasText } from "../editor/CanvasText";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 import { Quote } from "lucide-react";
 
 interface TemplateProps {
@@ -28,9 +29,10 @@ export const QuotationTemplate: React.FC<TemplateProps> = () => {
 
   const { personalInfo, summary, experiences, education, skills, projects } = data;
   const accent = theme.accentColor || "#d97706";
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="p-8 md:p-10 text-neutral-900 bg-white min-h-[1050px] leading-snug text-left space-y-6">
+    <div className={`${density.containerPadding} ${density.sectionGap} ${density.lineHeight} ${density.bodyFontSize} text-neutral-900 bg-white min-h-[1050px] text-left font-[inherit]`}>
       {/* ── TOP HEADER WITH MASSIVE QUOTATION ICON ── */}
       <header className="flex items-start justify-between gap-6 border-b pb-6" style={{ borderColor: `${accent}30` }}>
         <div className="space-y-1">

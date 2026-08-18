@@ -72,6 +72,8 @@ export const SkillsForm: React.FC<Props> = ({ data, onChange }) => {
           <div key={cat.id || catIdx} className="p-4 rounded-2xl border border-white/10 bg-white/[0.02] space-y-3">
             <div className="flex justify-between items-center gap-2">
               <input
+                id={`skill-category-${catIdx}`}
+                name={`skillCategory_${catIdx}`}
                 type="text"
                 value={cat.name}
                 onChange={(e) => handleUpdateCategoryName(catIdx, e.target.value)}
@@ -112,6 +114,8 @@ export const SkillsForm: React.FC<Props> = ({ data, onChange }) => {
             {/* Add Skill Input */}
             <div className="flex items-center gap-2">
               <input
+                id={`new-skill-input-${catIdx}`}
+                name={`newSkill_${catIdx}`}
                 type="text"
                 value={newSkillInput[catIdx] || ""}
                 onChange={(e) => setNewSkillInput({ ...newSkillInput, [catIdx]: e.target.value })}
