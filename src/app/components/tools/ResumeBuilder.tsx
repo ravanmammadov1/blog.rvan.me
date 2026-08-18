@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ResumeEditorProvider,
   useResumeEditor,
@@ -10,33 +12,37 @@ import {
 } from "./resumebuilder/resumeTypes";
 import { calculateAtsScore } from "./resumebuilder/atsEngine";
 import { downloadResumeAsPdf } from "./resumebuilder/converters/pdfExporter";
-import {
-  exportToRenderCvYaml,
-  exportToReactiveResumeJson,
-  importUniversalResume,
-} from "./resumebuilder/converters/schemaConverters";
 import { CanvaLeftToolbar } from "./resumebuilder/editor/CanvaLeftToolbar";
 import { FloatingFormatToolbar } from "./resumebuilder/editor/FloatingFormatToolbar";
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
+import {
+  saveUserCv,
+  getUserCvs,
+  generateCvSlug,
+  SavedCvRecord,
+} from "../../../lib/cvStorage";
 
 import {
   Printer,
-  Download,
-  Upload,
-  Copy,
-  Check,
   Undo2,
   Redo2,
   ZoomIn,
   ZoomOut,
   ShieldCheck,
-  ChevronDown,
   MousePointerClick,
-  FileCheck,
   Loader2,
+  Share2,
+  Cloud,
+  Check,
+  ExternalLink,
+  Globe,
+  Lock,
+  Sparkles,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
+import { useAuth } from "../../../hooks/useAuth";
+import { Button } from "../ui/Button";
 
 /**
  * Inner Canvas Editor Component
@@ -55,18 +61,46 @@ const ResumeEditorCanvasInner: React.FC = () => {
     setTheme,
   } = useResumeEditor();
 
-  const { language } = useLanguage();
+  const { language, getLocalizedPath } = useLanguage();
   const isAz = language === "az";
+  const { user, signIn } = useAuth();
+  const [searchParams] = useSearchParams();
 
   const [showAtsModal, setShowAtsModal] = useState(false);
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const [copiedText, setCopiedText] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isSavingCloud, setIsSavingCloud] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  // Cloud & Public Link State
+  const [publicSlug, setPublicSlug] = useState(() =>
+    generateCvSlug(data.personalInfo.fullName || "resume")
+  );
+  const [isPublic, setIsPublic] = useState(true);
+  const [isDiscoverable, setIsDiscoverable] = useState(false);
 
   // ATS Score Calculation
   const atsResult = useMemo(() => calculateAtsScore(data), [data]);
 
-  // Direct PDF Download (< 300KB, visually 1:1)
+  // Load existing CV if query param cvId exists
+  useEffect(() => {
+    const cvId = searchParams.get("cvId");
+    if (cvId && user?.uid) {
+      getUserCvs(user.uid).then((records) => {
+        const found = records.find((r) => r.id === cvId);
+        if (found) {
+          setData(found.resumeData);
+          setTheme(found.theme);
+          if (found.publicSlug) setPublicSlug(found.publicSlug);
+          setIsPublic(Boolean(found.isPublic));
+          setIsDiscoverable(Boolean(found.isDiscoverable));
+        }
+      });
+    }
+  }, [searchParams, user?.uid, setData, setTheme]);
+
+  // Direct PDF Download (< 300KB, visually 1:1, selectable text)
   const handleDownloadPdf = async () => {
     setIsGeneratingPdf(true);
     const cleanName = data.personalInfo.fullName
@@ -78,102 +112,36 @@ const ResumeEditorCanvasInner: React.FC = () => {
     setIsGeneratingPdf(false);
   };
 
-  // Helper download
-  const downloadFile = (content: string, filename: string, mime: string) => {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setShowExportMenu(false);
-  };
-
-  // Native JSON Backup
-  const handleExportJson = () => {
-    const jsonStr = JSON.stringify({ resumeData: data, theme }, null, 2);
-    downloadFile(
-      jsonStr,
-      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_backup.json`,
-      "application/json"
-    );
-  };
-
-  // RenderCV YAML Export
-  const handleExportRenderCvYaml = () => {
-    const yaml = exportToRenderCvYaml(data);
-    downloadFile(
-      yaml,
-      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_rendercv.yaml`,
-      "text/yaml"
-    );
-  };
-
-  // Reactive Resume JSON Export
-  const handleExportReactiveResumeJson = () => {
-    const jsonStr = exportToReactiveResumeJson(data);
-    downloadFile(
-      jsonStr,
-      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_reactive_resume.json`,
-      "application/json"
-    );
-  };
-
-  // Universal Import
-  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const content = event.target?.result as string;
-        const parsed = importUniversalResume(content);
-        if (parsed) {
-          setData((prev) => ({ ...prev, ...parsed }));
-          alert(isAz ? "CV uğurla yükləndi! Bütün məlumatlar bərpa olundu." : "Resume imported successfully!");
-        } else {
-          alert(isAz ? "Fayl formatı tanınmadı. Zəhmət olmasa JSON və ya YAML seçin." : "Invalid file format.");
-        }
-      } catch (err) {
-        alert(isAz ? "Xətalı fayl." : "Invalid file.");
-      }
-    };
-    reader.readAsText(file);
-  };
-
-  // Copy Plain Text
-  const handleCopyPlainText = () => {
-    const lines: string[] = [];
-    const info = data.personalInfo;
-    lines.push(`${info.fullName.toUpperCase()}`);
-    lines.push(`${info.title}`);
-    lines.push(`Email: ${info.email} | Phone: ${info.phone} | Location: ${info.location}`);
-    if (info.linkedin) lines.push(`LinkedIn: ${info.linkedin}`);
-    if (info.github) lines.push(`GitHub: ${info.github}`);
-    if (info.website) lines.push(`Portfolio: ${info.website}`);
-    lines.push("\n----------------------------------------\nSUMMARY");
-    lines.push(data.summary);
-
-    lines.push("\n----------------------------------------\nEXPERIENCE");
-    for (const exp of data.experiences) {
-      lines.push(`\n${exp.title} - ${exp.company} (${exp.location})`);
-      lines.push(`${exp.startDate} - ${exp.current ? "Present" : exp.endDate}`);
-      for (const b of exp.bullets) {
-        if (b.trim()) lines.push(`• ${b}`);
-      }
+  // Save to Cloud & Generate Public Web Version
+  const handleSaveAndPublish = async () => {
+    if (!user?.uid) return;
+    setIsSavingCloud(true);
+    try {
+      await saveUserCv(user.uid, data, theme, {
+        cvId: searchParams.get("cvId") || undefined,
+        title: data.personalInfo.fullName || "My Resume",
+        publicSlug,
+        isPublic,
+        isDiscoverable,
+        userDisplayName: user.displayName || undefined,
+        userEmail: user.email || undefined,
+        userPhoto: user.photoURL || undefined,
+      });
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 2500);
+    } catch (e) {
+      console.warn("Save CV failed:", e);
+    } finally {
+      setIsSavingCloud(false);
     }
+  };
 
-    lines.push("\n----------------------------------------\nEDUCATION");
-    for (const edu of data.education) {
-      lines.push(`${edu.degree} in ${edu.field} - ${edu.institution} (${edu.startDate} - ${edu.endDate})`);
-    }
-
-    navigator.clipboard.writeText(lines.join("\n"));
-    setCopiedText(true);
-    setTimeout(() => setCopiedText(false), 2000);
+  const handleCopyLink = () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://www.rvan.me";
+    const url = `${origin}${isAz ? "/az" : ""}/cv/${publicSlug}`;
+    navigator.clipboard.writeText(url);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
 
   return (
@@ -184,7 +152,13 @@ const ResumeEditorCanvasInner: React.FC = () => {
         <div className="flex items-center gap-3">
           <input
             type="text"
-            value={data.personalInfo.fullName ? `${data.personalInfo.fullName} - CV` : (isAz ? "Mənim CV-m" : "My Resume")}
+            value={
+              data.personalInfo.fullName
+                ? `${data.personalInfo.fullName} - CV`
+                : isAz
+                ? "Mənim CV-m"
+                : "My Resume"
+            }
             onChange={() => {}}
             className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[150px] sm:max-w-xs truncate"
             title="Resume Title"
@@ -199,7 +173,9 @@ const ResumeEditorCanvasInner: React.FC = () => {
               onClick={undo}
               disabled={!canUndo}
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                canUndo ? "hover:bg-white/10 text-white" : "opacity-30 text-neutral-500 cursor-not-allowed"
+                canUndo
+                  ? "hover:bg-white/10 text-white"
+                  : "opacity-30 text-neutral-500 cursor-not-allowed"
               }`}
               title="Undo (Ctrl+Z)"
             >
@@ -210,7 +186,9 @@ const ResumeEditorCanvasInner: React.FC = () => {
               onClick={redo}
               disabled={!canRedo}
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                canRedo ? "hover:bg-white/10 text-white" : "opacity-30 text-neutral-500 cursor-not-allowed"
+                canRedo
+                  ? "hover:bg-white/10 text-white"
+                  : "opacity-30 text-neutral-500 cursor-not-allowed"
               }`}
               title="Redo (Ctrl+Shift+Z)"
             >
@@ -224,7 +202,13 @@ const ResumeEditorCanvasInner: React.FC = () => {
           {UNIFIED_TEMPLATES.slice(0, 5).map((t) => (
             <button
               key={t.id}
-              onClick={() => setTheme((prev) => ({ ...prev, template: t.id, accentColor: t.defaultColor }))}
+              onClick={() =>
+                setTheme((prev) => ({
+                  ...prev,
+                  template: t.id,
+                  accentColor: t.defaultColor,
+                }))
+              }
               className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
                 theme.template === t.id
                   ? "bg-primary text-black font-bold shadow-sm"
@@ -236,84 +220,63 @@ const ResumeEditorCanvasInner: React.FC = () => {
           ))}
         </div>
 
-        {/* Right: ATS Score, Export & Direct PDF Download */}
-        <div className="flex items-center gap-2">
+        {/* Right: ATS Score, Public Web Link & Primary PDF Download */}
+        <div className="flex items-center gap-2.5">
           {/* ATS Score Indicator */}
           <button
             onClick={() => setShowAtsModal(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
             title={isAz ? "ATS Analizini Göstər" : "View ATS Compliance Audit"}
           >
-            <ShieldCheck size={13} className="text-primary group-hover:scale-110 transition-transform" />
+            <ShieldCheck
+              size={13}
+              className="text-primary group-hover:scale-110 transition-transform"
+            />
             <span className="text-xs font-mono font-bold">
-              ATS: <strong className={atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"}>{atsResult.score}%</strong>
+              ATS:{" "}
+              <strong
+                className={
+                  atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"
+                }
+              >
+                {atsResult.score}%
+              </strong>
             </span>
           </button>
 
-          {/* Copy Plain Text */}
+          {/* Public Web CV & Cloud Sync Action */}
           <button
-            onClick={handleCopyPlainText}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
-            title={isAz ? "Mətni kopyala" : "Copy plain text"}
+            onClick={() => setShowShareModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/20 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer"
+            title="Create or manage public web link"
           >
-            {copiedText ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            <span>{copiedText ? (isAz ? "KOPYALANDI" : "COPIED") : (isAz ? "MƏTN" : "TEXT")}</span>
+            <Share2 size={13} className="text-primary" />
+            <span className="hidden sm:inline">
+              {user ? (isAz ? "BULUD & LİNK" : "SHARE / CLOUD") : (isAz ? "LİNK YARAT" : "PUBLIC LINK")}
+            </span>
           </button>
 
-          {/* Export Code Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowExportMenu(!showExportMenu)}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
-            >
-              <Download size={12} />
-              <span className="hidden sm:inline">{isAz ? "KOD" : "EXPORT"}</span>
-              <ChevronDown size={10} />
-            </button>
-
-            {showExportMenu && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-neutral-900 border border-white/15 p-2 shadow-2xl z-50 space-y-1 font-mono text-xs text-foreground">
-                <button
-                  onClick={handleExportJson}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer"
-                >
-                  <span>JSON Backup</span>
-                  <span className="text-[10px] text-muted-foreground">.json</span>
-                </button>
-                <button
-                  onClick={handleExportRenderCvYaml}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-emerald-400"
-                >
-                  <span>RenderCV YAML</span>
-                  <span className="text-[10px] text-emerald-400">.yaml</span>
-                </button>
-                <button
-                  onClick={handleExportReactiveResumeJson}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-sky-400"
-                >
-                  <span>Reactive Resume v4</span>
-                  <span className="text-[10px] text-sky-400">.json</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Import Button */}
-          <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer">
-            <Upload size={12} />
-            <span className="hidden sm:inline">{isAz ? "İDXAL" : "IMPORT"}</span>
-            <input type="file" accept=".json,.yaml,.yml" onChange={handleImportFile} className="hidden" />
-          </label>
-
-          {/* Direct PDF Download (< 300KB) */}
+          {/* Direct PDF Download (The ONLY export action) */}
           <button
             onClick={handleDownloadPdf}
             disabled={isGeneratingPdf}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0 disabled:opacity-70"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0 disabled:opacity-70"
             title={isAz ? "A4 PDF Kimi Endir (< 300KB)" : "Download A4 PDF (< 300KB)"}
           >
-            {isGeneratingPdf ? <Loader2 size={13} className="animate-spin" /> : <Printer size={13} />}
-            <span>{isGeneratingPdf ? (isAz ? "YÜKLƏNİR..." : "GENERATING...") : (isAz ? "PDF YÜKLƏ" : "DOWNLOAD PDF")}</span>
+            {isGeneratingPdf ? (
+              <Loader2 size={13} className="animate-spin" />
+            ) : (
+              <Printer size={13} />
+            )}
+            <span>
+              {isGeneratingPdf
+                ? isAz
+                  ? "YÜKLƏNİR..."
+                  : "GENERATING..."
+                : isAz
+                ? "PDF YÜKLƏ"
+                : "DOWNLOAD PDF"}
+            </span>
           </button>
         </div>
       </header>
@@ -382,7 +345,179 @@ const ResumeEditorCanvasInner: React.FC = () => {
       </div>
 
       {/* Detailed ATS Score Audit Modal */}
-      {showAtsModal && <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />}
+      {showAtsModal && (
+        <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />
+      )}
+
+      {/* Share Public Web CV & Cloud Sync Modal */}
+      <AnimatePresence>
+        {showShareModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-lg rounded-3xl border border-white/15 bg-neutral-900 p-6 sm:p-8 shadow-2xl text-foreground space-y-6"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-2 text-primary font-mono text-sm font-bold">
+                  <Globe size={18} />
+                  <span>{isAz ? "İctimai Web CV və Bulud Yaddaşı" : "Public Web CV & Cloud Sync"}</span>
+                </div>
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="p-1 rounded-full text-muted-foreground hover:text-white transition-colors cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {!user ? (
+                // Guest Prompt
+                <div className="space-y-4 text-center py-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 text-primary mx-auto flex items-center justify-center">
+                    <Sparkles size={20} />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">
+                    {isAz ? "Öz Şəxsi /cv/ Linkini Əldə Et" : "Get Your Personalized /cv/ Link"}
+                  </h3>
+                  <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                    {isAz
+                      ? "Google hesabınızla daxil olaraq CV-nizi buludda saxlayın, ictimai /cv/ linki yaradın və real vaxt baxış analitikasını izləyin."
+                      : "Sign in with Google to save your CV to the cloud, generate a permanent shareable /cv/ link, and track audience analytics."}
+                  </p>
+                  <div className="pt-2">
+                    <button
+                      onClick={signIn}
+                      className="px-6 py-3 rounded-full bg-white text-black font-bold text-xs uppercase tracking-wider flex items-center gap-2 mx-auto hover:bg-neutral-200 transition-all cursor-pointer shadow-lg"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path
+                          fill="#4285F4"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                        />
+                      </svg>
+                      <span>{isAz ? "Google ilə Daxil Ol" : "Sign in with Google"}</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground pt-2">
+                    {isAz
+                      ? "Qeyd: PDF yükləmək üçün daxil olmaq məcburi deyil."
+                      : "Note: PDF download is 100% free and requires no login."}
+                  </p>
+                </div>
+              ) : (
+                // Authenticated User Controls
+                <div className="space-y-5">
+                  {/* Public Slug Input */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-mono text-muted-foreground block">
+                      {isAz ? "Şəxsi URL Ünvanı:" : "Custom Public Slug:"}
+                    </label>
+                    <div className="flex items-center rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-xs font-mono text-foreground">
+                      <span className="text-muted-foreground select-none">https://www.rvan.me/cv/</span>
+                      <input
+                        type="text"
+                        value={publicSlug}
+                        onChange={(e) => setPublicSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ""))}
+                        className="flex-1 bg-transparent border-none focus:outline-none text-primary font-bold pl-1"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Discoverability Options */}
+                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-mono font-bold text-foreground">
+                          {isAz ? "Axtarış Sistemlərində Kəşf Edilmə" : "Search Engine Discoverability"}
+                        </span>
+                        <p className="text-[11px] text-muted-foreground">
+                          {isDiscoverable
+                            ? (isAz ? "CV Google və axtarış sistemlərində indekslənəcək." : "CV will be indexable by Google.")
+                            : (isAz ? "CV noindex qorunmasındadır (yalnız linki olanlar görəcək)." : "Protected with noindex (only people with link can view).")}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsDiscoverable(!isDiscoverable)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
+                          isDiscoverable
+                            ? "bg-emerald-500 text-black"
+                            : "bg-white/10 text-muted-foreground"
+                        }`}
+                      >
+                        {isDiscoverable ? "INDEXABLE" : "NOINDEX"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                    <button
+                      onClick={handleCopyLink}
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/20 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
+                    >
+                      {copiedLink ? <Check size={13} className="text-emerald-400" /> : <Share2 size={13} />}
+                      <span>{copiedLink ? (isAz ? "KOPYALANDI" : "COPIED") : (isAz ? "LİNKİ KOPYALA" : "COPY LINK")}</span>
+                    </button>
+
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={getLocalizedPath(`/cv/${publicSlug}`)}
+                        target="_blank"
+                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono font-bold text-foreground hover:bg-white/20 transition-all cursor-pointer"
+                      >
+                        <span>{isAz ? "BAX" : "VIEW"}</span>
+                        <ExternalLink size={13} />
+                      </Link>
+
+                      <button
+                        onClick={handleSaveAndPublish}
+                        disabled={isSavingCloud}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-black font-mono font-extrabold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-70 shadow-md shadow-primary/20"
+                      >
+                        {isSavingCloud ? (
+                          <Loader2 size={13} className="animate-spin" />
+                        ) : savedSuccess ? (
+                          <Check size={13} className="text-black" />
+                        ) : (
+                          <Cloud size={13} />
+                        )}
+                        <span>
+                          {isSavingCloud
+                            ? isAz
+                              ? "YADDA SAXLANILIR..."
+                              : "SAVING..."
+                            : savedSuccess
+                            ? isAz
+                              ? "YADDA SAXLANILDI!"
+                              : "SAVED!"
+                            : isAz
+                            ? "BULUDDA YADDA SAXLA"
+                            : "SAVE TO CLOUD"}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
