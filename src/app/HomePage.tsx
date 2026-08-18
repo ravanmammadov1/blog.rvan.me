@@ -16,9 +16,10 @@ import HeroAtmosphere from "./components/HeroAtmosphere";
 // Lazy-loaded section components matching exact requested hierarchy
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const HeroParticles = lazy(() => import("./components/HeroParticles"));
+const WorkSection = lazy(() => import("./components/home/WorkSection"));
+const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
-const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
 
 const fadeUp = {
@@ -140,22 +141,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 3. EDITORIAL / BLOG (3 best articles) ── */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING EDITORIAL BLOG...</div>}>
-        <BlogSection />
+      {/* ── 3. PRIMARY WORK / CREDIBILITY (Featured Projects) ── */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING SELECTED WORK...</div>}>
+        <WorkSection />
       </Suspense>
 
-      {/* ── 5. RESOURCES (6 best showcase cards from all categories) ── */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING SHOWCASE RESOURCES...</div>}>
-        <ResourcesSection />
-      </Suspense>
-
-      {/* ── 6. TOOLS (Creative & Interactive tools) ── */}
+      {/* ── 4. USEFUL TOOLS (Interactive In-Browser Engines) ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CREATIVE TOOLS...</div>}>
         <ToolsSection />
       </Suspense>
 
-      {/* ── 7. FINAL CTA ── */}
+      {/* ── 5. EDITORIAL THINKING (Master Essays & Research) ── */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING EDITORIAL BLOG...</div>}>
+        <BlogSection />
+      </Suspense>
+
+      {/* ── 6. CURATED RESOURCES (Typography & Vector Assets) ── */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING SHOWCASE RESOURCES...</div>}>
+        <ResourcesSection />
+      </Suspense>
+
+      {/* ── 7. FINAL CTA (Collaboration) ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CONTACT CTA...</div>}>
         <ContactSection />
       </Suspense>

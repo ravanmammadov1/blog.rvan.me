@@ -38,7 +38,7 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
   ) => {
     // Base Design System Classes matching HOME page reference
     const baseClasses =
-      "group inline-flex items-center justify-center gap-2.5 rounded-full font-bold uppercase tracking-[.18em] transition-all duration-300 cursor-pointer select-none mono whitespace-nowrap";
+      "group inline-flex items-center justify-center gap-2.5 rounded-full font-bold uppercase tracking-[.18em] transition-all duration-300 cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
     // Size Variant Classes
     const sizeClasses = {
