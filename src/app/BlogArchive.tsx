@@ -119,7 +119,7 @@ export default function BlogArchive() {
 
   return (
     <main
-      className="min-h-screen bg-background text-foreground"
+      className="min-h-screen bg-background text-foreground overflow-x-hidden w-full"
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
