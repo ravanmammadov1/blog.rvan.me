@@ -67,8 +67,8 @@ export interface ResumeEditorContextType {
   setZoom: (z: number | ((prev: number) => number)) => void;
 
   // Active Left Drawer Tab
-  activeDrawer: "templates" | "elements" | "presets" | "styles" | null;
-  setActiveDrawer: (tab: "templates" | "elements" | "presets" | "styles" | null) => void;
+  activeDrawer: "design" | "content" | "style" | "templates" | "elements" | "styles" | null;
+  setActiveDrawer: (tab: "design" | "content" | "style" | "templates" | "elements" | "styles" | null) => void;
 }
 
 const ResumeEditorContext = createContext<ResumeEditorContextType | null>(null);
@@ -108,7 +108,7 @@ export const ResumeEditorProvider: React.FC<ProviderProps> = ({ initialData, ini
 
   // Zoom & Drawer
   const [zoom, setZoom] = useState<number>(1.0);
-  const [activeDrawer, setActiveDrawer] = useState<"templates" | "elements" | "presets" | "styles" | null>(null);
+  const [activeDrawer, setActiveDrawer] = useState<"design" | "content" | "style" | "templates" | "elements" | "styles" | null>(null);
 
   // Wrapper for updating data with history tracking
   const setData = useCallback((newDataOrUpdater: ResumeData | ((prev: ResumeData) => ResumeData)) => {

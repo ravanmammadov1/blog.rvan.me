@@ -12,6 +12,10 @@ import { DeveloperCompactTemplate } from "./DeveloperCompactTemplate";
 import { SwissEditorialTemplate } from "./SwissEditorialTemplate";
 import { CorporateCleanTemplate } from "./CorporateCleanTemplate";
 import { CompactAtsTemplate } from "./CompactAtsTemplate";
+import { ModernTechTemplate } from "./ModernTechTemplate";
+import { LeafishTemplate } from "./LeafishTemplate";
+import { MinimalTemplate } from "./MinimalTemplate";
+import { ExecutiveTemplate } from "./ExecutiveTemplate";
 import { FONT_FAMILY_CONFIG } from "../themeTokens";
 
 interface ResumePreviewProps {
@@ -27,30 +31,52 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
   const renderTemplate = () => {
     switch (theme.template) {
-      case "developer-cv":
-        return <DeveloperCompactTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "editorial-cv":
-        return <SwissEditorialTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      // 1. ATS / Classic
+      case "tech-cv":
+        return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "minimal-cv":
+        return <ClassicHarvardTemplate data={data} theme={theme} />;
+      case "classic-ats-cv":
+        return <MinimalTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "corporate-cv":
         return <CorporateCleanTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "compact-ats-cv":
         return <CompactAtsTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "quotation-cv":
-        return <QuotationTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+
+      // 2. Modern
       case "modern-cv":
         return <Modern2ColTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "modern-minimal-cv":
+        return <ModernTechTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "editorial-cv":
+        return <SwissEditorialTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "nordic-cv":
+        return <SoftBannerTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "clean-modern-cv":
+        return <LeafishTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+
+      // 3. Tech & Engineering
+      case "developer-cv":
+        return <DeveloperCompactTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "engineering-cv":
+        return <ExecutiveTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "academic-cv":
+        return <ClassicHarvardTemplate data={data} theme={theme} />;
+
+      // 4. Executive
       case "professional-cv":
         return <DarkSidebarTemplate data={data} theme={theme} onUpdate={onUpdate} />;
       case "executive-cv":
         return <ModerncvTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+      case "quotation-cv":
+        return <QuotationTemplate data={data} theme={theme} onUpdate={onUpdate} />;
+
+      // 5. Creative
       case "creative-cv":
         return <OnyxTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "nordic-cv":
-        return <SoftBannerTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "minimal-cv":
-        return <ClassicHarvardTemplate data={data} theme={theme} />;
+
+      // 6. Blank / Fallback
       case "blank-cv":
-      case "tech-cv":
       default:
         return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;
     }

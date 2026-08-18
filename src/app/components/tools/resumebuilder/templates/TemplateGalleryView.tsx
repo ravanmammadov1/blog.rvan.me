@@ -6,7 +6,7 @@ import {
   ResumeThemeConfig,
 } from "../resumeTypes";
 import { useLanguage } from "../../../../../lib/i18n/LanguageContext";
-import { Sparkles, Eye, Check, ShieldCheck, X } from "lucide-react";
+import { Sparkles, Eye, Check, ShieldCheck, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { ResumePreview } from "./ResumePreview";
 
 interface TemplateGalleryViewProps {
@@ -22,7 +22,7 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   const isAz = language === "az";
 
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [previewTemplate, setPreviewTemplate] = useState<TemplateId | null>(null);
+  const [previewTemplateId, setPreviewTemplateId] = useState<TemplateId | null>(null);
 
   // Per-template active accent color selection
   const [templateColors, setTemplateColors] = useState<Record<string, string>>(() => {
@@ -34,11 +34,12 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
   });
 
   const categories = [
-    { id: "all", label: isAz ? "Bütün Şablonlar" : "All Templates" },
-    { id: "classic", label: isAz ? "Klassik & ATS" : "Classic & ATS" },
-    { id: "modern", label: isAz ? "Müasir 2-Sütun" : "Modern 2-Column" },
+    { id: "all", label: isAz ? "Bütün Şablonlar (17)" : "All Templates (17)" },
+    { id: "classic", label: isAz ? "ATS & Klassik" : "ATS & Classic" },
+    { id: "modern", label: isAz ? "Müasir Dizayn" : "Modern Design" },
     { id: "tech", label: isAz ? "Mühəndis & Texniki" : "Tech & Engineering" },
-    { id: "creative", label: isAz ? "Kreativ & Liderlik" : "Creative & Executive" },
+    { id: "executive", label: isAz ? "Rəhbər & Liderlik" : "Executive & Leadership" },
+    { id: "creative", label: isAz ? "Kreativ & Portfel" : "Creative & Portfolio" },
   ];
 
   const handleColorChange = (e: React.MouseEvent, templateId: string, color: string) => {
@@ -51,30 +52,52 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
     return t.category === selectedCategory;
   });
 
+  // Modal navigation
+  const currentPreviewIdx = UNIFIED_TEMPLATES.findIndex((t) => t.id === previewTemplateId);
+  const currentPreviewTemplate = currentPreviewIdx !== -1 ? UNIFIED_TEMPLATES[currentPreviewIdx] : null;
+
+  const handlePrevTemplate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentPreviewIdx > 0) {
+      setPreviewTemplateId(UNIFIED_TEMPLATES[currentPreviewIdx - 1].id);
+    } else {
+      setPreviewTemplateId(UNIFIED_TEMPLATES[UNIFIED_TEMPLATES.length - 1].id);
+    }
+  };
+
+  const handleNextTemplate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentPreviewIdx < UNIFIED_TEMPLATES.length - 1) {
+      setPreviewTemplateId(UNIFIED_TEMPLATES[currentPreviewIdx + 1].id);
+    } else {
+      setPreviewTemplateId(UNIFIED_TEMPLATES[0].id);
+    }
+  };
+
   return (
-    <div className="w-full flex flex-col items-center py-10 px-4 md:px-8 max-w-7xl mx-auto">
+    <div className="w-full flex flex-col items-center py-8 px-4 md:px-8 max-w-7xl mx-auto">
       {/* ── HERO HEADER ── */}
-      <div className="text-center space-y-3 max-w-2xl mb-10">
+      <div className="text-center space-y-3 max-w-2xl mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono">
           <Sparkles size={13} />
-          <span>{isAz ? "12 HR TƏSDİQLİ PEŞƏKAR ŞABLON" : "12 HR-APPROVED PRO TEMPLATES"}</span>
+          <span>{isAz ? "17 PEŞƏKAR CV ŞABLONU • 100% PULSUZ & A4 PDF" : "17 PRO RESUME TEMPLATES • FREE A4 PDF"}</span>
         </div>
         <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white">
-          {isAz ? "Peşəkar CV Şablonunuzu Seçin" : "Choose Your Resume Template"}
+          {isAz ? "Peşəkar CV Şablonunuzu Seçin" : "Select Your Resume Template"}
         </h1>
         <p className="text-sm text-neutral-400">
           {isAz
-            ? "Bəyəndiyiniz şablonu və rəngi seçərək birbaşa redaktəyə başlayın. İstənilən vaxt məlumatlarınızı itirmədən şablonu dəyişə bilərsiniz."
-            : "Select a design and accent color to start editing directly. You can switch templates anytime without losing your entered data."}
+            ? "Məlumatlarınızı bir dəfə daxil edin və istənilən vaxt şablonlar arasında keçid edin. Real vaxtda redaktə və təmiz vektor PDF ixracı."
+            : "Enter your information once and switch seamlessly between templates anytime. Live inline canvas editing with instant vector PDF export."}
         </p>
 
         {/* Category Filter Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-3">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
                 selectedCategory === cat.id
                   ? "bg-primary text-black shadow-lg shadow-primary/20 scale-105"
                   : "bg-neutral-900 border border-white/10 text-neutral-300 hover:text-white hover:bg-neutral-800"
@@ -87,95 +110,116 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
       </div>
 
       {/* ── TEMPLATES GALLERY GRID ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
         {filteredTemplates.map((template) => {
           const activeColor = templateColors[template.id] || template.defaultAccent;
+          const isSelected = activeTemplateId === template.id;
+
+          const previewTheme: ResumeThemeConfig = {
+            template: template.id,
+            accentColor: activeColor,
+            fontFamily: "sans",
+            density: "standard",
+            paperSize: "a4",
+          };
 
           return (
             <div
               key={template.id}
-              className="flex flex-col group cursor-pointer"
-              onClick={() => onSelectTemplate(template.id, activeColor)}
+              className={`group flex flex-col rounded-2xl bg-neutral-900/90 border transition-all duration-200 overflow-hidden ${
+                isSelected
+                  ? "border-primary shadow-xl shadow-primary/10 ring-1 ring-primary"
+                  : "border-white/10 hover:border-white/30 hover:shadow-2xl"
+              }`}
             >
-              {/* Card Container with A4 Aspect Ratio */}
-              <div className="relative w-full aspect-[1/1.38] bg-neutral-900 rounded-2xl border border-white/15 overflow-hidden shadow-xl group-hover:border-primary/60 group-hover:shadow-2xl group-hover:shadow-primary/10 transition-all duration-300 flex flex-col items-center justify-center p-2 bg-white">
-                {/* Scaled Live Miniature of the Actual Template */}
-                <div className="w-full h-full overflow-hidden select-none pointer-events-none rounded-xl relative transform scale-[0.38] origin-top-left w-[263%] h-[263%] bg-white text-black">
-                  <ResumePreview
-                    data={template.presetData}
-                    theme={{
-                      template: template.id,
-                      accentColor: activeColor,
-                      fontFamily: "sans",
-                      density: "standard",
-                      paperSize: "a4",
-                    }}
-                  />
+              {/* Card Thumbnail Preview Container */}
+              <div
+                className="relative w-full aspect-[210/297] bg-white overflow-hidden cursor-pointer"
+                onClick={() => onSelectTemplate(template.id, activeColor)}
+              >
+                {/* Scaled Render of Sample Preset Resume */}
+                <div
+                  className="w-[800px] origin-top-left pointer-events-none select-none"
+                  style={{
+                    transform: "scale(0.35)",
+                    transformOrigin: "0 0",
+                  }}
+                >
+                  <ResumePreview data={template.presetData} theme={previewTheme} />
                 </div>
 
-                {/* Subtle Hover Overlay with Brand Mint Actions */}
-                <div className="absolute inset-0 bg-neutral-950/70 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2.5 p-6 z-20">
+                {/* Subtle Hover Action Overlay */}
+                <div className="absolute inset-0 bg-neutral-950/70 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-4">
                   <button
-                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setPreviewTemplate(template.id);
+                      setPreviewTemplateId(template.id);
                     }}
-                    className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-mono font-bold text-xs uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="w-full max-w-[140px] py-2 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                   >
-                    <Eye size={14} />
-                    <span>{isAz ? "Önizləmə" : "Preview"}</span>
+                    <Eye size={13} />
+                    <span>{isAz ? "BÖYÜK BAXIŞ" : "PREVIEW"}</span>
                   </button>
 
                   <button
-                    type="button"
-                    onClick={() => onSelectTemplate(template.id, activeColor)}
-                    className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-black font-mono font-extrabold text-xs uppercase tracking-wide flex items-center justify-center gap-2 shadow-md transition-transform transform active:scale-95 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectTemplate(template.id, activeColor);
+                    }}
+                    className="w-full max-w-[140px] py-2 rounded-xl bg-primary text-black hover:bg-primary/90 text-xs font-mono font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-lg"
                   >
-                    <Check size={14} />
-                    <span>{isAz ? "Seç və Redaktə Et" : "Select & Edit"}</span>
+                    <Sparkles size={13} />
+                    <span>{isAz ? "BU ŞABLONU SEÇ" : "USE TEMPLATE"}</span>
                   </button>
                 </div>
 
-                {/* Top Badge: ATS Score */}
-                <div className="absolute top-3 right-3 z-10 px-2 py-0.5 rounded-md bg-neutral-900/90 border border-white/10 text-[10px] font-mono font-bold text-neutral-300 flex items-center gap-1">
-                  <ShieldCheck size={11} className="text-primary" />
+                {/* ATS Badge in top-right */}
+                <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-mono font-bold border border-white/15 text-white">
+                  <ShieldCheck size={11} className={template.atsScore >= 95 ? "text-emerald-400" : "text-amber-400"} />
                   <span>ATS {template.atsScore}%</span>
                 </div>
               </div>
 
-              {/* Supported Colors Dots Row (Only Actual Supported Colors for this template!) */}
-              <div className="flex items-center justify-between mt-3 px-1">
-                <div className="flex items-center gap-1.5">
-                  {template.supportedAccents.map((colHex) => (
-                    <button
-                      key={colHex}
-                      type="button"
-                      onClick={(e) => handleColorChange(e, template.id, colHex)}
-                      className={`w-3.5 h-3.5 rounded-full border border-white/20 transition-all cursor-pointer ${
-                        activeColor === colHex
-                          ? "ring-2 ring-primary ring-offset-2 ring-offset-neutral-950 scale-125"
-                          : "opacity-60 hover:opacity-100"
-                      }`}
-                      style={{ backgroundColor: colHex }}
-                      title={colHex}
-                    />
-                  ))}
+              {/* Card Footer Details */}
+              <div className="p-4 flex flex-col justify-between flex-1 gap-3 bg-neutral-900 border-t border-white/10">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors">
+                      {isAz ? template.name_az : template.name}
+                    </h3>
+                    <span className="text-[10px] font-mono uppercase text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
+                      {template.category}
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-400 line-clamp-2">
+                    {isAz ? template.description_az : template.description}
+                  </p>
                 </div>
 
-                <span className="text-[10px] font-mono uppercase text-muted-foreground">
-                  {template.category}
-                </span>
-              </div>
-
-              {/* Template Title & Summary */}
-              <div className="mt-1.5 px-1">
-                <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors">
-                  {isAz ? template.name_az : template.name}
-                </h3>
-                <p className="text-[11px] text-neutral-400 line-clamp-1">
-                  {isAz ? template.description_az : template.description}
-                </p>
+                {/* Real Supported Accent Colors Selector */}
+                <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                  <span className="text-[10px] font-mono uppercase text-neutral-400">
+                    {isAz ? "Rənglər" : "Accents"}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {template.supportedAccents.map((hex) => {
+                      const isHexActive = activeColor.toLowerCase() === hex.toLowerCase();
+                      return (
+                        <button
+                          key={hex}
+                          onClick={(e) => handleColorChange(e, template.id, hex)}
+                          className={`w-4 h-4 rounded-full transition-transform cursor-pointer border ${
+                            isHexActive
+                              ? "ring-2 ring-primary scale-125 border-white"
+                              : "border-black/40 hover:scale-110 opacity-70 hover:opacity-100"
+                          }`}
+                          style={{ backgroundColor: hex }}
+                          title={hex}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           );
@@ -183,55 +227,71 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
       </div>
 
       {/* ── FULL SCREEN PREVIEW MODAL ── */}
-      {previewTemplate && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
-          onClick={() => setPreviewTemplate(null)}
-        >
-          <div
-            className="relative max-w-4xl w-full max-h-[90vh] bg-neutral-900 border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
+      {currentPreviewTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/85 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-4xl bg-neutral-900 border border-white/20 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[92vh]">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-neutral-950">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-3">
-                <span className="font-mono text-sm font-bold text-white uppercase">
-                  {UNIFIED_TEMPLATES.find((t) => t.id === previewTemplate)?.name || previewTemplate}
-                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={handlePrevTemplate}
+                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-white transition-all cursor-pointer"
+                    title="Previous"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    onClick={handleNextTemplate}
+                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-white transition-all cursor-pointer"
+                    title="Next"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>{isAz ? currentPreviewTemplate.name_az : currentPreviewTemplate.name}</span>
+                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary">
+                      ATS {currentPreviewTemplate.atsScore}%
+                    </span>
+                  </h2>
+                  <p className="text-xs text-neutral-400">
+                    {isAz ? currentPreviewTemplate.description_az : currentPreviewTemplate.description}
+                  </p>
+                </div>
               </div>
+
               <div className="flex items-center gap-3">
                 <button
-                  type="button"
                   onClick={() => {
-                    const col = templateColors[previewTemplate] || "#111827";
-                    onSelectTemplate(previewTemplate, col);
-                    setPreviewTemplate(null);
+                    const color = templateColors[currentPreviewTemplate.id] || currentPreviewTemplate.defaultAccent;
+                    onSelectTemplate(currentPreviewTemplate.id, color);
+                    setPreviewTemplateId(null);
                   }}
-                  className="px-5 py-2 rounded-xl bg-primary text-black font-mono font-bold text-xs uppercase hover:bg-primary/90 transition-all cursor-pointer shadow-md"
+                  className="px-4 py-2 rounded-xl bg-primary text-black font-extrabold text-xs font-mono hover:bg-primary/90 transition-all cursor-pointer shadow-lg shadow-primary/20 flex items-center gap-1.5"
                 >
-                  {isAz ? "BU ŞABLONU SEÇ" : "USE THIS TEMPLATE"}
+                  <Sparkles size={13} />
+                  <span>{isAz ? "BU ŞABLONU İSTİFADƏ ET" : "USE THIS TEMPLATE"}</span>
                 </button>
+
                 <button
-                  type="button"
-                  onClick={() => setPreviewTemplate(null)}
-                  className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  onClick={() => setPreviewTemplateId(null)}
+                  className="p-2 rounded-xl bg-white/5 text-neutral-400 hover:text-white hover:bg-white/15 transition-all cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
             </div>
 
-            {/* Modal Body Preview */}
-            <div className="flex-1 overflow-auto p-6 md:p-10 flex items-center justify-center bg-neutral-950/80 custom-scrollbar">
-              <div className="w-full max-w-[800px] shadow-2xl rounded-xl overflow-hidden">
+            {/* Modal Body: Crisp A4 Preview */}
+            <div className="flex-1 overflow-auto py-6 flex justify-center custom-scrollbar">
+              <div className="w-full max-w-[800px] shadow-2xl bg-white text-black rounded-lg overflow-hidden">
                 <ResumePreview
-                  data={
-                    UNIFIED_TEMPLATES.find((t) => t.id === previewTemplate)?.presetData ||
-                    UNIFIED_TEMPLATES[0].presetData
-                  }
+                  data={currentPreviewTemplate.presetData}
                   theme={{
-                    template: previewTemplate,
-                    accentColor: templateColors[previewTemplate] || "#111827",
+                    template: currentPreviewTemplate.id,
+                    accentColor: templateColors[currentPreviewTemplate.id] || currentPreviewTemplate.defaultAccent,
                     fontFamily: "sans",
                     density: "standard",
                     paperSize: "a4",

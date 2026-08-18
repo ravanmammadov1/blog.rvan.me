@@ -57,28 +57,31 @@ const ResumeEditorCanvasInner: React.FC<{
   const [showAtsModal, setShowAtsModal] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
-  // Automatically assign character avatar if photo is missing and template supports it
+  // Automatically assign character avatar once on load if photo is missing
   useEffect(() => {
     if (!data.personalInfo.photoUrl && avatarSvgUri) {
       updatePhoto(avatarSvgUri);
     }
   }, [avatarSvgUri]);
 
-  // ATS Score Calculation
+  // Dynamic ATS Score Calculation
   const atsResult = useMemo(() => calculateAtsScore(data), [data]);
 
-  // Direct PDF Download (< 300KB, visually 1:1, selectable text)
+  // Robust Native Vector PDF Download via @react-pdf/renderer
   const handleDownloadPdf = async () => {
+    if (isGeneratingPdf) return;
     setIsGeneratingPdf(true);
-    const cleanName = data.personalInfo.fullName
-      ? data.personalInfo.fullName.replace(/[^a-zA-Z0-9_-]/g, "_")
+
+    const cleanName = data.personalInfo.fullName?.trim()
+      ? data.personalInfo.fullName.replace(/[^a-zA-Z0-9_\-]/g, "_")
       : "Resume";
     const filename = `${cleanName}_CV.pdf`;
 
     try {
-      await downloadResumeAsPdf("printable-resume", filename);
+      await downloadResumeAsPdf(data, theme, filename);
     } catch (e) {
       console.error("PDF export error:", e);
+      alert(isAz ? "PDF yüklənməsi zamanı xəta baş verdi." : "Could not generate PDF. Please try again.");
     } finally {
       setIsGeneratingPdf(false);
     }
@@ -151,7 +154,7 @@ const ResumeEditorCanvasInner: React.FC<{
           </div>
         </div>
 
-        {/* Center: Template Quick Switcher Pills */}
+        {/* Center: Template Quick Switcher */}
         <div className="hidden lg:flex items-center gap-1 bg-black/40 border border-white/10 p-1 rounded-2xl text-xs font-mono">
           {UNIFIED_TEMPLATES.slice(0, 6).map((t) => (
             <button
@@ -160,13 +163,13 @@ const ResumeEditorCanvasInner: React.FC<{
                 setTheme((prev) => ({
                   ...prev,
                   template: t.id,
-                  accentColor: t.defaultAccent,
+                  accentColor: t.defaultAccent || prev.accentColor,
                 }))
               }
               className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
                 theme.template === t.id
-                  ? "bg-primary text-black font-bold shadow-sm"
-                  : "text-muted-foreground hover:text-white hover:bg-white/5"
+                  ? "bg-primary text-black font-bold shadow"
+                  : "text-neutral-400 hover:text-white"
               }`}
             >
               {isAz ? t.name_az : t.name}
@@ -198,12 +201,12 @@ const ResumeEditorCanvasInner: React.FC<{
             </span>
           </button>
 
-          {/* Direct PDF Download */}
+          {/* Direct Native PDF Download */}
           <button
             onClick={handleDownloadPdf}
             disabled={isGeneratingPdf}
             className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0 disabled:opacity-70"
-            title={isAz ? "A4 PDF Kimi Endir (< 300KB)" : "Download A4 PDF (< 300KB)"}
+            title={isAz ? "A4 Vektor PDF Endir" : "Download A4 Vector PDF"}
           >
             {isGeneratingPdf ? (
               <Loader2 size={13} className="animate-spin" />
@@ -223,7 +226,7 @@ const ResumeEditorCanvasInner: React.FC<{
         </div>
       </header>
 
-      {/* ── WORKSPACE BODY (Canva Left Drawer + Center A4 Canvas) ── */}
+      {/* ── WORKSPACE BODY (DESIGN/CONTENT/STYLE Left Toolbar + Center A4 Canvas) ── */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Canva Tools Strip & Drawer */}
         <CanvaLeftToolbar />
@@ -261,7 +264,7 @@ const ResumeEditorCanvasInner: React.FC<{
               </div>
             )}
 
-          {/* The A4 Resume Document Sheet Container with Safe Zone Padding */}
+          {/* The A4 Resume Document Sheet Container */}
           <div
             style={{
               transform: `scale(${zoom})`,
@@ -273,89 +276,82 @@ const ResumeEditorCanvasInner: React.FC<{
             <ResumePreview data={data} theme={theme} onUpdate={setData} />
           </div>
 
-          {/* Floating Zoom & Fit Controls (Bottom-Right) */}
-          <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-neutral-900/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-2xl shadow-2xl text-xs font-mono text-white print:hidden">
+          {/* Bottom Floating Canvas Zoom Controls */}
+          <div className="fixed bottom-6 right-6 flex items-center gap-1 bg-neutral-900/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-2xl shadow-2xl z-30 print:hidden text-xs font-mono text-foreground">
             <button
-              onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(1)))}
-              className="p-1 hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setZoom((z) => Math.max(0.4, Number((z - 0.1).toFixed(1))))}
+              className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               title="Zoom Out"
             >
               <ZoomOut size={13} />
             </button>
-            <span className="w-12 text-center font-bold">{Math.round(zoom * 100)}%</span>
+            <span className="w-12 text-center font-bold text-foreground">
+              {Math.round(zoom * 100)}%
+            </span>
             <button
-              onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(1)))}
-              className="p-1 hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setZoom((z) => Math.min(1.6, Number((z + 0.1).toFixed(1))))}
+              className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               title="Zoom In"
             >
               <ZoomIn size={13} />
-            </button>
-            <div className="h-3 w-px bg-white/20 mx-0.5" />
-            <button
-              onClick={() => setZoom(1.0)}
-              className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] uppercase font-bold cursor-pointer"
-            >
-              100%
             </button>
           </div>
         </main>
       </div>
 
-      {/* Detailed ATS Score Audit Modal */}
+      {/* ── ATS SCORE MODAL ── */}
       {showAtsModal && (
-        <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />
+        <AtsScoreModal
+          result={atsResult}
+          onClose={() => setShowAtsModal(false)}
+        />
       )}
     </div>
   );
 };
 
 /**
- * Flagship Exported ResumeBuilder Component
+ * Main Top-Level Exported CV Builder Component with Full Gallery Switcher
  */
-export default function ResumeBuilder() {
-  const [viewMode, setViewMode] = useState<"gallery" | "editor">("gallery");
+export const ResumeBuilder: React.FC = () => {
+  const [currentView, setCurrentView] = useState<"gallery" | "editor">("editor");
+  const [activeTemplate, setActiveTemplate] = useState<TemplateId>("tech-cv");
+  const [activeColor, setActiveColor] = useState<string>("#111827");
 
-  const [initialData] = useState<any>(() => {
-    try {
-      const saved = localStorage.getItem("rvan_ats_resume_data_v4");
-      if (saved) return JSON.parse(saved);
-    } catch {}
-    return TECH_CV_PRESET;
-  });
+  const initialTheme = useMemo(
+    () => ({
+      template: activeTemplate,
+      accentColor: activeColor,
+      fontFamily: "sans" as const,
+      density: "standard" as const,
+      paperSize: "a4" as const,
+    }),
+    [activeTemplate, activeColor]
+  );
 
-  const [initialTheme, setInitialTheme] = useState<any>(() => {
-    try {
-      const savedTheme = localStorage.getItem("rvan_ats_resume_theme_v4");
-      if (savedTheme) return JSON.parse(savedTheme);
-    } catch {}
-    return {
-      template: "tech-cv",
-      accentColor: "#111827",
-      fontFamily: "sans",
-      density: "standard",
-      paperSize: "a4",
-    };
-  });
-
-  const handleSelectTemplateFromGallery = (templateId: TemplateId, accentColor?: string) => {
-    setInitialTheme((prev: any) => ({
-      ...prev,
-      template: templateId,
-      accentColor: accentColor || prev.accentColor,
-    }));
-    setViewMode("editor");
+  const handleSelectFromGallery = (templateId: TemplateId, color?: string) => {
+    setActiveTemplate(templateId);
+    if (color) setActiveColor(color);
+    setCurrentView("editor");
   };
 
   return (
-    <ResumeEditorProvider initialData={initialData} initialTheme={initialTheme}>
-      {viewMode === "gallery" ? (
+    <div className="w-full">
+      {currentView === "gallery" ? (
         <TemplateGalleryView
-          onSelectTemplate={handleSelectTemplateFromGallery}
-          activeTemplateId={initialTheme.template}
+          onSelectTemplate={handleSelectFromGallery}
+          activeTemplateId={activeTemplate}
         />
       ) : (
-        <ResumeEditorCanvasInner onOpenGallery={() => setViewMode("gallery")} />
+        <ResumeEditorProvider
+          initialData={TECH_CV_PRESET}
+          initialTheme={initialTheme}
+        >
+          <ResumeEditorCanvasInner
+            onOpenGallery={() => setCurrentView("gallery")}
+          />
+        </ResumeEditorProvider>
       )}
-    </ResumeEditorProvider>
+    </div>
   );
-}
+};

@@ -1,16 +1,21 @@
 export type TemplateId =
   | "tech-cv"
   | "minimal-cv"
-  | "modern-cv"
-  | "professional-cv"
-  | "developer-cv"
-  | "quotation-cv"
-  | "editorial-cv"
+  | "classic-ats-cv"
   | "corporate-cv"
-  | "executive-cv"
-  | "creative-cv"
-  | "nordic-cv"
   | "compact-ats-cv"
+  | "modern-cv"
+  | "modern-minimal-cv"
+  | "editorial-cv"
+  | "nordic-cv"
+  | "clean-modern-cv"
+  | "developer-cv"
+  | "engineering-cv"
+  | "academic-cv"
+  | "professional-cv"
+  | "executive-cv"
+  | "quotation-cv"
+  | "creative-cv"
   | "blank-cv";
 
 export type ResumeFont = "sans" | "serif" | "mono";
@@ -124,7 +129,8 @@ export interface TemplateDefinition {
   id: TemplateId;
   name: string;
   name_az: string;
-  category: "classic" | "modern" | "tech" | "creative";
+  category: "classic" | "modern" | "tech" | "executive" | "creative";
+  atsLevel: "excellent" | "good" | "creative";
   description: string;
   description_az: string;
   supportedAccents: string[];
@@ -144,409 +150,246 @@ export const COLOR_OPTIONS = [
   { label: "Pastel Teal", hex: "#3b82f6" },
   { label: "Classic Black", hex: "#111827" },
   { label: "Burgundy", hex: "#881337" },
+  { label: "Amber Gold", hex: "#d97706" },
 ];
 
 export const FONT_OPTIONS: { id: ResumeFont; label: string; fontFamily: string }[] = [
-  { id: "sans", label: "Geist / Inter (Modern Sans)", fontFamily: "'Geist', 'Inter', system-ui, sans-serif" },
+  { id: "sans", label: "Geist / Inter (Modern Clean)", fontFamily: "'Geist', 'Inter', system-ui, sans-serif" },
   { id: "serif", label: "Merriweather (Classic Serif)", fontFamily: "'Merriweather', 'Georgia', serif" },
   { id: "mono", label: "JetBrains (Tech Mono)", fontFamily: "'JetBrains Mono', 'Fira Code', monospace" },
 ];
 
-// 1. Tech CV Preset (RenderCV sb2nov)
+// Rich Sample Data Preset for Tech & Engineering
 export const TECH_CV_PRESET: ResumeData = {
   personalInfo: {
-    fullName: "Alex Rivera",
-    title: "Senior Software Engineer | Cloud Architecture",
-    email: "alex.rivera@example.com",
-    phone: "+1 (555) 342-8921",
+    fullName: "Alex Chen",
+    title: "Senior Full-Stack & Distributed Systems Engineer",
+    email: "alex.chen@example.com",
+    phone: "+1 (555) 234-5678",
     location: "San Francisco, CA",
-    website: "https://alexrivera.dev",
-    linkedin: "https://linkedin.com/in/alexrivera-eng",
-    github: "https://github.com/alexrivera-dev",
-    photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+    website: "https://alexchen.dev",
+    linkedin: "https://linkedin.com/in/alexchen-eng",
+    github: "https://github.com/alexchen",
+    photoUrl: "",
     showPhoto: false,
   },
   summary:
-    "Performance-driven Senior Software Engineer with 6+ years of experience architecting high-throughput microservices, real-time web apps, and distributed cloud infrastructure. Spearheaded zero-downtime database migrations serving 10M+ daily active users while reducing AWS cloud compute costs by 34%.",
+    "High-impact Senior Software Engineer with 7+ years of experience architecting distributed cloud infrastructure, low-latency microservices, and modern React/TypeScript platforms. Proven track record in scaling systems from 10k to 5M+ daily active users while reducing cloud operating costs.",
   experiences: [
     {
-      id: "exp-1",
-      title: "Senior Full-Stack Engineer",
-      company: "Stripe",
+      id: "exp_1",
+      title: "Lead Platform Architect",
+      company: "Stripe Technologies",
       location: "San Francisco, CA",
-      startDate: "2022",
+      startDate: "2021",
       endDate: "Present",
       current: true,
       bullets: [
-        "Architected an event-driven payment ledger processing over $450M in monthly volume with 99.999% uptime SLA.",
-        "Scaled distributed Redis caching layer, reducing p99 API response latencies from 320ms to 48ms.",
-        "Spearheaded migration of monolithic endpoints to Go microservices deployed via Kubernetes on AWS EKS.",
+        "Architected high-throughput payment ingestion pipeline in Go and Kafka, processing 15M+ daily transactions with 99.999% availability.",
+        "Spearheaded multi-region Kubernetes migration across AWS and GCP, decreasing p99 latency by 45% and saving $380k in annual compute costs.",
+        "Mentored a distributed engineering team of 9, established automated CI/CD benchmarks, and cut release cycle times by 60%.",
       ],
     },
     {
-      id: "exp-2",
-      title: "Software Engineer II",
-      company: "Vercel",
-      location: "Remote",
-      startDate: "2019",
-      endDate: "2022",
+      id: "exp_2",
+      title: "Senior Full-Stack Engineer",
+      company: "Uber Technologies",
+      location: "San Francisco, CA",
+      startDate: "2018",
+      endDate: "2021",
       current: false,
       bullets: [
-        "Engineered edge routing functions in TypeScript and Rust, improving static asset delivery speeds by 28%.",
-        "Optimized client-side bundle footprints by 42% through automated tree-shaking algorithms.",
+        "Engineered real-time driver dispatch matching algorithms serving 250k concurrent requests per second.",
+        "Refactored legacy monolithic services into resilient Go microservices, improving system throughput by 70%.",
+        "Designed and published high-performance internal React component design system adopted by 40+ product teams.",
+      ],
+    },
+    {
+      id: "exp_3",
+      title: "Software Engineer",
+      company: "Dropbox Inc.",
+      location: "San Francisco, CA",
+      startDate: "2016",
+      endDate: "2018",
+      current: false,
+      bullets: [
+        "Built core desktop synchronization sync client in Rust & Python, reducing file conflict rates by 38%.",
+        "Automated continuous integration integration test suites, reducing regression defects by 52%.",
       ],
     },
   ],
   education: [
     {
-      id: "edu-1",
-      degree: "B.S. in Computer Science",
+      id: "edu_1",
+      degree: "B.S. in Computer Science & Engineering",
       field: "Distributed Systems & Machine Learning",
-      institution: "UC Berkeley",
+      institution: "University of California, Berkeley",
       location: "Berkeley, CA",
-      startDate: "2015",
-      endDate: "2019",
-      gpa: "3.88",
+      startDate: "2012",
+      endDate: "2016",
+      gpa: "3.91 / 4.0",
+      honors: "Dean's Honor List, Magna Cum Laude",
     },
   ],
   skills: [
     {
-      id: "sk-1",
-      name: "Languages",
-      items: ["TypeScript", "JavaScript", "Go", "Python", "Rust", "SQL"],
+      id: "skill_1",
+      name: "Programming Languages",
+      items: ["TypeScript", "Go (Golang)", "Rust", "Python", "SQL", "C++"],
     },
     {
-      id: "sk-2",
-      name: "Technologies",
-      items: ["React", "Next.js", "Node.js", "PostgreSQL", "Docker", "Kubernetes", "AWS"],
+      id: "skill_2",
+      name: "Cloud & Distributed Systems",
+      items: ["Kubernetes", "Docker", "AWS", "Google Cloud", "Kafka", "PostgreSQL", "Redis", "gRPC", "Terraform"],
+    },
+    {
+      id: "skill_3",
+      name: "Frontend & Web Architecture",
+      items: ["React", "Next.js", "Tailwind CSS", "GraphQL", "WebSockets", "Node.js"],
     },
   ],
   strengths: [],
   projects: [
     {
-      id: "proj-1",
-      name: "HyperScale Analytics",
-      role: "Lead Creator",
-      techStack: ["Go", "ClickHouse", "React", "Docker"],
-      link: "https://hyperscale.dev",
-      github: "https://github.com/alexrivera-dev/hyperscale",
-      description: ["Open-source distributed analytics pipeline capable of indexing 100M+ web events daily."],
+      id: "proj_1",
+      name: "RaftKv Distributed Consensus Engine",
+      role: "Creator & Lead Maintainer",
+      techStack: ["Go", "Raft Consensus", "gRPC", "Protobuf"],
+      link: "https://github.com/alexchen/raft-kv",
+      description: [
+        "Open-source distributed key-value store with leader election and linearizable read/write semantics (3.8k+ GitHub Stars).",
+      ],
+    },
+    {
+      id: "proj_2",
+      name: "HyperSync Real-Time Data Pipeline",
+      role: "Architect",
+      techStack: ["Rust", "Tokio", "WebSockets", "Redis"],
+      link: "https://github.com/alexchen/hypersync",
+      description: [
+        "Ultra-low latency asynchronous synchronization proxy handling 100k+ concurrent connections with sub-5ms latency.",
+      ],
     },
   ],
   certifications: [
-    { id: "cert-1", name: "AWS Certified Solutions Architect", issuer: "Amazon", date: "2023" },
+    {
+      id: "cert_1",
+      name: "AWS Certified Solutions Architect — Professional",
+      issuer: "Amazon Web Services",
+      date: "2023",
+    },
   ],
   languages: [
-    { id: "lang-1", language: "English", proficiency: "Native", rating: 5 },
+    { id: "lang_1", language: "English", proficiency: "Native" },
+    { id: "lang_2", language: "German", proficiency: "Professional" },
   ],
   references: [],
 };
 
-// 2. Professional CV Preset (Dark Sidebar Executive)
-export const PROFESSIONAL_CV_PRESET: ResumeData = {
-  personalInfo: {
-    fullName: "Richard Sanchez",
-    title: "Accounting Executive",
-    email: "henrysilly@gmail.com",
-    phone: "+012 345 678 902",
-    location: "Sydney, Australia",
-    website: "https://www.henrysilly.com",
-    linkedin: "https://linkedin.com/in/richardsanchez",
-    github: "",
-    photoUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80",
-    showPhoto: true,
-  },
-  summary:
-    "Highly motivated and detail-oriented Accounting Professional with strong experience in financial reporting, bookkeeping, and data analysis. Skilled in preparing financial statements, managing accounts payable/receivable, and performing reconciliations with a high level of accuracy.",
-  experiences: [
-    {
-      id: "exp-1",
-      title: "Accounting Executive",
-      company: "Arowwai Industries",
-      location: "Sydney, Australia",
-      startDate: "Jan 2024",
-      endDate: "Present",
-      current: true,
-      bullets: [
-        "Implemented cost-control measures resulting in a 15% reduction in operational expenses.",
-        "Streamlined financial reporting processes, enhancing overall efficiency by 20%.",
-        "Led a team in successfully navigating a complex audit, ensuring compliance with industry regulations.",
-      ],
-    },
-    {
-      id: "exp-2",
-      title: "Accountant",
-      company: "Arowwai Industries",
-      location: "Melbourne, Australia",
-      startDate: "Jun 2022",
-      endDate: "Jan 2024",
-      current: false,
-      bullets: [
-        "Prepared quarterly financial reports and automated reconciliation workflows.",
-        "Managed account payable cycles, achieving 99.8% timely supplier payments.",
-      ],
-    },
-  ],
-  education: [
-    {
-      id: "edu-1",
-      degree: "Bachelor of Business Management",
-      field: "Finance & Accounting",
-      institution: "Borcelle University",
-      location: "Melbourne, Australia",
-      startDate: "2016",
-      endDate: "2020",
-    },
-  ],
-  skills: [
-    {
-      id: "sk-1",
-      name: "Core Skills",
-      items: [
-        "Financial Reporting",
-        "Cost Control",
-        "Audit Compliance",
-        "B2B Negotiation",
-        "Tax Planning",
-        "Market Analysis",
-        "QuickBooks",
-        "Excel Modeling",
-      ],
-    },
-  ],
-  strengths: [],
-  projects: [],
-  certifications: [
-    { id: "cert-1", name: "Certified Public Accountant (CPA)", issuer: "CPA Australia", date: "2021" },
-  ],
-  languages: [
-    { id: "lang-1", language: "English", proficiency: "Native", rating: 5 },
-    { id: "lang-2", language: "Spanish", proficiency: "Professional", rating: 4 },
-  ],
-  references: [
-    {
-      id: "ref-1",
-      name: "Estelle Darcy",
-      position: "CEO",
-      company: "Wardiere Inc.",
-      phone: "+123-456-7890",
-      email: "Darcy@mail.com",
-    },
-  ],
-};
-
-// 3. Modern CV Preset (Enhancv 2-Col)
+// Rich Sample Data Preset for Executive / Modern 2-Col
 export const MODERN_CV_PRESET: ResumeData = {
   personalInfo: {
-    fullName: "Andrew Clark",
-    title: "Experienced Project Manager | IT | Leadership | Cost Management",
-    email: "help@enhancv.com",
-    phone: "+1-541-754-3010",
-    location: "New York, NY, USA",
-    website: "https://andrewclark.pm",
-    linkedin: "https://linkedin.com/in/andrew-clark",
-    github: "",
-    photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+    fullName: "Elena Rostova",
+    title: "Senior Technical Product & Engineering Director",
+    email: "elena.rostova@example.com",
+    phone: "+1 (555) 432-8765",
+    location: "New York, NY",
+    website: "https://elenarostova.com",
+    linkedin: "https://linkedin.com/in/elena-rostova",
+    github: "https://github.com/elena-rostova",
+    photoUrl: "",
     showPhoto: true,
   },
   summary:
-    "With over 12 years of experience in project management, Andrew Clark brings a wealth of expertise in managing complex IT projects, particularly in cloud technology. Managed a $2M project portfolio, resulting in significant cost reductions.",
+    "Visionary Engineering Director with 10+ years of enterprise experience leading cross-functional teams of 45+ software engineers and product designers. Delivered $40M+ in annual recurring revenue growth across fintech and consumer software verticals while maintaining world-class operational excellence.",
   experiences: [
     {
-      id: "exp-1",
-      title: "Senior IT Project Manager",
-      company: "IBM",
+      id: "exp_1",
+      title: "Director of Product Engineering",
+      company: "FinTech Global Innovations",
       location: "New York, NY",
-      startDate: "2018",
-      endDate: "2023",
-      current: true,
-      bullets: [
-        "Managed complex IT projects with a focus on timing, functionality, and cost efficiency.",
-        "Oversaw a $2M project portfolio resulting in a 15% reduction in costs through strategic resource allocation.",
-        "Implemented refined agile processes leading to a 20% increase in delivery efficiency.",
-      ],
-    },
-    {
-      id: "exp-2",
-      title: "IT Project Manager",
-      company: "Microsoft",
-      location: "Redmond, WA",
-      startDate: "2014",
-      endDate: "2018",
-      current: false,
-      bullets: [
-        "Managed a range of IT projects with budgets up to $1.5M within budget constraints.",
-        "Enhanced communication efficiency by 30% by implementing advanced PM software.",
-      ],
-    },
-  ],
-  education: [
-    {
-      id: "edu-1",
-      degree: "B.S. in Computer Science",
-      field: "Information Systems",
-      institution: "Columbia University",
-      location: "New York, NY",
-      startDate: "2007",
-      endDate: "2011",
-    },
-  ],
-  skills: [
-    {
-      id: "sk-1",
-      name: "Skills",
-      items: ["Project Management", "Leadership", "Cost Management", "Cloud Knowledge", "Agile & Scrum", "PowerBI", "Risk Assessment"],
-    },
-  ],
-  strengths: [
-    {
-      id: "str-1",
-      title: "Creative Problem Solving",
-      description: "Utilize creative solutions to tackle challenges, evident in 20% delivery speed increase.",
-      icon: "trophy",
-    },
-    {
-      id: "str-2",
-      title: "Strong Leadership",
-      description: "Experienced in leading cross-functional teams of 15+ professionals.",
-      icon: "star",
-    },
-  ],
-  projects: [],
-  certifications: [
-    { id: "cert-1", name: "PMP – Project Management Professional", issuer: "PMI", date: "2016" },
-  ],
-  languages: [
-    { id: "lang-1", language: "English", proficiency: "Native", rating: 5 },
-    { id: "lang-2", language: "Spanish", proficiency: "Fluent", rating: 4 },
-  ],
-  references: [],
-};
-
-// 4. Nordic CV Preset
-export const NORDIC_CV_PRESET: ResumeData = {
-  personalInfo: {
-    fullName: "Emily Carter",
-    title: "Registered Nurse & Clinical Care Specialist",
-    email: "hello@e-mail.com",
-    phone: "123 4567890",
-    location: "London, UK",
-    website: "",
-    linkedin: "www.linkedin.com/username",
-    github: "",
-    photoUrl: "https://images.unsplash.com/photo-1594824813590-78a08d3c52e6?w=400&auto=format&fit=crop&q=80",
-    showPhoto: true,
-  },
-  summary:
-    "Experienced Registered Nurse with over 5 years of providing high-quality patient care in hospital settings. Skilled in patient assessment, medication administration, and care planning.",
-  experiences: [
-    {
-      id: "exp-1",
-      title: "Registered Nurse",
-      company: "St. Mary's Hospital",
-      location: "London, UK",
       startDate: "2020",
       endDate: "Present",
       current: true,
       bullets: [
-        "Provide patient care in emergency department, administering medications and diagnostic tests.",
-        "Collaborate with medical teams to develop care plans, ensuring high satisfaction.",
+        "Directed a 50-person product and platform engineering organization, launching next-gen investment portal scaling to $2.4B in AUM.",
+        "Reduced customer onboarding drop-off rate from 34% to 8% via AI-powered identity verification and UX redesign.",
+        "Formulated engineering KPIs and hiring roadmap, achieving 94% annualized team retention.",
+      ],
+    },
+    {
+      id: "exp_2",
+      title: "Principal Engineering Manager",
+      company: "Datadog Cloud Analytics",
+      location: "New York, NY",
+      startDate: "2016",
+      endDate: "2020",
+      current: false,
+      bullets: [
+        "Led 3 engineering squads building high-throughput log analytics dashboards handling 20TB+ daily log telemetry.",
+        "Spearheaded cloud cost optimization program that decreased infrastructure spend by $1.8M per year.",
       ],
     },
   ],
   education: [
     {
-      id: "edu-1",
-      degree: "BSc in Clinical Nursing",
-      field: "Nursing Science",
-      institution: "University of Manchester",
-      location: "Manchester, UK",
+      id: "edu_1",
+      degree: "M.S. in Computer Science & Management",
+      field: "Information Systems & Product Strategy",
+      institution: "Columbia University",
+      location: "New York, NY",
       startDate: "2014",
-      endDate: "2017",
+      endDate: "2016",
+      gpa: "3.95 / 4.0",
     },
   ],
   skills: [
     {
-      id: "sk-1",
-      name: "Clinical Skills",
-      items: ["Patient Assessment", "Emergency Care", "Empathy & Compassion", "Attention to Detail", "Team Coordination"],
+      id: "skill_1",
+      name: "Strategic Leadership",
+      items: ["Engineering Leadership", "Product Roadmap Strategy", "P&L Management ($30M+)", "Agile / OKRs", "Cross-Functional Scale"],
+    },
+    {
+      id: "skill_2",
+      name: "Technical Architecture",
+      items: ["Enterprise SaaS", "Cloud Security", "Microservices", "React & TypeScript", "PostgreSQL", "System Scalability"],
     },
   ],
-  strengths: [],
-  projects: [],
+  strengths: [
+    { id: "st_1", title: "Scale & Execution", description: "Built engineering organizations from 5 to 50+ members.", icon: "trophy" },
+    { id: "st_2", title: "Cost Optimization", description: "Delivered $1.8M in annual infrastructure savings.", icon: "diamond" },
+  ],
+  projects: [
+    {
+      id: "proj_1",
+      name: "Open-Source FinTech Compliance Protocol",
+      role: "Lead Author",
+      techStack: ["TypeScript", "Zero-Knowledge", "Node.js"],
+      link: "https://github.com/elena/compliance-protocol",
+      description: ["Enterprise cryptographic compliance protocol adopted by 15 financial institutions."],
+    },
+  ],
   certifications: [
-    { id: "cert-1", name: "Certified Professional Nurse", issuer: "NMC UK", date: "2018" },
+    { id: "cert_1", name: "Certified Scrum Master (CSM)", issuer: "Scrum Alliance", date: "2022" },
   ],
   languages: [
-    { id: "lang-1", language: "English", proficiency: "Native", rating: 5 },
-    { id: "lang-2", language: "French", proficiency: "Fluent", rating: 4 },
+    { id: "lang_1", language: "English", proficiency: "Native" },
+    { id: "lang_2", language: "French", proficiency: "Fluent" },
   ],
   references: [],
 };
 
-// 5. Blank CV Preset
-export const BLANK_CV_PRESET: ResumeData = {
-  personalInfo: {
-    fullName: "Your Name",
-    title: "Your Professional Title",
-    email: "your.email@example.com",
-    phone: "+1 (555) 000-0000",
-    location: "City, Country",
-    website: "",
-    linkedin: "",
-    github: "",
-    photoUrl: "",
-    showPhoto: false,
-  },
-  summary: "Brief professional summary highlighting your core expertise, career goals, and key achievements.",
-  experiences: [
-    {
-      id: "exp-1",
-      title: "Job Title",
-      company: "Company Name",
-      location: "Location",
-      startDate: "2023",
-      endDate: "Present",
-      current: true,
-      bullets: ["Describe your main responsibilities and achievements with measurable metrics."],
-    },
-  ],
-  education: [
-    {
-      id: "edu-1",
-      degree: "Bachelor of Science",
-      field: "Major / Field",
-      institution: "University Name",
-      location: "Location",
-      startDate: "2019",
-      endDate: "2023",
-    },
-  ],
-  skills: [
-    {
-      id: "sk-1",
-      name: "Core Skills",
-      items: ["Skill 1", "Skill 2", "Skill 3"],
-    },
-  ],
-  strengths: [],
-  projects: [],
-  certifications: [],
-  languages: [
-    { id: "lang-1", language: "English", proficiency: "Native", rating: 5 },
-  ],
-  references: [],
-};
-
-// Unified Templates Definition (12 distinct professional templates with exact supported accents)
+// Unified Templates Definition (17 distinct professional templates)
 export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
+  // ── 1. ATS / CLASSIC ──
   {
     id: "tech-cv",
     name: "Modern Tech",
     name_az: "Müasir Texniki",
-    category: "tech",
-    description: "ATS gold standard engineering layout (LaTeX sb2nov style).",
-    description_az: "FAANG və mühəndislər üçün ATS uyğun qızıl standart (sb2nov).",
+    category: "classic",
+    atsLevel: "excellent",
+    description: "RenderCV sb2nov engineering standard with high-density quantified bullets.",
+    description_az: "RenderCV sb2nov mühəndislik standartı və sıx mətn iyerarxiyası.",
     supportedAccents: ["#111827", "#1e3a8a", "#059669", "#0284c7", "#4338ca"],
     defaultAccent: "#111827",
     layoutType: "single-column",
@@ -559,8 +402,9 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     name: "Harvard Classic",
     name_az: "Harvard Klassik",
     category: "classic",
-    description: "Clean single-column Harvard ATS standard format.",
-    description_az: "Təmiz 1 sütunlu klassik Harvard ATS formatı.",
+    atsLevel: "excellent",
+    description: "Traditional single-column serif academic and executive ATS standard.",
+    description_az: "Klassik 1 sütunlu serif akademik və rəhbər ATS standartı.",
     supportedAccents: ["#111827", "#1e3a8a", "#881337", "#2c2d30"],
     defaultAccent: "#111827",
     layoutType: "single-column",
@@ -569,12 +413,60 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     presetData: TECH_CV_PRESET,
   },
   {
+    id: "classic-ats-cv",
+    name: "Classic ATS",
+    name_az: "Klassik ATS",
+    category: "classic",
+    atsLevel: "excellent",
+    description: "Ultra-clean single-column with horizontal divider rules for ATS scanners.",
+    description_az: "ATS skanerləri üçün üfüqi ayırıcı xətləri olan təmiz klassik format.",
+    supportedAccents: ["#111827", "#1e3a8a", "#2c2d30", "#059669"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 100,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "corporate-cv",
+    name: "Corporate ATS",
+    name_az: "Korporativ ATS",
+    category: "classic",
+    atsLevel: "excellent",
+    description: "Executive divider structure with core competency grid and clean hierarchy.",
+    description_az: "Əsas bacarıqlar şəbəkəsi olan ənənəvi korporativ format.",
+    supportedAccents: ["#1e3a8a", "#111827", "#059669", "#881337"],
+    defaultAccent: "#1e3a8a",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 99,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "compact-ats-cv",
+    name: "Compact Plain ATS",
+    name_az: "Sıx Sadə ATS",
+    category: "classic",
+    atsLevel: "excellent",
+    description: "Dense, plain-text parser compliant single-page format for high-volume jobs.",
+    description_az: "Maksimum sıx və avtomatlaşdırılmış oxucular üçün tam uyğun 1 səhifəlik format.",
+    supportedAccents: ["#111827", "#1e3a8a", "#2c2d30"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 100,
+    presetData: TECH_CV_PRESET,
+  },
+
+  // ── 2. MODERN ──
+  {
     id: "modern-cv",
     name: "Modern 2-Column",
     name_az: "Müasir 2-Sütun",
     category: "modern",
-    description: "2-Column layout with skill badges, strengths, and rating dots.",
-    description_az: "Bacarıq nişanları, güclü tərəflər və dil reytinqi olan 2 sütunlu format.",
+    atsLevel: "good",
+    description: "Reactive Resume Kakuna layout with left contact/skills sidebar and right timeline.",
+    description_az: "Sol tərəfdə əlaqə və bacarıqlar, sağda isə zaman xətti olan müasir format.",
     supportedAccents: ["#0284c7", "#1e3a8a", "#059669", "#4338ca", "#d97706"],
     defaultAccent: "#0284c7",
     layoutType: "two-column",
@@ -583,45 +475,18 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     presetData: MODERN_CV_PRESET,
   },
   {
-    id: "professional-cv",
-    name: "Executive Sidebar",
-    name_az: "Rəhbər Yan Sütun",
-    category: "classic",
-    description: "Executive split layout with dark sidebar, photo, and timeline.",
-    description_az: "Qaranlıq yan sütun, şəkil və zaman xətti olan rəhbər formatı.",
-    supportedAccents: ["#1e3a8a", "#059669", "#2c2d30", "#881337", "#0284c7"],
-    defaultAccent: "#1e3a8a",
-    layoutType: "sidebar",
-    supportsProfileImage: true,
-    atsScore: 92,
-    presetData: PROFESSIONAL_CV_PRESET,
-  },
-  {
-    id: "developer-cv",
-    name: "Developer Compact",
-    name_az: "Proqramçı Sıx",
-    category: "tech",
-    description: "Terminal-styled dense engineering layout with tech stack badges.",
-    description_az: "Terminal üslublu sıx mühəndislik formatı və texnoloji nişanlar.",
-    supportedAccents: ["#059669", "#0284c7", "#111827", "#4338ca"],
-    defaultAccent: "#059669",
+    id: "modern-minimal-cv",
+    name: "Modern Minimal",
+    name_az: "Müasir Minimalist",
+    category: "modern",
+    atsLevel: "good",
+    description: "Clean sans-serif modern typography with spacious section breaks.",
+    description_az: "Geniş bölmə aralıqları olan təmiz müasir tipoqrafik format.",
+    supportedAccents: ["#111827", "#0284c7", "#059669", "#4338ca"],
+    defaultAccent: "#111827",
     layoutType: "single-column",
-    supportsProfileImage: false,
-    atsScore: 98,
-    presetData: TECH_CV_PRESET,
-  },
-  {
-    id: "quotation-cv",
-    name: "Quotation & Lead",
-    name_az: "Sitat və Liderlik",
-    category: "creative",
-    description: "Executive quotation hero block with 2-column asymmetric layout (Resumify).",
-    description_az: "Böyük sitat bloku və 2 sütunlu asimmetrik liderlik formatı.",
-    supportedAccents: ["#d97706", "#1e3a8a", "#059669", "#881337"],
-    defaultAccent: "#d97706",
-    layoutType: "two-column",
     supportsProfileImage: true,
-    atsScore: 94,
+    atsScore: 96,
     presetData: MODERN_CV_PRESET,
   },
   {
@@ -629,6 +494,7 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     name: "Swiss Editorial",
     name_az: "İsveçrə Redaksiyası",
     category: "modern",
+    atsLevel: "good",
     description: "High-typography modernist Swiss grid layout with disciplined hierarchy.",
     description_az: "Yüksək tipoqrafiyalı İsveçrə modernist şəbəkə formatı.",
     supportedAccents: ["#111827", "#1e3a8a", "#881337", "#0284c7"],
@@ -639,24 +505,105 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     presetData: MODERN_CV_PRESET,
   },
   {
-    id: "corporate-cv",
-    name: "Clean Corporate",
-    name_az: "Təmiz Korporativ",
-    category: "classic",
-    description: "Traditional executive divider structure with core competency grid.",
-    description_az: "Əsas bacarıqlar şəbəkəsi olan ənənəvi korporativ format.",
-    supportedAccents: ["#1e3a8a", "#111827", "#059669", "#881337"],
+    id: "nordic-cv",
+    name: "Nordic Soft Banner",
+    name_az: "Nordik Pastel",
+    category: "modern",
+    atsLevel: "good",
+    description: "Pastel header banner with career quote & 2-column split.",
+    description_az: "Pastel göy başlıq zolağı və 2 sütunlu zərif format.",
+    supportedAccents: ["#3b82f6", "#0284c7", "#059669", "#4338ca"],
+    defaultAccent: "#3b82f6",
+    layoutType: "banner",
+    supportsProfileImage: true,
+    atsScore: 92,
+    presetData: MODERN_CV_PRESET,
+  },
+  {
+    id: "clean-modern-cv",
+    name: "Clean Modern",
+    name_az: "Təmiz Müasir",
+    category: "modern",
+    atsLevel: "good",
+    description: "Balanced contemporary single-column layout with left date column.",
+    description_az: "Sol tərəfdə tarix sütunu olan balanslaşdırılmış müasir format.",
+    supportedAccents: ["#1e3a8a", "#0284c7", "#059669", "#111827"],
     defaultAccent: "#1e3a8a",
+    layoutType: "two-column",
+    supportsProfileImage: true,
+    atsScore: 97,
+    presetData: TECH_CV_PRESET,
+  },
+
+  // ── 3. TECH & ENGINEERING ──
+  {
+    id: "developer-cv",
+    name: "Developer Compact",
+    name_az: "Proqramçı Sıx",
+    category: "tech",
+    atsLevel: "good",
+    description: "Terminal-styled dense engineering layout with tech stack badges.",
+    description_az: "Terminal üslublu sıx mühəndislik formatı və texnoloji nişanlar.",
+    supportedAccents: ["#059669", "#0284c7", "#111827", "#4338ca"],
+    defaultAccent: "#059669",
     layoutType: "single-column",
     supportsProfileImage: false,
-    atsScore: 99,
+    atsScore: 98,
     presetData: TECH_CV_PRESET,
   },
   {
+    id: "engineering-cv",
+    name: "Engineering Terminal",
+    name_az: "Mühəndis Terminalı",
+    category: "tech",
+    atsLevel: "good",
+    description: "Monospace technical hierarchy with quantified impacts and GitHub badges.",
+    description_az: "Ölçülən nəticələr və GitHub nişanları olan monospaced mühəndis formatı.",
+    supportedAccents: ["#111827", "#059669", "#0284c7", "#4338ca"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 98,
+    presetData: TECH_CV_PRESET,
+  },
+  {
+    id: "academic-cv",
+    name: "Academic Research",
+    name_az: "Akademik Tədqiqat",
+    category: "tech",
+    atsLevel: "excellent",
+    description: "LaTeX-inspired curriculum vitae for researchers, professors, and scientists.",
+    description_az: "Tədqiqatçılar və alimlər üçün LaTeX üslublu akademik CV formatı.",
+    supportedAccents: ["#111827", "#1e3a8a", "#881337"],
+    defaultAccent: "#111827",
+    layoutType: "single-column",
+    supportsProfileImage: false,
+    atsScore: 100,
+    presetData: TECH_CV_PRESET,
+  },
+
+  // ── 4. EXECUTIVE ──
+  {
+    id: "professional-cv",
+    name: "Executive Sidebar",
+    name_az: "Rəhbər Yan Sütun",
+    category: "executive",
+    atsLevel: "good",
+    description: "Executive split layout with dark sidebar, photo, and leadership timeline.",
+    description_az: "Qaranlıq yan sütun, şəkil və zaman xətti olan rəhbər formatı.",
+    supportedAccents: ["#1e3a8a", "#059669", "#2c2d30", "#881337", "#0284c7"],
+    defaultAccent: "#1e3a8a",
+    layoutType: "sidebar",
+    supportsProfileImage: true,
+    atsScore: 92,
+    presetData: MODERN_CV_PRESET,
+  },
+  {
     id: "executive-cv",
-    name: "Moderncv Timeline",
-    name_az: "Moderncv Zaman Xətti",
-    category: "classic",
+    name: "Executive Timeline",
+    name_az: "Rəhbər Zaman Xətti",
+    category: "executive",
+    atsLevel: "good",
     description: "LaTeX moderncv layout with left date metadata columns.",
     description_az: "Sol tərəfdə tarix sütunları olan LaTeX moderncv formatı.",
     supportedAccents: ["#1e3a8a", "#0284c7", "#111827", "#059669"],
@@ -667,11 +614,29 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     presetData: TECH_CV_PRESET,
   },
   {
+    id: "quotation-cv",
+    name: "Quotation & Lead",
+    name_az: "Sitat və Liderlik",
+    category: "executive",
+    atsLevel: "creative",
+    description: "Executive quotation hero block with 2-column asymmetric layout (Resumify).",
+    description_az: "Böyük sitat bloku və 2 sütunlu asimmetrik liderlik formatı.",
+    supportedAccents: ["#d97706", "#1e3a8a", "#059669", "#881337"],
+    defaultAccent: "#d97706",
+    layoutType: "two-column",
+    supportsProfileImage: true,
+    atsScore: 94,
+    presetData: MODERN_CV_PRESET,
+  },
+
+  // ── 5. CREATIVE ──
+  {
     id: "creative-cv",
     name: "Onyx Creative",
     name_az: "Onyx Kreativ",
     category: "creative",
-    description: "Reactive Resume Onyx style with bold colored header banner.",
+    atsLevel: "creative",
+    description: "Reactive Resume Onyx style with bold colored header banner and skill badges.",
     description_az: "Müasir rəngli başlıq və texnologiya kartları olan Onyx formatı.",
     supportedAccents: ["#1e3a8a", "#4338ca", "#059669", "#d97706"],
     defaultAccent: "#1e3a8a",
@@ -680,46 +645,21 @@ export const UNIFIED_TEMPLATES: TemplateDefinition[] = [
     atsScore: 90,
     presetData: MODERN_CV_PRESET,
   },
-  {
-    id: "nordic-cv",
-    name: "Nordic Soft Banner",
-    name_az: "Nordik Pastel",
-    category: "creative",
-    description: "Pastel header banner with career quote & 2-column split.",
-    description_az: "Pastel göy başlıq zolağı və 2 sütunlu zərif format.",
-    supportedAccents: ["#3b82f6", "#0284c7", "#059669", "#4338ca"],
-    defaultAccent: "#3b82f6",
-    layoutType: "banner",
-    supportsProfileImage: true,
-    atsScore: 92,
-    presetData: NORDIC_CV_PRESET,
-  },
-  {
-    id: "compact-ats-cv",
-    name: "Compact Plain ATS",
-    name_az: "Sıx Sadə ATS",
-    category: "tech",
-    description: "Dense, plain-text parser compliant single-page format.",
-    description_az: "Maksimum sıx və avtomatlaşdırılmış oxucular üçün tam uyğun format.",
-    supportedAccents: ["#111827", "#1e3a8a", "#2c2d30"],
-    defaultAccent: "#111827",
-    layoutType: "single-column",
-    supportsProfileImage: false,
-    atsScore: 100,
-    presetData: TECH_CV_PRESET,
-  },
+
+  // ── 6. CLEAN CANVAS ──
   {
     id: "blank-cv",
     name: "Clean Canvas",
     name_az: "Təmiz Kətan",
     category: "classic",
-    description: "Fresh blank canvas to create your custom resume.",
+    atsLevel: "good",
+    description: "Fresh blank canvas to create your custom resume from scratch.",
     description_az: "Öz CV-nizi sıfırdan yaratmaq üçün təmiz kətan.",
     supportedAccents: ["#111827", "#1e3a8a", "#0284c7"],
     defaultAccent: "#111827",
     layoutType: "single-column",
     supportsProfileImage: false,
     atsScore: 95,
-    presetData: BLANK_CV_PRESET,
+    presetData: TECH_CV_PRESET,
   },
 ];
