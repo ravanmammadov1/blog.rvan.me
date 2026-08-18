@@ -24,6 +24,8 @@ const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const ToolDetailPage = lazy(() => import("./pages/ToolDetailPage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
+const TopicHubPage = lazy(() => import("./pages/TopicHubPage"));
+const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
@@ -49,6 +51,8 @@ function AppRoutes() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/blog" element={<BlogArchive />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
+      <Route path="/topics" element={<TopicArchivePage />} />
+      <Route path="/topics/:topicSlug" element={<TopicHubPage />} />
       <Route path="/tools" element={<ToolsArchive />} />
       <Route path="/tools/:toolId" element={<ToolDetailPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -75,6 +79,8 @@ function AppRoutes() {
       <Route path="/az/contact" element={<ContactPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
+      <Route path="/az/topics" element={<TopicArchivePage />} />
+      <Route path="/az/topics/:topicSlug" element={<TopicHubPage />} />
       <Route path="/az/tools" element={<ToolsArchive />} />
       <Route path="/az/tools/:toolId" element={<ToolDetailPage />} />
       <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />

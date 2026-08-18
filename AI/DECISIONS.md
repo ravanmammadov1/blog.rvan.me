@@ -155,3 +155,24 @@
 * **Consequences**:
   - *Pros*: 100% client-side privacy; zero external AI API costs or latency; fully explainable heuristic scoring; 41.41KB code-split chunk; deepens the **USE** pillar of the platform.
   - *Cons*: None.
+
+---
+
+## ADR-013: Topic Ecosystem Hubs & Client-Side Global Discovery Engine
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: The platform contained high-value editorial essays, interactive tools, and font/icon specimens that functioned as discrete units. Users and search crawlers needed structured semantic topical pillars connecting the entire learning and tooling journey.
+* **Decision**:
+  1. Create 4 authoritative Topic Hubs (`src/lib/topicHubs.ts`):
+     - `/topics/typography`: Modular type scales, fluid clamp math, font pairings, Google Fonts specimens.
+     - `/topics/design-psychology`: Visual hierarchy, Gestalt laws, Von Restorff effect, cognitive fluency.
+     - `/topics/marketing-psychology`: Conversion copywriting, pricing psychology, loss aversion, persuasion heuristics.
+     - `/topics/accessibility`: APCA perceptual contrast, WCAG 2.1 comparative ratios, inclusive tokens.
+  2. Implement `TopicHubPage.tsx` and `TopicArchivePage.tsx` rendering foundational principles, interactive tool links, curated essays, and domain resources.
+  3. Implement client-side `GlobalSearchModal.tsx` (`Cmd+K`) searching across all articles, tools, topic hubs, and resources with zero backend latency.
+  4. Deploy Resource $\rightarrow$ Tool discovery bridges on Font detail pages (`FontDetailPage.tsx` $\rightarrow$ `/tools/typography-scale`).
+  5. Fully localize all hubs for English and Azerbaijani (`/topics/*` and `/az/topics/*`), with `CollectionPage` JSON-LD schemas and sitemap entries.
+* **Consequences**:
+  - *Pros*: Provides natural search acquisition entry points; increases multi-page session depth; interconnects LEARN, USE, and DISCOVER pillars; 100% pre-rendered and indexable.
+  - *Cons*: None.
+

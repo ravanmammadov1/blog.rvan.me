@@ -66,6 +66,14 @@
       "destination": "/resources/:slug/index.html"
     },
     {
+      "source": "/topics",
+      "destination": "/topics/index.html"
+    },
+    {
+      "source": "/topics/:slug",
+      "destination": "/topics/:slug/index.html"
+    },
+    {
       "source": "/admin/linkedin",
       "destination": "/admin/linkedin/index.html"
     },

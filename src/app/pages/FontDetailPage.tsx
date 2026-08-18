@@ -406,6 +406,34 @@ export default function FontDetailPage() {
             </div>
           </div>
 
+          {/* Resource -> Tool Discovery Bridge */}
+          <div className="p-6 md:p-8 rounded-3xl border border-sky-500/30 bg-sky-500/5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 mono">
+                  {language === "az" ? "TİPOQRAFİYA ALƏTİ" : "PRACTICAL TYPOGRAPHY WORKBENCH"}
+                </span>
+                <h3 className="text-xl font-bold text-foreground">
+                  {language === "az"
+                    ? `${font.family} üçün Elastik CSS clamp() Miqyası Qurun`
+                    : `Calculate Fluid CSS clamp() Scale for ${font.family}`}
+                </h3>
+                <p className="text-xs text-muted-foreground max-w-2xl">
+                  {language === "az"
+                    ? `Bu şrift ailəsini riyazi modul miqyasda sınaqdan keçirin və canlı ekran simulyatoru ilə responsiv CSS tokenləri əldə edin.`
+                    : `Test ${font.family} across harmonic modular scales and export production-ready fluid typography tokens with live viewport simulation.`}
+                </p>
+              </div>
+              <Link
+                to={getLocalizedPath("/tools/typography-scale")}
+                className="inline-flex items-center gap-2 rounded-xl bg-sky-400 px-5 py-2.5 text-xs font-bold text-black uppercase tracking-wider mono shrink-0 hover:bg-sky-300 transition-colors"
+              >
+                <span>{language === "az" ? "Clamp Kalkulyatorunu Aç" : "Launch Scale Tool"}</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
           {/* Similar Fonts Section */}
           {similarFonts.length > 0 && (
             <div className="pt-8 border-t border-white/10 space-y-6">

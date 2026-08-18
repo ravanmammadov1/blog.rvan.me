@@ -79,6 +79,41 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/topics",
+    title: "Design & Marketing Topic Hubs — Rvan.me",
+    description: "Explore curated domain hubs across typography systems, design neuroscience, marketing psychology, and digital accessibility.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/topics/typography",
+    title: "Typography Systems & Responsive Font Scale Hub — Rvan.me",
+    description: "Explore responsive typography systems, mathematical type scales, CSS clamp() token generators, and master editorial essays on typographic hierarchy.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/topics/design-psychology",
+    title: "Design Psychology, Perception & Cognitive Heuristics Hub — Rvan.me",
+    description: "Understand the neuroscience of visual attention, eye-tracking patterns, Gestalt grouping, and why human brains process design structures predictably.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/topics/marketing-psychology",
+    title: "Marketing Psychology, Pricing & Conversion Optimization Hub — Rvan.me",
+    description: "Master conversion copywriting, psychological pricing models, risk reversal mechanics, and customer-centric value propositions with empirical heuristic tools.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/topics/accessibility",
+    title: "Digital Accessibility, APCA Contrast & Inclusive Design Hub — Rvan.me",
+    description: "Explore modern color accessibility, the W3C Silver APCA 0.98G standard, typography legibility thresholds, and accessible design system token workflows.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/resume-builder",
     title: "Free ATS Resume & CV Builder — HR-Approved Vector PDF Generator",
     description: "Create professional ATS-compliant resumes with real-time preview, ATS score checker, and instant high-quality vector PDF download. Built for engineers, designers, and executives.",
@@ -586,6 +621,26 @@ const staticAzTranslations = {
   "/opportunities": {
     title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
     description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
+  },
+  "/topics": {
+    title: "Dizayn və Marketinq Mövzu Mərkəzləri — Rvan.me",
+    description: "Tipoqrafiya, dizayn psixologiyası, marketinq konversiyası və rəqəmsal əlçatanlıq üzrə kurasiya edilmiş bilik mərkəzləri.",
+  },
+  "/topics/typography": {
+    title: "Tipoqrafiya Sistemləri və Elastik Şrift Miqyası Mərkəzi — Rvan.me",
+    description: "Responsiv tipoqrafiya sistemləri, riyazi şrift miqyasları, CSS clamp() generatorları və tipoqrafik iyerarxiya üzrə elmi məqalələr.",
+  },
+  "/topics/design-psychology": {
+    title: "Dizayn Psixologiyası, Qavrayış və Koqnitiv Prinsiplər Mərkəzi — Rvan.me",
+    description: "Vizual diqqətin neyroelmini, baxış trayektoriyalarını, Geştalt qruplaşmasını və insan beyninin dizaynı necə qavradığını öyrənin.",
+  },
+  "/topics/marketing-psychology": {
+    title: "Marketinq Psixologiyası, Qiymət və Konversiya Mərkəzi — Rvan.me",
+    description: "Konversiya kopiraytinqi, qiymət modelləri, risk ləğvi və müştəri yönümlü dəyər təkliflərini elmi hevristik alətlərlə öyrənin.",
+  },
+  "/topics/accessibility": {
+    title: "Rəqəmsal Əlçatanlıq, APCA Kontrast və İnklyuziv Dizayn Mərkəzi — Rvan.me",
+    description: "Müasir rəng əlçatanlığı, W3C Silver APCA 0.98G standartı, tipoqrafik oxunaqlıq hədləri və əlçatan dizayn sistemi iş axınları.",
   },
   "/tools/persuasion-analyzer": {
     title: "Marketinq və Persuasiya Mətn Analizatoru — Rvan.me",
