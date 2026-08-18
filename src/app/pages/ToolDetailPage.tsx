@@ -8,12 +8,12 @@ import { Wrench, ArrowLeft, Sparkles } from "lucide-react";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { Button } from "../components/ui/Button";
 
-// Lazy-load individual tools
-const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
-const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
-const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator"));
-const ApcaContrastCalculator = lazy(() => import("../components/tools/contrast/ApcaContrastCalculator"));
-const PersuasionAnalyzer = lazy(() => import("../components/tools/persuasion/PersuasionAnalyzer"));
+// Lazy-load individual tools with fail-safe default/named export resolution
+const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder").then(m => ({ default: m.default || (m as any).OpenPeepsBuilder })));
+const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder").then(m => ({ default: m.default || (m as any).ResumeBuilder })));
+const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator").then(m => ({ default: m.default || (m as any).TypographyScaleCalculator })));
+const ApcaContrastCalculator = lazy(() => import("../components/tools/contrast/ApcaContrastCalculator").then(m => ({ default: m.default || (m as any).ApcaContrastCalculator })));
+const PersuasionAnalyzer = lazy(() => import("../components/tools/persuasion/PersuasionAnalyzer").then(m => ({ default: m.default || (m as any).PersuasionAnalyzer })));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();

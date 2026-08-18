@@ -314,7 +314,7 @@ const ResumeEditorCanvasInner: React.FC<{
  * Main Top-Level Exported CV Builder Component with Full Gallery Switcher
  */
 export const ResumeBuilder: React.FC = () => {
-  const [currentView, setCurrentView] = useState<"gallery" | "editor">("editor");
+  const [currentView, setCurrentView] = useState<"gallery" | "editor">("gallery");
   const [activeTemplate, setActiveTemplate] = useState<TemplateId>("tech-cv");
   const [activeColor, setActiveColor] = useState<string>("#111827");
 
@@ -336,22 +336,25 @@ export const ResumeBuilder: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
-      {currentView === "gallery" ? (
-        <TemplateGalleryView
-          onSelectTemplate={handleSelectFromGallery}
-          activeTemplateId={activeTemplate}
-        />
-      ) : (
-        <ResumeEditorProvider
-          initialData={TECH_CV_PRESET}
-          initialTheme={initialTheme}
-        >
+    <ResumeEditorProvider
+      initialData={TECH_CV_PRESET}
+      initialTheme={initialTheme}
+    >
+      <div className="w-full">
+        {currentView === "gallery" ? (
+          <TemplateGalleryView
+            onSelectTemplate={handleSelectFromGallery}
+            activeTemplateId={activeTemplate}
+          />
+        ) : (
           <ResumeEditorCanvasInner
             onOpenGallery={() => setCurrentView("gallery")}
           />
-        </ResumeEditorProvider>
-      )}
-    </div>
+        )}
+      </div>
+    </ResumeEditorProvider>
   );
 };
+
+export default ResumeBuilder;
+

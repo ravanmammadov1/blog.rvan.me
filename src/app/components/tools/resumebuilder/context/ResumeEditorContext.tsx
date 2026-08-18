@@ -73,10 +73,59 @@ export interface ResumeEditorContextType {
 
 const ResumeEditorContext = createContext<ResumeEditorContextType | null>(null);
 
-export const useResumeEditor = () => {
+export const useResumeEditor = (): ResumeEditorContextType => {
   const context = useContext(ResumeEditorContext);
   if (!context) {
-    throw new Error("useResumeEditor must be used within a ResumeEditorProvider");
+    // Safe fallback for standalone gallery previews
+    return {
+      data: {
+        personalInfo: { fullName: "", title: "", email: "", phone: "", location: "", website: "", linkedin: "", github: "", showPhoto: false },
+        summary: "",
+        experiences: [],
+        education: [],
+        skills: [],
+        strengths: [],
+        projects: [],
+        certifications: [],
+        languages: [],
+        references: [],
+      },
+      theme: { template: "tech-cv", accentColor: "#111827", fontFamily: "sans", density: "standard", paperSize: "a4" },
+      setData: () => {},
+      setTheme: () => {},
+      undo: () => {},
+      redo: () => {},
+      canUndo: false,
+      canRedo: false,
+      selectedElement: null,
+      selectElement: () => {},
+      editingId: null,
+      setEditingId: () => {},
+      updateFieldByPath: () => {},
+      addExperience: () => {},
+      removeExperience: () => {},
+      addExpBullet: () => {},
+      removeExpBullet: () => {},
+      updateExpBullet: () => {},
+      addEducation: () => {},
+      removeEducation: () => {},
+      addSkillCategory: () => {},
+      removeSkillCategory: () => {},
+      addSkillItem: () => {},
+      removeSkillItem: () => {},
+      updateSkillItem: () => {},
+      addProject: () => {},
+      removeProject: () => {},
+      addReference: () => {},
+      removeReference: () => {},
+      updatePhoto: () => {},
+      removePhoto: () => {},
+      togglePhoto: () => {},
+      zoom: 1,
+      setZoom: () => {},
+      activeDrawer: null,
+      setActiveDrawer: () => {},
+    };
   }
   return context;
 };

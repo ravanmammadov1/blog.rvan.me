@@ -126,6 +126,7 @@ export const TemplateGalleryView: React.FC<TemplateGalleryViewProps> = ({
           return (
             <div
               key={template.id}
+              data-template-id={template.id}
               className={`group flex flex-col rounded-2xl bg-neutral-900/90 border transition-all duration-200 overflow-hidden ${
                 isSelected
                   ? "border-primary shadow-xl shadow-primary/10 ring-1 ring-primary"
