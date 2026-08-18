@@ -1,66 +1,65 @@
 # PROJECT TASK MANAGEMENT
 
-## Active Phase: Phase 0 — AI Project Control & Baseline Memory
+## Active Phase: Phase 1 — SEO Architecture, Sitemap & Interlinking
 
 ---
 
-## 1. Current Sprint Tasks
+## 1. Phase 1 Sprint Tasks (Immediate Execution)
 
 | Task ID | Description | Category | Priority | Status | Owner |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `TASK-001` | Establish AI Project Control Suite in `AI/` directory | Architecture | P0 | Done | Primary Agent |
-| `TASK-002` | Audit existing repository, routes, CMS schemas, and dependencies | Audit | P0 | Done | Primary Agent |
-| `TASK-003` | Verify production build baseline (`npm run build`) | QA / Build | P0 | Done | Primary Agent |
-| `TASK-004` | Create Git checkpoint commit for AI memory system | Git | P0 | Pending | Primary Agent |
+| `SITEMAP-01` | Unify `api/sitemap.ts` and `generate-seo-pages.mjs` to serve all 39 EN/AZ essays, tools, and curated resources with hreflang | SEO | P0 | Ready | Primary Agent |
+| `CANONICAL-01` | Canonicalize duplicate profile routes (`/profile`, `/ravanmammadov` → `/ravan-mammadov`) & add noindex to `/admin/linkedin` | SEO / Security | P0 | Ready | Primary Agent |
+| `INTERLINK-01` | Build `EcosystemBridgeCard.tsx` and inject contextual tool & resource links into all 39 master essays | UX / SEO | P1 | Ready | Primary Agent |
+| `FONT-TIER-01` | Implement 2-tier font indexation (Top 200 curated in sitemap; long-tail rendered dynamically via SPA) | SEO / Perf | P1 | Ready | Primary Agent |
+| `BUNDLE-OPT-01` | Split root `index.js` bundle to improve mobile LCP Core Web Vitals | Performance | P2 | Ready | Primary Agent |
 
 ---
 
-## 2. Phase 1 Backlog: Core UX, SEO Architecture & Performance Hardening
+## 2. Phase 2 Backlog: High-Utility Creative Tools Suite
 
 | Task ID | Description | Category | Priority | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `TASK-101` | Optimize `index.js` main bundle by moving heavy UI utilities to route-level lazy chunks | Performance | P1 | Ready |
-| `TASK-102` | Audit mobile touch targets and navigation drawer on iOS/Android viewports | UX / Mobile | P1 | Ready |
-| `TASK-103` | Validate OpenGraph and Twitter card generation across all 4,700+ routes | SEO | P1 | Ready |
-| `TASK-104` | Audit Azerbaijani string translations in `src/lib/i18n/translations.ts` for 100% UI coverage | i18n | P1 | Ready |
-| `TASK-105` | Enhance structured JSON-LD schemas on Tools and Font detail pages (`SoftwareApplication`, `ItemPage`) | SEO | P2 | Ready |
+| `TOOL-TYPE-01` | Build **Fluid Typography Scale & Clamp Calculator** (`/tools/typography-scale`) | Interactive Tool | P1 | Backlog |
+| `TOOL-APCA-01` | Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`) | Interactive Tool | P1 | Backlog |
+| `TOOL-CTA-01` | Build **Marketing Headline & CTA Impact Analyzer** (`/tools/headline-analyzer`) | Interactive Tool | P2 | Backlog |
+| `TOOL-RESUME-01` | Add section drag-and-drop reordering & JSON backup to **ATS Resume Builder** | Tool Upgrade | P2 | Backlog |
 
 ---
 
-## 3. Phase 2 Backlog: High-Utility Creative Tools Suite
+## 3. Phase 3 Backlog: Resource Discovery & Specimen Engines
 
 | Task ID | Description | Category | Priority | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `TASK-201` | Build **Fluid Typography Scale & Clamp Generator** (`/tools/typography-scale`) | Interactive Tool | P1 | Backlog |
-| `TASK-202` | Build **Color Contrast & APCA Matrix Evaluator** (`/tools/contrast-matrix`) | Interactive Tool | P1 | Backlog |
-| `TASK-203` | Build **Marketing Headline & CTA Impact Analyzer** (`/tools/headline-analyzer`) | Interactive Tool | P2 | Backlog |
-| `TASK-204` | Add drag-and-drop section reordering & JSON backup to **ATS Resume Builder** | Tool Upgrade | P2 | Backlog |
+| `DISCOVERY-01` | Global command palette / fuzzy search (`Cmd/Ctrl + K`) across all tools, articles, and fonts | Discovery | P1 | Backlog |
+| `SPECIMEN-01` | Variable font axis sliders (Weight, Width, Slant, Optical Size) & font pairing engine on font detail pages | Specimen Engine | P2 | Backlog |
+| `ICON-01` | Direct one-click code copy (SVG, React JSX snippet, Tailwind class) on Lucide icon cards | Asset Tool | P2 | Backlog |
 
 ---
 
-## 4. Phase 3 Backlog: Resource Discovery & Search Engine Deepening
+## 4. Phase 4 Backlog: User Accounts & Creative Workbench
 
 | Task ID | Description | Category | Priority | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `TASK-301` | Implement global command palette / fuzzy search (`Cmd/Ctrl + K`) across all tools & essays | Discovery | P1 | Backlog |
-| `TASK-302` | Add variable font axis playground (Weight, Width, Slant, Optical Size) on font detail pages | Specimen Engine | P2 | Backlog |
-| `TASK-303` | Implement direct one-click code copy (SVG, React JSX, Tailwind) on Lucide icon specimen cards | Asset Tool | P2 | Backlog |
+| `AUTH-01` | Bookmarking essays, saving font pairings, and reading history linked to Firebase Google Auth | Auth Utility | P2 | Backlog |
+| `AUTH-02` | Cloud resume synchronization for ATS Resume Builder drafts with local storage sync | User Storage | P2 | Backlog |
+| `AUTH-03` | "My Creative Workbench" profile dashboard | User Dashboard | P3 | Backlog |
 
 ---
 
-## 5. Phase 4 Backlog: User Accounts & Saved Collections
+## 5. Phase 5 Backlog: Editorial Content & Sanity CMS
 
 | Task ID | Description | Category | Priority | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `TASK-401` | Implement user bookmarking / saved articles and tools via Firebase Auth | Auth Utility | P2 | Backlog |
-| `TASK-402` | Enable resume draft cloud synchronization linked to user Google account | User Storage | P2 | Backlog |
+| `CMS-01` | Upgrade Sanity schemas with formal references for Authors, Related Tools, and Topic Clusters | CMS Schema | P3 | Backlog |
+| `AUTO-01` | Automate LinkedIn publishing queue via scheduled Vercel cron endpoints | Automation | P3 | Backlog |
 
 ---
 
 ## Task Completion Protocol
 When completing a task:
-1. Ensure the feature satisfies the **Definition of Done** in `AI/RULES.md`.
-2. Run `npm run build` to verify production compilation.
+1. Ensure the deliverable satisfies the **Definition of Done** in `AI/RULES.md`.
+2. Run `npm run build` to verify production compilation and route generation.
 3. Mark task as `Done` in `AI/TASKS.md`.
 4. Update `AI/CURRENT_STATE.md`.
-5. Create a descriptive Git commit.
+5. Create a descriptive Git checkpoint commit.
