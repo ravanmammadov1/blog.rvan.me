@@ -84,6 +84,138 @@ export const ECOSYSTEM_RELATIONSHIPS: Record<string, ArticleRelationship> = {
     ],
   },
 
+  // 00B. APCA vs WCAG 2.1 Contrast Guide
+  "apca-vs-wcag-contrast-accessibility-guide": {
+    slug: "apca-vs-wcag-contrast-accessibility-guide",
+    cluster: "Design Psychology",
+    primaryTopic: {
+      en: "APCA vs WCAG 2.1 Contrast Science",
+      az: "APCA və WCAG 2.1 Kontrast Elmi",
+    },
+    toolBridge: {
+      type: "tool",
+      path: "/tools/contrast-matrix",
+      badge: { en: "ACCESSIBILITY BENCH", az: "ƏLÇATANLIQ ALƏTİ" },
+      title: {
+        en: "Audit Contrast with APCA 0.98G Matrix",
+        az: "APCA 0.98G Matrisi ilə Kontrastı Yoxlayın",
+      },
+      description: {
+        en: "Evaluate perceptual lightness contrast (Lc), compare WCAG 2.1 ratios side-by-side, and inspect 2D font size vs. weight compliance.",
+        az: "Perseptual parlaqlıq kontrastını (Lc) yoxlayın, WCAG 2.1 nisbətlərini müqayisə edin və 2D şrift matrisi ilə test aparın.",
+      },
+      ctaText: { en: "Launch Contrast Matrix", az: "Matrisi Başlat" },
+    },
+    resourceBridge: {
+      type: "tool",
+      path: "/tools/typography-scale",
+      badge: { en: "TYPE INTEGRATION", az: "TİPOQRAFİYA ALƏTİ" },
+      title: {
+        en: "Calculate Accessible Type Scales",
+        az: "Əlçatan Şrift Miqyası Qurun",
+      },
+      description: {
+        en: "Ensure your responsive font sizes meet APCA spatial frequency thresholds across all viewport breakpoints.",
+        az: "Responsiv şrift ölçülərinizin bütün ekranlarda APCA məkan tezliyi hədlərinə uyğun olmasını təmin edin.",
+      },
+      ctaText: { en: "Launch Scale Calculator", az: "Kalkulyatoru Başlat" },
+    },
+    relatedSlugs: [
+      "why-error-is-red-success-green-links-blue",
+      "psychology-of-dark-mode-oled-black-ui",
+      "why-contrast-makes-designs-impossible-to-ignore-von-restorff",
+      "guide-responsive-fluid-typography-css-clamp",
+    ],
+  },
+
+  // 00C. Cognitive Conversion Copywriting Guide
+  "guide-cognitive-conversion-copywriting": {
+    slug: "guide-cognitive-conversion-copywriting",
+    cluster: "Pricing & Marketing Psychology",
+    primaryTopic: {
+      en: "Cognitive Heuristics & Conversion Copy",
+      az: "Koqnitiv Hevristika və Konversiya Mətni",
+    },
+    toolBridge: {
+      type: "tool",
+      path: "/tools/persuasion-analyzer",
+      badge: { en: "COPYWRITING BENCH", az: "ANALİZ ALƏTİ" },
+      title: {
+        en: "Analyze Marketing Copy Heuristics",
+        az: "Marketinq Mətnini Canlı Analiz Edin",
+      },
+      description: {
+        en: "Audit headlines, value propositions, and CTA buttons across 8 cognitive dimensions with instant heuristic scores and actionable rewrites.",
+        az: "Başlıqları, dəyər təkliflərini və CTA düymələrini 8 koqnitiv meyar üzrə analiz edin, dəqiq xallar və aydın tövsiyələr əldə edin.",
+      },
+      ctaText: { en: "Launch Persuasion Analyzer", az: "Analizatoru Başlat" },
+    },
+    resourceBridge: {
+      type: "resource",
+      path: "/fonts/inter",
+      badge: { en: "EDITORIAL TYPE", az: "REDAKSİYA ŞRİFTİ" },
+      title: {
+        en: "Inter Variable Specimen",
+        az: "Inter Dəyişən Şrift Nümunəsi",
+      },
+      description: {
+        en: "Test editorial readability with clean, legible variable typography.",
+        az: "Oxunaqlı variativ şriftlə redaksiya mətnlərini sınaqdan keçirin.",
+      },
+      ctaText: { en: "Explore Inter Specimen", az: "Nümunəyə Bax" },
+    },
+    relatedSlugs: [
+      "why-999-feels-cheaper-than-1000-pricing-psychology",
+      "why-free-makes-people-buy-zero-price-effect",
+      "fomo-loss-aversion-scarcity-psychology",
+      "why-only-3-left-makes-you-panic-buy-scarcity",
+    ],
+  },
+
+  // 00D. 3-Second Visual Hierarchy Framework
+  "visual-hierarchy-framework-web-interfaces": {
+    slug: "visual-hierarchy-framework-web-interfaces",
+    cluster: "Design Psychology",
+    primaryTopic: {
+      en: "Visual Hierarchy & Eye-Flow Heuristics",
+      az: "Vizual İyerarxiya və Baxış Axını Hevristikası",
+    },
+    toolBridge: {
+      type: "tool",
+      path: "/tools/typography-scale",
+      badge: { en: "HIERARCHY WORKBENCH", az: "İYERARXİYA ALƏTİ" },
+      title: {
+        en: "Structure Typographic Hierarchy",
+        az: "Tipoqrafik İyerarxiya Qurun",
+      },
+      description: {
+        en: "Generate harmonic modular scale ratios that establish instant, unmistakable visual contrast between headings and body copy.",
+        az: "Başlıqlar və əsas mətn arasında dərhal aydın vizual kontrast yaradan harmonik modul miqyas nisbətləri qurun.",
+      },
+      ctaText: { en: "Launch Scale Calculator", az: "Kalkulyatoru Başlat" },
+    },
+    resourceBridge: {
+      type: "tool",
+      path: "/tools/resume-builder",
+      badge: { en: "PRACTICAL TEST", az: "PRAKTİK TEST" },
+      title: {
+        en: "Test Scanpaths on ATS Resumes",
+        az: "CV Üzərində Baxış Trayektoriyalarını Test Edin",
+      },
+      description: {
+        en: "Apply F-pattern and Z-pattern scanning rules to professional curriculum vitae layouts.",
+        az: "F-sxem və Z-sxem baxış qaydalarını peşəkar CV strukturlarına tətbiq edin.",
+      },
+      ctaText: { en: "Launch Resume Builder", az: "CV Alətini Aç" },
+    },
+    relatedSlugs: [
+      "why-eyes-look-at-certain-things-first",
+      "why-negative-space-makes-designs-feel-expensive",
+      "why-we-group-things-together-gestalt-proximity",
+      "why-contrast-makes-designs-impossible-to-ignore-von-restorff",
+    ],
+  },
+
   // 01. Visual Hierarchy & Eye-Tracking
   "why-eyes-look-at-certain-things-first": {
     slug: "why-eyes-look-at-certain-things-first",

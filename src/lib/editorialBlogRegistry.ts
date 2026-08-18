@@ -1,5 +1,8 @@
 import { BlogPost } from "../types/blog";
 import { GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY } from "./blogs/articleResponsiveTypographyGuide";
+import { GUIDE_APCA_ACCESSIBILITY } from "./blogs/articleApcaAccessibilityGuide";
+import { GUIDE_COGNITIVE_COPYWRITING } from "./blogs/articleCognitiveCopywritingGuide";
+import { GUIDE_VISUAL_HIERARCHY } from "./blogs/articleVisualHierarchyGuide";
 import { ARTICLES_01_TO_10 } from "./blogs/articles01to10";
 import { ARTICLES_11_TO_20 } from "./blogs/articles11to20";
 import { ARTICLES_21_TO_30 } from "./blogs/articles21to30";
@@ -11,16 +14,19 @@ import { ARTICLES_31_TO_39 } from "./blogs/articles31to39";
  */
 export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY,
+  GUIDE_APCA_ACCESSIBILITY,
+  GUIDE_COGNITIVE_COPYWRITING,
+  GUIDE_VISUAL_HIERARCHY,
   ...ARTICLES_01_TO_10,
   ...ARTICLES_11_TO_20,
   ...ARTICLES_21_TO_30,
   ...ARTICLES_31_TO_39,
 ];
 
-// Verify that the count is at least 40
-if (MASTER_EDITORIAL_BLOGS.length < 40) {
+// Verify that the count is at least 43
+if (MASTER_EDITORIAL_BLOGS.length < 43) {
   console.warn(
-    `[editorialBlogRegistry] Expected at least 40 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
+    `[editorialBlogRegistry] Expected at least 43 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
   );
 }
 

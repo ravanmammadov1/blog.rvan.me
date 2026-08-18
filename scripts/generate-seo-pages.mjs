@@ -122,6 +122,30 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/blog/apca-vs-wcag-contrast-accessibility-guide",
+    title: "APCA vs. WCAG 2.1: The Definitive Contrast & Accessibility Guide — Rvan.me",
+    description: "An architectural deep-dive comparing WCAG 2.x relative luminance ratios (4.5:1) with the W3C Silver APCA-0.98G perceptual lightness algorithm: Spatial frequency, font weight, and dark mode polarity.",
+    type: "article",
+    schemaType: "BlogPosting",
+    lastmod: todayIso,
+  },
+  {
+    path: "/blog/guide-cognitive-conversion-copywriting",
+    title: "Cognitive Conversion Copywriting: The Empirical Heuristic Guide — Rvan.me",
+    description: "The behavioral psychology of high-converting product copy: How cognitive fluency, empirical specificity, risk reversal, and loss aversion eliminate decision friction.",
+    type: "article",
+    schemaType: "BlogPosting",
+    lastmod: todayIso,
+  },
+  {
+    path: "/blog/visual-hierarchy-framework-web-interfaces",
+    title: "The 3-Second Visual Hierarchy Framework for Modern Web Interfaces — Rvan.me",
+    description: "The neuroscience of visual scanning: How scale, Gestalt proximity, luminance contrast, and focal anchors direct user attention across landing pages in under 3 seconds.",
+    type: "article",
+    schemaType: "BlogPosting",
+    lastmod: todayIso,
+  },
+  {
     path: "/tools/resume-builder",
     title: "Free ATS Resume & CV Builder — HR-Approved Vector PDF Generator",
     description: "Create professional ATS-compliant resumes with real-time preview, ATS score checker, and instant high-quality vector PDF download. Built for engineers, designers, and executives.",
@@ -710,6 +734,18 @@ const staticAzTranslations = {
   "/blog/guide-responsive-fluid-typography-css-clamp": {
     title: "CSS clamp() ilə Responsiv Elastik Tipoqrafiyanın Tam Bələdçisi — Rvan.me",
     description: "Müasir elastik tipoqrafiyanın hərtərəfli arxitektura bələdçisi: Xətti interpolyasiya riyaziyyatı, harmonik modul miqyaslar və CSS clamp() ilə media query tullanışlarına son qoyun.",
+  },
+  "/blog/apca-vs-wcag-contrast-accessibility-guide": {
+    title: "APCA və WCAG 2.1: Kontrast və Əlçatanlığın Əsas Bələdçisi — Rvan.me",
+    description: "WCAG 2.x nisbi parlaqlıq nisbətləri (4.5:1) ilə W3C Silver APCA-0.98G perseptual alqoritminin müqayisəsi: Məkan tezliyi, şrift çəkisi və qaranlıq rejim qütblüyü.",
+  },
+  "/blog/guide-cognitive-conversion-copywriting": {
+    title: "Koqnitiv Konversiya Kopiraytinqi: Elmi Hevristik Bələdçi — Rvan.me",
+    description: "Yüksək konversiyalı mətnlərin davranış psixologiyası: Koqnitiv axıcılıq, ölçülə bilən dəqiqlik, riskin ləğvi və itki qorxusunun qərar vermə sürtünməsini necə aradan qaldırması.",
+  },
+  "/blog/visual-hierarchy-framework-web-interfaces": {
+    title: "Müasir Veb İnterfeyslər Üçün 3 Saniyəlik Vizual İyerarxiya Çərçivəsi — Rvan.me",
+    description: "Vizual baxış trayektoriyalarının neyroelmi: Miqyas, Geştalt yaxınlığı, parlaqlıq kontrastı və fokus nöqtələrinin 3 saniyə ərzində istifadəçi diqqətini necə idarə etməsi.",
   },
   "/tools/persuasion-analyzer": {
     title: "Marketinq və Persuasiya Mətn Analizatoru — Rvan.me",

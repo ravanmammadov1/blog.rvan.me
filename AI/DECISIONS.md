@@ -176,3 +176,22 @@
   - *Pros*: Provides natural search acquisition entry points; increases multi-page session depth; interconnects LEARN, USE, and DISCOVER pillars; 100% pre-rendered and indexable.
   - *Cons*: None.
 
+---
+
+## ADR-014: Four Core Pillar Content Architecture & Organic Heuristic Acquisition
+* **Date**: 2026-08-18
+* **Status**: ACCEPTED & IMPLEMENTED
+* **Context**: Following the launch of topic hubs and tools, high-intent search queries required comprehensive, evergreen pillar guides that anchor each of the 4 domains with practical engineering and cognitive depth.
+* **Decision**:
+  1. Launch 4 flagship organic pillar guides:
+     - Typography: `guide-responsive-fluid-typography-css-clamp`
+     - Accessibility: `apca-vs-wcag-contrast-accessibility-guide`
+     - Marketing Psychology: `guide-cognitive-conversion-copywriting`
+     - Design Psychology: `visual-hierarchy-framework-web-interfaces`
+  2. Integrate each guide as the primary anchor in its respective topic hub, with bidirectional bridges to flagship interactive workbenches (`/tools/typography-scale`, `/tools/contrast-matrix`, `/tools/persuasion-analyzer`, `/tools/resume-builder`).
+  3. Full bilingual EN/AZ localization, static pre-rendering, BlogPosting JSON-LD schemas, and sitemap registration.
+* **Consequences**:
+  - *Pros*: Complete topical authority across all 4 hubs; zero orphaned categories; delivers practical mathematical, psychophysical, and cognitive clarity.
+  - *Cons*: None.
+
+

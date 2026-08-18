@@ -97,12 +97,12 @@ export const TOPIC_HUBS: TopicHubDefinition[] = [
     seoDescription: "Understand the neuroscience of visual attention, eye-tracking patterns, Gestalt grouping, and why human brains process design structures predictably.",
     seoDescription_az: "Vizual diqqətin neyroelmini, baxış trayektoriyalarını, Geştalt qruplaşmasını və insan beyninin dizaynı necə qavradığını öyrənin.",
     featuredArticleSlugs: [
+      "visual-hierarchy-framework-web-interfaces",
       "why-eyes-look-at-certain-things-first",
       "why-contrast-makes-designs-impossible-to-ignore-von-restorff",
       "why-we-group-things-together-gestalt-proximity",
       "why-the-number-3-appears-everywhere-in-design",
       "why-error-is-red-success-green-links-blue",
-      "why-luxury-brands-use-so-much-empty-space"
     ],
     toolIds: ["contrast-matrix", "typography-scale", "persuasion-analyzer"],
     resourceSlugs: [
@@ -146,12 +146,12 @@ export const TOPIC_HUBS: TopicHubDefinition[] = [
     seoDescription: "Master conversion copywriting, psychological pricing models, risk reversal mechanics, and customer-centric value propositions with empirical heuristic tools.",
     seoDescription_az: "Konversiya kopiraytinqi, qiymət modelləri, risk ləğvi və müştəri yönümlü dəyər təkliflərini elmi hevristik alətlərlə öyrənin.",
     featuredArticleSlugs: [
+      "guide-cognitive-conversion-copywriting",
       "why-999-feels-cheaper-than-1000-pricing-psychology",
       "why-restaurants-put-expensive-dish-on-menu",
       "why-free-makes-people-buy-zero-price-effect",
       "why-only-3-left-makes-you-panic-buy-scarcity",
       "why-most-popular-works-on-pricing-tables",
-      "pricing-value-positioning-guide"
     ],
     toolIds: ["persuasion-analyzer", "resume-builder"],
     resourceSlugs: [
@@ -195,10 +195,10 @@ export const TOPIC_HUBS: TopicHubDefinition[] = [
     seoDescription: "Explore modern color accessibility, the W3C Silver APCA 0.98G standard, typography legibility thresholds, and accessible design system token workflows.",
     seoDescription_az: "Müasir rəng əlçatanlığı, W3C Silver APCA 0.98G standartı, tipoqrafik oxunaqlıq hədləri və əlçatan dizayn sistemi iş axınlarını kəşf edin.",
     featuredArticleSlugs: [
+      "apca-vs-wcag-contrast-accessibility-guide",
       "why-error-is-red-success-green-links-blue",
       "why-contrast-makes-designs-impossible-to-ignore-von-restorff",
       "why-modern-websites-all-look-the-same",
-      "why-ai-writing-sounds-so-similar-rlhf-homogenization"
     ],
     toolIds: ["contrast-matrix", "typography-scale"],
     resourceSlugs: [
