@@ -631,10 +631,17 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
       const localizedExcerpt = (isAzPost && base.excerpt_az) ? base.excerpt_az : (base.excerpt || data?.excerpt || "");
       const localizedCategory = (isAzPost && base.category_az) ? base.category_az : (base.category || data?.category || "");
 
+      const isSanityCoverValid = Boolean(
+        data?.coverImage && (data.coverImage.asset?._ref || data.coverImage.asset?.url || data.coverImage.url || data.coverImage.asset)
+      );
+      const effectiveCover = isSanityCoverValid
+        ? data.coverImage
+        : (editorialBlog?.coverImage || base.coverImage || data?.coverImage);
+
       return {
         ...base,
         ...(data || {}),
-        coverImage: editorialBlog?.coverImage || base.coverImage || data?.coverImage,
+        coverImage: effectiveCover,
         title: localizedTitle,
         category: localizedCategory,
         excerpt: localizedExcerpt,
@@ -708,9 +715,16 @@ export async function fetchAllBlogs(lang: string = "en") {
                    getEditorialBlogById(idKey);
 
         if (ed) {
+          const isSanityCoverValid = Boolean(
+            item.coverImage && (item.coverImage.asset?._ref || item.coverImage.asset?.url || item.coverImage.url || item.coverImage.asset)
+          );
+          const effectiveCover = isSanityCoverValid
+            ? item.coverImage
+            : (ed.coverImage || item.coverImage);
+
           return {
             ...item,
-            coverImage: ed.coverImage || item.coverImage,
+            coverImage: effectiveCover,
             title: (isAz && ed.title_az) ? ed.title_az : ed.title,
             category: (isAz && ed.category_az) ? ed.category_az : ed.category,
             excerpt: (isAz && ed.excerpt_az) ? ed.excerpt_az : ed.excerpt,
