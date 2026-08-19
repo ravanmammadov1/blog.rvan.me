@@ -291,11 +291,26 @@ function createGraph(page) {
     {
       "@type": "Person",
       "@id": personId,
-      name: "Ravan Mammadov",
-      jobTitle: "Senior Creative Designer & Art Director",
+      name: isAz ? "Rəvan Məmmədov" : "Ravan Mammadov",
+      alternateName: [
+        "Rəvan Məmmədov",
+        "Ravan Mammadov",
+        "Ravan Mammadov Studio",
+        "Rəvan Məmmədov Dizayner",
+        "ravanimate",
+      ],
+      jobTitle: isAz ? "Aparıcı Kreativ Dizayner və Art Direktor" : "Senior Creative Designer & Art Director",
       url: `${domain}/ravan-mammadov`,
-      image: `${domain}/og-image.jpg`,
-      description: "Senior Creative Designer based in Baku, Azerbaijan, specializing in motion design, brand identity, graphic design, and performance creative.",
+      image: {
+        "@type": "ImageObject",
+        "@id": `${domain}/#portrait`,
+        url: `${domain}/og-image.jpg`,
+        caption: "Rəvan Məmmədov (Ravan Mammadov) — Senior Creative Designer & Art Director",
+        representativeOfPage: true,
+      },
+      description: isAz
+        ? "Bakı, Azərbaycan mərkəzli aparıcı kreativ dizayner Rəvan Məmmədov: brend kimliyi, motion qrafika, art direksiya və marketinq kreativləri."
+        : "Senior Creative Designer based in Baku, Azerbaijan, specializing in motion design, brand identity, graphic design, and performance creative.",
       knowsAbout: [
         "Motion Design",
         "Art Direction",
@@ -312,6 +327,7 @@ function createGraph(page) {
         "https://www.linkedin.com/in/ravanmammadov1/",
         "https://www.instagram.com/ravanimate/",
         "https://github.com/ravanmammadov1",
+        "https://twitter.com/ravanimate",
       ],
     },
     {

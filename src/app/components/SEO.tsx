@@ -90,6 +90,7 @@ export default function SEO({
   const resolvedUrl = normalizeCanonicalUrl(rawUrl, siteDomain);
   const personId = `${siteDomain}/#person`;
   const websiteId = `${siteDomain}/#website`;
+  const isAz = resolvedUrl.includes("/az/") || resolvedUrl.endsWith("/az") || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
 
   useEffect(() => {
     document.title = resolvedTitle;
@@ -206,16 +207,39 @@ export default function SEO({
       {
         "@type": "Person",
         "@id": personId,
-        name: resolvedAuthor,
+        name: isAz ? "Rəvan Məmmədov" : "Ravan Mammadov",
+        alternateName: [
+          "Rəvan Məmmədov",
+          "Ravan Mammadov",
+          "Ravan Mammadov Studio",
+          "Rəvan Məmmədov Dizayner",
+          "ravanimate",
+        ],
         url: `${siteDomain}/ravan-mammadov`,
-        jobTitle: "Senior Creative Designer & Art Director",
-        image: `${siteDomain}/og-image.jpg`,
+        jobTitle: isAz ? "Aparıcı Kreativ Dizayner və Art Direktor" : "Senior Creative Designer & Art Director",
+        image: {
+          "@type": "ImageObject",
+          "@id": `${siteDomain}/#portrait`,
+          url: `${siteDomain}/og-image.jpg`,
+          caption: "Rəvan Məmmədov (Ravan Mammadov) — Senior Creative Designer & Art Director",
+          representativeOfPage: true,
+        },
         sameAs: [
           activeSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan",
           activeSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/",
           activeSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/",
+          "https://github.com/ravanmammadov1",
+          "https://twitter.com/ravanimate",
         ],
-        knowsAbout: ["Motion Design", "Graphic Design", "Brand Identity", "Art Direction", "Digital Marketing"],
+        knowsAbout: [
+          "Motion Design",
+          "Brand Architecture",
+          "Graphic Design",
+          "Art Direction",
+          "Creative Strategy",
+          "UI/UX Design",
+          "3D Product Visualization",
+        ],
       },
       {
         "@type": "WebSite",
@@ -225,13 +249,14 @@ export default function SEO({
         publisher: { "@id": personId },
       },
       {
-        "@type": "WebPage",
+        "@type": type === "profile" ? "ProfilePage" : "WebPage",
         "@id": `${resolvedUrl}#webpage`,
         url: resolvedUrl,
         name: resolvedTitle,
         description: resolvedDescription,
         isPartOf: { "@id": websiteId },
         about: { "@id": personId },
+        mainEntity: { "@id": personId },
       },
     ];
 
