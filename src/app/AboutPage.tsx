@@ -76,6 +76,7 @@ export default function AboutPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
   const { t, getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   useEffect(() => {
     window.scrollTo(0, 0);
