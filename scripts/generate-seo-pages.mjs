@@ -362,6 +362,7 @@ function createGraph(page) {
       inLanguage: isAz ? "az-AZ" : "en-US",
       isPartOf: { "@id": websiteId },
       about: { "@id": personId },
+      mainEntity: { "@id": personId },
     },
   ];
 
