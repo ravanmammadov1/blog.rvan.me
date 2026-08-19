@@ -634,6 +634,7 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
       return {
         ...base,
         ...(data || {}),
+        coverImage: editorialBlog?.coverImage || base.coverImage || data?.coverImage,
         title: localizedTitle,
         category: localizedCategory,
         excerpt: localizedExcerpt,
@@ -661,7 +662,15 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
 }
 
 export async function fetchAllBlogs(lang: string = "en") {
-  const editorialMap = new Map(MASTER_EDITORIAL_BLOGS.map((b) => [b.slug.current, b]));
+  const editorialMap = new Map<string, BlogPost>();
+  MASTER_EDITORIAL_BLOGS.forEach((b) => {
+    editorialMap.set(b._id.toLowerCase(), b);
+    if (b.slug?.current) editorialMap.set(b.slug.current.toLowerCase(), b);
+    if (b.slug_az?.current) editorialMap.set(b.slug_az.current.toLowerCase(), b);
+    if (b.originalSlug) editorialMap.set(b.originalSlug.toLowerCase(), b);
+    if (b.title) editorialMap.set(b.title.toLowerCase().trim(), b);
+    if (b.title_az) editorialMap.set(b.title_az.toLowerCase().trim(), b);
+  });
 
   try {
     const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
@@ -687,11 +696,21 @@ export async function fetchAllBlogs(lang: string = "en") {
 
     if (Array.isArray(data) && data.length > 0) {
       return data.map((item: any) => {
-        const slugKey = typeof item.slug === "object" ? item.slug?.current : item.slug;
-        const ed = editorialMap.get(slugKey) || editorialMap.get(item._id);
+        const slugKey = (typeof item.slug === "object" ? item.slug?.current : item.slug || "").toLowerCase().trim();
+        const origSlugKey = (item.originalSlug || "").toLowerCase().trim();
+        const idKey = (item._id || "").toLowerCase().trim();
+        const titleKey = (item.title || "").toLowerCase().trim();
+        const ed = editorialMap.get(idKey) || 
+                   editorialMap.get(slugKey) || 
+                   editorialMap.get(origSlugKey) || 
+                   editorialMap.get(titleKey) ||
+                   getEditorialBlogBySlug(slugKey) ||
+                   getEditorialBlogById(idKey);
+
         if (ed) {
           return {
             ...item,
+            coverImage: ed.coverImage || item.coverImage,
             title: (isAz && ed.title_az) ? ed.title_az : ed.title,
             category: (isAz && ed.category_az) ? ed.category_az : ed.category,
             excerpt: (isAz && ed.excerpt_az) ? ed.excerpt_az : ed.excerpt,

@@ -1685,26 +1685,6 @@
     "hash": "84678322efa4e03b184e0f1b964dc404dbbb0475e6fa6735402ac753054ca289"
   },
   {
-    "id": "doodle-armchair-reader",
-    "title": "Armchair Reader",
-    "slug": "armchair-reader",
-    "collection": "Open Doodles",
-    "category": "Marketing & Growth",
-    "tags": [
-      "armchair",
-      "reader",
-      "marketing",
-      "growth",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/armchair-reader.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "45708b2e3255b9f4f796dc8bc4c5d4a46e3b8061db151492f3d7663713fb0f68"
-  },
-  {
     "id": "undraw-around-the-world",
     "title": "Around The World",
     "slug": "around-the-world",
@@ -2346,26 +2326,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "6bd3f224092917d5050ebf58c8f59ddc2e7336b7d60fd18be685b5e245883360"
-  },
-  {
-    "id": "doodle-ballet-dancer",
-    "title": "Ballet Dancer",
-    "slug": "ballet-dancer",
-    "collection": "Open Doodles",
-    "category": "Design & Creative",
-    "tags": [
-      "ballet",
-      "dancer",
-      "design",
-      "creative",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/ballet-dancer.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "57aff9c3dba5c18c051433258bf09cb490aa3026ae1ebe282b40288693dbe822"
   },
   {
     "id": "undraw-balloons",
@@ -4143,26 +4103,6 @@
     "hash": "599bc29c59578c63cb5761b00b5faf5e2980ff432e9e812839ac830da13278af"
   },
   {
-    "id": "doodle-casual-chilling",
-    "title": "Casual Chilling",
-    "slug": "casual-chilling",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "casual",
-      "chilling",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/casual-chilling.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "6898102f765995d12d4f7f40f4a6886f3d4b34ff8507bef14a540124343d4e1b"
-  },
-  {
     "id": "undraw-cat",
     "title": "Cat",
     "slug": "cat",
@@ -5046,26 +4986,6 @@
     "hash": "f65a7ca9ceac86065374514cd31f55052203c8061548c538742bede8153af2f7"
   },
   {
-    "id": "doodle-cloud-floating",
-    "title": "Cloud Floating",
-    "slug": "cloud-floating",
-    "collection": "Open Doodles",
-    "category": "Tech & Coding",
-    "tags": [
-      "cloud",
-      "floating",
-      "tech",
-      "coding",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/cloud-floating.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "796691709ea61d0af106a55741d99edf205fea6cb1048243bc262fa42a387008"
-  },
-  {
     "id": "undraw-cloud-hosting",
     "title": "Cloud Hosting",
     "slug": "cloud-hosting",
@@ -5143,26 +5063,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "2ccb8764b16469bc72c2ea57c2f8458cd0e7272dfd1a2b7e8242707c3d315f63"
-  },
-  {
-    "id": "doodle-clumsy-moment",
-    "title": "Clumsy Moment",
-    "slug": "clumsy-moment",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "clumsy",
-      "moment",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/clumsy-moment.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "6b2efab3c091b0f4df3856681ffe53f7a12a241ed604532302791be211176855"
   },
   {
     "id": "undraw-cms",
@@ -5397,26 +5297,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "b412fe003daaedbf8e2f3ac7088aef25df3d547a8231731f5ef63271950ad9c1"
-  },
-  {
-    "id": "doodle-coffee-break",
-    "title": "Coffee Break",
-    "slug": "coffee-break",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "coffee",
-      "break",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/coffee-break.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "9b1a391fec4bca616674f287a89c332baee01ee806c5145ec817a28e25731d8b"
   },
   {
     "id": "undraw-coffee-run",
@@ -7166,26 +7046,6 @@
     "hash": "c60ed5eb1c1aaf874975ce67b0c693820e050b591e0bf566540bee59519facaa"
   },
   {
-    "id": "doodle-dancing-freely",
-    "title": "Dancing Freely",
-    "slug": "dancing-freely",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "dancing",
-      "freely",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/dancing-freely.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "30275375b8c06b0d93ec81ddbd59bc3df0d844a060c908114b1ed4761ca74c97"
-  },
-  {
     "id": "undraw-dark-alley",
     "title": "Dark Alley",
     "slug": "dark-alley",
@@ -8839,26 +8699,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "cb2648d06248b7225c5055c5c489479739ef0b9b9d4e569ce2123e1fe41f22e7"
-  },
-  {
-    "id": "doodle-dog-jump",
-    "title": "Dog Jump",
-    "slug": "dog-jump",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "dog",
-      "jump",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/dog-jump.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "bb8cd33de018f7fef7f9fab456e04dfe3e109ce4f1408fe4e9d28f535f18c90c"
   },
   {
     "id": "undraw-dog-walking",
@@ -12811,26 +12651,6 @@
     "hash": "99044a45d2e8e25a94ba16f729e277735d8c8daed009071f65c2bd0c37321118"
   },
   {
-    "id": "doodle-groovy-beats",
-    "title": "Groovy Beats",
-    "slug": "groovy-beats",
-    "collection": "Open Doodles",
-    "category": "Design & Creative",
-    "tags": [
-      "groovy",
-      "beats",
-      "design",
-      "creative",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/groovy-beats.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "bb01bede2528a6c074b6f87850372d720f3ede10454fa2d721e5c817578975fe"
-  },
-  {
     "id": "undraw-group-chat",
     "title": "Group Chat",
     "slug": "group-chat",
@@ -13601,27 +13421,6 @@
     "hash": "df1db4c7ecdca12dadc9257c3829869af0ffbedf48e16ff7788d56b181591614"
   },
   {
-    "id": "doodle-high-energy-moshing",
-    "title": "High Energy Moshing",
-    "slug": "high-energy-moshing",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "high",
-      "energy",
-      "moshing",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/high-energy-moshing.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "fb99f65e006810f05328b91236039c5a607c830b73a88a7536f289b816bac2d8"
-  },
-  {
     "id": "undraw-high-five",
     "title": "High Five",
     "slug": "high-five",
@@ -13640,27 +13439,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "fcdfb20d28ebf388d5d27d7fd160480ddbb7097521ff7da5f3fbd3e61272188f"
-  },
-  {
-    "id": "doodle-high-speed-sprint",
-    "title": "High Speed Sprint",
-    "slug": "high-speed-sprint",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "high",
-      "speed",
-      "sprint",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/high-speed-sprint.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "d18fb6f233c6774c724c59da1e5db8448c4441cb2eb68cb5861332e15c146458"
   },
   {
     "id": "undraw-hiking",
@@ -14115,27 +13893,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "b9dbb972d27a2ef94a2f247f9acfde4f882f494a30c7ed959cc5c34f4e9e32e5"
-  },
-  {
-    "id": "doodle-ice-cream-delight",
-    "title": "Ice Cream Delight",
-    "slug": "ice-cream-delight",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "ice",
-      "cream",
-      "delight",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/ice-cream-delight.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "0ed855309e83b48c6a7a3ff32ab862db12689bcc0c3220993a83dfb64d8f40a1"
   },
   {
     "id": "undraw-icon-design",
@@ -15938,27 +15695,6 @@
     "hash": "6abd14b0b1448775e7a6a6b297f52734497d085baeaccfdb56299faed5b66553"
   },
   {
-    "id": "doodle-late-night-coder",
-    "title": "Late Night Coder",
-    "slug": "late-night-coder",
-    "collection": "Open Doodles",
-    "category": "Tech & Coding",
-    "tags": [
-      "late",
-      "night",
-      "coder",
-      "tech",
-      "coding",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/late-night-coder.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "13b5feb79b39a547c5f310d6bd81c46d5f114871021ab003f8a993a0324e7b2b"
-  },
-  {
     "id": "undraw-launch-day",
     "title": "Launch Day",
     "slug": "launch-day",
@@ -16016,26 +15752,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "8b335e9f15bf4a9812c8fc8f375ec3058a8907f41a8ad8f58692475c4a13d2e9"
-  },
-  {
-    "id": "doodle-laying-down",
-    "title": "Laying Down",
-    "slug": "laying-down",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "laying",
-      "down",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/laying-down.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "4b8581ad414f31e544d65bdddd3fee094cd22dd0006f5359879274e3b2e40810"
   },
   {
     "id": "undraw-learning",
@@ -16192,26 +15908,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "69b4636c26e21645d4b9f6ca1e94c50c2860e71de9ab3ba4b46e4eabd2c844e7"
-  },
-  {
-    "id": "doodle-levitating-space",
-    "title": "Levitating Space",
-    "slug": "levitating-space",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "levitating",
-      "space",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/levitating-space.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "6cbeb5528a17113bf5e8181caeb6019730619155a3d558c522c3cbe8385e4904"
   },
   {
     "id": "undraw-light-the-fire",
@@ -16801,26 +16497,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "62505a8d66304c6ca2a75e651f12a1b9078209f9cb90da55a0d08d224c2f3d89"
-  },
-  {
-    "id": "doodle-loving-heart",
-    "title": "Loving Heart",
-    "slug": "loving-heart",
-    "collection": "Open Doodles",
-    "category": "Design & Creative",
-    "tags": [
-      "loving",
-      "heart",
-      "design",
-      "creative",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/loving-heart.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "b2974b0bbcac013c1ee957064c5291b83ff97a13713de6334b7ce0330095475e"
   },
   {
     "id": "undraw-loving-it",
@@ -22659,26 +22335,6 @@
     "hash": "cfa0eea65c3b9a79cde788596ad5d5956cde47a328d6d6ba174ae64e8b961ec7"
   },
   {
-    "id": "doodle-petting-dog",
-    "title": "Petting Dog",
-    "slug": "petting-dog",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "petting",
-      "dog",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/petting-dog.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "92df0441321c315a6d4c327cf45b14b9bb7d5e9aff2ada518a33e8999285ccb8"
-  },
-  {
     "id": "undraw-phone-call",
     "title": "Phone Call",
     "slug": "phone-call",
@@ -23165,46 +22821,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "54e274d410508d8c2fe64ca2da87cda5b1a57dc3b6523d0bf6f4381d7becd3a3"
-  },
-  {
-    "id": "doodle-playful-rolling",
-    "title": "Playful Rolling",
-    "slug": "playful-rolling",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "playful",
-      "rolling",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/playful-rolling.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "659d74aa603042156af16ee6a1189d928221a8539f4be770c58e833c9afb0fa2"
-  },
-  {
-    "id": "doodle-playground-swing",
-    "title": "Playground Swing",
-    "slug": "playground-swing",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "playground",
-      "swing",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/playground-swing.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "96db59f08b14cb0757208d8c1868216ed3b748c23ed335173b41dcb533ca4e9e"
   },
   {
     "id": "undraw-playing-cards",
@@ -24939,26 +24555,6 @@
     "hash": "b3c49465c25bffaee4f0e35951231d836b60f249384c1e15fe593816129c2ef1"
   },
   {
-    "id": "doodle-reading-book",
-    "title": "Reading Book",
-    "slug": "reading-book",
-    "collection": "Open Doodles",
-    "category": "Marketing & Growth",
-    "tags": [
-      "reading",
-      "book",
-      "marketing",
-      "growth",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/reading-book.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "e5996abe15bc19179d0566a1b6099dcd5e11f4bd1ef7d9e896a1722d0277fbc1"
-  },
-  {
     "id": "undraw-reading-list",
     "title": "Reading List",
     "slug": "reading-list",
@@ -25333,26 +24929,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "1647b6ebf5e67d3bf78f1376c8b00357d810fde3e20138c5065c749acdd6dab5"
-  },
-  {
-    "id": "doodle-relaxed-sitting",
-    "title": "Relaxed Sitting",
-    "slug": "relaxed-sitting",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "relaxed",
-      "sitting",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/relaxed-sitting.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "a491d12e5c2e6dbf67bcd7943cbc1f29dc7fda95d5c4bd8b130ea91ca0dfb012"
   },
   {
     "id": "undraw-relaxing-at-home",
@@ -26023,26 +25599,6 @@
     "hash": "aa70fd4729bcebfd56a2dc919010f3d783e1f206da18f1144c7d0a600eb5d632"
   },
   {
-    "id": "doodle-roller-skating",
-    "title": "Roller Skating",
-    "slug": "roller-skating",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "roller",
-      "skating",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/roller-skating.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "c59ffe9ca7d50674ae66afc7dc2d4cb4db8f3a49b05fb6f35eaf28b8d98088bd"
-  },
-  {
     "id": "undraw-romantic-getaway",
     "title": "Romantic Getaway",
     "slug": "romantic-getaway",
@@ -26101,26 +25657,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "5cd281b073fcb8243ec1f5fb5dd0630f2440bc4bd0600bad2af126468a458be2"
-  },
-  {
-    "id": "doodle-running-to-goal",
-    "title": "Running To Goal",
-    "slug": "running-to-goal",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "running",
-      "goal",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/running-to-goal.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "d283b0fa2b178a25b9cceb2900d8843f5d0398d1b717963b53c13282a0b3c774"
   },
   {
     "id": "undraw-running-wild",
@@ -27005,26 +26541,6 @@
     "hash": "fce3ca89eca4201695574a87234e202d9bd276ea286e4f83847737e401faf0ab"
   },
   {
-    "id": "doodle-selfie-moment",
-    "title": "Selfie Moment",
-    "slug": "selfie-moment",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "selfie",
-      "moment",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/selfie-moment.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "94cb757787af0d6e25d6889175346fe2cb256e3d7dccf79d18c348109fdc3273"
-  },
-  {
     "id": "undraw-send-gift",
     "title": "Send Gift",
     "slug": "send-gift",
@@ -27739,27 +27255,6 @@
     "hash": "b99d10eb015c72fefa2982999d5706981b5d3a54dc47dc19c5c8fc25f4a7824f"
   },
   {
-    "id": "doodle-side-reading-study",
-    "title": "Side Reading Study",
-    "slug": "side-reading-study",
-    "collection": "Open Doodles",
-    "category": "Marketing & Growth",
-    "tags": [
-      "side",
-      "reading",
-      "study",
-      "marketing",
-      "growth",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/side-reading-study.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "227f2baf1ba54a1d37ed14ff8cf8f8666fb37598157803846696699fdaa46c6c"
-  },
-  {
     "id": "undraw-sign-here",
     "title": "Sign Here",
     "slug": "sign-here",
@@ -27914,26 +27409,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "481d447cfae6d00d3cd9afeab8073bcc6642276df67a0d24352f3845ddb5cc3d"
-  },
-  {
-    "id": "doodle-sleek-executive",
-    "title": "Sleek Executive",
-    "slug": "sleek-executive",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "sleek",
-      "executive",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/sleek-executive.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "263b31ef3e02bba156a33e43a7bb0194991db264e9cd62d8fdced437f1668b0d"
   },
   {
     "id": "undraw-slider",
@@ -29675,26 +29150,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "34d4f7272aa98fb4ee99d521bfa2fee2e96ef2f9446030053029a36544457bc7"
-  },
-  {
-    "id": "doodle-summer-vibes",
-    "title": "Summer Vibes",
-    "slug": "summer-vibes",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "summer",
-      "vibes",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/summer-vibes.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "73504fb7f6ca4535f5c0a796b2468890d059a43ca6afa09030ee89e8cada4047"
   },
   {
     "id": "undraw-sunlight",
@@ -31858,26 +31313,6 @@
     "hash": "479953875231bd6c5bc4c9c77aab69d413b6a983d1ac7a958408c28ff6fed300"
   },
   {
-    "id": "doodle-unboxing-delivery",
-    "title": "Unboxing Delivery",
-    "slug": "unboxing-delivery",
-    "collection": "Open Doodles",
-    "category": "Finance & E-Commerce",
-    "tags": [
-      "unboxing",
-      "delivery",
-      "finance",
-      "e-commerce",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/unboxing-delivery.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "101c709a30d90fc050251feb4f6faf5fb7ea30e7798be22d9cce68361a6d04dc"
-  },
-  {
     "id": "undraw-under-construction",
     "title": "Under Construction",
     "slug": "under-construction",
@@ -32228,26 +31663,6 @@
     "hash": "d629477ab144af15bb0ef7aa016cca2def6fbef6bd95ca82190c030e4bede52c"
   },
   {
-    "id": "doodle-urban-stroll",
-    "title": "Urban Stroll",
-    "slug": "urban-stroll",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "urban",
-      "stroll",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/urban-stroll.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "a9dc668f257252add596d4e950070405bf7169a414449161d6c63a17648a48cf"
-  },
-  {
     "id": "undraw-usability-testing",
     "title": "Usability Testing",
     "slug": "usability-testing",
@@ -32463,26 +31878,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "7840cfa3b35acf8356503daf5ae061d644fcb837f0e51ac0e8695543ac51cac5"
-  },
-  {
-    "id": "doodle-victory-jump",
-    "title": "Victory Jump",
-    "slug": "victory-jump",
-    "collection": "Open Doodles",
-    "category": "Business & Startup",
-    "tags": [
-      "victory",
-      "jump",
-      "business",
-      "startup",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/victory-jump.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "427c453ebbd3a4edb60c9162811e0e7c1c19ce3fdc1c81d5073f3bf46903604d"
   },
   {
     "id": "undraw-video-call",
@@ -33098,26 +32493,6 @@
     "hash": "8ab4210f10b671dad6ed071d636919cdbbd8f2f81b6244b0a64aa8f0130491ab"
   },
   {
-    "id": "doodle-zen-meditation",
-    "title": "Zen Meditation",
-    "slug": "zen-meditation",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "zen",
-      "meditation",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/zen-meditation.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "cf190e098546ab36ad6338df84e75a2d276cf9e332a9c6323f1251e9b02a6dda"
-  },
-  {
     "id": "undraw-zoom-in",
     "title": "Zoom In",
     "slug": "zoom-in",
@@ -33336,26 +32711,6 @@
     "hash": "e8ff0a7f00a658b2701c6faa94315b4fb327f903f4b146902ec49661443c6272"
   },
   {
-    "id": "doodle-walking-the-dog",
-    "title": "Walking The Dog",
-    "slug": "walking-the-dog",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "walking",
-      "dog",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/walking-the-dog.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "867dcebca6b3f3a5f219ef7a6f9fc3b0a7d96ae52d444fd5968edffbbbe6eae0"
-  },
-  {
     "id": "undraw-walking-together",
     "title": "Walking Together",
     "slug": "walking-together",
@@ -33571,26 +32926,6 @@
     "license": "unDraw Open License (Free for Commercial & Personal)",
     "sourceUrl": "https://undraw.co",
     "hash": "ebb46e501e3c57b466f6dd7b3b88704669380f4fd09c8066d7f96218430b209d"
-  },
-  {
-    "id": "doodle-watering-houseplant",
-    "title": "Watering Houseplant",
-    "slug": "watering-houseplant",
-    "collection": "Open Doodles",
-    "category": "Lifestyle & Wellness",
-    "tags": [
-      "watering",
-      "houseplant",
-      "lifestyle",
-      "wellness",
-      "open doodles"
-    ],
-    "format": "svg",
-    "src": "/illustrations/open-doodles/watering-houseplant.svg",
-    "author": "Pablo Stanley",
-    "license": "CC0 1.0 Universal Public Domain",
-    "sourceUrl": "https://opendoodles.com",
-    "hash": "0196d20a51810f4091d984b9f19c0b9b7992a21373909d4f1a86c79d251cb6aa"
   },
   {
     "id": "undraw-watering-plants",
