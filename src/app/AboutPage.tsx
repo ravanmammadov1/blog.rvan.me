@@ -316,19 +316,23 @@ export default function AboutPage() {
               {/* Left Founder Info */}
               <div className="lg:col-span-7 space-y-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-wider text-primary mono uppercase">
-                  <UserCheck size={14} /> BEHIND RVAN.ME
+                  <UserCheck size={14} /> {isAz ? "RVAN.ME MÜƏLLİFİ" : "BEHIND RVAN.ME"}
                 </div>
 
                 <h2 className="text-3xl font-extrabold tracking-tight md:text-5xl text-foreground">
-                  Created & Curated by <span className="text-primary">Ravan Mammadov</span>
+                  {isAz ? "Müəllif və Təsisçi: " : "Created & Curated by "}<span className="text-primary">{isAz ? "Rəvan Məmmədov" : "Ravan Mammadov"}</span>
                 </h2>
 
                 <p className="text-base leading-relaxed text-muted-foreground font-medium max-w-2xl">
-                  {aboutData?.introParagraph1 || "Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and AI products."}
+                  {aboutData?.introParagraph1 || (isAz 
+                    ? "Rvan.me brend arxitekturası, motion qrafika, kreativ strategiya və süni intellekt məhsulları üzrə ixtisaslaşmış Aparıcı Kreativ Dizayner və Təsisçi Rəvan Məmmədov tərəfindən konseptual olaraq layihələndirilib və idarə olunur."
+                    : "Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and AI products.")}
                 </p>
 
                 <p className="text-xs md:text-sm leading-relaxed text-muted-foreground/80 font-medium max-w-2xl">
-                  {aboutData?.introParagraph2 || "Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics."}
+                  {aboutData?.introParagraph2 || (isAz
+                    ? "Dizayn düşüncəsi ilə texniki icra arasında körpü yaratmaq məqsədilə qurulan platforma yüksək faydalı dizayn sistemlərinə, maneəsiz yaradıcı alətlərə və müasir veb estetikasına sadiqliyi əks etdirir."
+                    : "Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics.")}
                 </p>
 
                 <div className="pt-2">
@@ -338,7 +342,7 @@ export default function AboutPage() {
                     size="md"
                     icon={<ArrowUpRight size={15} />}
                   >
-                    VIEW FULL PROFILE & EXPERIENCE
+                    {isAz ? "TAM PROFİLƏ VƏ TƏCRÜBƏYƏ BAX" : "VIEW FULL PROFILE & EXPERIENCE"}
                   </Button>
                 </div>
               </div>
