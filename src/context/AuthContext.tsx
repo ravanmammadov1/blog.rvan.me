@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth, isKeyConfigured } from "../lib/firebase";
-import { signInWithGoogle, logout } from "../services/auth";
+import { signInWithGoogle, checkRedirectResult, logout } from "../services/auth";
 import { PeepConfig, generateRandomPeep } from "../app/components/tools/openpeeps/peepsAssets";
 import {
   getGuestAvatarConfig,
@@ -22,7 +22,7 @@ export interface AuthContextType {
   updateCustomAvatar: (avatarUrl: string | null) => void;
   updateAvatarConfig: (config: PeepConfig) => void;
   randomizeAvatar: () => PeepConfig;
-  signIn: () => Promise<void>;
+  signIn: () => Promise<User | null>;
   signOut: () => Promise<void>;
   clearError: () => void;
 }
@@ -48,6 +48,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
       return;
     }
+
+    // Check for redirect result on page load
+    checkRedirectResult().then((redirectUser) => {
+      if (redirectUser) {
+        setUser(redirectUser);
+      }
+    });
 
     // Listen for persistent Firebase Auth state changes
     const unsubscribe = onAuthStateChanged(
@@ -112,12 +119,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return random;
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (): Promise<User | null> => {
     setError(null);
+    setLoading(true);
     try {
-      await signInWithGoogle();
+      const signedInUser = await signInWithGoogle();
+      if (signedInUser) {
+        setUser(signedInUser);
+      }
+      return signedInUser;
     } catch (err: any) {
-      setError(err?.message || "Sign in failed.");
+      const msg = err?.message || "Sign in failed.";
+      setError(msg);
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
