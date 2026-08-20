@@ -473,7 +473,7 @@ function applyPageMetadata(html, page) {
 async function fetchDynamicPages() {
   const projectId = process.env.VITE_SANITY_PROJECT_ID || "0lqwkcmg";
   const dataset = process.env.VITE_SANITY_DATASET || "production";
-  const query = `*[defined(slug.current) && (( _type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())) || (_type == "news" && (status == "published" || !defined(status)) && defined(publishedAt) && publishedAt <= now()) || (_type == "projects" && (status == "published" || !defined(status))) || (_type == "resource" && status == "published"))]{
+  const query = `*[defined(slug.current) && (( _type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())) || (_type == "projects" && (status == "published" || !defined(status))) || (_type == "resource" && status == "published"))]{
     _type,
     "slug": slug.current,
     "slug_az": slug_az.current,
@@ -503,7 +503,7 @@ async function fetchDynamicPages() {
 
     for (const item of (payload.result || [])) {
       const type = item._type;
-      const prefix = type === "blog" ? "/blog" : type === "news" ? "/news" : type === "projects" ? "/work" : "/resources";
+      const prefix = type === "blog" ? "/blog" : type === "projects" ? "/work" : "/resources";
       const lastmodDate = (item._updatedAt || item.publishDate || item.publishedAt || todayIso).split("T")[0];
 
       // EN Page
@@ -511,8 +511,8 @@ async function fetchDynamicPages() {
         path: `${prefix}/${item.slug}`,
         title: `${item.title || "Creative resource"} — Ravan Mammadov`,
         description: item.excerpt || item.description || `Explore ${item.title || "this resource"} by Senior Creative Designer Ravan Mammadov.`,
-        type: type === "blog" || type === "news" ? "article" : "website",
-        schemaType: type === "news" ? "NewsArticle" : "BlogPosting",
+        type: type === "blog" ? "article" : "website",
+        schemaType: "BlogPosting",
         publishDate: item.publishDate || item.publishedAt,
         modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
         coverImage: item.coverImage,
@@ -530,8 +530,8 @@ async function fetchDynamicPages() {
         path: `/az${prefix}/${azSlug}`,
         title: `${azTitle} — Rəvan Məmmədov`,
         description: azDesc,
-        type: type === "blog" || type === "news" ? "article" : "website",
-        schemaType: type === "news" ? "NewsArticle" : "BlogPosting",
+        type: type === "blog" ? "article" : "website",
+        schemaType: "BlogPosting",
         publishDate: item.publishDate || item.publishedAt,
         modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
         coverImage: item.coverImage,
@@ -546,8 +546,8 @@ async function fetchDynamicPages() {
           path: `/az${prefix}/${item.slug}`,
           title: `${azTitle} — Rəvan Məmmədov`,
           description: azDesc,
-          type: type === "blog" || type === "news" ? "article" : "website",
-          schemaType: type === "news" ? "NewsArticle" : "BlogPosting",
+          type: type === "blog" ? "article" : "website",
+          schemaType: "BlogPosting",
           publishDate: item.publishDate || item.publishedAt,
           modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
           coverImage: item.coverImage,
@@ -881,7 +881,7 @@ ${sitemapPages
         ? "0.7"
         : "0.8";
     const changefreq =
-      p.path.startsWith("/blog") || p.path.startsWith("/az/blog") || p.path.startsWith("/news")
+      p.path.startsWith("/blog") || p.path.startsWith("/az/blog")
         ? "daily"
         : "weekly";
 
