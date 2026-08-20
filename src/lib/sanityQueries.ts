@@ -1,5 +1,4 @@
 import { client } from "./sanityClient";
-import exportData from "../../sanity_to_wp_export.json";
 import {
   MASTER_EDITORIAL_BLOGS,
   getEditorialBlogBySlug,
@@ -558,24 +557,7 @@ export async function fetchRelatedContentItems(currentId: string, contentType: s
 }
 
 function getLocalBlogBySlug(slug: string) {
-  const editorial = getEditorialBlogBySlug(slug);
-  if (editorial) return editorial;
-
-  const blogs = (exportData as any)?.blogs || [];
-  const raw = (slug || "").trim();
-  const clean = decodeURIComponent(raw)
-    .replace(/^\/?(az\/)?blog\//, "")
-    .replace(/^\//, "")
-    .replace(/\/+$/, "")
-    .trim()
-    .toLowerCase();
-
-  return blogs.find((b: any) => {
-    const s = b.slug;
-    const slugStr = (typeof s === "object" ? s?.current : s || "").toLowerCase().replace(/\/+$/, "");
-    const bId = (b._id || "").toLowerCase();
-    return slugStr === clean || bId === clean || slugStr === raw.toLowerCase();
-  });
+  return getEditorialBlogBySlug(slug);
 }
 
 export async function fetchBlogBySlug(slug: string, lang: string = "en") {
