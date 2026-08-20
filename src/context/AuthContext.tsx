@@ -154,8 +154,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Compute active SVG Data URI
   const avatarSvgUri = peepConfigToSvgDataUri(avatarConfig);
 
-  // Active user photo: Custom uploaded base64 photo if available, otherwise the character avatar SVG
-  const userPhoto = customAvatar || avatarSvgUri;
+  // Active user photo: Custom uploaded base64 photo if available, then Google photoURL, otherwise the character avatar SVG
+  const userPhoto = customAvatar || user?.photoURL || avatarSvgUri;
 
   return (
     <AuthContext.Provider

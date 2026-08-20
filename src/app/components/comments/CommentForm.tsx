@@ -11,9 +11,9 @@ interface CommentFormProps {
 }
 
 export default function CommentForm({ onSubmit, submitting: externalSubmitting, error }: CommentFormProps) {
-  const { user, signIn, loading: globalAuthLoading } = useAuth();
-  const { currentLanguage } = useLanguage();
-  const isAz = currentLanguage === "az";
+  const { user, signIn, loading: globalAuthLoading, userPhoto } = useAuth();
+  const { language } = useLanguage();
+  const isAz = language === "az";
 
   const [text, setText] = useState("");
   const [localSubmitting, setLocalSubmitting] = useState(false);
@@ -118,14 +118,14 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
   return (
     <form onSubmit={handleSubmit} className="relative rounded-2xl border border-border bg-card p-4 sm:p-5 backdrop-blur-xl shadow-sm">
       <div className="flex items-start gap-3">
-        {user.photoURL ? (
+        {userPhoto || user.photoURL ? (
           <img
-            src={user.photoURL}
+            src={userPhoto || user.photoURL || ""}
             alt={user.displayName || "User"}
-            className="h-8 w-8 rounded-full object-cover border border-border shrink-0 mt-0.5"
+            className="h-9 w-9 rounded-full object-cover border border-border shrink-0 mt-0.5 shadow-sm"
           />
         ) : (
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground font-bold text-xs shrink-0 mt-0.5">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground font-bold text-xs shrink-0 mt-0.5">
             {userInitial}
           </span>
         )}
@@ -145,7 +145,7 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
             onChange={(e) => setText(e.target.value)}
             maxLength={1000}
             rows={3}
-            placeholder="Share your thoughts, feedback or questions..."
+            placeholder={isAz ? "Fikirlərinizi, təkliflərinizi və ya suallarınızı bölüşün..." : "Share your thoughts, feedback or questions..."}
             className="w-full resize-y rounded-xl border border-border bg-surface p-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-background focus:outline-none transition-all duration-200"
           />
 
@@ -162,16 +162,15 @@ export default function CommentForm({ onSubmit, submitting: externalSubmitting, 
               {isPosting ? (
                 <>
                   <Loader2 size={13} className="animate-spin" />
-                  <span>Posting...</span>
+                  <span>{isAz ? "Yayımlanır..." : "Posting..."}</span>
                 </>
               ) : (
                 <>
                   <Send size={13} />
-                  <span>Post Comment</span>
+                  <span>{isAz ? "Rəyi Paylaş" : "Post Comment"}</span>
                 </>
               )}
             </button>
-
           </div>
         </div>
       </div>

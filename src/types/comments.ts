@@ -17,14 +17,29 @@ export interface Comment {
   updatedAt?: Timestamp | Date | null;
   isEdited?: boolean;
   
-  // Prepared architecture for future expansions (replies, likes, moderation)
+  // Threaded replies, likes, dislikes, and rich reactions
   parentId?: string | null;
   likesCount?: number;
   likedBy?: string[];
+  dislikesCount?: number;
+  dislikedBy?: string[];
+  reactions?: Record<string, string[]>; // { heart: ["uid1"], laugh: ["uid2"], fire: ["uid3"] }
   status?: "approved" | "pending" | "flagged";
   
   // Local UI metadata (optimistic updates)
   isOptimistic?: boolean;
+}
+
+export interface ReactionInput {
+  commentId: string;
+  reactionType: "heart" | "laugh" | "think" | "fire" | "insight" | "clap";
+  userId: string;
+}
+
+export interface VoteInput {
+  commentId: string;
+  voteType: "like" | "dislike";
+  userId: string;
 }
 
 export interface CreateCommentInput {
