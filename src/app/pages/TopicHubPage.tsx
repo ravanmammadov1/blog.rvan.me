@@ -68,8 +68,15 @@ export default function TopicHubPage() {
   const featuredPosts = useMemo(() => {
     if (!topic || allPosts.length === 0) return [];
     return allPosts.filter((p) => {
-      const slugStr = typeof p.slug === "string" ? p.slug : p.slug?.current || "";
-      return topic.featuredArticleSlugs.includes(slugStr);
+      const slugStr = (typeof p.slug === "string" ? p.slug : p.slug?.current || "").toLowerCase().trim();
+      const origSlug = (p.originalSlug || "").toLowerCase().trim();
+      const azSlug = (p.azSlug || p.slug_az?.current || "").toLowerCase().trim();
+      const idStr = (p._id || "").toLowerCase().trim();
+
+      return topic.featuredArticleSlugs.some((target) => {
+        const t = target.toLowerCase().trim();
+        return slugStr === t || origSlug === t || azSlug === t || idStr === t;
+      });
     });
   }, [topic, allPosts]);
 
