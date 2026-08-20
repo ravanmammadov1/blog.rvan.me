@@ -431,10 +431,13 @@ function getHreflangTags(pagePath) {
   ].join("\n    ");
 }
 
+let globalSiteFaviconUrl = null;
+let globalSiteOgImageUrl = null;
+
 function applyPageMetadata(html, page) {
   const canonical = canonicalFor(page.path);
   const hreflangs = getHreflangTags(page.path);
-  const imageUrl = getSanityImageUrl(page.coverImage);
+  const imageUrl = getSanityImageUrl(page.coverImage) || globalSiteOgImageUrl || `${domain}/og-image.jpg`;
   const robotsDirective = page.noindex
     ? "noindex, nofollow"
     : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
@@ -457,6 +460,14 @@ function applyPageMetadata(html, page) {
   let output = html;
   for (const [pattern, replacement] of replacements) output = output.replace(pattern, replacement);
 
+  // If a live Sanity favicon exists, inject it into the HTML head
+  if (globalSiteFaviconUrl) {
+    output = output.replace(
+      /<link rel="icon"[^>]*href="\/favicon\.(ico|svg)"[^>]*>/gi,
+      `<link rel="icon" href="${globalSiteFaviconUrl}" />`
+    );
+  }
+
   // Inject hreflang alternate tags right after canonical tag (for indexable pages)
   if (!page.noindex && !output.includes('hreflang="az"')) {
     output = output.replace(
@@ -473,6 +484,25 @@ function applyPageMetadata(html, page) {
 async function fetchDynamicPages() {
   const projectId = process.env.VITE_SANITY_PROJECT_ID || "0lqwkcmg";
   const dataset = process.env.VITE_SANITY_DATASET || "production";
+
+  // Fetch live Site Settings (Favicon, OG Image) from Sanity
+  try {
+    const sQuery = `*[_type == "siteSettings"][0]{ favicon, "ogImage": seo.ogImage }`;
+    const sEndpoint = `https://${projectId}.api.sanity.io/v2025-01-01/data/query/${dataset}?query=${encodeURIComponent(sQuery)}`;
+    const sResp = await fetch(sEndpoint, { signal: AbortSignal.timeout(10000) });
+    if (sResp.ok) {
+      const sJson = await sResp.json();
+      if (sJson.result?.favicon) {
+        globalSiteFaviconUrl = getSanityImageUrl(sJson.result.favicon);
+      }
+      if (sJson.result?.ogImage) {
+        globalSiteOgImageUrl = getSanityImageUrl(sJson.result.ogImage);
+      }
+    }
+  } catch (e) {
+    console.warn("Could not fetch live Sanity siteSettings during prerender:", e?.message || e);
+  }
+
   const query = `*[defined(slug.current) && (( _type == "blog" && (status == "published" || !defined(status)) && (!defined(publishDate) || publishDate <= now())) || (_type == "projects" && (status == "published" || !defined(status))) || (_type == "resource" && status == "published"))]{
     _type,
     "slug": slug.current,
