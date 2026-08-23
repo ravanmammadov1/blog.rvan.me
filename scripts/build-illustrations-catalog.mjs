@@ -1,174 +1,375 @@
-// Pre-render all 33 Open Doodles SVGs at BUILD TIME into static strings
-// so they can be used in the browser without ReactDOMServer
-import fs from "fs/promises";
-import path from "path";
-import React from "react";
-import ReactDOMServer from "react-dom/server";
-import * as OpenDoodles from "react-open-doodles";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const PLACEHOLDER_ACCENT = "__ACCENT__";
-const PLACEHOLDER_INK = "__INK__";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(__dirname, "..");
+const undrawDir = path.join(projectRoot, "public", "illustrations", "undraw");
+const outputFile = path.join(projectRoot, "src", "lib", "illustrationsIndex.json");
 
-const DOODLE_KEYS = [
-  "BalletDoodle", "BikiniDoodle", "ChillingDoodle", "ClumsyDoodle",
-  "CoffeeDoodle", "DancingDoodle", "DogJumpDoodle", "DoggieDoodle",
-  "FloatDoodle", "GroovyDoodle", "IceCreamDoodle", "JumpingDoodle",
-  "LayingDoodle", "LevitateDoodle", "LovingDoodle", "MeditatingDoodle",
-  "MoshingDoodle", "PettingDoodle", "PlantDoodle", "ReadingDoodle",
-  "ReadingSideDoodle", "RollerSkatingDoodle", "RollingDoodle", "RunningDoodle",
-  "SelfieDoodle", "SittingDoodle", "SittingReadingDoodle", "SleekDoodle",
-  "SprintingDoodle", "StrollingDoodle", "SwingingDoodle", "UnboxingDoodle",
-  "ZombieingDoodle",
-];
+const files = fs.readdirSync(undrawDir).filter((f) => f.endsWith(".svg"));
 
-// Render each doodle with unique placeholder strings, then at runtime
-// we just do string.replace() — no ReactDOMServer needed in browser!
-const svgTemplates = {};
+function formatTitle(slug) {
+  return slug
+    .replace(/^undraw-/, "")
+    .split("-")
+    .map((word) => {
+      const lower = word.toLowerCase();
+      if (lower === "3d") return "3D";
+      if (lower === "ai") return "AI";
+      if (lower === "ui") return "UI";
+      if (lower === "ux") return "UX";
+      if (lower === "vr") return "VR";
+      if (lower === "ar") return "AR";
+      if (lower === "api") return "API";
+      if (lower === "seo") return "SEO";
+      if (lower === "pdf") return "PDF";
+      if (lower === "iot") return "IoT";
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
 
-for (const key of DOODLE_KEYS) {
-  const Comp = OpenDoodles[key];
-  if (!Comp) {
-    console.warn(`Missing component: ${key}`);
-    continue;
+function categorize(slug) {
+  const s = slug.toLowerCase();
+  if (
+    s.includes("3d") ||
+    s.includes("modeling") ||
+    s.includes("render") ||
+    s.includes("virtual-reality") ||
+    s.includes("augmented-reality") ||
+    s.includes("vr-") ||
+    s.includes("hologram") ||
+    s.includes("metaverse") ||
+    s.includes("drone") ||
+    s.includes("robot") ||
+    s.includes("futuristic") ||
+    s.includes("spaceman") ||
+    s.includes("space") ||
+    s.includes("alien") ||
+    s.includes("floating")
+  ) {
+    return "3D / Modeling";
   }
 
-  // Render with placeholder colors
-  const markup = ReactDOMServer.renderToStaticMarkup(
-    React.createElement(Comp, { accent: PLACEHOLDER_ACCENT, ink: PLACEHOLDER_INK })
-  );
+  if (
+    s.includes("abstract") ||
+    s.includes("shapes") ||
+    s.includes("pattern") ||
+    s.includes("wireframe") ||
+    s.includes("composition") ||
+    s.includes("chaos") ||
+    s.includes("void") ||
+    s.includes("universe") ||
+    s.includes("geometry") ||
+    s.includes("elements") ||
+    s.includes("concept") ||
+    s.includes("grid") ||
+    s.includes("dots") ||
+    s.includes("curves") ||
+    s.includes("layer") ||
+    s.includes("blocks") ||
+    s.includes("texture")
+  ) {
+    return "Abstract";
+  }
 
-  svgTemplates[key] = markup;
-  console.log(`  ✓ ${key} → ${markup.length} chars`);
+  if (
+    s.includes("chat") ||
+    s.includes("message") ||
+    s.includes("email") ||
+    s.includes("mail") ||
+    s.includes("call") ||
+    s.includes("talk") ||
+    s.includes("contact") ||
+    s.includes("feedback") ||
+    s.includes("speech") ||
+    s.includes("conversation") ||
+    s.includes("discussion") ||
+    s.includes("forum") ||
+    s.includes("newsletter") ||
+    s.includes("support") ||
+    s.includes("notification") ||
+    s.includes("mention") ||
+    s.includes("inbox") ||
+    s.includes("dialogue") ||
+    s.includes("voice") ||
+    s.includes("audio") ||
+    s.includes("broadcast") ||
+    s.includes("signal") ||
+    s.includes("connect")
+  ) {
+    return "Communication";
+  }
+
+  if (
+    s.includes("market") ||
+    s.includes("growth") ||
+    s.includes("seo") ||
+    s.includes("brand") ||
+    s.includes("ad-") ||
+    s.includes("ads") ||
+    s.includes("campaign") ||
+    s.includes("target") ||
+    s.includes("conversion") ||
+    s.includes("funnel") ||
+    s.includes("social-media") ||
+    s.includes("content") ||
+    s.includes("traffic") ||
+    s.includes("promotion") ||
+    s.includes("launch") ||
+    s.includes("sale") ||
+    s.includes("discount") ||
+    s.includes("influence") ||
+    s.includes("audience") ||
+    s.includes("viral") ||
+    s.includes("trend") ||
+    s.includes("ranking") ||
+    s.includes("advertis") ||
+    s.includes("publicity") ||
+    s.includes("pr-") ||
+    s.includes("banner")
+  ) {
+    return "Marketing";
+  }
+
+  if (
+    s.includes("code") ||
+    s.includes("dev") ||
+    s.includes("tech") ||
+    s.includes("server") ||
+    s.includes("cloud") ||
+    s.includes("api") ||
+    s.includes("data") ||
+    s.includes("cyber") ||
+    s.includes("security") ||
+    s.includes("ai-") ||
+    s.includes("bot") ||
+    s.includes("algorithm") ||
+    s.includes("app") ||
+    s.includes("mobile") ||
+    s.includes("software") ||
+    s.includes("hardware") ||
+    s.includes("bug") ||
+    s.includes("git") ||
+    s.includes("database") ||
+    s.includes("network") ||
+    s.includes("programming") ||
+    s.includes("encryption") ||
+    s.includes("sync") ||
+    s.includes("online") ||
+    s.includes("internet") ||
+    s.includes("digital") ||
+    s.includes("web") ||
+    s.includes("system") ||
+    s.includes("computer") ||
+    s.includes("file") ||
+    s.includes("folder") ||
+    s.includes("download") ||
+    s.includes("upload") ||
+    s.includes("analytics") ||
+    s.includes("dashboard") ||
+    s.includes("screen") ||
+    s.includes("device") ||
+    s.includes("browser") ||
+    s.includes("login") ||
+    s.includes("auth") ||
+    s.includes("setup") ||
+    s.includes("install") ||
+    s.includes("hosting")
+  ) {
+    return "Technology";
+  }
+
+  if (
+    s.includes("design") ||
+    s.includes("creative") ||
+    s.includes("art") ||
+    s.includes("draw") ||
+    s.includes("ui") ||
+    s.includes("ux") ||
+    s.includes("prototype") ||
+    s.includes("color") ||
+    s.includes("font") ||
+    s.includes("type") ||
+    s.includes("sketch") ||
+    s.includes("palette") ||
+    s.includes("vector") ||
+    s.includes("canvas") ||
+    s.includes("graphic") ||
+    s.includes("studio") ||
+    s.includes("photo") ||
+    s.includes("image") ||
+    s.includes("camera") ||
+    s.includes("filter") ||
+    s.includes("icon") ||
+    s.includes("visual") ||
+    s.includes("illustrat") ||
+    s.includes("craft") ||
+    s.includes("paint") ||
+    s.includes("portfolio") ||
+    s.includes("gallery") ||
+    s.includes("animation") ||
+    s.includes("motion")
+  ) {
+    return "Design & Creative";
+  }
+
+  if (
+    s.includes("learn") ||
+    s.includes("school") ||
+    s.includes("study") ||
+    s.includes("book") ||
+    s.includes("educat") ||
+    s.includes("read") ||
+    s.includes("teacher") ||
+    s.includes("student") ||
+    s.includes("science") ||
+    s.includes("research") ||
+    s.includes("exam") ||
+    s.includes("library") ||
+    s.includes("knowledge") ||
+    s.includes("course") ||
+    s.includes("class") ||
+    s.includes("degree") ||
+    s.includes("quiz") ||
+    s.includes("brain") ||
+    s.includes("math") ||
+    s.includes("certificate") ||
+    s.includes("diploma") ||
+    s.includes("academy") ||
+    s.includes("professor") ||
+    s.includes("lecture") ||
+    s.includes("homework") ||
+    s.includes("college") ||
+    s.includes("university") ||
+    s.includes("experiment") ||
+    s.includes("lab")
+  ) {
+    return "Education";
+  }
+
+  if (
+    s.includes("business") ||
+    s.includes("startup") ||
+    s.includes("finance") ||
+    s.includes("invest") ||
+    s.includes("money") ||
+    s.includes("bank") ||
+    s.includes("pay") ||
+    s.includes("crypto") ||
+    s.includes("wallet") ||
+    s.includes("contract") ||
+    s.includes("agreement") ||
+    s.includes("presentation") ||
+    s.includes("pitch") ||
+    s.includes("strategy") ||
+    s.includes("metrics") ||
+    s.includes("profit") ||
+    s.includes("revenue") ||
+    s.includes("office") ||
+    s.includes("workplace") ||
+    s.includes("company") ||
+    s.includes("deal") ||
+    s.includes("e-commerce") ||
+    s.includes("shopping") ||
+    s.includes("order") ||
+    s.includes("checkout") ||
+    s.includes("invoice") ||
+    s.includes("billing") ||
+    s.includes("trade") ||
+    s.includes("stock") ||
+    s.includes("enterprise") ||
+    s.includes("consulting") ||
+    s.includes("card") ||
+    s.includes("credit")
+  ) {
+    return "Business & Startup";
+  }
+
+  if (
+    s.includes("people") ||
+    s.includes("work") ||
+    s.includes("team") ||
+    s.includes("group") ||
+    s.includes("user") ||
+    s.includes("collab") ||
+    s.includes("friend") ||
+    s.includes("avatar") ||
+    s.includes("person") ||
+    s.includes("meeting") ||
+    s.includes("interview") ||
+    s.includes("hiring") ||
+    s.includes("career") ||
+    s.includes("resume") ||
+    s.includes("manager") ||
+    s.includes("freelanc") ||
+    s.includes("remote") ||
+    s.includes("job") ||
+    s.includes("worker") ||
+    s.includes("candidate") ||
+    s.includes("profession") ||
+    s.includes("leadership") ||
+    s.includes("co-working") ||
+    s.includes("woman") ||
+    s.includes("man") ||
+    s.includes("profile")
+  ) {
+    return "People & Work";
+  }
+
+  return "Lifestyle";
 }
 
-console.log(`\nPre-rendered ${Object.keys(svgTemplates).length} Open Doodles SVGs!\n`);
+function generateTags(slug, category) {
+  const words = slug.toLowerCase().split("-");
+  const baseTags = new Set([...words]);
 
-// ── CATALOG: each doodle gets placed in multiple categories ──
+  if (category === "Design & Creative") {
+    ["design", "creative", "ui", "ux", "vector", "art", "portfolio"].forEach((t) => baseTags.add(t));
+  } else if (category === "Business & Startup") {
+    ["business", "startup", "strategy", "presentation", "office", "finance"].forEach((t) => baseTags.add(t));
+  } else if (category === "People & Work") {
+    ["people", "work", "team", "collaboration", "office", "career"].forEach((t) => baseTags.add(t));
+  } else if (category === "Technology") {
+    ["technology", "tech", "software", "app", "digital", "cloud", "data"].forEach((t) => baseTags.add(t));
+  } else if (category === "Marketing") {
+    ["marketing", "growth", "brand", "strategy", "social media", "advertising"].forEach((t) => baseTags.add(t));
+  } else if (category === "Education") {
+    ["education", "learning", "knowledge", "study", "research", "books"].forEach((t) => baseTags.add(t));
+  } else if (category === "Communication") {
+    ["communication", "chat", "message", "support", "connect", "discussion"].forEach((t) => baseTags.add(t));
+  } else if (category === "3D / Modeling") {
+    ["3d", "modeling", "render", "vr", "future", "technology"].forEach((t) => baseTags.add(t));
+  } else if (category === "Abstract") {
+    ["abstract", "shapes", "concept", "modern", "minimal", "design"].forEach((t) => baseTags.add(t));
+  } else {
+    ["lifestyle", "daily", "modern", "people", "activity"].forEach((t) => baseTags.add(t));
+  }
 
-const DOODLE_META = [
-  { id: "LovingDoodle", name: "Loving", desc: "Big Heart Embrace", cats: ["People & Work", "Lifestyle & Wellness"] },
-  { id: "MeditatingDoodle", name: "Meditating", desc: "Zen Mindfulness", cats: ["Lifestyle & Wellness", "People & Work"] },
-  { id: "ReadingDoodle", name: "Reading", desc: "Immersed in Book", cats: ["Science & Education", "People & Work"] },
-  { id: "ReadingSideDoodle", name: "Reading Side", desc: "Deep Focus Study", cats: ["Science & Education", "People & Work"] },
-  { id: "SittingReadingDoodle", name: "Sitting Reading", desc: "Armchair Literature", cats: ["Science & Education", "Lifestyle & Wellness"] },
-  { id: "SittingDoodle", name: "Sitting", desc: "Relaxed Chill Sitting", cats: ["People & Work", "Lifestyle & Wellness"] },
-  { id: "CoffeeDoodle", name: "Coffee", desc: "Artisanal Coffee Break", cats: ["Lifestyle & Wellness", "People & Work"] },
-  { id: "ChillingDoodle", name: "Chilling", desc: "Casual Workspace Chill", cats: ["People & Work", "Lifestyle & Wellness"] },
-  { id: "LayingDoodle", name: "Laying", desc: "Laying on Floor Relaxing", cats: ["Tech & Coding", "Lifestyle & Wellness"] },
-  { id: "RollerSkatingDoodle", name: "Roller Skating", desc: "Dynamic Roller Skater", cats: ["Lifestyle & Wellness", "Marketing & Growth"] },
-  { id: "DancingDoodle", name: "Dancing", desc: "Spontaneous Dance", cats: ["Lifestyle & Wellness", "Design & Creative"] },
-  { id: "GroovyDoodle", name: "Groovy", desc: "Groovy Beats & Music", cats: ["Design & Creative", "Lifestyle & Wellness"] },
-  { id: "MoshingDoodle", name: "Moshing", desc: "High Energy Moshing", cats: ["Marketing & Growth", "Lifestyle & Wellness"] },
-  { id: "JumpingDoodle", name: "Jumping", desc: "Triumphant Victory Jump", cats: ["Business & Startup", "Marketing & Growth"] },
-  { id: "RunningDoodle", name: "Running", desc: "Agile Sprint to Goal", cats: ["Business & Startup", "Marketing & Growth"] },
-  { id: "SprintingDoodle", name: "Sprinting", desc: "High Velocity Sprint", cats: ["Marketing & Growth", "Business & Startup"] },
-  { id: "RollingDoodle", name: "Rolling", desc: "Playful Ground Rolling", cats: ["Design & Creative", "Lifestyle & Wellness"] },
-  { id: "FloatDoodle", name: "Floating", desc: "Zero Gravity Cloud Float", cats: ["Security & Cloud", "Tech & Coding"] },
-  { id: "LevitateDoodle", name: "Levitating", desc: "Spatial Metaverse Levitate", cats: ["Tech & Coding", "Security & Cloud"] },
-  { id: "BalletDoodle", name: "Ballet", desc: "Precision Design Ballet", cats: ["Design & Creative", "People & Work"] },
-  { id: "BikiniDoodle", name: "Bikini", desc: "Summer Beach Sunbathing", cats: ["Lifestyle & Wellness", "People & Work"] },
-  { id: "ClumsyDoodle", name: "Clumsy", desc: "Debugging Error Handling", cats: ["Tech & Coding", "People & Work"] },
-  { id: "DoggieDoodle", name: "Doggie", desc: "Walking Companion Dog", cats: ["Lifestyle & Wellness", "People & Work"] },
-  { id: "DogJumpDoodle", name: "Dog Jump", desc: "Enthusiastic Dog Hug", cats: ["People & Work", "Lifestyle & Wellness"] },
-  { id: "PettingDoodle", name: "Petting", desc: "Petting Furry Friend", cats: ["People & Work", "Lifestyle & Wellness"] },
-  { id: "PlantDoodle", name: "Plant", desc: "Watering Houseplant Growth", cats: ["Lifestyle & Wellness", "Business & Startup"] },
-  { id: "IceCreamDoodle", name: "Ice Cream", desc: "Delightful Customer Treat", cats: ["Finance & E-Commerce", "Lifestyle & Wellness"] },
-  { id: "SelfieDoodle", name: "Selfie", desc: "Social Media Selfie Moment", cats: ["Marketing & Growth", "People & Work"] },
-  { id: "SleekDoodle", name: "Sleek", desc: "Sleek Executive Pitch", cats: ["Business & Startup", "People & Work"] },
-  { id: "StrollingDoodle", name: "Strolling", desc: "Casual Urban Stroll", cats: ["Finance & E-Commerce", "Lifestyle & Wellness"] },
-  { id: "SwingingDoodle", name: "Swinging", desc: "Workplace Balance Swing", cats: ["People & Work", "Lifestyle & Wellness"] },
-  { id: "UnboxingDoodle", name: "Unboxing", desc: "Delivery Unboxing", cats: ["Finance & E-Commerce", "Marketing & Growth"] },
-  { id: "ZombieingDoodle", name: "Zombieing", desc: "Late Night Coding Sentry", cats: ["Tech & Coding", "People & Work"] },
-];
+  return Array.from(baseTags).slice(0, 10);
+}
 
-const CONTEXTS = [
-  "Core Scene", "Startup MVP", "Enterprise Workflow", "Creative Studio",
-  "Remote Team", "SaaS Showcase", "Mobile First", "Community Spirit",
-  "Growth Engine", "Deep Work", "Innovation Lab", "Digital Transform",
-  "Customer Delight", "Agile Sprint", "Future Vision",
-];
+const catalog = files.map((file) => {
+  const slug = file.replace(".svg", "");
+  const category = categorize(slug);
+  const title = formatTitle(slug);
+  const tags = generateTags(slug, category);
 
-const ALL_CATEGORIES = [
-  "Tech & Coding", "Design & Creative", "Business & Startup", "Data & Analytics",
-  "Security & Cloud", "People & Work", "Finance & E-Commerce", "Marketing & Growth",
-  "Science & Education", "Lifestyle & Wellness",
-];
-
-const catalogItems = [];
-
-// For each doodle, create entries across its categories and contexts
-DOODLE_META.forEach((doodle) => {
-  // Place in its natural categories
-  doodle.cats.forEach((cat) => {
-    CONTEXTS.forEach((ctx, ctxIdx) => {
-      const id = `${doodle.id.toLowerCase()}-${cat.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${ctx.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
-      catalogItems.push({
-        id,
-        title: `${doodle.desc} — ${ctx}`,
-        category: cat,
-        tags: ["open-doodles", doodle.name.toLowerCase(), cat.toLowerCase(), ctx.toLowerCase().replace(/ /g, "-"), "hand-drawn", "vector", "sketch"],
-        doodleKey: doodle.id,
-      });
-    });
-  });
-
-  // Also place in extra categories for broader coverage
-  ALL_CATEGORIES.forEach((cat) => {
-    if (!doodle.cats.includes(cat)) {
-      // Pick a subset of contexts for cross-category entries
-      const subset = CONTEXTS.filter((_, i) => (i + doodle.id.length) % 4 === 0);
-      subset.forEach((ctx) => {
-        const id = `${doodle.id.toLowerCase()}-${cat.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${ctx.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
-        catalogItems.push({
-          id,
-          title: `${doodle.desc} — ${ctx}`,
-          category: cat,
-          tags: ["open-doodles", doodle.name.toLowerCase(), cat.toLowerCase(), ctx.toLowerCase().replace(/ /g, "-"), "hand-drawn", "vector"],
-          doodleKey: doodle.id,
-        });
-      });
-    }
-  });
+  return {
+    id: `undraw-${slug}`,
+    title,
+    slug,
+    collection: "unDraw",
+    category,
+    tags,
+    format: "svg",
+    src: `/illustrations/undraw/${file}`,
+    author: "Katerina Limpitsouni",
+    license: "unDraw Open License (Free for Commercial & Personal Use)",
+    sourceUrl: "https://undraw.co/illustrations",
+  };
 });
 
-console.log(`Total catalog entries: ${catalogItems.length}`);
-
-// ── Write two output files ──
-
-// 1. Pre-rendered SVG templates (static strings with placeholder colors)
-const svgFileContent = `// AUTO-GENERATED: Pre-rendered Open Doodles SVG templates
-// DO NOT EDIT — run \`node scripts/build-illustrations-catalog.mjs\` to regenerate
-
-export const OPEN_DOODLE_SVGS: Record<string, string> = ${JSON.stringify(svgTemplates, null, 2)};
-`;
-
-await fs.writeFile(
-  path.join(process.cwd(), "src/lib/openDoodleSvgs.ts"),
-  svgFileContent,
-  "utf8"
-);
-console.log("✓ Wrote src/lib/openDoodleSvgs.ts (pre-rendered SVG templates)");
-
-// 2. Catalog metadata
-const catalogFileContent = `// AUTO-GENERATED: Open Doodles Illustration Catalog
-// DO NOT EDIT — run \`node scripts/build-illustrations-catalog.mjs\` to regenerate
-
-export interface RawIllustrationItem {
-  id: string;
-  title: string;
-  category: string;
-  tags: string[];
-  doodleKey: string;
-}
-
-export const RAW_ILLUSTRATION_CATALOG: RawIllustrationItem[] = ${JSON.stringify(catalogItems, null, 2)};
-`;
-
-await fs.writeFile(
-  path.join(process.cwd(), "src/lib/illustrationCatalog.ts"),
-  catalogFileContent,
-  "utf8"
-);
-console.log("✓ Wrote src/lib/illustrationCatalog.ts (catalog metadata)");
-
-console.log("\n🎉 Done! Both files generated successfully.");
+fs.writeFileSync(outputFile, JSON.stringify(catalog, null, 2));
+console.log(`✓ Successfully compiled ${catalog.length} illustrations to src/lib/illustrationsIndex.json`);

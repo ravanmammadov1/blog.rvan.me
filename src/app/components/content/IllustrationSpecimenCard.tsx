@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Copy, Image as ImageIcon, FileCode } from "lucide-react";
+import { Check, Copy, Image as ImageIcon, FileCode, ExternalLink, ShieldCheck } from "lucide-react";
 import { IllustrationItem } from "../../../lib/illustrationsData";
 
 interface IllustrationSpecimenCardProps {
@@ -108,16 +108,16 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   return (
     <article className="group relative rounded-2xl border border-border bg-card p-5 hover:border-primary/40 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40">
       <div>
-        {/* Header Badges */}
+        {/* Header: Category Badge & Copy SVG */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2 py-0.5 rounded-md mono">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2 py-0.5 rounded-md mono truncate max-w-[170px]">
             {illustration.category}
           </span>
 
           <button
             onClick={handleCopySvg}
-            className="text-[10px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer shrink-0"
-            title="Copy SVG source code to clipboard"
+            className="text-[10px] font-mono text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+            title="Copy SVG code to clipboard"
           >
             {downloadedType === "copied" ? (
               <>
@@ -152,14 +152,32 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
           )}
         </div>
 
-        {/* Title & Tags */}
-        <div className="mb-4">
+        {/* Title & Searchable Tags */}
+        <div className="mb-3 space-y-1">
           <h3 className="text-sm font-bold text-card-foreground group-hover:text-primary transition-colors mono truncate">
             {illustration.title}
           </h3>
-          <p className="text-[11px] text-muted-foreground mono mt-1 truncate">
+          <p className="text-[11px] text-muted-foreground mono truncate">
             {illustration.tags.slice(0, 4).join(" • ")}
           </p>
+        </div>
+
+        {/* Source & Open-Source License Attribution Bar */}
+        <div className="pt-2 pb-3 border-t border-border/50 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+          <span className="truncate max-w-[130px]" title={illustration.license}>
+            {illustration.collection} · Open Source
+          </span>
+
+          <a
+            href={illustration.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+            title={`View source: ${illustration.sourceUrl}`}
+          >
+            <span>SOURCE</span>
+            <ExternalLink size={10} />
+          </a>
         </div>
       </div>
 
@@ -167,8 +185,8 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       <div className="pt-3 border-t border-border grid grid-cols-2 gap-2">
         <button
           onClick={handleDownloadSvg}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
-          title="Download standalone SVG vector"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer active:scale-[0.98]"
+          title="Download vector SVG"
         >
           {downloadedType === "svg" ? (
             <Check size={13} className="text-emerald-500" />
@@ -180,8 +198,8 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
         <button
           onClick={handleDownloadPng}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
-          title="Download high-resolution 1200px PNG"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer active:scale-[0.98]"
+          title="Download high-resolution PNG (1200x900)"
         >
           {downloadedType === "png" ? (
             <Check size={13} className="text-emerald-500" />

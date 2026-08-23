@@ -514,69 +514,45 @@ export default function ResourcesArchive() {
       {activeCategory === "illustrations" && (
         <section className="px-6 py-10 md:px-10 relative z-10">
           <div className="mx-auto max-w-[1600px]">
-            {/* Single-Line Toolbar with Dropdown Category & Color Controls */}
-            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
-              {/* Category Selector Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen)}
-                  className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 transition-all cursor-pointer select-none"
-                >
-                  <Sparkles size={14} className="text-primary" />
-                  <span>Category: {illustrationCategorySubfilter}</span>
-                  <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
-                </button>
-
-                <AnimatePresence>
-                  {illustrationCategoryDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-2 z-50 w-72 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+            {/* Single-Line Toolbar with Category Pills & Color Customizer */}
+            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-border bg-card p-4 shadow-sm">
+              {/* Category Pills with Brand Gradient Active State */}
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
+                {ILLUSTRATION_CATEGORIES.map((cat) => {
+                  const isSelected = illustrationCategorySubfilter === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setIllustrationCategorySubfilter(cat)}
+                      className={`rounded-xl px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                        isSelected
+                          ? "text-white shadow-sm"
+                          : "text-muted-foreground hover:text-foreground hover:bg-surface border border-border"
+                      }`}
+                      style={
+                        isSelected
+                          ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                          : undefined
+                      }
                     >
-                      <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
-                        Select Category
-                      </div>
-                      <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                        {ILLUSTRATION_CATEGORIES.map((cat) => {
-                          const isSelected = illustrationCategorySubfilter === cat;
-                          return (
-                            <button
-                              key={cat}
-                              onClick={() => {
-                                setIllustrationCategorySubfilter(cat);
-                                setIllustrationCategoryDropdownOpen(false);
-                              }}
-                              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
-                                isSelected
-                                  ? "bg-primary text-black font-bold"
-                                  : "text-muted-foreground hover:text-white hover:bg-white/5"
-                              }`}
-                            >
-                              <span className="truncate">{cat}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      {cat}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Color Customization Presets */}
-              <div className="flex flex-wrap items-center gap-5">
+              <div className="flex flex-wrap items-center gap-4 shrink-0">
                 <div className="flex items-center gap-2">
                   <Palette size={14} className="text-primary shrink-0" />
-                  <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Accent Color:</span>
-                  <div className="flex items-center gap-1.5 bg-black/40 border border-white/10 p-1 rounded-xl">
+                  <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Accent:</span>
+                  <div className="flex items-center gap-1.5 bg-surface border border-border p-1 rounded-xl">
                     {COLOR_PRESETS.map((color) => (
                       <button
                         key={color}
                         onClick={() => setIllustrationColor(color)}
                         className={`h-5 w-5 rounded-lg transition-transform cursor-pointer ${
-                          illustrationColor === color ? "scale-110 border-2 border-white shadow-md" : "hover:scale-105 opacity-80"
+                          illustrationColor === color ? "scale-110 border-2 border-primary shadow-md" : "hover:scale-105 opacity-80"
                         }`}
                         style={{ backgroundColor: color }}
                         title={`Color: ${color}`}
@@ -594,20 +570,24 @@ export default function ResourcesArchive() {
               </div>
             </div>
 
-            {/* Reset Filters Option if filtered */}
-            {(deferredSearch || illustrationCategorySubfilter !== "All") && (
-              <div className="mb-6 flex justify-end">
+            {/* Status Counter & Reset Option */}
+            <div className="mb-6 flex items-center justify-between text-xs font-mono text-muted-foreground">
+              <span>
+                {filteredIllustrations.length} {filteredIllustrations.length === 1 ? "illustration" : "illustrations"} found
+              </span>
+
+              {(deferredSearch || illustrationCategorySubfilter !== "All") && (
                 <button
                   onClick={() => {
                     setIllustrationCategorySubfilter("All");
                     handleSearchChange("");
                   }}
-                  className="flex items-center gap-1.5 text-xs font-mono text-primary hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-mono text-primary hover:underline transition-colors cursor-pointer"
                 >
                   <RefreshCw size={12} /> Reset Filters
                 </button>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Illustration Specimen Grid */}
             {filteredIllustrations.length === 0 ? (

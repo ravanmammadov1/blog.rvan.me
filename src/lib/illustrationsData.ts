@@ -10,36 +10,37 @@ export interface IllustrationItem {
   tags: string[];
   format: "svg" | "png";
   src: string;
+  pngSrc?: string;
   author: string;
   license: string;
   sourceUrl: string;
-  hash: string;
+  hash?: string;
 }
 
 export const ILLUSTRATION_CATEGORIES = [
   "All",
-  "Marketing & Growth",
-  "Tech & Coding",
-  "Data & Analytics",
   "Design & Creative",
   "Business & Startup",
-  "Finance & E-Commerce",
-  "Security & Cloud",
   "People & Work",
-  "Science & Education",
-  "Lifestyle & Wellness",
+  "Technology",
+  "Marketing",
+  "Education",
+  "Lifestyle",
+  "Communication",
+  "Abstract",
+  "3D / Modeling",
 ] as const;
 
 export type IllustrationCategory = (typeof ILLUSTRATION_CATEGORIES)[number];
 
-export const ILLUSTRATION_COLLECTIONS = ["All", "unDraw", "Open Doodles"] as const;
+export const ILLUSTRATION_COLLECTIONS = ["All", "unDraw"] as const;
 export type IllustrationCollection = (typeof ILLUSTRATION_COLLECTIONS)[number];
 
 // Cast typed catalog
 export const ILLUSTRATIONS_CATALOG: IllustrationItem[] = rawCatalog as IllustrationItem[];
 
 /**
- * Fast client-side fuzzy search and filtering for the 1,773+ illustration library.
+ * Fast client-side fuzzy search and filtering across titles, categories, and tags.
  */
 export function searchIllustrations(
   query: string = "",
