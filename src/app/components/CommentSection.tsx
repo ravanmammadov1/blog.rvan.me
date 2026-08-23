@@ -13,7 +13,7 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ postId, postTitle }: CommentSectionProps) {
-  const { user } = useAuth();
+  const { user, userPhoto } = useAuth();
   const [firestoreComments, setFirestoreComments] = useState<Comment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,7 +105,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       author: {
         uid: user.uid,
         displayName: user.displayName || user.email?.split("@")[0] || "User",
-        photoURL: user.photoURL || null,
+        photoURL: userPhoto || user.photoURL || null,
         email: user.email || null,
       },
       text: text.trim(),
@@ -144,7 +144,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       author: {
         uid: user.uid,
         displayName: user.displayName || user.email?.split("@")[0] || "User",
-        photoURL: user.photoURL || null,
+        photoURL: userPhoto || user.photoURL || null,
         email: user.email || null,
       },
       text: text.trim(),

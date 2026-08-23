@@ -11,7 +11,7 @@ import {
   buildPeepSvg,
 } from "./peepsAssets";
 
-// Curated Cheerful & Friendly Expressions (Only smiling, happy, cute, confident)
+// Curated Cheerful & Friendly Expressions
 export const CHEERFUL_EXPRESSION_IDS = [
   "big_smile",
   "joyful_laugh",
@@ -23,7 +23,7 @@ export const CHEERFUL_EXPRESSION_IDS = [
   "pattern_sweater_smirk",
 ];
 
-// Curated Soft Pastel & Vibrant Background Colors (No gloomy black or transparent)
+// Curated Soft Pastel & Vibrant Background Colors
 export const CHEERFUL_BACKGROUND_COLORS = [
   "#e0f2fe", // Soft Sky Blue
   "#fef3c7", // Warm Amber Sunlight
@@ -35,26 +35,6 @@ export const CHEERFUL_BACKGROUND_COLORS = [
   "#dbeafe", // Powder Blue
   "#f3e8ff", // Lilac Mist
   "#ecfdf5", // Spring Leaf
-];
-
-// Gender-categorized Hair Styles
-export const FEMININE_HAIR_IDS = [
-  "straight_bob",
-  "messy_bun",
-  "pigtails",
-  "curly_medium",
-  "afro_headband",
-  "headphones",
-];
-
-export const MASCULINE_HAIR_IDS = [
-  "short_fade",
-  "fedora_hat",
-  "beanie_knit",
-  "dreadlocks",
-  "big_afro",
-  "mohawk",
-  "headphones",
 ];
 
 // PRNG Seed Hash Function (xmur3)
@@ -82,61 +62,25 @@ function mulberry32(a: number) {
 }
 
 /**
- * Calculates aesthetic quality score (0-100) for an avatar configuration.
+ * Generates a deterministic vector avatar configuration from any seed.
  */
-export function calculateAvatarScore(config: PeepConfig): number {
-  let score = 75;
-  if (CHEERFUL_EXPRESSION_IDS.includes(config.headExpression)) score += 15;
-  if (CHEERFUL_BACKGROUND_COLORS.includes(config.backgroundColor)) score += 10;
-  if (config.accessory !== "none") score += 5;
-  return Math.min(100, score);
-}
-
-/**
- * Generates a cheerful, deterministic character configuration from any input seed string.
- * Supports optional gender preference ('female' | 'male' | 'neutral').
- */
-export function generateDeterministicPeep(
-  seed: string,
-  gender?: "female" | "male" | "neutral"
-): PeepConfig {
-  const seedString = (seed || "rvan_guest_creator").trim();
-  const seedFn = xmur3(seedString);
+export function generateDeterministicPeep(seed: string): PeepConfig {
+  const seedFn = xmur3(seed || "default_user");
   const rand = mulberry32(seedFn());
 
-  const randomItem = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
+  const pick = <T>(arr: readonly T[] | T[]): T => {
+    const idx = Math.floor(rand() * arr.length);
+    return arr[idx];
+  };
 
-  // Filter expressions to ONLY cheerful, smiling, quality faces
-  const cheerfulExpressions = EXPRESSIONS.filter((e) =>
-    CHEERFUL_EXPRESSION_IDS.includes(e.id)
-  );
-  const selectedExpression = cheerfulExpressions.length > 0
-    ? randomItem(cheerfulExpressions).id
-    : "big_smile";
-
-  // Filter hair styles based on gender if specified
-  let hairOptions = HAIR_STYLES;
-  if (gender === "female") {
-    hairOptions = HAIR_STYLES.filter((h) => FEMININE_HAIR_IDS.includes(h.id));
-  } else if (gender === "male") {
-    hairOptions = HAIR_STYLES.filter((h) => MASCULINE_HAIR_IDS.includes(h.id));
-  }
-  if (hairOptions.length === 0) hairOptions = HAIR_STYLES;
-  const selectedHair = randomItem(hairOptions).id;
-
-  // Filter friendly non-knife bodies
-  const friendlyBodies = BODIES.filter((b) => !b.id.includes("knife"));
-  const selectedBody = friendlyBodies.length > 0 ? randomItem(friendlyBodies).id : "tshirt_relaxed";
-
-  // Friendly non-mask accessories
-  const friendlyAccessories = ACCESSORIES.filter((a) => a.id !== "face_mask");
-  const selectedAccessory = rand() > 0.4 ? randomItem(friendlyAccessories).id : "none";
-
-  // Premium, harmonious color combinations
-  const selectedSkin = randomItem(SKIN_TONES).value;
-  const selectedHairCol = randomItem(HAIR_COLORS).value;
-  const selectedClothing = randomItem(CLOTHING_COLORS).value;
-  const selectedBg = randomItem(CHEERFUL_BACKGROUND_COLORS);
+  const selectedExpression = pick(CHEERFUL_EXPRESSION_IDS);
+  const selectedHair = pick(HAIR_STYLES).id;
+  const selectedAccessory = rand() > 0.4 ? pick(ACCESSORIES).id : "none";
+  const selectedBody = pick(BODIES).id;
+  const selectedSkin = pick(SKIN_TONES).value;
+  const selectedHairCol = pick(HAIR_COLORS).value;
+  const selectedClothing = pick(CLOTHING_COLORS).value;
+  const selectedBg = pick(CHEERFUL_BACKGROUND_COLORS);
 
   return {
     mode: "bust",
@@ -155,7 +99,7 @@ export function generateDeterministicPeep(
 }
 
 /**
- * Converts a character configuration into a safe SVG Data URI.
+ * Converts a vector character configuration into a safe SVG Data URI.
  */
 export function peepConfigToSvgDataUri(config: PeepConfig, size: number = 200): string {
   try {
@@ -169,57 +113,11 @@ export function peepConfigToSvgDataUri(config: PeepConfig, size: number = 200): 
   }
 }
 
-const GUEST_SESSION_STORAGE_KEY = "rvan_guest_avatar_config";
-
 /**
- * Retrieves or establishes a stable cheerful character avatar for guest visitors during this session.
+ * Retrieves persistent vector avatar config for authenticated users.
  */
-export function getGuestAvatarConfig(): PeepConfig {
-  if (typeof window === "undefined") return DEFAULT_PEEP_CONFIG;
-
-  try {
-    const stored = sessionStorage.getItem(GUEST_SESSION_STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed && parsed.headExpression && parsed.hairStyle) {
-        return parsed;
-      }
-    }
-
-    // Initialize deterministic session character
-    let sessionSeed = sessionStorage.getItem("rvan_guest_session_id");
-    if (!sessionSeed) {
-      sessionSeed = "guest_" + Math.random().toString(36).substring(2, 12);
-      sessionStorage.setItem("rvan_guest_session_id", sessionSeed);
-    }
-
-    const config = generateDeterministicPeep(sessionSeed);
-    sessionStorage.setItem(GUEST_SESSION_STORAGE_KEY, JSON.stringify(config));
-    return config;
-  } catch (err) {
-    return DEFAULT_PEEP_CONFIG;
-  }
-}
-
-/**
- * Saves guest avatar preferences for the current session.
- */
-export function saveGuestAvatarConfig(config: PeepConfig) {
-  if (typeof window === "undefined") return;
-  try {
-    sessionStorage.setItem(GUEST_SESSION_STORAGE_KEY, JSON.stringify(config));
-  } catch (e) {}
-}
-
-/**
- * Retrieves or initializes a persistent cheerful character avatar for authenticated users.
- */
-export function getUserAvatarConfig(
-  uid: string,
-  fallbackSeed?: string,
-  gender?: "female" | "male" | "neutral"
-): PeepConfig {
-  if (!uid || typeof window === "undefined") return getGuestAvatarConfig();
+export function getUserAvatarConfig(uid: string): PeepConfig {
+  if (!uid || typeof window === "undefined") return DEFAULT_PEEP_CONFIG;
 
   const userKey = `rvan_user_avatar_config_${uid}`;
   try {
@@ -230,21 +128,14 @@ export function getUserAvatarConfig(
         return parsed;
       }
     }
-
-    // Deterministically assign avatar from user ID/email
-    const config = generateDeterministicPeep(
-      uid + (fallbackSeed ? "_" + fallbackSeed : ""),
-      gender
-    );
-    localStorage.setItem(userKey, JSON.stringify(config));
-    return config;
+    return generateDeterministicPeep(uid);
   } catch (err) {
-    return generateDeterministicPeep(uid, gender);
+    return generateDeterministicPeep(uid);
   }
 }
 
 /**
- * Persists updated character avatar configuration for authenticated users.
+ * Persists updated vector avatar configuration for authenticated users.
  */
 export function saveUserAvatarConfig(uid: string, config: PeepConfig) {
   if (!uid || typeof window === "undefined") return;

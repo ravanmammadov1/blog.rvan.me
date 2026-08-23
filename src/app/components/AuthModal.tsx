@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const { signIn, loading: globalLoading, error: globalError, clearError } = useAuth();
   const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,43 +59,46 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-xl"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
           />
 
           {/* Modal card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 16 }}
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 16 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-background/95 p-6 sm:p-8 backdrop-blur-2xl shadow-2xl aurora-card"
+            exit={{ opacity: 0, scale: 0.95, y: 12 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-2xl text-foreground"
           >
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute right-5 top-5 grid h-8 w-8 place-items-center rounded-full border border-white/10 text-muted-foreground transition-colors hover:border-white/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="absolute right-5 top-5 grid h-8 w-8 place-items-center rounded-xl border border-border bg-muted/60 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="Close dialog"
             >
-              <X size={16} />
+              <X size={15} />
             </button>
 
             {/* Badge icon */}
-            <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
-              <Sparkles size={20} />
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
+              <Sparkles size={18} />
             </div>
 
             {/* Title & Description */}
             <h2 className="mb-2 text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-              Sign in to Rvan.me
+              {t("signInTitle", "Sign in to Rvan.me")}
             </h2>
-            <p className="mb-6 text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed">
-              Save resources, bookmark articles, join blog discussions and personalize your experience.
+            <p className="mb-6 text-xs sm:text-sm text-muted-foreground font-normal leading-relaxed">
+              {t(
+                "signInDesc",
+                "Access your personal profile, customize your avatar, participate in article discussions, and save your preferences."
+              )}
             </p>
 
             {/* Error Banner */}
             {displayError && (
-              <div className="mb-5 flex items-start gap-2.5 rounded-2xl border border-red-500/30 bg-red-500/10 p-3.5 text-xs text-red-300 font-medium leading-relaxed">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
+              <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 text-xs text-red-600 dark:text-red-400 font-medium leading-relaxed">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
                 <span>{displayError}</span>
               </div>
             )}
@@ -102,10 +107,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <button
               onClick={handleGoogleSignIn}
               disabled={isBusy}
-              className="w-full flex items-center justify-center gap-3 rounded-full bg-white text-black font-semibold text-xs sm:text-sm py-3.5 px-6 tracking-wide transition-all duration-300 hover:bg-white/90 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-lg shadow-white/10"
+              className="w-full flex items-center justify-center gap-3 rounded-xl bg-foreground text-background font-bold text-xs sm:text-sm py-3 px-6 tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-sm cursor-pointer"
             >
               {isBusy ? (
-                <Loader2 className="w-4 h-4 animate-spin text-black" />
+                <Loader2 className="w-4 h-4 animate-spin text-background" />
               ) : (
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                   <path
@@ -126,25 +131,25 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   />
                 </svg>
               )}
-              <span>{isBusy ? "Signing in..." : "Continue with Google"}</span>
+              <span>{isBusy ? t("signingIn", "Signing in...") : t("continueWithGoogle", "Continue with Google")}</span>
             </button>
 
-            {/* Secondary Links & OAuth Compliance */}
-            <div className="mt-6 border-t border-white/10 pt-5 flex items-center justify-center gap-4 text-[10.5px] font-mono tracking-wider text-muted-foreground">
+            {/* Secondary Links & Compliance */}
+            <div className="mt-6 border-t border-border pt-4 flex items-center justify-center gap-4 text-[11px] font-mono tracking-wider text-muted-foreground">
               <Link
-                to="/privacy-policy"
+                to={getLocalizedPath("/privacy-policy")}
                 onClick={onClose}
                 className="hover:text-primary transition-colors underline underline-offset-4"
               >
-                Privacy Policy
+                {t("privacyPolicy", "Privacy Policy")}
               </Link>
-              <span className="text-white/20">·</span>
+              <span className="text-border">·</span>
               <Link
-                to="/terms"
+                to={getLocalizedPath("/terms")}
                 onClick={onClose}
                 className="hover:text-primary transition-colors underline underline-offset-4"
               >
-                Terms of Service
+                {t("termsOfService", "Terms of Service")}
               </Link>
             </div>
           </motion.div>

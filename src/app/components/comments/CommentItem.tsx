@@ -44,7 +44,7 @@ export default function CommentItemComponent({
   onDelete,
   onReply,
 }: CommentItemProps) {
-  const { user } = useAuth();
+  const { user, userPhoto } = useAuth();
   const { language } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.text);
@@ -64,12 +64,11 @@ export default function CommentItemComponent({
   const isLiked = Boolean(currentUserId && comment.likedBy?.includes(currentUserId));
   const isDisliked = Boolean(currentUserId && comment.dislikedBy?.includes(currentUserId));
 
-  // Determine Cheerful Avatar Fallback
-  const avatarUri = comment.author.photoURL
-    ? comment.author.photoURL
-    : peepConfigToSvgDataUri(
-        generateDeterministicPeep(comment.authorId || comment.author.displayName || "guest")
-      );
+  // Canonical avatar: If owner and has custom/active user photo, use it; otherwise use stored photoURL or fallback initial
+  const avatarUri = isOwner && userPhoto ? userPhoto : comment.author.photoURL || null;
+  const authorInitial = comment.author.displayName
+    ? comment.author.displayName.charAt(0).toUpperCase()
+    : "U";
 
   const handleVote = async (voteType: "like" | "dislike") => {
     if (!user) {
@@ -179,12 +178,18 @@ export default function CommentItemComponent({
         }`}
       >
         <div className="flex items-start gap-3">
-          {/* Cheerful / Google Avatar */}
-          <img
-            src={avatarUri}
-            alt={comment.author.displayName}
-            className="h-9 w-9 rounded-full object-cover border border-white/20 shrink-0 mt-0.5 shadow-sm bg-neutral-900"
-          />
+          {/* Canonical Profile Avatar / Initial Badge */}
+          {avatarUri ? (
+            <img
+              src={avatarUri}
+              alt={comment.author.displayName}
+              className="h-9 w-9 rounded-full object-cover border border-border shrink-0 mt-0.5 shadow-sm bg-surface"
+            />
+          ) : (
+            <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs shrink-0 mt-0.5 shadow-sm">
+              {authorInitial}
+            </div>
+          )}
 
           <div className="flex-1 min-w-0">
             {/* Header metadata */}

@@ -1,22 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown, Sun, Moon, Search } from "lucide-react";
+import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown, Search } from "lucide-react";
 import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
 import AuthModal from "./AuthModal";
 import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
-import { useTheme } from "../../context/ThemeContext";
 
 function UserAuthMenu() {
   const { user, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
-  const { theme, setTheme } = useTheme();
+  const { t, getLocalizedPath } = useLanguage();
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -80,127 +78,82 @@ function UserAuthMenu() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card p-4 shadow-xl z-50 pointer-events-auto text-foreground"
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card shadow-xl z-50 pointer-events-auto text-foreground overflow-hidden"
           >
-            {/* 1. PROFILE SECTION */}
-            <div className="pb-3.5 border-b border-border">
-              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono mb-2.5">
-                PROFILE
-              </div>
-              <div className="flex items-center gap-3 mb-3">
-                {userPhoto ? (
-                  <img src={userPhoto} alt={user?.displayName || "User"} className="h-9 w-9 rounded-full object-cover border border-border shrink-0" />
-                ) : user ? (
-                  <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shrink-0">
-                    {userInitial}
+            {!user ? (
+              /* SIGNED OUT STATE */
+              <div className="p-4 space-y-4">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-1">
+                    {t("profile", "PROFILE")}
                   </div>
-                ) : (
-                  <div className="h-9 w-9 rounded-full border border-border bg-muted flex items-center justify-center text-foreground shrink-0">
-                    <UserIcon size={16} />
+                  <div className="text-xs font-bold text-foreground">
+                    {t("guestUser", "Guest Visitor")}
                   </div>
-                )}
-                <div className="overflow-hidden">
-                  <div className="text-xs font-semibold text-foreground truncate">
-                    {user ? (user.displayName || "Authenticated User") : t("guestUser", "Guest Visitor")}
-                  </div>
-                  <div className="text-[10px] text-muted-foreground truncate font-mono">
-                    {user ? user.email : t("notSignedIn", "Not signed in")}
+                  <div className="text-[11px] text-muted-foreground mono">
+                    {t("notSignedIn", "Not signed in")}
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-1.5">
-                <Link
-                  to={getLocalizedPath("/profile")}
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2 text-xs font-medium text-foreground hover:bg-muted transition-colors"
-                >
-                  <span>{t("settingsAndAvatar", "Settings & Preferences")}</span>
-                  <ArrowUpRight size={13} className="text-muted-foreground" />
-                </Link>
-              </div>
-            </div>
-
-            {/* 2. THEME SECTION */}
-            <div className="py-3 border-b border-border">
-              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-muted-foreground mono mb-2">
-                THEME
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-muted/50 border border-border">
-                <button
-                  type="button"
-                  onClick={() => setTheme("dark")}
-                  className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    theme === "dark" ? "bg-card text-foreground font-bold shadow-sm border border-border" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Moon size={12} />
-                  <span>Dark</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTheme("light")}
-                  className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    theme === "light" ? "bg-card text-foreground font-bold shadow-sm border border-border" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Sun size={12} />
-                  <span>Light</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 3. LANGUAGE SECTION */}
-            <div className="py-3 border-b border-border">
-              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-muted-foreground mono mb-2">
-                LANGUAGE
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-muted/50 border border-border font-mono text-xs">
-                <button
-                  type="button"
-                  onClick={() => switchLanguage("en")}
-                  className={`py-1.5 rounded-lg font-bold transition-all ${
-                    language === "en" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  type="button"
-                  onClick={() => switchLanguage("az")}
-                  className={`py-1.5 rounded-lg font-bold transition-all ${
-                    language === "az" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  AZ
-                </button>
-              </div>
-            </div>
-
-            {/* 4. ACTIONS / AUTH */}
-            <div className="pt-3">
-              {user ? (
-                <button
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    signOut();
-                  }}
-                  className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors text-left mono"
-                >
-                  <LogOut size={14} /> {t("signOut", "Sign out")}
-                </button>
-              ) : (
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
                     setModalOpen(true);
                   }}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary bg-primary/10 px-3 py-2.5 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-primary-foreground transition-all"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary bg-primary/10 px-3 py-2.5 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
                 >
-                  {t("signIn", "SIGN IN WITH GOOGLE")}
+                  {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
                 </button>
-              )}
-            </div>
+              </div>
+            ) : (
+              /* SIGNED IN STATE */
+              <div className="p-4 space-y-4">
+                <div className="flex items-center gap-3 pb-3.5 border-b border-border">
+                  {userPhoto ? (
+                    <img
+                      src={userPhoto}
+                      alt={user.displayName || "User"}
+                      className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
+                    />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shrink-0">
+                      {userInitial}
+                    </div>
+                  )}
+                  <div className="overflow-hidden min-w-0">
+                    <div className="text-xs font-bold text-foreground truncate">
+                      {user.displayName || "User"}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground truncate font-mono">
+                      {user.email}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Link
+                    to={getLocalizedPath("/profile")}
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2.5 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
+                  >
+                    <span>{t("profileSettings", "PROFILE / SETTINGS")}</span>
+                    <ArrowUpRight size={14} className="text-primary" />
+                  </Link>
+                </div>
+
+                <div className="pt-2 border-t border-border">
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      signOut();
+                    }}
+                    className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-destructive hover:bg-destructive/10 transition-colors text-left mono uppercase tracking-wider cursor-pointer"
+                  >
+                    <LogOut size={14} /> {t("signOut", "SIGN OUT")}
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

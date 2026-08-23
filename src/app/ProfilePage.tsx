@@ -1,9 +1,6 @@
 import { useEffect, useState, useRef, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ArrowUpRight,
-  Sparkles,
   User as UserIcon,
   Sun,
   Moon,
@@ -12,7 +9,13 @@ import {
   Camera,
   RotateCcw,
   Check,
-  ShieldCheck
+  ShieldCheck,
+  Sparkles,
+  Palette,
+  Loader2,
+  Sliders,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
@@ -22,19 +25,31 @@ import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { Button } from "./components/ui/Button";
+import { Eyebrow } from "./components/Eyebrow";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 import AuthModal from "./components/AuthModal";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
+import {
+  EXPRESSIONS,
+  HAIR_STYLES,
+  ACCESSORIES,
+  SKIN_TONES,
+  HAIR_COLORS,
+  CLOTHING_COLORS,
+  PeepConfig,
+} from "../lib/peepsAssets";
+import {
+  generateDeterministicPeep,
+  getUserAvatarConfig,
+} from "../lib/avatarEngine";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: EASE },
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -42,20 +57,27 @@ export default function ProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [photoSuccessMsg, setPhotoSuccessMsg] = useState("");
+  const [bioText, setBioText] = useState("");
+  const [bioSaved, setBioSaved] = useState(false);
+  const [showAvatarStudio, setShowAvatarStudio] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     user,
+    profile,
+    loading: authLoading,
     signOut,
     userPhoto,
     customAvatar,
     updateCustomAvatar,
     avatarConfig,
     updateAvatarConfig,
-    randomizeAvatar,
+    updateBio,
   } = useAuth();
+
   const { theme, setTheme } = useTheme();
-  const { language, switchLanguage, t, getLocalizedPath } = useLanguage();
+  const { language, switchLanguage, t } = useLanguage();
+  const isAz = language === "az";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -63,6 +85,12 @@ export default function ProfilePage() {
       if (data) setSiteSettings(data);
     });
   }, [language]);
+
+  useEffect(() => {
+    if (profile?.bio) {
+      setBioText(profile.bio);
+    }
+  }, [profile?.bio]);
 
   const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,29 +105,53 @@ export default function ProfilePage() {
     reader.onload = () => {
       const base64Url = reader.result as string;
       updateCustomAvatar(base64Url);
-      setPhotoSuccessMsg(t("profileUpdated", "Profile photo updated successfully!"));
+      setPhotoSuccessMsg(isAz ? "Profil şəkli uğurla yeniləndi!" : "Profile photo updated successfully!");
       setTimeout(() => setPhotoSuccessMsg(""), 3500);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRandomizeCharacter = () => {
-    randomizeAvatar();
-    if (customAvatar) {
-      updateCustomAvatar(null);
-    }
-    setPhotoSuccessMsg(language === "az" ? "Yeni xarakter avatarı təsadüfi yaradıldı və yadda saxlanıldı!" : "New character avatar generated & saved to profile!");
+  const handleSaveBio = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateBio(bioText);
+    setBioSaved(true);
+    setTimeout(() => setBioSaved(false), 3000);
+  };
+
+  const handleResetToGooglePhoto = () => {
+    updateCustomAvatar(null);
+    updateAvatarConfig(null);
+    setPhotoSuccessMsg(isAz ? "Google profil şəklinə qaytarıldı." : "Reset to your Google account photo.");
     setTimeout(() => setPhotoSuccessMsg(""), 3500);
   };
 
-  const handleResetPhoto = () => {
-    updateCustomAvatar(null);
-    setPhotoSuccessMsg(language === "az" ? "Xarakter avatarına qaytarıldı." : "Switched back to your vector character avatar.");
+  const activePeepConfig: PeepConfig =
+    avatarConfig || (user ? getUserAvatarConfig(user.uid) : generateDeterministicPeep("guest"));
+
+  const handleUpdatePeepField = (field: keyof PeepConfig, value: any) => {
+    const updated = { ...activePeepConfig, [field]: value };
+    // If user was using custom photo, clear it to activate vector avatar
+    if (customAvatar) {
+      updateCustomAvatar(null);
+    }
+    updateAvatarConfig(updated);
+    setPhotoSuccessMsg(isAz ? "Vektor avatar yeniləndi!" : "Vector avatar customized & saved!");
+    setTimeout(() => setPhotoSuccessMsg(""), 3500);
+  };
+
+  const handleRandomizeVector = () => {
+    if (!user) return;
+    const randomConfig = generateDeterministicPeep(`random_${Date.now()}_${Math.random()}`);
+    if (customAvatar) {
+      updateCustomAvatar(null);
+    }
+    updateAvatarConfig(randomConfig);
+    setPhotoSuccessMsg(isAz ? "Yeni vektor avatar yaradıldı!" : "New vector avatar generated & saved!");
     setTimeout(() => setPhotoSuccessMsg(""), 3500);
   };
 
   const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "G";
-  const userName = user ? (user.displayName || "User") : t("guestUser", "Guest User");
+  const userName = user ? (user.displayName || "User") : t("guestUser", "Guest Visitor");
   const userEmail = user ? user.email : t("notSignedIn", "Not signed in");
 
   return (
@@ -109,264 +161,458 @@ export default function ProfilePage() {
     >
       <SEO
         title={`${t("settingsTitle", "Settings")} — Rvan.me`}
-        description={t("settingsDescription", "Private user settings, profile photo customizer, interface theme, language preferences, and account control panel.")}
+        description={t(
+          "settingsDescription",
+          "Private user settings, profile photo customizer, interface theme, language preferences, and account control panel."
+        )}
         url="https://www.rvan.me/profile"
       />
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Ambient background glows */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden opacity-30" aria-hidden="true">
-        <div
-          className="absolute -top-[15%] left-[10%] h-[700px] w-[700px] rounded-full"
-          style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(97,197,173,0.1) 0%, rgba(66,111,186,0.04) 50%, transparent 75%)",
-            filter: "blur(90px)",
-          }}
-        />
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────────────────────
-          SETTINGS & PRIVATE USER PROFILE PANEL
-      ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 pt-28 pb-20 md:px-10 md:pt-36 relative z-10">
         <div className="mx-auto max-w-[1600px]">
+          {/* Header */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className="mb-10">
-            <span className="text-xs font-bold tracking-[0.2em] text-primary mono uppercase flex items-center gap-2">
-              <Sparkles size={14} /> {t("userControlPanel", "USER CONTROL PANEL")}
-            </span>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-[-.05em] md:text-6xl text-foreground">
-              {t("settingsTitle", "SETTINGS")}
+            <Eyebrow className="text-primary tracking-[.2em] mb-2">
+              {isAz ? "İSTİFADƏÇİ İDARƏETMƏ PANİELİ" : "USER CONTROL PANEL"}
+            </Eyebrow>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
+              {t("settingsTitle", "Settings & Profile")}
             </h1>
-            <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-2xl font-medium leading-relaxed">
-              {t("settingsDescription", "Manage your personal profile details, profile picture, interface appearance, language preferences, and account controls.")}
+            <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-2xl font-normal leading-relaxed">
+              {t(
+                "settingsDescription",
+                "Manage your personal profile details, profile picture, interface appearance, language preferences, and account controls."
+              )}
             </p>
           </motion.div>
 
-          {/* Unauthenticated User Warning Banner */}
-          {!user && (
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-              className="mb-8 rounded-2xl border border-primary/30 bg-primary/5 p-4 md:p-6 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-            >
-              <div>
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary uppercase tracking-wider">
-                  <ShieldCheck size={16} /> {t("guestProfileBanner", "Guest Session Avatar Active")}
+          {/* Loading Auth State */}
+          {authLoading ? (
+            <div className="h-96 rounded-2xl border border-border bg-card flex flex-col items-center justify-center gap-3 text-muted-foreground">
+              <Loader2 size={24} className="animate-spin text-primary" />
+              <span className="text-xs mono uppercase tracking-wider">{isAz ? "YÜKLƏNİR..." : "INITIALIZING PROFILE..."}</span>
+            </div>
+          ) : !user ? (
+            /* Unauthenticated Visitor State */
+            <div className="space-y-8">
+              <div className="rounded-2xl border border-border bg-card p-8 md:p-12 text-center max-w-2xl mx-auto space-y-6">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                  <UserIcon size={26} />
                 </div>
-                <p className="mt-1 text-xs md:text-sm text-muted-foreground font-medium">
-                  {t("guestProfileDesc", "Your browsing session is represented by a unique vector character. Sign in with Google to sync your character identity permanently across all devices.")}
-                </p>
-              </div>
-              <Button
-                onClick={() => setAuthModalOpen(true)}
-                variant="primary"
-                size="sm"
-                className="shrink-0"
-              >
-                {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
-              </Button>
-            </motion.div>
-          )}
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* 1. USER PROFILE & AVATAR CARD */}
-            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <UserIcon size={14} /> {t("profileCardTitle", "PROFILE & AVATAR")}
-                </div>
-
-                {/* Profile Photo Display */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-                  <div className="relative group/avatar">
-                    {userPhoto ? (
-                      <img
-                        src={userPhoto}
-                        alt={userName}
-                        className="h-20 w-20 rounded-2xl object-cover border-2 border-primary/60 shadow-[0_0_25px_rgba(97,197,173,0.3)] shrink-0 bg-[#09090b]"
-                      />
-                    ) : (
-                      <div className="h-20 w-20 rounded-2xl bg-primary text-black font-extrabold flex items-center justify-center text-xl shadow-[0_0_20px_rgba(97,197,173,0.3)] shrink-0">
-                        {userInitial}
-                      </div>
-                    )}
-                    <button
-                      onClick={handleRandomizeCharacter}
-                      className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-lg bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
-                      title={language === "az" ? "Təsadüfi Avatar Yarat" : "Randomize Avatar"}
-                    >
-                      <Sparkles size={13} />
-                    </button>
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="text-base font-bold text-white truncate">{userName}</p>
-                    <p className="text-xs text-muted-foreground truncate mono mt-0.5">{userEmail}</p>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-bold mt-1.5 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                      <Check size={10} /> {customAvatar ? (language === "az" ? "Xüsusi Foto" : "Custom Photo") : (language === "az" ? "Xarakter Avatarı" : "Character Avatar")}
-                    </span>
-                  </div>
-                </div>
-
-                {photoSuccessMsg && (
-                  <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-2.5 text-[11px] font-mono text-emerald-400 font-medium">
-                    {photoSuccessMsg}
-                  </div>
-                )}
-
-                {/* Hidden File Input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp, image/gif"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                />
-
-                {/* Action Buttons */}
                 <div className="space-y-2">
-                  <Button
-                    onClick={handleRandomizeCharacter}
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    icon={<Sparkles size={14} className="text-primary" />}
-                    iconPosition="left"
-                  >
-                    {language === "az" ? "TƏSADÜFİ AVATAR 🎲" : "RANDOMIZE CHARACTER 🎲"}
-                  </Button>
-
-                  <Button
-                    to={getLocalizedPath("/tools/open-peeps")}
-                    variant="secondary"
-                    size="sm"
-                    className="w-full"
-                    icon={<ArrowUpRight size={14} className="text-primary" />}
-                    iconPosition="right"
-                  >
-                    {language === "az" ? "STUDİODA FƏRDLƏŞDİR" : "CUSTOMIZE IN AVATAR STUDIO"}
-                  </Button>
-
-                  {user ? (
-                    <>
-                      <Button
-                        onClick={() => fileInputRef.current?.click()}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full text-xs text-muted-foreground hover:text-white"
-                        icon={<Camera size={13} />}
-                        iconPosition="left"
-                      >
-                        {t("changeProfilePhoto", "Upload Custom Image")}
-                      </Button>
-
-                      {customAvatar && (
-                        <Button
-                          onClick={handleResetPhoto}
-                          variant="ghost"
-                          size="sm"
-                          className="w-full text-xs text-primary hover:text-white"
-                          icon={<RotateCcw size={13} />}
-                          iconPosition="left"
-                        >
-                          {language === "az" ? "Xarakter Avatarına Qayıt" : "Reset to Vector Avatar"}
-                        </Button>
-                      )}
-                    </>
-                  ) : (
-                    <Button
-                      onClick={() => setAuthModalOpen(true)}
-                      variant="primary"
-                      size="sm"
-                      className="w-full mt-2"
-                    >
-                      {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
-                    </Button>
-                  )}
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {isAz ? "Hesabınıza Daxil Olun" : "Sign In with Google"}
+                  </h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {isAz
+                      ? "Profil parametrlərinizi tənzimləmək, xüsusi profil şəkli seçmək və rəy bildirmək üçün Google ilə daxil olun."
+                      : "Sign in with your Google account to access your personal profile, customize your avatar, manage preferences, and participate in article discussions."}
+                  </p>
                 </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-white/10">
                 <Button
-                  to={getLocalizedPath("/tools/open-peeps")}
-                  variant="secondary"
-                  size="md"
-                  className="w-full justify-between"
-                  icon={<ArrowUpRight size={14} className="text-primary" />}
+                  onClick={() => setAuthModalOpen(true)}
+                  variant="primary"
+                  size="lg"
+                  className="mx-auto"
                 >
-                  {language === "az" ? "Xarakter Redaktorunu Aç" : "Open Character Builder"}
+                  {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
                 </Button>
               </div>
-            </div>
 
-            {/* 2. APPEARANCE CARD */}
-            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <Sun size={14} /> {t("appearanceCardTitle", "APPEARANCE")}
+              {/* Preferences Accessible for Guests */}
+              <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+                {/* Appearance */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                    <Sun size={14} /> {t("appearanceCardTitle", "APPEARANCE")}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t("appearanceDesc", "Select your preferred visual aesthetic theme.")}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-muted/50 border border-border">
+                    <button
+                      onClick={() => setTheme("dark")}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition-all ${
+                        theme === "dark" ? "bg-card text-foreground border border-border shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <Moon size={13} /> {t("darkTheme", "Dark")}
+                    </button>
+                    <button
+                      onClick={() => setTheme("light")}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition-all ${
+                        theme === "light" ? "bg-card text-foreground border border-border shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <Sun size={13} /> {t("lightTheme", "Light")}
+                    </button>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground font-mono mb-4">
-                  {t("appearanceDesc", "Select your preferred visual aesthetic theme.")}
-                </p>
-                <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
-                  <button
-                    onClick={() => setTheme("dark")}
-                    className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      theme === "dark" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    <Moon size={14} /> {t("darkTheme", "Dark")}
-                  </button>
-                  <button
-                    onClick={() => setTheme("light")}
-                    className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      theme === "light" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    <Sun size={14} /> {t("lightTheme", "Light")}
-                  </button>
-                </div>
-              </div>
-              <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
-                {language === "az" ? `AKTİV: ${theme === "dark" ? "QARANLIQ" : "İŞIQLI"} REJİMİ` : `ACTIVE: ${theme.toUpperCase()} MODE`}
-              </div>
-            </div>
 
-            {/* 3. LANGUAGE CARD */}
-            <div className="rounded-3xl border border-white/15 bg-white/5 p-6 md:p-8 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-4 flex items-center gap-2">
-                  <Globe size={14} /> {t("languageCardTitle", "LANGUAGE")}
+                {/* Language */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                    <Globe size={14} /> {t("languageCardTitle", "LANGUAGE")}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t("languageDesc", "Choose your preferred website language.")}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-muted/50 border border-border font-mono text-xs">
+                    <button
+                      onClick={() => switchLanguage("en")}
+                      className={`py-2.5 px-3 rounded-lg font-bold transition-all ${
+                        language === "en" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => switchLanguage("az")}
+                      className={`py-2.5 px-3 rounded-lg font-bold transition-all ${
+                        language === "az" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Azərbaycan
+                    </button>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground font-mono mb-4">
-                  {t("languageDesc", "Choose your preferred website language.")}
-                </p>
-                <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
-                  <button
-                    onClick={() => switchLanguage("en")}
-                    className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      language === "en" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => switchLanguage("az")}
-                    className={`py-3 px-4 rounded-xl text-xs font-mono font-bold transition-all ${
-                      language === "az" ? "bg-primary text-black" : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    Azərbaycan
-                  </button>
-                </div>
-              </div>
-              <div className="mt-4 text-[10px] font-mono text-muted-foreground/60 text-right uppercase">
-                {language === "az" ? "AKTİV: AZƏRBAYCAN DİLİ" : "ACTIVE: ENGLISH"}
               </div>
             </div>
-          </div>
+          ) : (
+            /* Authenticated User Dashboard */
+            <div className="grid gap-8 lg:grid-cols-12 items-start">
+              {/* Left Column: Profile & Avatar Management */}
+              <div className="lg:col-span-8 space-y-8">
+                {/* 1. Profile Picture & Identity Card */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-6">
+                  <div className="flex items-center justify-between pb-4 border-b border-border">
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                      <UserIcon size={14} /> {isAz ? "PROFİL VƏ ŞƏKİL" : "PROFILE & AVATAR"}
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md flex items-center gap-1">
+                      <Check size={11} /> {isAz ? "DOĞRULANMIŞ HESAB" : "VERIFIED GOOGLE ACCOUNT"}
+                    </span>
+                  </div>
+
+                  {photoSuccessMsg && (
+                    <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+                      {photoSuccessMsg}
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                    {/* Avatar Display */}
+                    <div className="relative">
+                      {userPhoto ? (
+                        <img
+                          src={userPhoto}
+                          alt={userName}
+                          className="h-24 w-24 rounded-2xl object-cover border-2 border-border bg-surface shrink-0 shadow-sm"
+                        />
+                      ) : (
+                        <div className="h-24 w-24 rounded-2xl bg-primary text-primary-foreground font-bold flex items-center justify-center text-2xl shrink-0 shadow-sm">
+                          {userInitial}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      <h2 className="text-xl font-bold text-foreground truncate">{userName}</h2>
+                      <p className="text-xs text-muted-foreground mono truncate">{userEmail}</p>
+                      <p className="text-[11px] text-muted-foreground/80 mono pt-1">
+                        {customAvatar
+                          ? (isAz ? "Fərdi yüklənmiş şəkil aktivdir" : "Custom uploaded photo is active")
+                          : avatarConfig
+                          ? (isAz ? "Fərdiləşdirilmiş vektor avatar aktivdir" : "Customized vector avatar is active")
+                          : (isAz ? "Google profil şəkli aktivdir" : "Google account photo is active")}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Photo Actions */}
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      variant="primary"
+                      size="sm"
+                      icon={<Camera size={13} />}
+                      iconPosition="left"
+                    >
+                      {isAz ? "FOTO YÜKLƏ" : "UPLOAD IMAGE"}
+                    </Button>
+
+                    <Button
+                      onClick={() => setShowAvatarStudio(!showAvatarStudio)}
+                      variant="secondary"
+                      size="sm"
+                      icon={showAvatarStudio ? <ChevronUp size={13} /> : <Sliders size={13} />}
+                      iconPosition="right"
+                    >
+                      {showAvatarStudio
+                        ? (isAz ? "VEKTOR REDAKTORU BAĞLA" : "HIDE VECTOR BUILDER")
+                        : (isAz ? "VEKTOR AVATAR YARAT" : "CUSTOMIZE VECTOR AVATAR")}
+                    </Button>
+
+                    {(customAvatar || avatarConfig) && (
+                      <Button
+                        onClick={handleResetToGooglePhoto}
+                        variant="ghost"
+                        size="sm"
+                        icon={<RotateCcw size={13} />}
+                        iconPosition="left"
+                      >
+                        {isAz ? "GOOGLE ŞƏKLİNƏ QAYIT" : "RESET TO GOOGLE PHOTO"}
+                      </Button>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png, image/jpeg, image/webp"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+                  </div>
+
+                  {/* Integrated Vector Avatar Customizer Accordion */}
+                  {showAvatarStudio && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="pt-6 border-t border-border space-y-6"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-bold text-foreground">
+                            {isAz ? "Vektor Avatar Redaktoru" : "Vector Avatar Builder"}
+                          </h3>
+                          <p className="text-xs text-muted-foreground">
+                            {isAz
+                              ? "İfadə, saç forması və rəngləri seçərək öz fərdi avatarınızı qurun."
+                              : "Choose your hair style, expression, and colors to craft a unique profile avatar."}
+                          </p>
+                        </div>
+
+                        <Button
+                          onClick={handleRandomizeVector}
+                          variant="secondary"
+                          size="sm"
+                          icon={<Sparkles size={13} className="text-primary" />}
+                        >
+                          {isAz ? "TƏSADÜFİ 🎲" : "RANDOMIZE 🎲"}
+                        </Button>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {/* Expression */}
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mono mb-2">
+                            {isAz ? "İfadələr" : "Expression"}
+                          </label>
+                          <select
+                            value={activePeepConfig.headExpression}
+                            onChange={(e) => handleUpdatePeepField("headExpression", e.target.value)}
+                            className="w-full rounded-xl border border-border bg-input px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
+                          >
+                            {EXPRESSIONS.map((exp) => (
+                              <option key={exp.id} value={exp.id}>
+                                {exp.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Hair Style */}
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mono mb-2">
+                            {isAz ? "Saç Forması" : "Hair Style"}
+                          </label>
+                          <select
+                            value={activePeepConfig.hairStyle}
+                            onChange={(e) => handleUpdatePeepField("hairStyle", e.target.value)}
+                            className="w-full rounded-xl border border-border bg-input px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
+                          >
+                            {HAIR_STYLES.map((hair) => (
+                              <option key={hair.id} value={hair.id}>
+                                {hair.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Accessories */}
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mono mb-2">
+                            {isAz ? "Aksessuar" : "Accessory"}
+                          </label>
+                          <select
+                            value={activePeepConfig.accessory}
+                            onChange={(e) => handleUpdatePeepField("accessory", e.target.value)}
+                            className="w-full rounded-xl border border-border bg-input px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
+                          >
+                            {ACCESSORIES.map((acc) => (
+                              <option key={acc.id} value={acc.id}>
+                                {acc.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Skin Tone */}
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mono mb-2">
+                            {isAz ? "Dəri Rəngi" : "Skin Tone"}
+                          </label>
+                          <div className="flex gap-2 flex-wrap">
+                            {SKIN_TONES.map((color) => (
+                              <button
+                                key={color.value}
+                                type="button"
+                                onClick={() => handleUpdatePeepField("skinColor", color.value)}
+                                style={{ backgroundColor: color.value }}
+                                className={`h-6 w-6 rounded-full border-2 transition-transform ${
+                                  activePeepConfig.skinColor === color.value
+                                    ? "border-primary scale-110 shadow-sm"
+                                    : "border-transparent hover:scale-105"
+                                }`}
+                                title={color.label}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* 2. Bio & Information Card */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-6">
+                  <div className="flex items-center justify-between pb-4 border-b border-border">
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                      {isAz ? "HAQQIMDA VƏ BIO" : "ABOUT & BIO"}
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleSaveBio} className="space-y-4">
+                    <div>
+                      <label htmlFor="bio" className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mono mb-2">
+                        {isAz ? "Qısa Təqdimat (Bio)" : "Short Bio / Perspective"}
+                      </label>
+                      <textarea
+                        id="bio"
+                        rows={3}
+                        value={bioText}
+                        onChange={(e) => setBioText(e.target.value)}
+                        placeholder={
+                          isAz
+                            ? "Dizayn, marketinq və ya yaradıcı sahədə fəaliyyətiniz barədə qısa qeyd..."
+                            : "Share a brief note about your creative work, design focus, or perspectives..."
+                        }
+                        className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors resize-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Button type="submit" variant="secondary" size="sm">
+                        {isAz ? "YADDA SAXLA" : "SAVE BIO"}
+                      </Button>
+                      {bioSaved && (
+                        <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                          <Check size={12} /> {isAz ? "Yadda saxlanıldı!" : "Saved successfully!"}
+                        </span>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              {/* Right Column: Preferences & Account Card */}
+              <div className="lg:col-span-4 space-y-8">
+                {/* 3. Appearance */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                    <Sun size={14} /> {t("appearanceCardTitle", "APPEARANCE")}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t("appearanceDesc", "Select your preferred visual aesthetic theme.")}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-muted/50 border border-border">
+                    <button
+                      onClick={() => setTheme("dark")}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition-all ${
+                        theme === "dark" ? "bg-card text-foreground border border-border shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <Moon size={13} /> {t("darkTheme", "Dark")}
+                    </button>
+                    <button
+                      onClick={() => setTheme("light")}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-bold transition-all ${
+                        theme === "light" ? "bg-card text-foreground border border-border shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <Sun size={13} /> {t("lightTheme", "Light")}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Language */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                    <Globe size={14} /> {t("languageCardTitle", "LANGUAGE")}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t("languageDesc", "Choose your preferred website language.")}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-muted/50 border border-border font-mono text-xs">
+                    <button
+                      onClick={() => switchLanguage("en")}
+                      className={`py-2.5 px-3 rounded-lg font-bold transition-all ${
+                        language === "en" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => switchLanguage("az")}
+                      className={`py-2.5 px-3 rounded-lg font-bold transition-all ${
+                        language === "az" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Azərbaycan
+                    </button>
+                  </div>
+                </div>
+
+                {/* 5. Account Controls */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                    <ShieldCheck size={14} /> {isAz ? "HESAB MƏLUMATLARI" : "ACCOUNT"}
+                  </div>
+                  <div className="space-y-2 text-xs text-muted-foreground">
+                    <div>
+                      <span className="font-bold text-foreground">Provider:</span> Google OAuth
+                    </div>
+                    <div>
+                      <span className="font-bold text-foreground">Email:</span> {userEmail}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-border">
+                    <button
+                      onClick={signOut}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs font-bold text-destructive hover:bg-destructive hover:text-white transition-colors mono uppercase tracking-wider cursor-pointer"
+                    >
+                      <LogOut size={14} /> {t("signOut", "SIGN OUT")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
