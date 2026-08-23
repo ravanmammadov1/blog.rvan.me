@@ -44,6 +44,13 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/faq",
+    title: "Frequently Asked Questions (FAQ) — Rvan.me",
+    description: "Detailed answers to the 10 most essential questions about Rvan.me, publishing, contributor onboarding, editorial review, and AI policies.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
     path: "/contributor",
     title: "Become a Contributor — Rvan.me Creative Community",
     description: "A creative publication built around Azerbaijan's creative community. Share what you know, build your professional identity, and get published under your name.",
@@ -625,6 +632,10 @@ const staticAzTranslations = {
   "/about": {
     title: "Haqqında — Rvan.me Rəqəmsal Ekosistem və Missiya",
     description: "Dizaynerlər, marketoloqlar və developerlər üçün qurulmuş vahid yaradıcı ekosistem və studiya vizyonu.",
+  },
+  "/faq": {
+    title: "Tez-tez Verilən Suallar (FAQ) — Rvan.me",
+    description: "Rvan.me nəşr prosesi, müəlliflik qaydaları, redaksiya meyarları və süni intellekt siyasəti haqqında ən vacib 10 sualın ətraflı cavabları.",
   },
   "/ravan-mammadov": {
     title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",

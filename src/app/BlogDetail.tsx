@@ -26,6 +26,8 @@ import ReportArticleModal from "./components/blog/ReportArticleModal";
 import { trackArticleView } from "../services/contributorService";
 
 import CommentSection from "./components/CommentSection";
+import { ARTICLE_DETAIL_FAQS } from "../data/faqData";
+import FaqAccordion from "./components/ui/FaqAccordion";
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -268,6 +270,25 @@ export default function BlogDetail() {
           </aside>
         </div>
       </article>
+
+      {/* Contextual Article Detail FAQ Section */}
+      <section className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20">
+        <div className="mx-auto max-w-[1200px]">
+          <FaqAccordion
+            items={ARTICLE_DETAIL_FAQS}
+            eyebrow={isAz ? "OXUCULAR VƏ MÜƏLLİFLƏR ÜÇÜN" : "FOR READERS & WRITERS"}
+            title={isAz ? "Məqalə və Müəlliflik Haqqında" : "Article & Attribution FAQ"}
+            description={
+              isAz
+                ? "Məqalənin paylaşılması, müəllifin təsdiqi və müzakirələr haqqında suallar:"
+                : "Questions regarding sharing, author verification, and submitting related essays:"
+            }
+            viewAllHref="/faq"
+            viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
+            showNumbers={true}
+          />
+        </div>
+      </section>
 
       <Footer siteSettings={siteSettings} />
 

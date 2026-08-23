@@ -24,6 +24,7 @@ const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
 const ContributorPage = lazy(() => import("./ContributorPage"));
 const AuthorPage = lazy(() => import("./AuthorPage"));
+const FaqPage = lazy(() => import("./FaqPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
@@ -41,6 +42,7 @@ function AppRoutes() {
       {/* English Default Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/faq" element={<FaqPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/settings" element={<ProfilePage />} />
       <Route path="/contributor" element={<ContributorPage />} />
@@ -68,6 +70,7 @@ function AppRoutes() {
       {/* Azerbaijani (/az) Parallel Routes */}
       <Route path="/az" element={<HomePage />} />
       <Route path="/az/about" element={<AboutPage />} />
+      <Route path="/az/faq" element={<FaqPage />} />
       <Route path="/az/profile" element={<ProfilePage />} />
       <Route path="/az/settings" element={<ProfilePage />} />
       <Route path="/az/contributor" element={<ContributorPage />} />

@@ -19,6 +19,8 @@ import { Button } from "./components/ui/Button";
 import { urlFor } from "../lib/sanityClient";
 import { formatBlogDate, estimateReadingTime } from "../lib/blogHelpers";
 import { getArticleCoverImage } from "../lib/contentEngine";
+import { BLOG_FAQS } from "../data/faqData";
+import FaqAccordion from "./components/ui/FaqAccordion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -346,6 +348,25 @@ export default function BlogArchive() {
           )}
         </div>
       </div>
+
+      {/* Contextual Blog FAQ Section */}
+      <section className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20">
+        <div className="mx-auto max-w-[1200px]">
+          <FaqAccordion
+            items={BLOG_FAQS}
+            eyebrow={isAz ? "BLOQ HAQQINDA SUALLAR" : "EDITORIAL & PUBLISHING FAQ"}
+            title={isAz ? "Bloq və Məqalə Qəbulu" : "Publication & Submissions"}
+            description={
+              isAz
+                ? "Məqalə mövzuları, nəşr tezliyi və redaksiya meyarları haqqında suallar:"
+                : "Questions regarding our editorial topics, publication cadence, and submission criteria:"
+            }
+            viewAllHref="/faq"
+            viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
+            showNumbers={true}
+          />
+        </div>
+      </section>
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />

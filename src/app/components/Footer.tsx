@@ -24,6 +24,12 @@ export default function Footer({ siteSettings }: FooterProps) {
         {/* Right Side */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
+            to={getLocalizedPath("/faq")}
+            className="transition-colors hover:text-foreground"
+          >
+            {t("navFaq", "FAQ")}
+          </Link>
+          <Link
             to={getLocalizedPath("/privacy-policy")}
             className="transition-colors hover:text-foreground"
           >

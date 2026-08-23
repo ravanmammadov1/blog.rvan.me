@@ -35,6 +35,8 @@ import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+import { ABOUT_FAQS } from "../data/faqData";
+import FaqAccordion from "./components/ui/FaqAccordion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -47,147 +49,9 @@ const fadeUp = {
   }),
 };
 
-interface FaqItem {
-  id: number;
-  qEn: string;
-  qAz: string;
-  aEn: string;
-  aAz: string;
-}
-
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    id: 1,
-    qEn: "What is Rvan.me?",
-    qAz: "Rvan.me nədir?",
-    aEn: "Rvan.me is an independent creative publication exploring design, branding, marketing, visual culture, technology and the creative industry.",
-    aAz: "Rvan.me — dizayn, brendinq, marketinq, vizual mədəniyyət, texnologiya və yaradıcı sənayeni araşdıran müstəqil kreativ nəşr və bilik platformasıdır.",
-  },
-  {
-    id: 2,
-    qEn: "Who can become a contributor?",
-    qAz: "Kimlər müəllif ola bilər?",
-    aEn: "Designers, marketers, writers, students, researchers, strategists and creative professionals — anyone with an interesting perspective or valuable idea to share.",
-    aAz: "Dizaynerlər, marketoloqlar, yazıçılar, tələbələr, tədqiqatçılar, strateqlər və kreativ mütəxəssislər — maraqlı baxış bucağı və ya bölüşməyə dəyərli ideyası olan hər kəs.",
-  },
-  {
-    id: 3,
-    qEn: "Do I need to be a professional to contribute?",
-    qAz: "Müəllif olmaq üçün peşəkar təcrübə mütləqdirmi?",
-    aEn: "No. Professional experience is welcome, but it is not a requirement. We care about the quality of your thinking, research and perspective.",
-    aAz: "Xeyr. Peşəkar təcrübə təqdir olunur, lakin mütləq şərt deyil. Bizim üçün əsas meyar düşüncənizin dərinliyi, araşdırmanızın keyfiyyəti və təqdim etdiyiniz fərqli baxış bucağıdır.",
-  },
-  {
-    id: 4,
-    qEn: "Can I write in Azerbaijani?",
-    qAz: "Azərbaycan dilində yaza bilərəmmi?",
-    aEn: "Yes. Azerbaijani is one of the primary languages of Rvan.me and we especially welcome thoughtful contributions from Azerbaijan's creative community.",
-    aAz: "Bəli. Azərbaycan dili Rvan.me-nin əsas dillərindən biridir və biz xüsusilə Azərbaycanın kreativ icmasından olan analitik və məzmunlu yazıların dərk olunmasını dəstəkləyirik.",
-  },
-  {
-    id: 5,
-    qEn: "Can I use AI when writing?",
-    qAz: "Yazarkən süni intellektdən (AI) istifadə edə bilərəmmi?",
-    aEn: "Yes. AI may be used for research, brainstorming, outlining, fact-checking and editing. However, contributors are responsible for the ideas, research, accuracy and final voice of their work. Fully AI-generated, low-effort articles are not accepted.",
-    aAz: "Bəli. Süni intellektdən araşdırma, beyin həmləsi, struktur qurma, faktların yoxlanılması və redaktə üçün istifadə edilə bilər. Lakin müəllif ideyaların orijinallığına, dəqiqliyinə və üslubuna şəxsən cavabdehdir. Tamamilə AI tərəfindən yazılmış səthi məqalələr qəbul edilmir.",
-  },
-  {
-    id: 6,
-    qEn: "Does every submitted article get published?",
-    qAz: "Göndərilən hər məqalə avtomatik dərc olunurmu?",
-    aEn: "No. Every submission goes through editorial review. We may accept it, request revisions or decline it.",
-    aAz: "Xeyr. Hər bir yazı redaksiya baxışından keçir. Redaksiya məqaləni birbaşa qəbul edə, təkmilləşdirmə üçün düzəlişlər tələb edə və ya qəbul etməyə bilər.",
-  },
-  {
-    id: 7,
-    qEn: "How does the editorial review work?",
-    qAz: "Redaksiya baxışı prosesi necə işləyir?",
-    aEn: "We look at originality, relevance, clarity, research quality, usefulness and the author's perspective.",
-    aAz: "Biz məqalənin orijinallığını, mövzunun aktuallığını, fikirlərin aydınlığını, araşdırma keyfiyyətini və oxucu üçün faydalılıq dərəcəsini qiymətləndiririk.",
-  },
-  {
-    id: 8,
-    qEn: "How long does review usually take?",
-    qAz: "Məqalənin yoxlanılması nə qədər vaxt aparır?",
-    aEn: "Editorial review typically takes between 2 to 5 business days. You can track your article's live status inside your Settings / Contributor dashboard.",
-    aAz: "Redaksiya baxışı adətən 2-5 iş günü çəkir. Məqalənizin statusunu birbaşa Tənzimləmələr / Müəlliflik kabinetinizdən izləyə bilərsiniz.",
-  },
-  {
-    id: 9,
-    qEn: "Can I write about my own work or experience?",
-    qAz: "Öz layihələrim və ya şəxsi təcrübəm haqqında yaza bilərəmmi?",
-    aEn: "Yes, case studies and practical reflections are welcome as long as they provide educational value, actionable lessons, or honest critique rather than pure self-promotion.",
-    aAz: "Bəli. Praktiki layihə təhlilləri (case study) və şəxsi təcrübələr oxucu üçün öyrədici dərslər və real fayda təqdim etdiyi halda çox dəyərlidir.",
-  },
-  {
-    id: 10,
-    qEn: "Can I promote my business or service?",
-    qAz: "Öz biznesimi və ya xidmətimi reklam edə bilərəmmi?",
-    aEn: "Self-promotion is allowed only when it provides genuine editorial value. Rvan.me should not be used for promotional spam, disguised advertising or SEO-only content.",
-    aAz: "Özünü tanıtma yalnız məqalənin tərkibində real məzmun dəyəri daşıdıqda məqbuldur. Rvan.me birbaşa reklam çarxı, spam və ya sadəcə SEO xatirinə yazılmış məzmunlar üçün nəzərdə tutulmayıb.",
-  },
-  {
-    id: 11,
-    qEn: "Will my name and profile appear on the article?",
-    qAz: "Məqalədə adım və ictimai profilim görünəcəkmi?",
-    aEn: "Yes. Approved articles are published under the contributor's profile and include their biography, role, verified badge, and relevant social/portfolio links.",
-    aAz: "Bəli. Təsdiqlənmiş məqalələr müəllifin ictimai profili altında dərc olunur və bioqrafiyanız, peşəkar titulunuz, təsdiq nişanınız və sosial/portfolio linkləriniz göstərilir.",
-  },
-  {
-    id: 12,
-    qEn: "Can I edit my article after publishing?",
-    qAz: "Məqalə dərc olunduqdan sonra ona düzəliş edə bilərəmmi?",
-    aEn: "Minor typo corrections can be requested through your contributor panel. For major conceptual changes, the revision will be reviewed by the editorial team before updating.",
-    aAz: "Kiçik orfoqrafik düzəlişləri müəllif paneliniz vasitəsilə bildirə bilərsiniz. Əsaslı məzmun dəyişiklikləri isə yenidən redaksiya tərəfindən təsdiqləndikdən sonra yenilənir.",
-  },
-  {
-    id: 13,
-    qEn: "Can readers comment on my article?",
-    qAz: "Oxucular məqaləmə şərh yaza bilərmi?",
-    aEn: "Yes. Authenticated community members can engage with your article, ask questions, leave feedback, and react with discussions.",
-    aAz: "Bəli. Daxil olmuş icma üzvləri məqalənizə şərh yaza, suallar verə və peşəkar müzakirələrdə iştirak edə bilərlər.",
-  },
-  {
-    id: 14,
-    qEn: "Can I submit more than one article?",
-    qAz: "Birdən çox məqalə göndərə bilərəmmi?",
-    aEn: "Yes. Contributors are encouraged to publish regularly and build an ongoing body of work on Rvan.me.",
-    aAz: "Bəli. Müəlliflər istənilən sayda məqalə təqdim edə və Rvan.me üzərində öz şəxsi müəllif arxivlərini zənginləşdirə bilərlər.",
-  },
-  {
-    id: 15,
-    qEn: "Can I submit an article that was published elsewhere?",
-    qAz: "Əvvəllər başqa yerdə dərc olunmuş məqaləni göndərə bilərəmmi?",
-    aEn: "We prioritize original, first-run publications. If an article was previously published on your personal blog or Medium, it must be adapted, revised, and clearly disclosed with canonical attribution.",
-    aAz: "Biz ilkin və orijinal yazılara üstünlük veririk. Əgər yazı şəxsi bloqunuzda və ya Medium-da paylaşılıbsa, o yenidən işlənməli və ilkin mənbə aydın şəkildə qeyd olunmalıdır.",
-  },
-  {
-    id: 16,
-    qEn: "Why should I become a contributor?",
-    qAz: "Niyə Rvan.me-də müəllif olmalıyam?",
-    aEn: "Publishing on Rvan.me gives you a public place to develop and share your professional perspective. Your approved articles become part of your author profile and public body of work.",
-    aAz: "Rvan.me-də dərc olunmaq sizə peşəkar baxış bucağınızı formalaşdırmaq və icma ilə bölüşmək üçün nüfuzlu platforma verir. Yazılarınız ictimai müəllif profilinizin və portfolio arxivinizin daimi hissəsinə çevrilir.",
-  },
-  {
-    id: 17,
-    qEn: "Is contributing paid?",
-    qAz: "Müəlliflərə qonorar ödənilirmi?",
-    aEn: "Rvan.me is an independent, non-commercial community publication. Community submissions are currently voluntary, providing authors with editorial guidance, professional visibility, and verified public attribution.",
-    aAz: "Rvan.me müstəqil, qeyri-kommersiya icma nəşridir. İcma töhfələri hazırda könüllü əsaslarla qəbul olunur və müəlliflərə redaksiya dəstəyi, peşəkar görünürlük və təsdiqlənmiş ictimai müəlliflik imkanı verir.",
-  },
-  {
-    id: 18,
-    qEn: "How do I become a contributor?",
-    qAz: "Müəllif olmaq üçün nə etməliyəm?",
-    aEn: "Sign in with Google, navigate to the Contributor page or Settings (/profile), fill out your author profile, and submit your first draft for editorial review.",
-    aAz: "Google hesabınızla daxil olun, Müəlliflik səhifəsinə və ya Tənzimləmələrə (/profile) keçin, müəllif profilinizi doldurun və ilk qaralamanızı redaksiyaya göndərin.",
-  },
-];
-
 export default function AboutPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
-  const [openFaqId, setOpenFaqId] = useState<number | null>(null);
 
   const { t, getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
@@ -201,10 +65,6 @@ export default function AboutPage() {
       if (data) setAboutData(data);
     });
   }, [language]);
-
-  const toggleFaq = (id: number) => {
-    setOpenFaqId((prev) => (prev === id ? null : id));
-  };
 
   const sanityPortraitUrl = aboutData?.profilePhoto
     ? urlFor(aboutData.profilePhoto)?.width(1200).height(1200).url()
@@ -660,72 +520,22 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── 9. FREQUENTLY ASKED QUESTIONS (ACCORDION) ── */}
+      {/* ── 9. FREQUENTLY ASKED QUESTIONS ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
-        <div className="mx-auto max-w-[1200px] space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "TEZ-TEZ VERİLƏN SUALLAR" : "FREQUENTLY ASKED QUESTIONS"}
-            </Eyebrow>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
-              {isAz ? "Müəlliflik və Nəşr Haqqında Ətraflı" : "Everything You Need to Know"}
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              {isAz
-                ? "Rvan.me nəşr prosesi, redaksiya qaydaları və müəlliflik imkanları ilə bağlı ən vacib sualların cavabları:"
-                : "Clear, transparent answers regarding our publication, editorial review, and contributor standards:"}
-            </p>
-          </div>
-
-          <div className="divide-y divide-border border-y border-border">
-            {FAQ_ITEMS.map((item) => {
-              const isOpen = openFaqId === item.id;
-              const formattedId = item.id < 10 ? `0${item.id}` : `${item.id}`;
-              return (
-                <div key={item.id} className="transition-colors">
-                  <button
-                    type="button"
-                    onClick={() => toggleFaq(item.id)}
-                    aria-expanded={isOpen}
-                    className="w-full py-6 flex items-center justify-between gap-6 text-left group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
-                  >
-                    <div className="flex items-baseline gap-4 sm:gap-6 min-w-0">
-                      <span className="font-mono text-xs sm:text-sm font-bold text-muted-foreground group-hover:text-primary transition-colors shrink-0">
-                        {formattedId}
-                      </span>
-                      <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                        {isAz ? item.qAz : item.qEn}
-                      </h3>
-                    </div>
-
-                    <div
-                      className={`h-8 w-8 rounded-full border border-border flex items-center justify-center shrink-0 transition-transform duration-300 ${
-                        isOpen ? "rotate-180 bg-primary text-primary-foreground border-primary" : "text-muted-foreground group-hover:border-primary/50"
-                      }`}
-                    >
-                      <ChevronDown size={14} />
-                    </div>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.25, ease: EASE }}
-                        className="overflow-hidden"
-                      >
-                        <div className="pb-6 pl-8 sm:pl-12 pr-4 text-xs sm:text-sm leading-relaxed text-muted-foreground max-w-3xl">
-                          {isAz ? item.aAz : item.aEn}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
+        <div className="mx-auto max-w-[1200px]">
+          <FaqAccordion
+            items={ABOUT_FAQS}
+            eyebrow={isAz ? "TEZ-TEZ VERİLƏN SUALLAR" : "FREQUENTLY ASKED QUESTIONS"}
+            title={isAz ? "Platforma və Nəşr Haqqında" : "About the Publication"}
+            description={
+              isAz
+                ? "Rvan.me-nin missiyası, auditoriyası və nəşr fəlsəfəsi ilə bağlı ən vacib suallar:"
+                : "Essential questions regarding our publication mission, audience, and editorial vision:"
+            }
+            viewAllHref="/faq"
+            viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
+            showNumbers={true}
+          />
         </div>
       </section>
 

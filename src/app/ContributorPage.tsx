@@ -37,6 +37,8 @@ import AuthModal from "./components/AuthModal";
 import ArticleSubmissionModal from "./components/contributor/ArticleSubmissionModal";
 import ContributorApplicationWizard from "./components/contributor/ContributorApplicationWizard";
 import { fetchSiteSettings } from "../lib/sanityQueries";
+import { CONTRIBUTORS_FAQS } from "../data/faqData";
+import FaqAccordion from "./components/ui/FaqAccordion";
 import {
   getContributorStatus,
   getContributorApplication,
@@ -609,6 +611,23 @@ export default function ContributorPage() {
                     </div>
                   ))}
                 </div>
+              </section>
+
+              {/* Contextual Contributor FAQ Section */}
+              <section className="space-y-8 border-t border-border/60 pt-16">
+                <FaqAccordion
+                  items={CONTRIBUTORS_FAQS}
+                  eyebrow={isAz ? "MÜƏLLİFLİK SUALLARI" : "CONTRIBUTOR FAQ"}
+                  title={isAz ? "Yazı və Qəbul Qaydaları" : "Submissions & Review FAQ"}
+                  description={
+                    isAz
+                      ? "Müəlliflik prosesi, dil seçimi, süni intellekt qaydaları və redaksiya meyarları:"
+                      : "Clear answers on our contributor criteria, language support, review stages, and AI policy:"
+                  }
+                  viewAllHref="/faq"
+                  viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
+                  showNumbers={true}
+                />
               </section>
             </div>
           )}

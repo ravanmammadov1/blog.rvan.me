@@ -12,6 +12,9 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 import { Button } from "./components/ui/Button";
 import { Eyebrow } from "./components/Eyebrow";
 
+import { HOMEPAGE_FAQS } from "../data/faqData";
+import FaqAccordion from "./components/ui/FaqAccordion";
+
 // Lazy-loaded section components for optimal performance and exact requested order
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
@@ -151,7 +154,26 @@ export default function HomePage() {
         <ContributorSection />
       </Suspense>
 
-      {/* ── 7. CONTACT ── */}
+      {/* ── 7. FREQUENTLY ASKED QUESTIONS (COMPACT HOMEPAGE SHOWCASE) ── */}
+      <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
+        <div className="mx-auto max-w-[1600px]">
+          <FaqAccordion
+            items={HOMEPAGE_FAQS}
+            eyebrow={isAz ? "TEZ-TEZ VERİLƏN SUALLAR" : "FREQUENTLY ASKED QUESTIONS"}
+            title={isAz ? "Nəşr və Müəlliflik Haqqında" : "Publication & Submissions"}
+            description={
+              isAz
+                ? "Rvan.me-nin redaksiya prinsipləri və məqalə qəbulu ilə bağlı ən vacib suallar:"
+                : "Essential answers regarding our publication philosophy, languages, and contributor onboarding:"
+            }
+            viewAllHref="/faq"
+            viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
+            showNumbers={true}
+          />
+        </div>
+      </section>
+
+      {/* ── 8. CONTACT ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CONTACT SECTION...</div>}>
         <ContactSection />
       </Suspense>
