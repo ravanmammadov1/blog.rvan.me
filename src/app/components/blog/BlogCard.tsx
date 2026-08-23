@@ -68,7 +68,7 @@ export default function BlogCard({
               height={675}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+              className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300 ease-out"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
                   post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : "designNews",

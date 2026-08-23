@@ -38,9 +38,9 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     },
     ref
   ) => {
-    // Base Design System Classes matching clean editorial hierarchy
+    // Base Design System Classes matching clean editorial hierarchy with polished micro-interactions
     const baseClasses =
-      "group inline-flex items-center justify-center gap-2 rounded-xl font-bold uppercase tracking-[.14em] transition-all duration-200 cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+      "group inline-flex items-center justify-center gap-2 rounded-xl font-bold uppercase tracking-[.14em] transition-all duration-200 cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985] active:translate-y-0";
 
     // Size Variant Classes
     const sizeClasses = {
@@ -54,18 +54,22 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     let inlineStyle: React.CSSProperties = { ...style };
 
     if (variant === "primary") {
-      variantClasses = "text-white shadow-sm hover:opacity-95 hover:shadow-md";
-      inlineStyle.background = "linear-gradient(135deg, #61c5ad 0%, #426fba 48%, #984f9f 100%)";
+      variantClasses =
+        "text-white shadow-sm hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 bg-[length:200%_200%] bg-left hover:bg-right transition-all duration-300";
+      inlineStyle.backgroundImage = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
     } else if (variant === "secondary") {
-      variantClasses = "border border-border bg-card text-foreground hover:bg-muted hover:border-foreground/30";
+      variantClasses =
+        "border border-border bg-card text-foreground hover:bg-muted/80 hover:border-primary/40 hover:-translate-y-0.5 shadow-sm";
     } else if (variant === "outline") {
-      variantClasses = "border border-border bg-transparent text-foreground hover:border-primary hover:text-primary";
+      variantClasses =
+        "border border-border bg-transparent text-foreground hover:border-primary hover:text-primary hover:-translate-y-0.5";
     } else if (variant === "filter") {
       if (active) {
-        variantClasses = "text-white font-bold border border-transparent shadow-sm";
-        inlineStyle.background = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
+        variantClasses = "text-white font-bold border border-transparent shadow-sm hover:-translate-y-0.5";
+        inlineStyle.backgroundImage = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
       } else {
-        variantClasses = "border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40";
+        variantClasses =
+          "border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40";
       }
     } else if (variant === "ghost") {
       variantClasses = "border border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50";
@@ -75,10 +79,14 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
 
     const content = (
       <>
-        {icon && iconPosition === "left" && <span className="shrink-0">{icon}</span>}
+        {icon && iconPosition === "left" && (
+          <span className="shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5">
+            {icon}
+          </span>
+        )}
         {children && <span>{children}</span>}
         {icon && iconPosition === "right" && (
-          <span className="shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+          <span className="shrink-0 transition-transform duration-200 group-hover:translate-x-1">
             {icon}
           </span>
         )}

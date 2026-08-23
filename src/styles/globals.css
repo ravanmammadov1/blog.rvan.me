@@ -213,20 +213,29 @@ html {
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
 }
 
-/* ─── Legacy compatibility mappings cleaned for editorial purity ─── */
-.glass,
-.glass-sm,
-.aurora-card,
-.glass-liquid {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--card-foreground);
+/* ─── Brand Gradient Utilities ─── */
+.brand-gradient-text {
+  background-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.glass-badge {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--foreground);
+.brand-gradient-bg {
+  background-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%);
+}
+
+.brand-gradient-border {
+  border-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%) 1;
+}
+
+/* ─── Reduced Motion Respect ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
