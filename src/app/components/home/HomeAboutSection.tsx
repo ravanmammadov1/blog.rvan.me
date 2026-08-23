@@ -6,11 +6,11 @@ import { Button } from "../ui/Button";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -19,10 +19,10 @@ export default function HomeAboutSection() {
   const isAz = language === "az";
 
   return (
-    <section id="about-summary" className="relative px-6 py-24 md:px-10 md:py-32 border-t border-white/10 bg-white/[0.01]">
+    <section id="about-summary" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-background">
       <div className="mx-auto max-w-[1600px] relative z-10">
-        <div className="p-8 md:p-14 rounded-3xl border border-white/15 bg-white/[0.02] backdrop-blur-2xl aurora-card">
-          <div className="grid gap-12 lg:grid-cols-12 items-center">
+        <div className="p-8 md:p-12 rounded-2xl border border-border bg-card">
+          <div className="grid gap-10 lg:grid-cols-12 items-center">
             {/* Platform Information */}
             <motion.div
               variants={fadeUp}
@@ -39,26 +39,26 @@ export default function HomeAboutSection() {
                 {isAz ? "Rvan.me Haqqında" : "About Rvan.me"}
               </h2>
 
-              <p className="text-base md:text-lg leading-relaxed text-muted-foreground font-medium">
+              <p className="text-base md:text-lg leading-relaxed text-muted-foreground font-normal">
                 {isAz
                   ? "Rvan.me — dizayn, marketinq, brendinq, vizual mədəniyyət, süni intellekt və yaradıcılıq, eləcə də kreativ sənayeni araşdıran müstəqil kreativ nəşr və bilik platformasıdır. Biz ideyaları araşdırmaq, yaradıcı işləri təhlil etmək və faydalı bilikləri bölüşmək üçün fəaliyyət göstəririk."
                   : "Rvan.me is a creative publication and knowledge platform exploring design, marketing, branding, visual culture, AI & creativity, and the creative industry. The platform exists to explore ideas, analyze creative work, and share useful knowledge."}
               </p>
 
               {/* Founder Subsection */}
-              <div className="pt-6 border-t border-white/10 space-y-3">
+              <div className="pt-6 border-t border-border space-y-2">
                 <div className="inline-flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
                   <UserCheck size={14} />
                   <span>{isAz ? "Təsisçi: Rəvan Məmmədov" : "Founded by Ravan Mammadov"}</span>
                 </div>
-                <p className="text-xs md:text-sm text-muted-foreground/80 leading-relaxed font-medium">
+                <p className="text-sm text-muted-foreground leading-relaxed font-normal">
                   {isAz
                     ? "Rəvan Məmmədov vizual mədəniyyət, brendlər, texnologiya və kreativ strategiyanın kəsişməsini araşdıran dizayner və marketoloqdur."
                     : "Ravan Mammadov is a designer and marketer exploring the intersection of visual culture, brands, technology and creative strategy."}
                 </p>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2">
                 <Button
                   to={getLocalizedPath("/about")}
                   variant="primary"
@@ -79,20 +79,20 @@ export default function HomeAboutSection() {
               custom={0.15}
               className="lg:col-span-5 flex justify-center"
             >
-              <div className="p-8 rounded-2xl border border-white/10 bg-black/50 backdrop-blur-md space-y-6 w-full max-w-md shadow-2xl">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
-                  <BookOpenCheck size={22} />
+              <div className="p-8 rounded-xl border border-border bg-surface space-y-5 w-full max-w-md">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                  <BookOpenCheck size={20} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">
                   {isAz ? "Açıq Redaksiya Bəyanatı" : "Editorial Philosophy"}
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                <p className="text-sm text-muted-foreground leading-relaxed font-normal">
                   {isAz
                     ? "Hər bir məqalə, resurs və analitik esse real kommersiya və yaradıcı faydalılıq üçün hazırlanır. Reklam səs-küyü olmadan təmiz bilik."
                     : "Every article, resource, and analytical essay is curated for real commercial and creative utility. Zero promotional noise, pure knowledge."}
                 </p>
-                <div className="pt-2 flex items-center gap-3 text-xs text-muted-foreground mono border-t border-white/10 pt-4">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="flex items-center gap-2.5 text-xs text-muted-foreground mono border-t border-border pt-4">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
                   <span>{isAz ? "Aktiv Nəşr Mərkəzi" : "Active Knowledge Hub"}</span>
                 </div>
               </div>

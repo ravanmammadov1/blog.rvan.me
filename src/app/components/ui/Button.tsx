@@ -38,15 +38,15 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     },
     ref
   ) => {
-    // Base Design System Classes matching HOME page reference
+    // Base Design System Classes matching clean editorial hierarchy
     const baseClasses =
-      "group inline-flex items-center justify-center gap-2.5 rounded-full font-bold uppercase tracking-[.18em] transition-all duration-300 cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+      "group inline-flex items-center justify-center gap-2 rounded-xl font-bold uppercase tracking-[.14em] transition-all duration-200 cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
     // Size Variant Classes
     const sizeClasses = {
-      sm: "px-4 py-2 text-[10.5px]",
-      md: "px-6 py-3.5 text-xs",
-      lg: "px-8 py-4 text-xs",
+      sm: "px-3.5 py-2 text-[11px]",
+      md: "px-5 py-2.5 text-xs",
+      lg: "px-6 py-3.5 text-xs",
     }[size];
 
     // Variant Style Logic
@@ -54,30 +54,21 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     let inlineStyle: React.CSSProperties = { ...style };
 
     if (variant === "primary") {
-      variantClasses =
-        "text-white hover:scale-[1.03]";
+      variantClasses = "text-white shadow-sm hover:opacity-95 hover:shadow-md";
       inlineStyle.background = "linear-gradient(135deg, #61c5ad 0%, #426fba 48%, #984f9f 100%)";
     } else if (variant === "secondary") {
-      variantClasses =
-        "border border-white/15 bg-white/5 text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 glass";
+      variantClasses = "border border-border bg-card text-foreground hover:bg-muted hover:border-foreground/30";
     } else if (variant === "outline") {
-      variantClasses =
-        "border border-[#61c5ad]/40 text-[#61c5ad] hover:text-white hover:border-transparent glass-sm";
-      inlineStyle.background =
-        "linear-gradient(135deg, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.12) 50%, rgba(152,79,159,0.12) 100%)";
+      variantClasses = "border border-border bg-transparent text-foreground hover:border-primary hover:text-primary";
     } else if (variant === "filter") {
       if (active) {
-        variantClasses =
-          "text-white font-extrabold border border-transparent";
-        inlineStyle.background =
-          "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
+        variantClasses = "text-white font-bold border border-transparent shadow-sm";
+        inlineStyle.background = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
       } else {
-        variantClasses =
-          "border border-white/15 bg-white/5 text-muted-foreground hover:text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 glass-sm";
+        variantClasses = "border border-border bg-card text-muted-foreground hover:text-foreground hover:border-primary/40";
       }
     } else if (variant === "ghost") {
-      variantClasses =
-        "border border-transparent text-primary hover:text-white hover:bg-white/5";
+      variantClasses = "border border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50";
     }
 
     const combinedClassName = `${baseClasses} ${sizeClasses} ${variantClasses} ${className}`;

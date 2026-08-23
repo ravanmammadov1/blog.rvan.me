@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Copy, Image as ImageIcon, FileCode, Download } from "lucide-react";
+import { Check, Copy, Image as ImageIcon, FileCode } from "lucide-react";
 import { IllustrationItem } from "../../../lib/illustrationsData";
 
 interface IllustrationSpecimenCardProps {
@@ -18,7 +18,6 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
     try {
       const res = await fetch(illustration.src);
       const svgText = await res.text();
-      // Apply accent color tint if dynamic
       const customizedSvg = svgText.split("#6c63ff").join(accentColor);
       await navigator.clipboard.writeText(customizedSvg);
       setDownloadedType("copied");
@@ -33,12 +32,10 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       const res = await fetch(illustration.src);
       let svgText = await res.text();
 
-      // If user chose a custom accent color, tint unDraw default purple (#6c63ff) to accent color
       if (accentColor && accentColor !== "#6c63ff") {
         svgText = svgText.split("#6c63ff").join(accentColor);
       }
 
-      // Ensure proper dark background rect is inside SVG for standalone view
       if (!svgText.includes("<rect") && !svgText.includes('fill="#0c0c10"')) {
         const insertIdx = svgText.indexOf(">") + 1;
         svgText =
@@ -82,7 +79,6 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
       if (!ctx) return;
 
-      // Solid background
       ctx.fillStyle = "#0c0c10";
       ctx.fillRect(0, 0, width, height);
 
@@ -90,7 +86,6 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       const img = new Image();
 
       img.onload = () => {
-        // Draw centered with margin
         const padding = 60;
         ctx.drawImage(img, padding, padding, width - padding * 2, height - padding * 2);
         const pngUrl = canvas.toDataURL("image/png");
@@ -104,36 +99,30 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
         setDownloadedType("png");
         setTimeout(() => setDownloadedType(null), 2000);
       };
-
       img.src = svgDataUri;
     } catch (err) {
-      console.error("Failed to export PNG:", err);
+      console.error("Failed to download PNG:", err);
     }
   };
 
   return (
-    <article className="group relative rounded-3xl border border-white/10 bg-white/5 p-5 glass transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.08] flex flex-col justify-between overflow-hidden shadow-lg">
+    <article className="group relative rounded-2xl border border-border bg-card p-5 hover:border-primary/40 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40">
       <div>
-        {/* Top Header: Category & Collection Badges + Copy SVG */}
+        {/* Header Badges */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2.5 py-0.5 rounded-full mono">
-              {illustration.category}
-            </span>
-            <span className="text-[10px] font-mono text-zinc-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
-              {illustration.collection}
-            </span>
-          </div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2 py-0.5 rounded-md mono">
+            {illustration.category}
+          </span>
 
           <button
             onClick={handleCopySvg}
-            className="text-[10px] font-mono text-muted-foreground hover:text-white flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+            className="text-[10px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer shrink-0"
             title="Copy SVG source code to clipboard"
           >
             {downloadedType === "copied" ? (
               <>
-                <Check size={12} className="text-emerald-400" />
-                <span className="text-emerald-400 font-bold">COPIED</span>
+                <Check size={12} className="text-emerald-500" />
+                <span className="text-emerald-500 font-bold">COPIED</span>
               </>
             ) : (
               <>
@@ -144,8 +133,8 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
           </button>
         </div>
 
-        {/* Live Vector SVG Render Preview with Dark Card Frame */}
-        <div className="my-3 flex items-center justify-center p-4 rounded-2xl border border-white/5 bg-[#0c0c10] aspect-[4/3] transition-transform duration-300 group-hover:scale-[1.02] overflow-hidden shadow-inner relative">
+        {/* Live Vector SVG Render Preview */}
+        <div className="my-3 flex items-center justify-center p-4 rounded-xl border border-border bg-surface aspect-[4/3] overflow-hidden relative">
           <img
             src={illustration.src}
             alt={illustration.title}
@@ -157,7 +146,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
             }`}
           />
           {!imgLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0c0c10]">
+            <div className="absolute inset-0 flex items-center justify-center bg-surface">
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
             </div>
           )}
@@ -165,41 +154,41 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
         {/* Title & Tags */}
         <div className="mb-4">
-          <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors mono truncate">
+          <h3 className="text-sm font-bold text-card-foreground group-hover:text-primary transition-colors mono truncate">
             {illustration.title}
           </h3>
-          <p className="text-[11px] text-muted-foreground/70 mono mt-1 truncate">
+          <p className="text-[11px] text-muted-foreground mono mt-1 truncate">
             {illustration.tags.slice(0, 4).join(" • ")}
           </p>
         </div>
       </div>
 
       {/* Action Buttons: SVG & PNG Downloads */}
-      <div className="pt-3 border-t border-white/10 grid grid-cols-2 gap-2">
+      <div className="pt-3 border-t border-border grid grid-cols-2 gap-2">
         <button
           onClick={handleDownloadSvg}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 py-2 text-[11px] font-mono font-bold text-white hover:border-primary hover:bg-primary/10 transition-all cursor-pointer"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
           title="Download standalone SVG vector"
         >
           {downloadedType === "svg" ? (
-            <Check size={13} className="text-emerald-400" />
+            <Check size={13} className="text-emerald-500" />
           ) : (
             <FileCode size={13} className="text-primary" />
           )}
-          <span>DOWNLOAD SVG</span>
+          <span>SVG</span>
         </button>
 
         <button
           onClick={handleDownloadPng}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 py-2 text-[11px] font-mono font-bold text-white hover:border-primary hover:bg-primary/10 transition-all cursor-pointer"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
           title="Download high-resolution 1200px PNG"
         >
           {downloadedType === "png" ? (
-            <Check size={13} className="text-emerald-400" />
+            <Check size={13} className="text-emerald-500" />
           ) : (
-            <ImageIcon size={13} className="text-cyan-400" />
+            <ImageIcon size={13} className="text-primary" />
           )}
-          <span>DOWNLOAD PNG</span>
+          <span>PNG</span>
         </button>
       </div>
     </article>

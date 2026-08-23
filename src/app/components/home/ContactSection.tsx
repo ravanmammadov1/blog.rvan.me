@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowDownRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { fetchSiteSettings } from "../../../lib/sanityQueries";
 import { Eyebrow } from "../Eyebrow";
@@ -7,11 +7,11 @@ import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Button } from "../ui/Button";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -73,48 +73,41 @@ export default function ContactSection() {
   const letsTalkLabel = siteSettings?.letsTalkLabel || t("btnGetInTouch", "GET IN TOUCH");
 
   return (
-    <section id="contact" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
-      {/* Subtle section aurora background */}
-      <div 
-        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
-        style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(16,185,129,0.06) 0%, rgba(6,182,212,0.04) 55%, transparent 70%)",
-        }}
-      />
+    <section id="contact" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-surface/30">
       <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
+          className="mb-12 flex items-end justify-between border-b border-border pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">{t("contactBadge", "GET IN TOUCH")}</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+            <Eyebrow className="text-primary tracking-[.2em]">{t("contactBadge", "GET IN TOUCH")}</Eyebrow>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
               {contactHeading}
             </h2>
           </div>
         </motion.div>
 
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-start">
           {/* Left: Info */}
           <motion.div
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            custom={0.1}
-            className="flex flex-col justify-center"
+            custom={0.08}
+            className="flex flex-col justify-center space-y-6"
           >
-            <p className="text-base leading-relaxed text-muted-foreground font-medium md:text-lg mb-10">
+            <p className="text-base leading-relaxed text-muted-foreground font-normal md:text-lg">
               {contactSubtext}
             </p>
 
-            <div className="space-y-6">
+            <div>
               <Button
                 href="mailto:hello@rvan.me"
-                variant="outline"
+                variant="secondary"
                 size="lg"
                 icon={<ArrowDownRight size={16} />}
               >
@@ -129,17 +122,10 @@ export default function ContactSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            custom={0.2}
-            className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12 glass shadow-2xl relative overflow-hidden group"
+            custom={0.15}
+            className="rounded-2xl border border-border bg-card p-8 md:p-10"
           >
-            {/* Subtle hover glow */}
-            <div 
-              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-              style={{
-                background: "radial-gradient(circle at top right, rgba(97,197,173,0.08) 0%, transparent 60%)",
-              }}
-            />
-            <form onSubmit={handleContactSubmit} className="space-y-6 relative z-10" noValidate>
+            <form onSubmit={handleContactSubmit} className="space-y-6" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
                   <label htmlFor="name" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">
@@ -152,7 +138,7 @@ export default function ContactSection() {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#61c5ad]/60 focus:ring-1 focus:ring-[#61c5ad]/30 focus:outline-none transition-all duration-300"
+                    className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
                     placeholder={t("placeholderName", "Your name")}
                   />
                 </div>
@@ -167,7 +153,7 @@ export default function ContactSection() {
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#61c5ad]/60 focus:ring-1 focus:ring-[#61c5ad]/30 focus:outline-none transition-all duration-300"
+                    className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
                     placeholder={t("placeholderEmail", "your@email.com")}
                   />
                 </div>
@@ -184,7 +170,7 @@ export default function ContactSection() {
                   onChange={(e) => setContactMessage(e.target.value)}
                   required
                   rows={5}
-                  className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#61c5ad]/60 focus:ring-1 focus:ring-[#61c5ad]/30 focus:outline-none transition-all duration-300 resize-none"
+                  className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors resize-none"
                   placeholder={t("placeholderMessage", "How can we collaborate? Share your details...")}
                 />
               </div>
@@ -204,43 +190,43 @@ export default function ContactSection() {
               <Button
                 type="submit"
                 disabled={contactStatus === "loading"}
-                variant="outline"
+                variant="primary"
                 size="lg"
-                className="w-full whitespace-nowrap"
+                className="w-full"
               >
                 {contactStatus === "loading" && (
-                  <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
+                  <span className="inline-flex items-center justify-center gap-2">
                     <Loader2 size={16} className="animate-spin" />
                     <span>SENDING...</span>
                   </span>
                 )}
                 {contactStatus === "success" && (
-                  <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
+                  <span className="inline-flex items-center justify-center gap-2">
                     <CheckCircle2 size={16} />
                     <span>SENT SUCCESSFULLY</span>
                   </span>
                 )}
                 {contactStatus === "error" && (
-                  <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap">
+                  <span className="inline-flex items-center justify-center gap-2">
                     <AlertCircle size={16} />
                     <span>FAILED - TRY AGAIN</span>
                   </span>
                 )}
                 {contactStatus === "idle" && (
-                  <span className="inline-flex items-center justify-center gap-2.5 whitespace-nowrap w-full">
+                  <span className="inline-flex items-center justify-center gap-2">
                     <span>{t("btnSendMessage", "SEND MESSAGE")}</span>
-                    <ArrowDownRight size={16} className="shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                    <ArrowDownRight size={16} />
                   </span>
                 )}
               </Button>
 
               {contactStatus === "error" && (
-                <p className="text-sm text-red-400 text-center" role="alert">
+                <p className="text-sm text-destructive text-center" role="alert">
                   {contactErrorMessage}
                 </p>
               )}
               {contactStatus === "success" && (
-                <p className="text-sm text-green-400 text-center" role="status">
+                <p className="text-sm text-emerald-500 text-center" role="status">
                   We'll review your query and respond shortly.
                 </p>
               )}

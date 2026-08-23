@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import ravanLogo from "@/assets/ravan_logo.svg";
 
-const MAX_PX = 8;
+const MAX_PX = 6;
 const SPRING = { stiffness: 90, damping: 22, mass: 0.8 };
 
 export default function HeroPortrait() {
@@ -33,8 +33,8 @@ export default function HeroPortrait() {
   const springY = useSpring(rawY, SPRING);
   const logoX = useTransform(springX, (v) => v * MAX_PX);
   const logoY = useTransform(springY, (v) => v * MAX_PX);
-  const rotateX = useTransform(springY, (v) => v * -5);
-  const rotateY = useTransform(springX, (v) => v * 5);
+  const rotateX = useTransform(springY, (v) => v * -3);
+  const rotateY = useTransform(springX, (v) => v * 3);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -59,22 +59,21 @@ export default function HeroPortrait() {
       onMouseLeave={handleMouseLeave}
       aria-hidden="true"
     >
-      {/* Floating + Parallax Pure Logo Focal Centerpiece */}
       <motion.div
         className="relative z-10 w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px]"
         style={reduced ? {} : { x: logoX, y: logoY, rotateX, rotateY, transformStyle: "preserve-3d" }}
-        whileHover={reduced ? {} : { scale: 1.03 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        whileHover={reduced ? {} : { scale: 1.02 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
       >
-        <div className="hero-logo-float flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-2">
           <img
             src={ravanLogo}
-            alt="Ravan Mammadov Studio Logo"
+            alt="Rvan.me Logo"
             width={480}
             height={480}
             fetchPriority="high"
             decoding="async"
-            className="h-auto w-full select-none drop-shadow-[0_10px_35px_rgba(97,197,173,0.3)] transition-transform duration-500 hover:drop-shadow-[0_15px_45px_rgba(152,79,159,0.45)]"
+            className="h-auto w-full select-none transition-transform duration-300"
             draggable={false}
           />
         </div>

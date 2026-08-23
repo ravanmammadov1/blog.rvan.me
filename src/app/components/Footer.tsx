@@ -17,7 +17,7 @@ export default function Footer({ siteSettings }: FooterProps) {
 
   return (
     <footer className="w-full border-t border-border bg-background text-foreground px-6 py-8 md:px-10 md:py-10">
-      <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row sm:items-center justify-between gap-4 text-[10.5px] font-bold tracking-[.18em] text-muted-foreground/70 mono uppercase">
+      <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] font-bold tracking-[.14em] text-muted-foreground mono uppercase">
         {/* Left Side */}
         <span>{footerCopyright}</span>
 
@@ -25,26 +25,26 @@ export default function Footer({ siteSettings }: FooterProps) {
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
             to={getLocalizedPath("/privacy-policy")}
-            className="transition-opacity duration-200 hover:opacity-100 hover:text-foreground opacity-70"
+            className="transition-colors hover:text-foreground"
           >
             {t("privacyPolicy", "PRIVACY POLICY")}
           </Link>
           <Link
             to={getLocalizedPath("/cookie-policy")}
-            className="transition-opacity duration-200 hover:opacity-100 hover:text-foreground opacity-70"
+            className="transition-colors hover:text-foreground"
           >
             {t("cookiePolicy", "COOKIE POLICY")}
           </Link>
           <Link
             to={getLocalizedPath("/terms")}
-            className="transition-opacity duration-200 hover:opacity-100 hover:text-foreground opacity-70"
+            className="transition-colors hover:text-foreground"
           >
             {t("termsOfService", "TERMS")}
           </Link>
           <button
             onClick={openPreferences}
             type="button"
-            className="p-0 border-none bg-transparent text-[10.5px] font-bold tracking-[.18em] text-muted-foreground/70 hover:opacity-100 hover:text-foreground transition-opacity duration-200 mono uppercase cursor-pointer opacity-70"
+            className="p-0 border-none bg-transparent text-[11px] font-bold tracking-[.14em] text-muted-foreground hover:text-foreground transition-colors mono uppercase cursor-pointer"
           >
             {t("cookies", "COOKIES")}
           </button>

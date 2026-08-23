@@ -7,7 +7,6 @@ import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
 import { formatBlogDate, estimateReadingTime } from "../../../lib/blogHelpers";
 import { getArticleCoverImage } from "../../../lib/contentEngine";
-import { NoiseBackground } from "@/components/ui/noise-background";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 interface BlogCardProps {
@@ -16,19 +15,6 @@ interface BlogCardProps {
   onHoverStart?: () => void;
   onHoverEnd?: () => void;
 }
-
-const categoryColors: Record<string, string> = {
-  Design: "#61c5ad",
-  Motion: "#426fba",
-  Marketing: "#984f9f",
-  Targeting: "#61c5ad",
-};
-
-const categoryGradientColors: Record<string, string[]> = {
-  Design: ["rgb(97, 197, 173)", "rgb(66, 111, 186)", "rgb(152, 79, 159)"],
-  Motion: ["rgb(66, 111, 186)", "rgb(152, 79, 159)", "rgb(97, 197, 173)"],
-  Marketing: ["rgb(152, 79, 159)", "rgb(97, 197, 173)", "rgb(66, 111, 186)"],
-};
 
 export default function BlogCard({
   post,
@@ -50,15 +36,9 @@ export default function BlogCard({
   const formattedDate = formatBlogDate(post.publishDate);
   const readTimeStr = estimateReadingTime(post.body, post.readTime);
 
-  // Safely extract slug string regardless of whether post.slug is an object { current: string }, a string, or post._id
+  // Safely extract slug string
   const rawSlug = typeof post.slug === "string" ? post.slug : (post.slug?.current || post._id || "");
   const slugStr = rawSlug.replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "");
-
-  const gradientColors = categoryGradientColors[post.category || ""] || [
-    "rgb(97, 197, 173)",
-    "rgb(66, 111, 186)",
-    "rgb(152, 79, 159)",
-  ];
 
   const handleMouseEnter = () => {
     setInternalHovered(true);
@@ -73,24 +53,22 @@ export default function BlogCard({
   return (
     <Link
       to={getLocalizedPath(`/blog/${slugStr}`)}
-      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl h-full cursor-pointer relative z-10 group"
+      className="group block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl cursor-pointer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <NoiseBackground
-        gradientColors={gradientColors}
-        className="p-7 min-h-[360px] flex flex-col justify-between"
-      >
+      <article className="flex flex-col justify-between h-full p-6 md:p-7 rounded-2xl border border-border bg-card transition-all duration-300 hover:border-primary/40 hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40">
         <div>
-        <div className="mb-6 aspect-[16/9] w-full overflow-hidden rounded-xl border border-white/10 relative bg-neutral-900/80">
-          <img
+          {/* Article Image */}
+          <div className="mb-6 aspect-[16/9] w-full overflow-hidden rounded-xl border border-border relative bg-muted/40">
+            <img
               src={coverUrl}
               alt={post.title || "Blog cover"}
               width={1200}
               height={675}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-700 ease-out"
+              className="h-full w-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
                   post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : post.category === "Motion" ? "motionNews" : "designNews",
@@ -98,66 +76,51 @@ export default function BlogCard({
                 );
               }}
             />
-          {/* Dynamic visual overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
-        </div>
+          </div>
 
-          <div className="mb-5 flex items-center justify-between">
-            <span
-              className="flex items-center gap-2 text-[10px] font-bold tracking-[.18em] mono uppercase transition-colors duration-300"
-              style={{
-                color: "#61c5ad",
-              }}
-            >
+          {/* Category & Arrow */}
+          <div className="mb-4 flex items-center justify-between">
+            <span className="text-[11px] font-bold tracking-[.16em] mono uppercase text-primary">
               {post.category || "Article"}
             </span>
 
             <motion.div
-              animate={{ rotate: isHovered ? 45 : 0 }}
-              transition={{ duration: 0.3 }}
-              className="grid h-9 w-9 place-items-center rounded-full border border-border transition-all duration-300 group-hover:border-[#61c5ad]/60 group-hover:bg-[#61c5ad]/10 group-hover:text-[#61c5ad]"
-              style={{
-                color: isHovered ? "#61c5ad" : "var(--foreground)",
-              }}
+              animate={{ x: isHovered ? 3 : 0, y: isHovered ? -3 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="grid h-8 w-8 place-items-center rounded-full border border-border text-muted-foreground group-hover:border-primary group-hover:text-primary group-hover:bg-primary/10 transition-colors"
             >
-              <ArrowRight size={14} />
+              <ArrowRight size={13} className="-rotate-45" />
             </motion.div>
           </div>
 
-          <h3
-            className="mb-3 text-xl font-semibold leading-[1.25] tracking-[-.03em] transition-colors duration-300 relative z-10"
-            style={{ color: isHovered ? "#61c5ad" : "var(--card-foreground)" }}
-          >
+          {/* Title */}
+          <h3 className="mb-3 text-xl font-bold leading-snug tracking-tight text-card-foreground group-hover:text-primary transition-colors duration-200">
             {post.title}
           </h3>
 
+          {/* Excerpt */}
           {post.excerpt && (
-            <p
-              className="mb-6 text-[13px] leading-relaxed line-clamp-3 transition-colors duration-300 relative z-10 font-medium"
-              style={{ color: isHovered ? "var(--foreground)" : "var(--muted-foreground)" }}
-            >
+            <p className="mb-6 text-sm leading-relaxed text-muted-foreground line-clamp-3 font-normal">
               {post.excerpt}
             </p>
           )}
         </div>
 
-        <div
-          className="mt-auto flex items-center gap-5 text-[10px] font-bold tracking-[.14em] mono uppercase transition-colors duration-300 relative z-10 pt-4 border-t border-border"
-          style={{ color: isHovered ? "var(--foreground)" : "var(--muted-foreground)" }}
-        >
+        {/* Footer Meta */}
+        <div className="mt-auto flex items-center gap-4 text-[11px] font-medium tracking-wider mono text-muted-foreground pt-4 border-t border-border">
           {formattedDate && (
             <span className="flex items-center gap-1.5">
-              <Calendar size={11} />
+              <Calendar size={12} className="opacity-70" />
               {formattedDate}
             </span>
           )}
 
           <span className="flex items-center gap-1.5">
-            <Clock size={11} />
+            <Clock size={12} className="opacity-70" />
             {readTimeStr}
           </span>
         </div>
-      </NoiseBackground>
+      </article>
     </Link>
   );
 }

@@ -26,11 +26,11 @@ const SHOWCASE_ICONS: IconItem[] = [
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay, ease: EASE },
+    transition: { duration: 0.7, delay, ease: EASE },
   }),
 };
 
@@ -88,21 +88,14 @@ export default function ResourcesSection() {
   }, []);
 
   return (
-    <section id="resources" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
-      {/* Subtle section background */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
-        style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(6,182,212,0.07) 0%, rgba(59,130,246,0.04) 50%, transparent 70%)",
-        }}
-      />
+    <section id="resources" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-surface/40">
       <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between border-b border-white/10 pb-6 gap-6"
+          className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between border-b border-border pb-6 gap-6"
         >
           <div>
             <Eyebrow className="text-primary tracking-[.2em]">{isAz ? "KURASİYA EDİLMİŞ KATALOQ" : "CURATED DIRECTORY"}</Eyebrow>

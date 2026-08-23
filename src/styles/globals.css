@@ -194,177 +194,39 @@ html {
   .aurora-text-animate { background-size: 200% auto; animation: auroraText 8s linear infinite; }
 }
 
-/* ─── Glassmorphism system (Dark shadows removed to preserve pure ambient glow) ─── */
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow:
-    0 1px 0 0 rgba(255,255,255,0.06) inset,
-    0 0 0 1px rgba(255,255,255,0.04);
+/* ─── Editorial Card Utility ─── */
+.editorial-card {
+  position: relative;
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.glass-sm {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 1px 0 0 rgba(255,255,255,0.05) inset;
+.editorial-card:hover {
+  border-color: rgba(97, 197, 173, 0.4);
+}
+
+.light .editorial-card:hover {
+  border-color: rgba(13, 148, 136, 0.5);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+}
+
+/* ─── Legacy compatibility mappings cleaned for editorial purity ─── */
+.glass,
+.glass-sm,
+.aurora-card,
+.glass-liquid {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--card-foreground);
 }
 
 .glass-badge {
-  background: rgba(97, 197, 173, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(97, 197, 173, 0.25);
-  box-shadow:
-    0 1px 0 0 rgba(97, 197, 173, 0.12) inset;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
 }
 
-.glass-stat {
-  background: rgba(255, 255, 255, 0.025);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow:
-    0 1px 0 0 rgba(255,255,255,0.05) inset;
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.glass-stat:hover {
-  background: rgba(255, 255, 255, 0.045);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-/* ─── Light Mode Glass Overrides ─── */
-.light .glass {
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.8) inset;
-}
-
-.light .glass-sm {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.9) inset;
-}
-
-.light .glass-stat {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.8) inset;
-}
-
-.light .glass-stat:hover {
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(0, 0, 0, 0.14);
-}
-
-.light .glass-badge {
-  background: rgba(97, 197, 173, 0.12);
-  border: 1px solid rgba(97, 197, 173, 0.3);
-  color: #121212;
-}
-
-/* ─── Nav active aurora glow ─── */
-.nav-active-glow {
-  position: relative;
-}
-.nav-active-glow::after {
-  content: '';
-  position: absolute;
-  inset: -4px -8px;
-  border-radius: 8px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(97,197,173,0.14) 0%, transparent 70%);
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-/* ─── Hero logo image ─── */
-.hero-logo-img {
-  will-change: transform;
-}
-
-
-/* ─── Uniform Aurora Design System Card Utility ─── */
-.aurora-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem; /* 16px */
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.4s ease-in-out;
-  will-change: transform, border-color, box-shadow;
-  transform: translateZ(0);
-}
-
-.aurora-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  background: radial-gradient(circle at 80% 20%, rgba(97, 197, 173, 0.1) 0%, rgba(66, 111, 186, 0.06) 50%, rgba(152, 79, 159, 0.04) 80%, transparent 100%);
-  pointer-events: none;
-}
-
-.aurora-card:hover {
-  transform: translateY(-4px) translateZ(0);
-  border-color: rgba(97, 197, 173, 0.35);
-  box-shadow: 
-    0 12px 30px rgba(0, 0, 0, 0.35), 
-    0 0 20px rgba(97, 197, 173, 0.1);
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.aurora-card:hover::before {
-  opacity: 1;
-}
-
-/* ─── reactGlass Inspired Physics-Based Liquid Glass Utilities ─── */
-.glass-liquid {
-  position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    -1px -1px 0 0 rgba(97, 197, 173, 0.25) inset,
-    1px 1px 0 0 rgba(152, 79, 159, 0.25) inset,
-    0 20px 60px rgba(0, 0, 0, 0.35);
-  transition: all 0.4s ease-in-out;
-}
-
-.glass-liquid::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  transform: skewX(-25deg);
-  transition: left 0.75s ease;
-  pointer-events: none;
-}
-
-.glass-liquid:hover::after {
-  left: 150%;
-}
-
-.light .glass-liquid {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.65) 100%);
-  border: 1px solid rgba(97, 197, 173, 0.3);
-  box-shadow:
-    -1px -1px 0 0 rgba(97, 197, 173, 0.3) inset,
-    1px 1px 0 0 rgba(152, 79, 159, 0.2) inset,
-    0 16px 40px rgba(0, 0, 0, 0.06);
-}

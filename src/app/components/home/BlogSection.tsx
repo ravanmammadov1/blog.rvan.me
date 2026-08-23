@@ -7,17 +7,16 @@ import BlogCard from "../blog/BlogCard";
 import { Eyebrow } from "../Eyebrow";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Button } from "../ui/Button";
+import { MASTER_EDITORIAL_BLOGS } from "../../../lib/editorialBlogRegistry";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 24 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
-
-import { MASTER_EDITORIAL_BLOGS } from "../../../lib/editorialBlogRegistry";
 
 export default function BlogSection() {
   const [blogPosts, setBlogPosts] = useState<any[]>(MASTER_EDITORIAL_BLOGS.slice(0, 3));
@@ -35,21 +34,14 @@ export default function BlogSection() {
   }, [language]);
 
   return (
-    <section id="blog" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
-      {/* Subtle section aurora background */}
-      <div 
-        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
-        style={{
-          background: "radial-gradient(circle at 80% 60%, rgba(139,92,246,0.07) 0%, rgba(79,70,229,0.04) 45%, transparent 70%)",
-        }}
-      />
+    <section id="blog" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-background">
       <div className="mx-auto max-w-[1600px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
+          className="mb-12 flex items-end justify-between border-b border-border pb-6"
         >
           <div>
             <Eyebrow className="text-primary tracking-[.2em]">{isAz ? "NƏŞR VƏ TƏHQİQAT" : "CREATIVE PUBLICATION"}</Eyebrow>
@@ -67,7 +59,7 @@ export default function BlogSection() {
         </motion.div>
 
         {blogPosts.length === 0 ? (
-          <div className="h-64 rounded-xl border border-white/10 bg-white/5 glass flex items-center justify-center text-muted-foreground text-sm">
+          <div className="h-64 rounded-2xl border border-border bg-card flex items-center justify-center text-muted-foreground text-sm">
             {t("noBlogArticles", "No blog articles available.")}
           </div>
         ) : (
@@ -86,10 +78,10 @@ export default function BlogSection() {
           </div>
         )}
 
-        <div className="mt-16 flex justify-center">
+        <div className="mt-12 flex justify-center">
           <Button
             to={getLocalizedPath("/blog")}
-            variant="outline"
+            variant="secondary"
             size="lg"
             icon={<ArrowUpRight size={16} />}
           >
