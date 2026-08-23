@@ -12,8 +12,6 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 import { Button } from "./components/ui/Button";
 import { Eyebrow } from "./components/Eyebrow";
 
-import HeroAtmosphere from "./components/HeroAtmosphere";
-
 // Lazy-loaded section components for optimal performance and exact requested order
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
@@ -53,9 +51,6 @@ export default function HomePage() {
         description="A creative publication and knowledge platform exploring design, marketing, branding, AI & creativity, and the creative industry."
         url="https://www.rvan.me"
       />
-
-      {/* ── GLOBAL SEAMLESS ARCHITECTURAL GRID BACKGROUND ── */}
-      <HeroAtmosphere />
 
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />

@@ -29,7 +29,7 @@ import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsent
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import CookiePreferencesModal from "./components/CookiePreferencesModal";
 import GoogleTagManager from "./components/GoogleTagManager";
-import { GlobalNoiseBackdrop } from "@/components/ui/noise-background";
+import GalaxyAtmosphere from "./components/GalaxyAtmosphere";
 
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
 
@@ -95,7 +95,7 @@ function AppContent() {
 
   return (
     <>
-      <GlobalNoiseBackdrop />
+      <GalaxyAtmosphere />
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
         <AppRoutes />
       </Suspense>
