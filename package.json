@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "vite build && node scripts/generate-seo-pages.mjs",
+    "build": "node scripts/generate-og-image.mjs && vite build && node scripts/generate-seo-pages.mjs",
     "dev": "vite",
     "preview": "vite preview",
     "illustrations:index": "node scripts/build-illustration-library.mjs"

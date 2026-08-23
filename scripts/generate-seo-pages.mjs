@@ -10,8 +10,8 @@ const todayIso = new Date().toISOString().split("T")[0];
 const staticPages = [
   {
     path: "/",
-    title: "Ravan Mammadov — Senior Creative Designer & Art Director",
-    description: "Senior Creative Designer based in Baku, Azerbaijan, specializing in motion design, brand identity, graphic design, and performance creative.",
+    title: "Rvan.me — Creative Publication & Knowledge Platform",
+    description: "A creative publication and knowledge platform exploring design, marketing, branding, AI & creativity, and the creative industry.",
     type: "website",
     lastmod: todayIso,
   },
@@ -123,7 +123,7 @@ function getSanityImageUrl(coverImage) {
     const assetId = parts[1];
     const dimensions = parts[2];
     const extension = parts[3];
-    return `https://cdn.sanity.io/images/0lqwkcmg/production/${assetId}-${dimensions}.${extension}?w=1200&auto=format`;
+    return `https://cdn.sanity.io/images/0lqwkcmg/production/${assetId}-${dimensions}.${extension}?w=1200&h=630&fit=crop&auto=format`;
   }
   return `${domain}/og-image.jpg`;
 }
@@ -313,10 +313,13 @@ function applyPageMetadata(html, page) {
     [/property="og:title" content="[^"]*"/i, `property="og:title" content="${escapeHtml(page.title)}"`],
     [/property="og:description" content="[^"]*"/i, `property="og:description" content="${escapeHtml(page.description)}"`],
     [/property="og:image" content="[^"]*"/i, `property="og:image" content="${imageUrl}"`],
+    [/property="og:image:secure_url" content="[^"]*"/i, `property="og:image:secure_url" content="${imageUrl}"`],
+    [/property="og:image:alt" content="[^"]*"/i, `property="og:image:alt" content="${escapeHtml(page.title)}"`],
     [/name="twitter:url" content="[^"]*"/i, `name="twitter:url" content="${canonical}"`],
     [/name="twitter:title" content="[^"]*"/i, `name="twitter:title" content="${escapeHtml(page.title)}"`],
     [/name="twitter:description" content="[^"]*"/i, `name="twitter:description" content="${escapeHtml(page.description)}"`],
     [/name="twitter:image" content="[^"]*"/i, `name="twitter:image" content="${imageUrl}"`],
+    [/name="twitter:image:alt" content="[^"]*"/i, `name="twitter:image:alt" content="${escapeHtml(page.title)}"`],
     [/link rel="canonical" href="[^"]*"/i, `link rel="canonical" href="${canonical}"`],
   ];
 
@@ -600,8 +603,8 @@ async function fetchFontPages() {
 
 const staticAzTranslations = {
   "/": {
-    title: "Rəvan Məmmədov — Kreativ Dizayner & Art Direktor | Rvan.me",
-    description: "Bakıda fəaliyyət göstərən aparıcı kreativ dizayner: motion dizayn, brend kimliyi, qrafik dizayn və performans kreativləri.",
+    title: "Rvan.me — Kreativ Nəşr və Bilik Platforması",
+    description: "Dizayn, marketinq, brendinq, süni intellekt və yaradıcılıq, eləcə də kreativ sənayeni araşdıran müstəqil nəşr və bilik platforması.",
   },
   "/work": {
     title: "Kreativ Portfolio — Motion, Brendinq və Qrafik Dizayn | Rəvan Məmmədov",

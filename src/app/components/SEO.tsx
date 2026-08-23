@@ -44,6 +44,13 @@ function normalizeCanonicalUrl(value: string, siteDomain: string): string {
   }
 }
 
+function toAbsoluteImageUrl(rawImage: string | null | undefined, domain: string): string {
+  if (!rawImage) return `${domain}/og-image.jpg`;
+  if (rawImage.startsWith("http://") || rawImage.startsWith("https://")) return rawImage;
+  const cleanPath = rawImage.startsWith("/") ? rawImage : `/${rawImage}`;
+  return `${domain}${cleanPath}`;
+}
+
 export default function SEO({
   title,
   description,
@@ -72,20 +79,20 @@ export default function SEO({
   const activeSettings = siteSettingsProp || fetchedSettings;
   const seoConfig = activeSettings?.seo;
   const siteDomain = getSiteOrigin(seoConfig?.canonicalUrl || DEFAULT_SITE_DOMAIN);
-  const resolvedTitle = title || seoConfig?.metaTitle || "Rvan.me — Creative Studio, Design Resources & Tools";
+  const resolvedTitle = title || seoConfig?.metaTitle || "Rvan.me — Creative Publication & Knowledge Platform";
   const resolvedDescription =
     description ||
     seoConfig?.metaDescription ||
-    "Rvan.me is a curated creative hub by Ravan Mammadov for design thinking, resources, developer tools, and industry insights.";
-  const resolvedAuthor = authorName || seoConfig?.author || "Ravan Mammadov";
+    "A creative publication and knowledge platform exploring design, marketing, branding, AI & creativity, and the creative industry.";
+  const resolvedAuthor = authorName || seoConfig?.author || "Rvan.me";
   const resolvedSiteName = seoConfig?.siteName || "Rvan.me";
 
   const resolvedTwitterHandle = seoConfig?.twitterHandle || "@ravanimate";
 
-  const sanityOgImageUrl = seoConfig?.ogImage ? urlFor(seoConfig.ogImage)?.url() : null;
-  const sanityTwitterImageUrl = seoConfig?.twitterImage ? urlFor(seoConfig.twitterImage)?.url() : null;
-  const resolvedOgImage = image || sanityOgImageUrl || `${siteDomain}/og-image.jpg`;
-  const resolvedTwitterImage = image || sanityTwitterImageUrl || sanityOgImageUrl || `${siteDomain}/og-image.jpg`;
+  const sanityOgImageUrl = seoConfig?.ogImage ? urlFor(seoConfig.ogImage)?.width(1200).height(630).auto("format").url() : null;
+  const sanityTwitterImageUrl = seoConfig?.twitterImage ? urlFor(seoConfig.twitterImage)?.width(1200).height(630).auto("format").url() : null;
+  const resolvedOgImage = toAbsoluteImageUrl(image || sanityOgImageUrl, siteDomain);
+  const resolvedTwitterImage = toAbsoluteImageUrl(image || sanityTwitterImageUrl || sanityOgImageUrl, siteDomain);
   const rawUrl = url || (typeof window !== "undefined" ? window.location.href : siteDomain);
   const resolvedUrl = normalizeCanonicalUrl(rawUrl, siteDomain);
   const personId = `${siteDomain}/#person`;

@@ -140,8 +140,8 @@ export default function BlogDetail() {
     );
   }
 
-  const imgBuilder = urlFor(post.coverImage);
-  const coverUrl = imgBuilder ? imgBuilder.width(1200).url() : undefined;
+  const imgBuilder = post.coverImage ? urlFor(post.coverImage) : null;
+  const coverUrl = imgBuilder ? imgBuilder.width(1200).height(630).auto("format").url() : undefined;
 
   const currentIndex = allPosts.findIndex(
     (p) => (p.slug?.current || p._id) === (post.slug?.current || post._id)
@@ -161,7 +161,7 @@ export default function BlogDetail() {
       <SEO
         title={post.seo?.metaTitle || `${post.title} — Rvan.me`}
         description={post.seo?.metaDescription || post.excerpt || `Read ${post.title} on Rvan.me.`}
-        image={post.seo?.ogImage ? (urlFor(post.seo.ogImage)?.width(1200).url() || coverUrl) : coverUrl}
+        image={coverUrl}
         url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
