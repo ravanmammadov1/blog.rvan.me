@@ -22,6 +22,9 @@ const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
+const TopicHubPage = lazy(() => import("./pages/TopicHubPage"));
+const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
+const PublicCvPage = lazy(() => import("./pages/PublicCvPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
@@ -40,7 +43,8 @@ function AppRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/ravanmammadov" element={<FounderProfilePage />} />
+      <Route path="/settings" element={<ProfilePage />} />
+      <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
       <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/work" element={<WorkArchive />} />
       <Route path="/work/:slug" element={<ProjectDetail />} />
@@ -56,6 +60,7 @@ function AppRoutes() {
       <Route path="/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
       <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
+      <Route path="/cv/:publicSlug" element={<PublicCvPage />} />
 
       {/* Admin Control Routes */}
       <Route path="/admin/linkedin" element={<LinkedInAdmin />} />
@@ -64,7 +69,8 @@ function AppRoutes() {
       <Route path="/az" element={<HomePage />} />
       <Route path="/az/about" element={<AboutPage />} />
       <Route path="/az/profile" element={<ProfilePage />} />
-      <Route path="/az/ravanmammadov" element={<FounderProfilePage />} />
+      <Route path="/az/settings" element={<ProfilePage />} />
+      <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
       <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/work" element={<WorkArchive />} />
       <Route path="/az/work/:slug" element={<ProjectDetail />} />
@@ -80,6 +86,7 @@ function AppRoutes() {
       <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
+      <Route path="/az/cv/:publicSlug" element={<PublicCvPage />} />
       <Route path="/az/admin/linkedin" element={<LinkedInAdmin />} />
 
       <Route path="*" element={<NotFound />} />

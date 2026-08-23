@@ -1,44 +1,51 @@
+import React from "react";
+import { pdf } from "@react-pdf/renderer";
+import { ResumePdfDocument } from "../pdf/ResumePdfDocument";
+import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
+
 /**
- * Direct PDF Exporter
- * Generates exact A4 vector PDF directly in-browser (< 300KB) matching visual canvas 1:1.
+ * Downloads a resume as a crisp, native vector PDF document using @react-pdf/renderer.
+ * - 0 HTML2Canvas / DOM rasterization
+ * - 0 CSS color parsing errors (oklch, color-mix, etc.)
+ * - 0 Eval / CSP issues
+ * - Clean asynchronous Blob -> Object URL -> Download -> Revoke lifecycle
  */
-export async function downloadResumeAsPdf(elementId: string, filename: string): Promise<boolean> {
-  const element = document.getElementById(elementId);
-  if (!element) {
-    window.print();
-    return false;
-  }
+export async function downloadResumeAsPdf(
+  data: ResumeData,
+  theme: ResumeThemeConfig,
+  customFilename?: string
+): Promise<boolean> {
+  const name = data.personalInfo.fullName?.trim() || "Resume";
+  const cleanName = name.replace(/[^a-zA-Z0-9_\-]/g, "_");
+  const filename = customFilename ? (customFilename.endsWith(".pdf") ? customFilename : `${customFilename}.pdf`) : `${cleanName}_CV.pdf`;
 
   try {
-    // Dynamically import html2pdf.js
-    const html2pdf = (await import("html2pdf.js")).default;
+    const docElement = React.createElement(ResumePdfDocument, { data, theme });
+    const blob = await pdf(docElement).toBlob();
 
-    const opt = {
-      margin: [0, 0, 0, 0],
-      filename: filename.endsWith(".pdf") ? filename : `${filename}.pdf`,
-      image: { type: "jpeg", quality: 0.92 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        letterRendering: true,
-        scrollY: 0,
-        scrollX: 0,
-      },
-      jsPDF: {
-        unit: "mm",
-        format: "a4",
-        orientation: "portrait",
-        compress: true,
-      },
-      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-    };
+    if (!blob || blob.size === 0) {
+      throw new Error("Generated PDF blob is empty.");
+    }
 
-    await html2pdf().set(opt).from(element).save();
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.style.display = "none";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+
+    // Release memory safely
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 2000);
+
     return true;
-  } catch (error) {
-    console.warn("Direct html2pdf generation failed, falling back to native print engine:", error);
-    window.print();
-    return false;
+  } catch (error: any) {
+    console.error("[PDF EXPORT ERROR]", error);
+    console.error("[PDF EXPORT ERROR MESSAGE]", error?.message);
+    console.error("[PDF EXPORT ERROR STACK]", error?.stack);
+    throw error;
   }
 }

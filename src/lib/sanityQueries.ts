@@ -1,5 +1,4 @@
 import { client } from "./sanityClient";
-import exportData from "../../sanity_to_wp_export.json";
 import {
   MASTER_EDITORIAL_BLOGS,
   getEditorialBlogBySlug,
@@ -558,24 +557,7 @@ export async function fetchRelatedContentItems(currentId: string, contentType: s
 }
 
 function getLocalBlogBySlug(slug: string) {
-  const editorial = getEditorialBlogBySlug(slug);
-  if (editorial) return editorial;
-
-  const blogs = (exportData as any)?.blogs || [];
-  const raw = (slug || "").trim();
-  const clean = decodeURIComponent(raw)
-    .replace(/^\/?(az\/)?blog\//, "")
-    .replace(/^\//, "")
-    .replace(/\/+$/, "")
-    .trim()
-    .toLowerCase();
-
-  return blogs.find((b: any) => {
-    const s = b.slug;
-    const slugStr = (typeof s === "object" ? s?.current : s || "").toLowerCase().replace(/\/+$/, "");
-    const bId = (b._id || "").toLowerCase();
-    return slugStr === clean || bId === clean || slugStr === raw.toLowerCase();
-  });
+  return getEditorialBlogBySlug(slug);
 }
 
 export async function fetchBlogBySlug(slug: string, lang: string = "en") {
@@ -622,32 +604,65 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
 
     // Merge: Prefer editorial registry's deep researched chapters while respecting Sanity overrides
     const base = editorialBlog || data || getLocalBlogBySlug(cleanSlug) || null;
-    if (base && data) {
+    if (base) {
+      const isAzPost = isAz;
+      const localizedBody = (isAzPost && Array.isArray(base.body_az) && base.body_az.length > 0)
+        ? base.body_az
+        : (Array.isArray(base.body) && base.body.length > 0 ? base.body : (data?.body || []));
+      const localizedTitle = (isAzPost && base.title_az) ? base.title_az : (base.title || data?.title || "");
+      const localizedExcerpt = (isAzPost && base.excerpt_az) ? base.excerpt_az : (base.excerpt || data?.excerpt || "");
+      const localizedCategory = (isAzPost && base.category_az) ? base.category_az : (base.category || data?.category || "");
+
+      const isSanityCoverValid = Boolean(
+        data?.coverImage && (data.coverImage.asset?._ref || data.coverImage.asset?.url || data.coverImage.url || data.coverImage.asset)
+      );
+      const effectiveCover = isSanityCoverValid
+        ? data.coverImage
+        : (editorialBlog?.coverImage || base.coverImage || data?.coverImage);
+
       return {
         ...base,
-        ...data,
-        // If Sanity body is sparse or older format, ensure deep editorial body is preserved
-        body: (Array.isArray(editorialBlog?.body) && editorialBlog.body.length > 0)
-          ? editorialBlog.body
-          : data.body || base.body,
-        title: editorialBlog?.title || data.title || base.title,
-        category: editorialBlog?.category || data.category || base.category,
-        excerpt: editorialBlog?.excerpt || data.excerpt || base.excerpt,
-        tags: editorialBlog?.tags || data.tags || base.tags,
+        ...(data || {}),
+        coverImage: effectiveCover,
+        title: localizedTitle,
+        category: localizedCategory,
+        excerpt: localizedExcerpt,
+        tags: base.tags || data?.tags,
+        body: localizedBody,
+        readTime: base.readTime || data?.readTime,
+        featured: base.featured ?? data?.featured,
       };
     }
     return base;
   } catch (error) {
     console.error("Error fetching blog by slug from Sanity:", error);
-    return editorialBlog || getLocalBlogBySlug(cleanSlug) || null;
+    const fallback = editorialBlog || getLocalBlogBySlug(cleanSlug) || null;
+    if (fallback && isAz) {
+      return {
+        ...fallback,
+        title: fallback.title_az || fallback.title,
+        category: fallback.category_az || fallback.category,
+        excerpt: fallback.excerpt_az || fallback.excerpt,
+        body: (Array.isArray(fallback.body_az) && fallback.body_az.length > 0) ? fallback.body_az : fallback.body,
+      };
+    }
+    return fallback;
   }
 }
 
 export async function fetchAllBlogs(lang: string = "en") {
-  const editorialMap = new Map(MASTER_EDITORIAL_BLOGS.map((b) => [b.slug.current, b]));
+  const editorialMap = new Map<string, BlogPost>();
+  MASTER_EDITORIAL_BLOGS.forEach((b) => {
+    editorialMap.set(b._id.toLowerCase(), b);
+    if (b.slug?.current) editorialMap.set(b.slug.current.toLowerCase(), b);
+    if (b.slug_az?.current) editorialMap.set(b.slug_az.current.toLowerCase(), b);
+    if (b.originalSlug) editorialMap.set(b.originalSlug.toLowerCase(), b);
+    if (b.title) editorialMap.set(b.title.toLowerCase().trim(), b);
+    if (b.title_az) editorialMap.set(b.title_az.toLowerCase().trim(), b);
+  });
 
   try {
-    const isAz = lang === "az";
+    const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
     const data = await client.fetch(
       `
       *[_type == "blog" && (status == "published" || !defined(status)) && defined(slug.current)] | order(select(featured == true => 1, 0) desc, _updatedAt desc, publishDate desc){
@@ -670,27 +685,58 @@ export async function fetchAllBlogs(lang: string = "en") {
 
     if (Array.isArray(data) && data.length > 0) {
       return data.map((item: any) => {
-        const slugKey = typeof item.slug === "object" ? item.slug?.current : item.slug;
-        const ed = editorialMap.get(slugKey) || editorialMap.get(item._id);
+        const slugKey = (typeof item.slug === "object" ? item.slug?.current : item.slug || "").toLowerCase().trim();
+        const origSlugKey = (item.originalSlug || "").toLowerCase().trim();
+        const idKey = (item._id || "").toLowerCase().trim();
+        const titleKey = (item.title || "").toLowerCase().trim();
+        const ed = editorialMap.get(idKey) || 
+                   editorialMap.get(slugKey) || 
+                   editorialMap.get(origSlugKey) || 
+                   editorialMap.get(titleKey) ||
+                   getEditorialBlogBySlug(slugKey) ||
+                   getEditorialBlogById(idKey);
+
         if (ed) {
+          const isSanityCoverValid = Boolean(
+            item.coverImage && (item.coverImage.asset?._ref || item.coverImage.asset?.url || item.coverImage.url || item.coverImage.asset)
+          );
+          const effectiveCover = isSanityCoverValid
+            ? item.coverImage
+            : (ed.coverImage || item.coverImage);
+
           return {
             ...item,
-            title: ed.title,
-            category: ed.category,
-            excerpt: ed.excerpt,
+            coverImage: effectiveCover,
+            title: (isAz && ed.title_az) ? ed.title_az : ed.title,
+            category: (isAz && ed.category_az) ? ed.category_az : ed.category,
+            excerpt: (isAz && ed.excerpt_az) ? ed.excerpt_az : ed.excerpt,
             tags: ed.tags || item.tags,
             readTime: ed.readTime || item.readTime,
             featured: ed.featured ?? item.featured,
+            body: (isAz && Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
           };
         }
         return item;
       });
     }
 
-    return getAllEditorialBlogs();
+    return getAllEditorialBlogs().map((ed) => isAz ? {
+      ...ed,
+      title: ed.title_az || ed.title,
+      category: ed.category_az || ed.category,
+      excerpt: ed.excerpt_az || ed.excerpt,
+      body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+    } : ed);
   } catch (error) {
     console.error("Error fetching all blogs from Sanity:", error);
-    return getAllEditorialBlogs();
+    const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
+    return getAllEditorialBlogs().map((ed) => isAz ? {
+      ...ed,
+      title: ed.title_az || ed.title,
+      category: ed.category_az || ed.category,
+      excerpt: ed.excerpt_az || ed.excerpt,
+      body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+    } : ed);
   }
 }
 

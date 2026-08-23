@@ -35,17 +35,6 @@ export default function CategoryFilter({
             }
           >
             {category.toUpperCase()}
-            {count !== undefined && (
-              <span
-                className={`ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full text-[9px] font-bold ${
-                  active
-                    ? "bg-black/10 text-black/80"
-                    : "bg-white/10 text-muted-foreground"
-                }`}
-              >
-                {count}
-              </span>
-            )}
           </button>
         );
       })}

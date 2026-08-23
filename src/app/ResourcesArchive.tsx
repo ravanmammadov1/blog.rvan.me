@@ -11,12 +11,18 @@ import {
   ICON_CATEGORIES,
   IconCategory,
 } from "../lib/iconEngine";
+import {
+  searchIllustrations,
+  ILLUSTRATION_CATEGORIES,
+  IllustrationCategory,
+} from "../lib/illustrationsData";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import { IconSpecimenCard } from "./components/content/IconSpecimenCard";
+import { IllustrationSpecimenCard } from "./components/content/IllustrationSpecimenCard";
 import PageHero from "./components/PageHero";
 import PageFilterBar from "./components/PageFilterBar";
 import { Button } from "./components/ui/Button";
@@ -32,11 +38,12 @@ const fadeUp = {
   }),
 };
 
-export type ResourceCategoryKey = "fonts" | "icons";
+export type ResourceCategoryKey = "fonts" | "icons" | "illustrations";
 
 export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: string }> = {
   fonts: { label: "Fonts", icon: "🔤" },
-  icons: { label: "Icons", icon: "🎨" },
+  icons: { label: "Icons", icon: "✨" },
+  illustrations: { label: "Illustrations", icon: "🎨" },
 };
 
 const COLOR_PRESETS = [
@@ -54,7 +61,7 @@ export default function ResourcesArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { t } = useLanguage();
+  const { t, language, isAz } = useLanguage();
 
   // Font Specimen Interactive Controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
@@ -70,8 +77,19 @@ export default function ResourcesArchive() {
   const [visibleIconLimit, setVisibleIconLimit] = useState(36);
   const [iconCategoryDropdownOpen, setIconCategoryDropdownOpen] = useState(false);
 
+  // Illustration Specimen Interactive Controls
+  const [illustrationCategorySubfilter, setIllustrationCategorySubfilter] = useState<IllustrationCategory>("All");
+  const [illustrationColor, setIllustrationColor] = useState("#61c5ad");
+  const [visibleIllustrationLimit, setVisibleIllustrationLimit] = useState(24);
+  const [illustrationCategoryDropdownOpen, setIllustrationCategoryDropdownOpen] = useState(false);
+
   const activeCategoryParam = searchParams.get("category") as ResourceCategoryKey;
-  const activeCategory: ResourceCategoryKey = activeCategoryParam === "icons" ? "icons" : "fonts";
+  const activeCategory: ResourceCategoryKey =
+    activeCategoryParam === "icons"
+      ? "icons"
+      : activeCategoryParam === "illustrations"
+      ? "illustrations"
+      : "fonts";
 
   const searchQuery = searchParams.get("q") || "";
   const deferredSearch = useDeferredValue(searchQuery);
@@ -79,6 +97,7 @@ export default function ResourcesArchive() {
   const categoryLabels: Record<ResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
     icons: t("icons", "Icons"),
+    illustrations: isAz ? "İllüstrasiyalar" : "Illustrations",
   };
 
   useEffect(() => {
@@ -113,7 +132,9 @@ export default function ResourcesArchive() {
   const filteredFonts = useMemo(() => {
     let list = fontCatalog;
 
-    if (fontCategorySubfilter !== "all") {
+    if (fontCategorySubfilter === "azerbaijani") {
+      list = list.filter((f) => f.supportsAzerbaijani);
+    } else if (fontCategorySubfilter !== "all") {
       list = list.filter((f) => f.category?.toLowerCase() === fontCategorySubfilter.toLowerCase());
     }
 
@@ -122,8 +143,12 @@ export default function ResourcesArchive() {
       list = list.filter(
         (f) =>
           f.family.toLowerCase().includes(q) ||
+          f.name.toLowerCase().includes(q) ||
           f.designer?.toLowerCase().includes(q) ||
-          f.category?.toLowerCase().includes(q)
+          f.category?.toLowerCase().includes(q) ||
+          f.foundry?.toLowerCase().includes(q) ||
+          f.aliases?.some((a) => a.toLowerCase().includes(q)) ||
+          (q === "calibri" && f.family.toLowerCase() === "carlito")
       );
     }
 
@@ -135,11 +160,16 @@ export default function ResourcesArchive() {
     return searchLucideIcons(deferredSearch, iconCategorySubfilter);
   }, [deferredSearch, iconCategorySubfilter]);
 
+  // Filtered Open-Source Vector Illustrations Catalog
+  const filteredIllustrations = useMemo(() => {
+    return searchIllustrations(deferredSearch, illustrationCategorySubfilter);
+  }, [deferredSearch, illustrationCategorySubfilter]);
+
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${t("resourcesArchiveTitle", "Open-Source Fonts & Vector Icons")} — Rvan.me`}
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and vector icon catalog.")}
+        title={`${t("resourcesArchiveTitle", "Open-Source Fonts, Vector Icons & Illustrations")} — Rvan.me`}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, SVG/React vector icons, and open-source illustration catalog.")}
         url="https://www.rvan.me/resources"
       />
 
@@ -161,7 +191,7 @@ export default function ResourcesArchive() {
         title={t("resourcesHeadingMain", "Creative")}
         accentText={t("resourcesHeadingAccent", "Resources.")}
         gradientVariant="primary"
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families and vector icon catalog.")}
+        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, SVG/React vector icons, and open-source illustration catalog.")}
       />
 
       {/* Primary Category Filter Bar (FONTS | ICONS) */}
@@ -180,7 +210,9 @@ export default function ResourcesArchive() {
         searchPlaceholder={
           activeCategory === "fonts"
             ? "Search fonts by family or designer..."
-            : "Search vector icons..."
+            : activeCategory === "icons"
+            ? "Search vector icons..."
+            : "Search open-source illustrations..."
         }
         searchId="resources-search"
       />
@@ -194,33 +226,48 @@ export default function ResourcesArchive() {
             {/* Font Toolbar */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               {/* Category Pills */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                {["all", "sans-serif", "serif", "display", "monospace", "handwriting"].map((cat) => (
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
+                {[
+                  { key: "all", label: isAz ? "HAMISI" : "ALL" },
+                  { key: "azerbaijani", label: isAz ? "AZƏRBAYCAN DİLİ (Ə)" : "AZERBAIJANI (Ə)" },
+                  { key: "sans-serif", label: "SANS SERIF" },
+                  { key: "serif", label: "SERIF" },
+                  { key: "display", label: "DISPLAY" },
+                  { key: "monospace", label: "MONOSPACE" },
+                  { key: "handwriting", label: "HANDWRITING" },
+                ].map((item) => (
                   <button
-                    key={cat}
-                    onClick={() => setFontCategorySubfilter(cat)}
-                    className={`rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                      fontCategorySubfilter === cat
-                        ? "bg-primary text-black"
+                    key={item.key}
+                    onClick={() => {
+                      setFontCategorySubfilter(item.key);
+                      if (item.key === "azerbaijani" && !previewText) {
+                        setPreviewText("Dizayn sistemləri və tipoqrafiya arxitekturası — Ə, ğ, ı, ö, ş, ü, ç.");
+                      }
+                    }}
+                    className={`rounded-xl px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                      fontCategorySubfilter === item.key
+                        ? item.key === "azerbaijani"
+                          ? "bg-emerald-400 text-black font-extrabold"
+                          : "bg-primary text-black"
                         : "text-muted-foreground hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    {cat}
+                    {item.label}
                   </button>
                 ))}
               </div>
 
               {/* Custom Preview Text & Size */}
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4 shrink-0">
                 <input
                   type="text"
                   value={previewText}
                   onChange={(e) => setPreviewText(e.target.value)}
                   placeholder="Type preview text..."
-                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none w-56 md:w-72"
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs font-mono text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none w-full sm:w-56 md:w-72"
                 />
 
-                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase">
+                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase shrink-0">
                   <span>{fontSizePx}px</span>
                   <input
                     type="range"
@@ -452,6 +499,150 @@ export default function ResourcesArchive() {
                       size="md"
                     >
                       LOAD MORE ICONS
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          3. ILLUSTRATIONS CATALOG SECTION
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {activeCategory === "illustrations" && (
+        <section className="px-6 py-10 md:px-10 relative z-10">
+          <div className="mx-auto max-w-[1600px]">
+            {/* Single-Line Toolbar with Dropdown Category & Color Controls */}
+            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
+              {/* Category Selector Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIllustrationCategoryDropdownOpen(!illustrationCategoryDropdownOpen)}
+                  className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-mono font-bold text-foreground hover:border-[#61c5ad]/50 hover:bg-white/10 transition-all cursor-pointer select-none"
+                >
+                  <Sparkles size={14} className="text-primary" />
+                  <span>Category: {illustrationCategorySubfilter}</span>
+                  <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${illustrationCategoryDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {illustrationCategoryDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 mt-2 z-50 w-72 rounded-2xl border border-white/15 bg-neutral-900/95 p-2 backdrop-blur-2xl shadow-2xl space-y-1"
+                    >
+                      <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70">
+                        Select Category
+                      </div>
+                      <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                        {ILLUSTRATION_CATEGORIES.map((cat) => {
+                          const isSelected = illustrationCategorySubfilter === cat;
+                          return (
+                            <button
+                              key={cat}
+                              onClick={() => {
+                                setIllustrationCategorySubfilter(cat);
+                                setIllustrationCategoryDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all text-left cursor-pointer ${
+                                isSelected
+                                  ? "bg-primary text-black font-bold"
+                                  : "text-muted-foreground hover:text-white hover:bg-white/5"
+                              }`}
+                            >
+                              <span className="truncate">{cat}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Color Customization Presets */}
+              <div className="flex flex-wrap items-center gap-5">
+                <div className="flex items-center gap-2">
+                  <Palette size={14} className="text-primary shrink-0" />
+                  <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase shrink-0">Accent Color:</span>
+                  <div className="flex items-center gap-1.5 bg-black/40 border border-white/10 p-1 rounded-xl">
+                    {COLOR_PRESETS.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setIllustrationColor(color)}
+                        className={`h-5 w-5 rounded-lg transition-transform cursor-pointer ${
+                          illustrationColor === color ? "scale-110 border-2 border-white shadow-md" : "hover:scale-105 opacity-80"
+                        }`}
+                        style={{ backgroundColor: color }}
+                        title={`Color: ${color}`}
+                      />
+                    ))}
+                    <input
+                      type="color"
+                      value={illustrationColor}
+                      onChange={(e) => setIllustrationColor(e.target.value)}
+                      className="h-5 w-5 rounded-lg border-0 bg-transparent cursor-pointer opacity-80 hover:opacity-100"
+                      title="Custom Hex Color"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Reset Filters Option if filtered */}
+            {(deferredSearch || illustrationCategorySubfilter !== "All") && (
+              <div className="mb-6 flex justify-end">
+                <button
+                  onClick={() => {
+                    setIllustrationCategorySubfilter("All");
+                    handleSearchChange("");
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-mono text-primary hover:text-white transition-colors cursor-pointer"
+                >
+                  <RefreshCw size={12} /> Reset Filters
+                </button>
+              </div>
+            )}
+
+            {/* Illustration Specimen Grid */}
+            {filteredIllustrations.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
+                <p className="text-muted-foreground text-xs">No vector illustrations found matching your search query.</p>
+                <button
+                  onClick={() => {
+                    setIllustrationCategorySubfilter("All");
+                    handleSearchChange("");
+                  }}
+                  className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
+                >
+                  RESET FILTERS
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  {filteredIllustrations.slice(0, visibleIllustrationLimit).map((illItem) => (
+                    <IllustrationSpecimenCard
+                      key={illItem.id}
+                      illustration={illItem}
+                      accentColor={illustrationColor}
+                    />
+                  ))}
+                </div>
+
+                {visibleIllustrationLimit < filteredIllustrations.length && (
+                  <div className="mt-10 text-center">
+                    <Button
+                      onClick={() => setVisibleIllustrationLimit((prev) => prev + 24)}
+                      variant="outline"
+                      size="md"
+                    >
+                      LOAD MORE ILLUSTRATIONS ({filteredIllustrations.length - visibleIllustrationLimit} REMAINING)
                     </Button>
                   </div>
                 )}

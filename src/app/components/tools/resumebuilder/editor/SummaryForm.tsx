@@ -27,6 +27,8 @@ export const SummaryForm: React.FC<Props> = ({ data, onChange }) => {
       </p>
 
       <textarea
+        id="resume-summary-input"
+        name="summary"
         rows={4}
         value={data.summary}
         onChange={(e) => onChange({ ...data, summary: e.target.value })}

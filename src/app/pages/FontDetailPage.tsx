@@ -6,11 +6,14 @@ import {
   BadgeCheck,
   Type,
   ArrowLeft,
+  ArrowRight,
   Sliders,
   Sparkles,
   ExternalLink,
   Layers,
   CheckCircle2,
+  BookOpen,
+  Compass,
 } from "lucide-react";
 
 import {
@@ -47,7 +50,7 @@ export default function FontDetailPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [catalog, setCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language, isAz } = useLanguage();
 
   // Live Specimen Tester State
   const [previewText, setPreviewText] = useState(
@@ -119,28 +122,65 @@ export default function FontDetailPage() {
   // Structured JSON-LD Data for Font Family
   const jsonLdData = {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": `${font.family} Font Family`,
-    "alternateName": font.name,
-    "creator": {
-      "@type": "Person",
-      "name": font.designer,
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": font.foundry,
-    },
-    "genre": font.category,
-    "license": font.license,
-    "url": canonicalUrl,
-    "description": font.description,
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "@id": `${canonicalUrl}#fontfamily`,
+        "name": `${font.family} Font Family`,
+        "alternateName": font.name,
+        "creator": {
+          "@type": "Person",
+          "name": font.designer,
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": font.foundry,
+          "url": "https://www.rvan.me",
+        },
+        "genre": font.category,
+        "license": font.license,
+        "url": canonicalUrl,
+        "description": font.description,
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": language === "az" ? "Ana Səhifə" : "Home",
+            "item": language === "az" ? "https://www.rvan.me/az" : "https://www.rvan.me",
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": language === "az" ? "Şriftlər Kataloqu" : "Fonts Directory",
+            "item": language === "az" ? "https://www.rvan.me/az/resources?category=fonts" : "https://www.rvan.me/resources?category=fonts",
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": font.family,
+            "item": canonicalUrl,
+          },
+        ],
+      },
+    ],
   };
+
+  const seoTitle = language === "az"
+    ? `${font.family} Şrift Ailəsi: Nümunə, CSS və Pulsuz Yüklə — Rvan.me`
+    : `${font.family} Font Family: Specimen, CSS & Free Download — Rvan.me`;
+
+  const seoDescription = language === "az"
+    ? `${font.family} şrift ailəsini pulsuz yükləyin (${font.license || "SIL Açıq Şrift Lisenziyası"}). ${font.stylesCount || 1} şrift çəkisi${font.isVariable ? ", variativ oxlar" : ""}, canlı nümayiş redaktoru, CSS kodları və elastik clamp() kalkulyatoru ilə.`
+    : `Download ${font.family} font family for free (${font.license || "SIL Open Font License"}). Features ${font.stylesCount || 1} style${(font.stylesCount || 1) > 1 ? "s" : ""}${font.isVariable ? ", variable axes" : ""}, live specimen tester, Fontsource/Google Fonts CSS code snippets, and fluid clamp() scale calculator.`;
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${font.family} Font Family — Free Download & Specimen | Rvan.me`}
-        description={`${font.family} is an open-source ${font.category.toLowerCase()} typeface family designed by ${font.designer}. Live specimen preview, style weights, license info, and free ZIP download.`}
+        title={seoTitle}
+        description={seoDescription}
         url={canonicalUrl}
       />
 
@@ -292,6 +332,30 @@ export default function FontDetailPage() {
                   0 1 2 3 4 5 6 7 8 9 ! @ # $ % ^ & * ( ) _ + - = [ ]
                 </p>
               </div>
+
+              {/* Azerbaijani Latin Special Glyphs */}
+              <div className="pt-2 border-t border-white/5">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <p className="text-[10px] text-muted-foreground mono uppercase">
+                    {language === "az" ? "Azərbaycan Latın Əlifbası (Xüsusi Qliflər)" : "Azerbaijani Latin Special Glyphs"}
+                  </p>
+                  {font.supportsAzerbaijani ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 mono">
+                      <CheckCircle2 size={11} /> {language === "az" ? "Dəstəklənir (100% Tam Dəstək)" : "Azerbaijani Supported"}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-400/80 mono">
+                      {language === "az" ? "Standart Latın Qlifləri" : "Standard Latin Coverage"}
+                    </span>
+                  )}
+                </div>
+                <p
+                  style={{ fontFamily: `"${font.family}", system-ui, sans-serif` }}
+                  className="text-2xl md:text-3xl text-foreground tracking-wider break-words"
+                >
+                  Ə ə · Ğ ğ · İ ı · Ö ö · Ş ş · Ü ü · Ç ç
+                </p>
+              </div>
             </div>
           </div>
 
@@ -310,11 +374,17 @@ export default function FontDetailPage() {
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
-              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("typeArchitecture", "TYPE ARCHITECTURE")}</span>
-              <p className="mt-2 text-base font-bold text-cyan-400">
-                {font.isVariable ? t("variableFontAxes", "Variable Font (Axes Supported)") : t("staticFamily", "Static Family")}
+              <span className="text-[10px] font-bold text-muted-foreground mono uppercase">
+                {language === "az" ? "AZƏRBAYCAN DİLİ" : "AZERBAIJANI LANGUAGE"}
+              </span>
+              <p className={`mt-2 text-base font-bold ${font.supportsAzerbaijani ? "text-emerald-400" : "text-amber-400"}`}>
+                {font.supportsAzerbaijani
+                  ? (language === "az" ? "Tam Dəstək (Ə, ğ, ı, ö, ş, ü, ç)" : "Verified (Ə, ğ, ı, ö, ş, ü, ç)")
+                  : (language === "az" ? "Standart Latın" : "Standard Latin")}
               </p>
-              <p className="text-xs text-muted-foreground mono mt-0.5">Format: WOFF2 / TTF / OTF</p>
+              <p className="text-xs text-muted-foreground mono mt-0.5">
+                {font.supportsAzerbaijani ? "Schwa (Ə/ə) + Latin-Ext A" : "Basic Latin"}
+              </p>
             </div>
 
             <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
@@ -403,6 +473,85 @@ export default function FontDetailPage() {
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Resource -> Tool Discovery Bridge */}
+          <div className="p-6 md:p-8 rounded-3xl border border-sky-500/30 bg-sky-500/5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 mono">
+                  {language === "az" ? "TİPOQRAFİYA ALƏTİ" : "PRACTICAL TYPOGRAPHY WORKBENCH"}
+                </span>
+                <h3 className="text-xl font-bold text-foreground">
+                  {language === "az"
+                    ? `${font.family} üçün Elastik CSS clamp() Miqyası Qurun`
+                    : `Calculate Fluid CSS clamp() Scale for ${font.family}`}
+                </h3>
+                <p className="text-xs text-muted-foreground max-w-2xl">
+                  {language === "az"
+                    ? `Bu şrift ailəsini riyazi modul miqyasda sınaqdan keçirin və canlı ekran simulyatoru ilə responsiv CSS tokenləri əldə edin.`
+                    : `Test ${font.family} across harmonic modular scales and export production-ready fluid typography tokens with live viewport simulation.`}
+                </p>
+              </div>
+              <Link
+                to={getLocalizedPath("/tools/typography-scale")}
+                className="inline-flex items-center gap-2 rounded-xl bg-sky-400 px-5 py-2.5 text-xs font-bold text-black uppercase tracking-wider mono shrink-0 hover:bg-sky-300 transition-colors"
+              >
+                <span>{language === "az" ? "Clamp Kalkulyatorunu Aç" : "Launch Scale Tool"}</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Contextual Topic Hub & Editorial Ecosystem Links */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Topic Hub Link */}
+            <div className="p-6 rounded-3xl border border-white/10 bg-white/[0.02] glass flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-sky-400 mono uppercase">
+                  <Compass size={14} /> {language === "az" ? "MÖVZU MƏRKƏZİ" : "TOPIC ECOSYSTEM HUB"}
+                </div>
+                <h4 className="text-base font-bold text-foreground">
+                  {language === "az" ? "Tipoqrafiya Sistemləri və Şrift Uyğunlaşdırması" : "Typography Systems & Font Scale Hub"}
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === "az"
+                    ? "Elastik şrift miqyası, şrift cütləşdirməsi və tipoqrafik ritm üzrə elmi tədqiqatlar və interaktiv alətlər toplusu."
+                    : "Deep research on typographic semantics, mathematical modular scales, CSS clamp() calculation, and variable font engineering."}
+                </p>
+              </div>
+              <Link
+                to={getLocalizedPath("/topics/typography")}
+                className="inline-flex items-center gap-2 text-xs font-bold text-sky-400 mono uppercase hover:underline"
+              >
+                <span>{language === "az" ? "Tipoqrafiya Mərkəzini Kəşf Et" : "Explore Typography Hub"}</span>
+                <ArrowRight size={12} />
+              </Link>
+            </div>
+
+            {/* Pillar Guide Link */}
+            <div className="p-6 rounded-3xl border border-white/10 bg-white/[0.02] glass flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
+                  <BookOpen size={14} /> {language === "az" ? "ƏSAS BƏLƏDÇİ" : "FLAGSHIP PILLAR STUDY"}
+                </div>
+                <h4 className="text-base font-bold text-foreground">
+                  {language === "az" ? "CSS clamp() ilə Responsiv Elastik Tipoqrafiyanın Tam Bələdçisi" : "Complete Guide to Responsive Fluid Typography with CSS clamp()"}
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === "az"
+                    ? "Xətti interpolyasiya riyaziyyatı, harmonik modul miqyaslar və CSS clamp() ilə media query tullanışlarına son qoyun."
+                    : "How linear interpolation equations, modular harmonic scales, and CSS clamp() eliminate breakpoint jumps."}
+                </p>
+              </div>
+              <Link
+                to={getLocalizedPath("/blog/guide-responsive-fluid-typography-css-clamp")}
+                className="inline-flex items-center gap-2 text-xs font-bold text-primary mono uppercase hover:underline"
+              >
+                <span>{language === "az" ? "Bələdçini Oxu" : "Read Full Guide"}</span>
+                <ArrowRight size={12} />
+              </Link>
             </div>
           </div>
 

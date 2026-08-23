@@ -19,14 +19,62 @@ export interface InteractiveToolDefinition {
 
 export const TOOL_CATEGORIES: { id: string; label: string; label_az: string }[] = [
   { id: "All", label: "All Tools", label_az: "Hamısı" },
-  { id: "Creative", label: "Creative", label_az: "Kreativ" },
-  { id: "Design", label: "Design", label_az: "Dizayn" },
   { id: "Marketing", label: "Marketing", label_az: "Marketinq" },
-  { id: "Visual", label: "Visual", label_az: "Vizual" },
+  { id: "Design", label: "Design", label_az: "Dizayn" },
   { id: "Developer", label: "Developer", label_az: "Developer" },
+  { id: "Creative", label: "Creative", label_az: "Kreativ" },
+  { id: "Visual", label: "Visual", label_az: "Vizual" },
 ];
 
 export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
+  {
+    id: "persuasion-analyzer",
+    slug: "persuasion-analyzer",
+    name: "Marketing & Persuasion Copy Analyzer",
+    name_az: "Marketinq və Persuasiya Mətn Analizatoru",
+    category: "Marketing",
+    description: "Evaluate headlines, value propositions, and CTA buttons across 8 cognitive marketing psychology dimensions. Get instant clarity scores, friction reduction tips, and empirical rewrite levers.",
+    description_az: "Başlıqlar, dəyər təklifləri və CTA düymələrini 8 koqnitiv marketinq psixologiyası meyarı üzrə analiz edin. Dəqiq təsir xalları, müqavimət azaldılması və aydın tövsiyələr əldə edin.",
+    icon: "🧠",
+    path: "/tools/persuasion-analyzer",
+    status: "live",
+    featured: true,
+    seoTitle: "Marketing & Persuasion Copy Analyzer — Cognitive Conversion Heuristics",
+    seoDescription: "Analyze marketing headlines, value propositions, and CTA buttons for cognitive fluency, empirical specificity, risk reversal, and loss aversion. 100% private in-browser copywriting analyzer.",
+    tags: ["persuasion-analyzer", "copywriting-tool", "conversion-rate-optimization", "cro", "headline-analyzer", "marketing-psychology", "cta-optimizer", "value-proposition"],
+  },
+  {
+    id: "contrast-matrix",
+    slug: "contrast-matrix",
+    name: "APCA Contrast Matrix & Accessibility Checker",
+    name_az: "APCA Kontrast Matrisi və Əlçatanlıq Aləti",
+    category: "Design",
+    description: "Evaluate perceptual color contrast with mathematical precision using the APCA-0.98G algorithm and WCAG 2.1 ratios. Features a 2D typography compliance matrix and design token evaluator.",
+    description_az: "APCA-0.98G alqoritmi və WCAG 2.1 nisbətləri ilə perseptual rəng kontrastını yoxlayın. 2D şrift matrisi, canlı interfeys nümunəsi və dizayn sistemi tokenləri auditi.",
+    icon: "👁️",
+    path: "/tools/contrast-matrix",
+    status: "live",
+    featured: true,
+    seoTitle: "APCA Contrast Matrix & Color Accessibility Checker — W3C Silver Calculator",
+    seoDescription: "Calculate perceptual lightness contrast (Lc) using APCA 0.98G and compare with WCAG 2.1 ratios. Features live typography compliance matrix, UI component sandbox, and design system token audits.",
+    tags: ["apca-contrast", "color-contrast-checker", "contrast-matrix", "accessible-colors", "wcag-contrast", "apca-calculator", "ui-accessibility", "design-system-tokens"],
+  },
+  {
+    id: "typography-scale",
+    slug: "typography-scale",
+    name: "Typography Scale & Clamp Calculator",
+    name_az: "Tipoqrafiya Miqyası və Clamp Kalkulyatoru",
+    category: "Design",
+    description: "Generate harmonious responsive typography hierarchies with exact mathematical modular scales and instant CSS clamp() code tokens. Free in-browser generator with live viewport testing.",
+    description_az: "Riyazi modul miqyaslar və CSS clamp() ilə tam elastik tipoqrafiya iyerarxiyaları qurun. Canlı ekran simulyatoru və bir kliklə CSS dəyişənlərini kopyalama imkanı.",
+    icon: "📐",
+    path: "/tools/typography-scale",
+    status: "live",
+    featured: true,
+    seoTitle: "Fluid Typography Scale & CSS Clamp Calculator — Responsive Type Generator",
+    seoDescription: "Calculate harmonic modular typography scales and generate instant, copyable CSS clamp() values. Features live viewport simulation, rem conversions, and multi-format CSS/Tailwind exports.",
+    tags: ["typography-scale", "type-scale", "css-clamp", "fluid-typography", "responsive-font-size", "modular-scale", "tailwind-typography", "css-generator"],
+  },
   {
     id: "resume-builder",
     slug: "resume-builder",
@@ -63,6 +111,15 @@ export const INTERACTIVE_TOOLS: InteractiveToolDefinition[] = [
 
 export function getToolById(id: string): InteractiveToolDefinition | undefined {
   const cleanId = (id || "").toLowerCase().trim();
+  if (cleanId === "persuasion-analyzer" || cleanId === "headline-analyzer" || cleanId === "persuasion" || cleanId === "copy-analyzer" || cleanId === "headline") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "persuasion-analyzer");
+  }
+  if (cleanId === "contrast-matrix" || cleanId === "apca" || cleanId === "contrast" || cleanId === "apca-contrast" || cleanId === "contrast-checker") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "contrast-matrix");
+  }
+  if (cleanId === "typography-scale" || cleanId === "type-scale" || cleanId === "clamp" || cleanId === "typographyscale" || cleanId === "clamp-calculator") {
+    return INTERACTIVE_TOOLS.find((t) => t.id === "typography-scale");
+  }
   if (cleanId === "openpeeps" || cleanId === "peeps" || cleanId === "character-builder") {
     return INTERACTIVE_TOOLS.find((t) => t.id === "open-peeps");
   }

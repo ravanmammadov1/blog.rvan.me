@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown, Sun, Moon } from "lucide-react";
+import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown, Sun, Moon, Search } from "lucide-react";
 import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
 import AuthModal from "./AuthModal";
+import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -100,100 +101,86 @@ function UserAuthMenu() {
                     <UserIcon size={16} />
                   </div>
                 )}
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-white truncate">
-                    {user ? (user.displayName || "User") : "Guest User"}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground truncate mono mt-0.5">
-                    {user ? user.email : "Not signed in"}
-                  </p>
+                <div className="overflow-hidden">
+                  <div className="text-xs font-semibold text-foreground truncate">
+                    {user ? (user.displayName || "Authenticated User") : t("guestUser", "Guest Visitor")}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground truncate font-mono">
+                    {user ? user.email : t("notSignedIn", "Not signed in")}
+                  </div>
                 </div>
               </div>
 
-              <Link
-                to={getLocalizedPath("/profile")}
-                onClick={() => setDropdownOpen(false)}
-                className="w-full flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-3 py-2.5 text-xs font-medium text-foreground hover:bg-white/10 hover:border-primary/50 transition-all text-left mono"
-              >
-                <span className="flex items-center gap-2">
-                  <UserIcon size={14} className="text-primary" /> {t("viewProfile", "View Profile")}
-                </span>
-                <ArrowUpRight size={13} className="text-muted-foreground" />
-              </Link>
-            </div>
-
-            {/* 2. PREFERENCES SECTION */}
-            <div className="py-3.5 border-b border-white/10 space-y-3.5">
-              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono">
-                {t("preferences", "PREFERENCES")}
-              </div>
-
-              {/* Appearance: Dark / Light */}
-              <div>
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono mb-1.5">
-                  <span>{t("appearance", "Appearance")}</span>
-                  <span className="text-[10px] text-primary font-bold uppercase mono">{theme === "dark" ? (language === "az" ? "QARANLIQ" : "DARK") : (language === "az" ? "İŞIQLI" : "LIGHT")}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
-                  <button
-                    onClick={() => setTheme("dark")}
-                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
-                      theme === "dark"
-                        ? "bg-primary text-black shadow-sm"
-                        : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    <Moon size={13} /> {t("darkTheme", "Dark")}
-                  </button>
-                  <button
-                    onClick={() => setTheme("light")}
-                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
-                      theme === "light"
-                        ? "bg-primary text-black shadow-sm"
-                        : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    <Sun size={13} /> {t("lightTheme", "Light")}
-                  </button>
-                </div>
-              </div>
-
-              {/* Language: English / Azərbaycan dili */}
-              <div>
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono mb-1.5">
-                  <span>{t("languageLabel", "Language")}</span>
-                  <span className="text-[10px] text-primary font-bold uppercase mono">{language === "az" ? "AZ" : "EN"}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10">
-                  <button
-                    onClick={() => switchLanguage("en")}
-                    className={`py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
-                      language === "en"
-                        ? "bg-primary text-black shadow-sm"
-                        : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => switchLanguage("az")}
-                    className={`py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-all ${
-                      language === "az"
-                        ? "bg-primary text-black shadow-sm"
-                        : "text-muted-foreground hover:text-white"
-                    }`}
-                  >
-                    Azərbaycan
-                  </button>
-                </div>
+              <div className="space-y-1.5">
+                <Link
+                  to={getLocalizedPath("/profile")}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs font-medium text-foreground hover:bg-white/10 transition-colors"
+                >
+                  <span>{t("settingsAndAvatar", "Settings & Avatar Customizer")}</span>
+                  <ArrowUpRight size={13} className="text-muted-foreground" />
+                </Link>
               </div>
             </div>
 
-            {/* 3. ACCOUNT SECTION */}
-            <div className="pt-3.5">
-              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono mb-2">
-                ACCOUNT
+            {/* 2. THEME SECTION */}
+            <div className="py-3 border-b border-white/10">
+              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-muted-foreground mono mb-2">
+                THEME
               </div>
+              <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/5">
+                <button
+                  type="button"
+                  onClick={() => setTheme("dark")}
+                  className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    theme === "dark" ? "bg-white/15 text-white shadow-sm" : "text-muted-foreground hover:text-white"
+                  }`}
+                >
+                  <Moon size={12} />
+                  <span>Dark</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTheme("light")}
+                  className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    theme === "light" ? "bg-white/15 text-white shadow-sm" : "text-muted-foreground hover:text-white"
+                  }`}
+                >
+                  <Sun size={12} />
+                  <span>Light</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 3. LANGUAGE SECTION */}
+            <div className="py-3 border-b border-white/10">
+              <div className="text-[9.5px] font-bold uppercase tracking-[.18em] text-muted-foreground mono mb-2">
+                LANGUAGE
+              </div>
+              <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/5 font-mono text-xs">
+                <button
+                  type="button"
+                  onClick={() => switchLanguage("en")}
+                  className={`py-1.5 rounded-lg font-bold transition-all ${
+                    language === "en" ? "bg-primary text-black shadow-sm" : "text-muted-foreground hover:text-white"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchLanguage("az")}
+                  className={`py-1.5 rounded-lg font-bold transition-all ${
+                    language === "az" ? "bg-primary text-black shadow-sm" : "text-muted-foreground hover:text-white"
+                  }`}
+                >
+                  AZ
+                </button>
+              </div>
+            </div>
+
+            {/* 4. ACTIONS / AUTH */}
+            <div className="pt-3">
               {user ? (
                 <button
                   onClick={() => {
@@ -232,6 +219,7 @@ interface SiteHeaderProps {
 export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const { t, getLocalizedPath } = useLanguage();
 
@@ -247,15 +235,20 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   }, []);
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
+    const handleGlobalKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setMenuOpen(false);
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
     };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
+    window.addEventListener("keydown", handleGlobalKey);
+    return () => window.removeEventListener("keydown", handleGlobalKey);
   }, []);
 
   const baseNavItems = [
     { label: t("navHome", "HOME"),      target: "/" },
+    { label: t("navTopics", "TOPICS"), target: "/topics" },
     { label: t("navResources", "RESOURCES"), target: "/resources" },
     { label: t("navBlog", "BLOG"),      target: "/blog" },
     { label: t("navAbout", "ABOUT"),     target: "/about" },
@@ -339,7 +332,18 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </nav>
  
           {/* Action Buttons & Authentication */}
-          <div className="flex items-center gap-3 shrink-0 self-center">
+          <div className="flex items-center gap-2.5 shrink-0 self-center">
+            {/* Global Search Button Trigger */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search articles, tools, and resources"
+              className="flex h-[38px] items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 text-[10.5px] font-medium transition-all duration-300 hover:border-primary/50 glass-sm text-muted-foreground hover:text-foreground shrink-0 self-center"
+            >
+              <Search size={14} className="text-primary" />
+              <span className="hidden lg:inline font-mono tracking-wider">{t("search", "SEARCH")}</span>
+              <kbd className="hidden lg:inline rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-mono text-muted-foreground">⌘K</kbd>
+            </button>
+
             {/* Integrated Profile & Preferences Dropdown */}
             <UserAuthMenu />
 
@@ -356,6 +360,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </div>
         </div>
       </header>
+
+      {/* Global Search Modal */}
+      <GlobalSearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Mobile Slide-Over Menu */}
       <AnimatePresence>

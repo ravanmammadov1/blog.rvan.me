@@ -1,12 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Type, Sparkles } from "lucide-react";
+import { ArrowUpRight, Type, Sparkles, Palette } from "lucide-react";
 import { Eyebrow } from "../Eyebrow";
 import { fetchHomeShowcaseResources, fetchUnifiedResources, SharedResourceItem, ResourceCategoryKey } from "../../../lib/resourceEngine";
 import type { IconItem } from "../../../lib/iconEngine";
+import { ILLUSTRATIONS_CATALOG } from "../../../lib/illustrationsData";
 import { IconSpecimenCard } from "../content/IconSpecimenCard";
 import { FontSpecimenCard } from "../content/FontSpecimenCard";
+import { IllustrationSpecimenCard } from "../content/IllustrationSpecimenCard";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Button } from "../ui/Button";
 
@@ -32,26 +34,29 @@ const fadeUp = {
   }),
 };
 
-export type HomeResourceCategoryKey = "fonts" | "icons";
+export type HomeResourceCategoryKey = "fonts" | "icons" | "illustrations";
 
 const CATEGORY_ICONS: Record<HomeResourceCategoryKey, React.ReactNode> = {
   fonts: <Type size={14} />,
   icons: <Sparkles size={14} />,
+  illustrations: <Palette size={14} />,
 };
 
 export const HOME_RESOURCE_CATEGORIES: Record<HomeResourceCategoryKey, { label: string }> = {
   fonts: { label: "Fonts" },
   icons: { label: "Icons" },
+  illustrations: { label: "Illustrations" },
 };
 
 export default function ResourcesSection() {
   const [resources, setResources] = useState<SharedResourceItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<HomeResourceCategoryKey>("fonts");
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, isAz } = useLanguage();
 
   const categoryLabels: Record<HomeResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),
     icons: t("icons", "Icons"),
+    illustrations: isAz ? "İllüstrasiyalar" : "Illustrations",
   };
 
   useEffect(() => {
@@ -76,6 +81,10 @@ export default function ResourcesSection() {
 
   const showcaseIcons = useMemo(() => {
     return SHOWCASE_ICONS;
+  }, []);
+
+  const showcaseIllustrations = useMemo(() => {
+    return ILLUSTRATIONS_CATALOG.slice(0, 4);
   }, []);
 
   return (
@@ -112,7 +121,7 @@ export default function ResourcesSection() {
           </Button>
         </motion.div>
 
-        {/* Category Tabs: FONTS | ICONS */}
+        {/* Category Tabs: FONTS | ICONS | ILLUSTRATIONS */}
         <div className="mb-10 flex flex-wrap gap-2">
           {(Object.keys(HOME_RESOURCE_CATEGORIES) as HomeResourceCategoryKey[]).map((catKey) => {
             const isActive = activeCategory === catKey;
@@ -154,7 +163,7 @@ export default function ResourcesSection() {
               />
             ))}
           </div>
-        ) : (
+        ) : activeCategory === "icons" ? (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
             {showcaseIcons.map((iconItem) => (
               <IconSpecimenCard
@@ -163,6 +172,16 @@ export default function ResourcesSection() {
                 iconSize={28}
                 strokeWidth={2}
                 iconColor="#61c5ad"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+            {showcaseIllustrations.map((illItem) => (
+              <IllustrationSpecimenCard
+                key={illItem.id}
+                illustration={illItem}
+                accentColor="#61c5ad"
               />
             ))}
           </div>

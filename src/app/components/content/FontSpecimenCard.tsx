@@ -59,9 +59,19 @@ export function FontSpecimenCard({
       <div>
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="flex items-center gap-1 rounded-full border border-[#61c5ad]/35 bg-gradient-to-r from-[#61c5ad]/12 via-[#426fba]/12 to-[#984f9f]/12 px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase text-[#61c5ad] mono">
-            {font.category}
-          </span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="flex items-center gap-1 rounded-full border border-[#61c5ad]/35 bg-gradient-to-r from-[#61c5ad]/12 via-[#426fba]/12 to-[#984f9f]/12 px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase text-[#61c5ad] mono">
+              {font.category}
+            </span>
+            {font.supportsAzerbaijani && (
+              <span
+                className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 text-emerald-400 text-[10px] font-bold mono uppercase"
+                title="Verified Azerbaijani Latin support (Ə, ğ, ı, ö, ş, ü, ç)"
+              >
+                AZ / Ə
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-2 text-[10px] font-semibold text-muted-foreground mono">
             {font.isVariable && (
               <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-0.5 text-cyan-400">

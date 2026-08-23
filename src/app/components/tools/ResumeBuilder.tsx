@@ -1,47 +1,46 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   ResumeEditorProvider,
   useResumeEditor,
 } from "./resumebuilder/context/ResumeEditorContext";
 import {
-  TECH_CV_PRESET,
-  UNIFIED_TEMPLATES,
   TemplateId,
 } from "./resumebuilder/resumeTypes";
+import {
+  MASTER_SAMPLE_RESUME,
+  TEMPLATE_REGISTRY,
+} from "./resumebuilder/resumeTemplates";
 import { calculateAtsScore } from "./resumebuilder/atsEngine";
 import { downloadResumeAsPdf } from "./resumebuilder/converters/pdfExporter";
-import {
-  exportToRenderCvYaml,
-  exportToReactiveResumeJson,
-  importUniversalResume,
-} from "./resumebuilder/converters/schemaConverters";
 import { CanvaLeftToolbar } from "./resumebuilder/editor/CanvaLeftToolbar";
 import { FloatingFormatToolbar } from "./resumebuilder/editor/FloatingFormatToolbar";
 import { ResumePreview } from "./resumebuilder/templates/ResumePreview";
 import { AtsScoreModal } from "./resumebuilder/editor/AtsScoreModal";
+import { TemplateGalleryView } from "./resumebuilder/templates/TemplateGalleryView";
+import { TemplateErrorBoundary } from "./resumebuilder/editor/TemplateErrorBoundary";
+import { useAuth } from "../../../hooks/useAuth";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 import {
-  Printer,
   Download,
-  Upload,
-  Copy,
-  Check,
   Undo2,
   Redo2,
   ZoomIn,
   ZoomOut,
   ShieldCheck,
-  ChevronDown,
   MousePointerClick,
-  FileCheck,
   Loader2,
+  ArrowLeft,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
-import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 /**
- * Inner Canvas Editor Component
+ * Inner Canvas Editor Component (Canva-style clean workspace)
  */
-const ResumeEditorCanvasInner: React.FC = () => {
+const ResumeEditorCanvasInner: React.FC<{
+  onOpenGallery: () => void;
+}> = ({ onOpenGallery }) => {
   const {
     data,
     theme,
@@ -53,140 +52,89 @@ const ResumeEditorCanvasInner: React.FC = () => {
     setZoom,
     setData,
     setTheme,
+    updatePhoto,
   } = useResumeEditor();
 
   const { language } = useLanguage();
   const isAz = language === "az";
+  const { avatarSvgUri } = useAuth();
 
   const [showAtsModal, setShowAtsModal] = useState(false);
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const [copiedText, setCopiedText] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
-  // ATS Score Calculation
+  // Automatically assign character avatar once on load if photo is missing
+  useEffect(() => {
+    if (!data.personalInfo.photoUrl && avatarSvgUri) {
+      updatePhoto(avatarSvgUri);
+    }
+  }, [avatarSvgUri]);
+
+  // Dynamic ATS Score Calculation
   const atsResult = useMemo(() => calculateAtsScore(data), [data]);
 
-  // Direct PDF Download (< 300KB, visually 1:1)
+  // Native Vector PDF Download via @react-pdf/renderer
   const handleDownloadPdf = async () => {
+    if (isGeneratingPdf) return;
     setIsGeneratingPdf(true);
-    const cleanName = data.personalInfo.fullName
-      ? data.personalInfo.fullName.replace(/[^a-zA-Z0-9_-]/g, "_")
+
+    const cleanName = data.personalInfo.fullName?.trim()
+      ? data.personalInfo.fullName.replace(/[^a-zA-Z0-9_\-]/g, "_")
       : "Resume";
     const filename = `${cleanName}_CV.pdf`;
 
-    await downloadResumeAsPdf("printable-resume", filename);
-    setIsGeneratingPdf(false);
-  };
-
-  // Helper download
-  const downloadFile = (content: string, filename: string, mime: string) => {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setShowExportMenu(false);
-  };
-
-  // Native JSON Backup
-  const handleExportJson = () => {
-    const jsonStr = JSON.stringify({ resumeData: data, theme }, null, 2);
-    downloadFile(
-      jsonStr,
-      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_backup.json`,
-      "application/json"
-    );
-  };
-
-  // RenderCV YAML Export
-  const handleExportRenderCvYaml = () => {
-    const yaml = exportToRenderCvYaml(data);
-    downloadFile(
-      yaml,
-      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_rendercv.yaml`,
-      "text/yaml"
-    );
-  };
-
-  // Reactive Resume JSON Export
-  const handleExportReactiveResumeJson = () => {
-    const jsonStr = exportToReactiveResumeJson(data);
-    downloadFile(
-      jsonStr,
-      `${data.personalInfo.fullName ? data.personalInfo.fullName.toLowerCase().replace(/\s+/g, "_") : "resume"}_reactive_resume.json`,
-      "application/json"
-    );
-  };
-
-  // Universal Import
-  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const content = event.target?.result as string;
-        const parsed = importUniversalResume(content);
-        if (parsed) {
-          setData((prev) => ({ ...prev, ...parsed }));
-          alert(isAz ? "CV uğurla yükləndi! Bütün məlumatlar bərpa olundu." : "Resume imported successfully!");
-        } else {
-          alert(isAz ? "Fayl formatı tanınmadı. Zəhmət olmasa JSON və ya YAML seçin." : "Invalid file format.");
-        }
-      } catch (err) {
-        alert(isAz ? "Xətalı fayl." : "Invalid file.");
-      }
-    };
-    reader.readAsText(file);
-  };
-
-  // Copy Plain Text
-  const handleCopyPlainText = () => {
-    const lines: string[] = [];
-    const info = data.personalInfo;
-    lines.push(`${info.fullName.toUpperCase()}`);
-    lines.push(`${info.title}`);
-    lines.push(`Email: ${info.email} | Phone: ${info.phone} | Location: ${info.location}`);
-    if (info.linkedin) lines.push(`LinkedIn: ${info.linkedin}`);
-    if (info.github) lines.push(`GitHub: ${info.github}`);
-    if (info.website) lines.push(`Portfolio: ${info.website}`);
-    lines.push("\n----------------------------------------\nSUMMARY");
-    lines.push(data.summary);
-
-    lines.push("\n----------------------------------------\nEXPERIENCE");
-    for (const exp of data.experiences) {
-      lines.push(`\n${exp.title} - ${exp.company} (${exp.location})`);
-      lines.push(`${exp.startDate} - ${exp.current ? "Present" : exp.endDate}`);
-      for (const b of exp.bullets) {
-        if (b.trim()) lines.push(`• ${b}`);
-      }
+    try {
+      await downloadResumeAsPdf(data, theme, filename);
+      setToastMessage({
+        text: isAz ? "✓ PDF uğurla yükləndi!" : "✓ PDF downloaded successfully!",
+        type: "success",
+      });
+      setTimeout(() => setToastMessage(null), 3500);
+    } catch (e: any) {
+      console.error("[PDF EXPORT ERROR]", e);
+      console.error("[PDF EXPORT ERROR MESSAGE]", e?.message);
+      console.error("[PDF EXPORT ERROR STACK]", e?.stack);
+      setToastMessage({
+        text: isAz ? "Xəta: PDF generasiya edilə bilmədi." : "Error: PDF could not be generated.",
+        type: "error",
+      });
+      setTimeout(() => setToastMessage(null), 4000);
+    } finally {
+      setIsGeneratingPdf(false);
     }
-
-    lines.push("\n----------------------------------------\nEDUCATION");
-    for (const edu of data.education) {
-      lines.push(`${edu.degree} in ${edu.field} - ${edu.institution} (${edu.startDate} - ${edu.endDate})`);
-    }
-
-    navigator.clipboard.writeText(lines.join("\n"));
-    setCopiedText(true);
-    setTimeout(() => setCopiedText(false), 2000);
   };
 
   return (
     <div className="w-full flex flex-col min-h-[90vh] bg-neutral-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
-      {/* ── TOP APP HEADER BAR ── */}
+      {/* ── TOP APP HEADER BAR (Canva-like clean simplicity) ── */}
       <header className="h-14 bg-neutral-900 border-b border-white/10 px-4 md:px-6 flex items-center justify-between gap-3 text-white shrink-0 z-40">
-        {/* Left: Document Title & Undo/Redo */}
-        <div className="flex items-center gap-3">
+        {/* Left: Back to Templates, Resume Name, Undo/Redo */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={onOpenGallery}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-primary hover:text-black transition-all text-xs font-mono font-bold cursor-pointer"
+            title={isAz ? "Bütün Şablonlar" : "Templates"}
+          >
+            <ArrowLeft size={13} />
+            <span>{isAz ? "Şablonlar" : "Templates"}</span>
+          </button>
+
+          <div className="h-4 w-px bg-white/15 hidden sm:block" />
+
           <input
+            id="resume-header-title"
+            name="resumeTitle"
             type="text"
-            value={data.personalInfo.fullName ? `${data.personalInfo.fullName} - CV` : (isAz ? "Mənim CV-m" : "My Resume")}
+            value={
+              data.personalInfo.fullName
+                ? `${data.personalInfo.fullName} - CV`
+                : isAz
+                ? "Mənim CV-m"
+                : "My Resume"
+            }
             onChange={() => {}}
-            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[150px] sm:max-w-xs truncate"
+            className="bg-transparent border border-transparent hover:border-white/20 focus:border-primary px-2 py-1 rounded-lg text-xs font-mono font-bold text-foreground focus:outline-none max-w-[130px] sm:max-w-xs truncate"
             title="Resume Title"
           />
 
@@ -199,7 +147,9 @@ const ResumeEditorCanvasInner: React.FC = () => {
               onClick={undo}
               disabled={!canUndo}
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                canUndo ? "hover:bg-white/10 text-white" : "opacity-30 text-neutral-500 cursor-not-allowed"
+                canUndo
+                  ? "hover:bg-white/10 text-white"
+                  : "opacity-30 text-neutral-500 cursor-not-allowed"
               }`}
               title="Undo (Ctrl+Z)"
             >
@@ -210,7 +160,9 @@ const ResumeEditorCanvasInner: React.FC = () => {
               onClick={redo}
               disabled={!canRedo}
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                canRedo ? "hover:bg-white/10 text-white" : "opacity-30 text-neutral-500 cursor-not-allowed"
+                canRedo
+                  ? "hover:bg-white/10 text-white"
+                  : "opacity-30 text-neutral-500 cursor-not-allowed"
               }`}
               title="Redo (Ctrl+Shift+Z)"
             >
@@ -219,106 +171,70 @@ const ResumeEditorCanvasInner: React.FC = () => {
           </div>
         </div>
 
-        {/* Center: Template Quick Switcher Pills */}
-        <div className="hidden lg:flex items-center gap-1 bg-black/40 border border-white/10 p-1 rounded-2xl text-xs font-mono">
-          {UNIFIED_TEMPLATES.slice(0, 5).map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTheme((prev) => ({ ...prev, template: t.id, accentColor: t.defaultColor }))}
-              className={`px-2.5 py-1 rounded-xl transition-all cursor-pointer ${
-                theme.template === t.id
-                  ? "bg-primary text-black font-bold shadow-sm"
-                  : "text-muted-foreground hover:text-white hover:bg-white/5"
-              }`}
-            >
-              {isAz ? t.name_az : t.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Right: ATS Score, Export & Direct PDF Download */}
-        <div className="flex items-center gap-2">
+        {/* Right: ATS Score Audit & Native Vector PDF Download */}
+        <div className="flex items-center gap-2.5">
           {/* ATS Score Indicator */}
           <button
             onClick={() => setShowAtsModal(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-black/40 hover:border-primary/50 transition-all cursor-pointer group"
             title={isAz ? "ATS Analizini Göstər" : "View ATS Compliance Audit"}
           >
-            <ShieldCheck size={13} className="text-primary group-hover:scale-110 transition-transform" />
+            <ShieldCheck
+              size={13}
+              className="text-primary group-hover:scale-110 transition-transform"
+            />
             <span className="text-xs font-mono font-bold">
-              ATS: <strong className={atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"}>{atsResult.score}%</strong>
+              ATS:{" "}
+              <strong
+                className={
+                  atsResult.score >= 80 ? "text-emerald-400" : "text-amber-400"
+                }
+              >
+                {atsResult.score}%
+              </strong>
             </span>
           </button>
 
-          {/* Copy Plain Text */}
-          <button
-            onClick={handleCopyPlainText}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
-            title={isAz ? "Mətni kopyala" : "Copy plain text"}
-          >
-            {copiedText ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            <span>{copiedText ? (isAz ? "KOPYALANDI" : "COPIED") : (isAz ? "MƏTN" : "TEXT")}</span>
-          </button>
-
-          {/* Export Code Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowExportMenu(!showExportMenu)}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer"
-            >
-              <Download size={12} />
-              <span className="hidden sm:inline">{isAz ? "KOD" : "EXPORT"}</span>
-              <ChevronDown size={10} />
-            </button>
-
-            {showExportMenu && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-neutral-900 border border-white/15 p-2 shadow-2xl z-50 space-y-1 font-mono text-xs text-foreground">
-                <button
-                  onClick={handleExportJson}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer"
-                >
-                  <span>JSON Backup</span>
-                  <span className="text-[10px] text-muted-foreground">.json</span>
-                </button>
-                <button
-                  onClick={handleExportRenderCvYaml}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-emerald-400"
-                >
-                  <span>RenderCV YAML</span>
-                  <span className="text-[10px] text-emerald-400">.yaml</span>
-                </button>
-                <button
-                  onClick={handleExportReactiveResumeJson}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 flex items-center justify-between cursor-pointer text-sky-400"
-                >
-                  <span>Reactive Resume v4</span>
-                  <span className="text-[10px] text-sky-400">.json</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Import Button */}
-          <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-xs font-mono font-bold text-foreground hover:bg-white/10 transition-all cursor-pointer">
-            <Upload size={12} />
-            <span className="hidden sm:inline">{isAz ? "İDXAL" : "IMPORT"}</span>
-            <input type="file" accept=".json,.yaml,.yml" onChange={handleImportFile} className="hidden" />
-          </label>
-
-          {/* Direct PDF Download (< 300KB) */}
+          {/* Direct Native PDF Download */}
           <button
             onClick={handleDownloadPdf}
             disabled={isGeneratingPdf}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0 disabled:opacity-70"
-            title={isAz ? "A4 PDF Kimi Endir (< 300KB)" : "Download A4 PDF (< 300KB)"}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-primary text-black text-xs font-mono font-extrabold hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer shrink-0 disabled:opacity-70"
+            title={isAz ? "A4 Vektor PDF Endir" : "Download A4 Vector PDF"}
           >
-            {isGeneratingPdf ? <Loader2 size={13} className="animate-spin" /> : <Printer size={13} />}
-            <span>{isGeneratingPdf ? (isAz ? "YÜKLƏNİR..." : "GENERATING...") : (isAz ? "PDF YÜKLƏ" : "DOWNLOAD PDF")}</span>
+            {isGeneratingPdf ? (
+              <Loader2 size={13} className="animate-spin" />
+            ) : (
+              <Download size={13} />
+            )}
+            <span>
+              {isGeneratingPdf
+                ? isAz
+                  ? "YÜKLƏNİR..."
+                  : "GENERATING..."
+                : isAz
+                ? "PDF YÜKLƏ"
+                : "DOWNLOAD PDF"}
+            </span>
           </button>
         </div>
       </header>
 
-      {/* ── WORKSPACE BODY (Canva Left Drawer + Center A4 Canvas) ── */}
+      {/* ── IN-APP NOTIFICATION TOAST ── */}
+      {toastMessage && (
+        <div
+          className={`absolute top-16 right-6 z-50 px-4 py-2 rounded-xl text-xs font-mono font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ${
+            toastMessage.type === "success"
+              ? "bg-emerald-950/90 text-emerald-300 border border-emerald-500/30"
+              : "bg-red-950/90 text-red-300 border border-red-500/30"
+          }`}
+        >
+          {toastMessage.type === "success" ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+          <span>{toastMessage.text}</span>
+        </div>
+      )}
+
+      {/* ── WORKSPACE BODY (DESIGN/CONTENT/STYLE Left Toolbar + Center A4 Canvas) ── */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Canva Tools Strip & Drawer */}
         <CanvaLeftToolbar />
@@ -332,7 +248,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
           <FloatingFormatToolbar />
 
           {/* Canvas Direct Editing Hint Pill */}
-          <div className="mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-mono text-primary flex items-center gap-2 shadow-inner print:hidden">
+          <div className="mb-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-mono text-primary flex items-center gap-2 shadow-inner print:hidden">
             <MousePointerClick size={13} className="animate-bounce" />
             <span>
               {isAz
@@ -341,7 +257,7 @@ const ResumeEditorCanvasInner: React.FC = () => {
             </span>
           </div>
 
-          {/* The A4 Resume Document Sheet Container with Safe Zone Padding */}
+          {/* The A4 Resume Document Sheet Container */}
           <div
             style={{
               transform: `scale(${zoom})`,
@@ -350,72 +266,91 @@ const ResumeEditorCanvasInner: React.FC = () => {
             }}
             className="w-full max-w-[850px] shadow-2xl relative print:shadow-none print:transform-none"
           >
-            <ResumePreview data={data} theme={theme} onUpdate={setData} />
+            <TemplateErrorBoundary fallbackTemplateId="tech-cv">
+              <ResumePreview data={data} theme={theme} onUpdate={setData} />
+            </TemplateErrorBoundary>
           </div>
 
-          {/* Floating Zoom & Fit Controls (Bottom-Right) */}
-          <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-neutral-900/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-2xl shadow-2xl text-xs font-mono text-white print:hidden">
+          {/* Bottom Floating Canvas Zoom Controls */}
+          <div className="fixed bottom-6 right-6 flex items-center gap-1 bg-neutral-900/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-2xl shadow-2xl z-30 print:hidden text-xs font-mono text-foreground">
             <button
-              onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(1)))}
-              className="p-1 hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setZoom((z) => Math.max(0.4, Number((z - 0.1).toFixed(1))))}
+              className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               title="Zoom Out"
             >
               <ZoomOut size={13} />
             </button>
-            <span className="w-12 text-center font-bold">{Math.round(zoom * 100)}%</span>
+            <span className="w-12 text-center font-bold text-foreground">
+              {Math.round(zoom * 100)}%
+            </span>
             <button
-              onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(1)))}
-              className="p-1 hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setZoom((z) => Math.min(1.6, Number((z + 0.1).toFixed(1))))}
+              className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               title="Zoom In"
             >
               <ZoomIn size={13} />
-            </button>
-            <div className="h-3 w-px bg-white/20 mx-0.5" />
-            <button
-              onClick={() => setZoom(1.0)}
-              className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] uppercase font-bold cursor-pointer"
-            >
-              100%
             </button>
           </div>
         </main>
       </div>
 
-      {/* Detailed ATS Score Audit Modal */}
-      {showAtsModal && <AtsScoreModal result={atsResult} onClose={() => setShowAtsModal(false)} />}
+      {/* ── ATS SCORE MODAL ── */}
+      {showAtsModal && (
+        <AtsScoreModal
+          result={atsResult}
+          onClose={() => setShowAtsModal(false)}
+        />
+      )}
     </div>
   );
 };
 
 /**
- * Flagship Exported ResumeBuilder Component
+ * Main Top-Level Exported CV Builder Component with Full Gallery Switcher
  */
-export default function ResumeBuilder() {
-  const [initialData] = useState<any>(() => {
-    try {
-      const saved = localStorage.getItem("rvan_ats_resume_data_v4");
-      if (saved) return JSON.parse(saved);
-    } catch {}
-    return TECH_CV_PRESET;
-  });
+export const ResumeBuilder: React.FC = () => {
+  const [currentView, setCurrentView] = useState<"gallery" | "editor">("gallery");
+  const [activeTemplate, setActiveTemplate] = useState<TemplateId>("awesome-cv");
+  const [activeColor, setActiveColor] = useState<string>("#dc2626");
 
-  const [initialTheme] = useState<any>(() => {
-    try {
-      const savedTheme = localStorage.getItem("rvan_ats_resume_theme_v4");
-      if (savedTheme) return JSON.parse(savedTheme);
-    } catch {}
-    return {
-      template: "tech-cv",
-      accentColor: "#111827",
-      fontFamily: "sans",
-      density: "standard",
-      paperSize: "a4",
-    };
-  });
+  const initialTheme = useMemo(
+    () => ({
+      template: activeTemplate,
+      accentColor: activeColor,
+      fontFamily: "sans" as const,
+      density: "standard" as const,
+      paperSize: "a4" as const,
+    }),
+    [activeTemplate, activeColor]
+  );
+
+  const handleSelectFromGallery = (templateId: TemplateId, color?: string) => {
+    setActiveTemplate(templateId);
+    if (color) setActiveColor(color);
+    setCurrentView("editor");
+  };
 
   return (
-    <ResumeEditorProvider initialData={initialData} initialTheme={initialTheme}>
-      <ResumeEditorCanvasInner />
-    </ResumeEditorProvider>
+    <TemplateErrorBoundary fallbackTemplateId="awesome-cv">
+      <ResumeEditorProvider
+        initialData={MASTER_SAMPLE_RESUME}
+        initialTheme={initialTheme}
+      >
+        <div className="w-full">
+          {currentView === "gallery" ? (
+            <TemplateGalleryView
+              onSelectTemplate={handleSelectFromGallery}
+              activeTemplateId={activeTemplate}
+            />
+          ) : (
+            <ResumeEditorCanvasInner
+              onOpenGallery={() => setCurrentView("gallery")}
+            />
+          )}
+        </div>
+      </ResumeEditorProvider>
+    </TemplateErrorBoundary>
   );
-}
+};
+
+export default ResumeBuilder;

@@ -190,7 +190,7 @@ export default function WorkSection() {
         {/* View All Projects CTA */}
         <div className="mt-16 flex justify-center">
           <Link
-            to="/profile"
+            to="/work"
             className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-[#61c5ad]/50 hover:bg-white/10 glass"
           >
             <span>VIEW ALL ARCHIVED PROJECTS</span>

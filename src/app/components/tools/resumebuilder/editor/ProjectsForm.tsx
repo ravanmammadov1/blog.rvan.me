@@ -95,8 +95,10 @@ export const ProjectsForm: React.FC<Props> = ({ data, onChange }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Project Name *</label>
+                <label htmlFor={`proj-name-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Project Name *</label>
                 <input
+                  id={`proj-name-${idx}`}
+                  name={`projectName_${idx}`}
                   type="text"
                   value={proj.name}
                   onChange={(e) => handleUpdate(idx, "name", e.target.value)}
@@ -106,8 +108,10 @@ export const ProjectsForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Your Role</label>
+                <label htmlFor={`proj-role-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Your Role</label>
                 <input
+                  id={`proj-role-${idx}`}
+                  name={`projectRole_${idx}`}
                   type="text"
                   value={proj.role || ""}
                   onChange={(e) => handleUpdate(idx, "role", e.target.value)}
@@ -117,8 +121,10 @@ export const ProjectsForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Technologies Used (comma separated)</label>
+                <label htmlFor={`proj-tech-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Technologies Used (comma separated)</label>
                 <input
+                  id={`proj-tech-${idx}`}
+                  name={`projectTech_${idx}`}
                   type="text"
                   value={proj.techStack?.join(", ") || ""}
                   onChange={(e) => handleUpdateTechStack(idx, e.target.value)}
@@ -128,8 +134,10 @@ export const ProjectsForm: React.FC<Props> = ({ data, onChange }) => {
               </div>
 
               <div>
-                <label className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Live URL or GitHub Link</label>
+                <label htmlFor={`proj-link-${idx}`} className="text-[11px] font-mono text-muted-foreground uppercase font-bold">Live URL or GitHub Link</label>
                 <input
+                  id={`proj-link-${idx}`}
+                  name={`projectLink_${idx}`}
                   type="url"
                   value={proj.link || proj.github || ""}
                   onChange={(e) => handleUpdate(idx, "link", e.target.value)}
@@ -156,6 +164,8 @@ export const ProjectsForm: React.FC<Props> = ({ data, onChange }) => {
                 <div key={bIdx} className="flex items-center gap-2">
                   <span className="text-primary font-bold text-xs">•</span>
                   <input
+                    id={`proj-${idx}-bullet-${bIdx}`}
+                    name={`projectBullet_${idx}_${bIdx}`}
                     type="text"
                     value={desc}
                     onChange={(e) => handleUpdateBullet(idx, bIdx, e.target.value)}

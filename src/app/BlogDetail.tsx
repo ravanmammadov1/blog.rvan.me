@@ -19,6 +19,8 @@ import TableOfContents from "./components/blog/TableOfContents";
 import ShareButtons from "./components/blog/ShareButtons";
 import AuthorCard from "./components/blog/AuthorCard";
 import RelatedPosts from "./components/blog/RelatedPosts";
+import EcosystemBridgeCard from "./components/blog/EcosystemBridgeCard";
+import { getEcosystemRelationship } from "../lib/ecosystemRelationshipMap";
 import { Button } from "./components/ui/Button";
 
 import CommentSection from "./components/CommentSection";
@@ -145,9 +147,9 @@ export default function BlogDetail() {
       ? allPosts[currentIndex + 1]
       : null;
 
-  const relatedPosts = allPosts
-    .filter((p) => (p.slug?.current || p._id) !== (post.slug?.current || post._id))
-    .slice(0, 3);
+  const postSlug = (post.slug?.current || post.originalSlug || post._id || "").toLowerCase();
+  const relationship = getEcosystemRelationship(postSlug);
+  const isAz = language === "az";
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -174,6 +176,32 @@ export default function BlogDetail() {
             </div>
 
             <BlogContent post={post} />
+
+            {/* Contextual Ecosystem Bridge: Interactive Tool Recommendation */}
+            {relationship?.toolBridge && (
+              <EcosystemBridgeCard
+                type={relationship.toolBridge.type}
+                href={relationship.toolBridge.path}
+                badge={isAz ? relationship.toolBridge.badge?.az : relationship.toolBridge.badge?.en}
+                title={isAz ? relationship.toolBridge.title.az : relationship.toolBridge.title.en}
+                description={isAz ? relationship.toolBridge.description.az : relationship.toolBridge.description.en}
+                ctaText={isAz ? relationship.toolBridge.ctaText?.az : relationship.toolBridge.ctaText?.en}
+                topic={isAz ? relationship.primaryTopic.az : relationship.primaryTopic.en}
+              />
+            )}
+
+            {/* Contextual Ecosystem Bridge: Curated Resource Recommendation */}
+            {relationship?.resourceBridge && (
+              <EcosystemBridgeCard
+                type={relationship.resourceBridge.type}
+                href={relationship.resourceBridge.path}
+                badge={isAz ? relationship.resourceBridge.badge?.az : relationship.resourceBridge.badge?.en}
+                title={isAz ? relationship.resourceBridge.title.az : relationship.resourceBridge.title.en}
+                description={isAz ? relationship.resourceBridge.description.az : relationship.resourceBridge.description.en}
+                ctaText={isAz ? relationship.resourceBridge.ctaText?.az : relationship.resourceBridge.ctaText?.en}
+                topic={isAz ? relationship.primaryTopic.az : relationship.primaryTopic.en}
+              />
+            )}
 
             <ShareButtons title={post.title} />
 
@@ -217,9 +245,10 @@ export default function BlogDetail() {
               </Button>
             </div>
 
+            {/* Contextual Related Posts via Semantic Topic Graph */}
             <RelatedPosts
-              posts={relatedPosts}
-              currentPostId={post._id}
+              currentPost={post}
+              allPosts={allPosts}
             />
           </div>
 

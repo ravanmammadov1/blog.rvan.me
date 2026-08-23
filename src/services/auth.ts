@@ -1,4 +1,11 @@
-import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, User } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut as firebaseSignOut,
+  User,
+} from "firebase/auth";
 import { auth, isKeyConfigured } from "../lib/firebase";
 
 const googleProvider = new GoogleAuthProvider();
@@ -10,12 +17,26 @@ export interface AuthError {
 }
 
 /**
- * Executes Google Sign-In via popup with comprehensive error mapping.
+ * Handles redirect result on page load if user signed in via redirect.
+ */
+export async function checkRedirectResult(): Promise<User | null> {
+  if (!auth) return null;
+  try {
+    const result = await getRedirectResult(auth);
+    return result?.user || null;
+  } catch (error: any) {
+    console.warn("[Auth Warning] getRedirectResult error:", error?.message || error);
+    return null;
+  }
+}
+
+/**
+ * Executes Google Sign-In with popup, falling back to redirect if popup is blocked.
  */
 export async function signInWithGoogle(): Promise<User | null> {
   if (!auth || !isKeyConfigured) {
-    console.warn("[Auth Warning] Cannot sign in: VITE_FIREBASE_API_KEY is not configured in .env file.");
-    throw new Error("Google Authentication is not configured yet. Please supply a valid VITE_FIREBASE_API_KEY in your .env file.");
+    console.warn("[Auth Warning] Cannot sign in: Firebase is not configured.");
+    throw new Error("Google Authentication is currently unavailable.");
   }
 
   try {
@@ -23,21 +44,33 @@ export async function signInWithGoogle(): Promise<User | null> {
     return result.user;
   } catch (error: any) {
     const code = error?.code || "auth/unknown-error";
-    
+
     // Ignore benign user-initiated popup closures
     if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
       console.log("[Auth] Google Sign-In popup closed by user.");
       return null;
     }
 
+    // If popup was blocked by browser, try redirect flow
+    if (code === "auth/popup-blocked") {
+      console.warn("[Auth] Popup was blocked by browser. Falling back to redirect...");
+      try {
+        await signInWithRedirect(auth, googleProvider);
+        return null;
+      } catch (redirectError: any) {
+        console.error("[Auth Error] Redirect sign-in failed:", redirectError);
+        throw new Error("Popup blocked. Please allow popups or try again.");
+      }
+    }
+
     if (code === "auth/invalid-api-key") {
       console.error("[Auth Error] Invalid API Key provided in .env.");
-      throw new Error("Invalid Firebase API Key in .env. Please update VITE_FIREBASE_API_KEY in your environment configuration.");
+      throw new Error("Authentication configuration error. Please contact administrator.");
     }
 
     if (code === "auth/unauthorized-domain") {
-      console.error("[Auth Error] Domain not authorized in Firebase Console -> Auth -> Settings -> Authorized Domains.");
-      throw new Error("This domain is not authorized for Google Sign-In. Add localhost or rvan.me to Firebase Console.");
+      console.error("[Auth Error] Domain not authorized in Firebase Console.");
+      throw new Error("This domain is not authorized for Google Sign-In.");
     }
 
     if (code === "auth/network-request-failed") {

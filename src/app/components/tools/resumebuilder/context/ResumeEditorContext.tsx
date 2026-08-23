@@ -67,16 +67,65 @@ export interface ResumeEditorContextType {
   setZoom: (z: number | ((prev: number) => number)) => void;
 
   // Active Left Drawer Tab
-  activeDrawer: "templates" | "elements" | "presets" | "styles" | null;
-  setActiveDrawer: (tab: "templates" | "elements" | "presets" | "styles" | null) => void;
+  activeDrawer: "design" | "content" | "style" | "templates" | "elements" | "styles" | null;
+  setActiveDrawer: (tab: "design" | "content" | "style" | "templates" | "elements" | "styles" | null) => void;
 }
 
 const ResumeEditorContext = createContext<ResumeEditorContextType | null>(null);
 
-export const useResumeEditor = () => {
+export const useResumeEditor = (): ResumeEditorContextType => {
   const context = useContext(ResumeEditorContext);
   if (!context) {
-    throw new Error("useResumeEditor must be used within a ResumeEditorProvider");
+    // Safe fallback for standalone gallery previews
+    return {
+      data: {
+        personalInfo: { fullName: "", title: "", email: "", phone: "", location: "", website: "", linkedin: "", github: "", showPhoto: false },
+        summary: "",
+        experiences: [],
+        education: [],
+        skills: [],
+        strengths: [],
+        projects: [],
+        certifications: [],
+        languages: [],
+        references: [],
+      },
+      theme: { template: "tech-cv", accentColor: "#111827", fontFamily: "sans", density: "standard", paperSize: "a4" },
+      setData: () => {},
+      setTheme: () => {},
+      undo: () => {},
+      redo: () => {},
+      canUndo: false,
+      canRedo: false,
+      selectedElement: null,
+      selectElement: () => {},
+      editingId: null,
+      setEditingId: () => {},
+      updateFieldByPath: () => {},
+      addExperience: () => {},
+      removeExperience: () => {},
+      addExpBullet: () => {},
+      removeExpBullet: () => {},
+      updateExpBullet: () => {},
+      addEducation: () => {},
+      removeEducation: () => {},
+      addSkillCategory: () => {},
+      removeSkillCategory: () => {},
+      addSkillItem: () => {},
+      removeSkillItem: () => {},
+      updateSkillItem: () => {},
+      addProject: () => {},
+      removeProject: () => {},
+      addReference: () => {},
+      removeReference: () => {},
+      updatePhoto: () => {},
+      removePhoto: () => {},
+      togglePhoto: () => {},
+      zoom: 1,
+      setZoom: () => {},
+      activeDrawer: null,
+      setActiveDrawer: () => {},
+    };
   }
   return context;
 };
@@ -91,6 +140,12 @@ export const ResumeEditorProvider: React.FC<ProviderProps> = ({ initialData, ini
   const [data, setDataInternal] = useState<ResumeData>(initialData);
   const [theme, setTheme] = useState<ResumeThemeConfig>(initialTheme);
 
+  useEffect(() => {
+    if (initialTheme) {
+      setTheme(initialTheme);
+    }
+  }, [initialTheme]);
+
   // Undo / Redo Stacks
   const [history, setHistory] = useState<ResumeData[]>([initialData]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
@@ -102,7 +157,7 @@ export const ResumeEditorProvider: React.FC<ProviderProps> = ({ initialData, ini
 
   // Zoom & Drawer
   const [zoom, setZoom] = useState<number>(1.0);
-  const [activeDrawer, setActiveDrawer] = useState<"templates" | "elements" | "presets" | "styles" | null>(null);
+  const [activeDrawer, setActiveDrawer] = useState<"design" | "content" | "style" | "templates" | "elements" | "styles" | null>(null);
 
   // Wrapper for updating data with history tracking
   const setData = useCallback((newDataOrUpdater: ResumeData | ((prev: ResumeData) => ResumeData)) => {

@@ -6,10 +6,6 @@
       "destination": "https://rvan-2796c.firebaseapp.com/__/auth/:path*"
     },
     {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
       "source": "/about",
       "destination": "/about/index.html"
     },
@@ -50,10 +46,6 @@
       "destination": "/ravan-mammadov/index.html"
     },
     {
-      "source": "/ravanmammadov",
-      "destination": "/ravanmammadov/index.html"
-    },
-    {
       "source": "/privacy-policy",
       "destination": "/privacy-policy/index.html"
     },
@@ -72,6 +64,14 @@
     {
       "source": "/resources/:slug",
       "destination": "/resources/:slug/index.html"
+    },
+    {
+      "source": "/topics",
+      "destination": "/topics/index.html"
+    },
+    {
+      "source": "/topics/:slug",
+      "destination": "/topics/:slug/index.html"
     },
     {
       "source": "/admin/linkedin",
@@ -93,6 +93,26 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/profile",
+      "destination": "/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/ravanmammadov",
+      "destination": "/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/az/profile",
+      "destination": "/az/ravan-mammadov",
+      "permanent": true
+    },
+    {
+      "source": "/az/ravanmammadov",
+      "destination": "/az/ravan-mammadov",
+      "permanent": true
+    },
     {
       "source": "/terms-of-service",
       "destination": "/terms",
@@ -272,6 +292,46 @@
       "source": "/blog/why-ad-campaigns-fail-creative-fatigue",
       "destination": "/blog/why-ad-campaigns-fail-fatigue",
       "permanent": true
+    },
+    {
+      "source": "/blog/why-search-is-a-magnifying-glass",
+      "destination": "/blog/why-notification-icon-is-a-bell",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/axtaris-niye-boyuducu-susedir",
+      "destination": "/az/blog/bildiris-ikonu-niye-zengdir",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-phone-icon-is-a-1960s-telephone-receiver",
+      "destination": "/blog/why-save-icon-is-still-a-floppy-disk",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/zeng-ikonu-niye-kohne-destekdir",
+      "destination": "/az/blog/yadda-saxla-ikonu-niye-diskisdir",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-settings-icon-is-a-mechanical-gear",
+      "destination": "/blog/why-hamburger-menu-has-three-lines",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/tenzimlemeler-niye-disli-carxdir",
+      "destination": "/az/blog/hamburger-menyu-niye-uc-xetdir",
+      "permanent": true
+    },
+    {
+      "source": "/blog/why-email-is-a-paper-envelope-icon",
+      "destination": "/blog/why-notification-icon-is-a-bell",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/e-poct-niye-kagiz-zerf-ikonudur",
+      "destination": "/az/blog/bildiris-ikonu-niye-zengdir",
+      "permanent": true
     }
   ],
   "headers": [
@@ -280,7 +340,7 @@
       "headers": [
         {
           "key": "X-Frame-Options",
-          "value": "DENY"
+          "value": "SAMEORIGIN"
         },
         {
           "key": "X-Content-Type-Options",
@@ -300,7 +360,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live https://*.vercel-scripts.com https://*.vercel-insights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src 'self' https:; object-src 'none'; base-uri 'self'"
+          "value": "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.googleadservices.com https://adservice.google.com https://tpc.googlesyndication.com https://apis.google.com https://*.googleapis.com https://*.gstatic.com https://accounts.google.com https://*.firebaseapp.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://vercel.live https://*.vercel-scripts.com https://*.vercel-insights.com; script-src-elem 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.googleadservices.com https://adservice.google.com https://tpc.googlesyndication.com https://apis.google.com https://*.googleapis.com https://*.gstatic.com https://accounts.google.com https://*.firebaseapp.com https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://vercel.live https://*.vercel-scripts.com https://*.vercel-insights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http: https://*.googleusercontent.com https://lh3.googleusercontent.com https://cdn.sanity.io https://*.googlesyndication.com https://*.doubleclick.net https://pagead2.googlesyndication.com https://*.google.com; media-src 'self' blob: https:; connect-src 'self' data: blob: https: wss: https://*.googlesyndication.com https://*.doubleclick.net https://pagead2.googlesyndication.com https://*.googleadservices.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseapp.com https://*.firebaseio.com https://*.firebasestorage.app https://*.clarity.ms https://c.clarity.ms https://0lqwkcmg.api.sanity.io https://*.sanity.io; frame-src 'self' https: https://*.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://accounts.google.com https://*.firebaseapp.com https://*.google.com https://apis.google.com; object-src 'none'; base-uri 'self'"
         }
       ]
     },
@@ -370,6 +430,19 @@
     {
       "source": "/robots.txt",
       "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/ads.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
         {
           "key": "Cache-Control",
           "value": "public, max-age=86400"

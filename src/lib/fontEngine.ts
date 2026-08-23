@@ -16,6 +16,8 @@ export interface FontItem {
   description: string;
   trendingScore?: number;
   createdAt: string;
+  supportsAzerbaijani?: boolean;
+  aliases?: string[];
 }
 
 // Load the large catalog only when the Resources route is opened. Keeping it
@@ -45,10 +47,28 @@ export function findFontBySlug(slug: string, catalog: FontItem[]): FontItem | un
   if (!slug || !Array.isArray(catalog)) return undefined;
   const cleanSlug = slug.toLowerCase().trim();
 
+  // Alias lookup for proprietary equivalents (e.g. Calibri -> Carlito)
+  if (cleanSlug === "calibri") {
+    const carlito = catalog.find((f) => f.family.toLowerCase() === "carlito");
+    if (carlito) return carlito;
+  }
+
   return catalog.find((font) => {
     const s = getFontSlug(font);
     const idSlug = font.id?.toLowerCase().replace(/^(font-|gf-)/, "");
-    return s === cleanSlug || idSlug === cleanSlug || font.family.toLowerCase().replace(/[^a-z0-9]+/g, "-") === cleanSlug;
+    const familySlug = font.family?.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const nameSlug = font.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const aliasMatch = font.aliases?.some(
+      (a) => a.toLowerCase().replace(/[^a-z0-9]+/g, "-") === cleanSlug
+    );
+
+    return (
+      s === cleanSlug ||
+      idSlug === cleanSlug ||
+      familySlug === cleanSlug ||
+      nameSlug === cleanSlug ||
+      aliasMatch
+    );
   });
 }
 

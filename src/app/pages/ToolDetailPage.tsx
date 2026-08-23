@@ -8,9 +8,12 @@ import { Wrench, ArrowLeft, Sparkles } from "lucide-react";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { Button } from "../components/ui/Button";
 
-// Lazy-load individual tools
-const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder"));
-const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder"));
+// Lazy-load individual tools with fail-safe default/named export resolution
+const OpenPeepsBuilder = lazy(() => import("../components/tools/OpenPeepsBuilder").then(m => ({ default: m.default || (m as any).OpenPeepsBuilder })));
+const ResumeBuilder = lazy(() => import("../components/tools/ResumeBuilder").then(m => ({ default: m.default || (m as any).ResumeBuilder })));
+const TypographyScaleCalculator = lazy(() => import("../components/tools/typography/TypographyScaleCalculator").then(m => ({ default: m.default || (m as any).TypographyScaleCalculator })));
+const ApcaContrastCalculator = lazy(() => import("../components/tools/contrast/ApcaContrastCalculator").then(m => ({ default: m.default || (m as any).ApcaContrastCalculator })));
+const PersuasionAnalyzer = lazy(() => import("../components/tools/persuasion/PersuasionAnalyzer").then(m => ({ default: m.default || (m as any).PersuasionAnalyzer })));
 
 export const ToolDetailPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -43,10 +46,10 @@ export const ToolDetailPage: React.FC = () => {
   const jsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": tool.name,
+    "name": language === "az" ? (tool.name_az || tool.name) : tool.name,
     "description": tool.seoDescription,
-    "url": `https://www.rvan.me${tool.path}`,
-    "applicationCategory": "DeveloperApplication",
+    "url": `https://www.rvan.me${language === "az" ? `/az${tool.path}` : tool.path}`,
+    "applicationCategory": "DesignApplication",
     "operatingSystem": "All",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
     "offers": {
@@ -62,6 +65,12 @@ export const ToolDetailPage: React.FC = () => {
 
   const renderToolComponent = () => {
     switch (tool.id) {
+      case "persuasion-analyzer":
+        return <PersuasionAnalyzer />;
+      case "contrast-matrix":
+        return <ApcaContrastCalculator />;
+      case "typography-scale":
+        return <TypographyScaleCalculator />;
       case "resume-builder":
         return <ResumeBuilder />;
       case "open-peeps":

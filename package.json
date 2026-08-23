@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
+    "@react-pdf/renderer": "^4.6.1",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "@sanity/client": "^7.23.2",
@@ -20,7 +21,6 @@
     "clsx": "2.1.1",
     "date-fns": "3.6.0",
     "firebase": "^12.17.1",
-    "html2pdf.js": "^0.14.0",
     "jszip": "^3.10.1",
     "lucide-react": "0.487.0",
     "motion": "12.23.24",
@@ -43,6 +43,7 @@
     "@types/react-dom": "^18.3.1",
     "@vercel/node": "^5.8.27",
     "@vitejs/plugin-react": "4.7.0",
+    "playwright": "^1.62.1",
     "rollup-plugin-visualizer": "^5.10.0",
     "sharp": "^0.35.3",
     "tailwindcss": "4.1.12",

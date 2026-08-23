@@ -1,56 +1,32 @@
 import React from "react";
 import { ResumeData, ResumeThemeConfig } from "../resumeTypes";
-import { Modern2ColTemplate } from "./Modern2ColTemplate";
-import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
-import { Sb2novTemplate } from "./Sb2novTemplate";
-import { ModerncvTemplate } from "./ModerncvTemplate";
-import { OnyxTemplate } from "./OnyxTemplate";
-import { SoftBannerTemplate } from "./SoftBannerTemplate";
-import { ClassicHarvardTemplate } from "./ClassicHarvardTemplate";
+import { TEMPLATE_REGISTRY } from "../resumeTemplates";
+import { FONT_FAMILY_CONFIG } from "../themeTokens";
+import { TemplateErrorBoundary } from "../editor/TemplateErrorBoundary";
 
 interface ResumePreviewProps {
   data: ResumeData;
   theme: ResumeThemeConfig;
+  isThumbnail?: boolean;
   onUpdate?: (newData: ResumeData) => void;
 }
 
-export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpdate }) => {
+export const ResumePreview: React.FC<ResumePreviewProps> = ({
+  data,
+  theme,
+  isThumbnail = false,
+  onUpdate,
+}) => {
   const getFontFamily = () => {
-    switch (theme.fontFamily) {
-      case "serif":
-        return "'Merriweather', 'Georgia', serif";
-      case "mono":
-        return "'JetBrains Mono', 'Fira Code', monospace";
-      case "sans":
-      default:
-        return "'Geist', 'Inter', system-ui, -apple-system, sans-serif";
-    }
+    return FONT_FAMILY_CONFIG[theme.fontFamily] || FONT_FAMILY_CONFIG.sans;
   };
 
-  const renderTemplate = () => {
-    switch (theme.template) {
-      case "modern-cv":
-        return <Modern2ColTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "professional-cv":
-        return <DarkSidebarTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "executive-cv":
-        return <ModerncvTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "creative-cv":
-        return <OnyxTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "nordic-cv":
-        return <SoftBannerTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-      case "minimal-cv":
-        return <ClassicHarvardTemplate data={data} theme={theme} />;
-      case "blank-cv":
-      case "tech-cv":
-      default:
-        return <Sb2novTemplate data={data} theme={theme} onUpdate={onUpdate} />;
-    }
-  };
+  const templateDef = TEMPLATE_REGISTRY[theme.template] || TEMPLATE_REGISTRY["tech-cv"];
+  const TemplateComponent = templateDef.component;
 
   return (
-    <>
-      {/* Dedicated Print Media Stylesheet with Safe Zone Control */}
+    <TemplateErrorBoundary fallbackTemplateId="tech-cv">
+      {/* Dedicated Print Media & Page Break Protection Stylesheet */}
       <style>{`
         @media print {
           body * {
@@ -67,9 +43,6 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
             margin: 0 !important;
             padding: 0 !important;
             box-shadow: none !important;
-            border: none !important;
-            background: white !important;
-            color: black !important;
           }
           @page {
             size: A4 portrait;
@@ -80,15 +53,21 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, theme, onUpd
 
       <div
         id="printable-resume"
-        className="w-full max-w-[850px] mx-auto bg-white text-neutral-900 rounded-xl shadow-2xl transition-all duration-300 border border-neutral-300 print:rounded-none print:border-none print:shadow-none overflow-hidden"
+        className="w-full bg-white text-neutral-900 overflow-hidden relative shadow-sm"
         style={{
           fontFamily: getFontFamily(),
-          minHeight: "1050px",
-          boxSizing: "border-box",
+          minHeight: isThumbnail ? "auto" : "1050px",
         }}
       >
-        {renderTemplate()}
+        <TemplateComponent
+          data={data}
+          theme={theme}
+          isThumbnail={isThumbnail}
+          onUpdate={onUpdate}
+        />
       </div>
-    </>
+    </TemplateErrorBoundary>
   );
 };
+
+export default ResumePreview;

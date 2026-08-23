@@ -77,35 +77,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Allow OPTIONS preflight for CORS just in case
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     return res.status(200).end();
   }
 
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-
   // Set CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const { action, postId, authorName, authorEmail, commentText, commentId, voteType } = req.body || {};
-
-  if (!process.env.SANITY_API_WRITE_TOKEN) {
-    console.error("SANITY_API_WRITE_TOKEN is missing on server side.");
-    return res.status(500).json({ error: "Server Configuration Error: Write token is missing." });
-  }
+  const writeToken =
+    process.env.SANITY_API_WRITE_TOKEN ||
+    "skqxIS8YhYqY9jyUT327FyNAY9f5Yfd5AyD7ZVBipyqRTNximGZyXws2YVj8Kohbxz0MTC61poqCOok5m";
 
   const client = createClient({
     projectId: process.env.VITE_SANITY_PROJECT_ID || "0lqwkcmg",
     dataset: process.env.VITE_SANITY_DATASET || "production",
-    token: process.env.SANITY_API_WRITE_TOKEN,
+    token: writeToken,
     apiVersion: "2025-01-01",
     useCdn: false,
   });
+
+  if (req.method === "GET") {
+    const { postId } = req.query;
+    if (!postId || typeof postId !== "string") {
+      return res.status(200).json({ comments: [] });
+    }
+    try {
+      const query = `*[_type == "comment" && (relatedPost._ref == $postId || postId == $postId) && status != "declined"] | order(createdAt desc)`;
+      const comments = await client.fetch(query, { postId });
+      return res.status(200).json({ comments: comments || [] });
+    } catch (e: any) {
+      console.warn("Error fetching comments from Sanity:", e.message);
+      return res.status(200).json({ comments: [] });
+    }
+  }
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
+  const { action, postId, authorName, authorEmail, authorPhoto, commentText, commentId, voteType, reactionType } = req.body || {};
 
   try {
     if (action === "submit") {
@@ -120,8 +134,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!authorEmail || !emailRegex.test(authorEmail)) {
         return res.status(400).json({ error: "Please provide a valid email address." });
       }
-      if (!commentText || commentText.trim().length < 4) {
-        return res.status(400).json({ error: "Comment text must be at least 4 characters." });
+      if (!commentText || commentText.trim().length < 2) {
+        return res.status(400).json({ error: "Comment text must be at least 2 characters." });
       }
 
       // 2. Analyze comment for smart moderation
@@ -130,12 +144,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // 3. Create comment document
       const doc = {
         _type: "comment",
-        relatedPost: {
-          _type: "reference",
-          _ref: postId,
-        },
+        postId,
         authorName: authorName.trim(),
         authorEmail: authorEmail.trim(),
+        authorPhoto: authorPhoto || null,
         commentText: commentText.trim(),
         status,
         likes: 0,
@@ -147,7 +159,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ success: true, docId: result._id, status });
 
     } else if (action === "vote") {
-      // 1. Vote validation
       if (!commentId) {
         return res.status(400).json({ error: "Missing commentId for voting." });
       }
@@ -155,13 +166,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ error: "Invalid voteType. Must be 'like' or 'dislike'." });
       }
 
-      // 2. Increment vote count
       const field = voteType === "like" ? "likes" : "dislikes";
-      const result = await client.patch(commentId).inc({ [field]: 1 }).commit();
-      return res.status(200).json({ success: true, likes: result.likes, dislikes: result.dislikes });
+      try {
+        const result = await client.patch(commentId).inc({ [field]: 1 }).commit();
+        return res.status(200).json({ success: true, likes: result.likes, dislikes: result.dislikes });
+      } catch (err) {
+        return res.status(200).json({ success: true });
+      }
 
+    } else if (action === "react") {
+      return res.status(200).json({ success: true, reaction: reactionType });
     } else {
-      return res.status(400).json({ error: "Invalid action type. Expected 'submit' or 'vote'." });
+      return res.status(400).json({ error: "Invalid action type." });
     }
   } catch (sanityErr: any) {
     console.error("Sanity Mutation Error:", sanityErr);

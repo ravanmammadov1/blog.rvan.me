@@ -51,7 +51,7 @@ export default function ProjectDetail() {
         <div className="text-center">
           <h1 className="text-4xl font-semibold">{t("projectNotFound", "Project Not Found")}</h1>
           <p className="mt-4 text-muted-foreground">{t("projectNotFoundDesc", "This case study is unavailable or has been removed.")}</p>
-          <Link to={getLocalizedPath("/profile")} className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-black mono">
+          <Link to={getLocalizedPath("/work")} className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-black mono">
             <ArrowLeft size={15} /> {t("backToWork", "Back to work")}
           </Link>
         </div>
@@ -94,7 +94,7 @@ export default function ProjectDetail() {
             <ol className="flex flex-wrap items-center gap-2">
               <li><Link to={getLocalizedPath("/")} className="hover:text-primary">{t("home", "Home")}</Link></li>
               <li aria-hidden="true">/</li>
-              <li><Link to={getLocalizedPath("/profile")} className="hover:text-primary">{t("navProfile", "Profile")}</Link></li>
+              <li><Link to={getLocalizedPath("/work")} className="hover:text-primary">{t("work", "Work")}</Link></li>
               <li aria-hidden="true">/</li>
               <li aria-current="page" className="text-foreground">{title}</li>
             </ol>
@@ -139,7 +139,7 @@ export default function ProjectDetail() {
           </div>
 
           <div className="mt-16 border-t border-white/10 pt-8">
-            <Link to={getLocalizedPath("/profile")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+            <Link to={getLocalizedPath("/work")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
               <ArrowLeft size={15} /> {t("backToWork", "Back to selected work")}
             </Link>
           </div>

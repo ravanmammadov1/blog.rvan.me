@@ -19,7 +19,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       const res = await fetch(illustration.src);
       const svgText = await res.text();
       // Apply accent color tint if dynamic
-      const customizedSvg = svgText.replaceAll("#6c63ff", accentColor);
+      const customizedSvg = svgText.split("#6c63ff").join(accentColor);
       await navigator.clipboard.writeText(customizedSvg);
       setDownloadedType("copied");
       setTimeout(() => setDownloadedType(null), 2000);
@@ -35,7 +35,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
       // If user chose a custom accent color, tint unDraw default purple (#6c63ff) to accent color
       if (accentColor && accentColor !== "#6c63ff") {
-        svgText = svgText.replaceAll("#6c63ff", accentColor);
+        svgText = svgText.split("#6c63ff").join(accentColor);
       }
 
       // Ensure proper dark background rect is inside SVG for standalone view
@@ -70,7 +70,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       let svgText = await res.text();
 
       if (accentColor && accentColor !== "#6c63ff") {
-        svgText = svgText.replaceAll("#6c63ff", accentColor);
+        svgText = svgText.split("#6c63ff").join(accentColor);
       }
 
       const canvas = document.createElement("canvas");

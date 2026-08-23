@@ -14,17 +14,51 @@ export const client = createClient({
 
 const builder = createImageUrlBuilder({ projectId, dataset });
 
+function createDirectUrlProxy(directUrl: string) {
+  const proxy: any = {
+    url: () => directUrl,
+    width: () => proxy,
+    height: () => proxy,
+    quality: () => proxy,
+    auto: () => proxy,
+    format: () => proxy,
+    fit: () => proxy,
+  };
+  return proxy;
+}
+
 export function urlFor(source: any) {
   if (!source) return null;
-  // If it's an object with an asset property or direct ref
-  if (typeof source === "object" && !source.asset && !source._ref) {
-    return null;
+
+  // If source is a direct string URL
+  if (typeof source === "string") {
+    if (source.startsWith("http://") || source.startsWith("https://") || source.startsWith("/")) {
+      return createDirectUrlProxy(source);
+    }
   }
+
+  // If source is an object
+  if (typeof source === "object") {
+    const directUrl = source.url || source.asset?.url;
+    const ref = source.asset?._ref || source._ref;
+    const isValidSanityRef = typeof ref === "string" && /^image-[a-f0-9]+-\d+x\d+-[a-z]+$/.test(ref);
+
+    // If it has a direct URL and not a valid Sanity ref, return direct URL proxy
+    if (directUrl && !isValidSanityRef) {
+      return createDirectUrlProxy(directUrl);
+    }
+
+    if (!isValidSanityRef) {
+      return directUrl ? createDirectUrlProxy(directUrl) : null;
+    }
+  }
+
   try {
     return builder.image(source);
   } catch (error) {
     console.warn("Sanity image builder error:", error);
-    return null;
+    const directUrl = typeof source === "object" ? (source.url || source.asset?.url) : null;
+    return directUrl ? createDirectUrlProxy(directUrl) : null;
   }
 }
 

@@ -6,6 +6,7 @@ import { CanvasPhoto } from "../editor/CanvasPhoto";
 import { CanvasSectionHeader } from "../editor/CanvasSectionHeader";
 import { CanvasAddSectionDivider } from "../editor/CanvasAddSectionDivider";
 import { useResumeEditor } from "../context/ResumeEditorContext";
+import { DENSITY_CONFIG } from "../themeTokens";
 
 interface TemplateProps {
   data: ResumeData;
@@ -36,9 +37,10 @@ export const DarkSidebarTemplate: React.FC<TemplateProps> = () => {
   const { personalInfo, summary, experiences, education, skills, references } = data;
   const accent = theme.accentColor || "#1e3a8a";
   const sidebarBg = theme.sidebarColor || "#2c2d30"; // Dark Charcoal
+  const density = DENSITY_CONFIG[theme.density || "standard"];
 
   return (
-    <div className="grid grid-cols-12 min-h-[1050px] bg-white text-neutral-900 overflow-hidden shadow-sm font-sans">
+    <div className={`grid grid-cols-12 min-h-[1050px] bg-white text-neutral-900 overflow-hidden shadow-sm font-[inherit] ${density.lineHeight} ${density.bodyFontSize}`}>
       {/* ── LEFT DARK SIDEBAR (35-40% width) ── */}
       <aside
         className="col-span-4 p-6 text-white flex flex-col justify-between space-y-6"

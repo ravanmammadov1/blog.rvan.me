@@ -47,7 +47,7 @@ const BehanceIcon = ({ size = 15, className = "" }: { size?: number; className?:
 );
 
 // ── Verified Career Experience (Timeless — No dates) ──
-const realExperience = [
+const realExperienceEn = [
   {
     role: "Senior Creative Designer",
     company: "RAM Holding",
@@ -109,10 +109,73 @@ const realExperience = [
   },
 ];
 
+const realExperienceAz = [
+  {
+    role: "Aparıcı Kreativ Dizayner",
+    company: "RAM Holding",
+    brands: ["Omoda", "Jaecoo", "JMC", "Wuling", "Otodok Service", "Prior Leasing"],
+    responsibilities: [
+      "Brend Kimliyi və Vizual Arxitektura",
+      "İnteqrasiya Olunmuş Marketinq Kampaniyaları",
+      "2D/3D Motion Qrafika və Animasiya",
+      "Kreativ və Kontent Strategiyası",
+      "Rəqəmsal Reklam və Sosial Media Materialları",
+      "Çap Dizaynı və Poliqrafiya İstehsalı",
+      "Video İstehsalı və Fotoqrafiya Rəhbərliyi",
+      "Kampaniya Planlaması və Komanda Liderliyi",
+    ],
+  },
+  {
+    role: "Aparıcı Kreativ Dizayner",
+    company: "My Group Holding",
+    brands: ["MyShop", "Vertu", "Xor", "MyGrocery", "MyPerfume", "YoKoSun", "Dry Idea"],
+    responsibilities: [
+      "Brend Kimliyi və Sistem Dizaynı",
+      "Məhsul Qablaşdırması və FMCG Vizual Dizayn",
+      "Rəqəmsal və Pərakəndə Satış Reklam Vizualları",
+      "Marketinq Vizual Kommunikasiyası",
+      "Omnichannel Yaradıcı Kampaniyalar",
+    ],
+  },
+  {
+    role: "Qrafik Dizayner",
+    company: "Inmotion Trading Co., LTD",
+    brands: ["EV Parts", "EV Motors", "Salam Baku", "Nihao Travel"],
+    responsibilities: [
+      "Motion Qrafika və Promo Animasiyalar",
+      "Sosial Media Kontenti və Reklam Kreativləri",
+      "Video Montaj və Post-Prodakşn",
+      "Rəqəmsal Marketinq Vizualları",
+    ],
+  },
+  {
+    role: "Qrafik və Motion Dizayner",
+    company: "Zafar Limited LLC",
+    brands: ["Inomarka.az", "Loadstar Logistics", "Uni Cleaning"],
+    responsibilities: [
+      "Korporativ Kimlik və Brendinq",
+      "Rəhbərlik üçün Təqdimatlar və Pitch Deck-lər",
+      "Veb Qrafika və İstifadəçi İnterfeysi Aktivləri",
+      "Marketinq Materialları və Reklam Dəstləri",
+    ],
+  },
+  {
+    role: "Motion Dizayner",
+    company: "MOF Agency",
+    brands: ["Ontop Bowling", "Ferma Art", "Nude Glass", "Avto Element"],
+    responsibilities: [
+      "2D Motion Qrafika və Keyframe Animasiya",
+      "Kommersiya Storyboard və Konseptlər",
+      "Sosial Media Video Materialları və VFX",
+    ],
+  },
+];
+
 export default function FounderProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
   const { t, getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -130,18 +193,43 @@ export default function FounderProfilePage() {
 
   const activeExperience = (aboutData?.experience && aboutData.experience.length > 0)
     ? aboutData.experience
-    : realExperience;
+    : (isAz ? realExperienceAz : realExperienceEn);
 
   const displayProjects = PORTFOLIO_FALLBACK_PROJECTS.map((project) => ({
     _id: project.slug,
     title: project.title,
     slug: { current: project.slug },
-    type: project.type,
-    description: project.description,
+    type: isAz
+      ? (project.slug === "wuling-creative-campaign"
+          ? "Art Direksiya · Motion · Kampaniya"
+          : project.slug === "limitless-drive"
+          ? "Brend Kimliyi · 3D · Avtomobil"
+          : "Kreativ Dəst · Motion Sistemi")
+      : project.type,
+    description: isAz
+      ? (project.slug === "wuling-creative-campaign"
+          ? "Avtomobil sahəsində art direksiya, motion qrafika və ardıcıl brend təcrübəsi üçün rəqəmsal kampaniya vizual sistemi."
+          : project.slug === "limitless-drive"
+          ? "Güclü vizual kimlik, kinematik məhsul təqdimatı və kampaniyaya hazır brend aktivləri üzərində qurulmuş 3D avtomobil vizual istiqaməti."
+          : "Avtomobil brendləri üçün rəqəmsal buraxılış və performans reklamlarını vahid vizual dildə saxlayan çevik kreativ və motion sistemi.")
+      : project.description,
     tags: project.tags,
     year: project.year,
     behanceCoverUrl: project.image,
   }));
+
+  const founderName = isAz ? "Rəvan Məmmədov" : "Ravan Mammadov";
+  const founderRole = isAz ? "Kreativ Direktor və Strateq" : "Creative Director & Strategist";
+  const founderBadge = isAz ? "TƏSİSÇİ VƏ KREATİV DİREKTOR" : "FOUNDER & CREATIVE DIRECTOR";
+  const founderLocation = isAz ? "Bakı, Azərbaycan" : "Baku, Azerbaijan";
+
+  const skillPills = isAz
+    ? ["Brend Arxitekturası", "Motion Qrafika", "Kreativ Strategiya", "Süni İntellekt Məhsulları", "FMCG Qablaşdırma"]
+    : ["Brand Architecture", "Motion Graphics", "Creative Strategy", "AI Products", "FMCG Packaging"];
+
+  const heroBio = isAz
+    ? "Dizaynerin estetik baxışını strateqin kommersiya dəqiqliyi ilə birləşdirirəm: biznes performansı üçün nəzərdə tutulmuş vahid vizual kimliklər, motion qrafikalar və inteqrasiya olunmuş marketinq kampaniyaları yaradıram."
+    : "I pair a designer's aesthetic eye with a strategist's commercial clarity: building cohesive visual identities, motion graphics, and integrated marketing campaigns designed to perform.";
 
   return (
     <main
@@ -149,9 +237,9 @@ export default function FounderProfilePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Ravan Mammadov — Founder & Creative Director"
-        description="Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."
-        url="https://www.rvan.me/ravanmammadov"
+        title={isAz ? "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli" : "Ravan Mammadov — Founder & Creative Director"}
+        description={isAz ? "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri." : "Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."}
+        url={isAz ? "https://www.rvan.me/az/ravan-mammadov" : "https://www.rvan.me/ravan-mammadov"}
       />
 
       <SiteHeader siteSettings={siteSettings} />
@@ -181,24 +269,25 @@ export default function FounderProfilePage() {
               className="lg:col-span-7"
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-                <Sparkles size={14} /> FOUNDER & CREATIVE DIRECTOR
+                <Sparkles size={14} /> {founderBadge}
               </div>
 
               <h1 className="mt-6 text-4xl font-extrabold tracking-[-.06em] md:text-6xl lg:text-7xl leading-none">
-                Ravan Mammadov <br />
-                <span className="text-primary font-bold">Creative Director & Strategist</span>
+                {founderName} <br />
+                <span className="text-primary font-bold">{founderRole}</span>
               </h1>
 
               <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold tracking-wider text-muted-foreground mono uppercase">
-                <span className="text-foreground">Brand Architecture</span> •
-                <span className="text-foreground">Motion Graphics</span> •
-                <span className="text-foreground">Creative Strategy</span> •
-                <span className="text-foreground">AI Products</span> •
-                <span className="text-foreground">FMCG Packaging</span>
+                {skillPills.map((skill, sIdx) => (
+                  <span key={skill} className="flex items-center gap-2">
+                    <span className="text-foreground">{skill}</span>
+                    {sIdx < skillPills.length - 1 && <span>•</span>}
+                  </span>
+                ))}
               </div>
 
               <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg font-medium">
-                I pair a designer's aesthetic eye with a strategist's commercial clarity: building cohesive visual identities, motion graphics, and integrated marketing campaigns designed to perform.
+                {heroBio}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -208,7 +297,7 @@ export default function FounderProfilePage() {
                   size="lg"
                   icon={<ArrowUpRight size={16} />}
                 >
-                  Get in Touch
+                  {isAz ? "Əlaqə Saxla" : "Get in Touch"}
                 </Button>
 
                 <Button
@@ -220,7 +309,7 @@ export default function FounderProfilePage() {
                 >
                   <span className="flex items-center gap-2">
                     <BehanceIcon size={15} />
-                    View Behance
+                    {isAz ? "Behance-ə Bax" : "View Behance"}
                   </span>
                 </Button>
               </div>
@@ -242,7 +331,7 @@ export default function FounderProfilePage() {
                       {sanityPortraitUrl ? (
                         <img
                           src={sanityPortraitUrl}
-                          alt="Ravan Mammadov — Founder of Rvan.me"
+                          alt={`${founderName} — ${isAz ? "Rvan.me Təsisçisi" : "Founder of Rvan.me"}`}
                           width={1200}
                           height={1200}
                           className="h-full w-full object-cover object-center rounded-2xl"
@@ -255,7 +344,7 @@ export default function FounderProfilePage() {
                           />
                           <img
                             src={RavanPortrait1200}
-                            alt="Ravan Mammadov — Founder of Rvan.me"
+                            alt={`${founderName} — ${isAz ? "Rvan.me Təsisçisi" : "Founder of Rvan.me"}`}
                             width={1200}
                             height={1200}
                             className="h-full w-full object-cover object-center rounded-2xl"
@@ -267,13 +356,13 @@ export default function FounderProfilePage() {
 
                   <div className="space-y-2">
                     <h3 className="text-2xl font-extrabold text-foreground tracking-tight">
-                      Ravan Mammadov
+                      {founderName}
                     </h3>
                     <p className="text-xs font-bold text-primary tracking-widest uppercase mono">
-                      Founder & Creative Director
+                      {founderRole}
                     </p>
                     <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
-                      <MapPin size={13} className="text-primary/70" /> Baku, Azerbaijan
+                      <MapPin size={13} className="text-primary/70" /> {founderLocation}
                     </p>
                   </div>
                 </div>
@@ -282,37 +371,37 @@ export default function FounderProfilePage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-8 border-b border-white/10">
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      CURRENTLY BUILDING
+                      {isAz ? "HAZIRDA QURULUR" : "CURRENTLY BUILDING"}
                     </span>
                     <p className="text-sm font-extrabold text-foreground tracking-tight">
-                      Rvan.me Ecosystem
+                      {isAz ? "Rvan.me Ekosistemi" : "Rvan.me Ecosystem"}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      CORE MISSION
+                      {isAz ? "ƏSAS MİSSİYA" : "CORE MISSION"}
                     </span>
                     <p className="text-xs font-bold text-foreground leading-snug">
-                      High-Utility Creative & Developer Tools
+                      {isAz ? "Yüksək Funksionallıqlı Yaradıcı & Developer Alətləri" : "High-Utility Creative & Developer Tools"}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      INDUSTRY TRACK RECORD
+                      {isAz ? "SAHƏ TƏCRÜBƏSİ" : "INDUSTRY TRACK RECORD"}
                     </span>
                     <p className="text-xs font-bold text-foreground leading-snug">
-                      Automotive · Luxury · FMCG · Tech
+                      {isAz ? "Avtomobil · Lüks · FMCG · Texnologiya" : "Automotive · Luxury · FMCG · Tech"}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      LOCATION
+                      {isAz ? "MƏKAN" : "LOCATION"}
                     </span>
                     <p className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-                      <MapPin size={13} className="text-primary" /> Baku, Azerbaijan
+                      <MapPin size={13} className="text-primary" /> {founderLocation}
                     </p>
                   </div>
                 </div>
@@ -326,7 +415,7 @@ export default function FounderProfilePage() {
                     className="w-full sm:w-1/2"
                     icon={<ArrowUpRight size={14} />}
                   >
-                    Get in Touch
+                    {isAz ? "Əlaqə Saxla" : "Get in Touch"}
                   </Button>
                   <Button
                     href="https://www.linkedin.com/in/ravanmammadov1/"
@@ -351,9 +440,11 @@ export default function FounderProfilePage() {
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10">
         <div className="mx-auto max-w-[1600px]">
           <div className="mb-12">
-            <span className="text-xs font-bold tracking-widest text-primary mono uppercase">CAREER TIMELINE</span>
+            <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
+              {isAz ? "KARYERA XRONOLOGİYASI" : "CAREER TIMELINE"}
+            </span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
-              Professional Experience
+              {isAz ? "Peşəkar Təcrübə" : "Professional Experience"}
             </h2>
           </div>
 
@@ -409,9 +500,11 @@ export default function FounderProfilePage() {
         <div className="mx-auto max-w-[1600px]">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
             <div>
-              <span className="text-xs font-bold tracking-widest text-primary mono uppercase">PORTFOLIO CASE STUDIES</span>
+              <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
+                {isAz ? "PORTFOLİO NÜMUNƏLƏRİ" : "PORTFOLIO CASE STUDIES"}
+              </span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
-                Selected Work
+                {isAz ? "Seçilmiş İşlər" : "Selected Work"}
               </h2>
             </div>
             <a
@@ -420,7 +513,7 @@ export default function FounderProfilePage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-6 py-3 text-xs font-bold text-primary mono uppercase hover:bg-primary hover:text-black transition-colors"
             >
-              <BehanceIcon size={14} /> VIEW BEHANCE <ArrowUpRight size={14} />
+              <BehanceIcon size={14} /> {isAz ? "BEHANCE-Ə BAX" : "VIEW BEHANCE"} <ArrowUpRight size={14} />
             </a>
           </div>
 
@@ -451,7 +544,9 @@ export default function FounderProfilePage() {
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
                   <span className="text-[10px] text-muted-foreground">{project.year}</span>
-                  <span className="text-[10px] text-primary flex items-center gap-1">VIEW PROJECT <ArrowUpRight size={12} /></span>
+                  <span className="text-[10px] text-primary flex items-center gap-1">
+                    {isAz ? "LAYİHƏYƏ BAX" : "VIEW PROJECT"} <ArrowUpRight size={12} />
+                  </span>
                 </div>
               </a>
             ))}
