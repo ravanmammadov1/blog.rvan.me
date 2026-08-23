@@ -99,7 +99,7 @@ function UserAuthMenu() {
             {/* Identity / Header area */}
             {!user ? (
               /* Signed Out Header */
-              <div className="p-4 pb-3.5 border-b border-border space-y-3">
+              <div className="p-4 space-y-3">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-1">
                     {t("profile", "PROFILE")}
@@ -123,150 +123,52 @@ function UserAuthMenu() {
                 </button>
               </div>
             ) : (
-              /* Signed In Header */
-              <div className="p-4 pb-3.5 border-b border-border space-y-3">
-                <div className="flex items-center gap-3">
-                  {userPhoto ? (
-                    <img
-                      src={userPhoto}
-                      alt={user.displayName || "User"}
-                      className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
-                    />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shrink-0">
-                      {userInitial}
-                    </div>
-                  )}
-                  <div className="overflow-hidden min-w-0">
-                    <div className="text-xs font-bold text-foreground truncate">
-                      {user.displayName || "User"}
-                    </div>
-                    <div className="text-[11px] text-muted-foreground truncate font-mono">
-                      {user.email}
+              /* Signed In Simplified Header */
+              <div>
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center gap-3">
+                    {userPhoto ? (
+                      <img
+                        src={userPhoto}
+                        alt={user.displayName || "User"}
+                        className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shrink-0">
+                        {userInitial}
+                      </div>
+                    )}
+                    <div className="overflow-hidden min-w-0">
+                      <div className="text-xs font-bold text-foreground truncate">
+                        {user.displayName || "User"}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground truncate font-mono">
+                        {user.email}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Primary Settings Link */}
-                <div className="space-y-1.5 pt-1">
                   <Link
                     to={getLocalizedPath("/profile")}
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center justify-between rounded-xl bg-muted/70 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
+                    className="flex items-center justify-between rounded-xl bg-primary text-primary-foreground px-3.5 py-2.5 text-xs font-bold transition-all hover:opacity-90 mono uppercase tracking-wider shadow-sm"
                   >
-                    <span>{t("profileSettings", "PROFILE / SETTINGS")}</span>
-                    <ArrowUpRight size={14} className="text-primary" />
+                    <span>{language === "az" ? "TƏNZİMLƏMƏLƏR" : "SETTINGS"}</span>
+                    <ArrowUpRight size={14} />
                   </Link>
-
-                  {/* If Contributor: Add quick links to Workspace & Public Profile */}
-                  {isContributor && (
-                    <>
-                      <Link
-                        to={getLocalizedPath("/contributor")}
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
-                      >
-                        <span>{language === "az" ? "MÜƏLLİF KABİNETİ" : "CONTRIBUTOR DASHBOARD"}</span>
-                        <ArrowUpRight size={14} className="text-primary" />
-                      </Link>
-
-                      {contributorApp?.slug && (
-                        <Link
-                          to={getLocalizedPath(`/author/${contributorApp.slug}`)}
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
-                        >
-                          <span>{language === "az" ? "İCTİMAİ PROFİLİNİZ" : "AUTHOR PROFILE"}</span>
-                          <ArrowUpRight size={14} className="text-primary" />
-                        </Link>
-                      )}
-                    </>
-                  )}
                 </div>
-              </div>
-            )}
 
-            {/* Quick Preferences: Theme & Language (Accessible to BOTH Guest and Signed-in users) */}
-            <div className="p-4 py-3 border-b border-border space-y-3 bg-surface/30">
-              {/* Theme Selector */}
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mono flex items-center gap-1.5">
-                  <Sun size={12} className="text-primary" />
-                  {t("appearance", "REJİM")}
-                </span>
-                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-muted/80 border border-border">
+                <div className="border-t border-border p-2 bg-surface/30">
                   <button
-                    type="button"
-                    onClick={() => setTheme("dark")}
-                    className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                      theme === "dark"
-                        ? "bg-card text-foreground shadow-sm border border-border"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      signOut();
+                    }}
+                    className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-destructive hover:bg-destructive/10 transition-colors text-left mono uppercase tracking-wider cursor-pointer"
                   >
-                    <Moon size={11} />
-                    <span>Dark</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTheme("light")}
-                    className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                      theme === "light"
-                        ? "bg-card text-foreground shadow-sm border border-border"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Sun size={11} />
-                    <span>Light</span>
+                    <LogOut size={14} /> {t("signOut", "SIGN OUT")}
                   </button>
                 </div>
-              </div>
-
-              {/* Language Selector */}
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mono flex items-center gap-1.5">
-                  <Globe size={12} className="text-primary" />
-                  {t("language", "DİL")}
-                </span>
-                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-muted/80 border border-border font-mono text-[11px]">
-                  <button
-                    type="button"
-                    onClick={() => switchLanguage("en")}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                      language === "en"
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    EN
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => switchLanguage("az")}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                      language === "az"
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    AZ
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* If Signed In: Sign Out button */}
-            {user && (
-              <div className="p-3">
-                <button
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    signOut();
-                  }}
-                  className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-destructive hover:bg-destructive/10 transition-colors text-left mono uppercase tracking-wider cursor-pointer"
-                >
-                  <LogOut size={14} /> {t("signOut", "SIGN OUT")}
-                </button>
               </div>
             )}
           </motion.div>
