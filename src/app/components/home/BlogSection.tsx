@@ -22,7 +22,7 @@ import { MASTER_EDITORIAL_BLOGS } from "../../../lib/editorialBlogRegistry";
 export default function BlogSection() {
   const [blogPosts, setBlogPosts] = useState<any[]>(MASTER_EDITORIAL_BLOGS.slice(0, 3));
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
-  const { t, getLocalizedPath, language } = useLanguage();
+  const { t, getLocalizedPath, language, isAz } = useLanguage();
 
   useEffect(() => {
     fetchAllBlogs(language)
