@@ -65,7 +65,7 @@ export default function HomeAboutSection() {
                   size="md"
                   icon={<ArrowUpRight size={15} />}
                 >
-                  {isAz ? "RƏVAN HAQQINDA ƏTRAFLI ÖYRƏN" : "LEARN MORE ABOUT RAVAN"}
+                  {isAz ? "RVAN.ME HAQQINDA ƏTRAFLI ÖYRƏN" : "LEARN MORE ABOUT RVAN.ME"}
                 </Button>
               </div>
             </motion.div>
