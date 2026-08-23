@@ -21,6 +21,8 @@ import AuthModal from "./AuthModal";
 import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 
+import { getContributorStatus, getContributorApplication } from "../../services/contributorService";
+
 function UserAuthMenu() {
   const { user, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -28,6 +30,9 @@ function UserAuthMenu() {
   const menuRef = useRef<HTMLDivElement>(null);
   const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
+
+  const isContributor = user?.uid ? getContributorStatus(user.uid) !== "NONE" : false;
+  const contributorApp = user?.uid ? getContributorApplication(user.uid) : null;
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -58,25 +63,23 @@ function UserAuthMenu() {
   const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
-    <div ref={menuRef} className="relative inline-block text-left shrink-0 self-center user-auth-menu">
+    <div className="relative shrink-0 flex items-center" ref={menuRef}>
       <button
         onClick={() => setDropdownOpen((prev) => !prev)}
-        className="flex h-9 items-center gap-2 rounded-xl border border-border bg-card px-2.5 text-[11px] font-medium transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center cursor-pointer"
+        className="flex items-center gap-2 rounded-xl border border-border/80 bg-card/80 px-2.5 py-1.5 text-xs text-foreground transition-all hover:bg-muted/80 focus:outline-none cursor-pointer select-none shadow-sm"
+        aria-label="User Account Menu"
+        aria-expanded={dropdownOpen}
       >
         {userPhoto ? (
           <img
             src={userPhoto}
-            alt={user?.displayName || "User"}
-            className="h-5 w-5 rounded-full object-cover border border-border shrink-0"
+            alt={user?.displayName || "Profile"}
+            className="h-6 w-6 rounded-full object-cover border border-border shrink-0"
           />
-        ) : user ? (
-          <span className="grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground font-bold text-[10px] shrink-0">
-            {userInitial}
-          </span>
         ) : (
-          <span className="grid h-5 w-5 place-items-center rounded-full bg-muted text-foreground shrink-0">
-            <UserIcon size={12} />
-          </span>
+          <div className="h-6 w-6 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-[11px] shrink-0">
+            {user ? userInitial : <UserIcon size={12} />}
+          </div>
         )}
         <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[120px] text-foreground font-semibold">
           {user ? (user.displayName || user.email?.split("@")[0]) : t("profile", "PROFILE")}
@@ -144,14 +147,42 @@ function UserAuthMenu() {
                   </div>
                 </div>
 
-                <Link
-                  to={getLocalizedPath("/profile")}
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
-                >
-                  <span>{t("profileSettings", "PROFILE / SETTINGS")}</span>
-                  <ArrowUpRight size={14} className="text-primary" />
-                </Link>
+                {/* Primary Settings Link */}
+                <div className="space-y-1.5 pt-1">
+                  <Link
+                    to={getLocalizedPath("/profile")}
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center justify-between rounded-xl bg-muted/70 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
+                  >
+                    <span>{t("profileSettings", "PROFILE / SETTINGS")}</span>
+                    <ArrowUpRight size={14} className="text-primary" />
+                  </Link>
+
+                  {/* If Contributor: Add quick links to Workspace & Public Profile */}
+                  {isContributor && (
+                    <>
+                      <Link
+                        to={getLocalizedPath("/contributor")}
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
+                      >
+                        <span>{language === "az" ? "MÜƏLLİF KABİNETİ" : "CONTRIBUTOR DASHBOARD"}</span>
+                        <ArrowUpRight size={14} className="text-primary" />
+                      </Link>
+
+                      {contributorApp?.slug && (
+                        <Link
+                          to={getLocalizedPath(`/author/${contributorApp.slug}`)}
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
+                        >
+                          <span>{language === "az" ? "İCTİMAİ PROFİLİNİZ" : "AUTHOR PROFILE"}</span>
+                          <ArrowUpRight size={14} className="text-primary" />
+                        </Link>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             )}
 

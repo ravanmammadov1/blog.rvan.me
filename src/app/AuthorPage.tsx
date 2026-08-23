@@ -57,9 +57,19 @@ export default function AuthorPage() {
     });
   }, [language]);
 
+  const [localApp, setLocalApp] = useState<any>(null);
+
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
+
+    if (typeof window !== "undefined") {
+      try {
+        const apps = JSON.parse(localStorage.getItem("rvan_contributor_applications_v1") || "{}");
+        const match = Object.values(apps).find((a: any) => a.slug === slug);
+        if (match) setLocalApp(match);
+      } catch (e) {}
+    }
 
     Promise.all([
       fetchAuthorBySlug(slug, language),
@@ -79,13 +89,24 @@ export default function AuthorPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const authorPhotoUrl = author?.image
-    ? urlFor(author.image)?.url() || RavanPortrait1200
-    : RavanPortrait1200;
+  const authorPhotoUrl =
+    localApp?.photoURL ||
+    (author?.image ? urlFor(author.image)?.url() || RavanPortrait1200 : RavanPortrait1200);
 
-  const authorName = author?.name || (slug ? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Author");
-  const authorRole = author?.role || (isAz ? "Kreativ Mütəxəssis və Müəllif" : "Creative Contributor");
-  const authorBio = author?.bio || (isAz ? "Rvan.me-də dərc olunan müəllif." : "Contributor on Rvan.me.");
+  const authorName =
+    localApp?.displayName ||
+    author?.name ||
+    (slug ? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Author");
+
+  const authorRole =
+    localApp?.roleTitle ||
+    author?.role ||
+    (isAz ? "Kreativ Mütəxəssis və Müəllif" : "Creative Contributor");
+
+  const authorBio =
+    localApp?.bio ||
+    author?.bio ||
+    (isAz ? "Rvan.me-də dərc olunan müəllif." : "Contributor on Rvan.me.");
 
   return (
     <div className="relative min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>

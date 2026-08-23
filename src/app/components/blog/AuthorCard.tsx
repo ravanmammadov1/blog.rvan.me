@@ -23,25 +23,33 @@ export default function AuthorCard({ post }: AuthorCardProps) {
     });
   }, []);
 
-  // Priority 1: Blog post author photo from Sanity
-  // Priority 2: About section profile photo from Sanity
-  // Priority 3: Fallback image asset
+  // Priority 1: Registered Contributor profile if matched
+  // Priority 2: Blog post author photo from Sanity
+  // Priority 3: About section profile photo from Sanity
+  // Priority 4: Fallback image asset
+  const [localApp, setLocalApp] = useState<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && post?.authorSlug) {
+      try {
+        const apps = JSON.parse(localStorage.getItem("rvan_contributor_applications_v1") || "{}");
+        const match = Object.values(apps).find((a: any) => a.slug === post.authorSlug);
+        if (match) setLocalApp(match);
+      } catch (e) {}
+    }
+  }, [post?.authorSlug]);
+
   const authorPhotoObj = post?.authorPhoto || aboutSection?.profilePhoto;
-  const authorPhotoUrl = authorPhotoObj
-    ? urlFor(authorPhotoObj)?.url() || RavanPortrait1200
-    : RavanPortrait1200;
+  const authorPhotoUrl =
+    localApp?.photoURL ||
+    (authorPhotoObj
+      ? urlFor(authorPhotoObj)?.url() || RavanPortrait1200
+      : RavanPortrait1200);
 
-  // Priority 1: Blog post author name from Sanity
-  // Priority 2: Fallback name
-  const authorName = post?.authorName || "Ravan Mammadov";
-
-  // Priority 1: Blog post author role from Sanity
-  // Priority 2: Fallback role
-  const authorRole = post?.authorRole || "Senior Creative Designer & Marketer";
-
-  // Priority 1: Blog post author bio from Sanity
-  // Priority 2: About section paragraph 1 from Sanity
+  const authorName = localApp?.displayName || post?.authorName || "Ravan Mammadov";
+  const authorRole = localApp?.roleTitle || post?.authorRole || "Senior Creative Designer & Marketer";
   const authorBio =
+    localApp?.bio ||
     post?.authorBio ||
     aboutSection?.introParagraph1 ||
     "From the first concept to the last frame, every detail is shaped to make an emotional impact. I work across motion, graphic design, art direction and growth-focused creative.";

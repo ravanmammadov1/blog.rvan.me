@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 
 // Fallback constants ensure production builds always have valid Firebase credentials embedded
@@ -17,6 +18,7 @@ const isKeyConfigured = Boolean(apiKey);
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
+let storage: FirebaseStorage | null = null;
 let analytics: Analytics | null = null;
 
 if (isKeyConfigured) {
@@ -34,6 +36,11 @@ if (isKeyConfigured) {
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
+    try {
+      storage = getStorage(app);
+    } catch (sErr) {
+      console.warn("[Firebase Storage] Initialization warning:", sErr);
+    }
 
     // Initialize Analytics conditionally in browser if supported
     if (typeof window !== "undefined") {
@@ -48,5 +55,5 @@ if (isKeyConfigured) {
   }
 }
 
-export { app, auth, db, analytics, isKeyConfigured };
+export { app, auth, db, storage, analytics, isKeyConfigured };
 export default app;
