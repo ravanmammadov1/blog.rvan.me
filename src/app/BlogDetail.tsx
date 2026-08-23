@@ -22,6 +22,8 @@ import RelatedPosts from "./components/blog/RelatedPosts";
 import EcosystemBridgeCard from "./components/blog/EcosystemBridgeCard";
 import { getEcosystemRelationship } from "../lib/ecosystemRelationshipMap";
 import { Button } from "./components/ui/Button";
+import ReportArticleModal from "./components/blog/ReportArticleModal";
+import { trackArticleView } from "../services/contributorService";
 
 import CommentSection from "./components/CommentSection";
 
@@ -36,6 +38,7 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -66,6 +69,8 @@ export default function BlogDetail() {
 
         if (foundPost) {
           setPost(foundPost);
+          const effectiveSlug = foundPost.slug?.current || cleanSlug;
+          trackArticleView(effectiveSlug, foundPost.title, foundPost.authorName);
         } else {
           setError("Blog post not found");
         }
@@ -204,7 +209,11 @@ export default function BlogDetail() {
               />
             )}
 
-            <ShareButtons title={post.title} />
+            <ShareButtons
+              title={post.title}
+              articleSlug={post.slug?.current || slug}
+              onReport={() => setReportModalOpen(true)}
+            />
 
             <AuthorCard post={post} />
 
@@ -261,6 +270,14 @@ export default function BlogDetail() {
       </article>
 
       <Footer siteSettings={siteSettings} />
+
+      <ReportArticleModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        articleId={post._id || post.slug?.current || "article"}
+        articleTitle={post.title}
+        authorName={post.authorName}
+      />
 
       <AnimatePresence>
         {showBackToTop && (

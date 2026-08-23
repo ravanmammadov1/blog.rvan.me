@@ -1,23 +1,29 @@
 import { useState } from "react";
-import { Check, Link2, Share2, Linkedin } from "lucide-react";
+import { Check, Link2, Share2, Linkedin, Flag, MoreHorizontal } from "lucide-react";
+import { trackArticleShare } from "../../../services/contributorService";
 
 interface ShareButtonsProps {
   title: string;
+  articleSlug?: string;
+  onReport?: () => void;
 }
 
-export default function ShareButtons({ title }: ShareButtonsProps) {
+export default function ShareButtons({ title, articleSlug, onReport }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
-  const currentUrl = window.location.href;
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   const handleCopyLink = () => {
+    if (typeof window === "undefined") return;
     navigator.clipboard.writeText(currentUrl);
     setCopied(true);
+    if (articleSlug) trackArticleShare(articleSlug);
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const canNativeShare = typeof navigator.share === "function";
+  const canNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   const handleNativeShare = async () => {
+    if (articleSlug) trackArticleShare(articleSlug);
     if (canNativeShare) {
       try {
         await navigator.share({
@@ -30,6 +36,10 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
     } else {
       handleCopyLink();
     }
+  };
+
+  const handleSocialClick = () => {
+    if (articleSlug) trackArticleShare(articleSlug);
   };
 
   const xShareUrl = `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${encodeURIComponent(currentUrl)}`;
@@ -45,7 +55,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
         {canNativeShare && (
           <button
             onClick={handleNativeShare}
-            className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground transition hover:bg-secondary"
+            className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground transition hover:bg-secondary cursor-pointer"
           >
             <Share2 size={14} />
             <span>Share</span>
@@ -54,7 +64,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
 
         <button
           onClick={handleCopyLink}
-          className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground transition hover:bg-secondary"
+          className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs text-foreground transition hover:bg-secondary cursor-pointer"
         >
           {copied ? (
             <>
@@ -72,6 +82,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
         {/* Modern X (formerly Twitter) Share Icon */}
         <a
           href={xShareUrl}
+          onClick={handleSocialClick}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center rounded-full border border-border bg-surface p-2 text-foreground transition hover:bg-secondary"
@@ -84,6 +95,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
 
         <a
           href={linkedinShareUrl}
+          onClick={handleSocialClick}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center rounded-full border border-border bg-surface p-2 text-foreground transition hover:bg-secondary"
@@ -91,6 +103,18 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
         >
           <Linkedin size={14} />
         </a>
+
+        {/* Discreet Report Button */}
+        {onReport && (
+          <button
+            onClick={onReport}
+            title="Report this article"
+            aria-label="Report article"
+            className="flex items-center justify-center rounded-full border border-border bg-surface p-2 text-muted-foreground hover:text-rose-500 hover:border-rose-500/30 transition-colors cursor-pointer ml-1"
+          >
+            <Flag size={13} />
+          </button>
+        )}
       </div>
     </div>
   );
