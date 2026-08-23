@@ -22,8 +22,6 @@ const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
-const TopicHubPage = lazy(() => import("./pages/TopicHubPage"));
-const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";

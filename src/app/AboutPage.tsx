@@ -48,13 +48,13 @@ const fadeUp = {
 const FALLBACK_VALUES = [
   {
     title: "Value First",
-    description: "Zero fluff and zero promotional noise. Every font family, tool, and article is curated for real commercial and creative utility.",
+    description: "Zero fluff and zero promotional noise. Every font family, resource, and article is curated for real commercial and creative utility.",
     icon: "CheckCircle2",
     color: "emerald",
   },
   {
     title: "Unified Ecosystem",
-    description: "Open-source typography, AI automation tools, RSS news aggregation, and design essays connected under a single design system.",
+    description: "Open-source typography, curated design resources, industry insights, and editorial essays connected under a single design system.",
     icon: "Layers",
     color: "cyan",
   },
@@ -103,7 +103,7 @@ export default function AboutPage() {
     >
       <SEO
         title={`${t("navAbout", "About")} Rvan.me — ${t("aboutHeroEyebrow", "PLATFORM VISION & MISSION")}`}
-        description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.")}
+        description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, creative resources, and industry intelligence in a single high-performance workspace.")}
         url="https://www.rvan.me/about"
       />
 
@@ -132,7 +132,7 @@ export default function AboutPage() {
         title={t("aboutHeroTitleMain", "Built for creative minds.")}
         accentText={t("aboutHeroTitleAccent", "Engineered for impact.")}
         gradientVariant="accent"
-        description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, developer tooling, and industry intelligence in a single high-performance workspace.")}
+        description={t("aboutHeroDescription", "Rvan.me is a curated digital ecosystem engineered to bridge design thinking, creative resources, and industry intelligence in a single high-performance workspace.")}
       >
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <Button
@@ -144,11 +144,11 @@ export default function AboutPage() {
             {t("btnExploreResources", "EXPLORE RESOURCES")}
           </Button>
           <Button
-            to={getLocalizedPath("/news")}
+            to={getLocalizedPath("/blog")}
             variant="secondary"
             size="md"
           >
-            {t("btnReadNews", "READ INDUSTRY NEWS")}
+            {t("btnReadEssays", "READ EDITORIAL ESSAYS")}
           </Button>
         </div>
       </PageHero>
@@ -165,7 +165,7 @@ export default function AboutPage() {
                 {aboutData?.heading || t("aboutWhyExistsTitle", "Bringing Clarity & Speed to Creative Workflows.")}
               </h2>
               <p className="mt-6 text-base leading-relaxed text-muted-foreground font-medium">
-                {aboutData?.introParagraph1 || t("aboutWhyExistsDescription", "Modern digital creation is fragmented across hundreds of bookmarks, scattered tools, and noisy social feeds. Rvan.me eliminates visual noise by uniting high-density creative utilities, open-source typography, and verified industry news into one seamless hub.")}
+                {aboutData?.introParagraph1 || t("aboutWhyExistsDescription", "Modern digital creation is fragmented across hundreds of bookmarks, scattered resources, and noisy social feeds. Rvan.me eliminates visual noise by uniting curated creative resources, open-source typography, and verified editorial essays into one seamless hub.")}
               </p>
               {aboutData?.introParagraph2 && (
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground/80 font-medium">
@@ -223,7 +223,7 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          3. THE CORE ECOSYSTEM PILLARS (Resources, Tools, Blog)
+          3. THE CORE ECOSYSTEM PILLARS (Resources, Design & Marketing, Editorial Essays)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10 bg-white/[0.01]">
         <div className="mx-auto max-w-[1600px]">
@@ -238,7 +238,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-3">
-            {/* Module 1: Resources */}
+            {/* Category 1: Resources Directory */}
             <Link
               to={getLocalizedPath("/resources")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
@@ -248,41 +248,45 @@ export default function AboutPage() {
                   <Globe size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  {t("aboutModuleResourcesTitle", "Resources Directory")}
+                  {isAz ? "Resurs Kataloqu" : "Resources Directory"}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutModuleResourcesDesc", "Curated open-source font catalog, vector icon sets, 3D mockups, and Figma UI kits.")}
+                  {isAz
+                    ? "Dizaynerlər üçün seçilmiş açıq mənbəli resurslar, o cümlədən şriftlər, vektor aktivlər, 3D maketlər, Figma resursları və digər faydalı kreativ aktivlər."
+                    : "Curated open-source resources for designers, including fonts, vector assets, 3D mockups, Figma resources, and other useful creative assets."}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>{t("btnExploreResources", "Explore Resources")}</span>
+                <span>{isAz ? "Resursları Kəşf Et" : "Explore Resources"}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
 
-            {/* Module 2: AI Tools */}
+            {/* Category 2: Design & Marketing */}
             <Link
-              to={getLocalizedPath("/ai-tools")}
+              to={getLocalizedPath("/blog")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
             >
               <div>
                 <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform">
-                  <Cpu size={22} />
+                  <Sparkles size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  {t("aboutModuleToolsTitle", "AI & Automation Directory")}
+                  {isAz ? "Dizayn və Marketinq" : "Design & Marketing"}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutModuleToolsDesc", "Verified AI utilities, motion animation scripts, and workflow automation extensions.")}
+                  {isAz
+                    ? "Dizayn, brendinq, marketinq, kreativ strategiya, vizual kommunikasiya və kreativ iş axınları haqqında praktiki fikirlər."
+                    : "Practical insights about design, branding, marketing, creative strategy, visual communication, and creative workflows."}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>{t("aboutViewCreatorTools", "Browse AI Directory")}</span>
+                <span>{isAz ? "Məqalələri Oxu" : "Read Articles"}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
 
-            {/* Module 3: Blog */}
+            {/* Category 3: Editorial Essays */}
             <Link
               to={getLocalizedPath("/blog")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
@@ -292,14 +296,16 @@ export default function AboutPage() {
                   <BookOpen size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  {t("aboutModuleBlogTitle", "Editorial Essays")}
+                  {isAz ? "Redaksiya Məqalələri" : "Editorial Essays"}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                  {t("aboutModuleBlogDesc", "Original technical writeups on motion graphics, brand identity systems, and performance creative.")}
+                  {isAz
+                    ? "Vizual strategiya, brendinq, dizayn sistemləri, marketinq və kreativ sənaye haqqında dərin təhlillər və məqalələr."
+                    : "In-depth analysis and articles about visual strategy, branding, design systems, marketing, and the creative industry."}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>Read Blog Essays</span>
+                <span>{isAz ? "Esseləri Oxu" : "Read Essays"}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
@@ -326,14 +332,14 @@ export default function AboutPage() {
 
                 <p className="text-base leading-relaxed text-muted-foreground font-medium max-w-2xl">
                   {aboutData?.introParagraph1 || (isAz 
-                    ? "Rvan.me brend arxitekturası, motion qrafika, kreativ strategiya və süni intellekt məhsulları üzrə ixtisaslaşmış Aparıcı Kreativ Dizayner və Təsisçi Rəvan Məmmədov tərəfindən konseptual olaraq layihələndirilib və idarə olunur."
-                    : "Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and AI products.")}
+                    ? "Rvan.me brend arxitekturası, motion qrafika, kreativ strategiya və rəqəmsal məhsullar üzrə ixtisaslaşmış Aparıcı Kreativ Dizayner və Təsisçi Rəvan Məmmədov tərəfindən konseptual olaraq layihələndirilib və idarə olunur."
+                    : "Rvan.me was conceived, engineered, and curated by Ravan Mammadov — Founder & Creative Director specializing in brand architecture, motion graphics, creative strategy, and digital products.")}
                 </p>
 
                 <p className="text-xs md:text-sm leading-relaxed text-muted-foreground/80 font-medium max-w-2xl">
                   {aboutData?.introParagraph2 || (isAz
-                    ? "Dizayn düşüncəsi ilə texniki icra arasında körpü yaratmaq məqsədilə qurulan platforma yüksək faydalı dizayn sistemlərinə, maneəsiz yaradıcı alətlərə və müasir veb estetikasına sadiqliyi əks etdirir."
-                    : "Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, friction-free creator tools, and modern web aesthetics.")}
+                    ? "Dizayn düşüncəsi ilə texniki icra arasında körpü yaratmaq məqsədilə qurulan platforma yüksək faydalı dizayn sistemlərinə, açıq mənbəli resurslara və müasir veb estetikasına sadiqliyi əks etdirir."
+                    : "Built to bridge design thinking and technical execution, the platform reflects a dedication to high-utility design systems, open-source creative resources, and modern web aesthetics.")}
                 </p>
 
                 <div className="pt-2">

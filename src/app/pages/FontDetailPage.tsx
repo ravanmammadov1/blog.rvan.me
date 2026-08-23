@@ -522,10 +522,10 @@ export default function FontDetailPage() {
                 </p>
               </div>
               <Link
-                to={getLocalizedPath("/topics/typography")}
+                to={getLocalizedPath("/resources?category=fonts")}
                 className="inline-flex items-center gap-2 text-xs font-bold text-sky-400 mono uppercase hover:underline"
               >
-                <span>{language === "az" ? "Tipoqrafiya Mərkəzini Kəşf Et" : "Explore Typography Hub"}</span>
+                <span>{language === "az" ? "Şrift Resurslarını Kəşf Et" : "Explore Font Resources"}</span>
                 <ArrowRight size={12} />
               </Link>
             </div>

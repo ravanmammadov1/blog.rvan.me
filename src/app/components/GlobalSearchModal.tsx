@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, X, BookOpen, Wrench, Compass, Sparkles, ArrowRight, CornerDownLeft } from "lucide-react";
-import { TOPIC_HUBS } from "../../lib/topicHubs";
 import { MASTER_EDITORIAL_BLOGS } from "../../lib/editorialBlogRegistry";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { trackSearchDiscovery } from "../../lib/analytics/events";
@@ -33,18 +32,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
   const searchCorpus: SearchItem[] = useMemo(() => {
     const items: SearchItem[] = [];
 
-    // 1. Topic Hubs
-    TOPIC_HUBS.forEach((hub) => {
-      items.push({
-        id: `topic-${hub.id}`,
-        title: isAz ? hub.name_az : hub.name,
-        subtitle: isAz ? hub.headline_az : hub.headline,
-        type: "TOPIC",
-        path: `/topics/${hub.slug}`,
-        badgeColor: "text-purple-400 border-purple-500/30 bg-purple-500/10",
-        icon: hub.icon || "🧭",
-      });
-    });
+
 
     // 3. Master Editorial Essays
     MASTER_EDITORIAL_BLOGS.forEach((blog) => {

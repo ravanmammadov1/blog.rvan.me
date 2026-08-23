@@ -625,26 +625,6 @@ const staticAzTranslations = {
     title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
     description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
   },
-  "/topics": {
-    title: "Dizayn və Marketinq Mövzu Mərkəzləri — Rvan.me",
-    description: "Tipoqrafiya, dizayn psixologiyası, marketinq konversiyası və rəqəmsal əlçatanlıq üzrə kurasiya edilmiş bilik mərkəzləri.",
-  },
-  "/topics/typography": {
-    title: "Tipoqrafiya Sistemləri və Elastik Şrift Miqyası Mərkəzi — Rvan.me",
-    description: "Responsiv tipoqrafiya sistemləri, riyazi şrift miqyasları, CSS clamp() generatorları və tipoqrafik iyerarxiya üzrə elmi məqalələr.",
-  },
-  "/topics/design-psychology": {
-    title: "Dizayn Psixologiyası, Qavrayış və Koqnitiv Prinsiplər Mərkəzi — Rvan.me",
-    description: "Vizual diqqətin neyroelmini, baxış trayektoriyalarını, Geştalt qruplaşmasını və insan beyninin dizaynı necə qavradığını öyrənin.",
-  },
-  "/topics/marketing-psychology": {
-    title: "Marketinq Psixologiyası, Qiymət və Konversiya Mərkəzi — Rvan.me",
-    description: "Konversiya kopiraytinqi, qiymət modelləri, risk ləğvi və müştəri yönümlü dəyər təkliflərini elmi hevristik alətlərlə öyrənin.",
-  },
-  "/topics/accessibility": {
-    title: "Rəqəmsal Əlçatanlıq, APCA Kontrast və İnklyuziv Dizayn Mərkəzi — Rvan.me",
-    description: "Müasir rəng əlçatanlığı, W3C Silver APCA 0.98G standartı, tipoqrafik oxunaqlıq hədləri və əlçatan dizayn sistemi iş axınları.",
-  },
   "/blog/guide-responsive-fluid-typography-css-clamp": {
     title: "CSS clamp() ilə Responsiv Elastik Tipoqrafiyanın Tam Bələdçisi — Rvan.me",
     description: "Müasir elastik tipoqrafiyanın hərtərəfli arxitektura bələdçisi: Xətti interpolyasiya riyaziyyatı, harmonik modul miqyaslar və CSS clamp() ilə media query tullanışlarına son qoyun.",
