@@ -17,7 +17,6 @@ import HeroAtmosphere from "./components/HeroAtmosphere";
 // Lazy-loaded section components matching exact requested hierarchy
 const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const HeroParticles = lazy(() => import("./components/HeroParticles"));
-const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));

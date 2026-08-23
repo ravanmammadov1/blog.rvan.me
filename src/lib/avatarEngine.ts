@@ -9,7 +9,7 @@ import {
   HAIR_COLORS,
   CLOTHING_COLORS,
   buildPeepSvg,
-} from "../app/components/tools/openpeeps/peepsAssets";
+} from "./peepsAssets";
 
 // Curated Cheerful & Friendly Expressions (Only smiling, happy, cute, confident)
 export const CHEERFUL_EXPRESSION_IDS = [

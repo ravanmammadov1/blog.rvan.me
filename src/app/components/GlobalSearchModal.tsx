@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, X, BookOpen, Wrench, Compass, Sparkles, ArrowRight, CornerDownLeft } from "lucide-react";
-import { INTERACTIVE_TOOLS } from "../lib/toolsRegistry";
 import { TOPIC_HUBS } from "../../lib/topicHubs";
 import { MASTER_EDITORIAL_BLOGS } from "../../lib/editorialBlogRegistry";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
@@ -44,19 +43,6 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
         path: `/topics/${hub.slug}`,
         badgeColor: "text-purple-400 border-purple-500/30 bg-purple-500/10",
         icon: hub.icon || "🧭",
-      });
-    });
-
-    // 2. Interactive Flagship Tools
-    INTERACTIVE_TOOLS.forEach((tool) => {
-      items.push({
-        id: `tool-${tool.id}`,
-        title: isAz ? tool.name_az || tool.name : tool.name,
-        subtitle: isAz ? tool.description_az || tool.description : tool.description,
-        type: "TOOL",
-        path: tool.path,
-        badgeColor: "text-sky-400 border-sky-500/30 bg-sky-500/10",
-        icon: tool.icon || "⚡",
       });
     });
 

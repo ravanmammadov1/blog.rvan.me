@@ -1,7 +1,6 @@
 import { client } from "./sanityClient";
 import { loadStaticFontCatalog, FontItem, getFontSlug } from "./fontEngine";
 import { fetchUniversalContentItems } from "./sanityQueries";
-import { INTERACTIVE_TOOLS } from "../app/lib/toolsRegistry";
 import { APPROVED_DISCOVERY_REPOS } from "./githubDiscoveryEngine";
 import { UniversalContentItem } from "../types/cms";
 
@@ -638,23 +637,6 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
       });
       APPROVED_DISCOVERY_REPOS.forEach((repo) => {
         list.push(repo);
-      });
-
-      // 3. Add Interactive Developer Tools
-      INTERACTIVE_TOOLS.forEach((tool) => {
-        list.push({
-          id: `tool-${tool.id}`,
-          title: tool.name,
-          description: tool.description,
-          category: "tools",
-          type: "Interactive Utility",
-          source: "Rvan.me Tools",
-          url: tool.path,
-          icon: tool.icon,
-          publishedAt: "2026-01-01T00:00:00Z",
-          qualityScore: 99,
-          trendingScore: 97,
-        });
       });
 
       // 3b. Add Curated Inspiration Baseline Dataset

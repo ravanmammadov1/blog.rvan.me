@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { getTopicBySlug, getAllTopicHubs } from "../../lib/topicHubs";
-import { getToolById } from "../lib/toolsRegistry";
 import { fetchAllBlogs, fetchSiteSettings } from "../../lib/sanityQueries";
 import { BlogPost } from "../../types/blog";
 import { SiteSettings } from "../../types/cms";
@@ -227,57 +226,7 @@ export default function TopicHubPage() {
           </div>
         </div>
 
-        {/* 3. Interactive Flagship Tools for This Domain */}
-        {topic.toolIds.length > 0 && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mono">
-                <Wrench size={14} />
-                {isAz ? "BU MÖVZUYA AİD İNTERAKTİV ALƏTLƏR" : "DOMAIN INTERACTIVE TOOLS"}
-              </div>
-              <span className="text-xs text-muted-foreground mono">
-                {isAz ? "Brauzerdaxili canlı alətlər" : "Free in-browser utilities"}
-              </span>
-            </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              {topic.toolIds.map((toolId) => {
-                const tool = getToolById(toolId);
-                if (!tool) return null;
-
-                return (
-                  <div
-                    key={tool.id}
-                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:border-primary/40 flex flex-col justify-between space-y-6"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-3xl">{tool.icon}</span>
-                        <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary mono">
-                          {tool.category}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-bold text-foreground">
-                        {isAz ? tool.name_az || tool.name : tool.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-                        {isAz ? tool.description_az || tool.description : tool.description}
-                      </p>
-                    </div>
-
-                    <Link
-                      to={getLocalizedPath(tool.path)}
-                      className="inline-flex items-center justify-between rounded-xl bg-white/5 px-4 py-2.5 text-xs font-bold text-foreground hover:bg-primary hover:text-black transition-all mono uppercase tracking-wider"
-                    >
-                      <span>{isAz ? "Aləti Aç" : "Launch Utility"}</span>
-                      <ArrowRight size={14} />
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* 4. Curated Master Editorial Essays */}
         <div className="space-y-6">

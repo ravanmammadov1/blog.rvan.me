@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth, isKeyConfigured } from "../lib/firebase";
 import { signInWithGoogle, checkRedirectResult, logout } from "../services/auth";
-import { PeepConfig, generateRandomPeep } from "../app/components/tools/openpeeps/peepsAssets";
+import { PeepConfig, generateRandomPeep } from "../lib/peepsAssets";
 import {
   getGuestAvatarConfig,
   saveGuestAvatarConfig,

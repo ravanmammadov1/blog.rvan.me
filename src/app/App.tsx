@@ -24,7 +24,6 @@ const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
 const TopicHubPage = lazy(() => import("./pages/TopicHubPage"));
 const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
-const PublicCvPage = lazy(() => import("./pages/PublicCvPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
@@ -60,7 +59,6 @@ function AppRoutes() {
       <Route path="/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
       <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
-      <Route path="/cv/:publicSlug" element={<PublicCvPage />} />
 
       {/* Admin Control Routes */}
       <Route path="/admin/linkedin" element={<LinkedInAdmin />} />
@@ -86,7 +84,6 @@ function AppRoutes() {
       <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
-      <Route path="/az/cv/:publicSlug" element={<PublicCvPage />} />
       <Route path="/az/admin/linkedin" element={<LinkedInAdmin />} />
 
       <Route path="*" element={<NotFound />} />
