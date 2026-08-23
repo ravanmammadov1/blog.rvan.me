@@ -105,19 +105,24 @@ export default function ResourcesSection() {
           className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between border-b border-white/10 pb-6 gap-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">{t("sectionResourcesEyebrow", "04 / Unified Creative Ecosystem")}</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              {t("sectionResourcesTitle", "Knowledge & Assets.")}
+            <Eyebrow className="text-primary tracking-[.2em]">{isAz ? "KURASİYA EDİLMİŞ KATALOQ" : "CURATED DIRECTORY"}</Eyebrow>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
+              {isAz ? "Resurslar" : "Resources"}
             </h2>
+            <p className="mt-2 text-xs md:text-sm text-muted-foreground font-medium max-w-xl">
+              {isAz
+                ? "Dizaynerlər, marketoloqlar və kreativ mütəxəssislər üçün seçilmiş faydalı açıq mənbəli resurslar, şriftlər, ikonlar və dizayn aktivləri."
+                : "Rvan.me curates useful open-source fonts, vector icons, 3D assets, and design kits for designers, marketers, and creative professionals."}
+            </p>
           </div>
 
           <Button
-            to={getLocalizedPath(`/resources?category=${activeCategory}`)}
+            to={getLocalizedPath("/resources")}
             variant="secondary"
             size="md"
             icon={<ArrowUpRight size={14} className="text-primary" />}
           >
-            {t("exploreAllResources", "BROWSE ALL RESOURCES")}
+            {isAz ? "BÜTÜN RESURSLARA BAX" : "EXPLORE ALL RESOURCES"}
           </Button>
         </motion.div>
 

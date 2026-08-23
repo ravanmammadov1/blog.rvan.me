@@ -52,16 +52,16 @@ export default function BlogSection() {
           className="mb-16 flex items-end justify-between border-b border-white/10 pb-6"
         >
           <div>
-            <Eyebrow className="text-muted-foreground">{t("sectionBlogEyebrow", "03 / Insights & Ideas")}</Eyebrow>
-            <h2 className="mt-6 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
-              {t("sectionBlogTitle", "Thinking out loud.")}
+            <Eyebrow className="text-primary tracking-[.2em]">{isAz ? "NƏŞR VƏ TƏHQİQAT" : "CREATIVE PUBLICATION"}</Eyebrow>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
+              {isAz ? "Son Məqalələr" : "Latest Articles"}
             </h2>
           </div>
           <Link
             to={getLocalizedPath("/blog")}
             className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            {t("exploreAllArticles", "EXPLORE ALL ARTICLES")}
+            {isAz ? "BÜTÜN MƏQALƏLƏRƏ BAX" : "VIEW ALL ARTICLES"}
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
@@ -93,7 +93,7 @@ export default function BlogSection() {
             size="lg"
             icon={<ArrowUpRight size={16} />}
           >
-            {t("exploreFullBlogArchive", "EXPLORE FULL BLOG ARCHIVE")}
+            {isAz ? "BÜTÜN MƏQALƏLƏRƏ BAX" : "VIEW ALL ARTICLES"}
           </Button>
         </div>
       </div>
