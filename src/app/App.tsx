@@ -22,6 +22,8 @@ const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
+const ContributorPage = lazy(() => import("./ContributorPage"));
+const AuthorPage = lazy(() => import("./AuthorPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
@@ -41,6 +43,8 @@ function AppRoutes() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/settings" element={<ProfilePage />} />
+      <Route path="/contributor" element={<ContributorPage />} />
+      <Route path="/author/:slug" element={<AuthorPage />} />
       <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
       <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/work" element={<WorkArchive />} />
@@ -66,6 +70,8 @@ function AppRoutes() {
       <Route path="/az/about" element={<AboutPage />} />
       <Route path="/az/profile" element={<ProfilePage />} />
       <Route path="/az/settings" element={<ProfilePage />} />
+      <Route path="/az/contributor" element={<ContributorPage />} />
+      <Route path="/az/author/:slug" element={<AuthorPage />} />
       <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
       <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/work" element={<WorkArchive />} />

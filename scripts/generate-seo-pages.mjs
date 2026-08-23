@@ -44,6 +44,20 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/contributor",
+    title: "Become a Contributor — Rvan.me Creative Community",
+    description: "A creative publication built around Azerbaijan's creative community. Share what you know, build your professional identity, and get published under your name.",
+    type: "website",
+    lastmod: todayIso,
+  },
+  {
+    path: "/author/ravan-mammadov",
+    title: "Ravan Mammadov — Author & Founder | Rvan.me",
+    description: "Articles, design essays, and creative publications by Ravan Mammadov on Rvan.me.",
+    type: "profile",
+    lastmod: todayIso,
+  },
+  {
     path: "/ravan-mammadov",
     title: "Ravan Mammadov — Founder & Senior Creative Designer",
     description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",

@@ -15,8 +15,17 @@ import {
   Loader2,
   Sliders,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  PenTool,
+  Send,
+  FileText,
+  Clock,
+  ArrowUpRight,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getSubmissionsByAuthor } from "../services/contributorService";
+import { ArticleSubmission } from "../types/contributor";
+import ArticleSubmissionModal from "./components/contributor/ArticleSubmissionModal";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -60,6 +69,8 @@ export default function ProfilePage() {
   const [bioText, setBioText] = useState("");
   const [bioSaved, setBioSaved] = useState(false);
   const [showAvatarStudio, setShowAvatarStudio] = useState(false);
+  const [submissions, setSubmissions] = useState<ArticleSubmission[]>([]);
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -76,7 +87,7 @@ export default function ProfilePage() {
   } = useAuth();
 
   const { theme, setTheme } = useTheme();
-  const { language, switchLanguage, t } = useLanguage();
+  const { language, switchLanguage, t, getLocalizedPath } = useLanguage();
   const isAz = language === "az";
 
   useEffect(() => {
@@ -85,6 +96,18 @@ export default function ProfilePage() {
       if (data) setSiteSettings(data);
     });
   }, [language]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      setSubmissions(getSubmissionsByAuthor(user.uid));
+    }
+  }, [user?.uid]);
+
+  const refreshSubmissions = () => {
+    if (user?.uid) {
+      setSubmissions(getSubmissionsByAuthor(user.uid));
+    }
+  };
 
   useEffect(() => {
     if (profile?.bio) {
@@ -527,11 +550,96 @@ export default function ProfilePage() {
                     </div>
                   </form>
                 </div>
+
+                {/* 3. Contributor & Community Publishing Hub */}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                      <PenTool size={14} /> {isAz ? "MÜƏLLİFLİK VƏ NƏŞR MƏRKƏZİ" : "CONTRIBUTOR & WRITING HUB"}
+                    </div>
+                    <button
+                      onClick={() => setSubmitModalOpen(true)}
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold uppercase mono tracking-wider hover:opacity-90 transition-opacity cursor-pointer shadow-sm"
+                    >
+                      <Send size={12} />
+                      <span>{isAz ? "YENİ MƏQALƏ TƏQDİM ET" : "SUBMIT DRAFT"}</span>
+                    </button>
+                  </div>
+
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed font-normal">
+                    {isAz
+                      ? "Rvan.me-də məqalələrinizi öz adınızla nəşr edin, peşəkar fikirlərinizi Azərbaycanın yaradıcı icması ilə bölüşün."
+                      : "Publish your articles under your name on Rvan.me, sharing your insights with Azerbaijan's creative community."}
+                  </p>
+
+                  {/* Submissions List */}
+                  <div className="space-y-3">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mono">
+                      {isAz ? "Təqdim Etdiyiniz Məqalələr" : "Your Submitted Drafts"} ({submissions.length})
+                    </div>
+
+                    {submissions.length > 0 ? (
+                      <div className="space-y-2.5">
+                        {submissions.map((sub) => (
+                          <div
+                            key={sub.id}
+                            className="p-4 rounded-xl border border-border bg-surface/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                          >
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-foreground truncate">{sub.title}</span>
+                                <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
+                                  {sub.category}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mono flex items-center gap-2">
+                                <span>{new Date(sub.createdAt).toLocaleDateString()}</span>
+                                <span>•</span>
+                                <span>AI: {sub.aiDisclosure === "none" ? "Yoxdur" : sub.aiDisclosure === "assisted" ? "Köməkçi" : "Geniş"}</span>
+                              </div>
+                            </div>
+
+                            <div className="shrink-0 flex items-center gap-2">
+                              <span
+                                className={`text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-md border ${
+                                  sub.status === "PUBLISHED"
+                                    ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                    : sub.status === "APPROVED"
+                                    ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                                    : sub.status === "CHANGES_REQUESTED"
+                                    ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                    : sub.status === "REJECTED"
+                                    ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                                    : "bg-primary/10 text-primary border-primary/20"
+                                }`}
+                              >
+                                {sub.status === "SUBMITTED"
+                                  ? (isAz ? "Baxışda" : "SUBMITTED")
+                                  : sub.status === "UNDER_REVIEW"
+                                  ? (isAz ? "Redaksiya Yoxlayır" : "UNDER REVIEW")
+                                  : sub.status}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 rounded-xl border border-border/80 bg-surface/30 text-center space-y-2">
+                        <FileText size={24} className="mx-auto text-muted-foreground/60" />
+                        <p className="text-xs text-muted-foreground">
+                          {isAz
+                            ? "Hələlik heç bir məqalə təqdim etməmisiniz. İlk layihənizi redaksiyamıza göndərin."
+                            : "You haven't submitted any drafts yet. Submit your first article draft for editorial review."}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Right Column: Preferences & Account Card */}
               <div className="lg:col-span-4 space-y-8">
-                {/* 3. Appearance */}
+                {/* 4. Appearance */}
                 <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
                     <Sun size={14} /> {t("appearanceCardTitle", "APPEARANCE")}
@@ -559,7 +667,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* 4. Language */}
+                {/* 5. Language */}
                 <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
                     <Globe size={14} /> {t("languageCardTitle", "LANGUAGE")}
@@ -587,7 +695,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* 5. Account Controls */}
+                {/* 6. Account Controls */}
                 <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
                     <ShieldCheck size={14} /> {isAz ? "HESAB MƏLUMATLARI" : "ACCOUNT"}
@@ -619,6 +727,11 @@ export default function ProfilePage() {
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <ArticleSubmissionModal
+        isOpen={submitModalOpen}
+        onClose={() => setSubmitModalOpen(false)}
+        onSubmitted={refreshSubmissions}
+      />
     </main>
   );
 }

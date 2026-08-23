@@ -61,7 +61,10 @@ export default function AuthorCard({ post }: AuthorCardProps) {
         </div>
 
         <h4 className="mt-1 text-xl font-bold text-foreground">
-          <Link to={getLocalizedPath("/ravan-mammadov")} className="hover:text-primary transition-colors">
+          <Link
+            to={getLocalizedPath(`/author/${post?.authorSlug || "ravan-mammadov"}`)}
+            className="hover:text-primary transition-colors"
+          >
             {authorName}
           </Link>
         </h4>

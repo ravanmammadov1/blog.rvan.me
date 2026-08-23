@@ -755,5 +755,90 @@ export async function fetchAllBlogs(lang: string = "en") {
   }
 }
 
+export interface AuthorDocument {
+  _id: string;
+  name: string;
+  slug: string;
+  role?: string;
+  role_az?: string;
+  bio?: string;
+  bio_az?: string;
+  image?: any;
+  socialLinks?: {
+    website?: string;
+    linkedin?: string;
+    twitter?: string;
+    github?: string;
+    behance?: string;
+    instagram?: string;
+  };
+  isVerified?: boolean;
+}
+
+export async function fetchAuthorBySlug(slug: string, lang: string = "en"): Promise<AuthorDocument | null> {
+  const cleanSlug = (slug || "").trim().toLowerCase();
+  const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
+
+  try {
+    const data = await client.fetch(
+      `
+      *[_type == "author" && (slug.current == $cleanSlug || lower(name) == $cleanSlug || _id == $cleanSlug)][0]{
+        _id,
+        name,
+        "slug": slug.current,
+        "role": select(${isAz} && defined(role_az) => role_az, role),
+        "bio": select(${isAz} && defined(bio_az) => bio_az, bio),
+        image,
+        socialLinks,
+        isVerified
+      }
+      `,
+      { cleanSlug }
+    );
+
+    if (data) return data;
+  } catch (err) {
+    console.warn("Could not fetch author from Sanity:", err);
+  }
+
+  // Fallback for primary founder/author
+  if (cleanSlug === "ravan-mammadov" || cleanSlug === "ravan" || cleanSlug === "founder") {
+    return {
+      _id: "founder-ravan",
+      name: "Ravan Mammadov",
+      slug: "ravan-mammadov",
+      role: isAz ? "Təsisçi və Kreativ Direktor" : "Founder & Creative Director",
+      bio: isAz
+        ? "Vizual mədəniyyət, brend arxitekturası, texnologiya və kreativ strategiyanın kəsişməsini araşdıran dizayner və marketoloq."
+        : "Designer and marketer exploring the intersection of visual culture, brand architecture, technology, and creative strategy.",
+      socialLinks: {
+        website: "https://www.rvan.me",
+        linkedin: "https://linkedin.com/in/ravanmammadov",
+        twitter: "https://x.com/ravanmammadov",
+        github: "https://github.com/ravanmammadov1",
+      },
+      isVerified: true,
+    };
+  }
+
+  return null;
+}
+
+export async function fetchArticlesByAuthor(authorSlug: string, lang: string = "en"): Promise<BlogPost[]> {
+  const allBlogs = await fetchAllBlogs(lang);
+  const cleanSlug = (authorSlug || "").trim().toLowerCase();
+
+  // If searching for primary author or all published
+  if (cleanSlug === "ravan-mammadov" || cleanSlug === "ravan") {
+    return allBlogs;
+  }
+
+  return allBlogs.filter((b) => {
+    const aSlug = (b.authorSlug || b.authorName || "").toLowerCase().replace(/\s+/g, "-");
+    return aSlug.includes(cleanSlug) || cleanSlug.includes(aSlug);
+  });
+}
+
+
 
 

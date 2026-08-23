@@ -32,6 +32,7 @@ export interface BlogPost {
   featured?: boolean;
   coverImage: any;
   authorName?: string;
+  authorSlug?: string;
   authorRole?: string;
   authorPhoto?: any;
   authorBio?: string;
