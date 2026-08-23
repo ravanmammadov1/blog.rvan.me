@@ -1,10 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Menu, X, LogOut, User as UserIcon, ChevronDown, Search } from "lucide-react";
+import {
+  ArrowUpRight,
+  Menu,
+  X,
+  LogOut,
+  User as UserIcon,
+  ChevronDown,
+  Search,
+  Sun,
+  Moon,
+  Globe,
+} from "lucide-react";
 import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../context/ThemeContext";
 import AuthModal from "./AuthModal";
 import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
@@ -14,7 +26,8 @@ function UserAuthMenu() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -48,7 +61,7 @@ function UserAuthMenu() {
     <div ref={menuRef} className="relative inline-block text-left shrink-0 self-center user-auth-menu">
       <button
         onClick={() => setDropdownOpen((prev) => !prev)}
-        className="flex h-9 items-center gap-2 rounded-xl border border-border bg-card px-2.5 text-[11px] font-medium transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center"
+        className="flex h-9 items-center gap-2 rounded-xl border border-border bg-card px-2.5 text-[11px] font-medium transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground shrink-0 select-none self-center cursor-pointer"
       >
         {userPhoto ? (
           <img
@@ -78,20 +91,21 @@ function UserAuthMenu() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card shadow-xl z-50 pointer-events-auto text-foreground overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden"
           >
+            {/* Identity / Header area */}
             {!user ? (
-              /* SIGNED OUT STATE */
-              <div className="p-4 space-y-4">
+              /* Signed Out Header */
+              <div className="p-4 pb-3.5 border-b border-border space-y-3">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-1">
                     {t("profile", "PROFILE")}
                   </div>
                   <div className="text-xs font-bold text-foreground">
-                    {t("guestUser", "Guest Visitor")}
+                    {t("guestUser", "Qonaq İstifadəçi")}
                   </div>
                   <div className="text-[11px] text-muted-foreground mono">
-                    {t("notSignedIn", "Not signed in")}
+                    {t("notSignedIn", "Daxil olunmayıb")}
                   </div>
                 </div>
 
@@ -100,15 +114,15 @@ function UserAuthMenu() {
                     setDropdownOpen(false);
                     setModalOpen(true);
                   }}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary bg-primary/10 px-3 py-2.5 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
                 >
-                  {t("signInWithGoogle", "SIGN IN WITH GOOGLE")}
+                  {t("signInWithGoogle", "GOOGLE İLƏ DAXİL OL")}
                 </button>
               </div>
             ) : (
-              /* SIGNED IN STATE */
-              <div className="p-4 space-y-4">
-                <div className="flex items-center gap-3 pb-3.5 border-b border-border">
+              /* Signed In Header */
+              <div className="p-4 pb-3.5 border-b border-border space-y-3">
+                <div className="flex items-center gap-3">
                   {userPhoto ? (
                     <img
                       src={userPhoto}
@@ -130,28 +144,98 @@ function UserAuthMenu() {
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <Link
-                    to={getLocalizedPath("/profile")}
-                    onClick={() => setDropdownOpen(false)}
-                    className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2.5 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
-                  >
-                    <span>{t("profileSettings", "PROFILE / SETTINGS")}</span>
-                    <ArrowUpRight size={14} className="text-primary" />
-                  </Link>
-                </div>
+                <Link
+                  to={getLocalizedPath("/profile")}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors mono uppercase tracking-wider"
+                >
+                  <span>{t("profileSettings", "PROFILE / SETTINGS")}</span>
+                  <ArrowUpRight size={14} className="text-primary" />
+                </Link>
+              </div>
+            )}
 
-                <div className="pt-2 border-t border-border">
+            {/* Quick Preferences: Theme & Language (Accessible to BOTH Guest and Signed-in users) */}
+            <div className="p-4 py-3 border-b border-border space-y-3 bg-surface/30">
+              {/* Theme Selector */}
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mono flex items-center gap-1.5">
+                  <Sun size={12} className="text-primary" />
+                  {t("appearance", "REJİM")}
+                </span>
+                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-muted/80 border border-border">
                   <button
-                    onClick={() => {
-                      setDropdownOpen(false);
-                      signOut();
-                    }}
-                    className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-destructive hover:bg-destructive/10 transition-colors text-left mono uppercase tracking-wider cursor-pointer"
+                    type="button"
+                    onClick={() => setTheme("dark")}
+                    className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                      theme === "dark"
+                        ? "bg-card text-foreground shadow-sm border border-border"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                   >
-                    <LogOut size={14} /> {t("signOut", "SIGN OUT")}
+                    <Moon size={11} />
+                    <span>Dark</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTheme("light")}
+                    className={`flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                      theme === "light"
+                        ? "bg-card text-foreground shadow-sm border border-border"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Sun size={11} />
+                    <span>Light</span>
                   </button>
                 </div>
+              </div>
+
+              {/* Language Selector */}
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mono flex items-center gap-1.5">
+                  <Globe size={12} className="text-primary" />
+                  {t("language", "DİL")}
+                </span>
+                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-muted/80 border border-border font-mono text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => switchLanguage("en")}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                      language === "en"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchLanguage("az")}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                      language === "az"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    AZ
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* If Signed In: Sign Out button */}
+            {user && (
+              <div className="p-3">
+                <button
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    signOut();
+                  }}
+                  className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-destructive hover:bg-destructive/10 transition-colors text-left mono uppercase tracking-wider cursor-pointer"
+                >
+                  <LogOut size={14} /> {t("signOut", "SIGN OUT")}
+                </button>
               </div>
             )}
           </motion.div>
