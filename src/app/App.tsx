@@ -9,7 +9,6 @@ import NotFound from "./NotFound";
 
 const BlogArchive = lazy(() => import("./BlogArchive"));
 const BlogDetail = lazy(() => import("./BlogDetail"));
-const ToolsArchive = lazy(() => import("./ToolsArchive"));
 const AboutPage = lazy(() => import("./AboutPage"));
 const ProfilePage = lazy(() => import("./ProfilePage"));
 const FounderProfilePage = lazy(() => import("./pages/FounderProfilePage"));
@@ -22,7 +21,6 @@ const ResourceDetail = lazy(() => import("./ResourceDetail"));
 const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
-const ToolDetailPage = lazy(() => import("./pages/ToolDetailPage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
@@ -49,8 +47,6 @@ function AppRoutes() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/blog" element={<BlogArchive />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
-      <Route path="/tools" element={<ToolsArchive />} />
-      <Route path="/tools/:toolId" element={<ToolDetailPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/terms" element={<TermsPage />} />
@@ -75,8 +71,6 @@ function AppRoutes() {
       <Route path="/az/contact" element={<ContactPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
-      <Route path="/az/tools" element={<ToolsArchive />} />
-      <Route path="/az/tools/:toolId" element={<ToolDetailPage />} />
       <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/az/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/az/terms" element={<TermsPage />} />

@@ -18,7 +18,6 @@ const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
 const HeroParticles = lazy(() => import("./components/HeroParticles"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
-const ToolsSection = lazy(() => import("./components/home/ToolsSection"));
 const ContactSection = lazy(() => import("./components/home/ContactSection"));
 
 const fadeUp = {
@@ -150,12 +149,7 @@ export default function HomePage() {
         <ResourcesSection />
       </Suspense>
 
-      {/* ── 6. TOOLS (Creative & Interactive tools) ── */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CREATIVE TOOLS...</div>}>
-        <ToolsSection />
-      </Suspense>
-
-      {/* ── 7. FINAL CTA ── */}
+      {/* ── 6. FINAL CTA ── */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CONTACT CTA...</div>}>
         <ContactSection />
       </Suspense>

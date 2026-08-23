@@ -143,11 +143,11 @@ export default function AboutPage() {
             {t("btnExploreResources", "EXPLORE RESOURCES")}
           </Button>
           <Button
-            to={getLocalizedPath("/tools")}
+            to={getLocalizedPath("/news")}
             variant="secondary"
             size="md"
           >
-            {t("aboutViewCreatorTools", "VIEW CREATOR TOOLS")}
+            {t("btnReadNews", "READ INDUSTRY NEWS")}
           </Button>
         </div>
       </PageHero>
@@ -259,9 +259,9 @@ export default function AboutPage() {
               </div>
             </Link>
 
-            {/* Module 2: Tools */}
+            {/* Module 2: AI Tools */}
             <Link
-              to={getLocalizedPath("/tools")}
+              to={getLocalizedPath("/ai-tools")}
               className="group p-6 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/50 hover:bg-white/[0.05] hover:-translate-y-1 transition-all duration-300 aurora-card flex flex-col justify-between"
             >
               <div>
@@ -269,14 +269,14 @@ export default function AboutPage() {
                   <Cpu size={22} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
-                  {t("aboutModuleToolsTitle", "AI & Creator Tools")}
+                  {t("aboutModuleToolsTitle", "AI & Automation Directory")}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                   {t("aboutModuleToolsDesc", "Verified AI utilities, motion animation scripts, and workflow automation extensions.")}
                 </p>
               </div>
               <div className="mt-8 flex items-center gap-1 text-xs font-bold text-primary mono uppercase">
-                <span>{t("aboutViewCreatorTools", "Browse Tools")}</span>
+                <span>{t("aboutViewCreatorTools", "Browse AI Directory")}</span>
                 <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </Link>
