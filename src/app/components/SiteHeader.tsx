@@ -99,32 +99,126 @@ function UserAuthMenu() {
             {/* Identity / Header area */}
             {!user ? (
               /* Signed Out Header */
-              <div className="p-4 space-y-3">
-                <div>
-                  <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-1">
-                    {t("profile", "PROFILE")}
+              <div>
+                <div className="p-4 space-y-3">
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-1">
+                      {t("profile", "PROFILE")}
+                    </div>
+                    <div className="text-xs font-bold text-foreground">
+                      {t("guestUser", "Qonaq İstifadəçi")}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mono">
+                      {t("notSignedIn", "Daxil olunmayıb")}
+                    </div>
                   </div>
-                  <div className="text-xs font-bold text-foreground">
-                    {t("guestUser", "Qonaq İstifadəçi")}
-                  </div>
-                  <div className="text-[11px] text-muted-foreground mono">
-                    {t("notSignedIn", "Daxil olunmayıb")}
-                  </div>
+
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setModalOpen(true);
+                    }}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
+                  >
+                    {t("signInWithGoogle", "GOOGLE İLƏ DAXİL OL")}
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    setModalOpen(true);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 text-xs font-bold text-primary uppercase tracking-wider mono hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
-                >
-                  {t("signInWithGoogle", "GOOGLE İLƏ DAXİL OL")}
-                </button>
+                {/* 3. QUICK PREFERENCES */}
+                <div className="border-t border-border p-3.5 space-y-3 bg-surface/30">
+                  {/* Appearance Segmented Control */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                      <span>{language === "az" ? "GÖRÜNÜŞ" : "APPEARANCE"}</span>
+                      <span className="text-primary">{theme === "dark" ? (language === "az" ? "Tünd" : "Dark") : (language === "az" ? "Açıq" : "Light")}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                      <button
+                        type="button"
+                        onClick={() => setTheme("dark")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          theme === "dark"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          theme === "dark"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <Moon size={12} />
+                        <span>{language === "az" ? "Tünd" : "Dark"}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setTheme("light")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          theme === "light"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          theme === "light"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <Sun size={12} />
+                        <span>{language === "az" ? "Açıq" : "Light"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Language Segmented Control */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                      <span>{language === "az" ? "DİL" : "LANGUAGE"}</span>
+                      <span className="text-primary">{language === "az" ? "AZ" : "EN"}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                      <button
+                        type="button"
+                        onClick={() => switchLanguage("en")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          language === "en"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          language === "en"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <span>EN</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => switchLanguage("az")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          language === "az"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          language === "az"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <span>AZ</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
-              /* Signed In Simplified Header */
-              <div>
+              /* Signed In Header with 4 Structured Sections */
+              <div className="max-h-[calc(100vh-80px)] overflow-y-auto">
+                {/* 1. USER PROFILE & 2. SETTINGS */}
                 <div className="p-4 space-y-3">
                   <div className="flex items-center gap-3">
                     {userPhoto ? (
@@ -158,6 +252,98 @@ function UserAuthMenu() {
                   </Link>
                 </div>
 
+                {/* 3. QUICK PREFERENCES (Appearance & Language) */}
+                <div className="border-t border-border p-3.5 space-y-3 bg-surface/30">
+                  {/* Appearance Segmented Control */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                      <span>{language === "az" ? "GÖRÜNÜŞ" : "APPEARANCE"}</span>
+                      <span className="text-primary">{theme === "dark" ? (language === "az" ? "Tünd" : "Dark") : (language === "az" ? "Açıq" : "Light")}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                      <button
+                        type="button"
+                        onClick={() => setTheme("dark")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          theme === "dark"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          theme === "dark"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <Moon size={12} />
+                        <span>{language === "az" ? "Tünd" : "Dark"}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setTheme("light")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          theme === "light"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          theme === "light"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <Sun size={12} />
+                        <span>{language === "az" ? "Açıq" : "Light"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Language Segmented Control */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
+                      <span>{language === "az" ? "DİL" : "LANGUAGE"}</span>
+                      <span className="text-primary">{language === "az" ? "AZ" : "EN"}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                      <button
+                        type="button"
+                        onClick={() => switchLanguage("en")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          language === "en"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          language === "en"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <span>EN</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => switchLanguage("az")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          language === "az"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          language === "az"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <span>AZ</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. SIGN OUT */}
                 <div className="border-t border-border p-2 bg-surface/30">
                   <button
                     onClick={() => {
