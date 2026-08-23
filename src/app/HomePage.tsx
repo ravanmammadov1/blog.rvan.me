@@ -100,12 +100,12 @@ export default function HomePage() {
                 </Button>
 
                 <Button
-                  to={getLocalizedPath("/about")}
+                  to={getLocalizedPath("/contributor")}
                   variant="secondary"
                   size="lg"
-                  icon={<ArrowRight size={16} />}
+                  icon={<ArrowUpRight size={16} />}
                 >
-                  {isAz ? "RVAN.ME HAQQINDA" : "ABOUT RVAN.ME"}
+                  {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
                 </Button>
               </div>
             </motion.div>
