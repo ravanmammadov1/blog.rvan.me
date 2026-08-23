@@ -650,10 +650,11 @@ export async function fetchUnifiedResources(): Promise<SharedResourceItem[]> {
 
       // 5. Map Sanity Universal Content Items
       (universalItems || []).forEach((item: UniversalContentItem) => {
+        const categorySlug = typeof item.category?.slug === "object" ? item.category?.slug?.current : item.category?.slug;
         let catKey: ResourceCategoryKey = "tools";
         if (item.contentType === "aiTool") catKey = "tools";
         else if (item.githubDetails) catKey = "githubRepos";
-        else if (item.category?.slug === "learning") catKey = "learning";
+        else if (categorySlug === "learning") catKey = "learning";
 
         list.push({
           id: item._id,

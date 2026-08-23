@@ -1,24 +1,3 @@
-export interface NewsItem {
-  _id: string;
-  title: string;
-  slug?: {
-    current: string;
-  };
-  coverImage?: any;
-  excerpt?: string;
-  body?: any[];
-  publishedAt?: string;
-  category?: string;
-}
-
-export interface ToolItem {
-  _id: string;
-  name: string;
-  description?: string;
-  icon?: any;
-  link?: string;
-  category?: string;
-}
 
 export interface ProjectItem {
   _id: string;
@@ -72,6 +51,11 @@ export interface AwardItem {
   issuer?: string;
   year?: string;
   category?: string;
+}
+
+export interface SkillCategory {
+  title: string;
+  items: string[];
 }
 
 export interface BrandItem {

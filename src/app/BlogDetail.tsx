@@ -154,12 +154,13 @@ export default function BlogDetail() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <SEO
-        title={`${post.title} — Ravan Mammadov`}
-        description={post.excerpt || `Read ${post.title} by Ravan Mammadov.`}
-        image={coverUrl}
-        url={`https://www.rvan.me/blog/${post.slug?.current || slug}`}
+        title={post.seo?.metaTitle || `${post.title} — Rvan.me`}
+        description={post.seo?.metaDescription || post.excerpt || `Read ${post.title} on Rvan.me.`}
+        image={post.seo?.ogImage ? (urlFor(post.seo.ogImage)?.width(1200).url() || coverUrl) : coverUrl}
+        url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
+        noIndex={post.seo?.noIndex}
       />
 
       <SiteHeader siteSettings={siteSettings} />

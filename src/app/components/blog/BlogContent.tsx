@@ -16,8 +16,8 @@ export default function BlogContent({ post }: BlogContentProps) {
             value={post.body}
             components={portableTextComponents}
           />
-        ) : typeof post.body === "string" && post.body.trim() ? (
-          <div dangerouslySetInnerHTML={{ __html: post.body }} />
+        ) : typeof (post.body as any) === "string" && (post.body as any).trim() ? (
+          <div dangerouslySetInnerHTML={{ __html: post.body as any }} />
         ) : (
           <p className="text-muted-foreground italic">No content available for this article.</p>
         )}

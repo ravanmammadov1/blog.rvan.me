@@ -11,6 +11,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   to?: string;
   href?: string;
   external?: boolean;
+  download?: string;
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   children?: React.ReactNode;
@@ -26,6 +27,7 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
       to,
       href,
       external = false,
+      download,
       icon,
       iconPosition = "right",
       children,
@@ -104,6 +106,7 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
       return (
         <a
           href={href}
+          download={download}
           target={external ? "_blank" : undefined}
           rel={external ? "noopener noreferrer" : undefined}
           className={combinedClassName}

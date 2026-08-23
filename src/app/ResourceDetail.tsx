@@ -10,6 +10,7 @@ import {
 import { fetchResources, fetchSiteSettings } from "../lib/sanityQueries";
 import { urlFor } from "../lib/sanityClient";
 import { ResourceItem, SiteSettings } from "../types/cms";
+import { useLanguage } from "../lib/i18n/LanguageContext";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
@@ -146,16 +147,13 @@ export default function ResourceDetail() {
   }, []);
 
   useEffect(() => {
-    if (!slug) return;
-    setLoading(true);
-
-    fetchResourceBySlug(slug)
-      .then((res) => {
-        setResource(res);
-        return fetchAllResources();
-      })
-      .then((all) => {
-        setAllResources(all || []);
+    fetchResources()
+      .then((items: ResourceItem[]) => {
+        const found = items.find(
+          (i) => (typeof i.slug === "string" ? i.slug : i.slug?.current) === slug || i._id === slug
+        );
+        setResource(found || null);
+        setAllResources(items || []);
       })
       .catch((err) => {
         console.error("Error fetching resource detail:", err);
@@ -213,6 +211,7 @@ export default function ResourceDetail() {
   const typeIcon = RESOURCE_TYPE_ICONS[resource.resourceType] ?? "📦";
   const typeLabel = RESOURCE_TYPE_LABELS[resource.resourceType] ?? resource.resourceType;
   const verification = VERIFICATION_CONFIG[resource.verificationStatus ?? "verified"];
+  const VerifyIcon = verification.icon;
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
@@ -289,7 +288,7 @@ export default function ResourceDetail() {
               <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.25} className="rounded-2xl border border-white/10 bg-white/5 p-8 mb-8 glass">
                 <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mono mb-6">{t("aboutResource", "About this Resource")}</h2>
                 <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed">
-                  <PortableText value={resource.body} components={portableTextComponents} />
+                  <PortableText value={resource.body} components={portableComponents} />
                 </div>
               </motion.div>
             )}

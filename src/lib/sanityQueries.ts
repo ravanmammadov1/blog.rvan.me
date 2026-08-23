@@ -5,13 +5,12 @@ import {
   getAllEditorialBlogs,
 } from "./editorialBlogRegistry";
 import {
-  NewsItem,
-  ToolItem,
   ProjectItem,
   SiteSettings,
   AboutSection,
   TestimonialItem,
 } from "../types/cms";
+import { BlogPost } from "../types/blog";
 
 export async function fetchSiteSettings(lang: string = "en"): Promise<SiteSettings | null> {
   try {
@@ -131,24 +130,6 @@ export async function fetchProjectBySlug(slug: string): Promise<ProjectItem | nu
   }
 }
 
-export async function fetchTools(): Promise<ToolItem[]> {
-  try {
-    const data = await client.fetch(`
-      *[_type == "tools"] | order(category asc, name asc){
-        _id,
-        name,
-        description,
-        icon,
-        link,
-        category
-      }
-    `);
-    return data || [];
-  } catch (error) {
-    console.error("Error fetching tools from Sanity:", error);
-    return [];
-  }
-}
 
 export async function fetchTestimonials(): Promise<TestimonialItem[]> {
   try {
@@ -590,13 +571,30 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
         "originalSlug": slug.current,
         "azSlug": slug_az.current,
         "excerpt": select(${isAz} && defined(excerpt_az) => excerpt_az, excerpt),
-        "category": select(${isAz} && defined(category_az) => category_az, category),
+        "category": coalesce(
+          select(${isAz} && defined(category->title_az) => category->title_az, category->title),
+          category->name,
+          select(${isAz} && defined(category_az) => category_az, category),
+          "Design"
+        ),
+        "authorName": coalesce(author->name, authorName, "Ravan Mammadov"),
+        "authorRole": coalesce(
+          select(${isAz} && defined(author->role_az) => author->role_az, author->role),
+          authorRole,
+          "Founder & Creative Director"
+        ),
+        "authorPhoto": coalesce(author->image, authorPhoto),
+        "authorBio": coalesce(
+          select(${isAz} && defined(author->bio_az) => author->bio_az, author->bio),
+          authorBio
+        ),
         tags,
         featured,
         publishDate,
         readTime,
         coverImage,
-        "body": select(${isAz} && defined(body_az) => body_az, body)
+        "body": select(${isAz} && defined(body_az) => body_az, body),
+        seo
       }
     `,
       { raw, cleanSlug, lowerSlug }
@@ -672,13 +670,30 @@ export async function fetchAllBlogs(lang: string = "en") {
         "originalSlug": slug.current,
         "azSlug": slug_az.current,
         "excerpt": select(${isAz} && defined(excerpt_az) => excerpt_az, excerpt),
-        "category": select(${isAz} && defined(category_az) => category_az, category),
+        "category": coalesce(
+          select(${isAz} && defined(category->title_az) => category->title_az, category->title),
+          category->name,
+          select(${isAz} && defined(category_az) => category_az, category),
+          "Design"
+        ),
+        "authorName": coalesce(author->name, authorName, "Ravan Mammadov"),
+        "authorRole": coalesce(
+          select(${isAz} && defined(author->role_az) => author->role_az, author->role),
+          authorRole,
+          "Founder & Creative Director"
+        ),
+        "authorPhoto": coalesce(author->image, authorPhoto),
+        "authorBio": coalesce(
+          select(${isAz} && defined(author->bio_az) => author->bio_az, author->bio),
+          authorBio
+        ),
         tags,
         featured,
         publishDate,
         readTime,
         coverImage,
-        "body": select(${isAz} && defined(body_az) => body_az, body)
+        "body": select(${isAz} && defined(body_az) => body_az, body),
+        seo
       }
     `
     );
@@ -694,7 +709,7 @@ export async function fetchAllBlogs(lang: string = "en") {
                    editorialMap.get(origSlugKey) || 
                    editorialMap.get(titleKey) ||
                    getEditorialBlogBySlug(slugKey) ||
-                   getEditorialBlogById(idKey);
+                   getEditorialBlogBySlug(idKey);
 
         if (ed) {
           const isSanityCoverValid = Boolean(

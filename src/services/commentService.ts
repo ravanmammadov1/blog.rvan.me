@@ -36,14 +36,16 @@ function notifySubscribers(postId: string) {
   const postSubs = subscribers.get(postId);
   if (!postSubs || postSubs.size === 0) return;
 
+  const toEpoch = (val: any) => {
+    if (!val) return 0;
+    if (typeof val?.toDate === "function") return val.toDate().getTime();
+    return new Date(val).getTime() || 0;
+  };
+
   const allComments = getStoredComments();
   const filtered = allComments
     .filter((c) => c.postId === postId)
-    .sort((a, b) => {
-      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return timeB - timeA;
-    });
+    .sort((a, b) => toEpoch(b.createdAt) - toEpoch(a.createdAt));
 
   postSubs.forEach((cb) => {
     try {
@@ -72,14 +74,16 @@ export function subscribeToComments(
   }
   subscribers.get(postId)!.add(onCommentsUpdate);
 
+  const toEpoch = (val: any) => {
+    if (!val) return 0;
+    if (typeof val?.toDate === "function") return val.toDate().getTime();
+    return new Date(val).getTime() || 0;
+  };
+
   // Deliver current cached/stored comments immediately
   const initial = getStoredComments()
     .filter((c) => c.postId === postId)
-    .sort((a, b) => {
-      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return timeB - timeA;
-    });
+    .sort((a, b) => toEpoch(b.createdAt) - toEpoch(a.createdAt));
   onCommentsUpdate(initial);
 
   // Also fetch any remotely approved comments from API

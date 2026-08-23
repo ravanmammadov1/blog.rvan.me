@@ -77,6 +77,38 @@ const portableTextComponents = {
       );
     },
     code: CodeBlock,
+    codeBlock: CodeBlock,
+    calloutBox: ({ value }: any) => {
+      const type = value?.type || "insight";
+      const isWarning = type === "warning";
+      const isReference = type === "reference";
+      const borderColor = isWarning
+        ? "border-amber-500/30 bg-amber-500/5 text-amber-300"
+        : isReference
+        ? "border-purple-500/30 bg-purple-500/5 text-purple-300"
+        : "border-primary/30 bg-primary/5 text-primary";
+
+      return (
+        <div className={`my-8 p-6 rounded-2xl border ${borderColor} backdrop-blur-sm`}>
+          {value.title && (
+            <h4 className="text-base font-bold text-foreground mb-2 flex items-center gap-2">
+              {value.title}
+            </h4>
+          )}
+          <p className="text-sm leading-relaxed text-foreground/90 font-medium">{value.text}</p>
+        </div>
+      );
+    },
+    divider: ({ value }: any) => {
+      if (value?.style === "stars") {
+        return (
+          <div className="my-12 text-center text-xl tracking-[1em] text-muted-foreground select-none">
+            ✦ ✦ ✦
+          </div>
+        );
+      }
+      return <hr className="my-12 border-white/10" />;
+    },
   },
 
   block: {
@@ -104,6 +136,15 @@ const portableTextComponents = {
         <h3 id={id} className="mt-10 mb-4 text-2xl font-semibold md:text-3xl scroll-mt-28 text-foreground">
           {children}
         </h3>
+      );
+    },
+
+    h4: ({ children }: any) => {
+      const id = generateId(children);
+      return (
+        <h4 id={id} className="mt-8 mb-3 text-xl font-bold scroll-mt-28 text-foreground">
+          {children}
+        </h4>
       );
     },
 

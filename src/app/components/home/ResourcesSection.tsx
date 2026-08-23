@@ -23,7 +23,7 @@ const SHOWCASE_ICONS: IconItem[] = [
   { id: "icon-compass", name: "Compass", componentName: "Compass", category: "General", tags: ["navigation", "direction", "explore"] },
 ];
 
-const EASE = "easeInOut";
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -154,13 +154,12 @@ export default function ResourcesSection() {
                 key={item.id}
                 font={{
                   family: item.title,
-                  category: item.type || "Sans-Serif",
+                  category: (item.type as any) || "Sans Serif",
                   designer: item.authorName || "Google Fonts",
                   foundry: item.source,
                   license: item.license || "SIL Open Font License",
                   description: item.description,
-                  url: item.url,
-                }}
+                } as any}
                 previewText="Design systems engineered for precision & elegance."
                 fontSizePx={26}
                 idx={idx}

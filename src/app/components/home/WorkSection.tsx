@@ -10,7 +10,7 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, delay, ease: "easeInOut" },
+    transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -111,7 +111,7 @@ export default function WorkSection() {
           className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
-            <Eyebrow number="01" label="SELECTED WORK" />
+            <Eyebrow className="text-muted-foreground">01 / SELECTED WORK</Eyebrow>
             <h2
               className="font-bold tracking-tight leading-[1.05] text-foreground"
               style={{ fontSize: "clamp(2rem, 4.5vw, 4.2rem)" }}
