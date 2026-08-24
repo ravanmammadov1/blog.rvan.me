@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -10,11 +10,6 @@ import {
   Eye,
   BookOpen,
   Type,
-  Palette,
-  Megaphone,
-  ShieldCheck,
-  Compass,
-  Brain,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Eyebrow } from "../Eyebrow";
@@ -31,12 +26,10 @@ const fadeUp = {
 export default function HeroSearchSection() {
   const { getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
-  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Dispatch global search event with query to open the search modal
     window.dispatchEvent(
       new CustomEvent("open-search", { detail: { query: searchInput.trim() } })
     );
@@ -47,59 +40,6 @@ export default function HeroSearchSection() {
       new CustomEvent("open-search", { detail: { query: searchInput.trim() } })
     );
   };
-
-  // Discovery topics list (functional shortcuts)
-  const discoveryTopics = [
-    {
-      id: "design",
-      label: isAz ? "Dizayn" : "Design",
-      tag: "DESIGN",
-      icon: Palette,
-      path: "/topics/design",
-    },
-    {
-      id: "marketing",
-      label: isAz ? "Marketinq" : "Marketing",
-      tag: "MARKETING",
-      icon: Megaphone,
-      path: "/topics/marketing",
-    },
-    {
-      id: "branding",
-      label: isAz ? "Brendinq" : "Branding",
-      tag: "BRANDING",
-      icon: ShieldCheck,
-      path: "/topics/branding",
-    },
-    {
-      id: "typography",
-      label: isAz ? "Tipoqrafiya" : "Typography",
-      tag: "TYPOGRAPHY",
-      icon: Type,
-      path: "/blog?category=Typography",
-    },
-    {
-      id: "psychology",
-      label: isAz ? "Psixologiya" : "Psychology",
-      tag: "PSYCHOLOGY",
-      icon: Brain,
-      path: "/blog?category=Psychology",
-    },
-    {
-      id: "ai",
-      label: isAz ? "Süni İntellekt" : "AI & Tech",
-      tag: "AI & TECH",
-      icon: Sparkles,
-      path: "/topics/ai-creativity",
-    },
-    {
-      id: "strategy",
-      label: isAz ? "Strategiya" : "Strategy",
-      tag: "STRATEGY",
-      icon: Compass,
-      path: "/topics/strategy",
-    },
-  ];
 
   // Popular Curated Concept Guides
   const popularConcepts = [
@@ -138,7 +78,7 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative flex min-h-[85vh] md:min-h-[92vh] flex-col items-center justify-center px-4 pt-28 pb-14 md:px-8 md:pt-36 md:pb-20 overflow-hidden text-center">
+    <section className="relative flex min-h-[85vh] md:min-h-[90vh] flex-col items-center justify-center px-4 pt-28 pb-14 md:px-8 md:pt-36 md:pb-20 overflow-hidden text-center">
       {/* ── Floating Decorative Elements (Subtle Editorial Symbols) ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 select-none" aria-hidden="true">
         {/* Spark Icon — Top Left */}
@@ -212,7 +152,7 @@ export default function HeroSearchSection() {
           initial="hidden"
           animate="visible"
           custom={0.2}
-          className="w-full max-w-2xl mx-auto mb-6"
+          className="w-full max-w-2xl mx-auto mb-10 md:mb-12"
         >
           <form onSubmit={handleSearchSubmit} className="relative group">
             {/* Ambient Animated Gradient Glow Halo */}
@@ -261,32 +201,6 @@ export default function HeroSearchSection() {
           </form>
         </motion.div>
 
-        {/* ── Search Discovery Chips (Pills / Tags) ── */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          custom={0.25}
-          className="w-full max-w-2xl mx-auto mb-10 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
-        >
-          <span className="text-[11px] mono uppercase font-bold text-muted-foreground/80 tracking-wider mr-1 shrink-0">
-            {isAz ? "KƏŞF ET:" : "EXPLORE:"}
-          </span>
-          {discoveryTopics.map((topic) => {
-            const Icon = topic.icon;
-            return (
-              <Link
-                key={topic.id}
-                to={getLocalizedPath(topic.path)}
-                className="group flex items-center gap-1.5 rounded-full border border-border/80 bg-white/70 dark:bg-white/[0.04] px-3 py-1 text-xs font-semibold text-foreground/80 backdrop-blur-md shadow-2xs hover:border-primary/50 hover:bg-white dark:hover:bg-white/[0.09] hover:text-foreground transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <Icon size={12} className="text-primary group-hover:scale-110 transition-transform duration-200" />
-                <span>{topic.label}</span>
-              </Link>
-            );
-          })}
-        </motion.div>
-
         {/* ══════════════════════════════════════════════════════════════════
             ── SEARCH RESULT PREVIEW / CURATED CONCEPT CARDS ──
         ══════════════════════════════════════════════════════════════════ */}
@@ -294,7 +208,7 @@ export default function HeroSearchSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          custom={0.3}
+          custom={0.25}
           className="w-full max-w-4xl mx-auto mb-10"
         >
           <div className="flex items-center justify-between mb-3 px-1">
@@ -347,7 +261,7 @@ export default function HeroSearchSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          custom={0.35}
+          custom={0.3}
           className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold mono"
         >
           <Link

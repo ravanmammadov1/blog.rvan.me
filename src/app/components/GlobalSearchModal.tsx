@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, X, BookOpen, Wrench, Compass, Sparkles, ArrowRight, CornerDownLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, X, ArrowRight, CornerDownLeft } from "lucide-react";
 import { MASTER_EDITORIAL_BLOGS } from "../../lib/editorialBlogRegistry";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { trackSearchDiscovery } from "../../lib/analytics/events";
@@ -33,9 +34,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
   const searchCorpus: SearchItem[] = useMemo(() => {
     const items: SearchItem[] = [];
 
-
-
-    // 3. Master Editorial Essays
+    // Master Editorial Essays
     MASTER_EDITORIAL_BLOGS.forEach((blog) => {
       const slugStr = typeof blog.slug === "string" ? blog.slug : blog.slug?.current || blog._id;
       items.push({
@@ -44,19 +43,19 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
         subtitle: isAz && blog.excerpt_az ? blog.excerpt_az : blog.excerpt,
         type: "ARTICLE",
         path: `/blog/${slugStr}`,
-        badgeColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
+        badgeColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
         icon: "📄",
       });
     });
 
-    // 4. Curated Core Resources
+    // Curated Core Resources
     items.push({
       id: "res-fonts",
       title: isAz ? "Google Şriftləri Kataloqu (2,000+ Şrift)" : "Curated Google Fonts Catalog",
       subtitle: isAz ? "Canlı nümayiş, variativ oxlar və CSS kodları" : "Live specimen editor, variable axes & CSS snippets",
       type: "RESOURCE",
       path: "/resources?category=fonts",
-      badgeColor: "text-amber-400 border-amber-500/30 bg-amber-500/10",
+      badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
       icon: "🔤",
     });
     items.push({
@@ -65,7 +64,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
       subtitle: isAz ? "UI/UX dizayn üçün minlərlə təmiz SVG ikon" : "Thousands of clean SVG icons for UI/UX applications",
       type: "RESOURCE",
       path: "/resources?category=icons",
-      badgeColor: "text-amber-400 border-amber-500/30 bg-amber-500/10",
+      badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
       icon: "✨",
     });
 
@@ -75,7 +74,6 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
   // Filter results
   const filteredResults = useMemo(() => {
     if (!query.trim()) {
-      // Return top featured recommendations
       return searchCorpus.slice(0, 8);
     }
 
@@ -139,125 +137,136 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, filteredResults, selectedIndex, navigate, getLocalizedPath, onClose, query]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-20 sm:pt-28 px-4 bg-black/80 backdrop-blur-md transition-opacity animate-in fade-in"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-2xl rounded-2xl border border-white/10 bg-neutral-950/95 p-4 shadow-2xl space-y-4 backdrop-blur-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Search Input Field */}
-        <div className="relative flex items-center border-b border-white/10 pb-3">
-          <Search size={18} className="text-primary shrink-0 ml-2" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setSelectedIndex(0);
-            }}
-            placeholder={
-              isAz
-                ? "Məqalələr, alətlər, mövzu habları və ya şriftləri axtarın..."
-                : "Search articles, interactive tools, topic hubs, or fonts..."
-            }
-            className="w-full bg-transparent px-3 py-2 text-sm sm:text-base font-medium text-foreground focus:outline-none placeholder:text-muted-foreground/50"
-          />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              className="p-1 text-muted-foreground hover:text-white"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-
-        {/* Results List */}
-        <div className="max-h-[60vh] overflow-y-auto space-y-1.5 pr-1">
-          {filteredResults.length === 0 ? (
-            <div className="py-12 text-center text-xs text-muted-foreground">
-              {isAz ? "Heç bir nəticə tapılmadı." : "No matching articles, tools, or resources found."}
-            </div>
-          ) : (
-            filteredResults.map((item, idx) => {
-              const isSelected = idx === selectedIndex;
-
-              return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-900/[0.12] dark:bg-black/45 backdrop-blur-xs"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-2xl rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-[#121215] p-4 sm:p-5 shadow-[0_20px_60px_rgba(15,23,42,0.10)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.55)] space-y-3.5 backdrop-blur-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Search Input Field */}
+            <div className="relative flex items-center border-b border-[#DDE1E0] dark:border-white/10 pb-3">
+              <Search size={18} className="text-primary shrink-0 ml-1" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelectedIndex(0);
+                }}
+                placeholder={
+                  isAz
+                    ? "Məqalələr, mövzular və resursları axtarın..."
+                    : "Search articles, topics, and resources..."
+                }
+                className="w-full bg-transparent px-3 py-1.5 text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground focus:outline-none placeholder:text-[#64748B] dark:placeholder:text-muted-foreground/50"
+              />
+              {query && (
                 <button
-                  key={item.id}
-                  onClick={() => {
-                    trackSearchDiscovery("result_selected", {
-                      resultType: item.type,
-                      targetPath: item.path,
-                      hasQuery: Boolean(query.trim()),
-                      queryLength: query.trim().length,
-                      resultCount: filteredResults.length,
-                    });
-                    navigate(getLocalizedPath(item.path));
-                    onClose();
-                  }}
-                  onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between gap-3 rounded-xl p-3 text-left transition-all ${
-                    isSelected
-                      ? "bg-white/10 border border-primary/40 shadow-sm"
-                      : "bg-white/[0.02] border border-transparent hover:bg-white/[0.05]"
-                  }`}
+                  onClick={() => setQuery("")}
+                  className="p-1 text-[#64748B] hover:text-[#0F172A] dark:text-muted-foreground dark:hover:text-white transition-colors"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-xl shrink-0">{item.icon}</span>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-foreground truncate">
-                          {item.title}
-                        </span>
-                        <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border mono shrink-0 ${item.badgeColor}`}>
-                          {item.type}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground truncate max-w-md mt-0.5">
-                        {item.subtitle}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0 text-muted-foreground">
-                    {isSelected && (
-                      <span className="text-[10px] mono text-primary flex items-center gap-1">
-                        <span>Select</span>
-                        <CornerDownLeft size={10} />
-                      </span>
-                    )}
-                    <ArrowRight size={14} className={isSelected ? "text-primary" : "text-muted-foreground/40"} />
-                  </div>
+                  <X size={16} />
                 </button>
-              );
-            })
-          )}
-        </div>
+              )}
+            </div>
 
-        {/* Footer info & shortcut guide */}
-        <div className="flex items-center justify-between border-t border-white/10 pt-3 text-[10px] text-muted-foreground/60 mono px-1">
-          <div className="flex items-center gap-3">
-            <span>
-              <kbd className="rounded bg-white/10 px-1 py-0.5">↑</kbd> <kbd className="rounded bg-white/10 px-1 py-0.5">↓</kbd> to navigate
-            </span>
-            <span>
-              <kbd className="rounded bg-white/10 px-1 py-0.5">↵</kbd> to select
-            </span>
-            <span>
-              <kbd className="rounded bg-white/10 px-1 py-0.5">esc</kbd> to close
-            </span>
-          </div>
+            {/* Results List */}
+            <div className="max-h-[58vh] overflow-y-auto space-y-1.5 pr-1">
+              {filteredResults.length === 0 ? (
+                <div className="py-10 text-center text-xs text-[#64748B] dark:text-muted-foreground">
+                  {isAz ? "Heç bir nəticə tapılmadı." : "No matching articles, tools, or resources found."}
+                </div>
+              ) : (
+                filteredResults.map((item, idx) => {
+                  const isSelected = idx === selectedIndex;
 
-          <span className="text-primary font-bold">RVAN ECOSYSTEM SEARCH</span>
-        </div>
-      </div>
-    </div>
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        trackSearchDiscovery("result_selected", {
+                          resultType: item.type,
+                          targetPath: item.path,
+                          hasQuery: Boolean(query.trim()),
+                          queryLength: query.trim().length,
+                          resultCount: filteredResults.length,
+                        });
+                        navigate(getLocalizedPath(item.path));
+                        onClose();
+                      }}
+                      onMouseEnter={() => setSelectedIndex(idx)}
+                      className={`w-full flex items-center justify-between gap-3 rounded-xl p-3 text-left transition-all duration-150 cursor-pointer ${
+                        isSelected
+                          ? "bg-primary/10 dark:bg-white/10 border border-primary/50 dark:border-primary/40 shadow-2xs"
+                          : "bg-slate-50/70 hover:bg-slate-100/90 dark:bg-white/[0.03] dark:hover:bg-white/[0.07] border border-slate-200/70 hover:border-slate-300 dark:border-white/5 dark:hover:border-white/10"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-xl shrink-0">{item.icon}</span>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs sm:text-[13px] font-bold text-[#0F172A] dark:text-foreground truncate">
+                              {item.title}
+                            </span>
+                            <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border mono shrink-0 ${item.badgeColor}`}>
+                              {item.type}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#475569] dark:text-muted-foreground truncate max-w-md mt-0.5">
+                            {item.subtitle}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0 text-[#64748B] dark:text-muted-foreground">
+                        {isSelected && (
+                          <span className="text-[10px] mono text-primary font-semibold flex items-center gap-1">
+                            <span>Select</span>
+                            <CornerDownLeft size={10} />
+                          </span>
+                        )}
+                        <ArrowRight size={14} className={isSelected ? "text-primary" : "opacity-40"} />
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Footer info & shortcut guide */}
+            <div className="flex items-center justify-between border-t border-[#DDE1E0] dark:border-white/10 pt-3 text-[10px] text-[#64748B] dark:text-muted-foreground/70 mono px-1">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span>
+                  <kbd className="rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 text-slate-700 dark:text-slate-300 font-mono">↑</kbd>{" "}
+                  <kbd className="rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 text-slate-700 dark:text-slate-300 font-mono">↓</kbd> navigate
+                </span>
+                <span>
+                  <kbd className="rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 text-slate-700 dark:text-slate-300 font-mono">↵</kbd> select
+                </span>
+                <span>
+                  <kbd className="rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 text-slate-700 dark:text-slate-300 font-mono">esc</kbd> close
+                </span>
+              </div>
+
+              <span className="text-primary font-bold tracking-wider">RVAN SEARCH</span>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

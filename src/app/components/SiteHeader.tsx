@@ -91,7 +91,7 @@ function UserAuthMenu() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-border bg-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-[#DDE1E0] dark:border-border bg-white dark:bg-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden"
           >
             {/* Identity / Header area */}
             {!user ? (
@@ -122,14 +122,14 @@ function UserAuthMenu() {
                 </div>
 
                 {/* QUICK PREFERENCES */}
-                <div className="border-t border-border p-3.5 space-y-3 bg-surface/30">
+                <div className="border-t border-[#DDE1E0] dark:border-border p-3.5 space-y-3 bg-slate-50/50 dark:bg-surface/30">
                   {/* Appearance Segmented Control */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
                       <span>{language === "az" ? "GÖRÜNÜŞ" : "APPEARANCE"}</span>
                       <span className="text-primary">{theme === "dark" ? (language === "az" ? "Tünd" : "Dark") : (language === "az" ? "Açıq" : "Light")}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white dark:bg-card border border-[#DDE1E0] dark:border-border">
                       <button
                         type="button"
                         onClick={() => setTheme("dark")}
@@ -173,7 +173,7 @@ function UserAuthMenu() {
                       <span>{language === "az" ? "DİL" : "LANGUAGE"}</span>
                       <span className="text-primary uppercase">{language}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-white dark:bg-card border border-[#DDE1E0] dark:border-border">
                       <button
                         type="button"
                         onClick={() => switchLanguage("az")}
@@ -215,7 +215,7 @@ function UserAuthMenu() {
             ) : (
               /* Signed In Profile View */
               <div>
-                <div className="p-4 border-b border-border space-y-3">
+                <div className="p-4 border-b border-[#DDE1E0] dark:border-border space-y-3">
                   <div className="flex items-center gap-3">
                     {userPhoto ? (
                       <img
@@ -252,11 +252,11 @@ function UserAuthMenu() {
                 </div>
 
                 {/* Profile navigation actions */}
-                <div className="p-2 border-b border-border space-y-1">
+                <div className="p-2 border-b border-[#DDE1E0] dark:border-border space-y-1">
                   <Link
                     to={getLocalizedPath("/profile")}
                     onClick={() => setDropdownOpen(false)}
-                    className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
                   >
                     <UserIcon size={14} className="text-primary" />
                     <span>{t("myAccount", "Mənim Hesabım")}</span>
@@ -265,7 +265,7 @@ function UserAuthMenu() {
                   <Link
                     to={getLocalizedPath("/contributor/dashboard")}
                     onClick={() => setDropdownOpen(false)}
-                    className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="text-sm">✍️</span>
@@ -280,11 +280,11 @@ function UserAuthMenu() {
                 </div>
 
                 {/* Preferences in signed in menu */}
-                <div className="p-3 border-b border-border space-y-3 bg-surface/30">
+                <div className="p-3 border-b border-[#DDE1E0] dark:border-border space-y-3 bg-slate-50/50 dark:bg-surface/30">
                   {/* Appearance Switch */}
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[11px] font-mono text-muted-foreground uppercase">{language === "az" ? "Görünüş" : "Theme"}</span>
-                    <div className="flex items-center gap-1 bg-card p-0.5 rounded-lg border border-border">
+                    <div className="flex items-center gap-1 bg-white dark:bg-card p-0.5 rounded-lg border border-[#DDE1E0] dark:border-border">
                       <button
                         type="button"
                         onClick={() => setTheme("dark")}
@@ -307,7 +307,7 @@ function UserAuthMenu() {
                   {/* Language Switch */}
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[11px] font-mono text-muted-foreground uppercase">{language === "az" ? "Dil" : "Lang"}</span>
-                    <div className="flex items-center gap-1 bg-card p-0.5 rounded-lg border border-border">
+                    <div className="flex items-center gap-1 bg-white dark:bg-card p-0.5 rounded-lg border border-[#DDE1E0] dark:border-border">
                       <button
                         type="button"
                         onClick={() => switchLanguage("az")}
@@ -355,25 +355,41 @@ interface SiteHeaderProps {
 
 export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  // Three scroll states: "top" (compact), "down" (normal expanded), "up" (subtle translucent glass)
+  const [navState, setNavState] = useState<"top" | "down" | "up">("top");
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchInitialQuery, setSearchInitialQuery] = useState("");
   const location = useLocation();
   const { t, getLocalizedPath } = useLanguage();
+  const lastScrollY = useRef(0);
 
-  // Passive, performance-optimized scroll-aware threshold listener (60px)
+  // Performance-optimized scroll listener (RAF + threshold caching)
   useEffect(() => {
     let ticking = false;
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 60;
-          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          const currentY = window.scrollY;
+          const diff = currentY - lastScrollY.current;
+
+          if (currentY < 45) {
+            setNavState((prev) => (prev !== "top" ? "top" : prev));
+          } else if (diff > 12) {
+            // Scrolling down -> expands into normal reading/navigation state
+            setNavState((prev) => (prev !== "down" ? "down" : prev));
+          } else if (diff < -12) {
+            // Scrolling up -> smooth upward translucent glass state
+            setNavState((prev) => (prev !== "up" ? "up" : prev));
+          }
+
+          lastScrollY.current = currentY;
           ticking = false;
         });
         ticking = true;
       }
     };
+
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -411,25 +427,45 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     { label: t("navContact", "CONTACT"), target: "/contact" },
   ];
 
-  // Mobile menu items (includes Home for explicit navigation)
+  // Mobile menu items
   const mobileNavItems = [
     { label: t("navHome", "HOME"), target: "/" },
     ...navItems,
   ];
 
+  // Container styling based on the 3 states
+  const getContainerStyle = () => {
+    switch (navState) {
+      case "top":
+        // Initial state at top of page: compact, lightweight, clean, editorial
+        return "max-w-[720px] md:max-w-[780px] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/60 dark:bg-[#121215]/60 border border-black/5 dark:border-white/5 shadow-2xs backdrop-blur-md mx-3 sm:mx-auto";
+      case "down":
+        // User scrolls down: smoothly grows into normal reading/navigation state
+        return "max-w-[960px] md:max-w-[1040px] px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl sm:rounded-full bg-white/94 dark:bg-[#121215]/92 border border-[#DDE1E0] dark:border-white/10 shadow-[0_6px_20px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4)] backdrop-blur-xl mx-4 sm:mx-auto";
+      case "up":
+        // User scrolls up: smooth upward translucent subtle glass appearance
+        return "max-w-[820px] md:max-w-[880px] px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-white/75 dark:bg-[#121215]/75 border border-[#DDE1E0]/70 dark:border-white/10 shadow-[0_8px_24px_rgba(15,23,42,0.05)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-xl mx-3 sm:mx-auto";
+    }
+  };
+
+  const getHeaderPadding = () => {
+    switch (navState) {
+      case "top":
+        return "pt-3 sm:pt-4 pb-1";
+      case "down":
+        return "pt-2.5 sm:pt-3 pb-1";
+      case "up":
+        return "pt-2 sm:pt-2.5 pb-1";
+    }
+  };
+
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full pointer-events-none transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          scrolled ? "pt-2.5 sm:pt-3 pb-1" : "pt-4 sm:pt-5 pb-2"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 w-full pointer-events-none transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${getHeaderPadding()}`}
       >
         <div
-          className={`pointer-events-auto mx-auto flex items-center justify-between transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            scrolled
-              ? "max-w-[760px] md:max-w-[820px] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/94 dark:bg-[#121215]/92 border border-[#DDE1E0] dark:border-white/10 shadow-[0_6px_20px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4)] backdrop-blur-xl mx-3 sm:mx-auto"
-              : "max-w-[1060px] px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl bg-white/40 dark:bg-white/[0.04] border border-black/5 dark:border-white/5 shadow-2xs backdrop-blur-md mx-4 sm:mx-auto"
-          }`}
+          className={`pointer-events-auto mx-auto flex items-center justify-between transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${getContainerStyle()}`}
         >
           {/* Logo & Brand — Original untouched asset */}
           <Link
@@ -443,7 +479,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               width={32}
               height={32}
               className={`object-contain transition-all duration-300 group-hover:scale-105 ${
-                scrolled ? "h-6 w-6 sm:h-7 sm:w-7" : "h-7 w-7 sm:h-8 sm:w-8"
+                navState === "top" ? "h-6 w-6 sm:h-6.5 sm:w-6.5" : "h-6.5 w-6.5 sm:h-7.5 sm:w-7.5"
               }`}
             />
             <span className="hidden sm:inline-block text-[11px] font-bold tracking-[.14em] uppercase text-foreground leading-none">
@@ -454,7 +490,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           {/* Desktop Navigation — Clean compact horizontal pill */}
           <nav
             className={`hidden md:flex items-center text-[11px] font-bold tracking-[.1em] mono uppercase transition-all duration-300 ${
-              scrolled ? "gap-1 sm:gap-1.5" : "gap-1.5 sm:gap-2.5"
+              navState === "top" ? "gap-1 sm:gap-1.5" : "gap-1.5 sm:gap-2.5"
             }`}
           >
             {navItems.map((item) => {
