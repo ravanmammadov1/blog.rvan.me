@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Sparkles, TrendingUp, Clock, BookOpen } from "lucide-react";
+import { ArrowUpRight, Sparkles, TrendingUp, Clock, BookOpen, Compass, Brain, Zap } from "lucide-react";
 import { fetchAllBlogs } from "../../../lib/sanityQueries";
 import BlogCard from "../blog/BlogCard";
 import { Eyebrow } from "../Eyebrow";
@@ -110,11 +110,11 @@ export default function BlogSection() {
             onClick={() => setActiveFilter("latest")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
               activeFilter === "latest"
-                ? "bg-primary text-black shadow-lg shadow-primary/20"
-                : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
             }`}
           >
-            <Clock size={13} />
+            <Clock size={13} className={activeFilter === "latest" ? "text-black" : "text-primary"} />
             <span>{isAz ? "Ən Son Nəşrlər" : "Latest Essays"}</span>
           </button>
 
@@ -122,11 +122,11 @@ export default function BlogSection() {
             onClick={() => setActiveFilter("most_read")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
               activeFilter === "most_read"
-                ? "bg-primary text-black shadow-lg shadow-primary/20"
-                : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
             }`}
           >
-            <TrendingUp size={13} />
+            <TrendingUp size={13} className={activeFilter === "most_read" ? "text-black" : "text-emerald-500"} />
             <span>{isAz ? "Ən Çox Oxunanlar" : "Most Read"}</span>
           </button>
 
@@ -134,39 +134,42 @@ export default function BlogSection() {
             onClick={() => setActiveFilter("design")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
               activeFilter === "design"
-                ? "bg-primary text-black shadow-lg shadow-primary/20"
-                : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
             }`}
           >
-            <span>📐 Design & Type</span>
+            <Compass size={13} className={activeFilter === "design" ? "text-black" : "text-primary"} />
+            <span>Design & Type</span>
           </button>
 
           <button
             onClick={() => setActiveFilter("psychology")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
               activeFilter === "psychology"
-                ? "bg-primary text-black shadow-lg shadow-primary/20"
-                : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
             }`}
           >
-            <span>🧠 Psychology & UX</span>
+            <Brain size={13} className={activeFilter === "psychology" ? "text-black" : "text-secondary"} />
+            <span>Psychology & UX</span>
           </button>
 
           <button
             onClick={() => setActiveFilter("marketing")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
               activeFilter === "marketing"
-                ? "bg-primary text-black shadow-lg shadow-primary/20"
-                : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
             }`}
           >
-            <span>⚡ Marketing & Brand</span>
+            <Zap size={13} className={activeFilter === "marketing" ? "text-black" : "text-accent"} />
+            <span>Marketing & Brand</span>
           </button>
         </div>
 
         {/* 6-Card Responsive Grid */}
         {displayedPosts.length === 0 ? (
-          <div className="h-64 rounded-xl border border-white/10 bg-white/5 glass flex items-center justify-center text-muted-foreground text-sm">
+          <div className="h-64 rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/5 glass flex items-center justify-center text-muted-foreground text-sm">
             {t("noBlogArticles", "No blog articles available.")}
           </div>
         ) : (

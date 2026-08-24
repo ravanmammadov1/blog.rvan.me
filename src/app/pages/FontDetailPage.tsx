@@ -234,8 +234,8 @@ export default function FontDetailPage() {
       {/* Interactive Specimen Tester */}
       <section className="px-6 py-10 md:px-10 relative z-10">
         <div className="mx-auto max-w-[1600px] space-y-10">
-          <div className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 glass space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+          <div className="p-6 md:p-8 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#DDE1E0] dark:border-white/10">
               <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
                 <Type size={16} /> {t("liveSpecimenTester", "LIVE SPECIMEN TESTER")}
               </div>
@@ -263,8 +263,8 @@ export default function FontDetailPage() {
                       onClick={() => setSelectedWeight(w)}
                       className={`px-2.5 py-1 rounded-full border transition-all ${
                         selectedWeight === w
-                          ? "border-primary bg-primary/20 text-primary"
-                          : "border-white/10 text-muted-foreground hover:text-foreground"
+                          ? "border-primary bg-primary/20 text-primary font-bold shadow-2xs"
+                          : "border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {w}
@@ -282,12 +282,12 @@ export default function FontDetailPage() {
                 value={previewText}
                 onChange={(e) => setPreviewText(e.target.value)}
                 placeholder={t("specimenPlaceholder", "Type your custom specimen text here...")}
-                className="w-full rounded-xl border border-white/10 bg-background/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none transition-all glass-sm"
+                className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-background/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:bg-white dark:focus:bg-background focus:outline-none transition-all shadow-2xs"
               />
             </div>
 
             {/* Authentic Live Specimen Paragraph */}
-            <div className="my-6 p-6 rounded-2xl border border-white/5 bg-background/90 min-h-[160px] flex items-center overflow-hidden">
+            <div className="my-6 p-6 rounded-2xl border border-[#DDE1E0] dark:border-white/5 bg-slate-50/50 dark:bg-background/90 min-h-[160px] flex items-center overflow-hidden shadow-2xs">
               <p
                 style={{
                   fontFamily: `"${font.family}", "${font.family.replace(/\s+(Pro|Display|Extra|Variable|Math|Code|Sans|Mono|Serif)$/i, "").trim()}", system-ui, sans-serif`,
@@ -303,9 +303,9 @@ export default function FontDetailPage() {
           </div>
 
           {/* Character Set & Glyphs Preview */}
-          <div className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 glass space-y-4">
+          <div className="p-6 md:p-8 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-4">
             <h2 className="text-xs font-bold tracking-widest text-primary mono uppercase">{t("glyphOverview", "CHARACTER SET & GLYPH OVERVIEW")}</h2>
-            <div className="p-6 rounded-2xl border border-white/5 bg-background/90 font-medium space-y-4 overflow-hidden">
+            <div className="p-6 rounded-2xl border border-[#DDE1E0] dark:border-white/5 bg-slate-50/50 dark:bg-background/90 font-medium space-y-4 overflow-hidden shadow-2xs">
               <div>
                 <p className="text-[10px] text-muted-foreground mono mb-1 uppercase">{t("uppercaseAlphabet", "Uppercase Alphabet")}</p>
                 <p
@@ -335,17 +335,17 @@ export default function FontDetailPage() {
               </div>
 
               {/* Azerbaijani Latin Special Glyphs */}
-              <div className="pt-2 border-t border-white/5">
+              <div className="pt-2 border-t border-[#DDE1E0] dark:border-white/5">
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <p className="text-[10px] text-muted-foreground mono uppercase">
                     {language === "az" ? "Azərbaycan Latın Əlifbası (Xüsusi Qliflər)" : "Azerbaijani Latin Special Glyphs"}
                   </p>
                   {font.supportsAzerbaijani ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 mono">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-500 mono">
                       <CheckCircle2 size={11} /> {language === "az" ? "Dəstəklənir (100% Tam Dəstək)" : "Azerbaijani Supported"}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-400/80 mono">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-500 mono">
                       {language === "az" ? "Standart Latın Qlifləri" : "Standard Latin Coverage"}
                     </span>
                   )}
@@ -362,23 +362,23 @@ export default function FontDetailPage() {
 
           {/* Metadata & Technical Specs Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
+            <div className="p-5 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("designerFoundry", "DESIGNER & FOUNDRY")}</span>
               <p className="mt-2 text-base font-bold text-foreground">{font.designer}</p>
               <p className="text-xs text-muted-foreground mono mt-0.5">{font.foundry}</p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
+            <div className="p-5 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("categoryStyles", "CATEGORY & STYLES")}</span>
               <p className="mt-2 text-base font-bold text-primary">{font.category}</p>
               <p className="text-xs text-muted-foreground mono mt-0.5">{font.stylesCount} {t("includedStyles", "Included Styles")}</p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
+            <div className="p-5 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <span className="text-[10px] font-bold text-muted-foreground mono uppercase">
                 {language === "az" ? "AZƏRBAYCAN DİLİ" : "AZERBAIJANI LANGUAGE"}
               </span>
-              <p className={`mt-2 text-base font-bold ${font.supportsAzerbaijani ? "text-emerald-400" : "text-amber-400"}`}>
+              <p className={`mt-2 text-base font-bold ${font.supportsAzerbaijani ? "text-emerald-500" : "text-amber-500"}`}>
                 {font.supportsAzerbaijani
                   ? (language === "az" ? "Tam Dəstək (Ə, ğ, ı, ö, ş, ü, ç)" : "Verified (Ə, ğ, ı, ö, ş, ü, ç)")
                   : (language === "az" ? "Standart Latın" : "Standard Latin")}
@@ -388,9 +388,9 @@ export default function FontDetailPage() {
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-white/5 glass">
+            <div className="p-5 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <span className="text-[10px] font-bold text-muted-foreground mono uppercase">{t("commercialLicense", "COMMERCIAL LICENSE")}</span>
-              <p className="mt-2 text-base font-bold text-emerald-400 flex items-center gap-1.5">
+              <p className="mt-2 text-base font-bold text-emerald-500 flex items-center gap-1.5">
                 <BadgeCheck size={16} /> {t("freeCommercialUse", "Free Commercial Use")}
               </p>
               <p className="text-xs text-muted-foreground mono mt-0.5">{font.license}</p>
@@ -398,7 +398,7 @@ export default function FontDetailPage() {
           </div>
 
           {/* Developer Integration & CDN Code Snippets */}
-          <div className="p-6 md:p-8 rounded-3xl border border-white/10 bg-white/5 glass space-y-4">
+          <div className="p-6 md:p-8 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-bold tracking-widest text-primary mono uppercase flex items-center gap-2">
                 <Sparkles size={14} /> DEVELOPER INTEGRATION & SOURCES
@@ -408,12 +408,12 @@ export default function FontDetailPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               {/* 1. Fontsource NPM */}
-              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2">
+              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-background/80 border border-[#DDE1E0] dark:border-white/10 space-y-2 shadow-2xs">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-mono font-bold text-primary">Fontsource (NPM / Self-Hosted)</span>
-                  <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">NPM</span>
+                  <span className="text-[9px] font-mono bg-slate-200 dark:bg-white/10 px-2 py-0.5 rounded text-foreground">NPM</span>
                 </div>
-                <pre className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-zinc-300 overflow-x-auto select-all">
+                <pre className="p-2.5 rounded-xl bg-slate-900 font-mono text-xs text-zinc-100 overflow-x-auto select-all">
                   npm install @fontsource/{getFontSlug(font)}
                 </pre>
                 <p className="text-[10px] text-muted-foreground font-mono">
@@ -422,26 +422,26 @@ export default function FontDetailPage() {
               </div>
 
               {/* 2. Google Fonts HTML */}
-              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2">
+              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-background/80 border border-[#DDE1E0] dark:border-white/10 space-y-2 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono font-bold text-cyan-400">Google Fonts CDN</span>
-                  <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">HTML LINK</span>
+                  <span className="text-[11px] font-mono font-bold text-sky-600 dark:text-cyan-400">Google Fonts CDN</span>
+                  <span className="text-[9px] font-mono bg-slate-200 dark:bg-white/10 px-2 py-0.5 rounded text-foreground">HTML LINK</span>
                 </div>
-                <pre className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-zinc-300 overflow-x-auto select-all">
+                <pre className="p-2.5 rounded-xl bg-slate-900 font-mono text-xs text-zinc-100 overflow-x-auto select-all">
                   {`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(font.family).replace(/%20/g, "+")}:wght@400;600;700&display=swap" />`}
                 </pre>
                 <p className="text-[10px] text-muted-foreground font-mono">
-                  CSS rule: <code className="text-cyan-400">font-family: '{font.family}', sans-serif;</code>
+                  CSS rule: <code className="text-sky-600 dark:text-cyan-400">font-family: '{font.family}', sans-serif;</code>
                 </p>
               </div>
 
               {/* 3. Bunny Fonts Privacy CDN */}
-              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2">
+              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-background/80 border border-[#DDE1E0] dark:border-white/10 space-y-2 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono font-bold text-emerald-400">Bunny Fonts (Zero-Tracking CDN)</span>
-                  <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">GDPR COMPLIANT</span>
+                  <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400">Bunny Fonts (Zero-Tracking CDN)</span>
+                  <span className="text-[9px] font-mono bg-slate-200 dark:bg-white/10 px-2 py-0.5 rounded text-foreground">GDPR COMPLIANT</span>
                 </div>
-                <pre className="p-2.5 rounded-xl bg-black/60 font-mono text-xs text-zinc-300 overflow-x-auto select-all">
+                <pre className="p-2.5 rounded-xl bg-slate-900 font-mono text-xs text-zinc-100 overflow-x-auto select-all">
                   {`<link rel="stylesheet" href="https://fonts.bunny.net/css?family=${getFontSlug(font)}:400,600,700" />`}
                 </pre>
                 <p className="text-[10px] text-muted-foreground font-mono">
@@ -450,14 +450,14 @@ export default function FontDetailPage() {
               </div>
 
               {/* 4. Open Foundry & Direct Source */}
-              <div className="p-4 rounded-2xl bg-background/80 border border-white/10 space-y-2 flex flex-col justify-between">
+              <div className="p-4 rounded-2xl bg-slate-50/80 dark:bg-background/80 border border-[#DDE1E0] dark:border-white/10 space-y-2 flex flex-col justify-between shadow-2xs">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-mono font-bold text-purple-400">Open Foundry & Releases</span>
-                    <span className="text-[9px] font-mono bg-white/10 px-2 py-0.5 rounded text-white">OFFICIAL</span>
+                    <span className="text-[11px] font-mono font-bold text-purple-600 dark:text-purple-400">Open Foundry & Releases</span>
+                    <span className="text-[9px] font-mono bg-slate-200 dark:bg-white/10 px-2 py-0.5 rounded text-foreground">OFFICIAL</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Open-source licensed under <strong className="text-white">{font.license}</strong>. Direct download includes all TTF, OTF, and WOFF2 family binaries.
+                    Open-source licensed under <strong className="text-foreground">{font.license}</strong>. Direct download includes all TTF, OTF, and WOFF2 family binaries.
                   </p>
                 </div>
                 <div className="pt-2">
@@ -478,10 +478,10 @@ export default function FontDetailPage() {
           </div>
 
           {/* Resource -> Tool Discovery Bridge */}
-          <div className="p-6 md:p-8 rounded-3xl border border-sky-500/30 bg-sky-500/5 space-y-4">
+          <div className="p-6 md:p-8 rounded-3xl border border-sky-500/30 bg-sky-500/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 mono">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mono">
                   {language === "az" ? "TİPOQRAFİYA ALƏTİ" : "PRACTICAL TYPOGRAPHY WORKBENCH"}
                 </span>
                 <h3 className="text-xl font-bold text-foreground">
@@ -497,7 +497,7 @@ export default function FontDetailPage() {
               </div>
               <Link
                 to={getLocalizedPath("/tools/typography-scale")}
-                className="inline-flex items-center gap-2 rounded-xl bg-sky-400 px-5 py-2.5 text-xs font-bold text-black uppercase tracking-wider mono shrink-0 hover:bg-sky-300 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-5 py-2.5 text-xs font-bold text-white uppercase tracking-wider mono shrink-0 hover:bg-sky-600 transition-colors shadow-sm"
               >
                 <span>{language === "az" ? "Clamp Kalkulyatorunu Aç" : "Launch Scale Tool"}</span>
                 <ArrowRight size={14} />
@@ -508,9 +508,9 @@ export default function FontDetailPage() {
           {/* Contextual Topic Hub & Editorial Ecosystem Links */}
           <div className="grid gap-6 md:grid-cols-2">
             {/* Topic Hub Link */}
-            <div className="p-6 rounded-3xl border border-white/10 bg-white/[0.02] glass flex flex-col justify-between space-y-4">
+            <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none flex flex-col justify-between space-y-4">
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-sky-400 mono uppercase">
+                <div className="flex items-center gap-2 text-xs font-bold text-sky-600 dark:text-sky-400 mono uppercase">
                   <Compass size={14} /> {language === "az" ? "MÖVZU MƏRKƏZİ" : "TOPIC ECOSYSTEM HUB"}
                 </div>
                 <h4 className="text-base font-bold text-foreground">
@@ -524,7 +524,7 @@ export default function FontDetailPage() {
               </div>
               <Link
                 to={getLocalizedPath("/resources?category=fonts")}
-                className="inline-flex items-center gap-2 text-xs font-bold text-sky-400 mono uppercase hover:underline"
+                className="inline-flex items-center gap-2 text-xs font-bold text-sky-600 dark:text-sky-400 mono uppercase hover:underline"
               >
                 <span>{language === "az" ? "Şrift Resurslarını Kəşf Et" : "Explore Font Resources"}</span>
                 <ArrowRight size={12} />
@@ -532,7 +532,7 @@ export default function FontDetailPage() {
             </div>
 
             {/* Pillar Guide Link */}
-            <div className="p-6 rounded-3xl border border-white/10 bg-white/[0.02] glass flex flex-col justify-between space-y-4">
+            <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
                   <BookOpen size={14} /> {language === "az" ? "ƏSAS BƏLƏDÇİ" : "FLAGSHIP PILLAR STUDY"}
@@ -558,7 +558,7 @@ export default function FontDetailPage() {
 
           {/* Similar Fonts Section */}
           {similarFonts.length > 0 && (
-            <div className="pt-8 border-t border-white/10 space-y-6">
+            <div className="pt-8 border-t border-[#DDE1E0] dark:border-white/10 space-y-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold tracking-tight text-foreground">{t("similarTypefaces", "Similar Typefaces")} ({font.category})</h2>

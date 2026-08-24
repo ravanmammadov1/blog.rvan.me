@@ -71,7 +71,7 @@
 }
 
 .light {
-  --background: #f5f6f5;
+  --background: #f6f8f7;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
@@ -84,14 +84,14 @@
   --surface: #ffffff;
   --secondary: #426fba;
   --secondary-foreground: #ffffff;
-  --muted: #eaecec;
+  --muted: #edf2f0;
   --muted-foreground: #475569;
   --accent: #984f9f;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #dde1e0;
-  --input: #dde1e0;
+  --border: #dbe2e0;
+  --input: #dbe2e0;
   --input-background: #ffffff;
   --switch-background: #cbd5e1;
 }

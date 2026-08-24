@@ -9,13 +9,13 @@ import { FilterChips, FilterOption } from "../components/common/FilterChips";
 import { JobCard } from "../components/content/JobCard";
 import { ScholarshipCard } from "../components/content/ScholarshipCard";
 import { ContentCard } from "../components/content/ContentCard";
-import { Briefcase, Sparkles } from "lucide-react";
+import { Briefcase, Sparkles, Globe, GraduationCap, Trophy } from "lucide-react";
 
 const OPPORTUNITY_FILTERS: FilterOption[] = [
-  { key: "all", label: "All Opportunities", icon: "🌐" },
-  { key: "remoteJob", label: "Remote Jobs", icon: "💼" },
-  { key: "scholarship", label: "Scholarships & Grants", icon: "🎓" },
-  { key: "competition", label: "Contests & Hackathons", icon: "🏆" },
+  { key: "all", label: "All Opportunities", icon: <Globe size={13} /> },
+  { key: "remoteJob", label: "Remote Jobs", icon: <Briefcase size={13} /> },
+  { key: "scholarship", label: "Scholarships & Grants", icon: <GraduationCap size={13} /> },
+  { key: "competition", label: "Contests & Hackathons", icon: <Trophy size={13} /> },
 ];
 
 export const OpportunityArchivePage: React.FC = () => {

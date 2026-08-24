@@ -84,7 +84,7 @@ export default function TermsPage() {
         <div className="mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-12">
           {/* Sidebar Navigation */}
           <div className="hidden lg:block lg:col-span-4 space-y-3 sticky top-32 h-fit">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">
+            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 p-6 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <p className="text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
                 CONTENTS OVERVIEW
               </p>
@@ -113,7 +113,7 @@ export default function TermsPage() {
             </div>
 
             {/* 2. Intellectual Property */}
-            <div id="intellectual-property" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="intellectual-property" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">02.</span> Intellectual Property
               </h2>
@@ -126,7 +126,7 @@ export default function TermsPage() {
             </div>
 
             {/* 3. Acceptable Use */}
-            <div id="acceptable-use" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="acceptable-use" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">03.</span> Acceptable Use Policy
               </h2>
@@ -139,7 +139,7 @@ export default function TermsPage() {
             </div>
 
             {/* 4. External Links */}
-            <div id="external-links" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="external-links" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">04.</span> External Directory Links
               </h2>
@@ -149,7 +149,7 @@ export default function TermsPage() {
             </div>
 
             {/* 5. Limitation of Liability */}
-            <div id="limitation-liability" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="limitation-liability" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">05.</span> Limitation of Liability
               </h2>
@@ -159,7 +159,7 @@ export default function TermsPage() {
             </div>
 
             {/* 6. Modifications */}
-            <div id="changes" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="changes" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">06.</span> Modifications to Terms
               </h2>
@@ -169,12 +169,12 @@ export default function TermsPage() {
             </div>
 
             {/* 7. Contact */}
-            <div id="contact" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="contact" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">07.</span> Contact Information
               </h2>
               <p>For inquiries regarding these Terms of Service, contact:</p>
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3">
+              <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none flex items-center gap-3">
                 <Mail size={18} className="text-primary shrink-0" />
                 <div>
                   <p className="text-xs font-bold text-foreground">Legal — Rvan.me Studio</p>

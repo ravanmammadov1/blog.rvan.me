@@ -153,7 +153,7 @@ export default function ContributorDashboardPage() {
       <section className="px-6 pt-28 pb-20 md:px-10 md:pt-36">
         <div className="mx-auto max-w-[1400px]">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-white/10 pb-8 mb-10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-[#DDE1E0] dark:border-white/10 pb-8 mb-10">
             <div>
               <span className="text-xs font-bold tracking-widest text-primary mono uppercase flex items-center gap-2">
                 <PenTool size={14} /> {isAz ? "KONTRIBUTOR VƏ REDAKSİYA MƏRKƏZİ" : "CONTRIBUTOR & EDITORIAL HUB"}
@@ -190,7 +190,7 @@ export default function ContributorDashboardPage() {
           </div>
 
           {!user ? (
-            <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-12 text-center backdrop-blur-2xl">
+            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-12 text-center shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-2xl">
               <ShieldCheck size={36} className="mx-auto text-primary mb-4" />
               <h2 className="text-2xl font-bold text-foreground">
                 {isAz ? "Müəllif kimi qoşulmaq üçün daxil olun" : "Sign in to access your Contributor Hub"}
@@ -208,23 +208,23 @@ export default function ContributorDashboardPage() {
             <div className="space-y-10">
               {/* Stats Overview Grid */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl">
+                <div className="rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                   <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
                     <span>{isAz ? "Dərc Olunmuş" : "Published"}</span>
-                    <CheckCircle size={16} className="text-emerald-400" />
+                    <CheckCircle size={16} className="text-emerald-500" />
                   </div>
                   <p className="mt-3 text-3xl font-extrabold text-foreground">{stats.publishedCount}</p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl">
+                <div className="rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                   <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
                     <span>{isAz ? "Baxışda Olan" : "Under Review"}</span>
-                    <Clock size={16} className="text-amber-400" />
+                    <Clock size={16} className="text-amber-500" />
                   </div>
                   <p className="mt-3 text-3xl font-extrabold text-foreground">{stats.submittedCount}</p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl">
+                <div className="rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                   <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
                     <span>{isAz ? "Qaralamalar" : "Drafts"}</span>
                     <FileText size={16} className="text-primary" />
@@ -232,17 +232,17 @@ export default function ContributorDashboardPage() {
                   <p className="mt-3 text-3xl font-extrabold text-foreground">{stats.draftsCount}</p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl">
+                <div className="rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                   <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
                     <span>{isAz ? "Profil Dolğunluğu" : "Profile Completeness"}</span>
-                    <UserCheck size={16} className="text-sky-400" />
+                    <UserCheck size={16} className="text-sky-500" />
                   </div>
                   <p className="mt-3 text-3xl font-extrabold text-foreground">{stats.profileCompleteness}%</p>
                 </div>
               </div>
 
               {/* Contributor Profile Status Bar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-6 backdrop-blur-xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-6 backdrop-blur-xl">
                 <div>
                   <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-primary uppercase">
                     <Sparkles size={14} /> {isAz ? "Status: Aktiv Kontributor" : "Status: Active Contributor"}
@@ -267,7 +267,7 @@ export default function ContributorDashboardPage() {
                 </h2>
 
                 {articles.length === 0 ? (
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-10 text-center backdrop-blur-xl">
+                  <div className="rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-10 text-center shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                     <PenTool size={28} className="mx-auto text-muted-foreground/40 mb-3" />
                     <p className="text-sm font-semibold text-foreground">
                       {isAz ? "Hələ heç bir məqalə qaralamanız yoxdur" : "No articles drafted yet"}
@@ -283,17 +283,17 @@ export default function ContributorDashboardPage() {
                     {articles.map((art) => (
                       <div
                         key={art.id}
-                        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-xl hover:border-primary/40 transition-colors"
+                        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-5 shadow-[0_4px_20px_rgba(15,23,42,0.03)] dark:shadow-none backdrop-blur-xl hover:border-primary/40 transition-colors"
                       >
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span
                               className={`text-[10px] font-bold mono uppercase px-2 py-0.5 rounded-full border ${
                                 art.status === "published"
-                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                                   : art.status === "submitted"
-                                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                                  : "bg-white/10 text-muted-foreground border-white/15"
+                                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                  : "bg-slate-100 dark:bg-white/10 text-muted-foreground border-slate-200 dark:border-white/15"
                               }`}
                             >
                               {art.status}
@@ -329,13 +329,13 @@ export default function ContributorDashboardPage() {
       {/* Editor Modal */}
       {editorOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-2xl rounded-3xl border border-white/15 bg-neutral-900/95 p-6 md:p-8 shadow-2xl backdrop-blur-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-2xl rounded-3xl border border-[#DDE1E0] dark:border-white/15 bg-white dark:bg-neutral-900/95 p-6 md:p-8 shadow-2xl backdrop-blur-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold text-foreground mb-4">
               {editingDraft.id ? (isAz ? "Məqaləni Redaktə Et" : "Edit Article Draft") : (isAz ? "Yeni Məqalə Yaz" : "Draft New Article")}
             </h2>
 
             {saveSuccessMsg && (
-              <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-400">
+              <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400">
                 {saveSuccessMsg}
               </div>
             )}
@@ -351,7 +351,7 @@ export default function ContributorDashboardPage() {
                   value={editingDraft.title || ""}
                   onChange={(e) => setEditingDraft({ ...editingDraft, title: e.target.value })}
                   placeholder={isAz ? "məs. Niyə Müasir Vebsaytlar Eyni Görünür?" : "e.g. Why Modern Websites All Look the Same"}
-                  className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                  className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
               </div>
 
@@ -363,7 +363,7 @@ export default function ContributorDashboardPage() {
                   <select
                     value={editingDraft.category || "Design"}
                     onChange={(e) => setEditingDraft({ ...editingDraft, category: e.target.value })}
-                    className="w-full rounded-xl border border-white/15 bg-neutral-800 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                    className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50 dark:bg-neutral-800 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                   >
                     <option value="Design">Design</option>
                     <option value="Psychology">Psychology</option>
@@ -382,7 +382,7 @@ export default function ContributorDashboardPage() {
                   <select
                     value={editingDraft.language || "en"}
                     onChange={(e) => setEditingDraft({ ...editingDraft, language: e.target.value as "en" | "az" })}
-                    className="w-full rounded-xl border border-white/15 bg-neutral-800 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                    className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50 dark:bg-neutral-800 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                   >
                     <option value="en">English</option>
                     <option value="az">Azərbaycan dili</option>
@@ -400,7 +400,7 @@ export default function ContributorDashboardPage() {
                   value={editingDraft.excerpt || ""}
                   onChange={(e) => setEditingDraft({ ...editingDraft, excerpt: e.target.value })}
                   placeholder={isAz ? "Məqalənin əsas tezisi və maraqlı sualı..." : "Core premise and editorial question..."}
-                  className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                  className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
               </div>
 
@@ -414,12 +414,12 @@ export default function ContributorDashboardPage() {
                   value={editingDraft.content || ""}
                   onChange={(e) => setEditingDraft({ ...editingDraft, content: e.target.value })}
                   placeholder={isAz ? "Məqalənin tam mətni və fəsilləri..." : "Write your essay content and chapters..."}
-                  className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground font-mono focus:border-primary focus:outline-none"
+                  className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground font-mono focus:border-primary focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
+            <div className="mt-6 flex items-center justify-between border-t border-[#DDE1E0] dark:border-white/10 pt-4">
               <Button onClick={() => setEditorOpen(false)} variant="ghost" size="sm">
                 {isAz ? "Bağla" : "Close"}
               </Button>

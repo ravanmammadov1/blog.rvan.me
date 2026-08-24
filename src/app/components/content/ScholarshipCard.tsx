@@ -13,15 +13,15 @@ export const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ item }) => {
     : "Open Applications";
 
   return (
-    <article className="group p-5 aurora-card flex flex-col justify-between relative min-h-[300px] border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 rounded-2xl">
+    <article className="group p-5 aurora-card flex flex-col justify-between relative min-h-[300px] border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-lg hover:border-primary/40 hover:bg-slate-50/50 dark:hover:bg-white/[0.05] transition-all duration-300 rounded-3xl">
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="flex items-center gap-1 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-0.5 text-[9.5px] font-semibold text-purple-400 mono uppercase">
+          <span className="flex items-center gap-1 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-0.5 text-[9.5px] font-semibold text-purple-600 dark:text-purple-400 mono uppercase shadow-2xs">
             <Award size={10} /> SCHOLARSHIP & GRANT
           </span>
 
-          <span className="text-[9px] font-bold bg-white/5 border border-white/10 text-muted-foreground px-2 py-0.5 rounded-full mono flex items-center gap-1">
+          <span className="text-[9px] font-bold bg-slate-50 dark:bg-white/5 border border-[#DDE1E0] dark:border-white/10 text-muted-foreground px-2 py-0.5 rounded-full mono flex items-center gap-1">
             <Calendar size={9} /> {deadline}
           </span>
         </div>
@@ -38,14 +38,14 @@ export const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ item }) => {
 
         {/* Funding Amount */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="flex items-center gap-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-lg mono">
+          <span className="flex items-center gap-1 text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-lg mono">
             <DollarSign size={11} /> Funding: {funding}
           </span>
         </div>
       </div>
 
       {/* Footer CTA */}
-      <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between mt-auto">
+      <div className="relative z-10 border-t border-[#DDE1E0] dark:border-white/10 pt-4 flex items-center justify-between mt-auto">
         <span className="text-[9px] font-bold text-muted-foreground/50 mono uppercase">
           ACADEMIC & CREATIVE
         </span>
@@ -53,7 +53,7 @@ export const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ item }) => {
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-purple-300 hover:bg-purple-500 hover:text-black transition-all duration-300 glass-sm"
+          className="inline-flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-300 hover:bg-purple-500 hover:text-white dark:hover:text-black transition-all duration-300 glass-sm"
         >
           VIEW GRANT <ExternalLink size={10} />
         </a>

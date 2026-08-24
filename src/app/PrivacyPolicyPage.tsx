@@ -91,7 +91,7 @@ export default function PrivacyPolicyPage() {
         <div className="mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-12">
           {/* Sidebar Navigation */}
           <div className="hidden lg:block lg:col-span-4 space-y-3 sticky top-32 h-fit">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">
+            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 p-6 glass shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <p className="text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
                 SECTIONS
               </p>
@@ -121,7 +121,7 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 2. Information We Collect */}
-            <div id="information-collected" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="information-collected" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">02.</span> Information We Collect
               </h2>
@@ -139,7 +139,7 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 3. How We Use Information */}
-            <div id="how-we-use-data" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="how-we-use-data" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">03.</span> How We Use Information
               </h2>
@@ -152,7 +152,7 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 4. Third-Party Services */}
-            <div id="third-party-services" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="third-party-services" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">04.</span> Third-Party Services & Future Expansion
               </h2>
@@ -162,7 +162,7 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 5. Marketing Disclosure */}
-            <div id="marketing-disclosure" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="marketing-disclosure" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">05.</span> Marketing & Advertising Technologies
               </h2>
@@ -172,7 +172,7 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 6. Data Retention */}
-            <div id="data-retention" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="data-retention" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">06.</span> Data Retention
               </h2>
@@ -182,7 +182,7 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 7. Your Privacy Rights */}
-            <div id="user-rights" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="user-rights" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">07.</span> Your Privacy Rights & Controls
               </h2>
@@ -194,12 +194,12 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* 8. Contact Information */}
-            <div id="contact" className="space-y-4 pt-6 border-t border-white/10">
+            <div id="contact" className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
               <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
                 <span className="text-primary mono text-base">08.</span> Contact Information
               </h2>
               <p>For privacy inquiries or data requests, contact us at:</p>
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3">
+              <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none flex items-center gap-3">
                 <Mail size={18} className="text-primary shrink-0" />
                 <div>
                   <p className="text-xs font-bold text-foreground">Privacy Enquiries — Rvan.me</p>

@@ -264,6 +264,45 @@ html {
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
 }
 
+/* ─── Glass & Surface Utilities (Light & Dark Compatible) ─── */
+.glass {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.dark .glass {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-sm {
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dark .glass-sm {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel {
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.dark .glass-panel {
+  background-color: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
 /* ─── Brand Gradient Utilities ─── */
 .brand-gradient-text {
   background-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%);
@@ -274,6 +313,19 @@ html {
 
 .brand-gradient-bg {
   background-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%);
+}
+
+.brand-gradient-btn {
+  background-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%);
+  background-size: 200% 200%;
+  background-position: left center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand-gradient-btn:hover {
+  background-position: right center;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -4px rgba(97, 197, 173, 0.35);
 }
 
 .brand-gradient-border {

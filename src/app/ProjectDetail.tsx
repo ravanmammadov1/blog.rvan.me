@@ -105,7 +105,7 @@ export default function ProjectDetail() {
           <p className="mt-8 max-w-3xl text-xl leading-relaxed text-muted-foreground">{description}</p>
 
           {image && (
-            <figure className="mt-16 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+            <figure className="mt-16 overflow-hidden rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
               <img src={image} alt={`${title} ${current.type || "creative design"} project`} width={1600} height={1000} fetchPriority="high" decoding="async" className="h-auto w-full object-cover" />
               <figcaption className="px-6 py-4 text-xs text-muted-foreground mono">{current.type || "Creative design and visual direction"}</figcaption>
             </figure>
@@ -120,15 +120,15 @@ export default function ProjectDetail() {
               <div>
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mono">{t("focus", "Focus")}</h2>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {tags.map((tag) => <span key={tag} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted-foreground">{tag}</span>)}
+                  {tags.map((tag) => <span key={tag} className="rounded-full border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-1 text-xs text-muted-foreground shadow-2xs">{tag}</span>)}
                 </div>
               </div>
-              <Link to={getLocalizedPath("/contact")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+              <Link to={getLocalizedPath("/contact")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:underline">
                 {t("btnGetInTouch", "Discuss a similar project")} <ArrowUpRight size={14} />
               </Link>
             </aside>
 
-            <div className="prose prose-invert max-w-none">
+            <div className="prose prose-neutral dark:prose-invert max-w-none">
               <h2>{t("modalOverview", "Overview")}</h2>
               <p>{description}</p>
               <h2>{t("creativeDirection", "Creative direction")}</h2>
@@ -138,8 +138,8 @@ export default function ProjectDetail() {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-white/10 pt-8">
-            <Link to={getLocalizedPath("/work")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+          <div className="mt-16 border-t border-[#DDE1E0] dark:border-white/10 pt-8">
+            <Link to={getLocalizedPath("/work")} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:underline">
               <ArrowLeft size={15} /> {t("backToWork", "Back to selected work")}
             </Link>
           </div>

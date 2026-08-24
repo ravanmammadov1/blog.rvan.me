@@ -61,7 +61,7 @@ export default function WorkArchive() {
               const image = project.image || fallback?.image;
               const detailPath = getLocalizedPath(`/work/${project.slug}`);
               return (
-                <article key={project.slug} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <article key={project.slug} className="group overflow-hidden rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
                   <Link to={detailPath} className="block">
                     <div className="relative aspect-[4/3] overflow-hidden">
                       {image && (
@@ -86,7 +86,7 @@ export default function WorkArchive() {
                   <div className="p-6">
                     <p className="text-sm font-semibold text-foreground">{project.type || "Creative case study"}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{project.description || fallback?.description}</p>
-                    <Link to={detailPath} className="mt-6 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:text-white">
+                    <Link to={detailPath} className="mt-6 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase hover:underline">
                       {t("readArticle", "Read case study")} <ArrowUpRight size={14} />
                     </Link>
                   </div>
@@ -95,7 +95,7 @@ export default function WorkArchive() {
             })}
           </div>
 
-          <section className="mt-24 rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12" aria-labelledby="work-cta-heading">
+          <section className="mt-24 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 p-8 md:p-12 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none" aria-labelledby="work-cta-heading">
             <h2 id="work-cta-heading" className="text-3xl font-semibold tracking-tight md:text-5xl">{t("sectionContactTitle", "Have a project in motion?")}</h2>
             <p className="mt-4 max-w-2xl text-muted-foreground">{t("sectionContactSubtitle", "Let's discuss motion design, brand identity, graphic design, or a marketing campaign for your next launch.")}</p>
             <Link to={getLocalizedPath("/contact")} className="mt-8 inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 text-xs font-bold tracking-widest text-black mono uppercase hover:bg-white">

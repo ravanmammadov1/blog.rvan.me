@@ -7,6 +7,8 @@ import {
   Sun,
   Moon,
   Globe,
+  Languages,
+  Dices,
   Camera,
   RotateCcw,
   Check,
@@ -182,13 +184,13 @@ export default function ProfilePage() {
           </motion.div>
 
           {/* Unified Navigation Tabs */}
-          <div className="mb-10 flex items-center gap-2 border-b border-white/10 pb-4 overflow-x-auto">
+          <div className="mb-10 flex items-center gap-2 border-b border-[#DDE1E0] dark:border-white/10 pb-4 overflow-x-auto">
             <button
               onClick={() => setActiveTab("site")}
               className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all mono uppercase cursor-pointer ${
                 activeTab === "site"
-                  ? "bg-primary text-black shadow-lg shadow-primary/20"
-                  : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                  ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                  : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
               }`}
             >
               <Globe size={14} />
@@ -199,8 +201,8 @@ export default function ProfilePage() {
               onClick={() => setActiveTab("profile")}
               className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all mono uppercase cursor-pointer ${
                 activeTab === "profile"
-                  ? "bg-primary text-black shadow-lg shadow-primary/20"
-                  : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                  ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                  : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
               }`}
             >
               <UserIcon size={14} />
@@ -211,8 +213,8 @@ export default function ProfilePage() {
               onClick={() => setActiveTab("contributor")}
               className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all mono uppercase cursor-pointer ${
                 activeTab === "contributor"
-                  ? "bg-primary text-black shadow-lg shadow-primary/20"
-                  : "border border-white/10 bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                  ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                  : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
               }`}
             >
               <PenTool size={14} />
@@ -223,7 +225,7 @@ export default function ProfilePage() {
           {/* TAB 1: SITE & PREFERENCES */}
           {activeTab === "site" && (
             <motion.div variants={fadeUp} initial="hidden" animate="visible" className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                 <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
                   <Globe size={16} /> {isAz ? "DİL SEÇİMİ" : "LANGUAGE"}
                 </div>
@@ -241,29 +243,31 @@ export default function ProfilePage() {
                     onClick={() => switchLanguage("en")}
                     className={`flex items-center justify-center gap-2 rounded-2xl border p-4 text-xs font-bold mono transition-all cursor-pointer ${
                       language === "en"
-                        ? "border-primary bg-primary/10 text-primary shadow-lg shadow-primary/10"
-                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-foreground"
+                        ? "border-primary bg-primary/10 text-primary shadow-md shadow-primary/10"
+                        : "border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 text-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
-                    <span>🇬🇧 English</span>
-                    {language === "en" && <Check size={14} className="text-primary" />}
+                    <Languages size={15} className="text-primary" />
+                    <span>English</span>
+                    {language === "en" && <Check size={14} className="text-primary ml-auto" />}
                   </button>
 
                   <button
                     onClick={() => switchLanguage("az")}
                     className={`flex items-center justify-center gap-2 rounded-2xl border p-4 text-xs font-bold mono transition-all cursor-pointer ${
                       language === "az"
-                        ? "border-primary bg-primary/10 text-primary shadow-lg shadow-primary/10"
-                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-foreground"
+                        ? "border-primary bg-primary/10 text-primary shadow-md shadow-primary/10"
+                        : "border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 text-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
-                    <span>🇦🇿 Azərbaycan</span>
-                    {language === "az" && <Check size={14} className="text-primary" />}
+                    <Globe size={15} className="text-primary" />
+                    <span>Azərbaycan</span>
+                    {language === "az" && <Check size={14} className="text-primary ml-auto" />}
                   </button>
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                 <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
                   <Sun size={16} /> {isAz ? "GÖRÜNÜŞ VƏ TEMA" : "APPEARANCE & THEME"}
                 </div>
@@ -281,26 +285,26 @@ export default function ProfilePage() {
                     onClick={() => setTheme("dark")}
                     className={`flex items-center justify-center gap-2 rounded-2xl border p-4 text-xs font-bold mono transition-all cursor-pointer ${
                       theme === "dark"
-                        ? "border-primary bg-primary/10 text-primary shadow-lg shadow-primary/10"
-                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-foreground"
+                        ? "border-primary bg-primary/10 text-primary shadow-md shadow-primary/10"
+                        : "border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 text-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     <Moon size={15} />
                     <span>Dark Theme</span>
-                    {theme === "dark" && <Check size={14} className="text-primary" />}
+                    {theme === "dark" && <Check size={14} className="text-primary ml-auto" />}
                   </button>
 
                   <button
                     onClick={() => setTheme("light")}
                     className={`flex items-center justify-center gap-2 rounded-2xl border p-4 text-xs font-bold mono transition-all cursor-pointer ${
                       theme === "light"
-                        ? "border-primary bg-primary/10 text-primary shadow-lg shadow-primary/10"
-                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-foreground"
+                        ? "border-primary bg-primary/10 text-primary shadow-md shadow-primary/10"
+                        : "border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 text-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
                     <Sun size={15} />
                     <span>Light Theme</span>
-                    {theme === "light" && <Check size={14} className="text-primary" />}
+                    {theme === "light" && <Check size={14} className="text-primary ml-auto" />}
                   </button>
                 </div>
               </div>
@@ -310,7 +314,7 @@ export default function ProfilePage() {
           {/* TAB 2: PERSONAL PROFILE */}
           {activeTab === "profile" && (
             <motion.div variants={fadeUp} initial="hidden" animate="visible" className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl space-y-6">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl space-y-6">
                 <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase">
                   <UserIcon size={16} /> {isAz ? "PROFİL MƏLUMATLARI" : "ACCOUNT IDENTITY"}
                 </div>
@@ -324,14 +328,14 @@ export default function ProfilePage() {
                   <div>
                     <h3 className="text-lg font-bold text-foreground">{userName}</h3>
                     <p className="text-xs text-muted-foreground mono">{userEmail}</p>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-bold mt-2 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold mt-2 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                       <Check size={10} /> {customAvatar ? (isAz ? "Xüsusi Foto" : "Custom Photo") : (isAz ? "Vektor Avatar" : "Vector Avatar")}
                     </span>
                   </div>
                 </div>
 
                 {photoSuccessMsg && (
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-400">
+                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400">
                     {photoSuccessMsg}
                   </div>
                 )}
@@ -361,10 +365,10 @@ export default function ProfilePage() {
                     variant="secondary"
                     size="md"
                     className="w-full"
-                    icon={<Sparkles size={15} className="text-primary" />}
+                    icon={<Dices size={15} className="text-primary" />}
                     iconPosition="left"
                   >
-                    {isAz ? "Təsadüfi Vektor Avatar 🎲" : "Randomize Character Avatar 🎲"}
+                    {isAz ? "Təsadüfi Vektor Avatar Yarat" : "Randomize Character Avatar"}
                   </Button>
 
                   {customAvatar && (
@@ -382,7 +386,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl flex flex-col justify-between">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
                     <Layers size={16} /> {isAz ? "AVATAR STUDİOSU" : "VECTOR AVATAR STUDIO"}
@@ -416,8 +420,8 @@ export default function ProfilePage() {
           {/* TAB 3: CONTRIBUTOR */}
           {activeTab === "contributor" && (
             <motion.div variants={fadeUp} initial="hidden" animate="visible" className="space-y-6">
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-10 backdrop-blur-xl">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-10 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#DDE1E0] dark:border-white/10 pb-6 mb-8">
                   <div>
                     <span className="text-xs font-bold tracking-widest text-primary mono uppercase flex items-center gap-2">
                       <Briefcase size={15} /> {isAz ? "İCTİMAİ MÜƏLLİF PROFİLİ" : "PUBLIC AUTHOR PROFILE"}
@@ -448,7 +452,7 @@ export default function ProfilePage() {
                 </div>
 
                 {contributorSuccessMsg && (
-                  <div className="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-400">
+                  <div className="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400">
                     {contributorSuccessMsg}
                   </div>
                 )}
@@ -468,7 +472,7 @@ export default function ProfilePage() {
                         )
                       }
                       placeholder={isAz ? "məs. Baş Kreativ Dizayner" : "e.g. Senior Creative Designer"}
-                      className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                     />
                   </div>
 
@@ -486,7 +490,7 @@ export default function ProfilePage() {
                         )
                       }
                       placeholder={isAz ? "məs. RAM Holding" : "e.g. RAM Holding"}
-                      className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                     />
                   </div>
 
@@ -504,7 +508,7 @@ export default function ProfilePage() {
                         )
                       }
                       placeholder={isAz ? "Bakı, Azərbaycan" : "Baku, Azerbaijan"}
-                      className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                     />
                   </div>
 
@@ -527,7 +531,7 @@ export default function ProfilePage() {
                         )
                       }
                       placeholder="https://linkedin.com/in/..."
-                      className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                     />
                   </div>
 
@@ -545,7 +549,7 @@ export default function ProfilePage() {
                         )
                       }
                       placeholder={isAz ? "Tədqiqat sahəniz və dizayn baxışınız..." : "Your creative philosophy and areas of research..."}
-                      className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                     />
                   </div>
                 </div>

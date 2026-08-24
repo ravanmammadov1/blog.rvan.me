@@ -323,9 +323,9 @@ export default function FounderProfilePage() {
               custom={0.2}
               className="lg:col-span-5"
             >
-              <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-white/15 bg-white/5 backdrop-blur-2xl shadow-2xl transition-all duration-500 overflow-hidden aurora-card">
+              <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-[#DDE1E0] dark:border-white/15 bg-white dark:bg-white/5 backdrop-blur-2xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-2xl transition-all duration-500 overflow-hidden aurora-card">
                 {/* Header: Photo & Name */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-white/10 pb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-[#DDE1E0] dark:border-white/10 pb-8">
                   <div className="h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1 shadow-[0_0_30px_rgba(97,197,173,0.25)] shrink-0">
                     <picture>
                       {sanityPortraitUrl ? (
@@ -368,8 +368,8 @@ export default function FounderProfilePage() {
                 </div>
 
                 {/* Founder Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-8 border-b border-white/10">
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-8 border-b border-[#DDE1E0] dark:border-white/10">
+                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
                       {isAz ? "HAZIRDA QURULUR" : "CURRENTLY BUILDING"}
                     </span>
@@ -378,7 +378,7 @@ export default function FounderProfilePage() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
                       {isAz ? "ƏSAS MİSSİYA" : "CORE MISSION"}
                     </span>
@@ -387,7 +387,7 @@ export default function FounderProfilePage() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
                       {isAz ? "SAHƏ TƏCRÜBƏSİ" : "INDUSTRY TRACK RECORD"}
                     </span>
@@ -396,7 +396,7 @@ export default function FounderProfilePage() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
                       {isAz ? "MƏKAN" : "LOCATION"}
                     </span>
@@ -437,7 +437,7 @@ export default function FounderProfilePage() {
       {/* ─────────────────────────────────────────────────────────────────────────────
           2. AUTHENTIC PROFESSIONAL EXPERIENCE
       ───────────────────────────────────────────────────────────────────────────── */}
-      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10">
+      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-[#DDE1E0] dark:border-white/10">
         <div className="mx-auto max-w-[1600px]">
           <div className="mb-12">
             <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
@@ -452,9 +452,9 @@ export default function FounderProfilePage() {
             {activeExperience.map((exp, idx) => (
               <div
                 key={idx}
-                className="p-6 md:p-7 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl aurora-card transition-all duration-300 hover:border-primary/40"
+                className="p-6 md:p-7 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl aurora-card transition-all duration-300 hover:border-primary/40"
               >
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-white/10 pb-5 mb-5">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#DDE1E0] dark:border-white/10 pb-5 mb-5">
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
                       {exp.role}
@@ -468,7 +468,7 @@ export default function FounderProfilePage() {
                       {exp.brands.map((b) => (
                         <span
                           key={b}
-                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold text-foreground/80 mono uppercase"
+                          className="rounded-full border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-1 text-[10px] font-bold text-foreground mono uppercase shadow-2xs"
                         >
                           {b}
                         </span>
@@ -496,7 +496,7 @@ export default function FounderProfilePage() {
       {/* ─────────────────────────────────────────────────────────────────────────────
           3. SELECTED PORTFOLIO CASE STUDIES
       ───────────────────────────────────────────────────────────────────────────── */}
-      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-white/10 bg-white/[0.01]">
+      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-[#DDE1E0] dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
         <div className="mx-auto max-w-[1600px]">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
             <div>
@@ -524,10 +524,10 @@ export default function FounderProfilePage() {
                 href={`https://www.behance.net/mammadovravan`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group p-5 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-primary/40 transition-all duration-300 aurora-card flex flex-col justify-between"
+                className="group p-5 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl hover:border-primary/40 transition-all duration-300 aurora-card flex flex-col justify-between"
               >
                 <div>
-                  <div className="aspect-video w-full overflow-hidden rounded-xl bg-black mb-4 border border-white/10">
+                  <div className="aspect-video w-full overflow-hidden rounded-2xl bg-black mb-4 border border-[#DDE1E0] dark:border-white/10">
                     <img
                       src={project.behanceCoverUrl}
                       alt={project.title}
@@ -542,7 +542,7 @@ export default function FounderProfilePage() {
                     {project.description}
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold mono">
+                <div className="mt-6 pt-4 border-t border-[#DDE1E0] dark:border-white/10 flex items-center justify-between text-xs font-bold mono">
                   <span className="text-[10px] text-muted-foreground">{project.year}</span>
                   <span className="text-[10px] text-primary flex items-center gap-1">
                     {isAz ? "LAYİHƏYƏ BAX" : "VIEW PROJECT"} <ArrowUpRight size={12} />

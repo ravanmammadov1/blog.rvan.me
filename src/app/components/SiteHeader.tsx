@@ -10,6 +10,7 @@ import {
   Sun,
   Moon,
   Globe,
+  PenTool,
 } from "lucide-react";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
@@ -267,7 +268,7 @@ function UserAuthMenu() {
                     className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="text-sm">✍️</span>
+                      <PenTool size={13} className="text-primary shrink-0" />
                       <span>{t("authorPanel", "Müəllif Paneli")}</span>
                     </div>
                     {isContributor && (

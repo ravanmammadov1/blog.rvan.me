@@ -115,7 +115,7 @@ export default function PublicAuthorProfilePage() {
             <ArrowLeft size={14} /> {isAz ? "Bütün Məqalələrə Qayıt" : "Back to All Articles"}
           </Link>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-8 rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 backdrop-blur-2xl shadow-2xl">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-8 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-12 backdrop-blur-2xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-2xl">
             {/* Portrait Photo */}
             <div className="relative shrink-0">
               <img
@@ -173,7 +173,7 @@ export default function PublicAuthorProfilePage() {
                       href={profile.socialLinks.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+                      className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 shadow-2xs transition-colors"
                       aria-label="LinkedIn"
                     >
                       <Linkedin size={15} />
@@ -184,7 +184,7 @@ export default function PublicAuthorProfilePage() {
                       href={profile.socialLinks.behance}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+                      className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 shadow-2xs transition-colors"
                       aria-label="Behance"
                     >
                       <BehanceIcon size={15} />
@@ -195,7 +195,7 @@ export default function PublicAuthorProfilePage() {
                       href={profile.socialLinks.dribbble}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+                      className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 shadow-2xs transition-colors"
                       aria-label="Dribbble"
                     >
                       <DribbbleIcon size={15} />
@@ -206,7 +206,7 @@ export default function PublicAuthorProfilePage() {
                       href={profile.socialLinks.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+                      className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 shadow-2xs transition-colors"
                       aria-label="Website"
                     >
                       <Globe size={15} />
@@ -224,7 +224,7 @@ export default function PublicAuthorProfilePage() {
         <div className="mx-auto max-w-[1400px] grid gap-6 md:grid-cols-2">
           {/* Expertise Skills */}
           {profile.skills && profile.skills.length > 0 && (
-            <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl">
+            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
               <h2 className="text-xs font-bold uppercase tracking-widest text-primary mono mb-4">
                 {isAz ? "İXTİSASLAŞMA VƏ EKSPERTİZA" : "CORE EXPERTISE & COMPETENCIES"}
               </h2>
@@ -232,7 +232,7 @@ export default function PublicAuthorProfilePage() {
                 {profile.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-foreground font-medium"
+                    className="rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-1.5 text-xs text-foreground font-medium shadow-2xs"
                   >
                     {skill}
                   </span>
@@ -242,7 +242,7 @@ export default function PublicAuthorProfilePage() {
           )}
 
           {/* Professional Background */}
-          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl">
+          <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
             <h2 className="text-xs font-bold uppercase tracking-widest text-primary mono mb-4">
               {isAz ? "PEŞƏKAR TƏCRÜBƏ VƏ TƏHSİL" : "PROFESSIONAL BACKGROUND"}
             </h2>
@@ -265,7 +265,7 @@ export default function PublicAuthorProfilePage() {
       {/* Published Body of Work Section */}
       <section className="px-6 py-12 md:px-10 pb-28">
         <div className="mx-auto max-w-[1400px]">
-          <div className="mb-10 flex items-center justify-between border-b border-white/10 pb-6">
+          <div className="mb-10 flex items-center justify-between border-b border-[#DDE1E0] dark:border-white/10 pb-6">
             <div>
               <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
                 {isAz ? "MÜƏLLİFİN NƏŞRLƏRİ" : "BODY OF WORK"}

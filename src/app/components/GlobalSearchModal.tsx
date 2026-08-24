@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ArrowRight, CornerDownLeft } from "lucide-react";
+import { Search, X, ArrowRight, CornerDownLeft, FileText, Type, Sparkles } from "lucide-react";
 import { MASTER_EDITORIAL_BLOGS } from "../../lib/editorialBlogRegistry";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { trackSearchDiscovery } from "../../lib/analytics/events";
@@ -13,7 +13,7 @@ interface SearchItem {
   type: "ARTICLE" | "TOOL" | "TOPIC" | "RESOURCE";
   path: string;
   badgeColor: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 interface GlobalSearchModalProps {
@@ -44,7 +44,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
         type: "ARTICLE",
         path: `/blog/${slugStr}`,
         badgeColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-        icon: "📄",
+        icon: <FileText size={16} className="text-emerald-500" />,
       });
     });
 
@@ -56,7 +56,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
       type: "RESOURCE",
       path: "/resources?category=fonts",
       badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
-      icon: "🔤",
+      icon: <Type size={16} className="text-amber-500" />,
     });
     items.push({
       id: "res-icons",
@@ -65,7 +65,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
       type: "RESOURCE",
       path: "/resources?category=icons",
       badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
-      icon: "✨",
+      icon: <Sparkles size={16} className="text-amber-500" />,
     });
 
     return items;
@@ -217,7 +217,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xl shrink-0">{item.icon}</span>
+                        <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">{item.icon}</span>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-xs sm:text-[13px] font-bold text-[#0F172A] dark:text-foreground truncate">

@@ -3,7 +3,7 @@ import React from "react";
 export interface FilterOption {
   key: string;
   label: string;
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 interface FilterChipsProps {
@@ -29,8 +29,8 @@ export const FilterChips: React.FC<FilterChipsProps> = ({
             onClick={() => onSelect(opt.key)}
             className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               isActive
-                ? "text-white font-extrabold shadow-[0_0_20px_rgba(97,197,173,0.35)]"
-                : "border border-white/10 bg-white/5 hover:border-[#61c5ad]/50 text-muted-foreground hover:text-foreground glass-sm"
+                ? "text-white font-extrabold shadow-md shadow-primary/20"
+                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 hover:border-primary/50 text-foreground dark:text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10 shadow-2xs"
             }`}
             style={
               isActive

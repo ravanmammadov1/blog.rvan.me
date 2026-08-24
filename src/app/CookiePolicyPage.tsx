@@ -100,14 +100,14 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* 2. Categorization */}
-          <div className="space-y-6 pt-6 border-t border-white/10">
+          <div className="space-y-6 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
             <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
               <span className="text-primary mono text-base">02.</span> Cookie Categories
             </h2>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {/* Category 1 */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 space-y-2">
+              <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-2">
                 <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider block">
                   CATEGORY 01 · MANDATORY
                 </span>
@@ -118,7 +118,7 @@ export default function CookiePolicyPage() {
               </div>
 
               {/* Category 2 */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 space-y-2">
+              <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-2">
                 <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider block">
                   CATEGORY 02 · OPTIONAL
                 </span>
@@ -129,7 +129,7 @@ export default function CookiePolicyPage() {
               </div>
 
               {/* Category 3 */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 space-y-2">
+              <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-2">
                 <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider block">
                   CATEGORY 03 · OPTIONAL
                 </span>
@@ -140,8 +140,8 @@ export default function CookiePolicyPage() {
               </div>
 
               {/* Category 4 */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-white/5 space-y-2">
-                <span className="text-[10px] font-bold text-amber-400 mono uppercase tracking-wider block">
+              <div className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none space-y-2">
+                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 mono uppercase tracking-wider block">
                   CATEGORY 04 · INACTIVE
                 </span>
                 <h3 className="text-base font-bold text-foreground">Marketing & Ads</h3>
@@ -153,7 +153,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* 3. Managing Preferences */}
-          <div className="space-y-4 pt-6 border-t border-white/10">
+          <div className="space-y-4 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
             <h2 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2">
               <span className="text-primary mono text-base">03.</span> Managing Your Preferences
             </h2>

@@ -259,7 +259,7 @@ export default function ContactPage() {
                           placeholder={t("placeholderName", "Your name")}
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
+                          className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:bg-white dark:focus:bg-background/80 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 shadow-2xs"
                         />
                       </div>
 
@@ -276,7 +276,7 @@ export default function ContactPage() {
                           placeholder={t("placeholderEmail", "your@email.com")}
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300"
+                          className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:bg-white dark:focus:bg-background/80 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 shadow-2xs"
                         />
                       </div>
                     </div>
@@ -293,12 +293,12 @@ export default function ContactPage() {
                         placeholder={t("placeholderMessage", "How can we collaborate? Share your details...")}
                         value={formData.projectDetails}
                         onChange={(e) => setFormData({ ...formData, projectDetails: e.target.value })}
-                        className="w-full rounded-xl border border-white/10 bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none"
+                        className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-background/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:bg-white dark:focus:bg-background/80 focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all duration-300 resize-none shadow-2xs"
                       />
                     </div>
 
                     {status === "error" && (
-                      <div className="flex items-center gap-2 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl">
+                      <div className="flex items-center gap-2 text-xs text-rose-500 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl">
                         <AlertCircle size={16} className="shrink-0" />
                         <span>{errorMessage}</span>
                       </div>
@@ -307,7 +307,11 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={status === "loading"}
-                      className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-primary px-8 py-3.5 text-[11px] font-bold tracking-[.18em] text-black uppercase transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(216,255,68,0.3)] mono disabled:opacity-50"
+                      className="group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl px-8 py-3.5 text-xs font-bold tracking-[.18em] text-white uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/25 mono disabled:opacity-50 cursor-pointer"
+                      style={{
+                        backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)",
+                        backgroundSize: "200% 200%",
+                      }}
                     >
                       {status === "loading" ? (
                         <>
@@ -315,7 +319,7 @@ export default function ContactPage() {
                         </>
                       ) : (
                         <>
-                          {t("btnSendMessage", "SEND MESSAGE")} <Send size={13} />
+                          {t("btnSendMessage", "SEND MESSAGE")} <Send size={13} className="transition-transform group-hover:translate-x-1" />
                         </>
                       )}
                     </button>

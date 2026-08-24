@@ -7,13 +7,13 @@ import { useSearchFilter } from "../hooks/useSearchFilter";
 import { SearchBar } from "../components/common/SearchBar";
 import { FilterChips, FilterOption } from "../components/common/FilterChips";
 import { ToolCard } from "../components/content/ToolCard";
-import { Cpu, Sparkles } from "lucide-react";
+import { Cpu, Sparkles, Gem, Gift, Zap, CreditCard } from "lucide-react";
 
 const PRICING_FILTERS: FilterOption[] = [
-  { key: "all", label: "All Pricing", icon: "💎" },
-  { key: "free", label: "100% Free", icon: "🎁" },
-  { key: "freemium", label: "Freemium", icon: "⚡" },
-  { key: "paid", label: "Paid / Pro", icon: "💳" },
+  { key: "all", label: "All Pricing", icon: <Gem size={13} /> },
+  { key: "free", label: "100% Free", icon: <Gift size={13} /> },
+  { key: "freemium", label: "Freemium", icon: <Zap size={13} /> },
+  { key: "paid", label: "Paid / Pro", icon: <CreditCard size={13} /> },
 ];
 
 export const AiToolArchivePage: React.FC = () => {
