@@ -17,7 +17,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const saved = localStorage.getItem("rvan_user_theme");
       if (saved === "light" || saved === "dark") return saved;
     } catch (e) {}
-    return "dark"; // Default is DARK to keep 100% original design intact!
+    return "light"; // Default is LIGHT for first-time visitors!
   });
 
   useEffect(() => {

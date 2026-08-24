@@ -77,7 +77,7 @@ export default function RelatedPosts({
   }
 
   return (
-    <section aria-labelledby="related-essays-heading" className="mt-20 border-t border-white/10 pt-16">
+    <section aria-labelledby="related-essays-heading" className="mt-20 border-t border-border/80 dark:border-white/10 pt-16">
       <div className="mb-10 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-primary mono font-bold">
@@ -91,7 +91,7 @@ export default function RelatedPosts({
         </div>
 
         {relationship && (
-          <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-muted-foreground mono">
+          <span className="inline-flex items-center rounded-full border border-border bg-muted/40 dark:border-white/10 dark:bg-white/5 px-3 py-1 text-[11px] font-medium text-muted-foreground mono">
             {isAz ? relationship.primaryTopic.az : relationship.primaryTopic.en}
           </span>
         )}
@@ -101,17 +101,17 @@ export default function RelatedPosts({
         {selectedPosts.map((post) => {
           const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
           const slugStr = post.slug?.current || post.originalSlug || post._id || "";
-          const imgUrl = post.coverImage ? urlFor(post.coverImage)?.url() : null;
+          const imgUrl = post.coverImage ? urlFor(post.coverImage)?.url() || (typeof post.coverImage.url === "string" ? post.coverImage.url : null) : null;
 
           return (
             <Link
               key={post._id || slugStr}
               to={getLocalizedPath(`/blog/${slugStr}`)}
-              className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/[0.06] hover:shadow-lg hover:shadow-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/[0.03] p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-card dark:hover:bg-white/[0.06] hover:shadow-lg hover:shadow-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-sm"
             >
               <div>
                 {imgUrl && (
-                  <div className="mb-4 overflow-hidden rounded-xl aspect-[16/10] bg-background/50 border border-white/5">
+                  <div className="mb-4 overflow-hidden rounded-xl aspect-[16/10] bg-muted/50 border border-border/60 dark:border-white/5">
                     <img
                       src={imgUrl}
                       alt={post.title}
@@ -124,24 +124,24 @@ export default function RelatedPosts({
                   </div>
                 )}
 
-                {post.category && (
+                {(post.category || post.category_az) && (
                   <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary mono">
-                    {post.category}
+                    {isAz && post.category_az ? post.category_az : post.category}
                   </span>
                 )}
 
                 <h3 className="mt-2 text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary line-clamp-2">
-                  {post.title}
+                  {isAz && post.title_az ? post.title_az : post.title}
                 </h3>
 
-                {post.excerpt && (
+                {(post.excerpt || post.excerpt_az) && (
                   <p className="mt-2.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                    {post.excerpt}
+                    {isAz && post.excerpt_az ? post.excerpt_az : post.excerpt}
                   </p>
                 )}
               </div>
 
-              <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-[10px] text-muted-foreground mono font-bold">
+              <div className="mt-6 flex items-center justify-between border-t border-border/60 dark:border-white/10 pt-4 text-[10px] text-muted-foreground mono font-bold">
                 <span>{readTimeStr}</span>
                 <span className="inline-flex items-center gap-1 text-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary">
                   {isAz ? "Oxu" : "Read"} <ArrowRight size={12} />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ThumbsUp, ThumbsDown, Sparkles, Heart } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Sparkles } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import {
@@ -69,9 +69,9 @@ export default function ArticleReactions({ postId, postTitle }: ArticleReactions
 
   return (
     <>
-      <div className="my-10 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6 backdrop-blur-xl">
+      <div className="my-10 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/[0.03] p-5 md:p-6 backdrop-blur-xl shadow-xs">
         <div className="flex items-center gap-3 text-left">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary border border-primary/20">
+          <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
             <Sparkles size={18} />
           </div>
           <div>
@@ -93,17 +93,17 @@ export default function ArticleReactions({ postId, postTitle }: ArticleReactions
             disabled={isSubmitting}
             className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-300 mono cursor-pointer ${
               userReaction === "like"
-                ? "bg-primary text-black shadow-lg shadow-primary/20 scale-105 border border-primary"
-                : "border border-white/15 bg-white/5 text-muted-foreground hover:border-primary/50 hover:bg-white/10 hover:text-foreground"
+                ? "bg-primary text-primary-foreground dark:text-black shadow-lg shadow-primary/20 scale-105 border border-primary"
+                : "border border-border bg-background/80 dark:border-white/15 dark:bg-white/5 text-muted-foreground hover:border-primary/50 hover:bg-muted/60 hover:text-foreground"
             }`}
             title={isAz ? "Məqaləni Bəyən" : "Like Article"}
           >
-            <ThumbsUp size={15} className={userReaction === "like" ? "fill-black" : ""} />
+            <ThumbsUp size={15} className={userReaction === "like" ? "fill-current" : ""} />
             <span>{isAz ? "Faydalı" : "Insightful"}</span>
             {stats.likeCount > 0 && (
               <span
                 className={`ml-1 rounded-full px-1.5 py-0.2 text-[10px] ${
-                  userReaction === "like" ? "bg-black/20 text-black font-extrabold" : "bg-white/10 text-primary"
+                  userReaction === "like" ? "bg-black/20 text-current font-extrabold" : "bg-primary/10 text-primary font-bold"
                 }`}
               >
                 {stats.likeCount}
@@ -117,15 +117,15 @@ export default function ArticleReactions({ postId, postTitle }: ArticleReactions
             disabled={isSubmitting}
             className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-300 mono cursor-pointer ${
               userReaction === "dislike"
-                ? "bg-rose-500/20 text-rose-400 border border-rose-500/50 shadow-lg shadow-rose-500/10 scale-105"
-                : "border border-white/15 bg-white/5 text-muted-foreground hover:border-white/30 hover:bg-white/10 hover:text-foreground"
+                ? "bg-rose-500/20 text-rose-500 border border-rose-500/50 shadow-lg shadow-rose-500/10 scale-105"
+                : "border border-border bg-background/80 dark:border-white/15 dark:bg-white/5 text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground"
             }`}
             title={isAz ? "Təkmilləşdirmə Tələb Olunur" : "Needs Improvement"}
           >
-            <ThumbsDown size={15} className={userReaction === "dislike" ? "fill-rose-400" : ""} />
+            <ThumbsDown size={15} className={userReaction === "dislike" ? "fill-rose-500" : ""} />
             <span>{isAz ? "Zəif" : "Not really"}</span>
             {stats.dislikeCount > 0 && (
-              <span className="ml-1 rounded-full bg-white/10 px-1.5 py-0.2 text-[10px] text-muted-foreground">
+              <span className="ml-1 rounded-full bg-muted px-1.5 py-0.2 text-[10px] text-muted-foreground">
                 {stats.dislikeCount}
               </span>
             )}

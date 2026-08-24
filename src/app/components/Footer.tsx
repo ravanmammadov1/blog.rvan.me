@@ -9,7 +9,8 @@ interface FooterProps {
 
 export default function Footer({ siteSettings }: FooterProps) {
   const { openPreferences } = useCookieConsent();
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   const footerCopyright = siteSettings?.footerText
     ? siteSettings.footerText.replace("{year}", new Date().getFullYear().toString())
@@ -23,6 +24,18 @@ export default function Footer({ siteSettings }: FooterProps) {
 
         {/* Right Side */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <Link
+            to={getLocalizedPath("/contributor/dashboard")}
+            className="transition-colors hover:text-primary text-primary/90 font-bold"
+          >
+            {isAz ? "MÜƏLLİF OL" : "BECOME A CONTRIBUTOR"}
+          </Link>
+          <Link
+            to={getLocalizedPath("/author/ravan-mammadov")}
+            className="transition-colors hover:text-foreground"
+          >
+            {isAz ? "MÜƏLLİF" : "AUTHOR"}
+          </Link>
           <Link
             to={getLocalizedPath("/faq")}
             className="transition-colors hover:text-foreground"

@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowUp } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
-import { client, urlFor } from "../lib/sanityClient";
 import { fetchSiteSettings, fetchBlogBySlug, fetchAllBlogs } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
@@ -33,7 +31,6 @@ export default function BlogDetail() {
   const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,7 +62,7 @@ export default function BlogDetail() {
                 .toLowerCase()
                 .replace(/\/+$/, "");
               const pOrigSlug = (p.originalSlug || "").toLowerCase();
-              const pAzSlug = (p.azSlug || "").toLowerCase();
+              const pAzSlug = (p.slug_az?.current || p.azSlug || "").toLowerCase();
               return (
                 pSlug === cleanSlug ||
                 pOrigSlug === cleanSlug ||
@@ -93,14 +90,6 @@ export default function BlogDetail() {
       })
       .finally(() => setLoading(false));
   }, [slug, language]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 600);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -136,7 +125,7 @@ export default function BlogDetail() {
           </p>
           <Link
             to={getLocalizedPath("/blog")}
-            className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm text-white backdrop-blur-xl transition hover:bg-white/20"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm text-foreground shadow-sm transition hover:bg-muted"
           >
             <ArrowLeft size={16} />
             {t("backToBlogArchive", "Back to Blog Archive")}
@@ -146,8 +135,7 @@ export default function BlogDetail() {
     );
   }
 
-  const imgBuilder = urlFor(post.coverImage);
-  const coverUrl = imgBuilder ? imgBuilder.width(1200).url() : undefined;
+  const coverUrl = typeof post.coverImage?.url === "string" ? post.coverImage.url : undefined;
 
   const currentIndex = allPosts.findIndex(
     (p) => (p.slug?.current || p._id) === (post.slug?.current || post._id)
@@ -199,11 +187,11 @@ export default function BlogDetail() {
 
             {/* Previous / Next Article Navigation */}
             {(prevPost || nextPost) && (
-              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-white/10 pt-12">
+              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-border/80 dark:border-white/10 pt-12">
                 {prevPost ? (
                   <Link
                     to={getLocalizedPath(`/blog/${prevPost.slug?.current || prevPost._id}`)}
-                    className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5"
+                    className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/5 p-6 backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:bg-card dark:hover:bg-white/10 hover:shadow-lg shadow-sm"
                   >
                     <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
                       ← {t("previousArticle", "PREVIOUS ARTICLE")}
@@ -219,7 +207,7 @@ export default function BlogDetail() {
                 {nextPost ? (
                   <Link
                     to={getLocalizedPath(`/blog/${nextPost.slug?.current || nextPost._id}`)}
-                    className="group flex flex-col justify-between items-end rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 text-right"
+                    className="group flex flex-col justify-between items-end rounded-2xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/5 p-6 backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:bg-card dark:hover:bg-white/10 hover:shadow-lg shadow-sm text-right"
                   >
                     <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
                       {t("nextArticle", "NEXT ARTICLE")} →
@@ -234,7 +222,7 @@ export default function BlogDetail() {
               </div>
             )}
 
-            <div className="mt-10 flex justify-center border-t border-white/10 pt-8">
+            <div className="mt-10 flex justify-center border-t border-border/80 dark:border-white/10 pt-8">
               <Button
                 to={getLocalizedPath("/blog")}
                 variant="secondary"
@@ -258,22 +246,6 @@ export default function BlogDetail() {
       </article>
 
       <Footer siteSettings={siteSettings} />
-
-      <AnimatePresence>
-        {showBackToTop && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-surface/80 text-foreground backdrop-blur-md transition hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
-            aria-label="Back to top"
-          >
-            <ArrowUp size={18} />
-          </motion.button>
-        )}
-      </AnimatePresence>
     </main>
   );
 }

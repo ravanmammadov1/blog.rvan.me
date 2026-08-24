@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,16 +42,19 @@ export default function ScrollToTopButton() {
           exit={{ opacity: 0, y: 16, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={scrollToTop}
-          className="group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-neutral-950/85 text-foreground backdrop-blur-md transition-all duration-300 hover:border-[#61c5ad]/60 hover:text-[#61c5ad] hover:scale-105 shadow-[0_0_20px_rgba(97,197,173,0.25)] hover:shadow-[0_0_30px_rgba(152,79,159,0.4)] glass-sm transform-gpu overflow-hidden"
+          className={`group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border backdrop-blur-md transition-all duration-300 hover:scale-105 transform-gpu overflow-hidden cursor-pointer ${
+            isDark
+              ? "border-white/15 bg-neutral-950/85 text-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:border-primary/60 hover:text-primary"
+              : "border-slate-200 bg-white/95 text-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-slate-400 hover:text-slate-900"
+          }`}
           aria-label="Scroll back to top"
         >
           {/* Circular SVG Scroll Progress Ring */}
           <svg className="absolute inset-0 h-full w-full -rotate-90 pointer-events-none p-0.5" viewBox="0 0 48 48">
             <defs>
               <linearGradient id="scrollToTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#61c5ad" />
-                <stop offset="50%" stopColor="#426fba" />
-                <stop offset="100%" stopColor="#984f9f" />
+                <stop offset="0%" stopColor={isDark ? "#61c5ad" : "#0d9488"} />
+                <stop offset="100%" stopColor={isDark ? "#bc66c5" : "#6366f1"} />
               </linearGradient>
             </defs>
             {/* Track */}
@@ -56,7 +62,7 @@ export default function ScrollToTopButton() {
               cx="24"
               cy="24"
               r={radius}
-              className="stroke-white/10 fill-none"
+              className={isDark ? "stroke-white/10 fill-none" : "stroke-slate-200 fill-none"}
               strokeWidth="2.5"
             />
             {/* Progress Bar */}
@@ -72,14 +78,6 @@ export default function ScrollToTopButton() {
               strokeLinecap="round"
             />
           </svg>
-
-          {/* Subtle Aurora Glow on hover */}
-          <div 
-            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-            style={{
-              background: "radial-gradient(circle at center, rgba(97,197,173,0.3) 0%, rgba(152,79,159,0.15) 60%, transparent 80%)",
-            }}
-          />
 
           {/* Arrow Icon */}
           <ArrowUp size={16} className="relative z-10 transition-transform group-hover:-translate-y-0.5" />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calendar, Clock, ArrowRight, Eye, User } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Eye } from "lucide-react";
 
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
@@ -32,15 +32,13 @@ export default function BlogCard({
   const rawSlug = typeof post.slug === "string" ? post.slug : post.slug?.current || post.originalSlug || post._id || "";
   const slugStr = rawSlug.replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "");
 
-  // Real-time Firestore View Counter
+  // Real-time Firestore View Counter (Defaults to 0, always displayed)
   const [views, setViews] = useState<number>(0);
 
   useEffect(() => {
     if (!slugStr) return;
     const unsubscribe = subscribeToArticleStats(slugStr, (stats) => {
-      if (stats.viewCount > 0) {
-        setViews(stats.viewCount);
-      }
+      setViews(stats.viewCount || 0);
     });
     return () => unsubscribe();
   }, [slugStr]);
@@ -48,6 +46,8 @@ export default function BlogCard({
   const imgBuilder = urlFor(post.coverImage);
   const coverUrl = imgBuilder
     ? imgBuilder.width(1200).height(675).quality(90).auto("format").url()
+    : (typeof post.coverImage?.url === "string" && post.coverImage.url)
+    ? post.coverImage.url
     : getArticleCoverImage(
         post.category === "Design"
           ? "designNews"
@@ -82,7 +82,7 @@ export default function BlogCard({
 
   return (
     <div
-      className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary"
+      className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-card dark:hover:bg-white/[0.05] hover:shadow-xl hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary shadow-sm"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -90,7 +90,7 @@ export default function BlogCard({
         {/* Cover Image Container */}
         <Link
           to={getLocalizedPath(`/blog/${slugStr}`)}
-          className="mb-5 block aspect-[16/9] w-full overflow-hidden rounded-2xl border border-white/10 relative bg-neutral-900/80 focus:outline-none"
+          className="mb-5 block aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/60 dark:border-white/10 relative bg-muted/40 dark:bg-neutral-900/80 focus:outline-none"
           tabIndex={-1}
         >
           <img
@@ -108,7 +108,7 @@ export default function BlogCard({
               );
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
         </Link>
 
         {/* Category & Arrow Row */}
@@ -116,12 +116,12 @@ export default function BlogCard({
           <span
             className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-[10px] font-bold tracking-wider mono uppercase text-primary"
           >
-            {post.category || "Article"}
+            {isAz && post.category_az ? post.category_az : (post.category || "Article")}
           </span>
 
           <Link
             to={getLocalizedPath(`/blog/${slugStr}`)}
-            className="grid h-8 w-8 place-items-center rounded-full border border-border transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-black focus:outline-none"
+            className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-background/60 transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black focus:outline-none shadow-xs"
             aria-label={`Read ${post.title}`}
           >
             <ArrowRight size={13} className="transition-transform group-hover:-rotate-45" />
@@ -131,21 +131,21 @@ export default function BlogCard({
         {/* Article Title */}
         <h3 className="mb-3 text-xl font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
           <Link to={getLocalizedPath(`/blog/${slugStr}`)} className="focus:outline-none focus-visible:underline">
-            {post.title}
+            {isAz && post.title_az ? post.title_az : post.title}
           </Link>
         </h3>
 
         {/* Short Description */}
-        {post.excerpt && (
+        {(post.excerpt || post.excerpt_az) && (
           <p className="mb-6 text-xs leading-relaxed text-muted-foreground line-clamp-3 font-medium">
-            {post.excerpt}
+            {isAz && post.excerpt_az ? post.excerpt_az : post.excerpt}
           </p>
         )}
       </div>
 
       {/* Footer Section: Author + Metadata */}
-      <div className="mt-auto space-y-4 pt-4 border-t border-white/10">
-        {/* Author Details */}
+      <div className="mt-auto space-y-4 pt-4 border-t border-border/80 dark:border-white/10">
+        {/* Author Details (Avatar + Name + Professional Title) */}
         <Link
           to={getLocalizedPath(authorProfileUrl)}
           className="flex items-center gap-3 group/author hover:opacity-90 transition-opacity focus:outline-none"
@@ -153,7 +153,7 @@ export default function BlogCard({
           <img
             src={authorAvatar}
             alt={authorName}
-            className="h-9 w-9 rounded-full object-cover border border-white/20 bg-neutral-800 shrink-0"
+            className="h-9 w-9 rounded-full object-cover border border-border/80 dark:border-white/20 bg-muted shrink-0"
             onError={(e) => {
               (e.currentTarget as HTMLElement).style.display = "none";
             }}
@@ -168,28 +168,27 @@ export default function BlogCard({
           </div>
         </Link>
 
-        {/* Publication Details: Date, Reading Time, Real Views */}
-        <div className="flex items-center justify-between text-[10px] font-bold tracking-wider mono uppercase text-muted-foreground pt-2 border-t border-white/5">
+        {/* Publication Details: Date, Reading Time, Real View Counter (Always Visible) */}
+        <div className="flex items-center justify-between text-[10px] font-bold tracking-wider mono uppercase text-muted-foreground pt-2 border-t border-border/40 dark:border-white/5">
           <div className="flex items-center gap-3">
             {formattedDate && (
               <span className="flex items-center gap-1">
-                <Calendar size={11} className="text-primary/70" />
+                <Calendar size={11} className="text-primary/80" />
                 {formattedDate}
               </span>
             )}
 
             <span className="flex items-center gap-1">
-              <Clock size={11} className="text-primary/70" />
+              <Clock size={11} className="text-primary/80" />
               {readTimeStr}
             </span>
           </div>
 
-          {views > 0 && (
-            <span className="flex items-center gap-1 text-primary">
-              <Eye size={11} />
-              {views} {isAz ? "baxış" : "views"}
-            </span>
-          )}
+          {/* Real View Counter (e.g. 0 views / 1.2k views) */}
+          <span className="flex items-center gap-1 font-bold text-primary">
+            <Eye size={11} />
+            {views.toLocaleString()} {isAz ? "baxış" : "views"}
+          </span>
         </div>
       </div>
     </div>
