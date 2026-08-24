@@ -35,6 +35,9 @@ import GoogleTagManager from "./components/GoogleTagManager";
 import GalaxyAtmosphere from "./components/GalaxyAtmosphere";
 
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
+import { ThemeProvider } from "../context/ThemeContext";
+import { AuthProvider } from "../context/AuthContext";
+import { ExperienceProvider } from "../context/ExperienceContext";
 
 function AppRoutes() {
   return (
@@ -128,9 +131,15 @@ function AppContent() {
 export default function App() {
   return (
     <LanguageProvider>
-      <CookieConsentProvider>
-        <AppContent />
-      </CookieConsentProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ExperienceProvider>
+            <CookieConsentProvider>
+              <AppContent />
+            </CookieConsentProvider>
+          </ExperienceProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </LanguageProvider>
   );
 }
