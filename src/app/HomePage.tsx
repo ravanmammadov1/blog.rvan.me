@@ -1,7 +1,6 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import SiteHeader from "./components/SiteHeader";
@@ -15,8 +14,8 @@ import { Eyebrow } from "./components/Eyebrow";
 import { HOMEPAGE_FAQS } from "../data/faqData";
 import FaqAccordion from "./components/ui/FaqAccordion";
 
-// Lazy-loaded section components for optimal performance and exact requested order
-const HeroPortrait = lazy(() => import("./components/HeroPortrait"));
+// Lazy-loaded section components for optimal performance
+const HeroCosmicVisual = lazy(() => import("./components/home/HeroCosmicVisual"));
 const BlogSection = lazy(() => import("./components/home/BlogSection"));
 const TopicsSection = lazy(() => import("./components/home/TopicsSection"));
 const HomeAboutSection = lazy(() => import("./components/home/HomeAboutSection"));
@@ -51,17 +50,17 @@ export default function HomePage() {
     <main className="relative min-h-screen bg-background text-foreground overflow-x-hidden" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title="Rvan.me — Creative Publication & Knowledge Platform"
-        description="A creative publication and knowledge platform exploring design, marketing, branding, AI & creativity, and the creative industry."
+        description="A creative publication about design, marketing, branding, AI and visual culture."
         url="https://www.rvan.me"
       />
 
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* ── 1. EDITORIAL HERO SECTION ── */}
-      <section className="relative flex flex-col justify-center px-6 pt-28 pb-14 md:px-10 md:pt-32 md:pb-20">
+      {/* ── 1. EDITORIAL COSMIC HERO SECTION ── */}
+      <section className="relative flex flex-col justify-center px-6 pt-28 pb-16 md:px-10 md:pt-36 md:pb-24 border-b border-border/60">
         <div className="mx-auto w-full max-w-[1600px] relative z-10">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             {/* Hero Left Editorial Copy */}
             <motion.div
               variants={fadeUp}
@@ -69,29 +68,29 @@ export default function HomePage() {
               animate="visible"
               className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
-              <Eyebrow className="mb-4 text-primary tracking-[.2em]">
+              {/* Micro-label */}
+              <Eyebrow className="mb-5 text-primary tracking-[.22em] font-semibold">
                 {isAz
-                  ? "KREATİV NƏŞR VƏ BİLİK PLATFORMASI"
-                  : "CREATIVE PUBLICATION & KNOWLEDGE PLATFORM"}
+                  ? "YARADICI NƏŞR · BİLİK · MƏDƏNİYYƏT"
+                  : "CREATIVE PUBLICATION · KNOWLEDGE · CULTURE"}
               </Eyebrow>
 
+              {/* Dominant Headline */}
               <h1
-                className="font-bold tracking-tight leading-[1.06] text-foreground mb-6 w-full"
-                style={{ fontSize: "clamp(2.4rem, 5vw, 5rem)" }}
+                className="font-extrabold tracking-tight leading-[1.04] text-foreground mb-6 w-full"
+                style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.25rem)" }}
               >
-                {isAz ? "Vizual strategiyanın təhlili." : "Deconstructing visual strategy."}
-                <br />
-                <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
-                  {isAz ? "Brendlərin və mədəniyyətin mənası." : "Decoding brands & visual culture."}
-                </span>
+                {isAz ? "DİZAYN. STRATEGİYA. FİKİRLƏR." : "DESIGN. STRATEGY. IDEAS."}
               </h1>
 
-              <p className="text-base sm:text-lg text-muted-foreground font-normal max-w-2xl leading-relaxed mb-8">
+              {/* Single Short Paragraph Description */}
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-normal max-w-2xl leading-relaxed mb-10">
                 {isAz
-                  ? "Rvan.me — dizayn, marketinq, brendinq, süni intellekt və yaradıcılıq, eləcə də kreativ sənayeni araşdıran müstəqil kreativ nəşr və bilik platformasıdır."
-                  : "Rvan.me is a creative publication and knowledge platform exploring design, marketing, branding, AI & creativity, and the creative industry."}
+                  ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr."
+                  : "A creative publication about design, marketing, branding, AI and visual culture."}
               </p>
 
+              {/* Simplified 2-Button CTA System */}
               <div className="flex flex-wrap items-center gap-4">
                 <Button
                   to={getLocalizedPath("/blog")}
@@ -99,30 +98,34 @@ export default function HomePage() {
                   size="lg"
                   icon={<ArrowUpRight size={16} />}
                 >
-                  {isAz ? "SON MƏQALƏLƏRİ OXU" : "READ LATEST ARTICLES"}
+                  {isAz ? "MƏQALƏLƏRƏ BAX" : "READ ARTICLES"}
                 </Button>
 
                 <Button
-                  to={getLocalizedPath("/contributor")}
+                  to={getLocalizedPath("/contributor/dashboard")}
                   variant="secondary"
                   size="lg"
                   icon={<ArrowUpRight size={16} />}
                 >
-                  {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+                  {isAz ? "BİZİMLƏ YAZ" : "WRITE WITH US"}
                 </Button>
               </div>
             </motion.div>
 
-            {/* Hero Right Visual Portrait */}
+            {/* Hero Right Minimal Cosmic Constellation System */}
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
               custom={0.15}
-              className="hidden lg:flex lg:col-span-5 justify-center lg:justify-end"
+              className="col-span-full lg:col-span-5 flex justify-center lg:justify-end"
             >
-              <Suspense fallback={<div className="h-[280px] w-[280px] rounded-2xl border border-border bg-card animate-pulse" />}>
-                <HeroPortrait />
+              <Suspense
+                fallback={
+                  <div className="h-[320px] w-[320px] sm:h-[400px] sm:w-[400px] rounded-3xl border border-border bg-card animate-pulse" />
+                }
+              >
+                <HeroCosmicVisual />
               </Suspense>
             </motion.div>
           </div>
@@ -149,22 +152,22 @@ export default function HomePage() {
         <ResourcesSection />
       </Suspense>
 
-      {/* ── 6. COMMUNITY CONTRIBUTOR INVITATION ── */}
-      <Suspense fallback={<div className="h-80 flex items-center justify-center text-xs text-muted-foreground mono">LOADING COMMUNITY SECTION...</div>}>
+      {/* ── 6. CONTRIBUTOR COMMUNITY PROGRAM ── */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CONTRIBUTOR NETWORK...</div>}>
         <ContributorSection />
       </Suspense>
 
-      {/* ── 7. FREQUENTLY ASKED QUESTIONS (COMPACT HOMEPAGE SHOWCASE) ── */}
-      <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
-        <div className="mx-auto max-w-[1600px]">
+      {/* ── 7. EDITORIAL & PLATFORM FAQ ── */}
+      <section className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20">
+        <div className="mx-auto max-w-[1200px]">
           <FaqAccordion
             items={HOMEPAGE_FAQS}
             eyebrow={isAz ? "TEZ-TEZ VERİLƏN SUALLAR" : "FREQUENTLY ASKED QUESTIONS"}
-            title={isAz ? "Nəşr və Müəlliflik Haqqında" : "Publication & Submissions"}
+            title={isAz ? "Platforma və Nəşr Haqqında" : "Platform & Editorial Overview"}
             description={
               isAz
-                ? "Rvan.me-nin redaksiya prinsipləri və məqalə qəbulu ilə bağlı ən vacib suallar:"
-                : "Essential answers regarding our publication philosophy, languages, and contributor onboarding:"
+                ? "Rvan.me platforması, müəlliflik, resurslar və alətlər haqqında ən çox soruşulan suallar:"
+                : "Answers to common questions regarding our publication, contributor program, resources, and workflows:"
             }
             viewAllHref="/faq"
             viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
@@ -173,14 +176,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 8. CONTACT ── */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CONTACT SECTION...</div>}>
+      {/* ── 8. COLLABORATE & CONTACT ── */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">LOADING CONTACT...</div>}>
         <ContactSection />
       </Suspense>
 
-      {/* ── FOOTER ── */}
+      {/* ── FOOTER & GLOBAL FLOATING CONTROLS ── */}
       <Footer siteSettings={siteSettings} />
-
       <ScrollToTopButton />
     </main>
   );
