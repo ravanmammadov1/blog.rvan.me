@@ -40,10 +40,10 @@ const fadeUp = {
 
 export type ResourceCategoryKey = "fonts" | "icons" | "illustrations";
 
-export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: string }> = {
-  fonts: { label: "Fonts", icon: "🔤" },
-  icons: { label: "Icons", icon: "✨" },
-  illustrations: { label: "Illustrations", icon: "🎨" },
+export const CATEGORY_MAP: Record<ResourceCategoryKey, { label: string; icon: React.ReactNode }> = {
+  fonts: { label: "Fonts", icon: <Type size={14} className="shrink-0" /> },
+  icons: { label: "Icons", icon: <Sparkles size={14} className="shrink-0" /> },
+  illustrations: { label: "Illustrations", icon: <Palette size={14} className="shrink-0" /> },
 };
 
 const COLOR_PRESETS = [

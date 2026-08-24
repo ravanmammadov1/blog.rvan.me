@@ -90,30 +90,93 @@ export default function AboutPage() {
 
       {/* ── 1. ABOUT MASTER HERO ── */}
       <PageHero
-        eyebrow={isAz ? "RVAN.ME HAQQINDA" : "ABOUT RVAN.ME"}
+        eyebrow={isAz ? "RVAN.ME HAQQINDA · REDAKSİYA BƏYANATI" : "ABOUT RVAN.ME · EDITORIAL STATEMENT"}
         title={isAz ? "KREATİV NƏŞR VƏ" : "CREATIVE PUBLICATION &"}
         accentText={isAz ? "BİLİK PLATFORMASI." : "KNOWLEDGE PLATFORM."}
         description={isAz
           ? "Dizayn, brendinq, marketinq strategiyası, vizual mədəniyyət və yaradıcı texnologiyalar haqqında müstəqil platforma."
           : "An independent creative publication exploring design, branding, marketing strategy, visual culture, and creative technology."}
       >
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-          <Button
-            to={getLocalizedPath("/blog")}
-            variant="primary"
-            size="lg"
-            icon={<ArrowUpRight size={16} />}
-          >
-            {isAz ? "MƏQALƏLƏRİ OXU" : "READ ARTICLES"}
-          </Button>
-          <Button
-            to={getLocalizedPath("/contributor")}
-            variant="secondary"
-            size="lg"
-            icon={<ArrowRight size={16} />}
-          >
-            {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
-          </Button>
+        <div className="flex flex-col items-center gap-8 pt-2 w-full">
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Button
+              to={getLocalizedPath("/blog")}
+              variant="primary"
+              size="lg"
+              icon={<ArrowUpRight size={16} />}
+            >
+              {isAz ? "MƏQALƏLƏRİ OXU" : "READ ARTICLES"}
+            </Button>
+            <Button
+              to={getLocalizedPath("/contributor")}
+              variant="secondary"
+              size="lg"
+              icon={<ArrowRight size={16} />}
+            >
+              {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+            </Button>
+          </div>
+
+          {/* Editorial Publication Identity & Pillars Matrix */}
+          <div className="w-full max-w-4xl mx-auto pt-8 border-t border-[#DDE1E0] dark:border-white/10">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+              <div className="p-3.5 sm:p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/[0.03] backdrop-blur-md shadow-2xs">
+                <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider text-primary uppercase mb-1">
+                  <span>01</span>
+                  <span>/</span>
+                  <span>{isAz ? "TƏDQİQAT" : "RESEARCH"}</span>
+                </div>
+                <div className="text-xs sm:text-[13px] font-bold text-foreground">
+                  {isAz ? "Koqnitiv UX & Qaydalar" : "Cognitive UX & Heuristics"}
+                </div>
+                <div className="text-[10px] text-muted-foreground mono mt-0.5">
+                  {isAz ? "3 saniyə qaydası & skanlama" : "3s rule & visual scanning"}
+                </div>
+              </div>
+
+              <div className="p-3.5 sm:p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/[0.03] backdrop-blur-md shadow-2xs">
+                <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider text-primary uppercase mb-1">
+                  <span>02</span>
+                  <span>/</span>
+                  <span>{isAz ? "STRATEGİYA" : "STRATEGY"}</span>
+                </div>
+                <div className="text-xs sm:text-[13px] font-bold text-foreground">
+                  {isAz ? "Brend Arxitekturası" : "Brand Architecture"}
+                </div>
+                <div className="text-[10px] text-muted-foreground mono mt-0.5">
+                  {isAz ? "Dəyər təklifi & mövqeləndirmə" : "Value props & positioning"}
+                </div>
+              </div>
+
+              <div className="p-3.5 sm:p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/[0.03] backdrop-blur-md shadow-2xs">
+                <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider text-primary uppercase mb-1">
+                  <span>03</span>
+                  <span>/</span>
+                  <span>{isAz ? "MƏDƏNİYYƏT" : "CULTURE"}</span>
+                </div>
+                <div className="text-xs sm:text-[13px] font-bold text-foreground">
+                  {isAz ? "Vizual Dialoq" : "Visual Discourse"}
+                </div>
+                <div className="text-[10px] text-muted-foreground mono mt-0.5">
+                  {isAz ? "Yaradıcı icma & ekosistem" : "Creative community"}
+                </div>
+              </div>
+
+              <div className="p-3.5 sm:p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/[0.03] backdrop-blur-md shadow-2xs">
+                <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider text-primary uppercase mb-1">
+                  <span>04</span>
+                  <span>/</span>
+                  <span>{isAz ? "MÜƏLLİFLİK" : "AUTHORS"}</span>
+                </div>
+                <div className="text-xs sm:text-[13px] font-bold text-foreground">
+                  {isAz ? "Təsdiqlənmiş Müəlliflər" : "Verified Authorship"}
+                </div>
+                <div className="text-[10px] text-muted-foreground mono mt-0.5">
+                  {isAz ? "Qalıcı rəqəmsal arxiv" : "Permanent digital archive"}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </PageHero>
 

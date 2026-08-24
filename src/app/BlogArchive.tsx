@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Calendar, Clock } from "lucide-react";
+import { Sparkles, ArrowRight, Calendar, Clock, Search, SlidersHorizontal, X } from "lucide-react";
 
 import { fetchAllBlogs, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -11,7 +11,6 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
-import PageFilterBar from "./components/PageFilterBar";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 import { useLanguage } from "../lib/i18n/LanguageContext";
@@ -255,19 +254,58 @@ export default function BlogArchive() {
           </motion.div>
         )}
 
-        {/* 3. Article Categories & Search Discovery */}
-        <PageFilterBar
-          categories={categories.map((cat) => ({
-            key: cat,
-            label: cat === "All" ? (isAz ? "HAMISI" : "ALL") : cat.toUpperCase(),
-          }))}
-          activeCategory={activeCategory}
-          onSelectCategory={setActiveCategory}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          searchPlaceholder={t("searchArticles", "Search articles...")}
-          searchId="blog-search"
-        />
+        {/* 3. Integrated Article Search & Category Filters */}
+        <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-3.5 sm:p-4.5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl space-y-3">
+          {/* Main Search Input */}
+          <div className="relative flex items-center">
+            <Search size={18} className="absolute left-3.5 text-primary shrink-0 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("searchArticles", "Search articles by title, excerpt, topic, or keyword...")}
+              className="w-full rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] pl-10 pr-10 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground placeholder:text-muted-foreground/60 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60 transition-all"
+              style={{ outline: "none", boxShadow: "none" }}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3.5 p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                aria-label="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
+          </div>
+
+          {/* Connected Category Filter Strip */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pt-0.5 pb-0.5">
+            <span className="text-[10px] font-mono font-bold text-muted-foreground/70 uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1">
+              <SlidersHorizontal size={12} className="text-primary" />
+              <span>{isAz ? "FİLTR:" : "FILTER:"}</span>
+            </span>
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              const label = cat === "All" ? (isAz ? "Hamısı" : "All") : cat;
+
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveCategory(cat)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer shrink-0 ${
+                    isActive
+                      ? "bg-primary text-black font-bold shadow-2xs"
+                      : "bg-slate-100/70 dark:bg-white/[0.04] text-muted-foreground hover:text-foreground hover:bg-slate-200/80 dark:hover:bg-white/[0.08] border border-transparent hover:border-slate-300 dark:hover:border-white/10"
+                  }`}
+                >
+                  <span>{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* 5. Article Grid & List */}
         <div>

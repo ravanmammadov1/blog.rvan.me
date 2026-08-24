@@ -12,6 +12,7 @@ import {
   Type,
   X,
   CornerDownLeft,
+  FileText,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Eyebrow } from "../Eyebrow";
@@ -25,7 +26,7 @@ interface SearchResultItem {
   type: "ARTICLE" | "RESOURCE" | "TOPIC";
   path: string;
   badgeColor: string;
-  icon: string;
+  iconType: "article" | "font" | "icon";
 }
 
 const fadeUp = {
@@ -47,7 +48,7 @@ export default function HeroSearchSection() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Search corpus from real master editorial articles & resources
+  // Search corpus from real master editorial articles & resources (clean vector icons)
   const searchCorpus: SearchResultItem[] = useMemo(() => {
     const items: SearchResultItem[] = [];
 
@@ -61,7 +62,7 @@ export default function HeroSearchSection() {
         type: "ARTICLE",
         path: `/blog/${slugStr}`,
         badgeColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-        icon: "📄",
+        iconType: "article",
       });
     });
 
@@ -73,7 +74,7 @@ export default function HeroSearchSection() {
       type: "RESOURCE",
       path: "/resources?category=fonts",
       badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
-      icon: "🔤",
+      iconType: "font",
     });
     items.push({
       id: "res-icons",
@@ -82,7 +83,7 @@ export default function HeroSearchSection() {
       type: "RESOURCE",
       path: "/resources?category=icons",
       badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
-      icon: "✨",
+      iconType: "icon",
     });
 
     return items;
@@ -255,7 +256,7 @@ export default function HeroSearchSection() {
         </motion.p>
 
         {/* ══════════════════════════════════════════════════════════════════
-            ── HERO INLINE SEARCH BAR — ZERO MODAL / POPUP ──
+            ── HERO INLINE SEARCH BAR — ZERO RECTANGLE FOCUS OUTLINE ──
         ══════════════════════════════════════════════════════════════════ */}
         <motion.div
           variants={fadeUp}
@@ -272,15 +273,15 @@ export default function HeroSearchSection() {
               aria-hidden="true"
             />
 
-            {/* Search Container Card */}
-            <div className="relative flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-neutral-950/85 backdrop-blur-xl border border-black/10 dark:border-white/12 shadow-[0_12px_40px_rgba(15,23,42,0.08)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:border-primary/50 group-focus-within:border-primary group-focus-within:ring-4 group-focus-within:ring-primary/15">
+            {/* Search Container Card — Smooth Unified Rounded Container with Clean Focus Transition */}
+            <div className="relative flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-neutral-950/85 backdrop-blur-xl border border-black/10 dark:border-white/12 shadow-[0_12px_40px_rgba(15,23,42,0.08)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:border-primary/50 group-focus-within:border-primary/70 group-focus-within:ring-2 group-focus-within:ring-primary/20">
               {/* Search Icon */}
               <Search
                 size={20}
                 className="text-primary shrink-0 transition-transform duration-300 group-focus-within:scale-110"
               />
 
-              {/* Input */}
+              {/* Input — Completely Stripped of Native Rectangular Browser Outlines */}
               <input
                 ref={inputRef}
                 type="text"
@@ -297,7 +298,8 @@ export default function HeroSearchSection() {
                     ? "İdeya, mövzu və məqalə axtar..."
                     : "Search ideas, concepts, articles..."
                 }
-                className="w-full bg-transparent text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+                className="w-full bg-transparent text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground placeholder:text-muted-foreground/60 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+                style={{ outline: "none", boxShadow: "none" }}
               />
 
               {/* Clear button if text entered */}
@@ -308,7 +310,7 @@ export default function HeroSearchSection() {
                     setSearchInput("");
                     inputRef.current?.focus();
                   }}
-                  className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   <X size={15} />
                 </button>
@@ -326,7 +328,7 @@ export default function HeroSearchSection() {
             </div>
           </form>
 
-          {/* ── INLINE RESULTS DROPDOWN — NO MODAL / NO FULLSCREEN DARKENING ── */}
+          {/* ── INLINE RESULTS DROPDOWN — CLEAN VECTOR ICONS ── */}
           <AnimatePresence>
             {isFocused && searchInput.trim().length > 0 && (
               <motion.div
@@ -369,7 +371,11 @@ export default function HeroSearchSection() {
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="text-base shrink-0">{item.icon}</span>
+                            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border/80 bg-background shrink-0 text-primary">
+                              {item.iconType === "article" && <FileText size={14} />}
+                              {item.iconType === "font" && <Type size={14} />}
+                              {item.iconType === "icon" && <Sparkles size={14} />}
+                            </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-bold text-[#0F172A] dark:text-foreground truncate">

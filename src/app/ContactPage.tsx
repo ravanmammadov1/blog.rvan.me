@@ -24,7 +24,7 @@ const fadeUp = {
 
 export default function ContactPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const { t, language } = useLanguage();
+  const { t, language, isAz, getLocalizedPath } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

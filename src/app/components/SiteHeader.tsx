@@ -364,6 +364,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   // Global navigation items
   const navItems = [
+    { label: t("navHome", "HOME"), target: "/" },
     { label: t("navBlog", "BLOG"), target: "/blog" },
     { label: t("navResources", "RESOURCES"), target: "/resources" },
     { label: t("navAbout", "ABOUT"), target: "/about" },
@@ -371,15 +372,12 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   ];
 
   // Mobile menu items
-  const mobileNavItems = [
-    { label: t("navHome", "HOME"), target: "/" },
-    ...navItems,
-  ];
+  const mobileNavItems = [...navItems];
 
   return (
     <>
       <header className="relative w-full pt-5 pb-3 px-4 z-30">
-        <div className="mx-auto flex items-center justify-between max-w-[760px] md:max-w-[820px] px-4 sm:px-5 py-2 rounded-full bg-white/90 dark:bg-[#121215]/90 border border-[#DDE1E0] dark:border-white/10 shadow-[0_4px_16px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.35)] backdrop-blur-md">
+        <div className="mx-auto flex items-center justify-between max-w-[780px] md:max-w-[860px] px-4 sm:px-5 py-2 rounded-full bg-white/90 dark:bg-[#121215]/90 border border-[#DDE1E0] dark:border-white/10 shadow-[0_4px_16px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.35)] backdrop-blur-md">
           {/* Logo & Brand — Always links to Home in active language */}
           <Link
             to={getLocalizedPath("/")}
@@ -402,9 +400,11 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           <nav className="hidden md:flex items-center gap-1 sm:gap-1.5 text-[11px] font-bold tracking-[.1em] mono uppercase">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
-              const isActive =
-                location.pathname === localizedTarget ||
-                location.pathname.startsWith(localizedTarget + "/");
+              const isHome = item.target === "/";
+              const isActive = isHome
+                ? location.pathname === "/" || location.pathname === "/az"
+                : location.pathname === localizedTarget ||
+                  location.pathname.startsWith(localizedTarget + "/");
 
               return (
                 <Link
