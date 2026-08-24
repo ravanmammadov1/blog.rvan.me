@@ -20,6 +20,7 @@ import { useTheme } from "../../context/ThemeContext";
 import AuthModal from "./AuthModal";
 import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
+import ravanLogo from "../../assets/ravan_logo.svg";
 
 import { getContributorStatus, getContributorApplication } from "../../services/contributorService";
 
@@ -438,9 +439,11 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 className="h-8 w-8 md:h-9 md:w-9 rounded-lg object-contain border border-border p-1 transition-transform duration-200 group-hover:scale-105"
               />
             ) : (
-              <span className="grid h-8 w-8 md:h-9 md:w-9 place-items-center rounded-lg border border-border text-sm font-bold bg-card transition-colors duration-200 group-hover:border-primary group-hover:text-primary">
-                R
-              </span>
+              <img
+                src={ravanLogo}
+                alt="Rvan.me Logo"
+                className="h-8 w-8 md:h-9 md:w-9 rounded-lg object-contain border border-border p-1 bg-card transition-transform duration-200 group-hover:scale-105"
+              />
             )}
             <span className="hidden text-[11px] font-bold leading-tight tracking-[.14em] sm:block uppercase">
               RVAN.ME
