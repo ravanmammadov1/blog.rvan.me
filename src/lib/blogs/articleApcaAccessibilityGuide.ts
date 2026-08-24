@@ -26,7 +26,7 @@ export const GUIDE_APCA_ACCESSIBILITY: BlogPost = {
     _type: "image",
     asset: { _type: "reference", _ref: "image-manual-apca" },
     alt: "APCA lightness contrast comparison diagram showing human visual perception versus mathematical luminance ratios",
-    url: "/covers/apca-contrast-science-cover.webp",
+    url: "https://cdn.sanity.io/images/0lqwkcmg/production/05ade1d31facaa232ce0cf417c5f83d2937ba995-2816x1536.jpg",
   },
   publishDate: "2026-08-18",
   readTime: "22 min read",

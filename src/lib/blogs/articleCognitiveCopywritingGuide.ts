@@ -26,7 +26,7 @@ export const GUIDE_COGNITIVE_COPYWRITING: BlogPost = {
     _type: "image",
     asset: { _type: "reference", _ref: "image-manual-copywriting" },
     alt: "Cognitive conversion copywriting heuristic framework diagram illustrating psychological friction versus motivation",
-    url: "/covers/cognitive-conversion-copywriting-cover.webp",
+    url: "https://cdn.sanity.io/images/0lqwkcmg/production/c437def783e670e7e6d8ffed32a90baf2c07919c-2752x1536.jpg",
   },
   publishDate: "2026-08-18",
   readTime: "24 min read",
