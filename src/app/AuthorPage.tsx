@@ -118,8 +118,8 @@ export default function AuthorPage() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      <main className="relative z-10 pt-28 pb-20 md:pt-36 md:pb-28">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+      <main className="relative z-10 pt-12 pb-20 md:pt-16 md:pb-28">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-8">
           {/* Back to Blog link */}
           <div className="mb-8">
             <Link

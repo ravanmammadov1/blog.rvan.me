@@ -17,8 +17,8 @@ export default function Footer({ siteSettings }: FooterProps) {
     : `© ${new Date().getFullYear()} RVAN.ME · RAVAN MAMMADOV ALL RIGHTS RESERVED`;
 
   return (
-    <footer className="w-full border-t border-border bg-background text-foreground px-6 py-8 md:px-10 md:py-10">
-      <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] font-bold tracking-[.14em] text-muted-foreground mono uppercase">
+    <footer className="w-full border-t border-border bg-background text-foreground px-4 py-8 sm:px-6 md:px-8 md:py-10">
+      <div className="mx-auto flex max-w-[1280px] flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] font-bold tracking-[.14em] text-muted-foreground mono uppercase">
         {/* Left Side */}
         <span>{footerCopyright}</span>
 

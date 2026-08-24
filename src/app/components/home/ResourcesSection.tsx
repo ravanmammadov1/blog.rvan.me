@@ -89,7 +89,7 @@ export default function ResourcesSection() {
 
   return (
     <section id="resources" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-surface/40">
-      <div className="mx-auto max-w-[1600px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"

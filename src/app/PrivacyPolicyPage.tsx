@@ -43,25 +43,32 @@ export default function PrivacyPolicyPage() {
       <SiteHeader siteSettings={siteSettings} />
 
       {/* Header Section */}
-      <section className="px-6 pt-24 pb-12 md:px-10 md:pt-32 border-b border-white/10 relative z-10">
-        <div className="mx-auto max-w-[1200px]">
+      <section className="px-4 pt-12 pb-10 sm:px-6 md:px-8 md:pt-16 border-b border-border relative z-10">
+        <div className="mx-auto max-w-[1280px]">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05}>
             <Link
-              to="/"
+              to={getLocalizedPath("/")}
               className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors mono uppercase mb-6"
             >
               <ArrowLeft size={14} /> BACK TO HOME
             </Link>
 
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-bold tracking-widest text-primary mono uppercase">
-              <Shield size={14} /> PRIVACY & GOVERNANCE
+            <div className="mb-3.5">
+              <span className="text-xs font-semibold tracking-[.24em] text-primary mono uppercase">
+                PRIVACY & GOVERNANCE
+              </span>
             </div>
 
-            <h1 className="mt-6 text-4xl font-extrabold tracking-tight md:text-6xl text-foreground">
-              Privacy Policy.
+            <h1
+              className="font-extrabold tracking-tight leading-[1.05] text-foreground uppercase mb-4"
+              style={{ fontSize: "clamp(2.4rem, 5.2vw, 4.4rem)" }}
+            >
+              <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] dark:from-[#61c5ad] dark:via-[#6099df] dark:to-[#bc66c5] bg-clip-text text-transparent inline-block">
+                Privacy Policy.
+              </span>
             </h1>
 
-            <p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed font-medium">
+            <p className="max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
               This Privacy Policy explains how Rvan.me ("we", "us", or "our") collects, processes, and protects your information when you access our creative platform and directory. Privacy information and user controls are designed with applicable privacy requirements in mind.
             </p>
 
@@ -80,8 +87,8 @@ export default function PrivacyPolicyPage() {
       </section>
 
       {/* Content Body */}
-      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10">
-        <div className="mx-auto max-w-[1200px] grid gap-12 lg:grid-cols-12">
+      <section className="px-4 py-12 sm:px-6 md:px-8 md:py-20 relative z-10">
+        <div className="mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-12">
           {/* Sidebar Navigation */}
           <div className="hidden lg:block lg:col-span-4 space-y-3 sticky top-32 h-fit">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-6 glass">

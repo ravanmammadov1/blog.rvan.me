@@ -122,11 +122,10 @@ export default function TopicDetailPage() {
         eyebrow={isAz ? `MÖVZU / ${topic.tag}` : `TOPIC / ${topic.tag}`}
         title={topicName}
         accentText="."
-        gradientVariant="secondary"
         description={topicDesc}
       />
 
-      <div className="mx-auto max-w-[1600px] px-6 py-12 md:px-10 space-y-12">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 md:px-8 space-y-10">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between border-b border-border pb-4">
           <Link

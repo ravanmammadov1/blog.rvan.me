@@ -224,7 +224,7 @@ export default function ResourceDetail() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      <div className="mx-auto max-w-[1600px] px-6 pt-20 pb-28 md:px-10 md:pt-28">
+      <div className="mx-auto max-w-[1280px] px-4 pt-10 pb-20 sm:px-6 md:px-8 md:pt-14 md:pb-28">
         {/* Breadcrumb */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.05} className="mb-8">
           <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mono uppercase tracking-widest">

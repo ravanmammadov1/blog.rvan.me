@@ -1,7 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Eyebrow } from "./Eyebrow";
 
-export type GradientVariant = "primary" | "secondary" | "accent" | "creative";
+export type GradientVariant = "primary" | "secondary" | "accent" | "creative" | "master";
 
 export interface PageHeroProps {
   eyebrow?: React.ReactNode;
@@ -9,74 +10,64 @@ export interface PageHeroProps {
   accentText?: React.ReactNode;
   description?: React.ReactNode;
   gradientVariant?: GradientVariant;
+  align?: "center" | "left";
   className?: string;
   children?: React.ReactNode;
 }
 
-/**
- * Centralized Brand Gradient Tokens for Rvan.me
- * Maintains strict saturation, brightness, and color language across all main page titles.
- */
-export const BRAND_GRADIENTS: Record<GradientVariant, string> = {
-  // Primary: Cyan -> Sky -> Blue (Used for Tools, Main Features)
-  primary: "from-cyan-400 via-sky-400 to-blue-500",
-
-  // Secondary: Electric Blue -> Indigo -> Violet (Used for Blog, Editorial)
-  secondary: "from-blue-400 via-indigo-400 to-violet-500",
-
-  // Accent: Mint/Emerald -> Cyan -> Blue (Used for News, Platform Mission)
-  accent: "from-emerald-400 via-cyan-400 to-blue-500",
-
-  // Creative: Sky -> Blue -> Violet (Used for Resources, Work Portfolio)
-  creative: "from-sky-400 via-blue-500 to-violet-500",
-};
-
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 /**
- * Unified PageHero Component for Rvan.me
- * Enforces standardized typography scale, letter-spacing, line-height, and brand gradients.
+ * Unified Editorial PageHero for Rvan.me
+ * Enforces standardized typography scale, brand gradient, and centered container alignment.
  */
 export function PageHero({
   eyebrow,
   title,
   accentText,
   description,
-  gradientVariant = "primary",
+  align = "center",
   className = "",
   children,
 }: PageHeroProps) {
-  const gradientClass = BRAND_GRADIENTS[gradientVariant] || BRAND_GRADIENTS.primary;
+  const isCentered = align === "center";
 
   return (
-    <section className={`px-6 pt-24 pb-8 md:px-10 md:pt-32 relative z-10 ${className}`}>
-      <div className="mx-auto max-w-[1600px]">
+    <section
+      className={`relative pt-12 pb-8 md:pt-16 md:pb-12 px-4 sm:px-6 md:px-8 z-10 ${
+        isCentered ? "text-center" : "text-left"
+      } ${className}`}
+    >
+      <div className="mx-auto max-w-[1280px] flex flex-col items-center">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="max-w-5xl"
+          className={`w-full ${isCentered ? "max-w-3xl mx-auto flex flex-col items-center" : "max-w-4xl"}`}
         >
           {/* Eyebrow Label */}
           {eyebrow && (
-            <div className="mb-4">
+            <div className="mb-3.5">
               {typeof eyebrow === "string" ? (
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold tracking-widest text-primary mono uppercase">
+                <Eyebrow className="text-primary tracking-[.24em] font-semibold text-xs sm:text-[13px]">
                   {eyebrow}
-                </span>
+                </Eyebrow>
               ) : (
                 eyebrow
               )}
             </div>
           )}
 
-          {/* Unified Page Title */}
-          <h1 className="text-4xl font-semibold tracking-[-.06em] sm:text-6xl md:text-7xl lg:text-8xl leading-[0.95] text-foreground">
+          {/* Unified Page Title with Brand Gradient */}
+          <h1
+            className="font-extrabold tracking-tight leading-[1.05] text-foreground w-full mb-3"
+            style={{ fontSize: "clamp(2.2rem, 5vw, 4.2rem)" }}
+          >
             {title}{" "}
             {accentText && (
               <>
-                <br />
-                <span className={`text-transparent bg-clip-text bg-gradient-to-r ${gradientClass}`}>
+                <br className="hidden sm:block" />
+                <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] dark:from-[#61c5ad] dark:via-[#6099df] dark:to-[#bc66c5] bg-clip-text text-transparent inline-block">
                   {accentText}
                 </span>
               </>
@@ -85,13 +76,13 @@ export function PageHero({
 
           {/* Subtitle / Description */}
           {description && (
-            <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed font-medium">
+            <p className={`text-base sm:text-lg text-muted-foreground leading-relaxed font-normal ${isCentered ? "max-w-xl mx-auto" : "max-w-2xl"}`}>
               {description}
             </p>
           )}
 
-          {/* Optional Action Buttons or Children */}
-          {children && <div className="mt-8">{children}</div>}
+          {/* Optional Action Buttons, Search Bar, or Filters */}
+          {children && <div className="mt-6 w-full">{children}</div>}
         </motion.div>
       </div>
     </section>

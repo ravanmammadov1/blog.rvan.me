@@ -20,7 +20,7 @@ export default function HomeAboutSection() {
 
   return (
     <section id="about-summary" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border/60 bg-transparent">
-      <div className="mx-auto max-w-[1600px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative z-10">
         <div className="p-8 md:p-12 rounded-2xl border border-border bg-card">
           <div className="grid gap-10 lg:grid-cols-12 items-center">
             {/* Platform Information */}

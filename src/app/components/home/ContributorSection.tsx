@@ -43,7 +43,7 @@ export default function ContributorSection() {
 
   return (
     <section id="contributor" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border/60 bg-transparent">
-      <div className="mx-auto max-w-[1600px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"

@@ -196,8 +196,8 @@ export default function ContributorPage() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      <main className="relative z-10 pt-28 pb-20 md:pt-36 md:pb-28">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+      <main className="relative z-10 pt-10 pb-20 md:pt-14 md:pb-28">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-8">
           {/* SCENARIO A: Authenticated user applying to become contributor */}
           {user && showApplyWizard && !isContributor && (
             <div className="py-6">

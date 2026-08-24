@@ -169,18 +169,18 @@ export default function BlogArchive() {
         />
       </div>
 
-      {/* 1. Unified Page Hero */}
+      {/* 1. Unified Master Page Hero */}
       <PageHero
-        title={isAz ? "Dizayn və" : "Design &"}
-        accentText={t("blogArchiveHeadingAccent", "Editorial Essays.")}
-        gradientVariant="secondary"
+        eyebrow={isAz ? "BLOQ · İDEYALAR VƏ BİLİK" : "BLOG · INSIGHTS & IDEAS"}
+        title={isAz ? "DİZAYN. İDEYALAR." : "DESIGN. IDEAS."}
+        accentText={isAz ? "VİZUAL MƏDƏNİYYƏT." : "VISUAL CULTURE."}
         description={t(
           "blogArchiveSubtitle",
           "Original articles on visual strategy, motion mechanics, design systems, and creative technology."
         )}
       />
 
-      <div className="mx-auto max-w-[1600px] px-6 py-6 md:px-10 relative z-10 space-y-10">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-8 py-6 relative z-10 space-y-10">
         {/* 2. Featured Highlighted Content (when not filtering/searching) */}
         {!searchQuery && activeCategory === "All" && featuredPost && !loading && (
           <motion.div
@@ -188,11 +188,11 @@ export default function BlogArchive() {
             initial="hidden"
             animate="visible"
             custom={0.15}
-            className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-6 sm:p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/40 shadow-2xl"
+            className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-6 sm:p-8 backdrop-blur-xl transition-all duration-300 hover:border-primary/40 shadow-[0_12px_40px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
           >
             <div className="grid gap-8 lg:grid-cols-12 items-center">
               {/* Cover Image */}
-              <div className="lg:col-span-6 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-white/10 relative bg-neutral-900/80">
+              <div className="lg:col-span-6 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#DDE1E0] dark:border-white/10 relative bg-neutral-900/80">
                 <img
                   src={
                     urlFor(featuredPost.coverImage)?.width(1200).height(675).quality(90).url() ||

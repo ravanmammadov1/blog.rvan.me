@@ -13,6 +13,7 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 import { fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
+import PageHero from "./components/PageHero";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -74,37 +75,17 @@ export default function FaqPage() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Hero Section */}
-      <section className="relative px-6 pt-32 pb-16 md:px-10 md:pt-40 md:pb-20 border-b border-border">
-        <div className="mx-auto max-w-[1200px]">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="max-w-3xl space-y-5"
-          >
-            <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "BİLİK BAZASI VƏ SUALLAR" : "KNOWLEDGE BASE & GUIDELINES"}
-            </Eyebrow>
+      {/* Master Page Hero */}
+      <PageHero
+        eyebrow={isAz ? "BİLİK BAZASI VƏ SUALLAR" : "KNOWLEDGE BASE & GUIDELINES"}
+        title={isAz ? "TEZ-TEZ VERİLƏN" : "FREQUENTLY ASKED"}
+        accentText={isAz ? "SUALLAR." : "QUESTIONS."}
+        description={isAz
+          ? "Rvan.me platformasının fəaliyyət prinsipləri, məqalə qəbulu, redaksiya baxışı, dil və müəlliflik qaydaları ilə bağlı ən mühüm sualların ətraflı cavabları:"
+          : "Clear, structured answers to the 10 most essential questions regarding our publication standards, contributor onboarding, language choices, and editorial review."}
+      />
 
-            <h1
-              className="font-extrabold tracking-tight leading-[1.08] text-foreground"
-              style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}
-            >
-              {isAz ? "Tez-tez Verilən Suallar" : "Frequently Asked Questions"}
-            </h1>
-
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              {isAz
-                ? "Rvan.me platformasının fəaliyyət prinsipləri, məqalə qəbulu, redaksiya baxışı, dil və müəlliflik qaydaları ilə bağlı 10 ən mühüm sualın ətraflı cavabları:"
-                : "Clear, structured answers to the 10 most essential questions regarding our publication standards, contributor onboarding, language choices, and editorial review."}
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 10 Detailed Questions Section */}
-      <section className="relative px-6 py-16 md:px-10 md:py-24">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 md:px-8 space-y-12">
         <div className="mx-auto max-w-[1200px]">
           <FaqAccordion
             items={GLOBAL_FAQS}
@@ -112,7 +93,7 @@ export default function FaqPage() {
             defaultOpenIndex={0}
           />
         </div>
-      </section>
+      </div>
 
       {/* Contributor Call to Action */}
       <section className="relative px-6 pb-24 md:px-10 md:pb-32">

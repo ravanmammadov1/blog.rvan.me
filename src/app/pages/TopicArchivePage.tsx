@@ -49,10 +49,9 @@ export default function TopicArchivePage() {
       <SiteHeader siteSettings={siteSettings} />
 
       <PageHero
-        eyebrow={isAz ? "BİLİK İNDEKSİ" : "KNOWLEDGE INDEX"}
-        title={isAz ? "Bütün Mövzular" : "Editorial Topics"}
-        accentText="."
-        gradientVariant="secondary"
+        eyebrow={isAz ? "BİLİK İNDEKSİ · MÖVZULAR" : "KNOWLEDGE INDEX · TOPICS"}
+        title={isAz ? "BÜTÜN REDAKSİYA" : "EDITORIAL TOPIC"}
+        accentText={isAz ? "MÖVZULARI." : "PILLARS."}
         description={
           isAz
             ? "Məqalələrimizi 6 əsas redaksiya mövzusu üzrə kəşf edin."
@@ -60,7 +59,7 @@ export default function TopicArchivePage() {
         }
       />
 
-      <div className="mx-auto max-w-[1600px] px-6 py-12 md:px-10">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 md:px-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {TOPICS_CATALOG.map((topic, idx) => {
             const Icon = topic.icon;

@@ -73,7 +73,7 @@ export default function BlogSection() {
           background: "radial-gradient(circle at 80% 60%, rgba(139,92,246,0.07) 0%, rgba(79,70,229,0.04) 45%, transparent 70%)",
         }}
       />
-      <div className="mx-auto max-w-[1600px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"

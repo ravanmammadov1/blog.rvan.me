@@ -45,7 +45,7 @@ export function PageFilterBar({
     <section
       className={`sticky ${stickyTopClass} z-30 px-4 sm:px-6 md:px-10 py-3.5 bg-background/90 backdrop-blur-xl border-y border-border/80 transition-all ${className}`}
     >
-      <div className="mx-auto max-w-[1600px] flex flex-col md:flex-row md:items-center justify-between gap-3.5 md:gap-6">
+      <div className="mx-auto max-w-[1280px] flex flex-col md:flex-row md:items-center justify-between gap-3.5 md:gap-6">
         {/* CATEGORY FILTERS:
             - Mobile: single-line horizontal scrollable track
             - Tablet/Desktop: flexible wrapping pill group */}
@@ -111,7 +111,7 @@ export function PageFilterBar({
         </div>
       </div>
 
-      {children && <div className="mx-auto max-w-[1600px] mt-3">{children}</div>}
+      {children && <div className="mx-auto max-w-[1280px] mt-3">{children}</div>}
     </section>
   );
 }

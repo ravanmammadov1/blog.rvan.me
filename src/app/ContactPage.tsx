@@ -139,10 +139,10 @@ export default function ContactPage() {
       </div>
 
       {/* Main Container */}
-      <section className="px-6 pt-24 pb-28 md:px-10 md:pt-32 md:pb-36 relative z-10">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="px-4 pt-12 pb-20 sm:px-6 md:px-8 md:pt-16 md:pb-28 relative z-10">
+        <div className="mx-auto max-w-[1280px]">
           
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16 items-start">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14 items-start">
             
             {/* LEFT COLUMN: Premium Intro & Social Links */}
             <motion.div 
@@ -153,23 +153,28 @@ export default function ContactPage() {
               className="lg:col-span-5 flex flex-col justify-between pt-2"
             >
               <div>
-                <p className="text-[11px] font-bold tracking-[.2em] text-primary mono uppercase mb-4">
+                <p className="text-xs font-semibold tracking-[.24em] text-primary mono uppercase mb-3.5">
                   {t("contactBadge", "GET IN TOUCH")}
                 </p>
-                <h1 className="text-4xl font-semibold tracking-[-.05em] sm:text-5xl lg:text-6xl text-foreground leading-[1.08] uppercase">
-                  {siteSettings?.contactHeading || t("contactHeading", "LET'S TALK.")}
+                <h1
+                  className="font-extrabold tracking-tight leading-[1.05] text-foreground uppercase mb-4"
+                  style={{ fontSize: "clamp(2.4rem, 5.2vw, 4.4rem)" }}
+                >
+                  <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] dark:from-[#61c5ad] dark:via-[#6099df] dark:to-[#bc66c5] bg-clip-text text-transparent inline-block">
+                    {siteSettings?.contactHeading || (isAz ? "GƏLİN DANIŞAQ." : "LET'S TALK.")}
+                  </span>
                 </h1>
-                <p className="mt-6 text-base sm:text-lg text-muted-foreground/90 leading-relaxed max-w-md font-medium">
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal max-w-md">
                   {siteSettings?.contactSubtext || t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.")}
                 </p>
               </div>
 
               {/* Social links block */}
-              <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
-                <p className="text-[10px] font-bold tracking-[.22em] text-muted-foreground/70 mono uppercase mb-4">
+              <div className="mt-10 sm:mt-12 pt-6 border-t border-[#DDE1E0] dark:border-white/10">
+                <p className="text-[10px] font-bold tracking-[.22em] text-muted-foreground/80 mono uppercase mb-3.5">
                   {t("connectAcrossNetworks", "CONNECT ACROSS NETWORKS")}
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2.5">
                   {[
                     { label: "LinkedIn", href: siteSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/" },
                     { label: "Behance", href: siteSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan" },
@@ -180,7 +185,7 @@ export default function ContactPage() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:border-primary/50 hover:text-primary transition-all duration-300 mono hover:-translate-y-0.5 glass-sm"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all duration-200 mono hover:-translate-y-0.5"
                     >
                       {social.label} <ArrowUpRight size={13} className="opacity-70" />
                     </a>
@@ -195,7 +200,7 @@ export default function ContactPage() {
               initial="hidden" 
               animate="visible" 
               custom={0.15}
-              className="lg:col-span-7 rounded-3xl border border-white/10 bg-white/5 p-7 sm:p-10 md:p-12 glass shadow-2xl relative overflow-hidden group"
+              className="lg:col-span-7 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-6 sm:p-9 md:p-10 shadow-[0_12px_40px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.4)] backdrop-blur-xl relative overflow-hidden group"
             >
               {/* Subtle hover glow */}
               <div 

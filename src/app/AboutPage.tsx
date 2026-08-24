@@ -34,6 +34,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import PageHero from "./components/PageHero";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 import { ABOUT_FAQS } from "../data/faqData";
 import FaqAccordion from "./components/ui/FaqAccordion";
@@ -87,61 +88,38 @@ export default function AboutPage() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* ── 1. ABOUT HERO SECTION ── */}
-      <section className="relative px-6 pt-32 pb-16 md:px-10 md:pt-40 md:pb-24 border-b border-border">
-        <div className="mx-auto max-w-[1600px]">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="max-w-4xl space-y-6"
+      {/* ── 1. ABOUT MASTER HERO ── */}
+      <PageHero
+        eyebrow={isAz ? "RVAN.ME HAQQINDA" : "ABOUT RVAN.ME"}
+        title={isAz ? "KREATİV NƏŞR VƏ" : "CREATIVE PUBLICATION &"}
+        accentText={isAz ? "BİLİK PLATFORMASI." : "KNOWLEDGE PLATFORM."}
+        description={isAz
+          ? "Dizayn, brendinq, marketinq strategiyası, vizual mədəniyyət və yaradıcı texnologiyalar haqqında müstəqil platforma."
+          : "An independent creative publication exploring design, branding, marketing strategy, visual culture, and creative technology."}
+      >
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <Button
+            to={getLocalizedPath("/blog")}
+            variant="primary"
+            size="lg"
+            icon={<ArrowUpRight size={16} />}
           >
-            <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "MÜSTƏQİL KREATİV NƏŞR VƏ BİLİK PLATFORMASI" : "INDEPENDENT CREATIVE PUBLICATION & KNOWLEDGE PLATFORM"}
-            </Eyebrow>
-
-            <h1
-              className="font-extrabold tracking-tight leading-[1.08] text-foreground"
-              style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.2rem)" }}
-            >
-              {isAz ? "Vizual strategiyanın təhlili." : "Deconstructing visual strategy."}
-              <br />
-              <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent">
-                {isAz ? "Brendlərin, mədəniyyətin və sənayenin mənası." : "Decoding brands, culture & the creative industry."}
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-normal leading-relaxed max-w-3xl">
-              {isAz
-                ? "Rvan.me — dizayn, brendinq, marketinq strategiyası, vizual mədəniyyət və yaradıcı texnologiyaları dərindən araşdıran, Azərbaycanın kreativ icmasını vahid intellektual məkanda birləşdirən müstəqil nəşr platformasıdır."
-                : "Rvan.me is an independent creative publication exploring design, branding, marketing strategy, visual culture, and creative technology — providing Azerbaijan's creative community with a focused intellectual home."}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <Button
-                to={getLocalizedPath("/blog")}
-                variant="primary"
-                size="lg"
-                icon={<ArrowUpRight size={16} />}
-              >
-                {isAz ? "MƏQALƏLƏRİ OXU" : "READ ARTICLES"}
-              </Button>
-              <Button
-                to={getLocalizedPath("/contributor")}
-                variant="secondary"
-                size="lg"
-                icon={<ArrowRight size={16} />}
-              >
-                {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
-              </Button>
-            </div>
-          </motion.div>
+            {isAz ? "MƏQALƏLƏRİ OXU" : "READ ARTICLES"}
+          </Button>
+          <Button
+            to={getLocalizedPath("/contributor")}
+            variant="secondary"
+            size="lg"
+            icon={<ArrowRight size={16} />}
+          >
+            {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+          </Button>
         </div>
-      </section>
+      </PageHero>
 
       {/* ── 2. WHY RVAN.ME EXISTS ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
-        <div className="mx-auto max-w-[1600px] grid gap-12 lg:grid-cols-12 items-start">
+        <div className="mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-12 items-start">
           <div className="lg:col-span-5 space-y-4">
             <Eyebrow className="text-primary tracking-[.2em]">
               {isAz ? "MİSSİYAMIZ VƏ MƏQSƏDİMİZ" : "WHY RVAN.ME EXISTS"}
@@ -180,7 +158,7 @@ export default function AboutPage() {
 
       {/* ── 3. WHAT WE PUBLISH (EDITORIAL PILLARS) ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border bg-card/20">
-        <div className="mx-auto max-w-[1600px] space-y-12">
+        <div className="mx-auto max-w-[1280px] space-y-12">
           <div className="max-w-3xl space-y-4">
             <Eyebrow className="text-primary tracking-[.2em]">
               {isAz ? "NƏŞR İSTİQAMƏTLƏRİ" : "WHAT WE PUBLISH"}
@@ -263,7 +241,7 @@ export default function AboutPage() {
 
       {/* ── 4. EDITORIAL PRINCIPLES ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
-        <div className="mx-auto max-w-[1600px] space-y-12">
+        <div className="mx-auto max-w-[1280px] space-y-12">
           <div className="max-w-3xl space-y-4">
             <Eyebrow className="text-primary tracking-[.2em]">
               {isAz ? "REDAKSİYA STANDARTLARI" : "EDITORIAL PRINCIPLES"}
@@ -316,7 +294,7 @@ export default function AboutPage() {
 
       {/* ── 5. FOR CONTRIBUTORS ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border bg-card/20">
-        <div className="mx-auto max-w-[1600px] grid gap-12 lg:grid-cols-12 items-center">
+        <div className="mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-12 items-center">
           <div className="lg:col-span-6 space-y-6">
             <Eyebrow className="text-primary tracking-[.2em]">
               {isAz ? "MÜƏLLİFLƏR ÜÇÜN" : "FOR CONTRIBUTORS"}
@@ -382,7 +360,7 @@ export default function AboutPage() {
 
       {/* ── 6. HOW PUBLISHING WORKS ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
-        <div className="mx-auto max-w-[1600px] space-y-12">
+        <div className="mx-auto max-w-[1280px] space-y-12">
           <div className="max-w-3xl space-y-4">
             <Eyebrow className="text-primary tracking-[.2em]">
               {isAz ? "NƏŞR PROSESİ" : "HOW PUBLISHING WORKS"}
@@ -435,7 +413,7 @@ export default function AboutPage() {
 
       {/* ── 7. AI POLICY ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border bg-card/30">
-        <div className="mx-auto max-w-[1600px] grid gap-10 lg:grid-cols-12 items-start">
+        <div className="mx-auto max-w-[1280px] grid gap-10 lg:grid-cols-12 items-start">
           <div className="lg:col-span-5 space-y-4">
             <Eyebrow className="text-primary tracking-[.2em]">
               {isAz ? "SÜNİ İNTELLEKT SİYASƏTİ" : "AI EDITORIAL POLICY"}
@@ -464,7 +442,7 @@ export default function AboutPage() {
 
       {/* ── 8. FOUNDER PROFILE ── */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-b border-border">
-        <div className="mx-auto max-w-[1600px] grid gap-12 lg:grid-cols-12 items-center">
+        <div className="mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-12 items-center">
           <div className="lg:col-span-4 flex justify-center lg:justify-start">
             <div className="relative group">
               <div className="h-64 w-64 sm:h-72 sm:w-72 rounded-3xl overflow-hidden border-2 border-primary/40 bg-surface shadow-2xl">

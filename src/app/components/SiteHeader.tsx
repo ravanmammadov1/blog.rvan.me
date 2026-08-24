@@ -15,7 +15,6 @@ import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../context/ThemeContext";
 import AuthModal from "./AuthModal";
-import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import ravanLogo from "../../assets/ravan_logo.svg";
 import { getContributorStatus, getContributorApplication } from "../../services/contributorService";
@@ -353,57 +352,15 @@ interface SiteHeaderProps {
   siteSettings?: SiteSettings | null;
 }
 
+/**
+ * SiteHeader
+ * Static, non-floating, non-resizing global header.
+ * Stays at the top of the page and naturally scrolls out of view.
+ */
 export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchInitialQuery, setSearchInitialQuery] = useState("");
   const location = useLocation();
   const { t, getLocalizedPath } = useLanguage();
-
-  // Performance-optimized scroll listener (RAF + threshold caching)
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 40;
-          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Keyboard shortcut & open-search event handlers
-  useEffect(() => {
-    const handleGlobalKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setSearchInitialQuery("");
-        setSearchOpen((prev) => !prev);
-      }
-    };
-    const handleOpenSearch = (event: Event) => {
-      const customEvent = event as CustomEvent<{ query?: string }>;
-      setSearchInitialQuery(customEvent.detail?.query || "");
-      setSearchOpen(true);
-    };
-
-    window.addEventListener("keydown", handleGlobalKey);
-    window.addEventListener("open-search", handleOpenSearch);
-    return () => {
-      window.removeEventListener("keydown", handleGlobalKey);
-      window.removeEventListener("open-search", handleOpenSearch);
-    };
-  }, []);
 
   // Global navigation items
   const navItems = [
@@ -421,15 +378,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 w-full pointer-events-none pt-3 sm:pt-4 pb-2">
-        <div
-          className={`pointer-events-auto mx-auto flex items-center justify-between max-w-[760px] md:max-w-[820px] px-4 sm:px-5 py-2 rounded-full backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] mx-3 sm:mx-auto ${
-            scrolled
-              ? "opacity-50 hover:opacity-100 bg-white/55 dark:bg-[#121215]/55 border border-[#DDE1E0]/50 dark:border-white/5 shadow-2xs hover:bg-white/95 dark:hover:bg-[#121215]/95 hover:border-[#DDE1E0] dark:hover:border-white/12 hover:shadow-[0_6px_20px_rgba(15,23,42,0.06)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.4)]"
-              : "opacity-100 bg-white/90 dark:bg-[#121215]/90 border border-[#DDE1E0] dark:border-white/10 shadow-[0_4px_16px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
-          }`}
-        >
-          {/* Logo & Brand — Original untouched asset */}
+      <header className="relative w-full pt-5 pb-3 px-4 z-30">
+        <div className="mx-auto flex items-center justify-between max-w-[760px] md:max-w-[820px] px-4 sm:px-5 py-2 rounded-full bg-white/90 dark:bg-[#121215]/90 border border-[#DDE1E0] dark:border-white/10 shadow-[0_4px_16px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.35)] backdrop-blur-md">
+          {/* Logo & Brand — Always links to Home in active language */}
           <Link
             to={getLocalizedPath("/")}
             className="group flex items-center gap-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 select-none"
@@ -489,16 +440,6 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </div>
         </div>
       </header>
-
-      {/* Global Search Modal (Invoked via ⌘K or Hero Search) */}
-      <GlobalSearchModal
-        isOpen={searchOpen}
-        onClose={() => {
-          setSearchOpen(false);
-          setSearchInitialQuery("");
-        }}
-        initialQuery={searchInitialQuery}
-      />
 
       {/* Mobile Slide-Over Menu */}
       <AnimatePresence>

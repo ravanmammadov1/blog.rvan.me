@@ -186,12 +186,15 @@ export default function ResourcesArchive() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* Page Hero */}
+      {/* Master Page Hero */}
       <PageHero
-        title={t("resourcesHeadingMain", "Creative")}
-        accentText={t("resourcesHeadingAccent", "Resources.")}
-        gradientVariant="primary"
-        description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, SVG/React vector icons, and open-source illustration catalog.")}
+        eyebrow={isAz ? "RESURSLAR · EKOSİSTEM" : "RESOURCES · ECOSYSTEM"}
+        title={isAz ? "ALƏTLƏR. AKTİVLƏR." : "TOOLS. ASSETS."}
+        accentText={isAz ? "MƏNBƏLƏR." : "REFERENCES."}
+        description={t(
+          "resourcesArchiveSubtitle",
+          "Curated open-source Google Font families, SVG/React vector icons, and open-source illustration catalog."
+        )}
       />
 
       {/* Primary Category Filter Bar (FONTS | ICONS) */}
@@ -221,10 +224,10 @@ export default function ResourcesArchive() {
           1. FONTS CATALOG SECTION
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "fonts" && (
-        <section className="px-6 py-10 md:px-10 relative z-10">
-          <div className="mx-auto max-w-[1600px]">
+        <section className="px-4 py-8 sm:px-6 md:px-8 relative z-10">
+          <div className="mx-auto max-w-[1280px]">
             {/* Font Toolbar */}
-            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
+            <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/[0.03] p-4 backdrop-blur-md shadow-xs">
               {/* Category Pills */}
               <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 min-w-0">
                 {[
@@ -335,8 +338,8 @@ export default function ResourcesArchive() {
           2. ICONS CATALOG SECTION
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "icons" && (
-        <section className="px-6 py-10 md:px-10 relative z-10">
-          <div className="mx-auto max-w-[1600px]">
+        <section className="px-4 py-8 sm:px-6 md:px-8 relative z-10">
+          <div className="mx-auto max-w-[1280px]">
             {/* Single-Line Toolbar with Dropdown Category & Slider Controls */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-white/10 bg-white/5 p-4 glass">
               
@@ -512,8 +515,8 @@ export default function ResourcesArchive() {
           3. ILLUSTRATIONS CATALOG SECTION
       ───────────────────────────────────────────────────────────────────────────── */}
       {activeCategory === "illustrations" && (
-        <section className="px-6 py-10 md:px-10 relative z-10">
-          <div className="mx-auto max-w-[1600px]">
+        <section className="px-4 py-8 sm:px-6 md:px-8 relative z-10">
+          <div className="mx-auto max-w-[1280px]">
             {/* Single-Line Toolbar with Category Pills & Color Customizer */}
             <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-border bg-card p-4 shadow-sm">
               {/* Category Pills with Brand Gradient Active State */}

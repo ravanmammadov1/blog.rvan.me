@@ -163,7 +163,7 @@ export default function BlogDetail() {
 
       <SiteHeader siteSettings={siteSettings} />
 
-      <article className="mx-auto max-w-[1400px] px-6 pt-24 pb-28 md:px-10">
+      <article className="mx-auto max-w-[1280px] px-4 pt-8 pb-20 sm:px-6 md:px-8 md:pt-12 md:pb-28">
         <BlogHero post={post} />
 
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">

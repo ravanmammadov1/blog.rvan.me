@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   ArrowRight,
@@ -10,9 +10,23 @@ import {
   Eye,
   BookOpen,
   Type,
+  X,
+  CornerDownLeft,
 } from "lucide-react";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { Eyebrow } from "../Eyebrow";
+import { MASTER_EDITORIAL_BLOGS } from "../../../lib/editorialBlogRegistry";
+import { trackSearchDiscovery } from "../../../lib/analytics/events";
+
+interface SearchResultItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  type: "ARTICLE" | "RESOURCE" | "TOPIC";
+  path: string;
+  badgeColor: string;
+  icon: string;
+}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -26,19 +40,115 @@ const fadeUp = {
 export default function HeroSearchSection() {
   const { getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Search corpus from real master editorial articles & resources
+  const searchCorpus: SearchResultItem[] = useMemo(() => {
+    const items: SearchResultItem[] = [];
+
+    // Articles
+    MASTER_EDITORIAL_BLOGS.forEach((blog) => {
+      const slugStr = typeof blog.slug === "string" ? blog.slug : blog.slug?.current || blog._id;
+      items.push({
+        id: `blog-${slugStr}`,
+        title: isAz && blog.title_az ? blog.title_az : blog.title,
+        subtitle: isAz && blog.excerpt_az ? blog.excerpt_az : blog.excerpt,
+        type: "ARTICLE",
+        path: `/blog/${slugStr}`,
+        badgeColor: "text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
+        icon: "📄",
+      });
+    });
+
+    // Resources
+    items.push({
+      id: "res-fonts",
+      title: isAz ? "Google Şriftləri Kataloqu (2,000+ Şrift)" : "Curated Google Fonts Catalog",
+      subtitle: isAz ? "Canlı nümayiş, variativ oxlar və CSS kodları" : "Live specimen editor, variable axes & CSS snippets",
+      type: "RESOURCE",
+      path: "/resources?category=fonts",
+      badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
+      icon: "🔤",
+    });
+    items.push({
+      id: "res-icons",
+      title: isAz ? "Lucide Vektor İkon Kolleksiyası" : "Lucide Vector Icon Library",
+      subtitle: isAz ? "UI/UX dizayn üçün minlərlə təmiz SVG ikon" : "Thousands of clean SVG icons for UI/UX applications",
+      type: "RESOURCE",
+      path: "/resources?category=icons",
+      badgeColor: "text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10",
+      icon: "✨",
+    });
+
+    return items;
+  }, [isAz]);
+
+  // Inline filtered results
+  const filteredResults = useMemo(() => {
+    if (!searchInput.trim()) return [];
+    const q = searchInput.toLowerCase().trim();
+    return searchCorpus
+      .filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.subtitle.toLowerCase().includes(q) ||
+          item.type.toLowerCase().includes(q)
+      )
+      .slice(0, 6);
+  }, [searchInput, searchCorpus]);
+
+  // Close inline results on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
+        setIsFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  // Keyboard navigation for inline search
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (filteredResults.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev + 1) % filteredResults.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev - 1 + filteredResults.length) % filteredResults.length);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selected = filteredResults[selectedIndex];
+      if (selected) {
+        trackSearchDiscovery("inline_result_selected", {
+          resultType: selected.type,
+          targetPath: selected.path,
+        });
+        navigate(getLocalizedPath(selected.path));
+        setIsFocused(false);
+      }
+    } else if (e.key === "Escape") {
+      setIsFocused(false);
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    window.dispatchEvent(
-      new CustomEvent("open-search", { detail: { query: searchInput.trim() } })
-    );
-  };
-
-  const handleOpenSearchModal = () => {
-    window.dispatchEvent(
-      new CustomEvent("open-search", { detail: { query: searchInput.trim() } })
-    );
+    if (filteredResults.length > 0) {
+      const selected = filteredResults[selectedIndex] || filteredResults[0];
+      navigate(getLocalizedPath(selected.path));
+      setIsFocused(false);
+    }
   };
 
   // Popular Curated Concept Guides
@@ -78,32 +188,32 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative flex min-h-[85vh] md:min-h-[90vh] flex-col items-center justify-center px-4 pt-28 pb-14 md:px-8 md:pt-36 md:pb-20 overflow-hidden text-center">
+    <section className="relative flex min-h-[80vh] md:min-h-[85vh] flex-col items-center justify-center px-4 pt-16 pb-14 md:px-8 md:pt-20 md:pb-20 overflow-hidden text-center">
       {/* ── Floating Decorative Elements (Subtle Editorial Symbols) ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 select-none" aria-hidden="true">
         {/* Spark Icon — Top Left */}
-        <div className="absolute top-20 left-[8%] md:left-[12%] animate-float-slow opacity-60 dark:opacity-80">
+        <div className="absolute top-12 left-[8%] md:left-[12%] animate-float-slow opacity-60 dark:opacity-80">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 backdrop-blur-md shadow-xs">
             <Sparkles size={14} className="text-primary" />
           </div>
         </div>
 
         {/* Orbit Ring — Upper Right */}
-        <div className="absolute top-28 right-[7%] md:right-[14%] animate-float-medium opacity-50 dark:opacity-75">
+        <div className="absolute top-16 right-[7%] md:right-[14%] animate-float-medium opacity-50 dark:opacity-75">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/10 border border-secondary/25 backdrop-blur-md shadow-xs">
             <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
           </div>
         </div>
 
         {/* Diamond / Plus Marker — Lower Left */}
-        <div className="absolute bottom-28 left-[6%] md:left-[10%] animate-float-gentle opacity-40 dark:opacity-60 hidden sm:block">
+        <div className="absolute bottom-24 left-[6%] md:left-[10%] animate-float-gentle opacity-40 dark:opacity-60 hidden sm:block">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/10 border border-accent/20 backdrop-blur-sm">
             <span className="text-xs font-mono font-bold text-accent">+</span>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-4xl relative z-10 flex flex-col items-center">
+      <div className="mx-auto w-full max-w-[1280px] relative z-10 flex flex-col items-center">
         {/* ── Micro-label ── */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}>
           <Eyebrow className="mb-4 text-primary tracking-[.24em] font-semibold">
@@ -119,8 +229,8 @@ export default function HeroSearchSection() {
           initial="hidden"
           animate="visible"
           custom={0.1}
-          className="font-extrabold tracking-tight leading-[1.04] mb-5 w-full"
-          style={{ fontSize: "clamp(2.5rem, 6.2vw, 5.2rem)" }}
+          className="font-extrabold tracking-tight leading-[1.04] mb-5 w-full max-w-4xl"
+          style={{ fontSize: "clamp(2.5rem, 6vw, 5.2rem)" }}
         >
           <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] dark:from-[#61c5ad] dark:via-[#6099df] dark:to-[#bc66c5] bg-clip-text text-transparent inline-block">
             {isAz ? (
@@ -145,14 +255,15 @@ export default function HeroSearchSection() {
         </motion.p>
 
         {/* ══════════════════════════════════════════════════════════════════
-            ── HERO SEARCH BAR — PRIMARY FOCAL POINT ──
+            ── HERO INLINE SEARCH BAR — ZERO MODAL / POPUP ──
         ══════════════════════════════════════════════════════════════════ */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           animate="visible"
           custom={0.2}
-          className="w-full max-w-2xl mx-auto mb-10 md:mb-12"
+          ref={searchContainerRef}
+          className="w-full max-w-2xl mx-auto mb-10 md:mb-12 relative"
         >
           <form onSubmit={handleSearchSubmit} className="relative group">
             {/* Ambient Animated Gradient Glow Halo */}
@@ -171,38 +282,130 @@ export default function HeroSearchSection() {
 
               {/* Input */}
               <input
+                ref={inputRef}
                 type="text"
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onClick={handleOpenSearchModal}
+                onChange={(e) => {
+                  setSearchInput(e.target.value);
+                  setIsFocused(true);
+                  setSelectedIndex(0);
+                }}
+                onFocus={() => setIsFocused(true)}
+                onKeyDown={handleKeyDown}
                 placeholder={
                   isAz
                     ? "İdeya, mövzu və məqalə axtar..."
                     : "Search ideas, concepts, articles..."
                 }
-                className="w-full bg-transparent text-sm sm:text-base font-medium text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+                className="w-full bg-transparent text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
               />
 
-              {/* Keyboard Shortcut Indicator */}
-              <kbd className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-border bg-muted/60 px-2 py-1 text-[11px] font-mono text-muted-foreground shadow-xs shrink-0 select-none">
-                ⌘K
-              </kbd>
+              {/* Clear button if text entered */}
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchInput("");
+                    inputRef.current?.focus();
+                  }}
+                  className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X size={15} />
+                </button>
+              )}
 
               {/* Search Submit Action Button */}
               <button
                 type="submit"
                 aria-label={isAz ? "Axtar" : "Search"}
-                className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:opacity-90 active:scale-95 transition-all mono shrink-0"
+                className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:opacity-90 active:scale-95 transition-all mono shrink-0 cursor-pointer"
               >
                 <span className="hidden xs:inline">{isAz ? "AXTAR" : "SEARCH"}</span>
                 <ArrowRight size={13} />
               </button>
             </div>
           </form>
+
+          {/* ── INLINE RESULTS DROPDOWN — NO MODAL / NO FULLSCREEN DARKENING ── */}
+          <AnimatePresence>
+            {isFocused && searchInput.trim().length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.99 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute top-full left-0 right-0 mt-2 z-40 rounded-2xl bg-white dark:bg-[#121215] border border-[#DDE1E0] dark:border-white/10 shadow-[0_16px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-3 text-left overflow-hidden backdrop-blur-xl space-y-1"
+              >
+                {filteredResults.length === 0 ? (
+                  <div className="py-6 text-center text-xs text-muted-foreground">
+                    {isAz ? "Heç bir nəticə tapılmadı." : "No matching ideas or articles found."}
+                  </div>
+                ) : (
+                  <>
+                    <div className="px-2 py-1 flex items-center justify-between text-[10px] mono font-bold text-muted-foreground/70 uppercase">
+                      <span>{isAz ? "İNTERAKTİV NƏTİCƏLƏR" : "MATCHING ENTITIES"} ({filteredResults.length})</span>
+                      <span>↵ to view</span>
+                    </div>
+
+                    {filteredResults.map((item, idx) => {
+                      const isSelected = idx === selectedIndex;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => {
+                            trackSearchDiscovery("inline_result_selected", {
+                              resultType: item.type,
+                              targetPath: item.path,
+                            });
+                            navigate(getLocalizedPath(item.path));
+                            setIsFocused(false);
+                          }}
+                          onMouseEnter={() => setSelectedIndex(idx)}
+                          className={`w-full flex items-center justify-between gap-3 rounded-xl p-2.5 text-left transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-primary/10 dark:bg-white/10 border border-primary/40 text-foreground"
+                              : "bg-slate-50/70 hover:bg-slate-100/90 dark:bg-white/[0.03] dark:hover:bg-white/[0.06] border border-slate-200/70 dark:border-white/5"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-base shrink-0">{item.icon}</span>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-[#0F172A] dark:text-foreground truncate">
+                                  {item.title}
+                                </span>
+                                <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full border mono shrink-0 ${item.badgeColor}`}>
+                                  {item.type}
+                                </span>
+                              </div>
+                              <p className="text-[10.5px] text-[#475569] dark:text-muted-foreground truncate max-w-md">
+                                {item.subtitle}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0 text-muted-foreground">
+                            {isSelected && (
+                              <span className="text-[9px] mono text-primary flex items-center gap-0.5">
+                                <span>Go</span>
+                                <CornerDownLeft size={9} />
+                              </span>
+                            )}
+                            <ArrowRight size={13} className={isSelected ? "text-primary" : "opacity-40"} />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* ══════════════════════════════════════════════════════════════════
-            ── SEARCH RESULT PREVIEW / CURATED CONCEPT CARDS ──
+            ── POPULAR SEARCHES & CURATED GUIDES ──
         ══════════════════════════════════════════════════════════════════ */}
         <motion.div
           variants={fadeUp}

@@ -37,7 +37,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
       <div className="flex items-center justify-between gap-4">
         <Link
           to={getLocalizedPath("/")}
-          className="group inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold tracking-wider text-white backdrop-blur-xl transition-all duration-300 hover:border-primary hover:bg-primary hover:text-black uppercase mono cursor-pointer"
+          className="group inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-card/80 dark:border-white/15 dark:bg-white/5 px-4 py-2 text-xs font-bold tracking-wider text-foreground backdrop-blur-xl transition-all duration-200 hover:border-primary hover:text-primary uppercase mono cursor-pointer shadow-2xs"
         >
           <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
           <span>{t("backToHome", "BACK TO HOME")}</span>
@@ -45,7 +45,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
 
         <Link
           to={getLocalizedPath("/blog")}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-mono font-bold tracking-widest text-muted-foreground hover:text-white hover:border-white/20 transition-colors uppercase cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 dark:border-white/10 dark:bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-mono font-bold tracking-widest text-muted-foreground hover:text-foreground transition-colors uppercase cursor-pointer"
         >
           {t("blogArchive", "BLOG ARCHIVE")}
         </Link>
