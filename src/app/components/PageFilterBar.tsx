@@ -93,6 +93,7 @@ export function PageFilterBar({
           <input
             id={searchId}
             type="search"
+            autoComplete="off"
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}

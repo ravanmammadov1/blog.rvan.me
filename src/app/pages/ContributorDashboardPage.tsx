@@ -347,6 +347,7 @@ export default function ContributorDashboardPage() {
                 </label>
                 <input
                   type="text"
+                  autoComplete="off"
                   value={editingDraft.title || ""}
                   onChange={(e) => setEditingDraft({ ...editingDraft, title: e.target.value })}
                   placeholder={isAz ? "məs. Niyə Müasir Vebsaytlar Eyni Görünür?" : "e.g. Why Modern Websites All Look the Same"}
@@ -395,6 +396,7 @@ export default function ContributorDashboardPage() {
                 </label>
                 <textarea
                   rows={2}
+                  autoComplete="off"
                   value={editingDraft.excerpt || ""}
                   onChange={(e) => setEditingDraft({ ...editingDraft, excerpt: e.target.value })}
                   placeholder={isAz ? "Məqalənin əsas tezisi və maraqlı sualı..." : "Core premise and editorial question..."}
@@ -408,6 +410,7 @@ export default function ContributorDashboardPage() {
                 </label>
                 <textarea
                   rows={8}
+                  autoComplete="off"
                   value={editingDraft.content || ""}
                   onChange={(e) => setEditingDraft({ ...editingDraft, content: e.target.value })}
                   placeholder={isAz ? "Məqalənin tam mətni və fəsilləri..." : "Write your essay content and chapters..."}

@@ -261,6 +261,7 @@ export default function BlogArchive() {
             <Search size={18} className="absolute left-3.5 text-primary shrink-0 pointer-events-none" />
             <input
               type="text"
+              autoComplete="off"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("searchArticles", "Search articles by title, excerpt, topic, or keyword...")}

@@ -285,6 +285,7 @@ export default function HeroSearchSection() {
               <input
                 ref={inputRef}
                 type="text"
+                autoComplete="off"
                 value={searchInput}
                 onChange={(e) => {
                   setSearchInput(e.target.value);

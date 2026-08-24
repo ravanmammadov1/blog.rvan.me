@@ -264,6 +264,7 @@ export default function ResourcesArchive() {
               <div className="flex flex-wrap items-center gap-4 shrink-0">
                 <input
                   type="text"
+                  autoComplete="off"
                   value={previewText}
                   onChange={(e) => setPreviewText(e.target.value)}
                   placeholder="Type preview text..."

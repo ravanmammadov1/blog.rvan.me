@@ -460,6 +460,7 @@ export default function ProfilePage() {
                     </label>
                     <input
                       type="text"
+                      autoComplete="organization-title"
                       value={contributorProfile?.professionalTitle || ""}
                       onChange={(e) =>
                         setContributorProfile((prev) =>
@@ -477,6 +478,7 @@ export default function ProfilePage() {
                     </label>
                     <input
                       type="text"
+                      autoComplete="organization-title"
                       value={contributorProfile?.currentWorkplace || ""}
                       onChange={(e) =>
                         setContributorProfile((prev) =>
@@ -494,6 +496,7 @@ export default function ProfilePage() {
                     </label>
                     <input
                       type="text"
+                      autoComplete="address-level2"
                       value={contributorProfile?.location || ""}
                       onChange={(e) =>
                         setContributorProfile((prev) =>
@@ -510,7 +513,8 @@ export default function ProfilePage() {
                       {isAz ? "LINKEDIN PROFİLİ" : "LINKEDIN URL"}
                     </label>
                     <input
-                      type="text"
+                      type="url"
+                      autoComplete="url"
                       value={contributorProfile?.socialLinks?.linkedin || ""}
                       onChange={(e) =>
                         setContributorProfile((prev) =>
@@ -533,6 +537,7 @@ export default function ProfilePage() {
                     </label>
                     <textarea
                       rows={3}
+                      autoComplete="off"
                       value={contributorProfile?.bio || ""}
                       onChange={(e) =>
                         setContributorProfile((prev) =>

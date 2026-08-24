@@ -19,6 +19,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <Search size={16} className="absolute left-4 text-muted-foreground/60 pointer-events-none" />
       <input
         type="text"
+        autoComplete="off"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

@@ -175,6 +175,7 @@ export default function ArticleSubmissionModal({
                   <input
                     type="text"
                     required
+                    autoComplete="off"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder={
@@ -229,6 +230,7 @@ export default function ArticleSubmissionModal({
                   <textarea
                     rows={2}
                     required
+                    autoComplete="off"
                     value={excerpt}
                     onChange={(e) => setExcerpt(e.target.value)}
                     placeholder={
@@ -249,6 +251,7 @@ export default function ArticleSubmissionModal({
                   <textarea
                     rows={8}
                     required
+                    autoComplete="off"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder={
@@ -267,6 +270,7 @@ export default function ArticleSubmissionModal({
                   </label>
                   <input
                     type="text"
+                    autoComplete="off"
                     value={sources}
                     onChange={(e) => setSources(e.target.value)}
                     placeholder={isAz ? "İstifadə etdiyiniz araşdırma və ya mənbə linkləri" : "Links to studies, articles, or data sources"}

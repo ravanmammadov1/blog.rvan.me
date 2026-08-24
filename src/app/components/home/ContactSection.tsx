@@ -135,6 +135,7 @@ export default function ContactSection() {
                     type="text"
                     id="name"
                     name="name"
+                    autoComplete="name"
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     required
@@ -150,6 +151,7 @@ export default function ContactSection() {
                     type="email"
                     id="email"
                     name="email"
+                    autoComplete="email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
@@ -166,6 +168,7 @@ export default function ContactSection() {
                 <textarea
                   id="message"
                   name="message"
+                  autoComplete="off"
                   value={contactMessage}
                   onChange={(e) => setContactMessage(e.target.value)}
                   required
@@ -179,10 +182,10 @@ export default function ContactSection() {
               <input
                 type="text"
                 name="honeypot"
+                autoComplete="off"
                 value={contactHoneypot}
                 onChange={(e) => setContactHoneypot(e.target.value)}
                 tabIndex={-1}
-                autoComplete="off"
                 style={{ display: "none" }}
                 aria-hidden="true"
               />

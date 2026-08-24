@@ -339,6 +339,7 @@ export default function LinkedInAdmin() {
                 <div className="relative">
                   <input
                     type="password"
+                    autoComplete="current-password"
                     value={inputSecret}
                     onChange={(e) => setInputSecret(e.target.value)}
                     placeholder="Enter secret key..."
@@ -632,6 +633,7 @@ export default function LinkedInAdmin() {
                       </label>
                       <input
                         type="url"
+                        autoComplete="url"
                         value={linkUrl}
                         onChange={(e) => setLinkUrl(e.target.value)}
                         placeholder="https://www.rvan.me/news/..."

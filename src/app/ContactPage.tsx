@@ -254,6 +254,7 @@ export default function ContactPage() {
                           type="text"
                           id="contact-name"
                           name="name"
+                          autoComplete="name"
                           required
                           placeholder={t("placeholderName", "Your name")}
                           value={formData.name}
@@ -270,6 +271,7 @@ export default function ContactPage() {
                           type="email"
                           id="contact-email"
                           name="email"
+                          autoComplete="email"
                           required
                           placeholder={t("placeholderEmail", "your@email.com")}
                           value={formData.email}

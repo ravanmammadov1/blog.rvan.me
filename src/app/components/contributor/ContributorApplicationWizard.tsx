@@ -231,6 +231,7 @@ export default function ContributorApplicationWizard({
                 <input
                   type="text"
                   required
+                  autoComplete="name"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="e.g. Nigar Əliyeva"
@@ -245,6 +246,7 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="number"
+                  autoComplete="off"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
                   placeholder={isAz ? "Məsələn: 26 (yalnız redaksiya üçündür)" : "e.g. 26 (private to editorial)"}
@@ -260,6 +262,7 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="text"
+                  autoComplete="address-level2"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g. Baku, Azerbaijan"
@@ -288,6 +291,7 @@ export default function ContributorApplicationWizard({
               <textarea
                 rows={3}
                 required
+                autoComplete="off"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder={
@@ -328,6 +332,7 @@ export default function ContributorApplicationWizard({
                 <input
                   type="text"
                   required
+                  autoComplete="organization-title"
                   value={roleTitle}
                   onChange={(e) => setRoleTitle(e.target.value)}
                   placeholder="e.g. Senior Brand Designer / Marketing Strategist"
@@ -341,6 +346,7 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="text"
+                  autoComplete="off"
                   value={areaOfExpertise}
                   onChange={(e) => setAreaOfExpertise(e.target.value)}
                   placeholder="e.g. Visual Identity & Typography"
@@ -352,18 +358,17 @@ export default function ContributorApplicationWizard({
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-foreground mono">
-                  {isAz ? "Təcrübə Müddəti" : "Years of Experience"}
+                  {isAz ? "Təcrübə Səviyyəsi" : "Years / Level of Experience"}
                 </label>
                 <select
-                  value={yearsOfExperience}
-                  onChange={(e) => setYearsOfExperience(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                  value={experienceLevel}
+                  onChange={(e) => setExperienceLevel(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                 >
-                  <option value="1-2 years">1-2 il / 1-2 years</option>
-                  <option value="3-5 years">3-5 il / 3-5 years</option>
-                  <option value="5-8 years">5-8 il / 5-8 years</option>
-                  <option value="8+ years">8+ il / 8+ years</option>
-                  <option value="Student / Emerging">Tələbə / Yeni başlayan</option>
+                  <option value="1-3 years">1–3 years / Junior-Mid</option>
+                  <option value="3-5 years">3–5 years / Mid-Senior</option>
+                  <option value="5-8 years">5–8 years / Senior</option>
+                  <option value="8+ years">8+ years / Lead / Director</option>
                 </select>
               </div>
 
@@ -373,6 +378,7 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="text"
+                  autoComplete="organization-title"
                   value={currentRole}
                   onChange={(e) => setCurrentRole(e.target.value)}
                   placeholder="e.g. Freelance / Creative Agency"
@@ -409,6 +415,7 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="url"
+                  autoComplete="url"
                   value={linkedin}
                   onChange={(e) => setLinkedin(e.target.value)}
                   placeholder="https://linkedin.com/in/username"
@@ -422,6 +429,7 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="url"
+                  autoComplete="url"
                   value={behance}
                   onChange={(e) => setBehance(e.target.value)}
                   placeholder="https://behance.net/username"
@@ -437,22 +445,27 @@ export default function ContributorApplicationWizard({
                 </label>
                 <input
                   type="url"
+                  autoComplete="url"
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
-                  placeholder="https://yourname.design"
+                  placeholder="https://yourportfolio.com"
                   className="w-full rounded-xl border border-border bg-surface px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-foreground mono">
-                  Dribbble / Instagram
+                  Dribbble / Instagram (Optional)
                 </label>
                 <input
                   type="text"
+                  autoComplete="url"
                   value={dribbble || instagram}
-                  onChange={(e) => setDribbble(e.target.value)}
-                  placeholder="https://dribbble.com/username"
+                  onChange={(e) => {
+                    setDribbble(e.target.value);
+                    setInstagram(e.target.value);
+                  }}
+                  placeholder="https://dribbble.com/username or @handle"
                   className="w-full rounded-xl border border-border bg-surface px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
                 />
               </div>

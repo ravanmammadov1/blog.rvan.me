@@ -162,6 +162,7 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
               <input
                 ref={inputRef}
                 type="text"
+                autoComplete="off"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);

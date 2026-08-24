@@ -188,6 +188,7 @@ export default function ReportArticleModal({
                   </label>
                   <textarea
                     rows={3}
+                    autoComplete="off"
                     value={details}
                     onChange={(e) => setDetails(e.target.value)}
                     placeholder={

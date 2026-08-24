@@ -278,6 +278,7 @@ export default function FontDetailPage() {
             <div>
               <input
                 type="text"
+                autoComplete="off"
                 value={previewText}
                 onChange={(e) => setPreviewText(e.target.value)}
                 placeholder={t("specimenPlaceholder", "Type your custom specimen text here...")}
