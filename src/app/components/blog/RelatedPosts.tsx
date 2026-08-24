@@ -18,48 +18,66 @@ export default function RelatedPosts({
   const { getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
 
-  const currentSlug = (currentPost.slug?.current || currentPost._id || "").toLowerCase();
+  const currentSlug = (currentPost.slug?.current || currentPost.originalSlug || currentPost._id || "").toLowerCase();
   const relationship = getEcosystemRelationship(currentSlug);
+  const currentPostId = currentPost._id || currentSlug;
+  const currentTags = new Set((currentPost.tags || []).map((t) => t.toLowerCase()));
 
-  let selectedPosts: BlogPost[] = [];
+  // Score candidate published articles based on semantic topic cluster, subtopic, category, and tags
+  const scoredPosts = allPosts
+    .filter((p) => {
+      const pId = p._id || p.slug?.current;
+      const pSlug = (p.slug?.current || p.originalSlug || p._id || "").toLowerCase();
+      // Exclude current article
+      if (pId === currentPostId || pSlug === currentSlug) return false;
+      // Ensure post has title and slug
+      return Boolean(p.title && (p.slug?.current || p._id));
+    })
+    .map((post) => {
+      let score = 0;
+      const postSlug = (post.slug?.current || post.originalSlug || post._id || "").toLowerCase();
 
-  if (relationship && relationship.relatedSlugs.length > 0) {
-    const slugSet = new Set(relationship.relatedSlugs.map((s) => s.toLowerCase()));
-    
-    // Pick posts matching the mapped relationship slugs in order
-    for (const targetSlug of relationship.relatedSlugs) {
-      const match = allPosts.find((p) => {
-        const pSlug = (p.slug?.current || p.originalSlug || p._id || "").toLowerCase();
-        return pSlug === targetSlug.toLowerCase();
-      });
-      if (match && match._id !== currentPost._id && !selectedPosts.some((sp) => sp._id === match._id)) {
-        selectedPosts.push(match);
+      // 1. Explicit semantic mapping relationship
+      if (relationship && relationship.relatedSlugs.some((s) => s.toLowerCase() === postSlug)) {
+        score += 60;
       }
-    }
-  }
 
-  // Fallback: If fewer than 3 posts mapped or found, fill from same category / topic cluster
-  if (selectedPosts.length < 3) {
-    const categoryMatches = allPosts.filter(
-      (p) =>
-        p._id !== currentPost._id &&
-        !selectedPosts.some((sp) => sp._id === p._id) &&
-        (p.category === currentPost.category || (relationship && p.tags?.includes(relationship.cluster)))
-    );
-    selectedPosts = [...selectedPosts, ...categoryMatches].slice(0, 3);
-  }
+      // 2. Same content cluster
+      if (relationship && post.tags?.some((t) => t.toLowerCase().includes(relationship.cluster.toLowerCase()))) {
+        score += 30;
+      }
 
-  // Final fallback if still empty
-  if (selectedPosts.length === 0) {
-    selectedPosts = allPosts.filter((p) => p._id !== currentPost._id).slice(0, 3);
-  }
+      // 3. Same primary category
+      if (post.category && currentPost.category && post.category.toLowerCase() === currentPost.category.toLowerCase()) {
+        score += 25;
+      }
+
+      // 4. Tag / Keyword overlap
+      if (Array.isArray(post.tags)) {
+        post.tags.forEach((tag) => {
+          if (currentTags.has(tag.toLowerCase())) {
+            score += 12;
+          }
+        });
+      }
+
+      // 5. Language preference alignment
+      if (isAz && (post.title_az || post.slug_az)) {
+        score += 15;
+      }
+
+      return { post, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  const selectedPosts: BlogPost[] = scoredPosts.slice(0, 3).map((sp) => sp.post);
 
   if (selectedPosts.length === 0) {
     return null;
   }
 
   return (
-    <section aria-labelledby="related-essays-heading" className="mt-24 border-t border-white/10 pt-16">
+    <section aria-labelledby="related-essays-heading" className="mt-20 border-t border-white/10 pt-16">
       <div className="mb-10 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-primary mono font-bold">
@@ -81,14 +99,13 @@ export default function RelatedPosts({
 
       <div className="grid gap-6 md:grid-cols-3">
         {selectedPosts.map((post) => {
-          const formattedDate = formatBlogDate(post.publishDate);
-          const readTimeStr = estimateReadingTime(post.body, post.readTime);
-          const slugStr = post.slug?.current || post._id || "";
+          const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
+          const slugStr = post.slug?.current || post.originalSlug || post._id || "";
           const imgUrl = post.coverImage ? urlFor(post.coverImage)?.url() : null;
 
           return (
             <Link
-              key={post._id}
+              key={post._id || slugStr}
               to={getLocalizedPath(`/blog/${slugStr}`)}
               className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/[0.06] hover:shadow-lg hover:shadow-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
@@ -113,7 +130,7 @@ export default function RelatedPosts({
                   </span>
                 )}
 
-                <h3 className="mt-2 text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+                <h3 className="mt-2 text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary line-clamp-2">
                   {post.title}
                 </h3>
 

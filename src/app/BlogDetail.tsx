@@ -8,6 +8,7 @@ import { fetchSiteSettings, fetchBlogBySlug, fetchAllBlogs } from "../lib/sanity
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+import { trackArticleView } from "../services/articleStatsService";
 
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -16,18 +17,11 @@ import ReadingProgress from "./components/blog/ReadingProgress";
 import BlogHero from "./components/blog/BlogHero";
 import BlogContent from "./components/blog/BlogContent";
 import TableOfContents from "./components/blog/TableOfContents";
-import ShareButtons from "./components/blog/ShareButtons";
 import AuthorCard from "./components/blog/AuthorCard";
+import ArticleReactions from "./components/blog/ArticleReactions";
 import RelatedPosts from "./components/blog/RelatedPosts";
-import EcosystemBridgeCard from "./components/blog/EcosystemBridgeCard";
-import { getEcosystemRelationship } from "../lib/ecosystemRelationshipMap";
-import { Button } from "./components/ui/Button";
-import ReportArticleModal from "./components/blog/ReportArticleModal";
-import { trackArticleView } from "../services/contributorService";
-
 import CommentSection from "./components/CommentSection";
-import { ARTICLE_DETAIL_FAQS } from "../data/faqData";
-import FaqAccordion from "./components/ui/FaqAccordion";
+import { Button } from "./components/ui/Button";
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -40,7 +34,6 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,25 +47,38 @@ export default function BlogDetail() {
     setLoading(true);
     setError(null);
 
-    const cleanSlug = decodeURIComponent(slug).replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "").trim().toLowerCase();
+    const cleanSlug = decodeURIComponent(slug)
+      .replace(/^\/?(az\/)?blog\//, "")
+      .replace(/^\//, "")
+      .replace(/\/+$/, "")
+      .trim()
+      .toLowerCase();
 
     Promise.all([fetchBlogBySlug(slug, language), fetchAllBlogs(language)])
       .then(([singlePost, postsList]) => {
         let foundPost = singlePost;
 
         if (!foundPost && postsList && postsList.length > 0) {
-          foundPost = postsList.find((p) => {
-            const pSlug = (typeof p.slug === "string" ? p.slug : p.slug?.current || p._id || "").toLowerCase().replace(/\/+$/, "");
-            const pOrigSlug = (p.originalSlug || "").toLowerCase();
-            const pAzSlug = (p.azSlug || "").toLowerCase();
-            return pSlug === cleanSlug || pOrigSlug === cleanSlug || pAzSlug === cleanSlug || (p._id && p._id.toLowerCase() === cleanSlug);
-          }) || null;
+          foundPost =
+            postsList.find((p) => {
+              const pSlug = (typeof p.slug === "string" ? p.slug : p.slug?.current || p._id || "")
+                .toLowerCase()
+                .replace(/\/+$/, "");
+              const pOrigSlug = (p.originalSlug || "").toLowerCase();
+              const pAzSlug = (p.azSlug || "").toLowerCase();
+              return (
+                pSlug === cleanSlug ||
+                pOrigSlug === cleanSlug ||
+                pAzSlug === cleanSlug ||
+                (p._id && p._id.toLowerCase() === cleanSlug)
+              );
+            }) || null;
         }
 
         if (foundPost) {
           setPost(foundPost);
-          const effectiveSlug = foundPost.slug?.current || cleanSlug;
-          trackArticleView(effectiveSlug, foundPost.title, foundPost.authorName);
+          const trackingId = foundPost.slug?.current || foundPost._id || cleanSlug;
+          trackArticleView(trackingId);
         } else {
           setError("Blog post not found");
         }
@@ -88,7 +94,6 @@ export default function BlogDetail() {
       .finally(() => setLoading(false));
   }, [slug, language]);
 
-  // Back to top visibility
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 600);
@@ -97,7 +102,6 @@ export default function BlogDetail() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Keyboard Escape navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -142,8 +146,8 @@ export default function BlogDetail() {
     );
   }
 
-  const imgBuilder = post.coverImage ? urlFor(post.coverImage) : null;
-  const coverUrl = imgBuilder ? imgBuilder.width(1200).height(630).auto("format").url() : undefined;
+  const imgBuilder = urlFor(post.coverImage);
+  const coverUrl = imgBuilder ? imgBuilder.width(1200).url() : undefined;
 
   const currentIndex = allPosts.findIndex(
     (p) => (p.slug?.current || p._id) === (post.slug?.current || post._id)
@@ -154,20 +158,19 @@ export default function BlogDetail() {
       ? allPosts[currentIndex + 1]
       : null;
 
-  const postSlug = (post.slug?.current || post.originalSlug || post._id || "").toLowerCase();
-  const relationship = getEcosystemRelationship(postSlug);
-  const isAz = language === "az";
+  const postTrackingId = post.slug?.current || post.originalSlug || post._id || "";
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <ReadingProgress />
+
       <SEO
-        title={post.seo?.metaTitle || `${post.title} — Rvan.me`}
-        description={post.seo?.metaDescription || post.excerpt || `Read ${post.title} on Rvan.me.`}
+        title={`${post.title} — Ravan Mammadov`}
+        description={post.excerpt || `Read ${post.title} by Ravan Mammadov.`}
         image={coverUrl}
-        url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
+        url={`https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
-        noIndex={post.seo?.noIndex}
       />
 
       <SiteHeader siteSettings={siteSettings} />
@@ -177,7 +180,7 @@ export default function BlogDetail() {
 
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Main Article Content Column */}
-          <div className="lg:col-span-8 space-y-12 min-w-0">
+          <div className="lg:col-span-8 space-y-10 min-w-0">
             {/* Mobile Collapsible TOC */}
             <div className="lg:hidden">
               <TableOfContents body={post.body} isMobile />
@@ -185,42 +188,16 @@ export default function BlogDetail() {
 
             <BlogContent post={post} />
 
-            {/* Contextual Ecosystem Bridge: Interactive Tool Recommendation */}
-            {relationship?.toolBridge && (
-              <EcosystemBridgeCard
-                type={relationship.toolBridge.type}
-                href={relationship.toolBridge.path}
-                badge={isAz ? relationship.toolBridge.badge?.az : relationship.toolBridge.badge?.en}
-                title={isAz ? relationship.toolBridge.title.az : relationship.toolBridge.title.en}
-                description={isAz ? relationship.toolBridge.description.az : relationship.toolBridge.description.en}
-                ctaText={isAz ? relationship.toolBridge.ctaText?.az : relationship.toolBridge.ctaText?.en}
-                topic={isAz ? relationship.primaryTopic.az : relationship.primaryTopic.en}
-              />
-            )}
+            {/* Article Like / Dislike Feedback Reaction */}
+            <ArticleReactions postId={postTrackingId} postTitle={post.title} />
 
-            {/* Contextual Ecosystem Bridge: Curated Resource Recommendation */}
-            {relationship?.resourceBridge && (
-              <EcosystemBridgeCard
-                type={relationship.resourceBridge.type}
-                href={relationship.resourceBridge.path}
-                badge={isAz ? relationship.resourceBridge.badge?.az : relationship.resourceBridge.badge?.en}
-                title={isAz ? relationship.resourceBridge.title.az : relationship.resourceBridge.title.en}
-                description={isAz ? relationship.resourceBridge.description.az : relationship.resourceBridge.description.en}
-                ctaText={isAz ? relationship.resourceBridge.ctaText?.az : relationship.resourceBridge.ctaText?.en}
-                topic={isAz ? relationship.primaryTopic.az : relationship.primaryTopic.en}
-              />
-            )}
-
-            <ShareButtons
-              title={post.title}
-              articleSlug={post.slug?.current || slug}
-              onReport={() => setReportModalOpen(true)}
-            />
-
+            {/* Author Profile Card */}
             <AuthorCard post={post} />
 
-            <CommentSection postId={post.slug?.current || post._id} postTitle={post.title} />
+            {/* Genuine Reader Discussion */}
+            <CommentSection postId={postTrackingId} postTitle={post.title} />
 
+            {/* Previous / Next Article Navigation */}
             {(prevPost || nextPost) && (
               <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-white/10 pt-12">
                 {prevPost ? (
@@ -228,20 +205,32 @@ export default function BlogDetail() {
                     to={getLocalizedPath(`/blog/${prevPost.slug?.current || prevPost._id}`)}
                     className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5"
                   >
-                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">← {t("previousArticle", "PREVIOUS ARTICLE")}</span>
-                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{prevPost.title}</p>
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
+                      ← {t("previousArticle", "PREVIOUS ARTICLE")}
+                    </span>
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {prevPost.title}
+                    </p>
                   </Link>
-                ) : <div />}
+                ) : (
+                  <div />
+                )}
 
                 {nextPost ? (
                   <Link
                     to={getLocalizedPath(`/blog/${nextPost.slug?.current || nextPost._id}`)}
                     className="group flex flex-col justify-between items-end rounded-xl border border-white/10 bg-white/5 p-6 glass transition-all duration-300 hover:border-primary/50 hover:bg-white/10 hover:shadow-lg hover:shadow-primary/5 text-right"
                   >
-                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">{t("nextArticle", "NEXT ARTICLE")} →</span>
-                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{nextPost.title}</p>
+                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
+                      {t("nextArticle", "NEXT ARTICLE")} →
+                    </span>
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {nextPost.title}
+                    </p>
                   </Link>
-                ) : <div />}
+                ) : (
+                  <div />
+                )}
               </div>
             )}
 
@@ -257,11 +246,8 @@ export default function BlogDetail() {
               </Button>
             </div>
 
-            {/* Contextual Related Posts via Semantic Topic Graph */}
-            <RelatedPosts
-              currentPost={post}
-              allPosts={allPosts}
-            />
+            {/* Contextual Related Published Articles */}
+            <RelatedPosts currentPost={post} allPosts={allPosts} />
           </div>
 
           {/* Sticky Desktop Aside Sidebar */}
@@ -271,34 +257,7 @@ export default function BlogDetail() {
         </div>
       </article>
 
-      {/* Contextual Article Detail FAQ Section */}
-      <section className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20">
-        <div className="mx-auto max-w-[1200px]">
-          <FaqAccordion
-            items={ARTICLE_DETAIL_FAQS}
-            eyebrow={isAz ? "OXUCULAR VƏ MÜƏLLİFLƏR ÜÇÜN" : "FOR READERS & WRITERS"}
-            title={isAz ? "Məqalə və Müəlliflik Haqqında" : "Article & Attribution FAQ"}
-            description={
-              isAz
-                ? "Məqalənin paylaşılması, müəllifin təsdiqi və müzakirələr haqqında suallar:"
-                : "Questions regarding sharing, author verification, and submitting related essays:"
-            }
-            viewAllHref="/faq"
-            viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
-            showNumbers={true}
-          />
-        </div>
-      </section>
-
       <Footer siteSettings={siteSettings} />
-
-      <ReportArticleModal
-        isOpen={reportModalOpen}
-        onClose={() => setReportModalOpen(false)}
-        articleId={post._id || post.slug?.current || "article"}
-        articleTitle={post.title}
-        authorName={post.authorName}
-      />
 
       <AnimatePresence>
         {showBackToTop && (
@@ -308,7 +267,7 @@ export default function BlogDetail() {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-surface/80 text-foreground backdrop-blur-md transition hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="fixed bottom-8 right-8 z-50 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-surface/80 text-foreground backdrop-blur-md transition hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
             aria-label="Back to top"
           >
             <ArrowUp size={18} />

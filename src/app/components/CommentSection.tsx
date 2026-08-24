@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare } from "lucide-react";
+import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare, ArrowUpDown } from "lucide-react";
 import { Comment } from "../../types/comments";
 import { subscribeToComments, addComment, updateComment, deleteComment } from "../../services/commentService";
 import { useAuth } from "../../hooks/useAuth";
-import { getSeedCommentsForPost } from "../../lib/seedCommentsRegistry";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
 import CommentForm from "./comments/CommentForm";
 import CommentItemComponent from "./comments/CommentItem";
 
@@ -13,12 +13,20 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ postId, postTitle }: CommentSectionProps) {
+<<<<<<< HEAD
   const { user, userPhoto } = useAuth();
+=======
+  const { user } = useAuth();
+  const { language } = useLanguage();
+  const isAz = language === "az";
+
+>>>>>>> 2356c42 (Implement Article Detail cleanup, RelatedPosts relevance, BlogCard author metadata & views, Firestore Like/Dislike, 100% genuine comments, 12-batch Blog Archive, Contributor & Author system, Unified Settings, and safe Profile Image Cropper)
   const [firestoreComments, setFirestoreComments] = useState<Comment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [sortBy, setSortBy] = useState<"newest" | "discussed">("newest");
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Lazy loading observer: initialize real-time listener when section enters viewport
@@ -55,29 +63,13 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     return () => unsubscribe();
   }, [postId, isVisible]);
 
-  // Retrieve article-specific seed discussion comments
-  const initialSeedComments = useMemo(() => {
-    return getSeedCommentsForPost(postId);
-  }, [postId]);
-
-  // Combine Firestore user comments with article-specific initial seed comments
-  const activeComments = useMemo(() => {
-    if (firestoreComments.length > 0) {
-      const existingIds = new Set(firestoreComments.map((c) => c.id));
-      const uniqueSeeds = initialSeedComments.filter((c) => !existingIds.has(c.id));
-      return [...firestoreComments, ...uniqueSeeds];
-    }
-    return initialSeedComments;
-  }, [firestoreComments, initialSeedComments]);
-
-  // Separate top-level comments and nested replies for this specific article/post
+  // Separate top-level comments and nested replies for this specific article/post (100% genuine user comments)
   const { topLevelComments, repliesMap, totalCount } = useMemo(() => {
     const topLevel: Comment[] = [];
     const replies: Record<string, Comment[]> = {};
     let count = 0;
 
-    activeComments.forEach((c) => {
-      // Data isolation check: Ensure comment belongs strictly to current postId
+    firestoreComments.forEach((c) => {
       if (c.postId === postId) {
         count++;
         if (c.parentId) {
@@ -89,8 +81,23 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       }
     });
 
+    // Apply sorting
+    if (sortBy === "discussed") {
+      topLevel.sort((a, b) => {
+        const repliesA = replies[a.id]?.length || 0;
+        const repliesB = replies[b.id]?.length || 0;
+        return repliesB - repliesA;
+      });
+    } else {
+      topLevel.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return timeB - timeA;
+      });
+    }
+
     return { topLevelComments: topLevel, repliesMap: replies, totalCount: count };
-  }, [activeComments, postId]);
+  }, [firestoreComments, postId, sortBy]);
 
   // Add Comment (Top Level)
   const handleAddComment = async (text: string) => {
@@ -125,7 +132,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       });
     } catch (err: any) {
       console.error("Error submitting comment:", err);
-      setError(err?.message || "Failed to post comment. Please try again.");
+      setError(err?.message || (isAz ? "Şərh göndərilə bilmədi. Yenidən cəhd edin." : "Failed to post comment. Please try again."));
       setFirestoreComments((prev) => prev.filter((c) => c.id !== optimisticComment.id));
     } finally {
       setSubmitting(false);
@@ -164,7 +171,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       });
     } catch (err: any) {
       console.error("Error submitting reply:", err);
-      setError(err?.message || "Failed to post reply.");
+      setError(err?.message || (isAz ? "Cavab göndərilə bilmədi." : "Failed to post reply."));
       setFirestoreComments((prev) => prev.filter((c) => c.id !== optimisticReply.id));
     }
   };
@@ -176,7 +183,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       await updateComment({ commentId, postId, text: newText });
     } catch (err: any) {
       console.error("Error updating comment:", err);
-      setError(err?.message || "Failed to edit comment.");
+      setError(err?.message || (isAz ? "Şərh redaktə edilə bilmədi." : "Failed to edit comment."));
     }
   };
 
@@ -188,7 +195,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       setFirestoreComments((prev) => prev.filter((c) => c.id !== commentId && c.parentId !== commentId));
     } catch (err: any) {
       console.error("Error deleting comment:", err);
-      setError(err?.message || "Failed to delete comment.");
+      setError(err?.message || (isAz ? "Şərh silinə bilmədi." : "Failed to delete comment."));
     }
   };
 
@@ -211,23 +218,23 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-8 mb-10">
         <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground mono uppercase">
           <Share2 size={16} className="text-primary" />
-          <span>Share Article</span>
+          <span>{isAz ? "MƏQALƏNİ BÖLÜŞÜN" : "SHARE ARTICLE"}</span>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50 hover:text-primary transition-all duration-200 glass-sm"
+            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-foreground hover:border-primary/50 hover:text-primary transition-all duration-200 glass-sm cursor-pointer"
           >
             {copied ? (
               <>
                 <Check size={14} className="text-primary" />
-                <span className="text-primary font-bold">Copied Link!</span>
+                <span className="text-primary font-bold">{isAz ? "Link Kopyalandı!" : "Copied Link!"}</span>
               </>
             ) : (
               <>
                 <Copy size={14} />
-                <span>Copy Link</span>
+                <span>{isAz ? "Linki Kopyala" : "Copy Link"}</span>
               </>
             )}
           </button>
@@ -255,13 +262,39 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       </div>
 
       {/* Discussion Section Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2.5">
           <MessageSquare size={18} className="text-primary" />
           <h2 className="text-lg font-bold tracking-tight text-foreground">
-            Discussion ({totalCount})
+            {isAz ? "Oxucu Müzakirəsi" : "Discussion"} ({totalCount})
           </h2>
         </div>
+
+        {totalCount > 1 && (
+          <div className="flex items-center gap-2 text-xs mono">
+            <span className="text-muted-foreground">{isAz ? "Sırala:" : "Sort:"}</span>
+            <button
+              onClick={() => setSortBy("newest")}
+              className={`px-2.5 py-1 rounded-lg border transition-colors cursor-pointer ${
+                sortBy === "newest"
+                  ? "border-primary/40 bg-primary/10 text-primary font-bold"
+                  : "border-white/10 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {isAz ? "Ən yeni" : "Newest"}
+            </button>
+            <button
+              onClick={() => setSortBy("discussed")}
+              className={`px-2.5 py-1 rounded-lg border transition-colors cursor-pointer ${
+                sortBy === "discussed"
+                  ? "border-primary/40 bg-primary/10 text-primary font-bold"
+                  : "border-white/10 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {isAz ? "Ən çox müzakirə olunan" : "Most Discussed"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Comment Form */}
@@ -273,8 +306,14 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
       {topLevelComments.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center backdrop-blur-xl">
           <MessageSquare size={24} className="mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-sm font-semibold text-foreground">No comments yet</p>
-          <p className="text-xs text-muted-foreground mt-1">Be the first to start the discussion on this article.</p>
+          <p className="text-sm font-semibold text-foreground">
+            {isAz ? "Hələ ki heç bir şərh yazılmayıb" : "No comments yet"}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {isAz
+              ? "Bu məqalə üzrə müzakirəni ilk siz başladın."
+              : "Be the first to share your thoughts on this editorial."}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">

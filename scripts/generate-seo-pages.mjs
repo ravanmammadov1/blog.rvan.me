@@ -72,6 +72,13 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
+    path: "/author/ravan-mammadov",
+    title: "Ravan Mammadov — Editorial Contributor & Visual Strategist | Rvan.me",
+    description: "Verified editorial author profile, design research publications, and career background of Ravan Mammadov.",
+    type: "profile",
+    lastmod: todayIso,
+  },
+  {
     path: "/resources",
     title: "Creative Resources — Open Source Fonts, Icons & Tools | Rvan.me",
     description: "Discover open-source font families, developer tools, vector assets, mockups, and UI kits for designers and developers.",

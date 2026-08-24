@@ -1,3 +1,15 @@
+import { db } from "../lib/firebase";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { CANONICAL_AUTHOR } from "../lib/blogHelpers";
 import {
   ArticleSubmission,
   ContributorApplication,
@@ -6,6 +18,66 @@ import {
   ArticleDailyView,
   ArticleReport,
 } from "../types/contributor";
+
+export interface ContributorProfile {
+  uid: string;
+  slug: string;
+  name: string;
+  email: string;
+  profileImage: string;
+  professionalTitle: string;
+  bio: string;
+  location: string;
+  currentWorkplace: string;
+  experience: string;
+  education: string;
+  skills: string[];
+  socialLinks: {
+    linkedin?: string;
+    behance?: string;
+    dribbble?: string;
+    instagram?: string;
+    website?: string;
+  };
+  status: "approved" | "pending" | "rejected" | "none";
+  appliedAt?: string;
+  approvedAt?: string;
+  publishedArticlesCount: number;
+}
+
+export interface ContributorArticleDraft {
+  id: string;
+  authorUid: string;
+  authorName: string;
+  title: string;
+  slug: string;
+  category: string;
+  topic?: string;
+  language: "en" | "az";
+  excerpt: string;
+  content: string;
+  coverImageUrl?: string;
+  status: "draft" | "submitted" | "changes_requested" | "published";
+  reviewerFeedback?: string;
+  createdAt: string;
+  updatedAt: string;
+  viewCount?: number;
+}
+
+export interface ContributorDashboardStats {
+  draftsCount: number;
+  submittedCount: number;
+  underReviewCount: number;
+  changesRequestedCount: number;
+  publishedCount: number;
+  totalViews: number;
+  totalComments: number;
+  profileCompleteness: number;
+}
+
+const CONTRIBUTORS_COLLECTION = "contributors";
+const DRAFTS_COLLECTION = "contributor_articles";
+const LOCAL_CONTRIBUTOR_CACHE_KEY = "rvan_contributor_profile_cache_v1";
 
 const SUBMISSIONS_STORAGE_KEY = "rvan_contributor_submissions_v1";
 const APPLICATIONS_STORAGE_KEY = "rvan_contributor_applications_v1";
@@ -31,6 +103,57 @@ function setLocalStorage<T>(key: string, data: T) {
   }
 }
 
+// Canonical Founder Profile
+export const FOUNDER_CONTRIBUTOR_PROFILE: ContributorProfile = {
+  uid: "founder-ravan-mammadov",
+  slug: "ravan-mammadov",
+  name: "Ravan Mammadov",
+  email: "mammadov@rvan.me",
+  profileImage: "/imports/ravan_1-400.webp",
+  professionalTitle: "Senior Creative Designer & Visual Strategist",
+  bio: "Lead creator specializing in high-performance digital identity systems, visual hierarchy, behavioural psychology, and fluid design engineering.",
+  location: "Baku, Azerbaijan",
+  currentWorkplace: "RAM Holding",
+  experience: "8+ years in Art Direction, Motion Design, Brand Identity & UI/UX Strategy",
+  education: "Creative Direction & Interactive Visual Systems",
+  skills: [
+    "Brand Architecture",
+    "Design Systems",
+    "Motion Dynamics",
+    "Typography Scaling",
+    "Cognitive UX",
+    "Creative Direction",
+  ],
+  socialLinks: {
+    linkedin: "https://linkedin.com/in/ravanmammadov",
+    behance: "https://behance.net/ravanmammadov",
+    dribbble: "https://dribbble.com/ravanmammadov",
+    instagram: "https://instagram.com/rvan.me",
+    website: "https://www.rvan.me",
+  },
+  status: "approved",
+  approvedAt: "2026-01-01T00:00:00Z",
+  publishedArticlesCount: 39,
+};
+
+export function calculateProfileCompleteness(profile: Partial<ContributorProfile>): number {
+  const fields = [
+    Boolean(profile.name?.trim()),
+    Boolean(profile.profileImage?.trim()),
+    Boolean(profile.professionalTitle?.trim()),
+    Boolean(profile.bio?.trim()),
+    Boolean(profile.location?.trim()),
+    Boolean(profile.currentWorkplace?.trim()),
+    Boolean(profile.experience?.trim()),
+    Boolean(profile.education?.trim()),
+    Boolean(profile.skills && profile.skills.length > 0),
+    Boolean(profile.socialLinks && Object.values(profile.socialLinks).some((v) => Boolean(v?.trim()))),
+  ];
+
+  const filled = fields.filter(Boolean).length;
+  return Math.round((filled / fields.length) * 100);
+}
+
 // ── 1. CONTRIBUTOR STATUS & APPLICATION ──
 
 export function getContributorApplication(uid: string): ContributorApplication | null {
@@ -49,7 +172,6 @@ export function getContributorStatus(uid: string): ContributorStatus {
 
   if (app.isVerifiedAuthor) return "VERIFIED";
 
-  // Check if has published articles
   const userSubmissions = getSubmissionsByAuthor(uid);
   const hasPublished = userSubmissions.some((s) => s.status === "PUBLISHED");
   if (hasPublished) return "PUBLISHED";
@@ -65,7 +187,7 @@ export async function submitContributorApplication(
 ): Promise<ContributorApplication> {
   const application: ContributorApplication = {
     ...appData,
-    status: "APPROVED", // Auto-enable author workspace upon detailed application completion
+    status: "APPROVED",
     submittedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -77,7 +199,6 @@ export async function submitContributorApplication(
   current[appData.uid] = application;
   setLocalStorage(APPLICATIONS_STORAGE_KEY, current);
 
-  // Send server-side email notification
   if (typeof window !== "undefined") {
     try {
       await fetch("/api/contributor-submit", {
@@ -182,8 +303,7 @@ export function trackArticleView(articleSlug: string, articleTitle: string = "",
 
   const cleanSlug = articleSlug.toLowerCase().trim();
   const allAnalytics = getLocalStorage<Record<string, ArticleAnalytics>>(ANALYTICS_STORAGE_KEY, {});
-
-  const todayStr = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const todayStr = new Date().toISOString().split("T")[0];
 
   const current = allAnalytics[cleanSlug] || {
     articleSlug: cleanSlug,
@@ -202,7 +322,6 @@ export function trackArticleView(articleSlug: string, articleTitle: string = "",
   if (articleTitle) current.articleTitle = articleTitle;
   if (authorId) current.authorId = authorId;
 
-  // Update daily timeline
   const dayEntryIndex = current.dailyViews.findIndex((d) => d.date === todayStr);
   if (dayEntryIndex >= 0) {
     current.dailyViews[dayEntryIndex].views += 1;
@@ -210,7 +329,6 @@ export function trackArticleView(articleSlug: string, articleTitle: string = "",
     current.dailyViews.push({ date: todayStr, views: 1 });
   }
 
-  // Keep last 30 days
   if (current.dailyViews.length > 30) {
     current.dailyViews = current.dailyViews.slice(-30);
   }
@@ -239,7 +357,6 @@ export function getContributorAggregatedAnalytics(authorId: string) {
   let totalShares = 0;
   const combinedDailyMap: Record<string, number> = {};
 
-  // Aggregate over submissions or direct author match
   Object.values(allAnalytics).forEach((item) => {
     if (item.authorId === authorId || submissions.some((s) => s.title === item.articleTitle)) {
       totalViews += item.views || 0;
@@ -285,7 +402,6 @@ export async function submitArticleReport(reportData: Omit<ArticleReport, "id" |
   reports.unshift(newReport);
   setLocalStorage(REPORTS_STORAGE_KEY, reports);
 
-  // Send server-side notification email
   if (typeof window !== "undefined") {
     try {
       await fetch("/api/report", {
@@ -299,4 +415,261 @@ export async function submitArticleReport(reportData: Omit<ArticleReport, "id" |
   }
 
   return newReport;
+}
+
+// ── 5. FIRESTORE CONTRIBUTOR PROFILES & DASHBOARD ──
+
+export async function getContributorProfile(uid: string): Promise<ContributorProfile | null> {
+  if (!uid) return null;
+  if (uid === "founder-ravan-mammadov" || uid === "ravan-mammadov") {
+    return FOUNDER_CONTRIBUTOR_PROFILE;
+  }
+
+  try {
+    const raw = localStorage.getItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+
+  if (db) {
+    try {
+      const docRef = doc(db, CONTRIBUTORS_COLLECTION, uid);
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data() as ContributorProfile;
+        try {
+          localStorage.setItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`, JSON.stringify(data));
+        } catch {}
+        return data;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error fetching profile:", err);
+    }
+  }
+
+  return null;
+}
+
+export async function getPublicAuthorBySlug(slug: string): Promise<ContributorProfile | null> {
+  if (!slug) return null;
+  const cleanSlug = slug.toLowerCase().trim();
+
+  if (cleanSlug === "ravan-mammadov" || cleanSlug === "ravanmammadov" || cleanSlug === "founder-ravan-mammadov") {
+    return FOUNDER_CONTRIBUTOR_PROFILE;
+  }
+
+  if (db) {
+    try {
+      const q = query(
+        collection(db, CONTRIBUTORS_COLLECTION),
+        where("slug", "==", cleanSlug),
+        where("status", "==", "approved")
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        return snap.docs[0].data() as ContributorProfile;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error querying author:", err);
+    }
+  }
+
+  return null;
+}
+
+export async function saveContributorProfile(
+  uid: string,
+  data: Partial<ContributorProfile>
+): Promise<ContributorProfile> {
+  const existing = (await getContributorProfile(uid)) || {
+    uid,
+    slug: (data.name || "author")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, ""),
+    name: data.name || "",
+    email: data.email || "",
+    profileImage: data.profileImage || "",
+    professionalTitle: data.professionalTitle || "",
+    bio: data.bio || "",
+    location: data.location || "",
+    currentWorkplace: data.currentWorkplace || "",
+    experience: data.experience || "",
+    education: data.education || "",
+    skills: data.skills || [],
+    socialLinks: data.socialLinks || {},
+    status: "approved",
+    appliedAt: new Date().toISOString(),
+    publishedArticlesCount: 0,
+  };
+
+  const updated: ContributorProfile = {
+    ...existing,
+    ...data,
+    uid,
+  };
+
+  try {
+    localStorage.setItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`, JSON.stringify(updated));
+  } catch {}
+
+  if (db) {
+    try {
+      const docRef = doc(db, CONTRIBUTORS_COLLECTION, uid);
+      await setDoc(docRef, updated, { merge: true });
+    } catch (err) {
+      console.warn("[ContributorService] Error saving profile:", err);
+    }
+  }
+
+  return updated;
+}
+
+export async function getContributorArticles(authorUid: string): Promise<ContributorArticleDraft[]> {
+  const localKey = `rvan_contributor_articles_${authorUid}`;
+  let localDrafts: ContributorArticleDraft[] = [];
+
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem(localKey);
+      if (raw) localDrafts = JSON.parse(raw);
+    } catch {}
+  }
+
+  if (db) {
+    try {
+      const q = query(
+        collection(db, DRAFTS_COLLECTION),
+        where("authorUid", "==", authorUid)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const remoteDrafts = snap.docs.map((d) => d.data() as ContributorArticleDraft);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(localKey, JSON.stringify(remoteDrafts));
+        }
+        return remoteDrafts;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error querying contributor articles:", err);
+    }
+  }
+
+  return localDrafts;
+}
+
+export async function saveContributorArticle(
+  draft: Partial<ContributorArticleDraft> & { authorUid: string; title: string }
+): Promise<ContributorArticleDraft> {
+  const draftId = draft.id || `draft-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const slug = (draft.title || "untitled-article")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  const fullDraft: ContributorArticleDraft = {
+    id: draftId,
+    authorUid: draft.authorUid,
+    authorName: draft.authorName || "Contributor",
+    title: draft.title,
+    slug,
+    category: draft.category || "Design",
+    topic: draft.topic,
+    language: draft.language || "en",
+    excerpt: draft.excerpt || "",
+    content: draft.content || "",
+    coverImageUrl: draft.coverImageUrl,
+    status: draft.status || "draft",
+    createdAt: draft.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const localKey = `rvan_contributor_articles_${draft.authorUid}`;
+  if (typeof window !== "undefined") {
+    try {
+      const current = (await getContributorArticles(draft.authorUid)) || [];
+      const updatedList = [
+        fullDraft,
+        ...current.filter((d) => d.id !== draftId),
+      ];
+      localStorage.setItem(localKey, JSON.stringify(updatedList));
+    } catch {}
+  }
+
+  if (db) {
+    try {
+      const docRef = doc(db, DRAFTS_COLLECTION, draftId);
+      await setDoc(docRef, fullDraft, { merge: true });
+    } catch (err) {
+      console.warn("[ContributorService] Error saving article draft:", err);
+    }
+  }
+
+  return fullDraft;
+}
+
+export async function getContributorDashboardStats(
+  authorUid: string,
+  profile: ContributorProfile | null
+): Promise<ContributorDashboardStats> {
+  const articles = await getContributorArticles(authorUid);
+
+  let draftsCount = 0;
+  let submittedCount = 0;
+  let underReviewCount = 0;
+  let changesRequestedCount = 0;
+  let publishedCount = 0;
+  let totalViews = 0;
+
+  articles.forEach((a) => {
+    if (a.status === "draft") draftsCount++;
+    else if (a.status === "submitted") submittedCount++;
+    else if (a.status === "changes_requested") changesRequestedCount++;
+    else if (a.status === "published") {
+      publishedCount++;
+      totalViews += a.viewCount || 0;
+    }
+  });
+
+  if (authorUid === "founder-ravan-mammadov" || authorUid === "ravan-mammadov") {
+    publishedCount = 39;
+  }
+
+  const profileCompleteness = profile ? calculateProfileCompleteness(profile) : 0;
+
+  return {
+    draftsCount,
+    submittedCount,
+    underReviewCount,
+    changesRequestedCount,
+    publishedCount,
+    totalViews,
+    totalComments: 0,
+    profileCompleteness,
+  };
+}
+
+export async function getApprovedContributors(): Promise<ContributorProfile[]> {
+  const result: ContributorProfile[] = [FOUNDER_CONTRIBUTOR_PROFILE];
+
+  if (db) {
+    try {
+      const q = query(
+        collection(db, CONTRIBUTORS_COLLECTION),
+        where("status", "==", "approved")
+      );
+      const snap = await getDocs(q);
+      snap.forEach((d) => {
+        const item = d.data() as ContributorProfile;
+        if (item.uid !== FOUNDER_CONTRIBUTOR_PROFILE.uid && !result.some((r) => r.uid === item.uid)) {
+          result.push(item);
+        }
+      });
+    } catch (err) {
+      console.warn("[ContributorService] Error getting approved contributors:", err);
+    }
+  }
+
+  return result;
 }

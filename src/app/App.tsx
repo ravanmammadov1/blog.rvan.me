@@ -22,9 +22,11 @@ const ProjectDetail = lazy(() => import("./ProjectDetail"));
 const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
-const ContributorPage = lazy(() => import("./ContributorPage"));
-const AuthorPage = lazy(() => import("./AuthorPage"));
-const FaqPage = lazy(() => import("./FaqPage"));
+const TopicHubPage = lazy(() => import("./pages/TopicHubPage"));
+const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
+const PublicCvPage = lazy(() => import("./pages/PublicCvPage"));
+const PublicAuthorProfilePage = lazy(() => import("./pages/PublicAuthorProfilePage"));
+const ContributorDashboardPage = lazy(() => import("./pages/ContributorDashboardPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
 
 import { useClarity } from "./hooks/useClarity";
@@ -42,11 +44,11 @@ function AppRoutes() {
       {/* English Default Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/faq" element={<FaqPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/settings" element={<ProfilePage />} />
-      <Route path="/contributor" element={<ContributorPage />} />
-      <Route path="/author/:slug" element={<AuthorPage />} />
+      <Route path="/contributor" element={<ContributorDashboardPage />} />
+      <Route path="/contributor/dashboard" element={<ContributorDashboardPage />} />
+      <Route path="/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
       <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/work" element={<WorkArchive />} />
@@ -54,6 +56,8 @@ function AppRoutes() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/blog" element={<BlogArchive />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
+      <Route path="/topics" element={<TopicArchivePage />} />
+      <Route path="/topics/:topicSlug" element={<TopicHubPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/terms" element={<TermsPage />} />
@@ -63,6 +67,7 @@ function AppRoutes() {
       <Route path="/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/fonts" element={<Navigate to="/resources?category=fonts" replace />} />
       <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
+      <Route path="/cv/:publicSlug" element={<PublicCvPage />} />
 
       {/* Admin Control Routes */}
       <Route path="/admin/linkedin" element={<LinkedInAdmin />} />
@@ -70,11 +75,11 @@ function AppRoutes() {
       {/* Azerbaijani (/az) Parallel Routes */}
       <Route path="/az" element={<HomePage />} />
       <Route path="/az/about" element={<AboutPage />} />
-      <Route path="/az/faq" element={<FaqPage />} />
       <Route path="/az/profile" element={<ProfilePage />} />
       <Route path="/az/settings" element={<ProfilePage />} />
-      <Route path="/az/contributor" element={<ContributorPage />} />
-      <Route path="/az/author/:slug" element={<AuthorPage />} />
+      <Route path="/az/contributor" element={<ContributorDashboardPage />} />
+      <Route path="/az/contributor/dashboard" element={<ContributorDashboardPage />} />
+      <Route path="/az/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
       <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/work" element={<WorkArchive />} />
@@ -82,6 +87,8 @@ function AppRoutes() {
       <Route path="/az/contact" element={<ContactPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
+      <Route path="/az/topics" element={<TopicArchivePage />} />
+      <Route path="/az/topics/:topicSlug" element={<TopicHubPage />} />
       <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/az/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/az/terms" element={<TermsPage />} />
@@ -91,6 +98,7 @@ function AppRoutes() {
       <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
+      <Route path="/az/cv/:publicSlug" element={<PublicCvPage />} />
       <Route path="/az/admin/linkedin" element={<LinkedInAdmin />} />
 
       <Route path="*" element={<NotFound />} />
@@ -123,23 +131,12 @@ function AppContent() {
   );
 }
 
-import { AuthProvider } from "../context/AuthContext";
-import { ThemeProvider } from "../context/ThemeContext";
-import { ExperienceProvider } from "../context/ExperienceContext";
-
 export default function App() {
   return (
-    <AuthProvider>
+    <LanguageProvider>
       <CookieConsentProvider>
-        <ThemeProvider>
-          <LanguageProvider>
-            <ExperienceProvider>
-              <AppContent />
-            </ExperienceProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+        <AppContent />
       </CookieConsentProvider>
-    </AuthProvider>
+    </LanguageProvider>
   );
 }
-

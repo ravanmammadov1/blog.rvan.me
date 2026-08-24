@@ -114,8 +114,8 @@ export default function BlogArchive() {
     loadMore,
     isLoadingMore,
   } = useProgressiveRendering(filteredPosts, {
-    initialBatchSize: 6,
-    stepBatchSize: 6,
+    initialBatchSize: 12,
+    stepBatchSize: 12,
     resetDependencies: [activeCategory, searchQuery],
   });
 
