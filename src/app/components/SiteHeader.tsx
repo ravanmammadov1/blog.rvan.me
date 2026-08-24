@@ -432,19 +432,13 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             className="group flex items-center gap-3 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center"
             aria-label="Rvan.me Home"
           >
-            {siteSettings?.logo ? (
-              <img
-                src={urlFor(siteSettings.logo)?.url() || ""}
-                alt="Rvan.me Logo"
-                className="h-8 w-8 md:h-9 md:w-9 rounded-lg object-contain border border-border p-1 transition-transform duration-200 group-hover:scale-105"
-              />
-            ) : (
-              <img
-                src={ravanLogo}
-                alt="Rvan.me Logo"
-                className="h-8 w-8 md:h-9 md:w-9 rounded-lg object-contain border border-border p-1 bg-card transition-transform duration-200 group-hover:scale-105"
-              />
-            )}
+            <img
+              src={ravanLogo}
+              alt="Rvan.me Logo"
+              width={36}
+              height={36}
+              className="h-8 w-8 md:h-9 md:w-9 object-contain transition-transform duration-200 group-hover:scale-105"
+            />
             <span className="hidden text-[11px] font-bold leading-tight tracking-[.14em] sm:block uppercase">
               RVAN.ME
               <br />

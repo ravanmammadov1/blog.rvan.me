@@ -16,9 +16,9 @@ interface Star {
 
 /**
  * GalaxyAtmosphere
- * Minimal, editorial digital atmosphere for Rvan.me.
+ * Minimal, editorial cosmic atmosphere for Rvan.me.
  * Dark Mode: Quiet night sky / deep space (near-black + sparse tiny stars + subtle atmospheric depth).
- * Light Mode: Quiet daytime sky / atmosphere (warm off-white + very subtle sky/cyan depth).
+ * Light Mode: Bright atmospheric daytime cosmos (warm-neutral canvas + perceptible teal/blue/violet atmospheric haze + sparse micro-stardust).
  * Completely lightweight, pure Canvas 2D + CSS, respects `prefers-reduced-motion`.
  */
 export default function GalaxyAtmosphere() {
@@ -42,7 +42,7 @@ export default function GalaxyAtmosphere() {
     // Check user preference for reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Palette accents for rare starlight in dark mode
+    // Palette accents for starlight in dark mode
     const darkAccentColors = [
       "255, 255, 255", // Crisp pure white starlight
       "255, 255, 255",
@@ -54,39 +54,42 @@ export default function GalaxyAtmosphere() {
 
     // Palette accents for sparse micro-particles in light mode
     const lightAccentColors = [
-      "30, 41, 59",    // Slate
-      "51, 65, 85",    // Slate micro-speck
-      "13, 148, 136",  // Subtle Cyan/Teal
-      "59, 130, 246",  // Subtle Sky Blue
+      "71, 85, 105",   // Slate-600
+      "100, 116, 139", // Slate-500
+      "13, 148, 136",  // Subtle Teal
+      "37, 99, 235",   // Subtle Blue
+      "124, 58, 237",  // Subtle Purple
     ];
 
     const initStars = (w: number, h: number) => {
       const isMobile = w < 768;
       // Sparse star count ensuring minimal, quiet editorial aesthetic without clutter
-      const totalStars = isMobile ? 65 : 120;
+      const totalStars = isMobile ? (isDark ? 65 : 45) : (isDark ? 120 : 80);
       const newStars: Star[] = [];
 
       for (let i = 0; i < totalStars; i++) {
         const randTier = Math.random();
-        let size = 0.7;
-        let baseAlpha = 0.15;
+        let size = 0.8;
+        let baseAlpha = 0.2;
         let twinkleSpeed = 0.008;
-        let colorRgb = isDark ? "255, 255, 255" : "30, 41, 59";
+        let colorRgb = isDark ? "255, 255, 255" : "71, 85, 105";
 
-        if (randTier < 0.75) {
-          // Tier 1: Distant micro-stardust (75%) — tiny & calm
+        if (randTier < 0.70) {
+          // Tier 1: Distant micro-stardust (70%) — tiny & calm
           size = Math.random() * 0.5 + 0.4;
-          baseAlpha = isDark ? Math.random() * 0.18 + 0.08 : Math.random() * 0.04 + 0.02;
+          baseAlpha = isDark ? Math.random() * 0.25 + 0.12 : Math.random() * 0.16 + 0.08;
           twinkleSpeed = Math.random() * 0.006 + 0.003;
-        } else if (randTier < 0.94) {
-          // Tier 2: Mid-depth subtle stars (19%)
-          size = Math.random() * 0.6 + 0.9;
-          baseAlpha = isDark ? Math.random() * 0.28 + 0.15 : Math.random() * 0.06 + 0.03;
+        } else if (randTier < 0.92) {
+          // Tier 2: Mid-depth subtle stars (22%)
+          size = Math.random() * 0.6 + 0.8;
+          baseAlpha = isDark ? Math.random() * 0.40 + 0.20 : Math.random() * 0.24 + 0.12;
           twinkleSpeed = Math.random() * 0.012 + 0.006;
+          const colors = isDark ? darkAccentColors : lightAccentColors;
+          colorRgb = colors[Math.floor(Math.random() * colors.length)];
         } else {
-          // Tier 3: Rare luminous accents (6%)
-          size = Math.random() * 0.7 + 1.2;
-          baseAlpha = isDark ? Math.random() * 0.38 + 0.22 : Math.random() * 0.08 + 0.04;
+          // Tier 3: Rare luminous cosmic accents (8%)
+          size = Math.random() * 0.6 + 1.2;
+          baseAlpha = isDark ? Math.random() * 0.55 + 0.30 : Math.random() * 0.35 + 0.18;
           twinkleSpeed = Math.random() * 0.018 + 0.008;
           const colors = isDark ? darkAccentColors : lightAccentColors;
           colorRgb = colors[Math.floor(Math.random() * colors.length)];
@@ -145,7 +148,7 @@ export default function GalaxyAtmosphere() {
 
           // Subtle organic sine twinkle
           star.twinklePhase += star.twinkleSpeed;
-          const variance = Math.sin(star.twinklePhase) * 0.3;
+          const variance = Math.sin(star.twinklePhase) * 0.35;
           star.currentAlpha = Math.max(0.01, Math.min(1, star.baseAlpha + variance * star.baseAlpha));
         }
 
@@ -185,37 +188,37 @@ export default function GalaxyAtmosphere() {
       className="pointer-events-none fixed inset-0 -z-40 overflow-hidden select-none transform-gpu"
       aria-hidden="true"
     >
-      {/* ── 1. Base Neutral Atmosphere ── */}
+      {/* ── 1. Base Neutral Canvas ── */}
       <div className="absolute inset-0 bg-background transition-colors duration-500" />
 
-      {/* ── 2. Minimal Atmospheric Depth (Subtle Gradient Fields) ── */}
-      {/* Top Ambient Glow (Subtle Brand Cyan/Blue Accent) */}
+      {/* ── 2. Subtle Cosmic Atmospheric Gradient Fields (Visible & Sophisticated) ── */}
+      {/* Top-Right Primary Atmospheric Nebula Haze (Teal → Blue → Violet) */}
       <div
-        className="absolute -top-[15%] right-[-8%] w-[65vw] h-[65vw] max-w-[850px] max-h-[850px] rounded-full pointer-events-none transition-opacity duration-700"
+        className="absolute -top-[10%] right-[-5%] w-[70vw] h-[70vw] max-w-[950px] max-h-[950px] rounded-full pointer-events-none transition-opacity duration-1000"
         style={{
           background: isDark
-            ? "radial-gradient(circle at center, rgba(97, 197, 173, 0.05) 0%, rgba(66, 111, 186, 0.02) 50%, transparent 75%)"
-            : "radial-gradient(circle at center, rgba(97, 197, 173, 0.04) 0%, rgba(59, 130, 246, 0.02) 50%, transparent 75%)",
-          filter: "blur(90px)",
+            ? "radial-gradient(ellipse 65% 55% at 60% 40%, rgba(97, 197, 173, 0.16) 0%, rgba(66, 111, 186, 0.12) 45%, rgba(152, 79, 159, 0.08) 75%, transparent 100%)"
+            : "radial-gradient(ellipse 65% 55% at 60% 40%, rgba(97, 197, 173, 0.16) 0%, rgba(66, 111, 186, 0.11) 45%, rgba(152, 79, 159, 0.07) 75%, transparent 100%)",
+          filter: "blur(60px)",
         }}
       />
 
-      {/* Center-Left Depth (Subtle Brand Purple/Lilac Accent) */}
+      {/* Center-Left Secondary Atmospheric Depth (Violet → Blue) */}
       <div
-        className="absolute top-[35%] -left-[12%] w-[55vw] h-[55vw] max-w-[750px] max-h-[750px] rounded-full pointer-events-none transition-opacity duration-700"
+        className="absolute top-[30%] -left-[10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full pointer-events-none transition-opacity duration-1000"
         style={{
           background: isDark
-            ? "radial-gradient(circle at center, rgba(188, 102, 197, 0.04) 0%, rgba(66, 111, 186, 0.015) 50%, transparent 75%)"
-            : "radial-gradient(circle at center, rgba(188, 102, 197, 0.025) 0%, rgba(66, 111, 186, 0.01) 50%, transparent 75%)",
-          filter: "blur(90px)",
+            ? "radial-gradient(ellipse 60% 50% at 40% 50%, rgba(188, 102, 197, 0.12) 0%, rgba(66, 111, 186, 0.08) 50%, transparent 80%)"
+            : "radial-gradient(ellipse 60% 50% at 40% 50%, rgba(152, 79, 159, 0.10) 0%, rgba(66, 111, 186, 0.07) 50%, transparent 80%)",
+          filter: "blur(70px)",
         }}
       />
 
-      {/* ── 3. High-Performance Canvas Starfield (Dark: Night Sky / Light: Daytime micro-texture) ── */}
+      {/* ── 3. High-Performance Canvas Starfield (Sparse, refined starlight) ── */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ opacity: isDark ? 0.85 : 0.45 }}
+        style={{ opacity: isDark ? 0.9 : 0.65 }}
       />
     </div>
   );
