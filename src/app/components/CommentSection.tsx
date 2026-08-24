@@ -13,14 +13,10 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ postId, postTitle }: CommentSectionProps) {
-<<<<<<< HEAD
   const { user, userPhoto } = useAuth();
-=======
-  const { user } = useAuth();
   const { language } = useLanguage();
   const isAz = language === "az";
 
->>>>>>> 2356c42 (Implement Article Detail cleanup, RelatedPosts relevance, BlogCard author metadata & views, Firestore Like/Dislike, 100% genuine comments, 12-batch Blog Archive, Contributor & Author system, Unified Settings, and safe Profile Image Cropper)
   const [firestoreComments, setFirestoreComments] = useState<Comment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
