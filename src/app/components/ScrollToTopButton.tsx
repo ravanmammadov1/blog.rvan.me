@@ -45,7 +45,7 @@ export default function ScrollToTopButton() {
           className={`group fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 grid h-12 w-12 place-items-center rounded-full border backdrop-blur-md transition-all duration-300 hover:scale-105 transform-gpu overflow-hidden cursor-pointer ${
             isDark
               ? "border-white/15 bg-neutral-950/85 text-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:border-primary/60 hover:text-primary"
-              : "border-slate-200 bg-white/95 text-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-slate-400 hover:text-slate-900"
+              : "border-[#dde1e0] bg-white text-[#0f172a] shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:border-slate-400 hover:text-slate-900"
           }`}
           aria-label="Scroll back to top"
         >

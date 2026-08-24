@@ -90,12 +90,12 @@ export default function TableOfContents({ body, content, isMobile = false }: Tab
   if (isMobile) {
     return (
       <nav
-        className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 shadow-sm"
+        className="rounded-2xl border border-border bg-card p-4 shadow-sm"
         aria-label="Table of Contents"
       >
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex w-full items-center justify-between text-xs font-bold uppercase tracking-[.18em] text-primary mono focus:outline-none"
+          className="flex w-full items-center justify-between text-xs font-bold uppercase tracking-[.18em] text-primary mono focus:outline-none cursor-pointer"
         >
           <span className="flex items-center gap-2">
             <List size={14} />
@@ -108,7 +108,7 @@ export default function TableOfContents({ body, content, isMobile = false }: Tab
         </button>
 
         {mobileOpen && (
-          <ul className="mt-4 space-y-2 border-t border-white/10 pt-3 text-xs">
+          <ul className="mt-4 space-y-2 border-t border-border pt-3 text-xs">
             {headings.map((h) => {
               const isActive = activeId === h.id;
               const isSubheading = h.level === "h3";
@@ -120,7 +120,7 @@ export default function TableOfContents({ body, content, isMobile = false }: Tab
                 >
                   <button
                     onClick={() => scrollToHeading(h.id)}
-                    className={`block w-full text-left transition-colors duration-200 py-1 ${
+                    className={`block w-full text-left transition-colors duration-200 py-1 cursor-pointer ${
                       isActive
                         ? "font-bold text-primary"
                         : "text-muted-foreground hover:text-foreground"
@@ -140,10 +140,10 @@ export default function TableOfContents({ body, content, isMobile = false }: Tab
   // Desktop Sticky Sidebar View (lg+)
   return (
     <nav
-      className="rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-2xl p-6 shadow-xl relative overflow-hidden"
+      className="rounded-3xl border border-border bg-card p-6 shadow-sm relative overflow-hidden dark:bg-white/[0.02] dark:border-white/10"
       aria-label="Table of Contents"
     >
-      <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-primary mono pb-3 border-b border-white/10">
+      <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-primary mono pb-3 border-b border-border dark:border-white/10">
         <List size={14} />
         <span>{tocTitle}</span>
       </div>
@@ -160,7 +160,7 @@ export default function TableOfContents({ body, content, isMobile = false }: Tab
             >
               <button
                 onClick={() => scrollToHeading(h.id)}
-                className={`group flex items-start gap-2 text-left transition-colors duration-200 py-1.5 leading-relaxed ${
+                className={`group flex items-start gap-2 text-left transition-colors duration-200 py-1.5 leading-relaxed cursor-pointer ${
                   isActive
                     ? "font-bold text-primary"
                     : "text-muted-foreground hover:text-foreground"
@@ -168,7 +168,7 @@ export default function TableOfContents({ body, content, isMobile = false }: Tab
               >
                 <span
                   className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 transition-colors ${
-                    isActive ? "bg-primary" : "bg-white/20 group-hover:bg-white/50"
+                    isActive ? "bg-primary" : "bg-muted-foreground/30 group-hover:bg-foreground/60"
                   }`}
                 />
                 <span>{h.text}</span>

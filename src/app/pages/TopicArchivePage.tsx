@@ -1,9 +1,17 @@
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { Eyebrow } from "../Eyebrow";
-import { useLanguage } from "../../../lib/i18n/LanguageContext";
-import { TOPICS_CATALOG } from "../../../lib/topicRegistry";
+
+import { useLanguage } from "../../lib/i18n/LanguageContext";
+import { fetchSiteSettings } from "../../lib/sanityQueries";
+import { SiteSettings } from "../../types/cms";
+import { TOPICS_CATALOG } from "../../lib/topicRegistry";
+import SEO from "../components/SEO";
+import SiteHeader from "../components/SiteHeader";
+import Footer from "../components/Footer";
+import PageHero from "../components/PageHero";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -14,36 +22,45 @@ const fadeUp = {
   }),
 };
 
-export default function TopicsSection() {
-  const { getLocalizedPath, language } = useLanguage();
+export default function TopicArchivePage() {
+  const { language, getLocalizedPath } = useLanguage();
   const isAz = language === "az";
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchSiteSettings(language).then((data) => {
+      if (data) setSiteSettings(data);
+    });
+  }, [language]);
 
   return (
-    <section id="topics" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-background">
-      <div className="mx-auto max-w-[1600px] relative z-10">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="mb-12 flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-6 gap-4"
-        >
-          <div>
-            <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "BİLİK İNDEKSİ" : "KNOWLEDGE INDEX"}
-            </Eyebrow>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
-              {isAz ? "Mövzular" : "Topics"}
-            </h2>
-          </div>
-          <p className="text-xs md:text-sm text-muted-foreground font-medium max-w-md">
-            {isAz
-              ? "Məqalələrimizi əsas redaksiya istiqamətlərimiz üzrə 6 mövzuya görə kəşf edin."
-              : "Browse articles by subject matter across our 6 core editorial verticals."}
-          </p>
-        </motion.div>
+    <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
+      <SEO
+        title={`${isAz ? "Mövzular İndeksi" : "Editorial Topics Index"} — Rvan.me`}
+        description={
+          isAz
+            ? "Rvan.me nəşrinin 6 əsas redaksiya mövzusu: Dizayn, Marketinq, Brendinq, Sİ və Yaradıcılıq, Kreativ Sənaye və Strategiya."
+            : "Explore our 6 core editorial verticals: Design, Marketing, Branding, AI & Creativity, Creative Industry, and Strategy."
+        }
+        url="https://www.rvan.me/topics"
+      />
 
-        {/* 3x2 Grid on Desktop (6 Topics Total) */}
+      <SiteHeader siteSettings={siteSettings} />
+
+      <PageHero
+        eyebrow={isAz ? "BİLİK İNDEKSİ" : "KNOWLEDGE INDEX"}
+        title={isAz ? "Bütün Mövzular" : "Editorial Topics"}
+        accentText="."
+        gradientVariant="secondary"
+        description={
+          isAz
+            ? "Məqalələrimizi 6 əsas redaksiya mövzusu üzrə kəşf edin."
+            : "Explore our publications across 6 structured editorial pillars."
+        }
+      />
+
+      <div className="mx-auto max-w-[1600px] px-6 py-12 md:px-10">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {TOPICS_CATALOG.map((topic, idx) => {
             const Icon = topic.icon;
@@ -55,8 +72,7 @@ export default function TopicsSection() {
                 key={topic.id}
                 variants={fadeUp}
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
+                animate="visible"
                 custom={idx * 0.06}
               >
                 <Link
@@ -91,6 +107,9 @@ export default function TopicsSection() {
           })}
         </div>
       </div>
-    </section>
+
+      <Footer siteSettings={siteSettings} />
+      <ScrollToTopButton />
+    </main>
   );
 }

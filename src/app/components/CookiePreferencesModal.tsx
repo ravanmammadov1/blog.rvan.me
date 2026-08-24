@@ -68,7 +68,7 @@ export default function CookiePreferencesModal() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 12 }}
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-xl rounded-3xl border border-border/80 bg-background/98 text-foreground p-6 sm:p-8 shadow-2xl shadow-black/20 dark:shadow-[0_25px_60px_rgba(0,0,0,0.7)] backdrop-blur-2xl dark:bg-[#09090b]/95 dark:border-white/15 z-10 my-auto"
+          className="relative w-full max-w-xl rounded-3xl border border-border bg-card text-foreground p-6 sm:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.7)] dark:bg-[#09090b]/95 dark:border-white/15 z-10 my-auto"
         >
           {/* Header */}
           <div className="flex items-center justify-between gap-4 border-b border-border dark:border-white/10 pb-5">

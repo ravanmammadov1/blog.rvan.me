@@ -82,7 +82,7 @@ export default function BlogCard({
 
   return (
     <div
-      className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-card dark:hover:bg-white/[0.05] hover:shadow-xl hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary shadow-sm"
+      className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.02] dark:hover:bg-white/[0.05] dark:shadow-none dark:hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

@@ -102,6 +102,13 @@ const staticPages = [
   { path: "/privacy-policy", title: "Privacy Policy — Ravan Mammadov", description: "Privacy policy and user data protections for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
   { path: "/cookie-policy", title: "Cookie Policy — Ravan Mammadov", description: "Cookie policy and consent preferences for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
   { path: "/terms", title: "Terms of Service — Ravan Mammadov", description: "Terms of service and intellectual property notice for the Ravan Mammadov portfolio and publication.", type: "website", lastmod: todayIso },
+  { path: "/topics", title: "Editorial Topics Index — Rvan.me", description: "Browse publications across our 6 core editorial pillars: Design, Marketing, Branding, AI & Creativity, Creative Industry, and Strategy.", type: "website", lastmod: todayIso },
+  { path: "/topics/design", title: "Design Insights & Systems — Rvan.me", description: "Visual systems, typography, grid architecture, UI/UX, and creative craft.", type: "website", lastmod: todayIso },
+  { path: "/topics/marketing", title: "Marketing & Growth Heuristics — Rvan.me", description: "Conversion heuristics, positioning, messaging psychology, and growth loops.", type: "website", lastmod: todayIso },
+  { path: "/topics/branding", title: "Branding & Visual Identity — Rvan.me", description: "Visual identity, brand strategy, design tokens, and market differentiation.", type: "website", lastmod: todayIso },
+  { path: "/topics/ai-creativity", title: "AI & Generative Creativity — Rvan.me", description: "Generative workflows, prompt engineering, AI art ethics, and synthetic media.", type: "website", lastmod: todayIso },
+  { path: "/topics/creative-industry", title: "Creative Industry Dynamics — Rvan.me", description: "Career dynamics, multidisciplinary workflows, and agency business models.", type: "website", lastmod: todayIso },
+  { path: "/topics/strategy", title: "Strategy & Creative Business — Rvan.me", description: "Brand strategy, marketing decisions, positioning, audience thinking, and strategic approaches to creative business.", type: "website", lastmod: todayIso },
   { path: "/admin/linkedin", title: "LinkedIn Admin Control Panel — Rvan.me", description: "LinkedIn OAuth 2.0 and personal profile publishing admin control panel.", type: "website", lastmod: todayIso },
 
   { path: "/work/wuling-creative-campaign", title: "Wuling Creative Campaign — Motion Design Case Study | Ravan Mammadov", description: "Explore the Wuling creative campaign case study combining automotive art direction, motion design, and marketing campaign assets.", type: "website", lastmod: "2026-07-15" },

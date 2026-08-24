@@ -26,6 +26,8 @@ const PublicAuthorProfilePage = lazy(() => import("./pages/PublicAuthorProfilePa
 const ContributorDashboardPage = lazy(() => import("./pages/ContributorDashboardPage"));
 const FaqPage = lazy(() => import("./FaqPage"));
 const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
+const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
+const TopicDetailPage = lazy(() => import("./pages/TopicDetailPage"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
@@ -58,6 +60,8 @@ function AppRoutes() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/blog" element={<BlogArchive />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
+      <Route path="/topics" element={<TopicArchivePage />} />
+      <Route path="/topics/:topicSlug" element={<TopicDetailPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/terms" element={<TermsPage />} />
@@ -87,6 +91,8 @@ function AppRoutes() {
       <Route path="/az/contact" element={<ContactPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
+      <Route path="/az/topics" element={<TopicArchivePage />} />
+      <Route path="/az/topics/:topicSlug" element={<TopicDetailPage />} />
       <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/az/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/az/terms" element={<TermsPage />} />
