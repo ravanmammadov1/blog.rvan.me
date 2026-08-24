@@ -419,13 +419,17 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-200 ${
+        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
           scrolled || !isHomePage
             ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm py-2 md:py-2.5"
-            : "bg-background/40 backdrop-blur-sm border-b border-transparent py-3 md:py-3.5"
+            : "bg-transparent border-b border-transparent py-4 md:py-5"
         }`}
       >
-        <div className="mx-auto flex h-11 md:h-12 max-w-[1600px] items-center justify-between px-6 md:px-10">
+        <div className={`mx-auto flex h-11 md:h-12 items-center justify-between transition-all duration-300 ${
+          scrolled || !isHomePage
+            ? "max-w-[1600px] px-6 md:px-10"
+            : "max-w-[1400px] px-6 md:px-10 bg-white/40 dark:bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)] mx-4 md:mx-auto"
+        }`}>
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}

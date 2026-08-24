@@ -2,14 +2,15 @@ import { useTheme } from "../../context/ThemeContext";
 
 /**
  * GalaxyAtmosphere
- * Living animated gradient atmosphere for the Rvan.me brand.
+ * Large, visually prominent animated gradient atmosphere for the Rvan.me hero.
  *
- * Uses 3 large blurred gradient masses slowly drifting via CSS keyframe animations.
- * GPU-accelerated (transform + opacity only). No canvas, no JS animation loop.
- * Respects prefers-reduced-motion (pauses all animation).
+ * Creates 4 large blurred gradient masses using ONLY brand colors:
+ *   - Cyan/Teal: #61c5ad / rgba(97, 197, 173)
+ *   - Blue:      #426fba / rgba(66, 111, 186) / #6099df / rgba(96, 153, 223)
+ *   - Purple:    #984f9f / rgba(152, 79, 159) / #bc66c5 / rgba(188, 102, 197)
  *
- * Light Mode: Soft teal/blue/violet haze over warm-neutral #F5F6F5 canvas.
- * Dark Mode: Deeper, richer teal/blue/violet atmospheric glow over near-black canvas.
+ * The gradient is NOT subtle — it's a primary visual element of the hero.
+ * GPU-accelerated (transform + opacity only). Respects prefers-reduced-motion.
  */
 export default function GalaxyAtmosphere() {
   const { theme } = useTheme();
@@ -20,66 +21,82 @@ export default function GalaxyAtmosphere() {
       className="pointer-events-none fixed inset-0 -z-40 overflow-hidden select-none transform-gpu"
       aria-hidden="true"
     >
-      {/* Base Canvas */}
+      {/* Base Canvas — matches site background */}
       <div className="absolute inset-0 bg-background transition-colors duration-500" />
 
-      {/* ── Animated Gradient Mass 1: Teal/Cyan — Top Right ── */}
+      {/* ── Gradient Mass 1: TEAL/CYAN — Top Right, very large ── */}
       <div
         className="absolute rounded-full animate-gradient-drift-1"
         style={{
-          top: "-12%",
-          right: "-8%",
-          width: "min(65vw, 900px)",
-          height: "min(65vw, 900px)",
+          top: "-18%",
+          right: "-12%",
+          width: "min(80vw, 1100px)",
+          height: "min(80vw, 1100px)",
           background: isDark
-            ? "radial-gradient(ellipse at 45% 50%, rgba(97, 197, 173, 0.28) 0%, rgba(97, 197, 173, 0.10) 40%, transparent 70%)"
-            : "radial-gradient(ellipse at 45% 50%, rgba(97, 197, 173, 0.22) 0%, rgba(97, 197, 173, 0.08) 40%, transparent 70%)",
+            ? "radial-gradient(ellipse at 40% 50%, rgba(97, 197, 173, 0.50) 0%, rgba(97, 197, 173, 0.22) 35%, rgba(97, 197, 173, 0.06) 60%, transparent 80%)"
+            : "radial-gradient(ellipse at 40% 50%, rgba(97, 197, 173, 0.40) 0%, rgba(97, 197, 173, 0.18) 35%, rgba(97, 197, 173, 0.05) 60%, transparent 80%)",
+          filter: "blur(50px)",
+        }}
+      />
+
+      {/* ── Gradient Mass 2: BLUE — Center-Left, very large ── */}
+      <div
+        className="absolute rounded-full animate-gradient-drift-2"
+        style={{
+          top: "10%",
+          left: "-15%",
+          width: "min(75vw, 1000px)",
+          height: "min(75vw, 1000px)",
+          background: isDark
+            ? "radial-gradient(ellipse at 55% 45%, rgba(96, 153, 223, 0.45) 0%, rgba(66, 111, 186, 0.20) 40%, rgba(66, 111, 186, 0.06) 65%, transparent 82%)"
+            : "radial-gradient(ellipse at 55% 45%, rgba(96, 153, 223, 0.35) 0%, rgba(66, 111, 186, 0.15) 40%, rgba(66, 111, 186, 0.04) 65%, transparent 82%)",
+          filter: "blur(60px)",
+        }}
+      />
+
+      {/* ── Gradient Mass 3: PURPLE/VIOLET — Bottom-Center-Right, large ── */}
+      <div
+        className="absolute rounded-full animate-gradient-drift-3"
+        style={{
+          bottom: "-10%",
+          right: "0%",
+          width: "min(70vw, 950px)",
+          height: "min(70vw, 950px)",
+          background: isDark
+            ? "radial-gradient(ellipse at 50% 50%, rgba(188, 102, 197, 0.42) 0%, rgba(152, 79, 159, 0.18) 40%, rgba(152, 79, 159, 0.05) 65%, transparent 80%)"
+            : "radial-gradient(ellipse at 50% 50%, rgba(188, 102, 197, 0.32) 0%, rgba(152, 79, 159, 0.14) 40%, rgba(152, 79, 159, 0.04) 65%, transparent 80%)",
+          filter: "blur(55px)",
+        }}
+      />
+
+      {/* ── Gradient Mass 4: Connecting TEAL-BLUE — Upper Center, medium ── */}
+      <div
+        className="absolute rounded-full animate-gradient-drift-4"
+        style={{
+          top: "5%",
+          left: "20%",
+          width: "min(55vw, 750px)",
+          height: "min(55vw, 750px)",
+          background: isDark
+            ? "radial-gradient(ellipse at 50% 50%, rgba(97, 197, 173, 0.28) 0%, rgba(96, 153, 223, 0.18) 45%, transparent 75%)"
+            : "radial-gradient(ellipse at 50% 50%, rgba(97, 197, 173, 0.22) 0%, rgba(96, 153, 223, 0.12) 45%, transparent 75%)",
           filter: "blur(70px)",
         }}
       />
 
-      {/* ── Animated Gradient Mass 2: Blue — Center Left ── */}
+      {/* ── Gradient Mass 5: Deep PURPLE — Lower-Left, connecting ── */}
       <div
-        className="absolute rounded-full animate-gradient-drift-2"
+        className="absolute rounded-full animate-gradient-drift-1"
         style={{
-          top: "25%",
-          left: "-10%",
-          width: "min(55vw, 780px)",
-          height: "min(55vw, 780px)",
+          bottom: "5%",
+          left: "-5%",
+          width: "min(50vw, 650px)",
+          height: "min(50vw, 650px)",
           background: isDark
-            ? "radial-gradient(ellipse at 55% 45%, rgba(66, 111, 186, 0.26) 0%, rgba(66, 111, 186, 0.10) 45%, transparent 72%)"
-            : "radial-gradient(ellipse at 55% 45%, rgba(66, 111, 186, 0.20) 0%, rgba(66, 111, 186, 0.07) 45%, transparent 72%)",
-          filter: "blur(80px)",
-        }}
-      />
-
-      {/* ── Animated Gradient Mass 3: Purple/Violet — Bottom Right ── */}
-      <div
-        className="absolute rounded-full animate-gradient-drift-3"
-        style={{
-          bottom: "-5%",
-          right: "5%",
-          width: "min(50vw, 700px)",
-          height: "min(50vw, 700px)",
-          background: isDark
-            ? "radial-gradient(ellipse at 50% 50%, rgba(152, 79, 159, 0.24) 0%, rgba(152, 79, 159, 0.08) 45%, transparent 70%)"
-            : "radial-gradient(ellipse at 50% 50%, rgba(152, 79, 159, 0.18) 0%, rgba(152, 79, 159, 0.06) 45%, transparent 70%)",
-          filter: "blur(75px)",
-        }}
-      />
-
-      {/* ── Animated Gradient Mass 4: Mixed Accent — Upper Center (softer, connecting) ── */}
-      <div
-        className="absolute rounded-full animate-gradient-drift-4"
-        style={{
-          top: "8%",
-          left: "25%",
-          width: "min(40vw, 550px)",
-          height: "min(40vw, 550px)",
-          background: isDark
-            ? "radial-gradient(ellipse at 50% 50%, rgba(96, 153, 223, 0.18) 0%, rgba(97, 197, 173, 0.08) 50%, transparent 75%)"
-            : "radial-gradient(ellipse at 50% 50%, rgba(96, 153, 223, 0.14) 0%, rgba(97, 197, 173, 0.06) 50%, transparent 75%)",
-          filter: "blur(90px)",
+            ? "radial-gradient(ellipse at 50% 50%, rgba(152, 79, 159, 0.30) 0%, rgba(66, 111, 186, 0.12) 50%, transparent 78%)"
+            : "radial-gradient(ellipse at 50% 50%, rgba(152, 79, 159, 0.22) 0%, rgba(66, 111, 186, 0.08) 50%, transparent 78%)",
+          filter: "blur(65px)",
+          animationDelay: "-12s",
         }}
       />
     </div>
