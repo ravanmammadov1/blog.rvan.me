@@ -56,31 +56,8 @@ export default function HomePage() {
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />
 
-      {/* ── 1. EDITORIAL COSMIC HERO SECTION ── */}
-      <section className="relative flex min-h-[78vh] md:min-h-[82vh] flex-col justify-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28 border-b border-border/60 overflow-hidden">
-        {/* Subtle Cosmic Atmospheric Background Layer */}
-        <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-          {/* Faint Nebula Atmosphere (Upper Right & Center) */}
-          <div
-            className="absolute top-1/4 right-0 md:right-1/12 h-[350px] w-[350px] md:h-[550px] md:w-[550px] rounded-full transition-opacity duration-1000"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, rgba(97,197,173,0.12) 0%, rgba(66,111,186,0.08) 45%, rgba(152,79,159,0.05) 70%, transparent 85%)",
-              filter: "blur(60px)",
-            }}
-          />
-
-          {/* Sparse Delicate Star Points */}
-          <svg className="absolute inset-0 h-full w-full opacity-40 dark:opacity-60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="78%" cy="28%" r="1" className="fill-slate-400 dark:fill-teal-300" />
-            <circle cx="88%" cy="42%" r="1.5" className="fill-slate-400 dark:fill-blue-300" opacity="0.8" />
-            <circle cx="68%" cy="56%" r="1" className="fill-slate-400 dark:fill-purple-300" />
-            <circle cx="82%" cy="68%" r="1.5" className="fill-slate-400 dark:fill-teal-200" opacity="0.6" />
-            <circle cx="92%" cy="22%" r="1" className="fill-slate-400 dark:fill-slate-300" opacity="0.5" />
-            <circle cx="62%" cy="34%" r="1.5" className="fill-slate-400 dark:fill-blue-200" opacity="0.7" />
-          </svg>
-        </div>
-
+      {/* ── 1. EDITORIAL HERO — Living gradient atmosphere provided by global GalaxyAtmosphere ── */}
+      <section className="relative flex min-h-[80vh] md:min-h-[85vh] flex-col justify-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28 overflow-hidden">
         <div className="mx-auto w-full max-w-[1600px] relative z-10">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             {/* Hero Left: Editorial Headline & Actions */}
@@ -88,7 +65,7 @@ export default function HomePage() {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="col-span-full lg:col-span-8 flex flex-col items-start"
+              className="col-span-full lg:col-span-7 flex flex-col items-start"
             >
               {/* Micro-label */}
               <Eyebrow className="mb-5 text-primary tracking-[.22em] font-semibold">
@@ -99,22 +76,26 @@ export default function HomePage() {
 
               {/* Dominant Brand Gradient Headline */}
               <h1
-                className="font-extrabold tracking-tight leading-[1.04] mb-6 w-full"
-                style={{ fontSize: "clamp(2.6rem, 5.8vw, 5.4rem)" }}
+                className="font-extrabold tracking-tight leading-[1.04] mb-7 w-full"
+                style={{ fontSize: "clamp(2.8rem, 6vw, 5.6rem)" }}
               >
                 <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] dark:from-[#61c5ad] dark:via-[#6099df] dark:to-[#bc66c5] bg-clip-text text-transparent inline-block">
-                  {isAz ? "DİZAYN. STRATEGİYA. FİKİRLƏR." : "DESIGN. STRATEGY. IDEAS."}
+                  {isAz ? (
+                    <>DİZAYN. STRATEGİYA.<br />FİKİRLƏR.</>
+                  ) : (
+                    <>DESIGN. STRATEGY.<br />IDEAS.</>
+                  )}
                 </span>
               </h1>
 
               {/* Single Short Paragraph Description */}
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-normal max-w-2xl leading-relaxed mb-10">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-normal max-w-xl leading-relaxed mb-10">
                 {isAz
                   ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr."
                   : "A creative publication about design, marketing, branding, AI and visual culture."}
               </p>
 
-              {/* Simplified 2-Button CTA System */}
+              {/* 2-Button CTA System */}
               <div className="flex flex-wrap items-center gap-4">
                 <Button
                   to={getLocalizedPath("/blog")}
@@ -136,8 +117,8 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Hero Right: Generous Negative Space with Subtle Atmospheric Depth */}
-            <div className="hidden lg:block lg:col-span-4" aria-hidden="true" />
+            {/* Hero Right: Negative space — the animated gradient atmosphere fills this area naturally */}
+            <div className="hidden lg:block lg:col-span-5" aria-hidden="true" />
           </div>
         </div>
       </section>
