@@ -2,18 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowUpRight,
   Menu,
   X,
   LogOut,
   User as UserIcon,
   ChevronDown,
-  Search,
   Sun,
   Moon,
   Globe,
 } from "lucide-react";
-import { urlFor } from "../../lib/sanityClient";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../context/ThemeContext";
@@ -21,7 +18,6 @@ import AuthModal from "./AuthModal";
 import GlobalSearchModal from "./GlobalSearchModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import ravanLogo from "../../assets/ravan_logo.svg";
-
 import { getContributorStatus, getContributorApplication } from "../../services/contributorService";
 
 function UserAuthMenu() {
@@ -58,7 +54,7 @@ function UserAuthMenu() {
   }, [dropdownOpen]);
 
   if (loading) {
-    return <div className="h-9 w-20 rounded-xl bg-muted border border-border animate-pulse shrink-0 self-center" />;
+    return <div className="h-7 w-16 rounded-full bg-muted border border-border animate-pulse shrink-0 self-center" />;
   }
 
   const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
@@ -67,7 +63,7 @@ function UserAuthMenu() {
     <div className="relative shrink-0 flex items-center" ref={menuRef}>
       <button
         onClick={() => setDropdownOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-xl border border-border/80 bg-card/80 px-2.5 py-1.5 text-xs text-foreground transition-all hover:bg-muted/80 focus:outline-none cursor-pointer select-none shadow-sm"
+        className="flex items-center gap-1.5 rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] px-2.5 py-1 text-xs text-foreground transition-all hover:bg-muted/80 dark:hover:bg-white/[0.08] focus:outline-none cursor-pointer select-none shadow-2xs"
         aria-label="User Account Menu"
         aria-expanded={dropdownOpen}
       >
@@ -75,17 +71,17 @@ function UserAuthMenu() {
           <img
             src={userPhoto}
             alt={user?.displayName || "Profile"}
-            className="h-6 w-6 rounded-full object-cover border border-border shrink-0"
+            className="h-5 w-5 rounded-full object-cover border border-border shrink-0"
           />
         ) : (
-          <div className="h-6 w-6 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-[11px] shrink-0">
-            {user ? userInitial : <UserIcon size={12} />}
+          <div className="h-5 w-5 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-[10px] shrink-0">
+            {user ? userInitial : <UserIcon size={11} />}
           </div>
         )}
-        <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[120px] text-foreground font-semibold">
-          {user ? (user.displayName || user.email?.split("@")[0]) : t("profile", "PROFILE")}
+        <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[90px] text-foreground font-semibold text-[11px]">
+          {user ? (user.displayName?.split(" ")[0] || user.email?.split("@")[0]) : t("profile", "PROFILE")}
         </span>
-        <ChevronDown size={13} className={`transition-transform duration-200 shrink-0 text-muted-foreground ${dropdownOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={11} className={`transition-transform duration-200 shrink-0 text-muted-foreground ${dropdownOpen ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
@@ -125,7 +121,7 @@ function UserAuthMenu() {
                   </button>
                 </div>
 
-                {/* 3. QUICK PREFERENCES */}
+                {/* QUICK PREFERENCES */}
                 <div className="border-t border-border p-3.5 space-y-3 bg-surface/30">
                   {/* Appearance Segmented Control */}
                   <div className="space-y-1.5">
@@ -151,7 +147,6 @@ function UserAuthMenu() {
                         <Moon size={12} />
                         <span>{language === "az" ? "Tünd" : "Dark"}</span>
                       </button>
-
                       <button
                         type="button"
                         onClick={() => setTheme("light")}
@@ -172,30 +167,13 @@ function UserAuthMenu() {
                     </div>
                   </div>
 
-                  {/* Language Segmented Control */}
+                  {/* Language Selector */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
                       <span>{language === "az" ? "DİL" : "LANGUAGE"}</span>
-                      <span className="text-primary">{language === "az" ? "AZ" : "EN"}</span>
+                      <span className="text-primary uppercase">{language}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
-                      <button
-                        type="button"
-                        onClick={() => switchLanguage("en")}
-                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                          language === "en"
-                            ? "text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        style={
-                          language === "en"
-                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                            : undefined
-                        }
-                      >
-                        <span>EN</span>
-                      </button>
-
                       <button
                         type="button"
                         onClick={() => switchLanguage("az")}
@@ -210,142 +188,146 @@ function UserAuthMenu() {
                             : undefined
                         }
                       >
-                        <span>AZ</span>
+                        <Globe size={12} />
+                        <span>Azərbaycan</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => switchLanguage("en")}
+                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                          language === "en"
+                            ? "text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                        style={
+                          language === "en"
+                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
+                            : undefined
+                        }
+                      >
+                        <Globe size={12} />
+                        <span>English</span>
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              /* Signed In Header with 4 Structured Sections */
-              <div className="max-h-[calc(100vh-80px)] overflow-y-auto">
-                {/* 1. USER PROFILE & 2. SETTINGS */}
-                <div className="p-4 space-y-3">
+              /* Signed In Profile View */
+              <div>
+                <div className="p-4 border-b border-border space-y-3">
                   <div className="flex items-center gap-3">
                     {userPhoto ? (
                       <img
                         src={userPhoto}
                         alt={user.displayName || "User"}
-                        className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
+                        className="h-10 w-10 rounded-full object-cover border-2 border-primary"
                       />
                     ) : (
-                      <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-primary/20 text-primary border-2 border-primary/40 flex items-center justify-center font-bold text-sm">
                         {userInitial}
                       </div>
                     )}
-                    <div className="overflow-hidden min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs font-bold text-foreground truncate">
-                        {user.displayName || "User"}
+                        {user.displayName || "Creative Contributor"}
                       </div>
-                      <div className="text-[11px] text-muted-foreground truncate font-mono">
+                      <div className="text-[11px] text-muted-foreground truncate mono">
                         {user.email}
                       </div>
                     </div>
                   </div>
 
+                  {/* Contributor badge status */}
+                  <div className="flex items-center justify-between text-[11px] mono">
+                    <span className="text-muted-foreground uppercase">{t("status", "Status")}:</span>
+                    {isContributor ? (
+                      <span className="text-primary font-bold">● {t("verifiedAuthor", "Təsdiqlənmiş Müəllif")}</span>
+                    ) : contributorApp?.status === "PENDING" ? (
+                      <span className="text-amber-500 font-bold">● {t("applicationUnderReview", "Baxılmaqdadır")}</span>
+                    ) : (
+                      <span className="text-muted-foreground">● {t("reader", "Oxucu")}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Profile navigation actions */}
+                <div className="p-2 border-b border-border space-y-1">
                   <Link
                     to={getLocalizedPath("/profile")}
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center justify-between rounded-xl bg-primary text-primary-foreground px-3.5 py-2.5 text-xs font-bold transition-all hover:opacity-90 mono uppercase tracking-wider shadow-sm"
+                    className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
                   >
-                    <span>{language === "az" ? "TƏNZİMLƏMƏLƏR" : "SETTINGS"}</span>
-                    <ArrowUpRight size={14} />
+                    <UserIcon size={14} className="text-primary" />
+                    <span>{t("myAccount", "Mənim Hesabım")}</span>
+                  </Link>
+
+                  <Link
+                    to={getLocalizedPath("/contributor/dashboard")}
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-sm">✍️</span>
+                      <span>{t("authorPanel", "Müəllif Paneli")}</span>
+                    </div>
+                    {isContributor && (
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-primary mono bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
+                        {t("active", "AKTİV")}
+                      </span>
+                    )}
                   </Link>
                 </div>
 
-                {/* 3. QUICK PREFERENCES (Appearance & Language) */}
-                <div className="border-t border-border p-3.5 space-y-3 bg-surface/30">
-                  {/* Appearance Segmented Control */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
-                      <span>{language === "az" ? "GÖRÜNÜŞ" : "APPEARANCE"}</span>
-                      <span className="text-primary">{theme === "dark" ? (language === "az" ? "Tünd" : "Dark") : (language === "az" ? "Açıq" : "Light")}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
+                {/* Preferences in signed in menu */}
+                <div className="p-3 border-b border-border space-y-3 bg-surface/30">
+                  {/* Appearance Switch */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[11px] font-mono text-muted-foreground uppercase">{language === "az" ? "Görünüş" : "Theme"}</span>
+                    <div className="flex items-center gap-1 bg-card p-0.5 rounded-lg border border-border">
                       <button
                         type="button"
                         onClick={() => setTheme("dark")}
-                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                          theme === "dark"
-                            ? "text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        style={
-                          theme === "dark"
-                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                            : undefined
-                        }
+                        className={`p-1.5 rounded-md transition-colors ${theme === "dark" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                        title="Dark mode"
                       >
                         <Moon size={12} />
-                        <span>{language === "az" ? "Tünd" : "Dark"}</span>
                       </button>
-
                       <button
                         type="button"
                         onClick={() => setTheme("light")}
-                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                          theme === "light"
-                            ? "text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        style={
-                          theme === "light"
-                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                            : undefined
-                        }
+                        className={`p-1.5 rounded-md transition-colors ${theme === "light" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                        title="Light mode"
                       >
                         <Sun size={12} />
-                        <span>{language === "az" ? "Açıq" : "Light"}</span>
                       </button>
                     </div>
                   </div>
 
-                  {/* Language Segmented Control */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-muted-foreground uppercase">
-                      <span>{language === "az" ? "DİL" : "LANGUAGE"}</span>
-                      <span className="text-primary">{language === "az" ? "AZ" : "EN"}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-card border border-border">
-                      <button
-                        type="button"
-                        onClick={() => switchLanguage("en")}
-                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                          language === "en"
-                            ? "text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        style={
-                          language === "en"
-                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                            : undefined
-                        }
-                      >
-                        <span>EN</span>
-                      </button>
-
+                  {/* Language Switch */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[11px] font-mono text-muted-foreground uppercase">{language === "az" ? "Dil" : "Lang"}</span>
+                    <div className="flex items-center gap-1 bg-card p-0.5 rounded-lg border border-border">
                       <button
                         type="button"
                         onClick={() => switchLanguage("az")}
-                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                          language === "az"
-                            ? "text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                        style={
-                          language === "az"
-                            ? { backgroundImage: "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)" }
-                            : undefined
-                        }
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-colors ${language === "az" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                       >
-                        <span>AZ</span>
+                        AZ
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => switchLanguage("en")}
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-colors ${language === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                      >
+                        EN
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* 4. SIGN OUT */}
-                <div className="border-t border-border p-2 bg-surface/30">
+                {/* Sign Out */}
+                <div className="p-2">
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
@@ -375,22 +357,29 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchInitialQuery, setSearchInitialQuery] = useState("");
   const location = useLocation();
   const { t, getLocalizedPath } = useLanguage();
 
-  const isHomePage = location.pathname === "/" || location.pathname === "/az";
-
+  // Passive, performance-optimized scroll-aware threshold listener (60px)
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 60;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const [searchInitialQuery, setSearchInitialQuery] = useState("");
-
+  // Keyboard shortcut & open-search event handlers
   useEffect(() => {
     const handleGlobalKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setMenuOpen(false);
@@ -414,73 +403,74 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     };
   }, []);
 
-  const baseNavItems = [
-    { label: t("navHome", "HOME"), target: "/" },
+  // Global navigation items
+  const navItems = [
     { label: t("navBlog", "BLOG"), target: "/blog" },
     { label: t("navResources", "RESOURCES"), target: "/resources" },
     { label: t("navAbout", "ABOUT"), target: "/about" },
     { label: t("navContact", "CONTACT"), target: "/contact" },
   ];
 
-  const navItems = baseNavItems.filter((item) => {
-    if (item.target === "/") {
-      return !isHomePage;
-    }
-    return true;
-  });
+  // Mobile menu items (includes Home for explicit navigation)
+  const mobileNavItems = [
+    { label: t("navHome", "HOME"), target: "/" },
+    ...navItems,
+  ];
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
-          scrolled || !isHomePage
-            ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm py-2 md:py-2.5"
-            : "bg-transparent border-b border-transparent py-4 md:py-5"
+        className={`fixed top-0 left-0 right-0 z-50 w-full pointer-events-none transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          scrolled ? "pt-2.5 sm:pt-3 pb-1" : "pt-4 sm:pt-5 pb-2"
         }`}
       >
-        <div className={`mx-auto flex h-11 md:h-12 items-center justify-between transition-all duration-300 ${
-          scrolled || !isHomePage
-            ? "max-w-[1600px] px-6 md:px-10"
-            : "max-w-[1400px] px-6 md:px-10 bg-white/40 dark:bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)] mx-4 md:mx-auto"
-        }`}>
-          {/* Logo & Brand */}
+        <div
+          className={`pointer-events-auto mx-auto flex items-center justify-between transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            scrolled
+              ? "max-w-[760px] md:max-w-[820px] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/94 dark:bg-[#121215]/92 border border-[#DDE1E0] dark:border-white/10 shadow-[0_6px_20px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4)] backdrop-blur-xl mx-3 sm:mx-auto"
+              : "max-w-[1060px] px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl bg-white/40 dark:bg-white/[0.04] border border-black/5 dark:border-white/5 shadow-2xs backdrop-blur-md mx-4 sm:mx-auto"
+          }`}
+        >
+          {/* Logo & Brand — Original untouched asset */}
           <Link
             to={getLocalizedPath("/")}
-            className="group flex items-center gap-3 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center"
+            className="group flex items-center gap-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 select-none"
             aria-label="Rvan.me Home"
           >
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={36}
-              height={36}
-              className="h-8 w-8 md:h-9 md:w-9 object-contain transition-transform duration-200 group-hover:scale-105"
+              width={32}
+              height={32}
+              className={`object-contain transition-all duration-300 group-hover:scale-105 ${
+                scrolled ? "h-6 w-6 sm:h-7 sm:w-7" : "h-7 w-7 sm:h-8 sm:w-8"
+              }`}
             />
-            <span className="hidden text-[11px] font-bold leading-tight tracking-[.14em] sm:block uppercase">
+            <span className="hidden sm:inline-block text-[11px] font-bold tracking-[.14em] uppercase text-foreground leading-none">
               RVAN.ME
-              <br />
-              <span className="text-[9px] font-medium text-muted-foreground">{t("studio", "STUDIO")}</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-1.5 text-[11px] font-bold tracking-[.1em] mono uppercase md:flex shrink-0 self-center">
+          {/* Desktop Navigation — Clean compact horizontal pill */}
+          <nav
+            className={`hidden md:flex items-center text-[11px] font-bold tracking-[.1em] mono uppercase transition-all duration-300 ${
+              scrolled ? "gap-1 sm:gap-1.5" : "gap-1.5 sm:gap-2.5"
+            }`}
+          >
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive =
-                item.target === "/"
-                  ? isHomePage
-                  : location.pathname === localizedTarget ||
-                    location.pathname.startsWith(localizedTarget + "/");
+                location.pathname === localizedTarget ||
+                location.pathname.startsWith(localizedTarget + "/");
 
               return (
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-3.5 py-1.5 transition-colors duration-200 rounded-lg ${
+                  className={`relative px-3 py-1.5 transition-colors duration-200 rounded-full ${
                     isActive
-                      ? "text-foreground font-bold bg-muted/60"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                      ? "text-foreground font-bold bg-muted/80 dark:bg-white/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40 dark:hover:bg-white/5"
                   } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
                 >
                   <span>{item.label}</span>
@@ -488,21 +478,10 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               );
             })}
           </nav>
- 
-          {/* Action Buttons & Authentication */}
-          <div className="flex items-center gap-2.5 shrink-0 self-center">
-            {/* Global Search Button Trigger */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              aria-label="Search articles and resources"
-              className="flex h-9 items-center gap-2 rounded-xl border border-border bg-card px-3 text-[11px] font-medium transition-colors hover:border-primary/40 text-muted-foreground hover:text-foreground shrink-0 self-center"
-            >
-              <Search size={13} className="text-primary" />
-              <span className="hidden lg:inline font-mono tracking-wider font-semibold">{t("search", "SEARCH")}</span>
-              <kbd className="hidden lg:inline rounded bg-muted px-1.5 py-0.5 text-[9px] font-mono text-muted-foreground border border-border">⌘K</kbd>
-            </button>
 
-            {/* Integrated Profile & Preferences Dropdown */}
+          {/* Action & Profile Control on Right */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Integrated Compact Profile & Preferences Control */}
             <UserAuthMenu />
 
             {/* Mobile Menu Toggle */}
@@ -511,15 +490,15 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation"
-              className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card md:hidden text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 self-center"
+              className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
             >
-              {menuOpen ? <X size={17} /> : <Menu size={17} />}
+              {menuOpen ? <X size={15} /> : <Menu size={15} />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Global Search Modal */}
+      {/* Global Search Modal (Invoked via ⌘K or Hero Search) */}
       <GlobalSearchModal
         isOpen={searchOpen}
         onClose={() => {
@@ -540,11 +519,11 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             className="fixed inset-0 z-40 flex flex-col justify-center bg-background/98 backdrop-blur-md px-8 pt-20 md:hidden"
           >
             <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 relative z-10">
-              {navItems.map((item, i) => {
+              {mobileNavItems.map((item, i) => {
                 const localizedTarget = getLocalizedPath(item.target);
                 const isActive =
                   item.target === "/"
-                    ? isHomePage
+                    ? location.pathname === "/" || location.pathname === "/az"
                     : location.pathname === localizedTarget ||
                       location.pathname.startsWith(localizedTarget + "/");
 
