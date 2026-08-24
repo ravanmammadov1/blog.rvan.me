@@ -389,16 +389,29 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const [searchInitialQuery, setSearchInitialQuery] = useState("");
+
   useEffect(() => {
     const handleGlobalKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setMenuOpen(false);
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        setSearchInitialQuery("");
         setSearchOpen((prev) => !prev);
       }
     };
+    const handleOpenSearch = (event: Event) => {
+      const customEvent = event as CustomEvent<{ query?: string }>;
+      setSearchInitialQuery(customEvent.detail?.query || "");
+      setSearchOpen(true);
+    };
+
     window.addEventListener("keydown", handleGlobalKey);
-    return () => window.removeEventListener("keydown", handleGlobalKey);
+    window.addEventListener("open-search", handleOpenSearch);
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKey);
+      window.removeEventListener("open-search", handleOpenSearch);
+    };
   }, []);
 
   const baseNavItems = [
@@ -507,7 +520,14 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       </header>
 
       {/* Global Search Modal */}
-      <GlobalSearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <GlobalSearchModal
+        isOpen={searchOpen}
+        onClose={() => {
+          setSearchOpen(false);
+          setSearchInitialQuery("");
+        }}
+        initialQuery={searchInitialQuery}
+      />
 
       {/* Mobile Slide-Over Menu */}
       <AnimatePresence>

@@ -18,9 +18,10 @@ interface SearchItem {
 interface GlobalSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialQuery?: string;
 }
 
-export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
+export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: GlobalSearchModalProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,13 +94,16 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
   // Focus input on open & track search opened
   useEffect(() => {
     if (isOpen) {
+      if (initialQuery !== undefined) {
+        setQuery(initialQuery);
+      }
       setTimeout(() => inputRef.current?.focus(), 50);
       setSelectedIndex(0);
       trackSearchDiscovery("search_opened");
     } else {
       setQuery("");
     }
-  }, [isOpen]);
+  }, [isOpen, initialQuery]);
 
   // Keyboard navigation
   useEffect(() => {

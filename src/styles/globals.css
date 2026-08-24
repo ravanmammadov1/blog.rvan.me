@@ -220,6 +220,29 @@ html {
   .animate-gradient-drift-2 { animation: gradientDrift2 36s ease-in-out infinite; }
   .animate-gradient-drift-3 { animation: gradientDrift3 32s ease-in-out infinite; }
   .animate-gradient-drift-4 { animation: gradientDrift4 24s ease-in-out infinite; }
+
+  /* ─── Subtle Floating Decorative Elements ─── */
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+  @keyframes floatMedium {
+    0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    50% { transform: translateY(-14px) rotate(-6deg) scale(1.04); }
+  }
+  @keyframes floatGentle {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-8px) scale(0.96); }
+  }
+  @keyframes haloPulse {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.65; transform: scale(1.02); }
+  }
+
+  .animate-float-slow { animation: floatSlow 7s ease-in-out infinite; }
+  .animate-float-medium { animation: floatMedium 5.5s ease-in-out infinite; }
+  .animate-float-gentle { animation: floatGentle 8s ease-in-out infinite; }
+  .animate-halo-pulse { animation: haloPulse 4s ease-in-out infinite; }
 }
 
 /* ─── Editorial Card Utility ─── */
