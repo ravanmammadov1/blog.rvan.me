@@ -355,13 +355,11 @@ interface SiteHeaderProps {
 
 export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  // Three scroll states: "top" (compact), "down" (normal expanded), "up" (subtle translucent glass)
-  const [navState, setNavState] = useState<"top" | "down" | "up">("top");
+  const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchInitialQuery, setSearchInitialQuery] = useState("");
   const location = useLocation();
   const { t, getLocalizedPath } = useLanguage();
-  const lastScrollY = useRef(0);
 
   // Performance-optimized scroll listener (RAF + threshold caching)
   useEffect(() => {
@@ -370,20 +368,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const currentY = window.scrollY;
-          const diff = currentY - lastScrollY.current;
-
-          if (currentY < 45) {
-            setNavState((prev) => (prev !== "top" ? "top" : prev));
-          } else if (diff > 12) {
-            // Scrolling down -> expands into normal reading/navigation state
-            setNavState((prev) => (prev !== "down" ? "down" : prev));
-          } else if (diff < -12) {
-            // Scrolling up -> smooth upward translucent glass state
-            setNavState((prev) => (prev !== "up" ? "up" : prev));
-          }
-
-          lastScrollY.current = currentY;
+          const isScrolled = window.scrollY > 40;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
           ticking = false;
         });
         ticking = true;
@@ -433,39 +419,15 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
     ...navItems,
   ];
 
-  // Container styling based on the 3 states
-  const getContainerStyle = () => {
-    switch (navState) {
-      case "top":
-        // Initial state at top of page: compact, lightweight, clean, editorial
-        return "max-w-[720px] md:max-w-[780px] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/60 dark:bg-[#121215]/60 border border-black/5 dark:border-white/5 shadow-2xs backdrop-blur-md mx-3 sm:mx-auto";
-      case "down":
-        // User scrolls down: smoothly grows into normal reading/navigation state
-        return "max-w-[960px] md:max-w-[1040px] px-5 sm:px-7 py-2.5 sm:py-3 rounded-2xl sm:rounded-full bg-white/94 dark:bg-[#121215]/92 border border-[#DDE1E0] dark:border-white/10 shadow-[0_6px_20px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4)] backdrop-blur-xl mx-4 sm:mx-auto";
-      case "up":
-        // User scrolls up: smooth upward translucent subtle glass appearance
-        return "max-w-[820px] md:max-w-[880px] px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-white/75 dark:bg-[#121215]/75 border border-[#DDE1E0]/70 dark:border-white/10 shadow-[0_8px_24px_rgba(15,23,42,0.05)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-xl mx-3 sm:mx-auto";
-    }
-  };
-
-  const getHeaderPadding = () => {
-    switch (navState) {
-      case "top":
-        return "pt-3 sm:pt-4 pb-1";
-      case "down":
-        return "pt-2.5 sm:pt-3 pb-1";
-      case "up":
-        return "pt-2 sm:pt-2.5 pb-1";
-    }
-  };
-
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full pointer-events-none transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${getHeaderPadding()}`}
-      >
+      <header className="fixed top-0 left-0 right-0 z-50 w-full pointer-events-none pt-3 sm:pt-4 pb-2">
         <div
-          className={`pointer-events-auto mx-auto flex items-center justify-between transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${getContainerStyle()}`}
+          className={`pointer-events-auto mx-auto flex items-center justify-between max-w-[760px] md:max-w-[820px] px-4 sm:px-5 py-2 rounded-full backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] mx-3 sm:mx-auto ${
+            scrolled
+              ? "opacity-50 hover:opacity-100 bg-white/55 dark:bg-[#121215]/55 border border-[#DDE1E0]/50 dark:border-white/5 shadow-2xs hover:bg-white/95 dark:hover:bg-[#121215]/95 hover:border-[#DDE1E0] dark:hover:border-white/12 hover:shadow-[0_6px_20px_rgba(15,23,42,0.06)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.4)]"
+              : "opacity-100 bg-white/90 dark:bg-[#121215]/90 border border-[#DDE1E0] dark:border-white/10 shadow-[0_4px_16px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
+          }`}
         >
           {/* Logo & Brand — Original untouched asset */}
           <Link
@@ -476,11 +438,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={32}
-              height={32}
-              className={`object-contain transition-all duration-300 group-hover:scale-105 ${
-                navState === "top" ? "h-6 w-6 sm:h-6.5 sm:w-6.5" : "h-6.5 w-6.5 sm:h-7.5 sm:w-7.5"
-              }`}
+              width={28}
+              height={28}
+              className="h-6.5 w-6.5 sm:h-7 sm:w-7 object-contain transition-transform duration-200 group-hover:scale-105"
             />
             <span className="hidden sm:inline-block text-[11px] font-bold tracking-[.14em] uppercase text-foreground leading-none">
               RVAN.ME
@@ -488,11 +448,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </Link>
 
           {/* Desktop Navigation — Clean compact horizontal pill */}
-          <nav
-            className={`hidden md:flex items-center text-[11px] font-bold tracking-[.1em] mono uppercase transition-all duration-300 ${
-              navState === "top" ? "gap-1 sm:gap-1.5" : "gap-1.5 sm:gap-2.5"
-            }`}
-          >
+          <nav className="hidden md:flex items-center gap-1 sm:gap-1.5 text-[11px] font-bold tracking-[.1em] mono uppercase">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive =
