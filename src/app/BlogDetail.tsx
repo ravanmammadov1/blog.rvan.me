@@ -7,6 +7,10 @@ import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 import { trackArticleView } from "../services/articleStatsService";
+import {
+  getPublishedContributorArticleBySlug,
+  slugifyAuthorName,
+} from "../services/contributorService";
 
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -51,8 +55,12 @@ export default function BlogDetail() {
       .trim()
       .toLowerCase();
 
-    Promise.all([fetchBlogBySlug(slug, language), fetchAllBlogs(language)])
-      .then(([singlePost, postsList]) => {
+    Promise.all([
+      fetchBlogBySlug(slug, language),
+      fetchAllBlogs(language),
+      getPublishedContributorArticleBySlug(cleanSlug),
+    ])
+      .then(([singlePost, postsList, contributorPost]) => {
         let foundPost = singlePost;
 
         if (!foundPost && postsList && postsList.length > 0) {
@@ -70,6 +78,36 @@ export default function BlogDetail() {
                 (p._id && p._id.toLowerCase() === cleanSlug)
               );
             }) || null;
+        }
+
+        if (!foundPost && contributorPost) {
+          foundPost = {
+            _id: contributorPost.id,
+            title: contributorPost.title,
+            title_az: contributorPost.language === "az" ? contributorPost.title : undefined,
+            slug: { current: contributorPost.slug },
+            slug_az: contributorPost.language === "az" ? { current: contributorPost.slug } : undefined,
+            excerpt: contributorPost.excerpt,
+            excerpt_az: contributorPost.language === "az" ? contributorPost.excerpt : undefined,
+            body: [
+              {
+                _type: "block",
+                style: "normal",
+                children: [{ _type: "span", text: contributorPost.content }],
+              },
+            ],
+            publishDate: contributorPost.publishedAt || contributorPost.createdAt,
+            readTime: contributorPost.readTime || "4 min read",
+            category: contributorPost.category,
+            category_az: contributorPost.category,
+            tags: contributorPost.tags || [],
+            coverImage: contributorPost.coverImageUrl ? { asset: { url: contributorPost.coverImageUrl } } : null,
+            authorName: contributorPost.authorName,
+            authorSlug: contributorPost.authorSlug || slugifyAuthorName(contributorPost.authorName),
+            authorRole: contributorPost.authorRole || "Editorial Contributor",
+            authorBio: contributorPost.authorBio,
+            status: "published",
+          };
         }
 
         if (foundPost) {

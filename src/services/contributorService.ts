@@ -4,6 +4,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  deleteDoc,
   collection,
   getDocs,
   query,
@@ -49,16 +50,27 @@ export interface ContributorArticleDraft {
   id: string;
   authorUid: string;
   authorName: string;
+  authorSlug?: string;
+  authorRole?: string;
+  authorPhoto?: string;
+  authorBio?: string;
   title: string;
   slug: string;
   category: string;
   topic?: string;
+  tags?: string[];
   language: "en" | "az";
   excerpt: string;
   content: string;
   coverImageUrl?: string;
-  status: "draft" | "submitted" | "changes_requested" | "published";
+  status: "draft" | "submitted" | "changes_requested" | "published" | "rejected";
   reviewerFeedback?: string;
+  reviewNote?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  submittedAt?: string;
+  publishedAt?: string;
+  readTime?: string;
   createdAt: string;
   updatedAt: string;
   viewCount?: number;
@@ -890,29 +902,48 @@ export async function getContributorArticles(authorUid: string): Promise<Contrib
   return localDrafts;
 }
 
+export function calculateReadTime(text: string = "", language: string = "en"): string {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return language === "az" ? `${minutes} dəq oxu` : `${minutes} min read`;
+}
+
 export async function saveContributorArticle(
   draft: Partial<ContributorArticleDraft> & { authorUid: string; title: string }
 ): Promise<ContributorArticleDraft> {
   const draftId = draft.id || `draft-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-  const slug = (draft.title || "untitled-article")
+  const cleanSlug = (draft.slug || draft.title || "untitled-article")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+  const readTimeStr = calculateReadTime(draft.content || "", draft.language || "en");
+
   const fullDraft: ContributorArticleDraft = {
     id: draftId,
     authorUid: draft.authorUid,
     authorName: draft.authorName || "Contributor",
+    authorSlug: draft.authorSlug,
+    authorRole: draft.authorRole,
+    authorPhoto: draft.authorPhoto,
+    authorBio: draft.authorBio,
     title: draft.title,
-    slug,
+    slug: cleanSlug,
     category: draft.category || "Design",
-    topic: draft.topic,
+    topic: draft.topic || "",
+    tags: draft.tags || [],
     language: draft.language || "en",
     excerpt: draft.excerpt || "",
     content: draft.content || "",
-    coverImageUrl: draft.coverImageUrl,
+    coverImageUrl: draft.coverImageUrl || "",
     status: draft.status || "draft",
+    reviewNote: draft.reviewNote,
+    reviewedBy: draft.reviewedBy,
+    reviewedAt: draft.reviewedAt,
+    submittedAt: draft.submittedAt,
+    publishedAt: draft.publishedAt,
+    readTime: readTimeStr,
     createdAt: draft.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -941,6 +972,176 @@ export async function saveContributorArticle(
   return fullDraft;
 }
 
+export async function submitContributorArticle(
+  articleId: string,
+  authorUid: string
+): Promise<ContributorArticleDraft | null> {
+  const articles = await getContributorArticles(authorUid);
+  const target = articles.find((a) => a.id === articleId);
+  if (!target) return null;
+
+  const submittedAt = new Date().toISOString();
+  const updated: ContributorArticleDraft = {
+    ...target,
+    status: "submitted",
+    submittedAt,
+    updatedAt: submittedAt,
+  };
+
+  return await saveContributorArticle(updated);
+}
+
+export async function deleteContributorDraft(
+  articleId: string,
+  authorUid: string
+): Promise<boolean> {
+  const localKey = `rvan_contributor_articles_${authorUid}`;
+  if (typeof window !== "undefined") {
+    try {
+      const current = (await getContributorArticles(authorUid)) || [];
+      const updatedList = current.filter((d) => d.id !== articleId);
+      localStorage.setItem(localKey, JSON.stringify(updatedList));
+    } catch {}
+  }
+
+  if (db) {
+    try {
+      const docRef = doc(db, DRAFTS_COLLECTION, articleId);
+      await deleteDoc(docRef);
+    } catch (err) {
+      console.warn("[ContributorService] Error deleting article draft:", err);
+    }
+  }
+
+  return true;
+}
+
+export async function adminRequestChanges(
+  articleId: string,
+  reviewNote: string,
+  adminIdentifier: string = "Admin"
+): Promise<boolean> {
+  const reviewedAt = new Date().toISOString();
+  if (db) {
+    try {
+      const docRef = doc(db, DRAFTS_COLLECTION, articleId);
+      await updateDoc(docRef, {
+        status: "changes_requested",
+        reviewNote,
+        reviewedAt,
+        reviewedBy: adminIdentifier,
+        updatedAt: reviewedAt,
+      });
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error requesting changes on article:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
+export async function adminRejectArticle(
+  articleId: string,
+  rejectionReason: string,
+  adminIdentifier: string = "Admin"
+): Promise<boolean> {
+  const reviewedAt = new Date().toISOString();
+  if (db) {
+    try {
+      const docRef = doc(db, DRAFTS_COLLECTION, articleId);
+      await updateDoc(docRef, {
+        status: "rejected",
+        reviewNote: rejectionReason,
+        reviewedAt,
+        reviewedBy: adminIdentifier,
+        updatedAt: reviewedAt,
+      });
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error rejecting article:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
+export async function adminApproveAndPublishArticle(
+  articleId: string,
+  adminIdentifier: string = "Admin"
+): Promise<boolean> {
+  const publishedAt = new Date().toISOString();
+  if (db) {
+    try {
+      const docRef = doc(db, DRAFTS_COLLECTION, articleId);
+      await updateDoc(docRef, {
+        status: "published",
+        publishedAt,
+        reviewedAt: publishedAt,
+        reviewedBy: adminIdentifier,
+        updatedAt: publishedAt,
+      });
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error approving & publishing article:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
+export async function getPublishedContributorArticles(
+  lang?: string
+): Promise<ContributorArticleDraft[]> {
+  const list: ContributorArticleDraft[] = [];
+  if (db) {
+    try {
+      const q = query(
+        collection(db, DRAFTS_COLLECTION),
+        where("status", "==", "published")
+      );
+      const snap = await getDocs(q);
+      snap.forEach((d) => {
+        const item = d.data() as ContributorArticleDraft;
+        if (item && (!lang || item.language === lang || item.language === "en")) {
+          list.push(item);
+        }
+      });
+      list.sort(
+        (a, b) =>
+          new Date(b.publishedAt || b.createdAt).getTime() -
+          new Date(a.publishedAt || a.createdAt).getTime()
+      );
+    } catch (err) {
+      console.warn("[ContributorService] Error querying published contributor articles:", err);
+    }
+  }
+  return list;
+}
+
+export async function getPublishedContributorArticleBySlug(
+  slug: string
+): Promise<ContributorArticleDraft | null> {
+  if (!slug) return null;
+  const cleanSlug = slug.toLowerCase().trim();
+  if (db) {
+    try {
+      const q = query(
+        collection(db, DRAFTS_COLLECTION),
+        where("slug", "==", cleanSlug),
+        where("status", "==", "published")
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        return snap.docs[0].data() as ContributorArticleDraft;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error querying published article by slug:", err);
+    }
+  }
+  return null;
+}
+
 export async function getContributorDashboardStats(
   authorUid: string,
   profile: ContributorProfile | null
@@ -956,7 +1157,10 @@ export async function getContributorDashboardStats(
 
   articles.forEach((a) => {
     if (a.status === "draft") draftsCount++;
-    else if (a.status === "submitted") submittedCount++;
+    else if (a.status === "submitted") {
+      submittedCount++;
+      underReviewCount++;
+    }
     else if (a.status === "changes_requested") changesRequestedCount++;
     else if (a.status === "published") {
       publishedCount++;

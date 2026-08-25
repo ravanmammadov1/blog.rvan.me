@@ -49,7 +49,7 @@ service cloud.firestore {
 
     // Contributor Article Drafts & Submissions
     match /contributor_articles/{articleId} {
-      // Anyone can read published articles; authors and admins can read drafts & submitted articles
+      // Anyone can read published articles; authors and admins can read drafts, submissions, and feedback
       allow read: if resource.data.status == "published" ||
                      (isAuthenticated() && (request.auth.uid == resource.data.authorUid || isAdmin()));
 
@@ -58,18 +58,23 @@ service cloud.firestore {
                        request.auth.uid == request.resource.data.authorUid &&
                        (request.resource.data.status == "draft" || request.resource.data.status == "submitted");
 
-      // Authors can update their own drafts/submissions, BUT cannot publish directly.
-      // ONLY Admin can approve, reject, or publish articles.
+      // Authors can update their own drafts or resubmit changes-requested articles.
+      // Contributors CANNOT set status to 'published' and cannot edit published articles directly.
+      // ONLY Admin can set status to 'published', 'changes_requested', or 'rejected'.
       allow update: if isAdmin() || (
                        isAuthenticated() &&
                        request.auth.uid == resource.data.authorUid &&
                        request.resource.data.authorUid == resource.data.authorUid &&
                        request.resource.data.status != "published" &&
-                       (request.resource.data.status == "draft" || request.resource.data.status == "submitted")
+                       (request.resource.data.status == "draft" || request.resource.data.status == "submitted") &&
+                       (resource.data.status == "draft" || resource.data.status == "changes_requested" || resource.data.status == "submitted")
                      );
 
-      // Authors can delete their own drafts; admins can delete any
-      allow delete: if isAuthenticated() && (request.auth.uid == resource.data.authorUid || isAdmin());
+      // Authors can delete their own unpublished drafts; admins can delete any
+      allow delete: if isAuthenticated() && (
+                       (request.auth.uid == resource.data.authorUid && resource.data.status == "draft") ||
+                       isAdmin()
+                     );
     }
 
     // Article Views & Stats Tracking

@@ -6,6 +6,11 @@ import { Sparkles, ArrowRight, Calendar, Clock, Search, SlidersHorizontal, X } f
 import { fetchAllBlogs, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
+import {
+  getPublishedContributorArticles,
+  ContributorArticleDraft,
+  slugifyAuthorName,
+} from "../services/contributorService";
 import BlogCard from "./components/blog/BlogCard";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -20,6 +25,36 @@ import { formatBlogDate, estimateReadingTime } from "../lib/blogHelpers";
 import { getArticleCoverImage } from "../lib/contentEngine";
 import { BLOG_FAQS } from "../data/faqData";
 import FaqAccordion from "./components/ui/FaqAccordion";
+
+function mapContributorArticleToBlogPost(art: ContributorArticleDraft): BlogPost {
+  return {
+    _id: art.id,
+    title: art.title,
+    title_az: art.language === "az" ? art.title : undefined,
+    slug: { current: art.slug },
+    slug_az: art.language === "az" ? { current: art.slug } : undefined,
+    excerpt: art.excerpt,
+    excerpt_az: art.language === "az" ? art.excerpt : undefined,
+    body: [
+      {
+        _type: "block",
+        style: "normal",
+        children: [{ _type: "span", text: art.content }],
+      },
+    ],
+    publishDate: art.publishedAt || art.createdAt,
+    readTime: art.readTime || "4 min read",
+    category: art.category,
+    category_az: art.category,
+    tags: art.tags || [],
+    coverImage: art.coverImageUrl ? { asset: { url: art.coverImageUrl } } : null,
+    authorName: art.authorName,
+    authorSlug: art.authorSlug || slugifyAuthorName(art.authorName),
+    authorRole: art.authorRole || "Editorial Contributor",
+    authorBio: art.authorBio,
+    status: "published",
+  };
+}
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -50,16 +85,31 @@ export default function BlogArchive() {
       if (data) setSiteSettings(data);
     });
 
-    fetchAllBlogs(language)
-      .then((data) => {
-        if (data && data.length > 0) {
-          setPosts(data);
-        } else {
-          setPosts([]);
+    Promise.all([
+      fetchAllBlogs(language),
+      getPublishedContributorArticles(language),
+    ])
+      .then(([sanityData, contributorArts]) => {
+        const combinedList: BlogPost[] = [];
+        if (sanityData && sanityData.length > 0) {
+          combinedList.push(...sanityData);
         }
+        if (contributorArts && contributorArts.length > 0) {
+          const mapped = contributorArts.map(mapContributorArticleToBlogPost);
+          combinedList.push(...mapped);
+        }
+        // Deduplicate by slug
+        const seen = new Set<string>();
+        const unique = combinedList.filter((p) => {
+          const s = p.slug?.current || p._id;
+          if (!s || seen.has(s)) return false;
+          seen.add(s);
+          return true;
+        });
+        setPosts(unique);
       })
       .catch((err) => {
-        console.error("Error fetching blog archive from Sanity:", err);
+        console.error("Error fetching blog archive:", err);
         setPosts([]);
       })
       .finally(() => setLoading(false));

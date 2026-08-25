@@ -15,6 +15,10 @@ import {
   ChevronRight,
   Filter,
   Lock,
+  MessageSquare,
+  AlertCircle,
+  Sparkles,
+  BookOpen,
 } from "lucide-react";
 import SEO from "../../components/SEO";
 import SiteHeader from "../../components/SiteHeader";
@@ -29,10 +33,14 @@ import {
   getApprovedContributors,
   getAllSubmittedArticles,
   getAdminOverviewMetrics,
+  adminRequestChanges,
+  adminRejectArticle,
+  adminApproveAndPublishArticle,
   ContributorApplicationRecord,
   ContributorProfile,
   ContributorArticleDraft,
   slugifyAuthorName,
+  calculateReadTime,
 } from "../../../services/contributorService";
 import { SiteSettings } from "../../../types/cms";
 import { fetchSiteSettings } from "../../../lib/sanityQueries";
@@ -74,6 +82,15 @@ export default function AdminConsolePage() {
   const [appFilter, setAppFilter] = useState<"ALL" | "PENDING" | "REVIEWING" | "APPROVED" | "REJECTED">("ALL");
   const [selectedApp, setSelectedApp] = useState<ContributorApplicationRecord | null>(null);
   const [processingAppId, setProcessingAppId] = useState<string | null>(null);
+
+  // Article Filters & Review Modal State
+  const [articleFilter, setArticleFilter] = useState<"ALL" | "submitted" | "changes_requested" | "published" | "rejected">("ALL");
+  const [selectedArticle, setSelectedArticle] = useState<ContributorArticleDraft | null>(null);
+  const [reviewActionType, setReviewActionType] = useState<"publish" | "changes" | "reject" | null>(null);
+  const [editorialNoteInput, setEditorialNoteInput] = useState("");
+  const [processingArticleId, setProcessingArticleId] = useState<string | null>(null);
+
+  // Action Success Banner
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
 
   // Update tab state when route changes
@@ -119,6 +136,7 @@ export default function AdminConsolePage() {
     }
   }, [isAdmin, language]);
 
+  // Application Approval Handlers
   const handleApprove = async (appId: string) => {
     setProcessingAppId(appId);
     setActionSuccessMsg(null);
@@ -155,17 +173,87 @@ export default function AdminConsolePage() {
     }
   };
 
+  // Article Moderation Handlers
+  const handleApproveAndPublishArticle = async (articleId: string) => {
+    setProcessingArticleId(articleId);
+    setActionSuccessMsg(null);
+    try {
+      const reviewer = user?.email || user?.displayName || "Platform Admin";
+      await adminApproveAndPublishArticle(articleId, reviewer);
+      setActionSuccessMsg(isAz ? "Məqalə təsdiqləndi və Rvan.me-də rəsmi olaraq dərc edildi." : "Article approved and published live on Rvan.me!");
+      await loadAllData();
+      if (selectedArticle && selectedArticle.id === articleId) {
+        setSelectedArticle((prev) => (prev ? { ...prev, status: "published", publishedAt: new Date().toISOString() } : null));
+      }
+      setReviewActionType(null);
+    } catch (err) {
+      console.error("Failed to publish article:", err);
+    } finally {
+      setProcessingArticleId(null);
+    }
+  };
+
+  const handleRequestChangesArticle = async () => {
+    if (!selectedArticle || !editorialNoteInput.trim()) return;
+    setProcessingArticleId(selectedArticle.id);
+    setActionSuccessMsg(null);
+    try {
+      const reviewer = user?.email || user?.displayName || "Platform Admin";
+      await adminRequestChanges(selectedArticle.id, editorialNoteInput.trim(), reviewer);
+      setActionSuccessMsg(isAz ? "Düzəliş qeydi müəllifə göndərildi." : "Changes requested and editorial note sent to author.");
+      await loadAllData();
+      setSelectedArticle((prev) => (prev ? { ...prev, status: "changes_requested", reviewNote: editorialNoteInput.trim() } : null));
+      setReviewActionType(null);
+      setEditorialNoteInput("");
+    } catch (err) {
+      console.error("Failed to request changes:", err);
+    } finally {
+      setProcessingArticleId(null);
+    }
+  };
+
+  const handleRejectArticle = async () => {
+    if (!selectedArticle) return;
+    setProcessingArticleId(selectedArticle.id);
+    setActionSuccessMsg(null);
+    try {
+      const reviewer = user?.email || user?.displayName || "Platform Admin";
+      await adminRejectArticle(selectedArticle.id, editorialNoteInput.trim(), reviewer);
+      setActionSuccessMsg(isAz ? "Məqalə imtina statusuna keçirildi." : "Article rejected.");
+      await loadAllData();
+      setSelectedArticle((prev) => (prev ? { ...prev, status: "rejected", reviewNote: editorialNoteInput.trim() } : null));
+      setReviewActionType(null);
+      setEditorialNoteInput("");
+    } catch (err) {
+      console.error("Failed to reject article:", err);
+    } finally {
+      setProcessingArticleId(null);
+    }
+  };
+
   // Filtered applications
   const filteredApps = applications.filter((app) => {
     if (appFilter === "ALL") return true;
     return app.status === appFilter;
   });
 
+  // Filtered articles (prioritize 'submitted' / under review at the top)
+  const sortedArticles = [...articles].sort((a, b) => {
+    if (a.status === "submitted" && b.status !== "submitted") return -1;
+    if (b.status === "submitted" && a.status !== "submitted") return 1;
+    return new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime();
+  });
+
+  const filteredArticles = sortedArticles.filter((art) => {
+    if (articleFilter === "ALL") return true;
+    return art.status === articleFilter;
+  });
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title={isAz ? "Admin İdarəetmə Paneli — Rvan.me" : "Admin Console — Rvan.me"}
-        description="Editorial management and contributor application review."
+        description="Editorial management, contributor application review, and publishing studio."
         noIndex
       />
 
@@ -221,8 +309,8 @@ export default function AdminConsolePage() {
                 </h1>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {isAz
-                    ? "Müəlliflik müraciətlərinin yoxlanılması və redaksiya idarəetmə mərkəzi."
-                    : "Editorial management, contributor application review, and platform administration."}
+                    ? "Müəlliflik müraciətlərinin yoxlanılması və redaksiya məqalə nəşriyyat mərkəzi."
+                    : "Editorial management, contributor application review, and article publishing."}
                 </p>
               </div>
 
@@ -245,7 +333,7 @@ export default function AdminConsolePage() {
                 className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "overview"
                     ? "bg-primary text-black font-extrabold shadow-sm shadow-primary/20"
-                    : "border border-border bg-card/60 dark:bg-white/5 text-muted-foreground hover:text-foreground"
+                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <ShieldCheck size={14} />
@@ -258,7 +346,7 @@ export default function AdminConsolePage() {
                 className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "applications"
                     ? "bg-primary text-black font-extrabold shadow-sm shadow-primary/20"
-                    : "border border-border bg-card/60 dark:bg-white/5 text-muted-foreground hover:text-foreground"
+                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <FileText size={14} />
@@ -274,30 +362,37 @@ export default function AdminConsolePage() {
 
               <button
                 type="button"
+                onClick={() => switchTab("articles")}
+                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  activeTab === "articles"
+                    ? "bg-primary text-black font-extrabold shadow-sm shadow-primary/20"
+                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <PenTool size={14} />
+                <span>
+                  {t("adminArticles", "Articles")}
+                  {articles.filter((a) => a.status === "submitted").length > 0 && (
+                    <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30">
+                      {articles.filter((a) => a.status === "submitted").length}
+                    </span>
+                  )}
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => switchTab("contributors")}
                 className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "contributors"
                     ? "bg-primary text-black font-extrabold shadow-sm shadow-primary/20"
-                    : "border border-border bg-card/60 dark:bg-white/5 text-muted-foreground hover:text-foreground"
+                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Users size={14} />
                 <span>
                   {t("adminContributors", "Contributors")} ({metrics.activeContributors})
                 </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => switchTab("articles")}
-                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  activeTab === "articles"
-                    ? "bg-primary text-black font-extrabold shadow-sm shadow-primary/20"
-                    : "border border-border bg-card/60 dark:bg-white/5 text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <PenTool size={14} />
-                <span>{t("adminArticles", "Articles")}</span>
               </button>
             </div>
 
@@ -324,7 +419,7 @@ export default function AdminConsolePage() {
                 {/* Metric Summary Grid */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
-                    <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
+                    <div className="flex items-center justify-between text-muted-foreground text-xs font-mono uppercase">
                       <span>{t("adminPendingApps", "Pending Applications")}</span>
                       <Clock size={16} className="text-amber-500" />
                     </div>
@@ -334,7 +429,17 @@ export default function AdminConsolePage() {
                   </div>
 
                   <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
-                    <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
+                    <div className="flex items-center justify-between text-muted-foreground text-xs font-mono uppercase">
+                      <span>{t("underReview", "Articles Awaiting Review")}</span>
+                      <PenTool size={16} className="text-amber-500" />
+                    </div>
+                    <p className="mt-3 text-3xl font-extrabold text-foreground">
+                      {articles.filter((a) => a.status === "submitted").length}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
+                    <div className="flex items-center justify-between text-muted-foreground text-xs font-mono uppercase">
                       <span>{t("adminActiveContributors", "Active Contributors")}</span>
                       <Users size={16} className="text-sky-500" />
                     </div>
@@ -344,25 +449,65 @@ export default function AdminConsolePage() {
                   </div>
 
                   <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
-                    <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
-                      <span>{t("adminTotalApps", "Total Applications")}</span>
-                      <FileText size={16} className="text-primary" />
+                    <div className="flex items-center justify-between text-muted-foreground text-xs font-mono uppercase">
+                      <span>{t("published", "Published Contributor Essays")}</span>
+                      <CheckCircle2 size={16} className="text-emerald-500" />
                     </div>
                     <p className="mt-3 text-3xl font-extrabold text-foreground">
-                      {metrics.totalApplications}
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
-                    <div className="flex items-center justify-between text-muted-foreground text-xs mono uppercase">
-                      <span>{t("adminSubmittedArticles", "Submitted Articles")}</span>
-                      <PenTool size={16} className="text-emerald-500" />
-                    </div>
-                    <p className="mt-3 text-3xl font-extrabold text-foreground">
-                      {metrics.submittedArticles}
+                      {articles.filter((a) => a.status === "published").length}
                     </p>
                   </div>
                 </div>
+
+                {/* Submissions Requiring Review */}
+                {articles.filter((a) => a.status === "submitted").length > 0 && (
+                  <div className="rounded-3xl border border-amber-500/30 bg-amber-500/5 p-6 md:p-8 space-y-4">
+                    <div className="flex items-center justify-between border-b border-amber-500/20 pb-4">
+                      <div className="flex items-center gap-2">
+                        <Clock size={16} className="text-amber-500" />
+                        <h2 className="text-base font-bold text-foreground">
+                          {isAz ? "Baxış Gözləyən Məqalələr" : "Submissions Awaiting Editorial Review"}
+                        </h2>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setArticleFilter("submitted");
+                          switchTab("articles");
+                        }}
+                        className="text-xs font-mono text-amber-500 hover:underline font-bold"
+                      >
+                        {isAz ? "Hamısına Bax →" : "View Queue →"}
+                      </button>
+                    </div>
+
+                    <div className="divide-y divide-border/60">
+                      {articles
+                        .filter((a) => a.status === "submitted")
+                        .slice(0, 3)
+                        .map((art) => (
+                          <div key={art.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
+                            <div>
+                              <h3 className="text-sm font-bold text-foreground">{art.title}</h3>
+                              <span className="text-xs font-mono text-muted-foreground">
+                                By {art.authorName} · {art.category} · {new Date(art.submittedAt || art.updatedAt).toLocaleDateString(isAz ? "az-AZ" : "en-US")}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedArticle(art);
+                              }}
+                              className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-primary text-black hover:brightness-110 transition-all cursor-pointer shrink-0"
+                            >
+                              {isAz ? "Nəzərdən Keçir" : "Review Article"}
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Recent Applications Quick Review Deck */}
                 <div className="rounded-3xl border border-border bg-card p-6 md:p-8 space-y-6">
@@ -647,7 +792,149 @@ export default function AdminConsolePage() {
               </div>
             )}
 
-            {/* ── TAB 3: CONTRIBUTORS ── */}
+            {/* ── TAB 3: ARTICLES ── */}
+            {activeTab === "articles" && (
+              <div className="space-y-6">
+                {/* Filter Toolbar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 p-4 md:p-6 rounded-2xl border border-border bg-card">
+                  <div className="flex items-center gap-2">
+                    <Filter size={15} className="text-primary" />
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                      {t("adminStatus", "Status")}:
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(["ALL", "submitted", "changes_requested", "published", "rejected"] as const).map((filter) => (
+                      <button
+                        key={filter}
+                        type="button"
+                        onClick={() => setArticleFilter(filter)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          articleFilter === filter
+                            ? "bg-primary text-black font-extrabold shadow-xs"
+                            : "border border-border bg-card text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {filter === "ALL" && t("allArticles", "All Articles")}
+                        {filter === "submitted" && t("underReview", "Under Review")}
+                        {filter === "changes_requested" && t("changesRequested", "Changes Requested")}
+                        {filter === "published" && t("published", "Published")}
+                        {filter === "rejected" && t("rejected", "Rejected")}
+                        {filter !== "ALL" && ` (${articles.filter((a) => a.status === filter).length})`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {filteredArticles.length === 0 ? (
+                  <div className="rounded-3xl border border-border bg-card p-12 text-center space-y-4 max-w-xl mx-auto my-8">
+                    <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+                      <PenTool size={24} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <h3 className="text-base font-bold text-foreground">
+                        {isAz ? "Redaksiya Məqalə Növbəsi" : "Editorial Queue"}
+                      </h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {t("noArticlesFound", "No articles found matching the selected filter.")}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {filteredArticles.map((art) => (
+                      <div
+                        key={art.id}
+                        className="rounded-3xl border border-border bg-card p-6 md:p-8 space-y-4 hover:border-primary/40 transition-all shadow-xs"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                                  art.status === "published"
+                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                                    : art.status === "submitted"
+                                    ? "bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30"
+                                    : art.status === "changes_requested"
+                                    ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30"
+                                    : art.status === "rejected"
+                                    ? "bg-rose-500/10 text-rose-500 border-rose-500/30"
+                                    : "bg-muted text-muted-foreground border-border"
+                                }`}
+                              >
+                                {art.status === "submitted"
+                                  ? t("underReview", "Under Review")
+                                  : art.status === "changes_requested"
+                                  ? t("changesRequested", "Changes Requested")
+                                  : art.status}
+                              </span>
+                              <span className="text-xs font-mono text-primary font-bold">
+                                {art.category}
+                              </span>
+                              <span className="text-[11px] font-mono text-muted-foreground">
+                                · {art.language === "az" ? "AZ" : "EN"}
+                              </span>
+                            </div>
+                            <h3 className="text-base font-bold text-foreground mt-1">
+                              {art.title}
+                            </h3>
+                            <span className="text-xs font-mono text-muted-foreground block mt-0.5">
+                              By <strong className="text-foreground">{art.authorName}</strong> ·{" "}
+                              {new Date(art.submittedAt || art.updatedAt || art.createdAt).toLocaleString(isAz ? "az-AZ" : "en-US")}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedArticle(art);
+                                setReviewActionType(null);
+                                setEditorialNoteInput("");
+                              }}
+                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-primary text-black hover:brightness-110 transition-all cursor-pointer font-extrabold shadow-xs"
+                            >
+                              <BookOpen size={13} />
+                              <span>{isAz ? "Məqaləyə Bax & Qərar Ver" : "Review & Decide"}</span>
+                            </button>
+
+                            {art.status === "published" && (
+                              <Link
+                                to={getLocalizedPath(`/blog/${art.slug}`)}
+                                target="_blank"
+                                className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-mono font-bold border border-border bg-card hover:border-primary/50 text-foreground transition-all"
+                              >
+                                <ExternalLink size={12} />
+                                <span>{t("viewPublicArticle", "View Live")}</span>
+                              </Link>
+                            )}
+                          </div>
+                        </div>
+
+                        {art.excerpt && (
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                            {art.excerpt}
+                          </p>
+                        )}
+
+                        {art.reviewNote && (
+                          <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-3 text-xs font-sans text-foreground">
+                            <span className="font-mono text-[10px] font-bold uppercase text-purple-600 dark:text-purple-400 block mb-0.5">
+                              Latest Editorial Note:
+                            </span>
+                            {art.reviewNote}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── TAB 4: CONTRIBUTORS ── */}
             {activeTab === "contributors" && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-border pb-4">
@@ -714,68 +1001,6 @@ export default function AdminConsolePage() {
                             <ExternalLink size={12} />
                           </Link>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── TAB 4: ARTICLES ── */}
-            {activeTab === "articles" && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between border-b border-border pb-4">
-                  <div>
-                    <h2 className="text-base font-bold text-foreground">
-                      {t("adminArticles", "Articles")}
-                    </h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {isAz
-                        ? "Müəlliflər tərəfindən baxış üçün təqdim olunmuş məqalələr."
-                        : "Contributor article submissions and draft moderation queue."}
-                    </p>
-                  </div>
-                </div>
-
-                {articles.length === 0 ? (
-                  /* Clean, explicit placeholder state */
-                  <div className="rounded-3xl border border-border bg-card p-12 text-center space-y-4 max-w-xl mx-auto my-8">
-                    <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
-                      <PenTool size={24} />
-                    </div>
-                    <div className="space-y-1.5">
-                      <h3 className="text-base font-bold text-foreground">
-                        {isAz ? "Redaksiya Məqalə Növbəsi" : "Editorial Submissions"}
-                      </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {t(
-                          "adminArticlesPlaceholder",
-                          "Article review will appear here when contributor submissions are enabled."
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    {articles.map((art) => (
-                      <div
-                        key={art.id}
-                        className="rounded-2xl border border-border bg-card p-6 space-y-3"
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <h3 className="text-base font-bold text-foreground">{art.title}</h3>
-                            <span className="text-xs font-mono text-muted-foreground">
-                              By {art.authorName} · Category: {art.category}
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full border border-primary/30 bg-primary/10 text-primary">
-                            {art.status}
-                          </span>
-                        </div>
-                        {art.excerpt && (
-                          <p className="text-xs text-muted-foreground line-clamp-2">{art.excerpt}</p>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -923,6 +1148,226 @@ export default function AdminConsolePage() {
                         : t("adminReject", "Reject")}
                     </span>
                   </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── ARTICLE REVIEW & DECISION MODAL ── */}
+      {selectedArticle && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md overflow-y-auto"
+          onClick={() => setSelectedArticle(null)}
+        >
+          <div
+            className="w-full max-w-3xl rounded-3xl border border-border bg-card p-6 md:p-8 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-border pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-primary uppercase tracking-wider">
+                    {selectedArticle.category} · {selectedArticle.language === "az" ? "AZ" : "EN"}
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                      selectedArticle.status === "published"
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                        : selectedArticle.status === "submitted"
+                        ? "bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30"
+                        : selectedArticle.status === "changes_requested"
+                        ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30"
+                        : selectedArticle.status === "rejected"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-500/30"
+                        : "bg-muted text-muted-foreground border-border"
+                    }`}
+                  >
+                    {selectedArticle.status === "submitted"
+                      ? t("underReview", "Under Review")
+                      : selectedArticle.status}
+                  </span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mt-1">
+                  {selectedArticle.title}
+                </h2>
+                <span className="text-xs font-mono text-muted-foreground block mt-0.5">
+                  Author: <strong className="text-foreground">{selectedArticle.authorName}</strong> (UID: {selectedArticle.authorUid}) · {calculateReadTime(selectedArticle.content, selectedArticle.language)}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedArticle(null)}
+                className="grid h-8 w-8 place-items-center rounded-full border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Modal Body / Article Preview */}
+            <div className="space-y-6 text-xs">
+              {/* Cover Image if available */}
+              {selectedArticle.coverImageUrl && (
+                <div className="rounded-2xl border border-border overflow-hidden aspect-video bg-muted max-h-60">
+                  <img
+                    src={selectedArticle.coverImageUrl}
+                    alt={selectedArticle.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Excerpt */}
+              {selectedArticle.excerpt && (
+                <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-1">
+                  <span className="font-mono text-[10.5px] font-bold text-primary uppercase tracking-wider block">
+                    {t("articleExcerpt", "Excerpt / Short Premise")}:
+                  </span>
+                  <p className="text-sm font-sans text-foreground leading-relaxed">
+                    {selectedArticle.excerpt}
+                  </p>
+                </div>
+              )}
+
+              {/* Rendered Body Content */}
+              <div className="space-y-2">
+                <span className="font-mono text-[10.5px] font-bold text-muted-foreground uppercase tracking-wider block">
+                  {t("articleContent", "Article Body")}:
+                </span>
+                <div className="p-6 rounded-2xl border border-border bg-background whitespace-pre-wrap font-sans text-xs text-foreground/90 leading-relaxed max-h-72 overflow-y-auto">
+                  {selectedArticle.content}
+                </div>
+              </div>
+
+              {/* Review feedback input form when an action is selected */}
+              {reviewActionType === "changes" && (
+                <div className="rounded-2xl border border-purple-500/30 bg-purple-500/10 p-5 space-y-3">
+                  <label className="block text-xs font-mono font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                    {t("reviewNote", "Editorial Review Note / Feedback for Author")} <span className="text-rose-500">*</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    autoComplete="off"
+                    value={editorialNoteInput}
+                    onChange={(e) => setEditorialNoteInput(e.target.value)}
+                    placeholder={t("reviewNotePlaceholder", "Write editorial feedback or required revisions...")}
+                    className="w-full rounded-xl border border-border bg-card p-3 text-xs text-foreground focus:border-primary focus:outline-none"
+                  />
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setReviewActionType(null)}
+                      className="px-3 py-1.5 rounded-lg text-xs font-mono text-muted-foreground"
+                    >
+                      {t("discardChanges", "Cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!editorialNoteInput.trim() || processingArticleId === selectedArticle.id}
+                      onClick={handleRequestChangesArticle}
+                      className="px-4 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs font-mono uppercase tracking-wider hover:brightness-110 transition-all disabled:opacity-50"
+                    >
+                      {processingArticleId === selectedArticle.id ? "..." : t("requestChanges", "Request Changes")}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {reviewActionType === "reject" && (
+                <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-5 space-y-3">
+                  <label className="block text-xs font-mono font-bold text-rose-500 uppercase tracking-wider">
+                    {t("rejectionReason", "Rejection Reason")}
+                  </label>
+                  <textarea
+                    rows={3}
+                    autoComplete="off"
+                    value={editorialNoteInput}
+                    onChange={(e) => setEditorialNoteInput(e.target.value)}
+                    placeholder={t("rejectionReasonPlaceholder", "State the reason for rejecting this submission...")}
+                    className="w-full rounded-xl border border-border bg-card p-3 text-xs text-foreground focus:border-primary focus:outline-none"
+                  />
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setReviewActionType(null)}
+                      className="px-3 py-1.5 rounded-lg text-xs font-mono text-muted-foreground"
+                    >
+                      {t("discardChanges", "Cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={processingArticleId === selectedArticle.id}
+                      onClick={handleRejectArticle}
+                      className="px-4 py-1.5 rounded-xl bg-rose-600 text-white font-bold text-xs font-mono uppercase tracking-wider hover:brightness-110 transition-all disabled:opacity-50"
+                    >
+                      {processingArticleId === selectedArticle.id ? "..." : t("rejected", "Reject Article")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions Footer */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border">
+              <button
+                type="button"
+                onClick={() => setSelectedArticle(null)}
+                className="px-4 py-2 rounded-xl text-xs font-mono font-bold border border-border hover:bg-muted text-muted-foreground transition-colors cursor-pointer"
+              >
+                {isAz ? "Bağla" : "Close"}
+              </button>
+
+              <div className="flex items-center gap-2">
+                {selectedArticle.status !== "published" && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setReviewActionType("changes")}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider border border-purple-500/40 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
+                    >
+                      <MessageSquare size={13} />
+                      <span>{t("requestChanges", "Request Changes")}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setReviewActionType("reject")}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider border border-rose-500/30 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                    >
+                      <X size={13} />
+                      <span>{t("rejected", "Reject")}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={processingArticleId === selectedArticle.id}
+                      onClick={() => handleApproveAndPublishArticle(selectedArticle.id)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-primary text-black hover:brightness-110 transition-all cursor-pointer font-extrabold disabled:opacity-50 shadow-xs"
+                    >
+                      <Sparkles size={13} />
+                      <span>
+                        {processingArticleId === selectedArticle.id
+                          ? isAz ? "Dərc edilir..." : "Publishing..."
+                          : t("approveAndPublish", "Approve & Publish")}
+                      </span>
+                    </button>
+                  </>
+                )}
+
+                {selectedArticle.status === "published" && (
+                  <Link
+                    to={getLocalizedPath(`/blog/${selectedArticle.slug}`)}
+                    target="_blank"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-primary text-black hover:brightness-110 transition-all"
+                  >
+                    <ExternalLink size={13} />
+                    <span>{t("viewPublicArticle", "View Live Article")}</span>
+                  </Link>
                 )}
               </div>
             </div>
