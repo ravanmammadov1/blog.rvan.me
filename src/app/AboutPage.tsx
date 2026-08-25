@@ -70,9 +70,10 @@ export default function AboutPage() {
 
       {/* ── 1. HERO SECTION ── */}
       <PageHero
-        title={t("aboutTitle", "The Pursuit of")}
-        accentText={t("aboutAccent", "Substance.")}
-        eyebrow={t("aboutEyebrow", "MANIFESTO & EDITORIAL MISSION")}
+        title={isAz ? "KREATIV NƏŞRİYYAT &" : "CREATIVE PUBLICATION &"}
+        accentText={isAz ? "BİLİK PLATFORMASI." : "KNOWLEDGE PLATFORM."}
+        eyebrow={isAz ? "MANIFEST VƏ REDAKSİYA MİSSİYASI" : "MANIFESTO & EDITORIAL MISSION"}
+        contentClassName="max-w-4xl"
         description={
           <span className="space-y-4 block">
             <span className="block text-foreground font-semibold text-lg sm:text-xl md:text-2xl leading-relaxed">

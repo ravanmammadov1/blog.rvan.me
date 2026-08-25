@@ -20,6 +20,14 @@ import {
   Compass,
   ArrowRight,
   Globe,
+  AlertCircle,
+  Clock,
+  Check,
+  X,
+  MessageSquare,
+  Trash2,
+  Send,
+  User,
 } from "lucide-react";
 import SEO from "../../components/SEO";
 import SiteHeader from "../../components/SiteHeader";
@@ -31,7 +39,36 @@ import { SiteSettings } from "../../../types/cms";
 import { BlogPost } from "../../../types/blog";
 import { fetchAllBlogs, fetchSiteSettings } from "../../../lib/sanityQueries";
 
-type AdminTab = "overview" | "editorial" | "submissions" | "site" | "analytics";
+type AdminTab = "overview" | "submissions" | "editorial" | "site" | "analytics";
+type SubmissionFilter = "ALL" | "PENDING" | "PUBLISHED" | "CHANGES_REQUESTED" | "REJECTED";
+
+export interface RealArticleSubmission {
+  _id: string;
+  _type: string;
+  authorName: string;
+  authorEmail: string;
+  authorBio?: string;
+  authorWebsite?: string;
+  profilePhotoUrl?: string;
+  profilePhotoAssetRef?: string;
+  title: string;
+  slug?: string;
+  language: "en" | "az";
+  category: string;
+  topic?: string;
+  tags?: string[];
+  excerpt: string;
+  content: string;
+  coverImageUrl?: string;
+  coverImageAssetRef?: string;
+  editorialNote?: string;
+  editorialReviewNote?: string;
+  originalWorkConfirmed?: boolean;
+  status: "PENDING" | "PUBLISHED" | "CHANGES_REQUESTED" | "REJECTED";
+  submittedAt: string;
+  publishedAt?: string;
+  publishedBlogId?: string;
+}
 
 export default function AdminConsolePage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -43,8 +80,8 @@ export default function AdminConsolePage() {
   // Determine active tab from URL pathname
   const getTabFromPath = (): AdminTab => {
     const path = location.pathname.replace(/^\/az/, "");
+    if (path.includes("/submissions") || path.includes("/inbox")) return "submissions";
     if (path.includes("/editorial") || path.includes("/articles")) return "editorial";
-    if (path.includes("/submissions")) return "submissions";
     if (path.includes("/site")) return "site";
     if (path.includes("/analytics")) return "analytics";
     return "overview";
@@ -53,9 +90,21 @@ export default function AdminConsolePage() {
   const [activeTab, setActiveTab] = useState<AdminTab>(getTabFromPath());
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
-  // Data States
+  // Real Data States
   const [publishedBlogs, setPublishedBlogs] = useState<BlogPost[]>([]);
+  const [submissions, setSubmissions] = useState<RealArticleSubmission[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+
+  // Submission Review Modal State
+  const [selectedSubmission, setSelectedSubmission] = useState<RealArticleSubmission | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [reviewNoteInput, setReviewNoteInput] = useState("");
+  const [showFeedbackBox, setShowFeedbackBox] = useState<"approve" | "changes" | "reject" | null>(null);
+  const [submissionFilter, setSubmissionFilter] = useState<SubmissionFilter>("ALL");
+  const [editorialSearch, setEditorialSearch] = useState("");
 
   // Update tab state when route changes
   useEffect(() => {
@@ -71,11 +120,23 @@ export default function AdminConsolePage() {
   const loadAllData = async () => {
     if (!isAdmin) return;
     setLoadingData(true);
+    setDataError(null);
     try {
+      // 1. Load published articles from Sanity
       const blogs = await fetchAllBlogs(language);
       setPublishedBlogs(blogs || []);
-    } catch (err) {
-      console.error("[AdminConsole] Error loading published articles from Sanity:", err);
+
+      // 2. Load real submissions from Sanity via /api/admin-submissions
+      const res = await fetch("/api/admin-submissions");
+      if (res.ok) {
+        const json = await res.json();
+        setSubmissions(json.submissions || []);
+      } else {
+        console.warn("[AdminConsole] Could not load submissions from API:", res.statusText);
+      }
+    } catch (err: any) {
+      console.error("[AdminConsole] Error loading admin data:", err);
+      setDataError(err?.message || "Failed to load live editorial data.");
     } finally {
       setLoadingData(false);
     }
@@ -92,9 +153,114 @@ export default function AdminConsolePage() {
     }
   }, [isAdmin, language]);
 
-  // Derive real statistics
-  const categoriesList = Array.from(new Set(publishedBlogs.map((b) => b.category).filter(Boolean)));
-  const authorsList = Array.from(new Set(publishedBlogs.map((b) => b.authorName).filter(Boolean)));
+  // Real Computed Statistics
+  const pendingSubmissions = submissions.filter((s) => s.status === "PENDING");
+  const publishedSubmissions = submissions.filter((s) => s.status === "PUBLISHED");
+  const changesRequestedSubmissions = submissions.filter((s) => s.status === "CHANGES_REQUESTED");
+  const rejectedSubmissions = submissions.filter((s) => s.status === "REJECTED");
+
+  const categoriesList = Array.from(
+    new Set(publishedBlogs.map((b) => b.category).filter(Boolean))
+  );
+  const authorsList = Array.from(
+    new Set(publishedBlogs.map((b) => b.authorName).filter(Boolean))
+  );
+
+  // Filtered Submissions
+  const filteredSubmissions = submissions.filter((s) => {
+    if (submissionFilter === "ALL") return true;
+    return s.status === submissionFilter;
+  });
+
+  // Filtered Published Blogs
+  const filteredPublishedBlogs = publishedBlogs.filter((b) => {
+    if (!editorialSearch.trim()) return true;
+    const q = editorialSearch.toLowerCase();
+    return (
+      (b.title && b.title.toLowerCase().includes(q)) ||
+      (b.authorName && b.authorName.toLowerCase().includes(q)) ||
+      (b.category && b.category.toLowerCase().includes(q))
+    );
+  });
+
+  // ── HANDLE ADMIN EDITORIAL ACTIONS ──
+  const handleSubmissionAction = async (action: "approve_and_publish" | "request_changes" | "reject" | "delete") => {
+    if (!selectedSubmission) return;
+    setActionLoading(true);
+    setActionSuccess(null);
+    setActionError(null);
+
+    try {
+      const res = await fetch("/api/admin-submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          submissionId: selectedSubmission._id,
+          editorialNote: reviewNoteInput.trim() || undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to process submission action.");
+      }
+
+      setActionSuccess(data.message || "Action completed successfully.");
+      setShowFeedbackBox(null);
+      setReviewNoteInput("");
+
+      // Update selected submission locally
+      if (action === "delete") {
+        setSubmissions((prev) => prev.filter((s) => s._id !== selectedSubmission._id));
+        setSelectedSubmission(null);
+      } else {
+        const newStatus =
+          action === "approve_and_publish"
+            ? "PUBLISHED"
+            : action === "request_changes"
+            ? "CHANGES_REQUESTED"
+            : "REJECTED";
+
+        setSubmissions((prev) =>
+          prev.map((s) =>
+            s._id === selectedSubmission._id
+              ? {
+                  ...s,
+                  status: newStatus,
+                  publishedBlogId: data.blogId || s.publishedBlogId,
+                  editorialReviewNote: reviewNoteInput.trim() || s.editorialReviewNote,
+                }
+              : s
+          )
+        );
+
+        setSelectedSubmission((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: newStatus,
+                publishedBlogId: data.blogId || prev.publishedBlogId,
+                editorialReviewNote: reviewNoteInput.trim() || prev.editorialReviewNote,
+              }
+            : null
+        );
+      }
+
+      // Re-fetch published articles if an article was published
+      if (action === "approve_and_publish") {
+        fetchAllBlogs(language).then((blogs) => {
+          setPublishedBlogs(blogs || []);
+        });
+      }
+    } catch (err: any) {
+      console.error("[AdminConsole] Action failed:", err);
+      setActionError(err?.message || "An unexpected error occurred.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   // Access Control Screen
   if (authLoading) {
@@ -153,14 +319,14 @@ export default function AdminConsolePage() {
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
                   <ShieldCheck size={12} />
-                  <span>{isAz ? "SAYT İDARƏETMƏ MƏRKƏZİ" : "PLATFORM CONTROL CENTER"}</span>
+                  <span>{isAz ? "SAYT İDARƏETMƏ MƏRKƏZİ" : "EDITORIAL CONTROL CENTER"}</span>
                 </span>
                 <span className="text-xs font-mono text-muted-foreground">
                   UID: {user?.uid.slice(0, 10)}...
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                {isAz ? "Rvan.me İdarəetmə Paneli" : "Rvan.me Admin Console"}
+                {isAz ? "Rvan.me Redaksiya Paneli" : "Rvan.me Editorial Console"}
               </h1>
             </div>
 
@@ -169,17 +335,17 @@ export default function AdminConsolePage() {
                 type="button"
                 onClick={loadAllData}
                 disabled={loadingData}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition-colors disabled:opacity-50 cursor-pointer shadow-2xs"
               >
                 <RefreshCw size={14} className={loadingData ? "animate-spin text-primary" : ""} />
-                <span>{loadingData ? (isAz ? "Yenilənir..." : "Refreshing...") : (isAz ? "Yenilə" : "Refresh")}</span>
+                <span>{loadingData ? (isAz ? "Yenilənir..." : "Refreshing...") : (isAz ? "Məlumatları Yenilə" : "Refresh Data")}</span>
               </button>
               <Link
                 to={getLocalizedPath("/write")}
                 target="_blank"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-2xs"
               >
-                <span>{isAz ? "Məqalə Təqdimat Portalı" : "Share Your Ideas Form"}</span>
+                <span>{isAz ? "Məqalə Təqdimat Portalı" : "Public Submission Portal"}</span>
                 <ExternalLink size={13} />
               </Link>
             </div>
@@ -200,18 +366,6 @@ export default function AdminConsolePage() {
             </button>
 
             <button
-              onClick={() => switchTab("editorial")}
-              className={`pb-3 px-4 text-xs font-bold tracking-wider uppercase transition-colors border-b-2 flex items-center gap-2 shrink-0 cursor-pointer ${
-                activeTab === "editorial"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <BookOpen size={14} />
-              <span>{isAz ? "Redaksiya & Məqalələr" : "Editorial & Content"} ({publishedBlogs.length})</span>
-            </button>
-
-            <button
               onClick={() => switchTab("submissions")}
               className={`pb-3 px-4 text-xs font-bold tracking-wider uppercase transition-colors border-b-2 flex items-center gap-2 shrink-0 cursor-pointer ${
                 activeTab === "submissions"
@@ -220,7 +374,26 @@ export default function AdminConsolePage() {
               }`}
             >
               <Mail size={14} />
-              <span>{isAz ? "E-poçt Qəbulu" : "Submissions Intake"}</span>
+              <span>
+                {isAz ? "Məqalə Təqdimatları" : "Submissions Intake"}
+                {pendingSubmissions.length > 0 && (
+                  <span className="ml-1.5 px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[10px] font-bold">
+                    {pendingSubmissions.length}
+                  </span>
+                )}
+              </span>
+            </button>
+
+            <button
+              onClick={() => switchTab("editorial")}
+              className={`pb-3 px-4 text-xs font-bold tracking-wider uppercase transition-colors border-b-2 flex items-center gap-2 shrink-0 cursor-pointer ${
+                activeTab === "editorial"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <BookOpen size={14} />
+              <span>{isAz ? "Dərc Olunmuş Məqalələr" : "Published Articles"} ({publishedBlogs.length})</span>
             </button>
 
             <button
@@ -252,6 +425,13 @@ export default function AdminConsolePage() {
 
       {/* Main Workspace Body */}
       <section className="px-4 py-8 sm:px-6 md:px-8 max-w-[1280px] mx-auto space-y-8">
+        {dataError && (
+          <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
+            <AlertCircle size={16} />
+            <span>{dataError}</span>
+          </div>
+        )}
+
         {/* ── TAB 1: OVERVIEW ── */}
         {activeTab === "overview" && (
           <div className="space-y-8">
@@ -259,149 +439,310 @@ export default function AdminConsolePage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="p-5 rounded-3xl border border-border bg-card space-y-1">
                 <span className="text-[10px] font-bold font-mono text-muted-foreground uppercase tracking-wider">
+                  {isAz ? "GÖZLƏYƏN TƏQDİMATLAR" : "PENDING SUBMISSIONS"}
+                </span>
+                <div className="text-3xl font-extrabold text-foreground">{pendingSubmissions.length}</div>
+                <p className="text-[11px] text-muted-foreground">
+                  {pendingSubmissions.length > 0
+                    ? isAz
+                      ? "Baxış tələb edən yeni məqalələr"
+                      : "Awaiting editorial review"
+                    : isAz
+                    ? "Bütün təqdimatlar cavablandırılıb"
+                    : "Inbox zero — all reviewed"}
+                </p>
+              </div>
+
+              <div className="p-5 rounded-3xl border border-border bg-card space-y-1">
+                <span className="text-[10px] font-bold font-mono text-muted-foreground uppercase tracking-wider">
                   {isAz ? "DƏRC EDİLMİŞ MƏQALƏLƏR" : "PUBLISHED ARTICLES"}
                 </span>
                 <div className="text-3xl font-extrabold text-foreground">{publishedBlogs.length}</div>
-                <p className="text-[11px] text-muted-foreground">{isAz ? "Sanity CMS üzərindən" : "Live from Sanity CMS"}</p>
+                <p className="text-[11px] text-muted-foreground">{isAz ? "Sanity CMS üzərindən canlı" : "Live in Sanity CMS"}</p>
               </div>
 
               <div className="p-5 rounded-3xl border border-border bg-card space-y-1">
                 <span className="text-[10px] font-bold font-mono text-muted-foreground uppercase tracking-wider">
-                  {isAz ? "MÜƏLLİFLƏR" : "TOTAL AUTHORS"}
+                  {isAz ? "MÜƏLLİF HEYƏTİ" : "ACTIVE AUTHORS"}
                 </span>
                 <div className="text-3xl font-extrabold text-foreground">{authorsList.length || 1}</div>
-                <p className="text-[11px] text-muted-foreground">{isAz ? "Aktiv dərc olunmuş müəlliflər" : "Active published authors"}</p>
+                <p className="text-[11px] text-muted-foreground">{isAz ? "Dərc olunmuş müəlliflər" : "Published editorial authors"}</p>
               </div>
 
               <div className="p-5 rounded-3xl border border-border bg-card space-y-1">
                 <span className="text-[10px] font-bold font-mono text-muted-foreground uppercase tracking-wider">
-                  {isAz ? "KATEQORİYALAR" : "CATEGORIES"}
-                </span>
-                <div className="text-3xl font-extrabold text-foreground">{categoriesList.length || 5}</div>
-                <p className="text-[11px] text-muted-foreground">{isAz ? "Dizayn, Marketinq, AI və s." : "Design, Marketing, AI, etc."}</p>
-              </div>
-
-              <div className="p-5 rounded-3xl border border-border bg-card space-y-1">
-                <span className="text-[10px] font-bold font-mono text-muted-foreground uppercase tracking-wider">
-                  {isAz ? "İNDEKSLƏNƏN SƏHİFƏLƏR" : "SITEMAP URLS"}
+                  {isAz ? "SAYT XƏRİTƏSİ" : "SITEMAP URLS"}
                 </span>
                 <div className="text-3xl font-extrabold text-foreground">699</div>
-                <p className="text-[11px] text-muted-foreground">{isAz ? "SEO Sitemap & 4207 statik marşrut" : "Authoritative sitemap.xml"}</p>
+                <p className="text-[11px] text-muted-foreground">{isAz ? "4,207 statik pre-rendered səhifə" : "4,207 pre-rendered HTML routes"}</p>
               </div>
             </div>
 
-            {/* Platform Model Explainer */}
-            <div className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/[0.04] to-card p-6 sm:p-8 space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary shrink-0">
-                  <Sparkles size={24} />
-                </div>
-                <div className="space-y-1">
+            {/* Pending Submissions Alert / Review Feed */}
+            <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
                   <h3 className="text-lg font-bold text-foreground">
-                    {isAz ? "Sadələşdirilmiş Redaksiya Modeli Aktivdir" : "Streamlined Editorial Intake Active"}
+                    {isAz ? "Baxış Tələb Edən Təqdimatlar" : "Incoming Article Submissions Requiring Attention"}
                   </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
+                  <p className="text-xs text-muted-foreground">
                     {isAz
-                      ? "Rvan.me ictimai məqalə qəbulu serverless Resend API vasitəsilə birbaşa redaksiya e-poçtunuza çatdırılır. Bəyənilən məqalələr Sanity CMS-də yaradılır və dərhal saytda yayımlanır."
-                      : "Public article submissions are delivered directly to the editorial Gmail inbox via serverless Resend API with binary attachments. Accepted articles are created in Sanity CMS and published instantly."}
+                      ? "Ziyarətçilər tərəfindən /write səhifəsi vasitəsilə göndərilən və baxılmamış məqalələr."
+                      : "Articles submitted by creators via /write that are pending editorial approval."}
                   </p>
                 </div>
+                <button
+                  onClick={() => switchTab("submissions")}
+                  className="text-xs font-bold text-primary mono uppercase hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{isAz ? "Hamısına Bax" : "View All"}</span>
+                  <ArrowRight size={13} />
+                </button>
               </div>
+
+              {pendingSubmissions.length === 0 ? (
+                <div className="py-8 text-center border border-dashed border-border/80 rounded-2xl text-xs text-muted-foreground space-y-1">
+                  <CheckCircle2 size={24} className="mx-auto text-emerald-500 mb-2" />
+                  <p className="font-bold text-foreground">{isAz ? "Gözləyən məqalə yoxdur" : "No pending submissions"}</p>
+                  <p>{isAz ? "Bütün daxil olan təqdimatlar nəzərdən keçirilib." : "All incoming editorial submissions have been reviewed."}</p>
+                </div>
+              ) : (
+                <div className="space-y-3 pt-2">
+                  {pendingSubmissions.slice(0, 5).map((sub) => (
+                    <div
+                      key={sub._id}
+                      className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="space-y-1 min-w-0">
+                        <div className="flex items-center gap-2 text-xs font-mono">
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20 uppercase text-[10px]">
+                            Pending Review
+                          </span>
+                          <span className="text-muted-foreground/50">•</span>
+                          <span className="text-muted-foreground">{sub.category}</span>
+                          <span className="text-muted-foreground/50">•</span>
+                          <span className="text-muted-foreground">
+                            {new Date(sub.submittedAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <h4 className="text-base font-bold text-foreground line-clamp-1">{sub.title}</h4>
+                        <p className="text-xs text-muted-foreground">
+                          {isAz ? "Müəllif" : "Author"}: <strong className="text-foreground">{sub.authorName}</strong> ({sub.authorEmail})
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedSubmission(sub);
+                          setShowFeedbackBox(null);
+                        }}
+                        className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold tracking-wider uppercase shadow-2xs hover:bg-primary/90 transition-colors shrink-0 cursor-pointer"
+                      >
+                        {isAz ? "Məqaləni Oxu & Qərar Ver" : "Review & Decide"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Quick Actions Grid */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold font-mono text-muted-foreground uppercase tracking-wider">
-                {isAz ? "SÜRƏTLİ KEÇİDLƏR" : "QUICK ACTIONS"}
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <a
-                  href="https://www.sanity.io/manage"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-5 rounded-2xl border border-border bg-card hover:border-primary/40 transition-colors flex items-center justify-between group"
+            {/* Recently Published Content Feed */}
+            <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">
+                    {isAz ? "Son Dərc Olunmuş Məqalələr" : "Recently Published Live Articles"}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {isAz ? "Sanity CMS üzərindən saytda aktiv olan məqalələr." : "Live articles published on Rvan.me."}
+                  </p>
+                </div>
+                <button
+                  onClick={() => switchTab("editorial")}
+                  className="text-xs font-bold text-primary mono uppercase hover:underline flex items-center gap-1 cursor-pointer"
                 >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <BookOpen size={15} className="text-primary" /> {isAz ? "Sanity Studio CMS" : "Sanity CMS Studio"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Məqalə yarat və redaktə et" : "Manage content & publishing"}</p>
-                  </div>
-                  <ExternalLink size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                </a>
+                  <span>{isAz ? "Bütün Məqalələr" : "All Articles"}</span>
+                  <ArrowRight size={13} />
+                </button>
+              </div>
 
-                <Link
-                  to={getLocalizedPath("/")}
-                  target="_blank"
-                  className="p-5 rounded-2xl border border-border bg-card hover:border-primary/40 transition-colors flex items-center justify-between group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <Globe size={15} className="text-primary" /> {isAz ? "Sayta Bax (Canlı)" : "View Live Website"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Əsas səhifəni aç" : "Open homepage"}</p>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 pt-2">
+                {publishedBlogs.slice(0, 6).map((blog) => (
+                  <div
+                    key={blog._id}
+                    className="p-4 rounded-2xl border border-border bg-muted/10 space-y-2 flex flex-col justify-between"
+                  >
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono font-bold text-primary uppercase">{blog.category}</span>
+                      <h4 className="text-sm font-bold text-foreground line-clamp-2">{blog.title}</h4>
+                      <p className="text-[11px] text-muted-foreground">By {blog.authorName}</p>
+                    </div>
+                    <Link
+                      to={getLocalizedPath(`/blog/${blog.slug?.current || blog._id}`)}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline pt-2"
+                    >
+                      <span>{isAz ? "Saytda Bax" : "View on Live Site"}</span>
+                      <ExternalLink size={11} />
+                    </Link>
                   </div>
-                  <ExternalLink size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                </Link>
-
-                <Link
-                  to={getLocalizedPath("/write")}
-                  target="_blank"
-                  className="p-5 rounded-2xl border border-border bg-card hover:border-primary/40 transition-colors flex items-center justify-between group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <PenTool size={15} className="text-primary" /> {isAz ? "Fikrinizi Paylaşın" : "Share Your Ideas Portal"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "İctimai məqalə təqdimat forması" : "Public /write submission portal"}</p>
-                  </div>
-                  <ExternalLink size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                </Link>
-
-                <Link
-                  to={getLocalizedPath("/contact")}
-                  target="_blank"
-                  className="p-5 rounded-2xl border border-border bg-card hover:border-primary/40 transition-colors flex items-center justify-between group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <Mail size={15} className="text-primary" /> {isAz ? "Əlaqə Səhifəsi" : "Contact Page"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Ümumi sorğu forması" : "Public general inquiries"}</p>
-                  </div>
-                  <ExternalLink size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                </Link>
-
-                <Link
-                  to={getLocalizedPath("/about/ravan-mammadov")}
-                  target="_blank"
-                  className="p-5 rounded-2xl border border-border bg-card hover:border-primary/40 transition-colors flex items-center justify-between group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <Users size={15} className="text-primary" /> {isAz ? "Təsisçi Səhifəsi" : "Founder Profile"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Ravan Mammadov SEO səhifəsi" : "Personal brand & SEO authority"}</p>
-                  </div>
-                  <ExternalLink size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                </Link>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* ── TAB 2: EDITORIAL ── */}
+        {/* ── TAB 2: SUBMISSIONS INTAKE ── */}
+        {activeTab === "submissions" && (
+          <div className="space-y-6">
+            {/* Filter Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl border border-border bg-card">
+              <div className="flex items-center gap-2 overflow-x-auto">
+                {(["ALL", "PENDING", "PUBLISHED", "CHANGES_REQUESTED", "REJECTED"] as SubmissionFilter[]).map(
+                  (filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setSubmissionFilter(filter)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer ${
+                        submissionFilter === filter
+                          ? "bg-primary text-primary-foreground shadow-2xs"
+                          : "bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {filter === "ALL" && `All (${submissions.length})`}
+                      {filter === "PENDING" && `Pending (${pendingSubmissions.length})`}
+                      {filter === "PUBLISHED" && `Published (${publishedSubmissions.length})`}
+                      {filter === "CHANGES_REQUESTED" && `Revisions (${changesRequestedSubmissions.length})`}
+                      {filter === "REJECTED" && `Declined (${rejectedSubmissions.length})`}
+                    </button>
+                  )
+                )}
+              </div>
+
+              <span className="text-xs font-mono text-muted-foreground">
+                {filteredSubmissions.length} {isAz ? "təqdimat" : "records"}
+              </span>
+            </div>
+
+            {/* Submissions List */}
+            {filteredSubmissions.length === 0 ? (
+              <div className="p-12 text-center rounded-3xl border border-border bg-card space-y-2">
+                <Inbox size={32} className="mx-auto text-muted-foreground/40 mb-2" />
+                <h4 className="text-base font-bold text-foreground">
+                  {isAz ? "Bu kateqoriyada təqdimat tapılmadı" : "No submissions in this filter"}
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  {isAz
+                    ? "İstifadəçilər /write səhifəsindən məqalə təqdim etdikdə burada görünəcək."
+                    : "Submissions received via /write will appear here in real-time."}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredSubmissions.map((sub) => (
+                  <div
+                    key={sub._id}
+                    className="p-6 rounded-3xl border border-border bg-card space-y-4 hover:border-primary/40 transition-colors"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                          {sub.status === "PENDING" && (
+                            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20 uppercase text-[10px]">
+                              ● Pending Review
+                            </span>
+                          )}
+                          {sub.status === "PUBLISHED" && (
+                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20 uppercase text-[10px]">
+                              ✓ Published Live
+                            </span>
+                          )}
+                          {sub.status === "CHANGES_REQUESTED" && (
+                            <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold border border-blue-500/20 uppercase text-[10px]">
+                              Revisions Requested
+                            </span>
+                          )}
+                          {sub.status === "REJECTED" && (
+                            <span className="px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive font-bold border border-destructive/20 uppercase text-[10px]">
+                              Declined
+                            </span>
+                          )}
+                          <span className="text-muted-foreground/50">•</span>
+                          <span className="text-muted-foreground">{sub.category}</span>
+                          <span className="text-muted-foreground/50">•</span>
+                          <span className="text-muted-foreground uppercase">{sub.language}</span>
+                          <span className="text-muted-foreground/50">•</span>
+                          <span className="text-muted-foreground">
+                            {new Date(sub.submittedAt).toLocaleDateString()} {new Date(sub.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg sm:text-xl font-bold text-foreground">{sub.title}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{sub.excerpt}</p>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedSubmission(sub);
+                            setShowFeedbackBox(null);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold tracking-wider uppercase shadow-2xs hover:bg-primary/90 transition-colors cursor-pointer"
+                        >
+                          {isAz ? "Ətraflı Bax" : "Review Article"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-border/60 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        {sub.profilePhotoUrl ? (
+                          <img
+                            src={sub.profilePhotoUrl}
+                            alt={sub.authorName}
+                            className="h-6 w-6 rounded-full object-cover border border-border"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[10px]">
+                            {sub.authorName[0]}
+                          </div>
+                        )}
+                        <span className="font-semibold text-foreground">{sub.authorName}</span>
+                        <span>({sub.authorEmail})</span>
+                      </div>
+
+                      {sub.publishedBlogId && (
+                        <Link
+                          to={getLocalizedPath(`/blog/${sub.slug}`)}
+                          target="_blank"
+                          className="text-primary font-bold hover:underline flex items-center gap-1"
+                        >
+                          <span>View Live Article</span>
+                          <ExternalLink size={12} />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── TAB 3: PUBLISHED ARTICLES ── */}
         {activeTab === "editorial" && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl border border-border bg-card">
               <div className="space-y-1">
                 <h3 className="text-lg font-bold text-foreground">
-                  {isAz ? "Sanity CMS Redaksiya İdarəetməsi" : "Sanity CMS Editorial Hub"}
+                  {isAz ? "Sanity CMS Redaksiya Arxivi" : "Sanity CMS Editorial Library"}
                 </h3>
                 <p className="text-xs text-muted-foreground">
                   {isAz
-                    ? "Məqalələr Sanity CMS vasitəsilə idarə olunur və dərc edilir."
-                    : "Published articles are managed and published directly in Sanity CMS Studio."}
+                    ? "Bütün dərc olunmuş məqalələr birbaşa Sanity CMS Studio vasitəsilə idarə olunur."
+                    : "All live articles are stored in Sanity CMS production dataset."}
                 </p>
               </div>
 
@@ -417,28 +758,48 @@ export default function AdminConsolePage() {
               </a>
             </div>
 
+            {/* Search Input */}
+            <div className="p-4 rounded-2xl border border-border bg-card flex items-center gap-3">
+              <input
+                type="text"
+                value={editorialSearch}
+                onChange={(e) => setEditorialSearch(e.target.value)}
+                placeholder={isAz ? "Məqalə və ya müəllif axtar..." : "Search published articles or authors..."}
+                className="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
+              />
+              {editorialSearch && (
+                <button
+                  type="button"
+                  onClick={() => setEditorialSearch("")}
+                  className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
             {/* Published Articles List */}
             <div className="rounded-3xl border border-border bg-card p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold font-mono text-foreground uppercase">
-                  {isAz ? "DƏRC EDİLMİŞ MƏQALƏLƏR" : "LIVE PUBLISHED ARTICLES"} ({publishedBlogs.length})
+                  {isAz ? "DƏRC EDİLMİŞ MƏQALƏLƏR" : "LIVE ARTICLES"} ({filteredPublishedBlogs.length})
                 </h4>
               </div>
 
-              {publishedBlogs.length === 0 ? (
+              {filteredPublishedBlogs.length === 0 ? (
                 <div className="py-12 text-center text-xs text-muted-foreground">
-                  {isAz ? "Dərc edilmiş məqalə tapılmadı." : "No published articles found."}
+                  {isAz ? "Məqalə tapılmadı." : "No matching articles found."}
                 </div>
               ) : (
                 <div className="space-y-3 pt-2">
-                  {publishedBlogs.map((art) => (
+                  {filteredPublishedBlogs.map((art) => (
                     <div
                       key={art._id}
-                      className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-primary/40 transition-colors"
                     >
                       <div className="space-y-1 min-w-0">
                         <div className="flex items-center gap-2 text-xs font-mono">
-                          <span className="font-bold text-emerald-500 uppercase">● Live</span>
+                          <span className="font-bold text-emerald-500 uppercase text-[10px]">● Live</span>
                           <span className="text-muted-foreground/50">•</span>
                           <span className="text-muted-foreground">{art.category}</span>
                           <span className="text-muted-foreground/50">•</span>
@@ -454,9 +815,9 @@ export default function AdminConsolePage() {
                         <Link
                           to={getLocalizedPath(`/blog/${art.slug?.current || art._id}`)}
                           target="_blank"
-                          className="px-3.5 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition-colors flex items-center gap-1.5"
+                          className="px-3.5 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition-colors flex items-center gap-1.5 shadow-2xs"
                         >
-                          <span>{isAz ? "Bloqda Oxu" : "View Live Post"}</span>
+                          <span>{isAz ? "Saytda Oxu" : "View Live Post"}</span>
                           <ExternalLink size={13} />
                         </Link>
                       </div>
@@ -464,82 +825,6 @@ export default function AdminConsolePage() {
                   ))}
                 </div>
               )}
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB 3: SUBMISSIONS INTAKE ── */}
-        {activeTab === "submissions" && (
-          <div className="space-y-6">
-            <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-primary/10 text-primary border border-primary/20">
-                  <Mail size={13} />
-                  <span>{isAz ? "E-POÇT ƏSASLI TƏQDİMAT SİSTEMİ" : "EMAIL-BASED INTAKE PIPELINE"}</span>
-                </div>
-                <h3 className="text-xl font-bold text-foreground">
-                  {isAz ? "Məqalə Təqdimatları Birbaşa E-poçtunuza Çatdırılır" : "Article Submissions are Delivered Directly by Email"}
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl">
-                  {isAz
-                    ? "Ziyarətçilər /write və /az/write səhifələrindən məqalə təqdim etdikdə, bütün məlumatlar və şəkillər (qapaq və müəllif avatarı) serverless Resend servisi vasitəsilə birbaşa redaksiya e-poçtunuza (mammadovravan1@gmail.com) göndərilir. Bəyəndiyiniz məqalələri Sanity CMS-ə daxil edərək bir kliklə yayımlaya bilərsiniz."
-                    : "When visitors submit articles through /write or /az/write, the complete payload including cover image and author portrait attachments is delivered directly to your administrative Gmail inbox (mammadovravan1@gmail.com) via Resend. Accepted articles are manually input into Sanity CMS for publishing."}
-                </p>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-3 pt-2">
-                <a
-                  href="https://mail.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-5 rounded-2xl border border-border bg-muted/20 hover:border-primary/40 transition-colors flex flex-col justify-between space-y-3 group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <Mail size={15} className="text-primary" /> {isAz ? "Gmail Poçt Qutusu" : "Editorial Gmail Inbox"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Daxil olan təqdimatları oxu" : "Review incoming submissions"}</p>
-                  </div>
-                  <div className="inline-flex items-center gap-1 text-xs font-bold text-primary">
-                    <span>{isAz ? "Gmail-i Aç" : "Open Gmail"}</span>
-                    <ExternalLink size={12} />
-                  </div>
-                </a>
-
-                <Link
-                  to={getLocalizedPath("/write")}
-                  target="_blank"
-                  className="p-5 rounded-2xl border border-border bg-muted/20 hover:border-primary/40 transition-colors flex flex-col justify-between space-y-3 group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <PenTool size={15} className="text-primary" /> {isAz ? "İctimai Təqdimat Forması" : "Public /write Form"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Ziyarətçi təqdimat portalı" : "Live submission intake page"}</p>
-                  </div>
-                  <div className="inline-flex items-center gap-1 text-xs font-bold text-primary">
-                    <span>{isAz ? "Formanı Aç" : "Open Form"}</span>
-                    <ExternalLink size={12} />
-                  </div>
-                </Link>
-
-                <Link
-                  to={getLocalizedPath("/contact")}
-                  target="_blank"
-                  className="p-5 rounded-2xl border border-border bg-muted/20 hover:border-primary/40 transition-colors flex flex-col justify-between space-y-3 group"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-foreground flex items-center gap-2">
-                      <Mail size={15} className="text-primary" /> {isAz ? "Əlaqə Forması" : "Contact Form"}
-                    </span>
-                    <p className="text-[11px] text-muted-foreground">{isAz ? "Ümumi müraciət forması" : "General visitor inquiry form"}</p>
-                  </div>
-                  <div className="inline-flex items-center gap-1 text-xs font-bold text-primary">
-                    <span>{isAz ? "Əlaqəni Aç" : "Open Contact"}</span>
-                    <ExternalLink size={12} />
-                  </div>
-                </Link>
-              </div>
             </div>
           </div>
         )}
@@ -569,7 +854,7 @@ export default function AdminConsolePage() {
               </div>
 
               <div className="p-6 rounded-3xl border border-border bg-card space-y-3">
-                <span className="text-xs font-mono font-bold text-primary uppercase">{isAz ? "STATİK GENERASİYA" : "STATIC PAGES"}</span>
+                <span className="text-xs font-mono font-bold text-primary uppercase">{isAz ? "STATİK GENERASİYA" : "STATIC PRE-RENDERING"}</span>
                 <h4 className="text-base font-bold text-foreground">4,207 Pre-Rendered Routes</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {isAz
@@ -622,6 +907,254 @@ export default function AdminConsolePage() {
           </div>
         )}
       </section>
+
+      {/* ── SUBMISSION FULL REVIEW MODAL ── */}
+      {selectedSubmission && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm overflow-y-auto">
+          <div className="w-full max-w-3xl bg-background border border-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-mono font-bold uppercase">
+                    Editorial Submission Review
+                  </span>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    ID: {selectedSubmission._id}
+                  </span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">{selectedSubmission.title}</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSubmission(null)}
+                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Action Feedback Messages */}
+            {actionSuccess && (
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
+                <CheckCircle2 size={16} />
+                <span>{actionSuccess}</span>
+              </div>
+            )}
+            {actionError && (
+              <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-semibold flex items-center gap-2">
+                <AlertCircle size={16} />
+                <span>{actionError}</span>
+              </div>
+            )}
+
+            {/* Author Profile Block */}
+            <div className="p-5 rounded-2xl border border-border bg-muted/20 flex flex-col sm:flex-row items-start gap-4">
+              {selectedSubmission.profilePhotoUrl ? (
+                <img
+                  src={selectedSubmission.profilePhotoUrl}
+                  alt={selectedSubmission.authorName}
+                  className="h-16 w-16 rounded-2xl object-cover border-2 border-primary/40 shrink-0"
+                />
+              ) : (
+                <div className="h-16 w-16 rounded-2xl bg-primary/20 text-primary flex items-center justify-center font-bold text-xl shrink-0">
+                  {selectedSubmission.authorName[0]}
+                </div>
+              )}
+              <div className="space-y-1 text-xs">
+                <div className="font-bold text-foreground text-sm">{selectedSubmission.authorName}</div>
+                <div className="text-muted-foreground">
+                  Email: <a href={`mailto:${selectedSubmission.authorEmail}`} className="text-primary hover:underline">{selectedSubmission.authorEmail}</a>
+                </div>
+                {selectedSubmission.authorBio && (
+                  <p className="text-muted-foreground pt-1 italic">"{selectedSubmission.authorBio}"</p>
+                )}
+                {selectedSubmission.authorWebsite && (
+                  <div className="pt-1">
+                    <a href={selectedSubmission.authorWebsite} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline flex items-center gap-1">
+                      <span>{selectedSubmission.authorWebsite}</span>
+                      <ExternalLink size={11} />
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Article Details & Excerpt */}
+            <div className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl border border-border bg-muted/10 font-mono">
+                <div>
+                  <span className="text-muted-foreground uppercase text-[10px] block">Category</span>
+                  <span className="font-bold text-foreground">{selectedSubmission.category}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground uppercase text-[10px] block">Topic</span>
+                  <span className="font-bold text-foreground">{selectedSubmission.topic || "General"}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground uppercase text-[10px] block">Language</span>
+                  <span className="font-bold text-foreground uppercase">{selectedSubmission.language}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground uppercase text-[10px] block">Status</span>
+                  <span className="font-bold text-primary uppercase">{selectedSubmission.status}</span>
+                </div>
+              </div>
+
+              {selectedSubmission.coverImageUrl && (
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Cover Image Preview</span>
+                  <div className="rounded-2xl overflow-hidden border border-border aspect-[16/9] max-h-60 bg-neutral-900">
+                    <img
+                      src={selectedSubmission.coverImageUrl}
+                      alt={selectedSubmission.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Excerpt / Summary</span>
+                <div className="p-4 rounded-2xl bg-muted/20 border border-border text-foreground leading-relaxed italic">
+                  "{selectedSubmission.excerpt}"
+                </div>
+              </div>
+
+              {selectedSubmission.editorialNote && (
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Author's Note</span>
+                  <div className="p-3 rounded-xl bg-muted/10 border border-border text-muted-foreground leading-relaxed">
+                    {selectedSubmission.editorialNote}
+                  </div>
+                </div>
+              )}
+
+              {selectedSubmission.editorialReviewNote && (
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-bold text-amber-500 uppercase">Previous Review Note</span>
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-foreground leading-relaxed">
+                    {selectedSubmission.editorialReviewNote}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase">Article Content (Markdown Body)</span>
+                <div className="p-4 rounded-2xl bg-muted/10 border border-border font-mono text-[11px] leading-relaxed whitespace-pre-wrap max-h-72 overflow-y-auto">
+                  {selectedSubmission.content}
+                </div>
+              </div>
+            </div>
+
+            {/* Editorial Decision Actions */}
+            <div className="space-y-4 pt-4 border-t border-border">
+              {showFeedbackBox && (
+                <div className="p-4 rounded-2xl border border-primary/30 bg-muted/20 space-y-3">
+                  <span className="text-xs font-bold text-foreground">
+                    {showFeedbackBox === "approve"
+                      ? "Editorial approval note (optional):"
+                      : showFeedbackBox === "changes"
+                      ? "Describe the revisions required from the author (will be emailed to author):"
+                      : "Reason for declining submission (will be emailed to author):"}
+                  </span>
+                  <textarea
+                    value={reviewNoteInput}
+                    onChange={(e) => setReviewNoteInput(e.target.value)}
+                    rows={3}
+                    placeholder="Enter editorial message..."
+                    className="w-full p-3 rounded-xl border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={actionLoading}
+                      onClick={() =>
+                        handleSubmissionAction(
+                          showFeedbackBox === "approve"
+                            ? "approve_and_publish"
+                            : showFeedbackBox === "changes"
+                            ? "request_changes"
+                            : "reject"
+                        )
+                      }
+                      className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold tracking-wider uppercase hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      {actionLoading ? "Processing..." : "Confirm & Send Email"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowFeedbackBox(null)}
+                      className="px-4 py-2 rounded-xl border border-border bg-card text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {!showFeedbackBox && (
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={actionLoading}
+                      onClick={() => {
+                        setShowFeedbackBox("approve");
+                        setReviewNoteInput("Approved for publication on Rvan.me.");
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold tracking-wider uppercase shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      <Check size={14} />
+                      <span>Approve & Publish to Sanity</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={actionLoading}
+                      onClick={() => {
+                        setShowFeedbackBox("changes");
+                        setReviewNoteInput("");
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold tracking-wider uppercase shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      <MessageSquare size={14} />
+                      <span>Request Revisions</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={actionLoading}
+                      onClick={() => {
+                        setShowFeedbackBox("reject");
+                        setReviewNoteInput("");
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      <X size={14} />
+                      <span>Decline Submission</span>
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={actionLoading}
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to permanently delete this submission record?")) {
+                        handleSubmissionAction("delete");
+                      }
+                    }}
+                    className="p-2.5 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                    title="Delete record"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer siteSettings={siteSettings} />
     </main>

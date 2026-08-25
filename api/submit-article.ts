@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { createClient } from "@sanity/client";
 import { Resend } from "resend";
 
 // Simple in-memory rate limiting map (IP -> timestamps array)
@@ -19,6 +20,30 @@ function isRateLimited(ip: string): boolean {
   rateLimitMap.set(ip, validTimestamps);
   return false;
 }
+
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+}
+
+const writeToken =
+  process.env.SANITY_API_WRITE_TOKEN ||
+  "skqxIS8YhYqY9jyUT327FyNAY9f5Yfd5AyD7ZVBipyqRTNximGZyXws2YVj8Kohbxz0MTC61poqCOok5m";
+
+const sanityClient = createClient({
+  projectId: process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg",
+  dataset: process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || "production",
+  token: writeToken,
+  apiVersion: "2025-01-01",
+  useCdn: false,
+});
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow POST
@@ -114,28 +139,86 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // 4. Build Attachments
+    // 4. Build Buffers and Attachments
     const attachments: Array<{ filename: string; content: Buffer }> = [];
+    let coverBuffer: Buffer | null = null;
+    let profileBuffer: Buffer | null = null;
 
     if (coverImageBase64 && typeof coverImageBase64 === "string") {
       const cleanCoverBase64 = coverImageBase64.replace(/^data:image\/\w+;base64,/, "");
       const ext = coverImageBase64.includes("png") ? "png" : coverImageBase64.includes("webp") ? "webp" : "jpg";
+      coverBuffer = Buffer.from(cleanCoverBase64, "base64");
       attachments.push({
         filename: coverImageName || `article_cover.${ext}`,
-        content: Buffer.from(cleanCoverBase64, "base64"),
+        content: coverBuffer,
       });
     }
 
     if (profilePhotoBase64 && typeof profilePhotoBase64 === "string") {
       const cleanProfileBase64 = profilePhotoBase64.replace(/^data:image\/\w+;base64,/, "");
       const ext = profilePhotoBase64.includes("png") ? "png" : profilePhotoBase64.includes("webp") ? "webp" : "jpg";
+      profileBuffer = Buffer.from(cleanProfileBase64, "base64");
       attachments.push({
         filename: profilePhotoName || `author_profile.${ext}`,
-        content: Buffer.from(cleanProfileBase64, "base64"),
+        content: profileBuffer,
       });
     }
 
-    // 5. Resend configuration & recipient setup
+    // 5. Store Persistent Submission Record in Sanity CMS
+    let coverAssetRef: string | undefined = undefined;
+    let coverAssetUrl: string | undefined = undefined;
+    let profileAssetRef: string | undefined = undefined;
+    let profileAssetUrl: string | undefined = undefined;
+    let savedSubmissionId = `submission-${Date.now()}`;
+
+    try {
+      if (coverBuffer) {
+        const coverAsset = await sanityClient.assets.upload("image", coverBuffer, {
+          filename: coverImageName || "cover.jpg",
+        });
+        coverAssetRef = coverAsset._id;
+        coverAssetUrl = coverAsset.url;
+      }
+
+      if (profileBuffer) {
+        const profileAsset = await sanityClient.assets.upload("image", profileBuffer, {
+          filename: profilePhotoName || "author.jpg",
+        });
+        profileAssetRef = profileAsset._id;
+        profileAssetUrl = profileAsset.url;
+      }
+
+      const submissionRecord = await sanityClient.create({
+        _id: savedSubmissionId,
+        _type: "articleSubmission",
+        authorName: trimmedName,
+        authorEmail: trimmedEmail,
+        authorBio: trimmedBio,
+        authorWebsite: authorWebsite || "",
+        profilePhotoAssetRef: profileAssetRef,
+        profilePhotoUrl: profileAssetUrl,
+        title: trimmedTitle,
+        slug: slugify(trimmedTitle),
+        language: language || "en",
+        category: selectedCategory,
+        topic: topic || "",
+        tags: Array.isArray(tags) ? tags : [],
+        excerpt: trimmedExcerpt,
+        content: trimmedContent,
+        coverImageAssetRef: coverAssetRef,
+        coverImageUrl: coverAssetUrl,
+        editorialNote: editorialNote || "",
+        originalWorkConfirmed: true,
+        status: "PENDING",
+        submittedAt: new Date().toISOString(),
+      });
+
+      savedSubmissionId = submissionRecord._id;
+    } catch (sanityErr: any) {
+      console.warn("[SubmitArticle] Sanity submission store notice:", sanityErr.message);
+    }
+
+    // 6. Resend configuration & recipient setup
     const apiKey = process.env.RESEND_API_KEY;
     const recipientEmail = process.env.ADMIN_EMAIL || "mammadovravan1@gmail.com";
     const fromAddress =
@@ -188,6 +271,7 @@ ${trimmedContent}
 
 ==================================================
 COPYRIGHT CONFIRMATION: Confirmed by author
+SUBMISSION ID: ${savedSubmissionId}
 SUBMITTED AT: ${timestampStr}
     `.trim();
 
@@ -198,85 +282,80 @@ SUBMITTED AT: ${timestampStr}
         <head>
           <meta charset="utf-8">
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.6; background-color: #f8fafc; padding: 24px 12px; margin: 0; }
-            .container { background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 32px; max-width: 680px; margin: 0 auto; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
-            .header { border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 24px; }
-            .badge { display: inline-block; background: #f1f5f9; color: #0f172a; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; }
-            .title { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; line-height: 1.25; }
-            .author-sub { font-size: 14px; color: #64748b; margin: 0; }
-            .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #64748b; text-transform: uppercase; margin-top: 20px; margin-bottom: 6px; }
-            .value-box { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px; padding: 14px 16px; font-size: 14px; color: #1e293b; }
-            .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-            .content-box { background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0f172a; border-radius: 8px; padding: 20px; font-size: 14px; color: #1e293b; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; line-height: 1.65; max-height: 800px; overflow-y: auto; }
-            .note-box { background: #fffbeb; border: 1px solid #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #92400e; margin-top: 8px; }
-            .attachment-tag { display: inline-flex; align-items: center; gap: 6px; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-top: 6px; }
-            .footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #94a3b8; text-align: center; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f5; color: #18181b; margin: 0; padding: 24px; }
+            .card { max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e4e4e7; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+            .header { background: #0a0a0c; color: #ffffff; padding: 32px 32px 24px 32px; border-bottom: 2px solid #61c5ad; }
+            .badge { display: inline-block; background: rgba(97, 197, 173, 0.2); color: #61c5ad; border: 1px solid rgba(97, 197, 173, 0.4); font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; border-radius: 999px; margin-bottom: 12px; }
+            .title { font-size: 24px; font-weight: 800; margin: 0; line-height: 1.3; }
+            .content { padding: 32px; font-size: 14px; line-height: 1.6; }
+            .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #71717a; border-bottom: 1px solid #e4e4e7; padding-bottom: 6px; margin: 24px 0 14px 0; }
+            .author-grid { background: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+            .row { margin-bottom: 8px; }
+            .label { font-weight: 700; color: #52525b; font-size: 12px; display: inline-block; width: 130px; }
+            .val { color: #18181b; font-weight: 500; }
+            .article-body { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 20px; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.6; color: #27272a; max-height: 500px; overflow-y: auto; }
+            .footer { background: #fafafa; border-top: 1px solid #e4e4e7; padding: 20px 32px; font-size: 12px; color: #71717a; text-align: center; }
           </style>
         </head>
         <body>
-          <div class="container">
+          <div class="card">
             <div class="header">
-              <div class="badge">Rvan.me Editorial Intake</div>
+              <span class="badge">Rvan.me · Editorial Submission</span>
               <h1 class="title">${escapeHtml(trimmedTitle)}</h1>
-              <p class="author-sub">Submitted by <strong>${escapeHtml(trimmedName)}</strong> &lt;<a href="mailto:${escapeHtml(trimmedEmail)}">${escapeHtml(trimmedEmail)}</a>&gt;</p>
             </div>
-
-            <div class="section-label">Author Information</div>
-            <div class="value-box">
-              <strong>Name:</strong> ${escapeHtml(trimmedName)}<br>
-              <strong>Email:</strong> <a href="mailto:${escapeHtml(trimmedEmail)}">${escapeHtml(trimmedEmail)}</a><br>
-              <strong>Bio:</strong> ${escapeHtml(trimmedBio)}<br>
-              ${authorWebsite ? `<strong>Website / Portfolio:</strong> <a href="${escapeHtml(authorWebsite)}" target="_blank">${escapeHtml(authorWebsite)}</a><br>` : ""}
-              <div class="attachment-tag">📎 Author Profile Photo: Attached (${escapeHtml(profilePhotoName || "author_profile.jpg")})</div>
-            </div>
-
-            <div class="meta-grid">
-              <div>
-                <div class="section-label">Language</div>
-                <div class="value-box"><strong>${escapeHtml(selectedLang)}</strong></div>
+            <div class="content">
+              <div class="section-title">Author Profile</div>
+              <div class="author-grid">
+                <div class="row"><span class="label">Full Name:</span> <span class="val"><strong>${escapeHtml(trimmedName)}</strong></span></div>
+                <div class="row"><span class="label">Email:</span> <span class="val"><a href="mailto:${escapeHtml(trimmedEmail)}" style="color: #61c5ad; text-decoration: none;">${escapeHtml(trimmedEmail)}</a></span></div>
+                <div class="row"><span class="label">Bio:</span> <span class="val">${escapeHtml(trimmedBio)}</span></div>
+                ${authorWebsite ? `<div class="row"><span class="label">Portfolio / Social:</span> <span class="val"><a href="${escapeHtml(authorWebsite)}" target="_blank" style="color: #61c5ad;">${escapeHtml(authorWebsite)}</a></span></div>` : ""}
+                <div class="row"><span class="label">Profile Photo:</span> <span class="val">Attached (${profilePhotoName || "author_profile.jpg"})</span></div>
               </div>
-              <div>
-                <div class="section-label">Category & Topic</div>
-                <div class="value-box"><strong>${escapeHtml(selectedCategory)}</strong> ${topic ? `· ${escapeHtml(topic)}` : ""}</div>
+
+              <div class="section-title">Article Details</div>
+              <div class="author-grid">
+                <div class="row"><span class="label">Title:</span> <span class="val"><strong>${escapeHtml(trimmedTitle)}</strong></span></div>
+                <div class="row"><span class="label">Language:</span> <span class="val">${escapeHtml(selectedLang)}</span></div>
+                <div class="row"><span class="label">Category:</span> <span class="val">${escapeHtml(selectedCategory)}</span></div>
+                ${topic ? `<div class="row"><span class="label">Topic:</span> <span class="val">${escapeHtml(topic)}</span></div>` : ""}
+                ${tags && tags.length > 0 ? `<div class="row"><span class="label">Tags:</span> <span class="val">${Array.isArray(tags) ? escapeHtml(tags.join(", ")) : escapeHtml(tags)}</span></div>` : ""}
+                <div class="row"><span class="label">Cover Image:</span> <span class="val">Attached (${coverImageName || "article_cover.jpg"})</span></div>
+              </div>
+
+              <div class="section-title">Excerpt / Summary</div>
+              <p style="font-size: 14px; line-height: 1.6; color: #3f3f46; font-style: italic; background: #f4f4f5; padding: 14px 18px; border-radius: 8px; border-left: 3px solid #61c5ad; margin: 0 0 20px 0;">
+                "${escapeHtml(trimmedExcerpt)}"
+              </p>
+
+              ${editorialNote ? `
+                <div class="section-title">Author's Note to the Editor</div>
+                <p style="font-size: 13px; line-height: 1.5; color: #52525b; background: #fafafa; padding: 12px 16px; border-radius: 8px; margin: 0 0 20px 0; border: 1px solid #e4e4e7;">
+                  ${escapeHtml(editorialNote)}
+                </p>
+              ` : ""}
+
+              <div class="section-title">Full Article Markdown Body</div>
+              <div class="article-body">${escapeHtml(trimmedContent)}</div>
+
+              <div style="margin-top: 24px; padding: 12px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 12px; color: #166534;">
+                ✓ Original work and authorship confirmed by submitter.
               </div>
             </div>
-
-            <div class="section-label">Cover Image</div>
-            <div class="value-box">
-              <div class="attachment-tag">📎 Article Cover Image: Attached (${escapeHtml(coverImageName || "article_cover.jpg")})</div>
-            </div>
-
-            ${editorialNote ? `
-              <div class="section-label">Editorial Note to Editor</div>
-              <div class="note-box">${escapeHtml(editorialNote)}</div>
-            ` : ""}
-
-            <div class="section-label">Excerpt / Short Summary</div>
-            <div class="value-box" style="font-style: italic;">
-              ${escapeHtml(trimmedExcerpt)}
-            </div>
-
-            <div class="section-label">Article Content</div>
-            <div class="content-box">${escapeHtml(trimmedContent)}</div>
-
-            <div class="section-label">Copyright & Integrity</div>
-            <div class="value-box" style="font-size: 12px;">
-              ✓ Author confirmed original work and right to submit for publication.<br>
-              <strong>Submitted:</strong> ${timestampStr}
-            </div>
-
             <div class="footer">
-              Rvan.me Editorial Intake System · Reply directly to this email to contact the author
+              Submitted to Rvan.me on ${timestampStr} · Submission ID: ${savedSubmissionId}
             </div>
           </div>
         </body>
       </html>
     `;
 
+    // Deliver via Resend
     if (!apiKey) {
-      console.warn("RESEND_API_KEY environment variable is missing. Article logged locally in development mode.");
+      console.warn("[SubmitArticle] Warning: RESEND_API_KEY is not defined in environment.");
       return res.status(200).json({
         success: true,
+        submissionId: savedSubmissionId,
         message: "Article submitted successfully (Development mode: RESEND_API_KEY not configured).",
       });
     }
@@ -302,6 +381,7 @@ SUBMITTED AT: ${timestampStr}
 
     return res.status(200).json({
       success: true,
+      submissionId: savedSubmissionId,
       message: "Article submitted successfully.",
       id: emailData?.id,
     });

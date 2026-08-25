@@ -12,6 +12,8 @@ export interface PageHeroProps {
   gradientVariant?: GradientVariant;
   align?: "center" | "left";
   className?: string;
+  contentClassName?: string;
+  titleClassName?: string;
   children?: React.ReactNode;
 }
 
@@ -28,6 +30,8 @@ export function PageHero({
   description,
   align = "center",
   className = "",
+  contentClassName = "",
+  titleClassName = "",
   children,
 }: PageHeroProps) {
   const isCentered = align === "center";
@@ -43,7 +47,7 @@ export function PageHero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE }}
-          className={`w-full ${isCentered ? "max-w-3xl mx-auto flex flex-col items-center" : "max-w-4xl"}`}
+          className={`w-full ${isCentered ? "max-w-4xl mx-auto flex flex-col items-center" : "max-w-4xl"} ${contentClassName}`}
         >
           {/* Eyebrow Label */}
           {eyebrow && (
@@ -60,8 +64,8 @@ export function PageHero({
 
           {/* Unified Page Title with Brand Gradient */}
           <h1
-            className="font-extrabold tracking-tight leading-[1.05] text-foreground w-full mb-3"
-            style={{ fontSize: "clamp(2.2rem, 5vw, 4.2rem)" }}
+            className={`font-extrabold tracking-tight leading-[1.08] text-foreground w-full mb-3 ${titleClassName}`}
+            style={{ fontSize: "clamp(2rem, 4.4vw, 3.8rem)" }}
           >
             {title}{" "}
             {accentText && (
@@ -76,9 +80,9 @@ export function PageHero({
 
           {/* Subtitle / Description */}
           {description && (
-            <p className={`text-base sm:text-lg text-muted-foreground leading-relaxed font-normal ${isCentered ? "max-w-xl mx-auto" : "max-w-2xl"}`}>
+            <div className={`text-base sm:text-lg text-muted-foreground leading-relaxed font-normal ${isCentered ? "max-w-2xl mx-auto" : "max-w-2xl"}`}>
               {description}
-            </p>
+            </div>
           )}
 
           {/* Optional Action Buttons, Search Bar, or Filters */}

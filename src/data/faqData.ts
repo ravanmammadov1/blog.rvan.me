@@ -1,5 +1,5 @@
 export interface FaqItem {
-  id: string | number;
+  id: number | string;
   qEn: string;
   qAz: string;
   aEn: string | string[];
@@ -13,33 +13,33 @@ export const GLOBAL_FAQS: FaqItem[] = [
     id: 1,
     qEn: "What is Rvan.me?",
     qAz: "Rvan.me nədir?",
-    aEn: "Rvan.me is an independent creative publication, knowledge platform, and resource ecosystem founded by senior creative designer Ravan Mammadov. It brings together in-depth design systems, branding strategy, motion design, creative technology, curated typography, and community perspectives.",
-    aAz: "Rvan.me — baş kreativ dizayner Rəvan Məmmədov tərəfindən təsis edilmiş müstəqil kreativ nəşr, bilik platforması və resurs ekosistemidir. Platforma dizayn sistemləri, brendinq strategiyası, motion dizayn, yaradıcı texnologiyalar, şrift kataloqları və icma yazılarını bir araya gətirir.",
+    aEn: "Rvan.me is a premier digital publication, knowledge hub, and creative ecosystem dedicated to high-standard design systems, brand strategy, typography, motion graphics, and technology in Azerbaijan and globally.",
+    aAz: "Rvan.me Azərbaycanda və qlobal miqyasda yüksək səviyyəli dizayn sistemləri, brend strategiyası, tipoqrafiya, motion dizayn və texnologiya sahələrinə həsr olunmuş aparıcı rəqəmsal nəşriyyat, bilik mərkəzi və yaradıcı ekosistemdir.",
     bulletsEn: [
-      "Rigorous editorial essays, case studies, and practical design frameworks.",
-      "Curated creative tools, Google Fonts catalog with live specimen preview, and vector icons.",
-      "Verified contributor platform giving regional and international writers a permanent public portfolio."
+      "In-depth editorial articles, critical essays, and real-world case studies.",
+      "Comprehensive curated directory of 2,000+ Google Fonts, SVG vector icons, and AI utilities.",
+      "Verified author platform giving regional and international writers a permanent public portfolio."
     ],
     bulletsAz: [
-      "Dərin redaksiya esseləri, layihə təhlilləri və praktiki dizayn çərçivələri.",
-      "Kreativ alətlər, canlı nümayişli Google Fonts kataloqu və vektor ikonlar.",
-      "Yerli və beynəlxalq müəlliflərə daimi ictimai portfolio təqdim edən təsdiqlənmiş müəllif platforması."
+      "Dərin redaksiya məqalələri, analitik esselər və real təcrübə araşdırmaları.",
+      "2,000-dən çox Google Şrifti, SVG vektor ikonlar və süni intellekt alətlərinin kataloqu.",
+      "Yazıçılar və dizaynerlər üçün şəxsi rəqəmsal portfolio və müəlliflik platforması."
     ]
   },
   {
     id: 2,
-    qEn: "How do I create an account?",
-    qAz: "Necə hesab yarada bilərəm?",
-    aEn: "Creating an account on Rvan.me is instant and secure through Google Sign-In. Click the Profile / Sign In button in the navigation bar to get started.",
-    aAz: "Rvan.me-də hesab yaratmaq Google Girişi (Google Sign-In) vasitəsilə dərhal və təhlükəsiz şəkildə həyata keçirilir. Başlamaq üçün menyudakı Profil / Giriş düyməsinə klikləyin.",
+    qEn: "How does user authentication work on Rvan.me?",
+    qAz: "Rvan.me-də istifadəçi girişi necə işləyir?",
+    aEn: "We provide seamless, passwordless One-Click Google Authentication backed by enterprise-grade Firebase security.",
+    aAz: "Biz Firebase təhlükəsizlik infrastrukturu ilə dəstəklənən sürətli və şifrəsiz 'Tək Kliklə Google Girişi' təqdim edirik.",
     bulletsEn: [
-      "No passwords to manage — secure OAuth authentication via Google & Firebase.",
-      "Instantly unlocks your personal profile, custom avatars, and contributor access.",
-      "Your first name, last name, and profile picture are automatically synced from your Google account."
+      "Zero password friction — securely sign in using your existing Google account.",
+      "Instantly unlocks your personal profile, custom avatars, and reading features.",
+      "Your display name and photo are automatically synced from your verified Google credentials."
     ],
     bulletsAz: [
       "Şifrə yadda saxlamağa ehtiyac yoxdur — Google və Firebase vasitəsilə təhlükəsiz giriş.",
-      "Şəxsi profilinizi, fərdi avatarınızı və müəlliflik imkanlarını dərhal aktivləşdirir.",
+      "Şəxsi profilinizi, fərdi avatarınızı və oxu imkanlarını dərhal aktivləşdirir.",
       "Adınız, soyadınız və profil şəkliniz Google hesabınızdan avtomatik sinxronlaşdırılır."
     ]
   },
@@ -50,7 +50,7 @@ export const GLOBAL_FAQS: FaqItem[] = [
     aEn: "Anyone with an original idea or finished article can submit it for editorial consideration via our submission page (/write). Fill out the form with your article text, author bio, profile photo, and cover image.",
     aAz: "Orijinal fikri və ya hazır məqaləsi olan hər kəs onu təqdimat səhifəmiz (/write) vasitəsilə redaksiyamıza göndərə bilər. Formu məqalə mətni, müəllif bioqrafiyası, profil şəkli və üz qabığı ilə dolduraraq bizimlə bölüşün.",
     bulletsEn: [
-      "No contributor account required — anyone can submit an article.",
+      "No account required — anyone can submit an article for editorial review.",
       "Attach your profile photo and cover image directly in the form.",
       "Our editorial team reviews every submission and reaches out via email if selected."
     ],
@@ -73,49 +73,49 @@ export const GLOBAL_FAQS: FaqItem[] = [
     ],
     bulletsAz: [
       "Qiymətləndirmə: Məqalənizi orijinallıq, struktur və faydalılıq üzrə nəzərdən keçiririk.",
-      "Müəlliflik: Qəbul edildikdə yazınız adınız, bioqrafiyanız və şəklinizlə Rvan.me-də yayımlanır.",
-      "Müəllif Hüququ: Əsəriniz sizə məxsus olaraq qalır — müəlliflik hüququnuz 100% sizdədir."
+      "Müəlliflik: Qəbul edildikdə, məqaləniz adınız, bioqrafiyanız və şəklinizlə Rvan.me-də dərc olunur.",
+      "Müəllif Hüququ: Əsəriniz sizə məxsusdur — 100% müəllif hüququ sizdə qalır."
     ]
   },
   {
     id: 5,
-    qEn: "How does article publication work?",
-    qAz: "Məqalənin nəşri necə həyata keçirilir?",
-    aEn: "Every selected article is published with full author attribution, dedicated URLs, and social preview cards.",
-    aAz: "Seçilmiş hər bir yazı tam müəllif adı, xüsusi link və sosial önizləmə kartları ilə nəşr olunur.",
+    qEn: "What are the rules regarding AI-generated content?",
+    qAz: "Süni intellektlə (AI) yaradılan məzmuna dair qaydalar nələrdir?",
+    aEn: "We strictly value genuine human critical thinking, original lived expertise, and substantive domain knowledge.",
+    aAz: "Biz həqiqi insan təfəkkürünü, şəxsi peşəkar təcrübəni və dərin sahəvi bilikləri hər şeydən üstün tuturuq.",
     bulletsEn: [
-      "Direct Communication: We contact authors directly via email regarding publication decisions.",
-      "Editorial Crafting: Articles are formatted to premium editorial standards.",
-      "Public Attribution: Published articles prominently feature your author identity."
+      "AI as Assistant: Using AI for grammar polishing, ideation, or initial structuring is permitted.",
+      "No Raw AI Dumps: Direct copy-pasting of generic, unedited LLM output is strictly rejected.",
+      "Mandatory Disclosure: Authors must declare the extent of AI assistance during the submission process."
     ],
     bulletsAz: [
-      "Birbaşa Əlaqə: Nəşr qərarı ilə bağlı müəlliflə birbaşa e-poçt vasitəsilə əlaqə saxlayırıq.",
-      "Redaksiya Tərtibatı: Məqalələr yüksək vizual və məzmun standartları ilə dizayn olunur.",
-      "İctimai Müəlliflik: Nəşr olunan yazılarda müəllif kimliyiniz aydın şəkildə təqdim olunur."
+      "AI Köməkçi Kimi: Qrammatik düzəlişlər, ideya axtarışı və ya ilkin struktur üçün AI istifadəsinə icazə verilir.",
+      "Xam AI Mətnlərinə Qadağa: Süni intellekt tərəfindən yazılmış şablon mətni birbaşa köçürmək qəti qadağandır.",
+      "Məcburi Bəyanat: Müəlliflər təqdimat zamanı AI-dan hansı dərəcədə istifadə etdiklərini bəyan etməlidirlər."
     ]
   },
   {
     id: 6,
-    qEn: "Can I delete my account?",
-    qAz: "Hesabımı və şəxsi məlumatlarımı silə bilərəmmi?",
-    aEn: "Yes. You have complete control over your account. You can permanently delete your account and personal profile data at any time directly through the Settings page (/profile) or by contacting us.",
-    aAz: "Bəli. Hesabınız üzərində tam nəzarətə sahibsiniz. İstənilən vaxt Tənzimləmələr səhifəsi (/profile) vasitəsilə və ya bizimlə əlaqə saxlayaraq hesabınızı və bütün şəxsi profil məlumatlarınızı birdəfəlik silə bilərsiniz.",
+    qEn: "How is user data and privacy handled?",
+    qAz: "İstifadəçi məlumatları və məxfilik necə qorunur?",
+    aEn: "We adhere to privacy-first architecture and GDPR compliance principles. We never sell your personal information or track you across third-party networks.",
+    aAz: "Biz məxfilik prinsiplərinə və GDPR standartlarına tam riayət edirik. Şəxsi məlumatlarınız heç vaxt üçüncü tərəflərə satılmır.",
     bulletsEn: [
-      "Account deletion removes your stored profile details, custom avatars, and local drafts.",
-      "You can also request full removal of your submitted publications by reaching out to our editorial desk.",
-      "We do not retain unnecessary personal data after account deletion."
+      "All account authentication data is encrypted via Google Firebase infrastructure.",
+      "You have the right to request deletion of your account and associated profile data at any time.",
+      "No intrusive advertising tracking pixels or third-party cookies are used on the platform."
     ],
     bulletsAz: [
-      "Hesabın silinməsi saxlanılan profil məlumatlarınızı, fərdi avatarınızı və yerli qaralamalarınızı silir.",
-      "Həmçinin redaksiyaya müraciət edərək təqdim etdiyiniz yazıların da tam silinməsini tələb edə bilərsiniz.",
-      "Hesab silindikdən sonra heç bir lazımsız şəxsi məlumat saxlanılmır."
+      "Bütün istifadəçi məlumatları Google Firebase infrastrukturu vasitəsilə şifrələnir.",
+      "Hesabınızı və profil məlumatlarınızı istənilən vaxt tamamilə silmək hüququnuz var.",
+      "Platformada heç bir bezdirici reklam izləmə kodu və ya kənar kukilər istifadə olunmur."
     ]
   },
   {
     id: 7,
-    qEn: "Who owns contributor content?",
-    qAz: "Müəllif məzmununun müəllif hüquqları kimə məxsusdur?",
-    aEn: "You do. The contributor RETAINS 100% COPYRIGHT OWNERSHIP of their original work. Rvan.me does NOT take ownership of your copyright.",
+    qEn: "Who owns the submitted article content?",
+    qAz: "Təqdim olunan məqalənin müəllif hüquqları kimə məxsusdur?",
+    aEn: "You do. The author RETAINS 100% COPYRIGHT OWNERSHIP of their original work. Rvan.me does NOT take ownership of your copyright.",
     aAz: "Müəllif hüquqları tamamilə SİZƏ məxsusdur. Müəllif öz orijinal əsərinin 100% müəllif hüququnu özündə saxlayır. Rvan.me heç bir halda müəllif hüquqlarını öz üzərinə keçirmir.",
     bulletsEn: [
       "You retain full intellectual property rights to your written work and original concepts.",
@@ -183,9 +183,25 @@ export const GLOBAL_FAQS: FaqItem[] = [
 
 export const HOMEPAGE_FAQS: FaqItem[] = [
   GLOBAL_FAQS[0], // What is Rvan.me?
-  GLOBAL_FAQS[2], // How do I become a contributor?
-  GLOBAL_FAQS[3], // How do I submit an article?
-  GLOBAL_FAQS[6], // Who owns contributor content?
+  GLOBAL_FAQS[2], // How can I share an idea or submit an article?
+  GLOBAL_FAQS[3], // How does the editorial review process work?
+  GLOBAL_FAQS[6], // Who owns submitted article content?
+];
+
+export const ABOUT_FAQS: FaqItem[] = [
+  GLOBAL_FAQS[0], // What is Rvan.me?
+  GLOBAL_FAQS[2], // How can I share an idea or submit an article?
+  GLOBAL_FAQS[3], // How does the editorial review process work?
+  GLOBAL_FAQS[4], // What are the rules regarding AI-generated content?
+  GLOBAL_FAQS[6], // Who owns submitted article content?
+  GLOBAL_FAQS[9], // What languages are available on Rvan.me?
+];
+
+export const CONTACT_FAQS: FaqItem[] = [
+  GLOBAL_FAQS[7], // How can I contact Rvan.me?
+  GLOBAL_FAQS[2], // How can I share an idea or submit an article?
+  GLOBAL_FAQS[3], // How does the editorial review process work?
+  GLOBAL_FAQS[5], // How is user data and privacy handled?
 ];
 
 export const BLOG_FAQS: FaqItem[] = [
@@ -207,8 +223,8 @@ export const BLOG_FAQS: FaqItem[] = [
     id: "b3",
     qEn: "Can I submit an article or pitch an editorial idea?",
     qAz: "Mən də məqalə təklif edə və ya qaralama göndərə bilərəmmi?",
-    aEn: "Yes. Any designer, researcher, or marketing strategist can apply as a contributor via the Contributor Hub or Settings (/profile) and submit an article draft for editorial review.",
-    aAz: "Bəli. Hər bir dizayner, tədqiqatçı və ya marketoloq Müəlliflik səhifəsi və ya Tənzimləmələr (/profile) vasitəsilə məqalə qaralamasını redaksiyaya təqdim edə bilər."
+    aEn: "Yes. Any designer, researcher, or marketing strategist can share ideas or submit an article draft via /write for editorial review.",
+    aAz: "Bəli. Hər bir dizayner, tədqiqatçı və ya marketoloq /write səhifəsi vasitəsilə məqalə qaralamasını redaksiyaya təqdim edə bilər."
   },
   {
     id: "b4",
@@ -231,15 +247,15 @@ export const ARTICLE_DETAIL_FAQS: FaqItem[] = [
     id: "ad2",
     qEn: "Who wrote this article and how is author identity verified?",
     qAz: "Bu məqalənin müəllifi kimdir və müəllif kimliyi necə təsdiqlənir?",
-    aEn: "Every article is written by an authenticated contributor with a verified public profile detailing their role, professional background, and portfolio links.",
-    aAz: "Hər bir yazı təsdiqlənmiş ictimai profilə, peşəkar təcrübəyə və portfolio linklərinə malik autentifikasiya olunmuş müəllif tərəfindən qələmə alınır."
+    aEn: "Every article is written by an authenticated author with a verified public profile detailing their role, professional background, and portfolio links.",
+    aAz: "Hər bir yazı təsdiqlənmiş ictimai profilə, peşəkar təcrübəyə və portfolio linklərinə malik müəllif tərəfindən qələmə alınır."
   },
   {
     id: "ad3",
     qEn: "Can I write and submit an article on a related topic?",
     qAz: "Mən də bu və ya oxşar mövzuda məqalə yazıb göndərə bilərəmmi?",
-    aEn: "Yes. We actively encourage dialogue, follow-up perspectives, and differing viewpoints. Sign in and submit your draft through the Contributor Hub.",
-    aAz: "Bəli. Mövzu ilə bağlı alternativ fikirləri, fərqli təcrübələri və davam məqalələrini dəstəkləyirik. Müəllif kimi qoşularaq qaralamanızı göndərə bilərsiniz."
+    aEn: "Yes. We actively encourage dialogue, follow-up perspectives, and differing viewpoints. Submit your draft through /write.",
+    aAz: "Bəli. Mövzu ilə bağlı alternativ fikirləri, fərqli təcrübələri və davam məqalələrini dəstəkləyirik. Fikrinizi bizimlə bölüşün (/write) səhifəsi vasitəsilə qaralamanızı göndərə bilərsiniz."
   },
   {
     id: "ad4",
@@ -250,41 +266,4 @@ export const ARTICLE_DETAIL_FAQS: FaqItem[] = [
   }
 ];
 
-export const CONTRIBUTORS_FAQS: FaqItem[] = [
-  GLOBAL_FAQS[2], // How do I become a contributor?
-  GLOBAL_FAQS[3], // How do I submit an article?
-  GLOBAL_FAQS[4], // How does article approval work?
-  GLOBAL_FAQS[6], // Who owns contributor content?
-  GLOBAL_FAQS[9], // What languages are available?
-];
-
-export const ABOUT_FAQS: FaqItem[] = [
-  GLOBAL_FAQS[0], // What is Rvan.me?
-  GLOBAL_FAQS[2], // How do I become a contributor?
-  GLOBAL_FAQS[8], // How does the Resources section work?
-  GLOBAL_FAQS[9], // What languages are available?
-];
-
-export const CONTACT_FAQS: FaqItem[] = [
-  {
-    id: "c1",
-    qEn: "How can I contact the Rvan.me editorial team?",
-    qAz: "Rvan.me redaksiya heyəti ilə necə əlaqə saxlaya bilərəm?",
-    aEn: "You can reach us directly via the contact form on this page or by emailing mammadovravan1@gmail.com for editorial questions, article submissions, and general inquiries.",
-    aAz: "Bu səhifədəki əlaqə forması və ya mammadovravan1@gmail.com e-poçt ünvanı vasitəsilə redaksiya sualları, məqalə təklifləri və ümumi müraciətlər üçün bizimlə əlaqə saxlaya bilərsiniz."
-  },
-  {
-    id: "c2",
-    qEn: "How do I submit a collaboration, sponsorship, or media request?",
-    qAz: "Əməkdaşlıq, tərəfdaşlıq və ya media sorğularını necə göndərə bilərəm?",
-    aEn: "Please select 'Partnership & Collaboration' in the contact form or send a brief description of your project to our editorial email. We respond to professional inquiries within 1–3 business days.",
-    aAz: "Zəhmət olmasa əlaqə formasında 'Əməkdaşlıq' seçimini qeyd edin və ya layihənizin qısa təsvirini e-poçt ünvanımıza göndərin. Peşəkar müraciətlərə 1–3 iş günü ərzində cavab verilir."
-  },
-  {
-    id: "c3",
-    qEn: "Where should I report a factual error, correction, or copyright issue?",
-    qAz: "Məqalədəki faktiki səhvi, düzəlişi və ya müəllif hüququ məsələsini hara bildirməliyəm?",
-    aEn: "We take editorial accuracy seriously. You can use the 'Report Article' button directly on any blog post or contact our editorial desk with the article link and specific details.",
-    aAz: "Biz redaksiya dəqiqliyinə böyük önəm veririk. Hər bir məqalənin altındakı 'Məqaləni Bildir' düyməsindən istifadə edə və ya birbaşa əlaqə forması vasitəsilə düzəliş tələbini göndərə bilərsiniz."
-  }
-];
+export const CONTRIBUTORS_FAQS = GLOBAL_FAQS;
