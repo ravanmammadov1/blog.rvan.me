@@ -54,6 +54,8 @@ export interface ContributorApplication {
   preferredTopics: string[];
   preferredLanguage: "az" | "en" | "tr";
   isVerifiedAuthor?: boolean;
+  acceptedTermsAt?: string;
+  termsVersion?: string;
   updatedAt: string;
 }
 
@@ -102,6 +104,8 @@ export interface ArticleSubmission {
     requestedAt: string;
     resolvedAt?: string;
   }[];
+  acceptedTermsAt?: string;
+  termsVersion?: string;
   createdAt: string;
   updatedAt: string;
   publishedSlug?: string;

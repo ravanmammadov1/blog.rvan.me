@@ -62,9 +62,12 @@ function AppRoutes() {
       <Route path="/blog/:slug" element={<BlogDetail />} />
       <Route path="/topics" element={<TopicArchivePage />} />
       <Route path="/topics/:topicSlug" element={<TopicDetailPage />} />
+      <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/cookies" element={<Navigate to="/cookie-policy" replace />} />
       <Route path="/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/terms" element={<TermsPage />} />
+      <Route path="/terms-of-service" element={<Navigate to="/terms" replace />} />
       <Route path="/resources" element={<ResourcesArchive />} />
       <Route path="/resources/:slug" element={<ResourceDetail />} />
       <Route path="/ai-tools" element={<AiToolArchivePage />} />
@@ -93,9 +96,12 @@ function AppRoutes() {
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
       <Route path="/az/topics" element={<TopicArchivePage />} />
       <Route path="/az/topics/:topicSlug" element={<TopicDetailPage />} />
+      <Route path="/az/privacy" element={<Navigate to="/az/privacy-policy" replace />} />
       <Route path="/az/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/az/cookies" element={<Navigate to="/az/cookie-policy" replace />} />
       <Route path="/az/cookie-policy" element={<CookiePolicyPage />} />
       <Route path="/az/terms" element={<TermsPage />} />
+      <Route path="/az/terms-of-service" element={<Navigate to="/az/terms" replace />} />
       <Route path="/az/resources" element={<ResourcesArchive />} />
       <Route path="/az/resources/:slug" element={<ResourceDetail />} />
       <Route path="/az/ai-tools" element={<AiToolArchivePage />} />

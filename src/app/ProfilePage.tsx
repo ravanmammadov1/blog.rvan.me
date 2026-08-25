@@ -19,6 +19,7 @@ import {
   ExternalLink,
   Briefcase,
   Layers,
+  Trash2,
 } from "lucide-react";
 
 import { fetchSiteSettings } from "../lib/sanityQueries";
@@ -66,10 +67,12 @@ export default function ProfilePage() {
   const [contributorProfile, setContributorProfile] = useState<ContributorProfile | null>(null);
   const [isSavingContributor, setIsSavingContributor] = useState(false);
   const [contributorSuccessMsg, setContributorSuccessMsg] = useState("");
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const {
     user,
     signOut,
+    deleteAccount,
     userPhoto,
     customAvatar,
     updateCustomAvatar,
@@ -78,6 +81,22 @@ export default function ProfilePage() {
   const { theme, setTheme } = useTheme();
   const { language, switchLanguage, t, getLocalizedPath } = useLanguage();
   const isAz = language === "az";
+
+  const handleDeleteAccount = async () => {
+    const confirmMsg = isAz
+      ? "Hesabınızı və bütün fərdi profil məlumatlarınızı birdəfəlik silmək istədiyinizdən əminsiniz? Bu əməliyyat geri qaytarıla bilməz."
+      : "Are you sure you want to permanently delete your account and personal profile data? This action cannot be undone.";
+    if (!window.confirm(confirmMsg)) return;
+    try {
+      setIsDeletingAccount(true);
+      await deleteAccount();
+      alert(isAz ? "Hesabınız uğurla silindi." : "Your account has been deleted successfully.");
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete account. Please sign in again and retry.");
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -413,6 +432,33 @@ export default function ProfilePage() {
                     {isAz ? "Avatar Studiyasını Aç" : "Launch Avatar Studio"}
                   </Button>
                 </div>
+              </div>
+
+              {/* Danger Zone: Account Deletion */}
+              <div className="md:col-span-2 rounded-3xl border border-rose-500/20 bg-rose-500/[0.02] dark:bg-rose-500/[0.04] p-6 sm:p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold tracking-widest text-rose-500 mono uppercase">
+                    {isAz ? "HESABIN SİLİNMƏSİ" : "DANGER ZONE"}
+                  </span>
+                  <h4 className="text-base font-bold text-foreground">
+                    {isAz ? "Hesabı və Fərdi Məlumatları Sil" : "Delete Account & Data"}
+                  </h4>
+                  <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+                    {isAz
+                      ? "Hesabınızı, saxlanılan fərdi avatarınızı və lokal profil məlumatlarınızı birdəfəlik silin. Bu əməliyyat geri qaytarıla bilməz."
+                      : "Permanently remove your authenticated account, customized profile avatar, and local profile data."}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  disabled={isDeletingAccount}
+                  onClick={handleDeleteAccount}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-rose-500/40 text-rose-500 hover:bg-rose-500 hover:text-white dark:hover:text-black transition-colors text-xs font-bold uppercase mono tracking-wider disabled:opacity-50 shrink-0 cursor-pointer"
+                >
+                  <Trash2 size={14} />
+                  <span>{isDeletingAccount ? (isAz ? "Silinir..." : "Deleting...") : (isAz ? "Hesabı Sil" : "Delete Account")}</span>
+                </button>
               </div>
             </motion.div>
           )}

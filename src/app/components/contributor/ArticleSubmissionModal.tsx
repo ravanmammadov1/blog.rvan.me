@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Sparkles, AlertCircle, CheckCircle2, FileText, Info } from "lucide-react";
+import { X, Send, Sparkles, AlertCircle, CheckCircle2, FileText, Info, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { submitArticle } from "../../../services/contributorService";
@@ -18,7 +19,7 @@ export default function ArticleSubmissionModal({
   onSubmitted,
 }: ArticleSubmissionModalProps) {
   const { user, userPhoto } = useAuth();
-  const { language } = useLanguage();
+  const { language, getLocalizedPath } = useLanguage();
   const isAz = language === "az";
 
   const [title, setTitle] = useState("");
@@ -29,6 +30,7 @@ export default function ArticleSubmissionModal({
   const [sources, setSources] = useState("");
   const [aiDisclosure, setAiDisclosure] = useState<AiDisclosureLevel>("none");
   const [aiNotes, setAiNotes] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +46,14 @@ export default function ArticleSubmissionModal({
         isAz
           ? "Başlıq, xülasə və məqalə mətni mütləq daxil edilməlidir."
           : "Title, excerpt, and article content are required."
+      );
+      return;
+    }
+    if (!agreeTerms) {
+      setError(
+        isAz
+          ? "Məqaləni təqdim etmək üçün Rvan.me Müəllif Qaydaları ilə razılaşmalısınız."
+          : "You must agree to the Rvan.me Contributor Terms before submitting."
       );
       return;
     }
@@ -68,6 +78,8 @@ export default function ArticleSubmissionModal({
         sources: sources.trim() || undefined,
         aiDisclosure,
         aiNotes: aiNotes.trim() || undefined,
+        acceptedTermsAt: new Date().toISOString(),
+        termsVersion: "2026.1",
       });
 
       setSuccess(true);
@@ -86,6 +98,7 @@ export default function ArticleSubmissionModal({
     setSources("");
     setAiDisclosure("none");
     setAiNotes("");
+    setAgreeTerms(false);
     setSuccess(false);
     setError(null);
   };
@@ -335,6 +348,46 @@ export default function ArticleSubmissionModal({
                       </span>
                     </label>
                   </div>
+                </div>
+
+                {/* Contributor Terms Agreement */}
+                <div className="p-4 rounded-xl border border-primary/25 bg-primary/5 space-y-2">
+                  <label className="flex items-start gap-3 text-xs text-foreground cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      id="contributor-terms-agree"
+                      checked={agreeTerms}
+                      onChange={(e) => setAgreeTerms(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary shrink-0 cursor-pointer"
+                    />
+                    <span className="leading-relaxed">
+                      {isAz ? (
+                        <>
+                          <span className="font-semibold text-foreground">Rvan.me Müəllif Qaydaları</span> ilə razılaşıram və anlayıram ki, orijinal əsərimin müəllif hüquqları mənə məxsus olaraq qalır, Rvan.me-yə isə məzmunu yayımlamaq, arxivləşdirmək və tanıtmaq üçün qeyri-müstəsna lisenziya hüququ verirəm. (
+                          <Link
+                            to={getLocalizedPath("/terms")}
+                            target="_blank"
+                            className="text-primary font-bold hover:underline"
+                          >
+                            Qaydaları oxu
+                          </Link>
+                          )
+                        </>
+                      ) : (
+                        <>
+                          I agree to the <span className="font-semibold text-foreground">Rvan.me Contributor Terms</span> and understand that I retain copyright ownership of my original work while granting Rvan.me a non-exclusive license to publish, archive, and promote it. (
+                          <Link
+                            to={getLocalizedPath("/terms")}
+                            target="_blank"
+                            className="text-primary font-bold hover:underline"
+                          >
+                            View Terms
+                          </Link>
+                          )
+                        </>
+                      )}
+                    </span>
+                  </label>
                 </div>
 
                 {/* Footer Submit Button */}

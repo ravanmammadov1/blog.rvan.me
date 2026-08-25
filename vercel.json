@@ -104,8 +104,33 @@
       "permanent": true
     },
     {
+      "source": "/privacy",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/az/privacy",
+      "destination": "/az/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/cookies",
+      "destination": "/cookie-policy",
+      "permanent": true
+    },
+    {
+      "source": "/az/cookies",
+      "destination": "/az/cookie-policy",
+      "permanent": true
+    },
+    {
       "source": "/terms-of-service",
       "destination": "/terms",
+      "permanent": true
+    },
+    {
+      "source": "/az/terms-of-service",
+      "destination": "/az/terms",
       "permanent": true
     },
     {

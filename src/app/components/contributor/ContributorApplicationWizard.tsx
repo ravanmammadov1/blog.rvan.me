@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User,
@@ -15,6 +16,7 @@ import {
   Camera,
   Eye,
   AlertCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
@@ -71,6 +73,7 @@ export default function ContributorApplicationWizard({
   // Step 4: Your Voice
   const [selectedTopics, setSelectedTopics] = useState<string[]>(["design", "branding"]);
   const [preferredLang, setPreferredLang] = useState<"az" | "en" | "tr">(isAz ? "az" : "en");
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const toggleTopic = (id: string) => {
     setSelectedTopics((prev) =>
@@ -107,6 +110,14 @@ export default function ContributorApplicationWizard({
   const handleSubmitApplication = async () => {
     if (!user) {
       setError(isAz ? "Daxil olunmayıb." : "Not authenticated.");
+      return;
+    }
+    if (!agreeTerms) {
+      setError(
+        isAz
+          ? "Müəllif kabinetini qurmaq üçün Rvan.me Müəllif Qaydaları ilə razılaşmalısınız."
+          : "You must agree to the Rvan.me Contributor Terms before completing your application."
+      );
       return;
     }
 
@@ -146,6 +157,8 @@ export default function ContributorApplicationWizard({
         preferredTopics: selectedTopics,
         preferredLanguage: preferredLang,
         isVerifiedAuthor: false,
+        acceptedTermsAt: new Date().toISOString(),
+        termsVersion: "2026.1",
       });
 
       onSuccess(app);
@@ -610,6 +623,46 @@ export default function ContributorApplicationWizard({
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Contributor Terms Agreement Checkbox */}
+            <div className="p-4 rounded-xl border border-primary/25 bg-primary/5 space-y-2">
+              <label className="flex items-start gap-3 text-xs text-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  id="wizard-terms-agree"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary shrink-0 cursor-pointer"
+                />
+                <span className="leading-relaxed">
+                  {isAz ? (
+                    <>
+                      <span className="font-semibold text-foreground">Rvan.me Müəllif Qaydaları</span> ilə razılaşıram və anlayıram ki, təqdim etdiyim məqalələrin müəllif hüquqları mənə məxsus olaraq qalır, Rvan.me-yə isə məzmunu yayımlamaq və tanıtmaq üçün qeyri-müstəsna lisenziya verirəm. (
+                      <Link
+                        to={language === "az" ? "/az/terms" : "/terms"}
+                        target="_blank"
+                        className="text-primary font-bold hover:underline"
+                      >
+                        Qaydaları oxu
+                      </Link>
+                      )
+                    </>
+                  ) : (
+                    <>
+                      I agree to the <span className="font-semibold text-foreground">Rvan.me Contributor Terms</span> and understand that I retain copyright ownership of my original work while granting Rvan.me a non-exclusive license to publish and promote it. (
+                      <Link
+                        to={language === "az" ? "/az/terms" : "/terms"}
+                        target="_blank"
+                        className="text-primary font-bold hover:underline"
+                      >
+                        View Terms
+                      </Link>
+                      )
+                    </>
+                  )}
+                </span>
+              </label>
             </div>
           </motion.div>
         )}

@@ -11,165 +11,181 @@ export interface FaqItem {
 export const GLOBAL_FAQS: FaqItem[] = [
   {
     id: 1,
-    qEn: "What is Rvan.me and what is its editorial mission?",
-    qAz: "Rvan.me nədir və əsas redaksiya missiyası nədən ibarətdir?",
-    aEn: "Rvan.me is an independent creative publication and knowledge platform exploring visual strategy, brand architecture, motion design, creative technology, marketing psychology, and Azerbaijan's growing creative community.",
-    aAz: "Rvan.me — vizual strategiya, brend memarlığı, motion dizayn, yaradıcı texnologiyalar, marketinq psixologiyası və Azərbaycanın inkişaf edən kreativ icmasını araşdıran müstəqil nəşr və bilik platformasıdır.",
+    qEn: "What is Rvan.me?",
+    qAz: "Rvan.me nədir?",
+    aEn: "Rvan.me is an independent creative publication, knowledge platform, and resource ecosystem founded by senior creative designer Ravan Mammadov. It brings together in-depth design systems, branding strategy, motion design, creative technology, curated typography, and community perspectives.",
+    aAz: "Rvan.me — baş kreativ dizayner Rəvan Məmmədov tərəfindən təsis edilmiş müstəqil kreativ nəşr, bilik platforması və resurs ekosistemidir. Platforma dizayn sistemləri, brendinq strategiyası, motion dizayn, yaradıcı texnologiyalar, şrift kataloqları və icma yazılarını bir araya gətirir.",
     bulletsEn: [
-      "Replacing fleeting social media noise with rigorous, permanent analysis.",
-      "Bridging high-level theoretical foundations with practical execution.",
-      "Providing verified public author attribution for regional creative thinkers."
+      "Rigorous editorial essays, case studies, and practical design frameworks.",
+      "Curated creative tools, Google Fonts catalog with live specimen preview, and vector icons.",
+      "Verified contributor platform giving regional and international writers a permanent public portfolio."
     ],
     bulletsAz: [
-      "Sosial media lentlərində itən səthi səs-küyü qalıcı və analitik məzmunla əvəz etmək.",
-      "Nəzəri strateji prinsipləri real layihə təcrübəsi ilə birləşdirmək.",
-      "Yaradıcı düşüncə sahiblərinə təsdiqlənmiş ictimai müəlliflik imkanı yaratmaq."
+      "Dərin redaksiya esseləri, layihə təhlilləri və praktiki dizayn çərçivələri.",
+      "Kreativ alətlər, canlı nümayişli Google Fonts kataloqu və vektor ikonlar.",
+      "Yerli və beynəlxalq müəlliflərə daimi ictimai portfolio təqdim edən təsdiqlənmiş müəllif platforması."
     ]
   },
   {
     id: 2,
-    qEn: "Who can become a contributor on Rvan.me?",
-    qAz: "Kimlər Rvan.me-də müəllif kimi yazı dərc edə bilər?",
-    aEn: "We welcome designers, brand strategists, marketing professionals, writers, researchers, students, and creative technologists. We care about the depth of your thinking and clarity of your perspective rather than your job title.",
-    aAz: "Dizaynerlər, brend strateqləri, marketoloqlar, yazıçılar, tədqiqatçılar, tələbələr və kreativ texnoloqlar platformamızda yazı dərc edə bilərlər. Bizim üçün vəzifə adından daha çox fikirlərinizin dərinliyi və arqumentlərinizin aydınlığı önəmlidir.",
+    qEn: "How do I create an account?",
+    qAz: "Necə hesab yarada bilərəm?",
+    aEn: "Creating an account on Rvan.me is instant and secure through Google Sign-In. Click the Profile / Sign In button in the navigation bar to get started.",
+    aAz: "Rvan.me-də hesab yaratmaq Google Girişi (Google Sign-In) vasitəsilə dərhal və təhlükəsiz şəkildə həyata keçirilir. Başlamaq üçün menyudakı Profil / Giriş düyməsinə klikləyin.",
     bulletsEn: [
-      "Practitioners with hands-on case studies and lessons learned.",
-      "Researchers analyzing industry trends, typography, or behavioral UX.",
-      "Emerging creators with original, non-obvious viewpoints."
+      "No passwords to manage — secure OAuth authentication via Google & Firebase.",
+      "Instantly unlocks your personal profile, custom avatars, and contributor access.",
+      "Your first name, last name, and profile picture are automatically synced from your Google account."
     ],
     bulletsAz: [
-      "Real layihə təcrübələri və dərslərini bölüşən praktiklər.",
-      "Sənaye trendlərini, tipoqrafiyanı və ya UX psixologiyasını araşdıranlar.",
-      "Orijinal və qeyri-standart baxış bucağına malik gənc yaradıcılar."
+      "Şifrə yadda saxlamağa ehtiyac yoxdur — Google və Firebase vasitəsilə təhlükəsiz giriş.",
+      "Şəxsi profilinizi, fərdi avatarınızı və müəlliflik imkanlarını dərhal aktivləşdirir.",
+      "Adınız, soyadınız və profil şəkliniz Google hesabınızdan avtomatik sinxronlaşdırılır."
     ]
   },
   {
     id: 3,
-    qEn: "What types of articles and topics do you publish?",
-    qAz: "Hansı mövzularda və formatda məqalələr dərc olunur?",
-    aEn: "We publish analytical essays, practical frameworks, case studies, and critical reviews across five core editorial pillars:",
-    aAz: "Biz beş əsas redaksiya sütunu üzrə analitik esselər, praktiki bələdçilər, layihə təhlilləri və tənqidi icmallar dərc edirik:",
+    qEn: "How do I become a contributor?",
+    qAz: "Necə müəllif (kontributor) ola bilərəm?",
+    aEn: "Any authenticated user can apply to become a contributor. Once signed in, navigate to the Contributor page (/contributor) or Settings (/profile) and set up your author profile.",
+    aAz: "Hesabı olan hər bir istifadəçi müəlliflik üçün müraciət edə bilər. Daxil olduqdan sonra Müəlliflik səhifəsinə (/contributor) və ya Tənzimləmələrə (/profile) keçərək müəllif profilinizi qurun.",
     bulletsEn: [
-      "Visual Strategy & Brand Systems: Identity deconstructions and market positioning.",
-      "Motion, Typography & Graphic Craft: Kinetic rules, fluid type math, and art direction.",
-      "Applied AI & Creative Tech: Practical computational tools and algorithmic workflows.",
-      "Behavioral Psychology & Copywriting: Cognitive heuristics, conversion ethics, and perceptual UX.",
-      "Industry Critiques & Essays: Reflections on creative leadership and careers in Azerbaijan."
+      "Fill out your professional title, short biography, and portfolio/social links.",
+      "Select your primary areas of expertise (Brand Design, UI/UX, AI, Creative Industry).",
+      "Upon completion, your contributor workspace is immediately ready for drafting articles."
     ],
     bulletsAz: [
-      "Vizual Strategiya və Brend Sistemləri: Brend kimliyi və bazar mövqeləndirilməsi.",
-      "Motion, Tipoqrafiya və Qrafik Sənət: Kinetik qaydalar, elastik tipoqrafiya və art direktorluq.",
-      "Tətbiqi AI və Kreativ Texnologiyalar: Alqoritmik alətlər və hesablama dizaynı.",
-      "Davranış Psixologiyası və Kopiraytinq: Koqnitiv təsirlər və konversiya psixologiyası.",
-      "Sənaye Tənqidi və İcma Məqalələri: Azərbaycanda kreativ karyera və dizayn liderliyi."
+      "Peşəkar vəzifənizi, qısa bioqrafiyanızı və portfolio/sosial linklərinizi daxil edin.",
+      "Əsas ixtisas sahələrinizi (Brend Dizaynı, UI/UX, AI, Kreativ Sənaye) seçin.",
+      "Tamamlandıqdan sonra müəllif kabinetiniz qaralama yazmaq üçün dərhal aktivləşir."
     ]
   },
   {
     id: 4,
-    qEn: "Can I write and submit articles in Azerbaijani?",
-    qAz: "Məqalələri Azərbaycan dilində yaza və təqdim edə bilərəmmi?",
-    aEn: "Yes, absolutely. Azerbaijani is one of Rvan.me's primary languages. Fostering high-quality Azerbaijani-language design and branding literature is central to our founding mission.",
-    aAz: "Bəli, mütləq. Azərbaycan dili Rvan.me-nin əsas dillərindən biridir. Azərbaycan dilində keyfiyyətli dizayn, brendinq və marketinq ədəbiyyatının formalaşdırılması bizim ən başlıca missiyamızdır.",
+    qEn: "How do I submit an article?",
+    qAz: "Məqaləni necə təqdim edə bilərəm?",
+    aEn: "From your Contributor Dashboard (/contributor), click 'New Article' to open the submission editor.",
+    aAz: "Müəllif Kabinetinizdən (/contributor) 'Yeni Məqalə' düyməsinə klikləyərək yazı redaktorunu açın.",
     bulletsEn: [
-      "Contributions in Azerbaijani are prioritized and actively supported.",
-      "Bilingual publishing (AZ + EN) is also supported to reach international readers."
+      "Enter your article title, concise summary, category, and main body content in Markdown or text.",
+      "Select your preferred language (Azerbaijani or English) and provide transparent AI assistance disclosure.",
+      "Agree to the Contributor Terms (confirming your copyright ownership) and submit for editorial review."
     ],
     bulletsAz: [
-      "Azərbaycan dilində olan yazılara xüsusi üstünlük verilir və redaksiya dəstəyi göstərilir.",
-      "Beynəlxalq auditoriyaya çıxış üçün iki dilli (AZ + EN) nəşr imkanı da mövcuddur."
+      "Məqalənizin başlığını, qısa xülasəsini, kateqoriyasını və əsas mətnini daxil edin.",
+      "Yazının dilini (Azərbaycan və ya İngilis) seçin və şəffaf AI istifadə bəyanatını qeyd edin.",
+      "Müəllif Qaydaları ilə razılaşaraq (müəllif hüququnuzu təsdiq edərək) yazını redaksiyaya göndərin."
     ]
   },
   {
     id: 5,
-    qEn: "What is Rvan.me's policy on using AI tools for writing?",
-    qAz: "Yazı prosesində süni intellektdən (AI) istifadə qaydaları necədir?",
-    aEn: "We maintain a transparent and balanced approach: AI is welcomed as an intellectual amplifier, not as an author replacement.",
-    aAz: "Biz şəffaf və balanslı yanaşmaya üstünlük veririk: AI müəllifin düşüncəsini gücləndirən köməkçi alətdir, müəllifin özünü əvəz edən vasitə deyil.",
+    qEn: "How does article approval work?",
+    qAz: "Məqalələrin təsdiqlənməsi prosesi necə işləyir?",
+    aEn: "Every submitted article undergoes human editorial review to maintain high analytical depth and community trust before public publication.",
+    aAz: "İctimai dərcdən öncə hər bir yazı yüksək analitik keyfiyyəti və oxucu etimadını qorumaq üçün redaksiya heyəti tərəfindən nəzərdən keçirilir.",
     bulletsEn: [
-      "Permitted: Using AI for background research, outlining, idea exploration, and grammar polish.",
-      "Prohibited: Submitting unedited, raw AI outputs lacking personal perspective or domain insight.",
-      "Accountability: The human contributor is 100% responsible for facts, arguments, and voice."
+      "Editorial Evaluation: We review structure, originality, clarity of perspective, and actionable value (typically 2–5 business days).",
+      "Actionable Feedback: If revisions are needed, clear editorial notes are attached directly in your dashboard.",
+      "Publication: Approved articles go live on Rvan.me with permanent author attribution, social preview cards, and custom URLs."
     ],
     bulletsAz: [
-      "İcazə verilir: İlkin araşdırma, strukturlaşdırma, beyin həmləsi və qrammatik cilalama.",
-      "Qadağandır: Heç bir şəxsi təhlil olmadan birbaşa AI tərəfindən çıxarılan səthi mətnlər.",
-      "Məsuliyyət: Müəllif məqalədəki bütün faktlara, arqumentlərə və üsluba şəxsən cavabdehdir."
+      "Redaksiya Qiymətləndirməsi: Məzmunun strukturu, orijinallığı və praktiki dəyəri yoxlanılır (adətən 2–5 iş günü ərzində).",
+      "Düzəliş Təklifləri: Təkmilləşdirmə lazım olduqda redaksiya qeydləri birbaşa şəxsi kabinetinizə göndərilir.",
+      "Dərc Olunma: Təsdiqlənmiş yazılar daimi müəllif adı, sosial önizləmə kartları və fərdi linklə canlı yayımlanır."
     ]
   },
   {
     id: 6,
-    qEn: "How does the editorial submission and review process work?",
-    qAz: "Məqalənin təqdim edilməsi və redaksiya baxışı prosesi necə işləyir?",
-    aEn: "Our publishing lifecycle follows four transparent, structured steps:",
-    aAz: "Nəşr prosesimiz dörd şəffaf və ardıcıl mərhələdən ibarətdir:",
+    qEn: "Can I delete my account?",
+    qAz: "Hesabımı və şəxsi məlumatlarımı silə bilərəmmi?",
+    aEn: "Yes. You have complete control over your account. You can permanently delete your account and personal profile data at any time directly through the Settings page (/profile) or by contacting us.",
+    aAz: "Bəli. Hesabınız üzərində tam nəzarətə sahibsiniz. İstənilən vaxt Tənzimləmələr səhifəsi (/profile) vasitəsilə və ya bizimlə əlaqə saxlayaraq hesabınızı və bütün şəxsi profil məlumatlarınızı birdəfəlik silə bilərsiniz.",
     bulletsEn: [
-      "1. Draft: Sign in with Google, set up your public profile in Settings (/profile), and submit your draft.",
-      "2. Review: Our editorial team reviews your submission within 2–5 business days for depth and clarity.",
-      "3. Collaborative Polish: If needed, we provide actionable editorial feedback to elevate the piece.",
-      "4. Publication: Your article goes live with a verified badge, custom URL, and permanent attribution."
+      "Account deletion removes your stored profile details, custom avatars, and local drafts.",
+      "You can also request full removal of your submitted publications by reaching out to our editorial desk.",
+      "We do not retain unnecessary personal data after account deletion."
     ],
     bulletsAz: [
-      "1. Qaralama: Google ilə daxil olun, Tənzimləmələrdə (/profile) profilinizi tamamlayın və yazını göndərin.",
-      "2. Baxış: Redaksiya heyəti 2–5 iş günü ərzində məqalənin dərinliyini və orijinallığını qiymətləndirir.",
-      "3. Birgə Redaktə: Lazım olduqda, məzmunun mükəmməlləşdirilməsi üçün təkliflər təqdim edilir.",
-      "4. Canlı Yayımlanma: Məqaləniz təsdiqlənmiş müəlliflik nişanı və daimi linklə dərc olunur."
+      "Hesabın silinməsi saxlanılan profil məlumatlarınızı, fərdi avatarınızı və yerli qaralamalarınızı silir.",
+      "Həmçinin redaksiyaya müraciət edərək təqdim etdiyiniz yazıların da tam silinməsini tələb edə bilərsiniz.",
+      "Hesab silindikdən sonra heç bir lazımsız şəxsi məlumat saxlanılmır."
     ]
   },
   {
     id: 7,
-    qEn: "Does every submitted article get published?",
-    qAz: "Təqdim olunan hər bir yazı mütləq dərc edilirmi?",
-    aEn: "No. To maintain high editorial trust and reading value, every submission undergoes editorial curation. Submissions may be accepted directly, returned for collaborative revisions, or declined if they lack sufficient analytical rigor.",
-    aAz: "Xeyr. Redaksiya keyfiyyətini və oxucu etimadını qorumaq üçün hər bir yazı dəyərləndirilir. Məqalə birbaşa qəbul edilə, təkmilləşdirmə üçün düzəlişlərə göndərilə və ya yetərincə analitik dərinliyə malik olmadıqda qəbul edilməyə bilər."
+    qEn: "Who owns contributor content?",
+    qAz: "Müəllif məzmununun müəllif hüquqları kimə məxsusdur?",
+    aEn: "You do. The contributor RETAINS 100% COPYRIGHT OWNERSHIP of their original work. Rvan.me does NOT take ownership of your copyright.",
+    aAz: "Müəllif hüquqları tamamilə SİZƏ məxsusdur. Müəllif öz orijinal əsərinin 100% müəllif hüququnu özündə saxlayır. Rvan.me heç bir halda müəllif hüquqlarını öz üzərinə keçirmir.",
+    bulletsEn: [
+      "You retain full intellectual property rights to your written work and original concepts.",
+      "By submitting, you grant Rvan.me a non-exclusive license to publish, display, archive, distribute, and promote your article.",
+      "You are always free to republish, adapt, or cross-post your original writing on other platforms with reference to original publication."
+    ],
+    bulletsAz: [
+      "Yazdığınız məqalə və orijinal fikirləriniz üzərində bütün əqli mülkiyyət hüquqları sizdə qalır.",
+      "Yazını təqdim etməklə siz Rvan.me-yə məqaləni yayımlamaq, arxivləşdirmək və tanıtmaq üçün qeyri-müstəsna lisenziya hüququ verirsiniz.",
+      "Orijinal yazınızı istənilən vaxt digər platformalarda yenidən paylaşmaq və ya uyğunlaşdırmaq hüququnuz tam qorunur."
+    ]
   },
   {
     id: 8,
-    qEn: "Can I write about my own studio, projects, or services?",
-    qAz: "Öz studiyam, müştəri layihələrim və ya xidmətlərim haqqında yaza bilərəmmi?",
-    aEn: "Yes, case studies from your direct experience are welcome as long as they deliver educational value, practical methodologies, or critical takeaways. Pure promotional advertisements, disguised press releases, and SEO keyword spam are not accepted.",
-    aAz: "Bəli. Şəxsi layihələriniz və təcrübələriniz oxucuya öyrədici dərslər, metodologiyalar və real nəticələr təqdim etdiyi təqdirdə çox faydalıdır. Lakin birbaşa reklam xarakterli mətnlər və gizli piar yazıları qəbul edilmir."
+    qEn: "How can I contact Rvan.me?",
+    qAz: "Rvan.me ilə necə əlaqə saxlaya bilərəm?",
+    aEn: "You can reach the editorial desk directly via our Contact page (/contact) or by sending an email to mammadovravan1@gmail.com.",
+    aAz: "Redaksiya heyəti ilə birbaşa Əlaqə səhifəmiz (/contact) və ya mammadovravan1@gmail.com e-poçt ünvanı vasitəsilə əlaqə saxlaya bilərsiniz.",
+    bulletsEn: [
+      "Editorial Inquiries: Questions about article proposals, reviews, or editorial standards.",
+      "Partnerships & Collaborations: Brand partnerships, creative workshops, and project inquiries.",
+      "Corrections & Feedback: Reporting factual updates or technical issues on the site."
+    ],
+    bulletsAz: [
+      "Redaksiya Sorğuları: Məqalə təklifləri, baxış prosesi və ya redaksiya standartları ilə bağlı suallar.",
+      "Tərəfdaşlıq və Əməkdaşlıq: Brend əməkdaşlıqları, yaradıcı seminarlar və layihə müraciətləri.",
+      "Düzəlişlər və Rəylər: Faktiki məlumatların yenilənməsi və ya saytla bağlı texniki bildirişlər."
+    ]
   },
   {
     id: 9,
-    qEn: "What do I gain as a published Rvan.me contributor?",
-    qAz: "Rvan.me-də dərc olunan müəllif nə əldə edir?",
-    aEn: "Publishing on Rvan.me gives your professional thinking an enduring, reputable public home:",
-    aAz: "Rvan.me-də məqalə dərc etmək sizə peşəkar nüfuz və qalıcı ictimai arxiv qazandırır:",
+    qEn: "How does the Resources section work?",
+    qAz: "Resurslar bölməsi necə işləyir?",
+    aEn: "The Resources directory (/resources) is a curated collection of high-utility design assets, open-source typography, SVG icons, and productivity tools.",
+    aAz: "Resurslar bölməsi (/resources) dizaynerlər və yaradıcı peşəkarlar üçün açıq mənbəli şriftlər, SVG ikonlar və faydalı alətlərin seçilmiş kolleksiyasıdır.",
     bulletsEn: [
-      "Permanent Public Portfolio: All your published articles link to your verified author profile (/author/:slug).",
-      "Real Engagement Insights: Access genuine metrics on views, shares, and reader comments in your dashboard.",
-      "Editorial Mentorship: Work directly with experienced art directors and editors to sharpen your writing."
+      "Fonts Catalog: Explore 2,000+ open-source Google fonts with live interactive specimens, variable axes, and ready-to-use CSS tokens.",
+      "Lucide Vector Icons: Search and copy thousands of clean SVG icons for UI/UX and web development.",
+      "AI & Design Tools: Curated directory of verified utilities engineered to accelerate creative workflows."
     ],
     bulletsAz: [
-      "Daimi İctimai Portfolio: Yazılarınız ictimai müəllif profilinizdə (/author/:slug) daimi arxivləşir.",
-      "Real Oxucu Analitikası: Yazılarınıza olan baxışları və şərhləri şəxsi kabinetinizdən izləyin.",
-      "Redaksiya Dəstəyi: Təcrübəli redaktor və dizaynerlərlə birgə yazınızı ən yüksək standartlara çatdırın."
+      "Şrift Kataloqu: 2,000-dən çox açıq mənbəli şrifti canlı nümayiş, variativ oxlar və hazır CSS kodları ilə kəşf edin.",
+      "Lucide Vektor İkonları: UI/UX və veb tətbiqlər üçün minlərlə təmiz SVG ikonu axtarın və istifadə edin.",
+      "Süni İntellekt və Dizayn Alətləri: Yaradıcı iş axınlarını sürətləndirmək üçün sınaqdan keçirilmiş faydalı alətlər toplusu."
     ]
   },
   {
     id: 10,
-    qEn: "Is contributing free and how do I get started?",
-    qAz: "Müəllif olmaq ödənişsizdirmi və necə başlaya bilərəm?",
-    aEn: "Yes, contributing is 100% free. Rvan.me is an independent community publication focused on elevating creative discourse.",
-    aAz: "Bəli, müəlliflik tamamilə ödənişsizdir. Rvan.me yaradıcı müzakirələri inkişaf etdirmək üçün qurulmuş müstəqil icma platformasıdır.",
+    qEn: "What languages are available on Rvan.me?",
+    qAz: "Rvan.me hansı dillərdə mövcuddur?",
+    aEn: "Rvan.me is fully bilingual, offering complete interfaces, navigation, and content in both Azerbaijani and English.",
+    aAz: "Rvan.me tam iki dilli (bilingual) platformadır və bütün interfeys, naviqasiya və məzmunu həm Azərbaycan, həm də İngilis dilində təqdim edir.",
     bulletsEn: [
-      "1. Sign in with Google using the profile menu in the header.",
-      "2. Go to Settings (/profile) or the Contributor page (/contributor).",
-      "3. Complete your public profile and submit your draft for review."
+      "Azerbaijani (AZ): Our primary domestic language, fostering high-quality regional creative literature under the /az routes.",
+      "English (EN): Designed for international accessibility, global readers, and worldwide creative collaboration.",
+      "Seamless Switching: Switch languages anytime via the globe selector in the header or profile menu."
     ],
     bulletsAz: [
-      "1. Saytın yuxarı menyusundan Google hesabınızla daxil olun.",
-      "2. Tənzimləmələrə (/profile) və ya Müəlliflik səhifəsinə (/contributor) keçin.",
-      "3. İctimai profilinizi tamamlayaraq ilk məqalə qaralamanızı təqdim edin."
+      "Azərbaycan dili (AZ): Əsas dilimiz — /az bölməsində yüksək səviyyəli yerli dizayn və brendinq ədəbiyyatını inkişaf etdirir.",
+      "İngilis dili (EN): Beynəlxalq oxucular, qlobal əlçatanlıq və xarici əməkdaşlıqlar üçün nəzərdə tutulub.",
+      "Rahat Keçid: Menyudakı və ya profil bölməsindəki dil seçicisi vasitəsilə istənilən vaxt dillər arasında dərhal keçid edə bilərsiniz."
     ]
   }
 ];
 
 export const HOMEPAGE_FAQS: FaqItem[] = [
   GLOBAL_FAQS[0], // What is Rvan.me?
-  GLOBAL_FAQS[1], // Who can become a contributor?
-  GLOBAL_FAQS[3], // Can I write in Azerbaijani?
-  GLOBAL_FAQS[2], // What types of articles do you publish?
+  GLOBAL_FAQS[2], // How do I become a contributor?
+  GLOBAL_FAQS[3], // How do I submit an article?
+  GLOBAL_FAQS[6], // Who owns contributor content?
 ];
 
 export const BLOG_FAQS: FaqItem[] = [
@@ -235,18 +251,18 @@ export const ARTICLE_DETAIL_FAQS: FaqItem[] = [
 ];
 
 export const CONTRIBUTORS_FAQS: FaqItem[] = [
-  GLOBAL_FAQS[1], // Who can become a contributor?
-  GLOBAL_FAQS[2], // What types of articles do you publish?
-  GLOBAL_FAQS[3], // Can I write in Azerbaijani?
-  GLOBAL_FAQS[4], // AI policy
-  GLOBAL_FAQS[5], // Review process
+  GLOBAL_FAQS[2], // How do I become a contributor?
+  GLOBAL_FAQS[3], // How do I submit an article?
+  GLOBAL_FAQS[4], // How does article approval work?
+  GLOBAL_FAQS[6], // Who owns contributor content?
+  GLOBAL_FAQS[9], // What languages are available?
 ];
 
 export const ABOUT_FAQS: FaqItem[] = [
   GLOBAL_FAQS[0], // What is Rvan.me?
-  GLOBAL_FAQS[1], // Who is Rvan.me for?
-  GLOBAL_FAQS[2], // What kind of content?
-  GLOBAL_FAQS[3], // Azerbaijani language support
+  GLOBAL_FAQS[2], // How do I become a contributor?
+  GLOBAL_FAQS[8], // How does the Resources section work?
+  GLOBAL_FAQS[9], // What languages are available?
 ];
 
 export const CONTACT_FAQS: FaqItem[] = [

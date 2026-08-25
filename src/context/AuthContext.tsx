@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, ReactNode, useCallback } from "react";
-import { User, onAuthStateChanged, updateProfile as updateFirebaseProfile } from "firebase/auth";
+import { User, onAuthStateChanged, updateProfile as updateFirebaseProfile, deleteUser } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, storage, isKeyConfigured } from "../lib/firebase";
 import { signInWithGoogle, checkRedirectResult, logout } from "../services/auth";
@@ -27,6 +27,7 @@ export interface AuthContextType {
   updateDisplayName: (name: string) => Promise<void>;
   signIn: () => Promise<User | null>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -256,6 +257,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setError(null);
+    try {
+      const uid = user.uid;
+      // 1. Delete Firebase Auth user
+      await deleteUser(user);
+      // 2. Clear local storage profile keys
+      try {
+        localStorage.removeItem(`rvan_user_profile_${uid}`);
+        localStorage.removeItem(`rvan_user_avatar_${uid}`);
+        const apps = JSON.parse(localStorage.getItem("rvan_contributor_applications_v1") || "{}");
+        delete apps[uid];
+        localStorage.setItem("rvan_contributor_applications_v1", JSON.stringify(apps));
+      } catch (e) {}
+      setUser(null);
+      setProfile(null);
+      setCustomAvatar(null);
+    } catch (err: any) {
+      console.error("Account deletion error:", err);
+      setError(err?.message || "Failed to delete account. Please re-authenticate and try again.");
+      throw err;
+    }
+  };
+
   const clearError = () => setError(null);
 
   // Single canonical user photo hierarchy:
@@ -279,6 +305,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         updateDisplayName,
         signIn: handleSignIn,
         signOut: handleSignOut,
+        deleteAccount: handleDeleteAccount,
         clearError,
       }}
     >
