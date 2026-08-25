@@ -63,6 +63,8 @@ export default function BlogCard({
       );
 
   const formattedDate = formatBlogDate(post.publishDate, language);
+  const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
+
   // Author resolution: dynamically resolve author slug and link to /author/:slug
   const rawAuthorName = post.authorName || post.author?.name || "";
   const isFounder =

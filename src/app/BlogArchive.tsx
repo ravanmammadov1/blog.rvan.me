@@ -227,11 +227,11 @@ export default function BlogArchive() {
                   <div className="flex items-center gap-4 text-xs text-muted-foreground/80 mono">
                     <span className="flex items-center gap-1">
                       <Calendar size={13} />
-                      {formatBlogDate(featuredPost.publishDate)}
+                      {formatBlogDate(featuredPost.publishDate, language)}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock size={13} />
-                      {estimateReadingTime(featuredPost.body, featuredPost.readTime)}
+                      {estimateReadingTime(featuredPost.body, featuredPost.readTime, language)}
                     </span>
                   </div>
 

@@ -28,8 +28,8 @@ export default function BlogHero({ post }: BlogHeroProps) {
           : "frontendNews",
         post.title
       );
-  const formattedDate = formatBlogDate(post.publishDate);
-  const readTimeStr = estimateReadingTime(post.body, post.readTime);
+  const formattedDate = formatBlogDate(post.publishDate, language);
+  const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
 
   return (
     <header className="space-y-8 pt-4 pb-6">
