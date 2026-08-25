@@ -80,9 +80,9 @@ function AppRoutes() {
 
       {/* Admin Control Routes */}
       <Route path="/admin" element={<AdminConsolePage />} />
-      <Route path="/admin/submissions" element={<AdminConsolePage />} />
-      <Route path="/admin/applications" element={<AdminConsolePage />} />
-      <Route path="/admin/contributors" element={<AdminConsolePage />} />
+      <Route path="/admin/submissions" element={<Navigate to="/admin" replace />} />
+      <Route path="/admin/applications" element={<Navigate to="/admin" replace />} />
+      <Route path="/admin/contributors" element={<Navigate to="/admin" replace />} />
       <Route path="/admin/articles" element={<AdminConsolePage />} />
       <Route path="/admin/linkedin" element={<Navigate to="/admin" replace />} />
 
@@ -119,9 +119,9 @@ function AppRoutes() {
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
       <Route path="/az/admin" element={<AdminConsolePage />} />
-      <Route path="/az/admin/submissions" element={<AdminConsolePage />} />
-      <Route path="/az/admin/applications" element={<AdminConsolePage />} />
-      <Route path="/az/admin/contributors" element={<AdminConsolePage />} />
+      <Route path="/az/admin/submissions" element={<Navigate to="/az/admin" replace />} />
+      <Route path="/az/admin/applications" element={<Navigate to="/az/admin" replace />} />
+      <Route path="/az/admin/contributors" element={<Navigate to="/az/admin" replace />} />
       <Route path="/az/admin/articles" element={<AdminConsolePage />} />
       <Route path="/az/admin/linkedin" element={<Navigate to="/az/admin" replace />} />
 
