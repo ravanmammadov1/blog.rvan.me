@@ -9,6 +9,7 @@ import { getFallbackProject } from "../lib/portfolioFallback";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import GlobalFaqSection from "./components/GlobalFaqSection";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
 function projectImage(project: ProjectItem | ReturnType<typeof getFallbackProject>) {
@@ -145,6 +146,10 @@ export default function ProjectDetail() {
           </div>
         </div>
       </article>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
+
       <Footer siteSettings={siteSettings} />
     </main>
   );

@@ -16,6 +16,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import GlobalFaqSection from "./components/GlobalFaqSection";
 import { Button } from "./components/ui/Button";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -364,6 +365,9 @@ export default function ResourceDetail() {
           </aside>
         </div>
       </div>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />

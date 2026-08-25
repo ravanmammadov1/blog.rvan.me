@@ -10,6 +10,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import PageHero from "./components/PageHero";
+import GlobalFaqSection from "./components/GlobalFaqSection";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
 function getProjectImage(project: ProjectItem) {
@@ -104,6 +105,10 @@ export default function WorkArchive() {
           </section>
         </div>
       </section>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
+
       <Footer siteSettings={siteSettings} />
     </main>
   );

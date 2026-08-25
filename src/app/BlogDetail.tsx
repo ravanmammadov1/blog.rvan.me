@@ -19,6 +19,7 @@ import AuthorCard from "./components/blog/AuthorCard";
 import ArticleReactions from "./components/blog/ArticleReactions";
 import RelatedPosts from "./components/blog/RelatedPosts";
 import CommentSection from "./components/CommentSection";
+import GlobalFaqSection from "./components/GlobalFaqSection";
 import { Button } from "./components/ui/Button";
 
 export default function BlogDetail() {
@@ -246,6 +247,9 @@ export default function BlogDetail() {
           </aside>
         </div>
       </article>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
 
       <Footer siteSettings={siteSettings} />
     </main>

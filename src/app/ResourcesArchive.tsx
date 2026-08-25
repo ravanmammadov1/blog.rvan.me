@@ -20,6 +20,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import GlobalFaqSection from "./components/GlobalFaqSection";
 import { FontSpecimenCard } from "./components/content/FontSpecimenCard";
 import { IconSpecimenCard } from "./components/content/IconSpecimenCard";
 import { IllustrationSpecimenCard } from "./components/content/IllustrationSpecimenCard";
@@ -635,6 +636,9 @@ export default function ResourcesArchive() {
           </div>
         </section>
       )}
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />

@@ -33,6 +33,7 @@ import SiteHeader from "../components/SiteHeader";
 import Footer from "../components/Footer";
 import SEO from "../components/SEO";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import GlobalFaqSection from "../components/GlobalFaqSection";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { fetchSiteSettings } from "../../lib/sanityQueries";
 import { SiteSettings } from "../../types/cms";
@@ -1036,6 +1037,9 @@ export default function WriteForRvanPage() {
           </AnimatePresence>
         </div>
       </section>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />

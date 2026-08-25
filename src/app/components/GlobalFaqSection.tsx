@@ -1,0 +1,52 @@
+import { FaqItem, GLOBAL_FAQS } from "../../data/faqData";
+import FaqAccordion from "./ui/FaqAccordion";
+import { useLanguage } from "../../lib/i18n/LanguageContext";
+
+interface GlobalFaqSectionProps {
+  items?: FaqItem[];
+  title?: string;
+  eyebrow?: string;
+  description?: string;
+  className?: string;
+}
+
+/**
+ * Global site-wide FAQ section positioned immediately before the Footer.
+ * Unified across public pages with #faq anchor support.
+ */
+export default function GlobalFaqSection({
+  items,
+  title,
+  eyebrow,
+  description,
+  className = "",
+}: GlobalFaqSectionProps) {
+  const { language } = useLanguage();
+  const isAz = language === "az";
+
+  const defaultItems = items || GLOBAL_FAQS.slice(0, 6);
+
+  return (
+    <section
+      id="faq"
+      className={`relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20 scroll-mt-20 ${className}`}
+    >
+      <div className="mx-auto max-w-[1200px]">
+        <FaqAccordion
+          items={defaultItems}
+          eyebrow={eyebrow || (isAz ? "TEZ-TEZ VERİLƏN SUALLAR" : "FREQUENTLY ASKED QUESTIONS")}
+          title={title || (isAz ? "Platforma və Nəşr Haqqında" : "Platform & Editorial FAQ")}
+          description={
+            description ||
+            (isAz
+              ? "Rvan.me nəşriyyatı, məqalə təqdimatı, resurslar və alətlər haqqında ən çox verilən suallar:"
+              : "Frequently asked questions regarding our publication, editorial submissions, tools, and creative ecosystem:")
+          }
+          viewAllHref="/faq"
+          viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
+          showNumbers={true}
+        />
+      </div>
+    </section>
+  );
+}

@@ -12,6 +12,7 @@ import {
   Layers,
   Award,
   ChevronRight,
+  ArrowRight,
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
@@ -28,6 +29,7 @@ import { PORTFOLIO_FALLBACK_PROJECTS } from "../../lib/portfolioFallback";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import { Button } from "../components/ui/Button";
+import GlobalFaqSection from "../components/GlobalFaqSection";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -195,7 +197,6 @@ export default function FounderProfilePage() {
     });
     fetchAllBlogs(language).then((blogs) => {
       if (blogs && blogs.length > 0) {
-        // Filter articles authored by Ravan Mammadov or general editorial articles
         const filtered = blogs.filter(
           (b) =>
             b.authorName?.toLowerCase().includes("ravan") ||
@@ -240,8 +241,8 @@ export default function FounderProfilePage() {
     behanceCoverUrl: project.image,
   }));
 
-  // Canonical Name: ALWAYS "Ravan Mammadov" in both languages
-  const founderName = "Ravan Mammadov";
+  // Human-facing Display Name: Ravan Mammadov in EN, Rəvan Məmmədov in AZ
+  const founderName = isAz ? "Rəvan Məmmədov" : "Ravan Mammadov";
   const founderRole = isAz
     ? "Kreativ Strateq · Dizayner · Marketoloq"
     : "Creative Strategist · Designer · Marketer";
@@ -267,7 +268,7 @@ export default function FounderProfilePage() {
       ];
 
   const positioningStatement = isAz
-    ? "Ravan Mammadov dizayn, marketinq, vizual kommunikasiya və müasir rəqəmsal texnologiyalar sahəsində fəaliyyət göstərən yaradıcı peşəkardır."
+    ? "Rəvan Məmmədov dizayn, marketinq, vizual kommunikasiya və müasir rəqəmsal texnologiyalar sahəsində fəaliyyət göstərən yaradıcı peşəkardır."
     : "Ravan Mammadov is a creative professional working across design, marketing, visual communication and emerging digital technologies.";
 
   const biographyText = isAz
@@ -282,10 +283,10 @@ export default function FounderProfilePage() {
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Ravan Mammadov",
+    name: founderName,
     url: isAz ? "https://www.rvan.me/az/about/ravan-mammadov" : "https://www.rvan.me/about/ravan-mammadov",
     image: "https://www.rvan.me/imports/ravan_1-1200.webp",
-    jobTitle: "Creative Strategist, Designer, Marketer",
+    jobTitle: isAz ? "Kreativ Strateq, Dizayner, Marketoloq" : "Creative Strategist, Designer, Marketer",
     worksFor: {
       "@type": "Organization",
       name: "Rvan.me",
@@ -304,7 +305,7 @@ export default function FounderProfilePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title={isAz ? "Ravan Mammadov — Kreativ Strateq, Dizayner, Marketoloq" : "Ravan Mammadov — Creative Strategist, Designer, Marketer"}
+        title={isAz ? "Rəvan Məmmədov — Kreativ Strateq, Dizayner, Marketoloq" : "Ravan Mammadov — Creative Strategist, Designer, Marketer"}
         description={positioningStatement}
         url={isAz ? "https://www.rvan.me/az/about/ravan-mammadov" : "https://www.rvan.me/about/ravan-mammadov"}
       />
@@ -718,7 +719,7 @@ export default function FounderProfilePage() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          6. FOOTER CTA: EDITORIAL INVITATION
+          6. EDITORIAL INVITATION (SHARE YOUR IDEAS)
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-20 relative z-10 border-t border-[#DDE1E0] dark:border-white/10 bg-gradient-to-b from-transparent to-primary/[0.03]">
         <div className="mx-auto max-w-[1200px] text-center space-y-6">
@@ -755,6 +756,10 @@ export default function FounderProfilePage() {
         </div>
       </section>
 
+      {/* ── 7. GLOBAL FAQ SECTION (IMMEDIATELY BEFORE FOOTER) ── */}
+      <GlobalFaqSection />
+
+      {/* ── 8. GLOBAL FOOTER ── */}
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />
     </main>

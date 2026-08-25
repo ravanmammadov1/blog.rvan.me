@@ -162,7 +162,7 @@ export const EDITORIAL_TOPICS = [
 
 export type EditorialTopic = (typeof EDITORIAL_TOPICS)[number];
 
-// ── NEW "WRITE FOR RVAN.ME" ARTICLE SUBMISSION SYSTEM ──
+// ── ARTICLE SUBMISSION SYSTEM ──
 export type ArticleSubmissionStatus =
   | "PENDING"
   | "IN_REVIEW"

@@ -14,6 +14,7 @@ import SiteHeader from "../components/SiteHeader";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import GlobalFaqSection from "../components/GlobalFaqSection";
 import { Button } from "../components/ui/Button";
 
 const fadeUp = {
@@ -220,6 +221,9 @@ export default function TopicDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />

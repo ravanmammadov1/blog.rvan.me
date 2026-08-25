@@ -52,10 +52,12 @@ function AppRoutes() {
       <Route path="/settings" element={<ProfilePage />} />
       <Route path="/contributor" element={<Navigate to="/write" replace />} />
       <Route path="/contributor/dashboard" element={<Navigate to="/write" replace />} />
-      <Route path="/author/:authorSlug" element={<PublicAuthorProfilePage />} />
+      {/* Founder & Author Routes */}
       <Route path="/about/ravan-mammadov" element={<FounderProfilePage />} />
-      <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
       <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
+      <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
+      <Route path="/author/ravan-mammadov" element={<FounderProfilePage />} />
+      <Route path="/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/work" element={<WorkArchive />} />
       <Route path="/work/:slug" element={<ProjectDetail />} />
       <Route path="/contact" element={<ContactPage />} />
@@ -93,10 +95,11 @@ function AppRoutes() {
       <Route path="/az/settings" element={<ProfilePage />} />
       <Route path="/az/contributor" element={<Navigate to="/az/write" replace />} />
       <Route path="/az/contributor/dashboard" element={<Navigate to="/az/write" replace />} />
-      <Route path="/az/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/az/about/ravan-mammadov" element={<FounderProfilePage />} />
-      <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
       <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
+      <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
+      <Route path="/az/author/ravan-mammadov" element={<FounderProfilePage />} />
+      <Route path="/az/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/az/work" element={<WorkArchive />} />
       <Route path="/az/work/:slug" element={<ProjectDetail />} />
       <Route path="/az/contact" element={<ContactPage />} />

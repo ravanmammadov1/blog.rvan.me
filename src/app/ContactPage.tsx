@@ -19,7 +19,7 @@ import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import { Button } from "./components/ui/Button";
 import { CONTACT_FAQS } from "../data/faqData";
-import FaqAccordion from "./components/ui/FaqAccordion";
+import GlobalFaqSection from "./components/GlobalFaqSection";
 import { useAuth } from "../hooks/useAuth";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -464,24 +464,17 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Contextual Contact FAQ Section */}
-      <section className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20">
-        <div className="mx-auto max-w-[1200px]">
-          <FaqAccordion
-            items={CONTACT_FAQS}
-            eyebrow={language === "az" ? "ƏLAQƏ VƏ ƏMƏKDAŞLIQ" : "CONTACT & INQUIRIES"}
-            title={language === "az" ? "Əlaqə Haqqında Suallar" : "Inquiries & Submissions"}
-            description={
-              language === "az"
-                ? "Redaksiya heyəti ilə əlaqə, əməkdaşlıq təklifləri və düzəlişlər haqqında ən çox verilən suallar:"
-                : "Common questions regarding contacting the editorial desk, partnership proposals, and corrections:"
-            }
-            viewAllHref="/faq"
-            viewAllLabel={language === "az" ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}
-            showNumbers={true}
-          />
-        </div>
-      </section>
+      {/* Contextual Contact Global FAQ Section */}
+      <GlobalFaqSection
+        items={CONTACT_FAQS}
+        eyebrow={language === "az" ? "ƏLAQƏ VƏ ƏMƏKDAŞLIQ" : "CONTACT & INQUIRIES"}
+        title={language === "az" ? "Əlaqə Haqqında Suallar" : "Inquiries & Submissions"}
+        description={
+          language === "az"
+            ? "Redaksiya heyəti ilə əlaqə, əməkdaşlıq təklifləri və düzəlişlər haqqında ən çox verilən suallar:"
+            : "Common questions regarding contacting the editorial desk, partnership proposals, and corrections:"
+        }
+      />
 
       {/* Footer */}
       <Footer siteSettings={siteSettings} />

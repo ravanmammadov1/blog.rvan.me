@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import {
   Sparkles,
   MapPin,
@@ -11,8 +10,6 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
-  Calendar,
-  Clock,
   ArrowLeft,
   UserX,
   Compass,
@@ -33,6 +30,7 @@ import SEO from "../components/SEO";
 import SiteHeader from "../components/SiteHeader";
 import Footer from "../components/Footer";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import GlobalFaqSection from "../components/GlobalFaqSection";
 import { Button } from "../components/ui/Button";
 
 // Behance SVG
@@ -136,7 +134,7 @@ export default function PublicAuthorProfilePage() {
       <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
         <SEO
           title={isAz ? "Müəllif Tapılmadı — Rvan.me" : "Author Not Found — Rvan.me"}
-          description={isAz ? "Axtarılan müəllif profili tapılmadı." : "The requested contributor profile does not exist."}
+          description={isAz ? "Axtarılan müəllif profili tapılmadı." : "The requested author profile does not exist."}
           noIndex={true}
         />
         <SiteHeader siteSettings={siteSettings} />
@@ -157,7 +155,7 @@ export default function PublicAuthorProfilePage() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {isAz
                   ? `«${authorSlug}» adlı müəllif profili mövcud deyil və ya hələ dərc edilməyib.`
-                  : `The contributor profile for "${authorSlug}" could not be found or has not been published yet.`}
+                  : `The author profile for "${authorSlug}" could not be found or has not been published yet.`}
               </p>
             </div>
 
@@ -172,12 +170,12 @@ export default function PublicAuthorProfilePage() {
                 {isAz ? "BÜTÜN MƏQALƏLƏR" : "EXPLORE BLOG"}
               </Button>
               <Button
-                to={getLocalizedPath("/contributor")}
+                to={getLocalizedPath("/write")}
                 variant="secondary"
                 size="md"
                 icon={<Compass size={14} />}
               >
-                {isAz ? "MÜƏLLİFLİK PROQRAMI" : "CONTRIBUTOR PROGRAM"}
+                {isAz ? "FİKRİNİZİ PAYLAŞIN" : "SHARE YOUR IDEAS"}
               </Button>
             </div>
           </div>
@@ -193,7 +191,7 @@ export default function PublicAuthorProfilePage() {
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
-        title={`${profile.name} — ${isAz ? "Müəllif və Kontributor Profili" : "Author & Contributor Profile"} | Rvan.me`}
+        title={`${profile.name} — ${isAz ? "Müəllif Profili" : "Author Profile"} | Rvan.me`}
         description={profile.bio || `${profile.name} — ${profile.professionalTitle}`}
         image={profile.profileImage || undefined}
         url={isAz ? `https://www.rvan.me/az/author/${profile.slug}` : `https://www.rvan.me/author/${profile.slug}`}
@@ -238,7 +236,7 @@ export default function PublicAuthorProfilePage() {
             {/* Author Information */}
             <div className="flex-1 space-y-3">
               <div className="flex items-center gap-2 text-xs font-mono text-primary uppercase font-bold tracking-widest">
-                <Sparkles size={14} /> {isAz ? "REDAKSİYA MÜƏLLİFİ" : "EDITORIAL CONTRIBUTOR"}
+                <Sparkles size={14} /> {isAz ? "REDAKSİYA MÜƏLLİFİ" : "EDITORIAL AUTHOR"}
               </div>
 
               <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
@@ -411,8 +409,8 @@ export default function PublicAuthorProfilePage() {
               </h3>
               <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto leading-relaxed">
                 {isAz
-                  ? `Bu müəllif Rvan.me redaksiyasına qoşulub. ${profile.name} tərəfindən yazılan məqalələr redaksiya baxışından sonra burada dərc olunacaq.`
-                  : `This author is a registered contributor on Rvan.me. Articles written by ${profile.name} will appear here once editorially approved and published.`}
+                  ? `Bu müəllif Rvan.me redaksiyasında qeydiyyatdan keçib. ${profile.name} tərəfindən yazılan məqalələr redaksiya baxışından sonra burada dərc olunacaq.`
+                  : `This author is a registered author on Rvan.me. Articles written by ${profile.name} will appear here once editorially approved and published.`}
               </p>
             </div>
           ) : (
@@ -473,6 +471,9 @@ export default function PublicAuthorProfilePage() {
           )}
         </div>
       </section>
+
+      {/* ── Global FAQ Section ── */}
+      <GlobalFaqSection />
 
       <Footer siteSettings={siteSettings} />
       <ScrollToTopButton />
