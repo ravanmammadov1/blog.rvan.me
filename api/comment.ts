@@ -87,9 +87,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const writeToken =
-    process.env.SANITY_API_WRITE_TOKEN ||
-    "skqxIS8YhYqY9jyUT327FyNAY9f5Yfd5AyD7ZVBipyqRTNximGZyXws2YVj8Kohbxz0MTC61poqCOok5m";
+  const writeToken = process.env.SANITY_API_WRITE_TOKEN;
+
+  if (!writeToken) {
+    console.warn("[comment] SANITY_API_WRITE_TOKEN environment variable is missing on server.");
+  }
 
   const client = createClient({
     projectId: process.env.VITE_SANITY_PROJECT_ID || "0lqwkcmg",

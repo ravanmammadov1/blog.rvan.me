@@ -33,9 +33,11 @@ function slugify(text: string): string {
     .replace(/-+$/, "");
 }
 
-const writeToken =
-  process.env.SANITY_API_WRITE_TOKEN ||
-  "skqxIS8YhYqY9jyUT327FyNAY9f5Yfd5AyD7ZVBipyqRTNximGZyXws2YVj8Kohbxz0MTC61poqCOok5m";
+const writeToken = process.env.SANITY_API_WRITE_TOKEN;
+
+if (!writeToken) {
+  console.warn("[SubmitArticle] SANITY_API_WRITE_TOKEN environment variable is missing on server.");
+}
 
 const sanityClient = createClient({
   projectId: process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || "0lqwkcmg",

@@ -1,6 +1,6 @@
 import fs from "fs";
 
-const token = "skqxIS8YhYqY9jyUT327FyNAY9f5Yfd5AyD7ZVBipyqRTNximGZyXws2YVj8Kohbxz0MTC61poqCOok5m";
+const token = process.env.SANITY_API_WRITE_TOKEN;
 const projectId = "0lqwkcmg";
 const dataset = "production";
 

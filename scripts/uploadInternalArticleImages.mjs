@@ -1,6 +1,9 @@
 import { createClient } from "@sanity/client";
 
-const token = "skqxIS8YhYqY9jyUT327FyNAY9f5Yfd5AyD7ZVBipyqRTNximGZyXws2YVj8Kohbxz0MTC61poqCOok5m";
+const token = process.env.SANITY_API_WRITE_TOKEN;
+if (!token) {
+  throw new Error("SANITY_API_WRITE_TOKEN environment variable is missing.");
+}
 
 const client = createClient({
   projectId: "0lqwkcmg",
