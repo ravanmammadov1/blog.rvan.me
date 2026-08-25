@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  PenTool,
   Sparkles,
-  FileText,
   ShieldCheck,
   CheckCircle2,
   AlertCircle,
-  ArrowRight,
   Eye,
   Edit3,
   Bold,
@@ -86,7 +82,6 @@ async function compressImageFile(
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Try webp first, fallback to jpeg
         let mimeType = "image/jpeg";
         if (file.type === "image/webp") {
           mimeType = "image/webp";
@@ -119,6 +114,7 @@ export default function WriteForRvanPage() {
   const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string>("");
   const [profilePhotoBase64, setProfilePhotoBase64] = useState<string>("");
+  const [isProcessingProfile, setIsProcessingProfile] = useState<boolean>(false);
   const profileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Article Information State
@@ -132,9 +128,10 @@ export default function WriteForRvanPage() {
   const [editorialNote, setEditorialNote] = useState("");
 
   // Cover Image State
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string>("");
-  const [coverBase64, setCoverBase64] = useState<string>("");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string>("");
+  const [coverImageBase64, setCoverImageBase64] = useState<string>("");
+  const [isProcessingCover, setIsProcessingCover] = useState<boolean>(false);
   const coverInputRef = useRef<HTMLInputElement | null>(null);
 
   // Editor Tabs & Status
@@ -165,6 +162,7 @@ export default function WriteForRvanPage() {
       return;
     }
 
+    setIsProcessingProfile(true);
     try {
       const { base64, previewUrl } = await compressImageFile(file, 800, 0.85);
       setProfilePhotoFile(file);
@@ -174,6 +172,8 @@ export default function WriteForRvanPage() {
     } catch (err) {
       console.error("Profile photo processing error:", err);
       setErrorMessage(isAz ? "Şəkil oxunarkən xəta baş verdi." : "Failed to process profile photo.");
+    } finally {
+      setIsProcessingProfile(false);
     }
   };
 
@@ -200,22 +200,25 @@ export default function WriteForRvanPage() {
       return;
     }
 
+    setIsProcessingCover(true);
     try {
       const { base64, previewUrl } = await compressImageFile(file, 1600, 0.82);
-      setCoverFile(file);
-      setCoverPreview(previewUrl);
-      setCoverBase64(base64);
+      setCoverImageFile(file);
+      setCoverImagePreview(previewUrl);
+      setCoverImageBase64(base64);
       setErrorMessage("");
     } catch (err) {
       console.error("Cover image processing error:", err);
       setErrorMessage(isAz ? "Şəkil oxunarkən xəta baş verdi." : "Failed to process cover image.");
+    } finally {
+      setIsProcessingCover(false);
     }
   };
 
   const handleRemoveCover = () => {
-    setCoverFile(null);
-    setCoverPreview("");
-    setCoverBase64("");
+    setCoverImageFile(null);
+    setCoverImagePreview("");
+    setCoverImageBase64("");
     if (coverInputRef.current) {
       coverInputRef.current.value = "";
     }
@@ -275,7 +278,7 @@ export default function WriteForRvanPage() {
       setErrorMessage(isAz ? "Zəhmət olmasa məqalə mətnini daxil edin." : "Please enter the article content.");
       return;
     }
-    if (!coverBase64) {
+    if (!coverImageBase64) {
       setErrorMessage(isAz ? "Zəhmət olmasa məqalə üçün üz qabığı şəkli yükləyin." : "Please upload a cover image for the article.");
       return;
     }
@@ -302,7 +305,7 @@ export default function WriteForRvanPage() {
         authorEmail: authorEmail.trim(),
         authorBio: authorBio.trim(),
         authorWebsite: authorWebsite.trim(),
-        profilePhotoBase64,
+        profilePhotoBase64: profilePhotoBase64 || null,
         profilePhotoName: profilePhotoFile?.name || "author_profile.jpg",
         title: articleTitle.trim(),
         excerpt: excerpt.trim(),
@@ -310,8 +313,8 @@ export default function WriteForRvanPage() {
         category,
         topic: topic.trim(),
         tags,
-        coverImageBase64,
-        coverImageName: coverFile?.name || "article_cover.jpg",
+        coverImageBase64: coverImageBase64 || null,
+        coverImageName: coverImageFile?.name || "article_cover.jpg",
         language: selectedLanguage,
         editorialNote: editorialNote.trim(),
         originalWorkConfirmed: true,
@@ -352,9 +355,9 @@ export default function WriteForRvanPage() {
     setExcerpt("");
     setArticleContent("");
     setTagsStr("");
-    setCoverFile(null);
-    setCoverPreview("");
-    setCoverBase64("");
+    setCoverImageFile(null);
+    setCoverImagePreview("");
+    setCoverImageBase64("");
     setProfilePhotoFile(null);
     setProfilePhotoPreview("");
     setProfilePhotoBase64("");
@@ -577,7 +580,11 @@ export default function WriteForRvanPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-semibold text-foreground truncate">{profilePhotoFile?.name}</p>
-                          <p className="text-[11px] text-muted-foreground">{isAz ? "Müəllif şəkli seçildi" : "Author photo attached"}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {isProcessingProfile
+                              ? (isAz ? "Şəkil sıxılır..." : "Compressing image...")
+                              : (isAz ? "Müəllif şəkli seçildi" : "Author photo attached")}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <button
@@ -604,7 +611,7 @@ export default function WriteForRvanPage() {
                         className="cursor-pointer rounded-2xl border-2 border-dashed border-border hover:border-primary/50 bg-muted/10 hover:bg-primary/[0.02] p-4 text-center transition-all flex items-center justify-center gap-3"
                       >
                         <div className="grid h-10 w-10 place-items-center rounded-full bg-card border border-border text-primary shadow-2xs">
-                          <Camera size={18} />
+                          {isProcessingProfile ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
                         </div>
                         <div className="text-left">
                           <span className="text-xs font-bold text-foreground block">
@@ -894,17 +901,17 @@ export default function WriteForRvanPage() {
                       id="cover-image-upload-input"
                     />
 
-                    {coverPreview ? (
+                    {coverImagePreview ? (
                       <div className="relative rounded-2xl border border-border bg-muted/20 p-4 space-y-3">
                         <div className="relative h-48 w-full rounded-xl overflow-hidden bg-black/5 dark:bg-white/5 border border-border">
                           <img
-                            src={coverPreview}
+                            src={coverImagePreview}
                             alt="Cover Preview"
                             className="h-full w-full object-cover"
                           />
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground truncate">{coverFile?.name}</span>
+                          <span className="text-xs text-muted-foreground truncate">{coverImageFile?.name}</span>
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
@@ -931,7 +938,7 @@ export default function WriteForRvanPage() {
                         className="cursor-pointer rounded-2xl border-2 border-dashed border-border hover:border-primary/50 bg-muted/10 hover:bg-primary/[0.02] p-6 text-center transition-all space-y-2"
                       >
                         <div className="mx-auto grid h-10 w-10 place-items-center rounded-xl bg-card border border-border text-primary shadow-2xs">
-                          <UploadCloud size={20} />
+                          {isProcessingCover ? <Loader2 size={20} className="animate-spin" /> : <UploadCloud size={20} />}
                         </div>
                         <div className="space-y-0.5">
                           <span className="text-xs font-bold text-foreground block">
@@ -1008,7 +1015,7 @@ export default function WriteForRvanPage() {
 
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isProcessingCover || isProcessingProfile}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-xs tracking-wider uppercase bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {isSubmitting ? (
