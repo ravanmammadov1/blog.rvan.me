@@ -54,17 +54,17 @@ export default function ContributorSection() {
           {/* Top Header & Copy */}
           <div className="max-w-3xl space-y-4">
             <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "İCMA VƏ MÜƏLLİFLİK" : "COMMUNITY & PERSPECTIVES"}
+              {isAz ? "İCMA VƏ PERSPEKTİVLƏR" : "COMMUNITY & PERSPECTIVES"}
             </Eyebrow>
 
             <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-foreground">
-              {isAz ? "Fikirləriniz görülməyə layiqdir." : "Your ideas deserve to be seen."}
+              {isAz ? "Fikirləriniz görünməyə dəyər." : "Your ideas deserve to be seen."}
             </h2>
 
             <p className="text-base md:text-lg leading-relaxed text-muted-foreground font-normal">
               {isAz
-                ? "Bildiklərinizi paylaşın. Peşəkar kimliyinizi qurun. Öz adınız və profilinizlə nəşr olun."
-                : "Share what you know. Build your professional identity. Get published under your name."}
+                ? "Maraqlı fikirlərinizi paylaşın. Rvan.me üçün uyğun yazıları müəllifinizin adı ilə nəşr edirik."
+                : "Share your perspective. If it fits Rvan.me, we will publish it under your name."}
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export default function ContributorSection() {
               size="md"
               icon={<ArrowUpRight size={15} />}
             >
-              {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
+              {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
             </Button>
             <span className="text-xs text-muted-foreground mono">
               {isAz

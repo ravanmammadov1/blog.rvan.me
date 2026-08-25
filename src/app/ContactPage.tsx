@@ -446,7 +446,7 @@ export default function ContactPage() {
                       iconPosition="right"
                       className="w-full sm:w-auto"
                     >
-                      {isAz ? "MƏQALƏ TƏQDİMAT SƏHİFƏSİNƏ KEÇ" : "GO TO SUBMISSION PORTAL"}
+                      {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
                     </Button>
                   </div>
 

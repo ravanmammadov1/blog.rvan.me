@@ -203,7 +203,7 @@ export default function BlogSection() {
             icon={<Sparkles size={15} className="text-primary" />}
             iconPosition="left"
           >
-            {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
+            {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
           </Button>
         </div>
       </div>

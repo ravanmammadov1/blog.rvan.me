@@ -112,8 +112,8 @@ export default function HomePage() {
             title={isAz ? "Platforma və Nəşr Haqqında" : "Platform & Editorial Overview"}
             description={
               isAz
-                ? "Rvan.me platforması, müəlliflik, resurslar və alətlər haqqında ən çox soruşulan suallar:"
-                : "Answers to common questions regarding our publication, contributor program, resources, and workflows:"
+                ? "Rvan.me platforması, məqalə qəbulu, resurslar və alətlər haqqında ən çox soruşulan suallar:"
+                : "Answers to common questions regarding our publication, editorial submissions, resources, and workflows:"
             }
             viewAllHref="/faq"
             viewAllLabel={isAz ? "BÜTÜN SUALLARA BAX (10)" : "VIEW ALL FAQS (10)"}

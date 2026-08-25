@@ -113,7 +113,7 @@ export default function AboutPage() {
               size="lg"
               icon={<ArrowRight size={16} />}
             >
-              {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
+              {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
             </Button>
           </div>
 
@@ -580,22 +580,22 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── 10. FINAL CONTRIBUTOR CALL TO ACTION ── */}
-      <section className="relative px-6 py-24 md:px-10 md:py-32">
+      {/* ── 10. EDITORIAL INVITATION ── */}
+      <section className="relative px-6 py-20 md:px-10 md:py-28">
         <div className="mx-auto max-w-4xl rounded-3xl border border-border bg-gradient-to-b from-card to-background p-8 sm:p-14 text-center space-y-6 shadow-xl relative overflow-hidden">
           <div className="space-y-3">
             <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "İDEYANIZ VAR?" : "HAVE AN IDEA WORTH SHARING?"}
+              {isAz ? "REDAKSİYA DƏVƏTİ" : "EDITORIAL INVITATION"}
             </Eyebrow>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
-              {isAz ? "Paylaşmağa dəyər bir fikriniz var?" : "Have an idea worth sharing?"}
+              {isAz ? "Paylaşmağa dəyər bir fikriniz var?" : "Have something worth saying?"}
             </h2>
 
             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               {isAz
-                ? "Bildikləriniz, öyrəndikləriniz, araşdırdıqlarınız və ya fərqli gördüyünüz yanaşmalar haqqında yazın. Öz peşəkar ictimai profilinizi yaradın və ilk məqalənizi göndərin."
-                : "Write about what you know, what you've learned, what you've researched or what you see differently. Create your profile and submit your first article."}
+                ? "Dizayn, yaradıcılıq, texnologiya, marketinq, mədəniyyət və kreativ sənayeni formalaşdıran ideyalar haqqında maraqlı fikirləriniz varsa, onları bizimlə bölüşün."
+                : "We're always interested in thoughtful perspectives on design, creativity, technology, marketing, culture and the ideas shaping the creative industry."}
             </p>
           </div>
 
@@ -606,13 +606,9 @@ export default function AboutPage() {
               size="lg"
               icon={<ArrowRight size={16} />}
             >
-              {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
+              {isAz ? "FİKRİNİZİ PAYLAŞIN →" : "SHARE YOUR IDEAS →"}
             </Button>
           </div>
-
-          <p className="text-[11px] font-mono text-muted-foreground">
-            {isAz ? "Məqalə ideyanızı və ya qaralamanızı redaksiyaya təqdim edin." : "Submit your article proposal or essay draft to our editorial board."}
-          </p>
         </div>
       </section>
 

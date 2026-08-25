@@ -45,53 +45,53 @@ export const GLOBAL_FAQS: FaqItem[] = [
   },
   {
     id: 3,
-    qEn: "How do I write for Rvan.me?",
-    qAz: "Rvan.me üçün necə məqalə yaza bilərəm?",
-    aEn: "Anyone can submit an article idea or a draft for editorial consideration on Rvan.me. Navigate to the Contact page (/contact) and submit your topic proposal.",
-    aAz: "Hər kəs Rvan.me-də dərc olunması üçün məqalə ideyası və ya qaralama təqdim edə bilər. Əlaqə səhifəsinə (/contact) keçərək mövzu təklifinizi göndərin.",
+    qEn: "How can I share an idea or submit an article to Rvan.me?",
+    qAz: "Rvan.me ilə necə fikir və ya məqalə paylaşa bilərəm?",
+    aEn: "Anyone with an original idea or finished article can submit it for editorial consideration via our submission page (/write). Fill out the form with your article text, author bio, profile photo, and cover image.",
+    aAz: "Orijinal fikri və ya hazır məqaləsi olan hər kəs onu təqdimat səhifəmiz (/write) vasitəsilə redaksiyamıza göndərə bilər. Formu məqalə mətni, müəllif bioqrafiyası, profil şəkli və üz qabığı ilə dolduraraq bizimlə bölüşün.",
     bulletsEn: [
-      "Share your topic title, short summary, and target audience.",
-      "Include any relevant background, research, or portfolio links.",
-      "Our editorial team reviews every submission and reaches out with next steps."
+      "No contributor account required — anyone can submit an article.",
+      "Attach your profile photo and cover image directly in the form.",
+      "Our editorial team reviews every submission and reaches out via email if selected."
     ],
     bulletsAz: [
-      "Məqalə mövzusunu, qısa xülasəsini və hədəf oxucu kütlənizi qeyd edin.",
-      "Mövzuya aid təcrübənizi və ya portfolio linkinizi əlavə edin.",
-      "Redaksiya heyətimiz hər bir müraciəti nəzərdən keçirib növbəti addımlar üçün sizinlə əlaqə saxlayır."
+      "Müəllif hesabı açmaq tələb olunmur — hər kəs məqalə göndərə bilər.",
+      "Profil şəklinizi və üz qabığı şəklini birbaşa forma vasitəsilə əlavə edin.",
+      "Redaksiya heyətimiz hər müraciəti nəzərdən keçirir və seçildikdə e-poçtla sizinlə əlaqə saxlayır."
     ]
   },
   {
     id: 4,
-    qEn: "How do article submissions work?",
-    qAz: "Məqalə təqdimatı necə işləyir?",
-    aEn: "Once your article proposal or draft is submitted through the Contact page, it enters our editorial review queue.",
-    aAz: "Məqalə təklifiniz və ya yazınız Əlaqə səhifəsindən göndərildikdən sonra redaksiyanın baxış növbəsinə daxil olur.",
+    qEn: "How does the editorial review process work?",
+    qAz: "Redaksiya baxışı prosesi necə işləyir?",
+    aEn: "Submissions are delivered directly to the editorial team for manual evaluation.",
+    aAz: "Təqdim olunan yazılar birbaşa redaksiya heyətinə çatdırılır və qiymətləndirilir.",
     bulletsEn: [
-      "Submit your article premise, key takeaways, and preferred language (Azerbaijani or English).",
-      "Editorial Board reviews the piece for originality, analytical depth, and practical utility.",
-      "Upon approval, your piece is published on Rvan.me with verified author attribution."
+      "Evaluation: We review your submission for originality, structure, and real utility.",
+      "Attribution: If accepted, your article is published on Rvan.me with your name, bio, and profile photo.",
+      "Copyright: Your work stays yours — you retain 100% of your copyright."
     ],
     bulletsAz: [
-      "Məqalənin əsas tezisini, faydalı fikirlərini və dilini (Azərbaycan və ya İngilis) təqdim edin.",
-      "Redaksiya heyəti yazını orijinallıq, analitik dərinlik və faydalılıq üzrə qiymətləndirir.",
-      "Təsdiqləndikdən sonra məqaləniz təsdiqlənmiş müəllif adınızla Rvan.me-də canlı yayımlanır."
+      "Qiymətləndirmə: Məqalənizi orijinallıq, struktur və faydalılıq üzrə nəzərdən keçiririk.",
+      "Müəlliflik: Qəbul edildikdə yazınız adınız, bioqrafiyanız və şəklinizlə Rvan.me-də yayımlanır.",
+      "Müəllif Hüququ: Əsəriniz sizə məxsus olaraq qalır — müəlliflik hüququnuz 100% sizdədir."
     ]
   },
   {
     id: 5,
-    qEn: "How does article approval work?",
-    qAz: "Məqalələrin təsdiqlənməsi prosesi necə işləyir?",
-    aEn: "Every submitted article undergoes human editorial review to maintain high analytical depth and community trust before public publication.",
-    aAz: "İctimai dərcdən öncə hər bir yazı yüksək analitik keyfiyyəti və oxucu etimadını qorumaq üçün redaksiya heyəti tərəfindən nəzərdən keçirilir.",
+    qEn: "How does article publication work?",
+    qAz: "Məqalənin nəşri necə həyata keçirilir?",
+    aEn: "Every selected article is published with full author attribution, dedicated URLs, and social preview cards.",
+    aAz: "Seçilmiş hər bir yazı tam müəllif adı, xüsusi link və sosial önizləmə kartları ilə nəşr olunur.",
     bulletsEn: [
-      "Editorial Evaluation: We review structure, originality, clarity of perspective, and actionable value (typically 2–5 business days).",
-      "Actionable Feedback: If revisions are needed, clear editorial notes are attached directly in your dashboard.",
-      "Publication: Approved articles go live on Rvan.me with permanent author attribution, social preview cards, and custom URLs."
+      "Direct Communication: We contact authors directly via email regarding publication decisions.",
+      "Editorial Crafting: Articles are formatted to premium editorial standards.",
+      "Public Attribution: Published articles prominently feature your author identity."
     ],
     bulletsAz: [
-      "Redaksiya Qiymətləndirməsi: Məzmunun strukturu, orijinallığı və praktiki dəyəri yoxlanılır (adətən 2–5 iş günü ərzində).",
-      "Düzəliş Təklifləri: Təkmilləşdirmə lazım olduqda redaksiya qeydləri birbaşa şəxsi kabinetinizə göndərilir.",
-      "Dərc Olunma: Təsdiqlənmiş yazılar daimi müəllif adı, sosial önizləmə kartları və fərdi linklə canlı yayımlanır."
+      "Birbaşa Əlaqə: Nəşr qərarı ilə bağlı müəlliflə birbaşa e-poçt vasitəsilə əlaqə saxlayırıq.",
+      "Redaksiya Tərtibatı: Məqalələr yüksək vizual və məzmun standartları ilə dizayn olunur.",
+      "İctimai Müəlliflik: Nəşr olunan yazılarda müəllif kimliyiniz aydın şəkildə təqdim olunur."
     ]
   },
   {

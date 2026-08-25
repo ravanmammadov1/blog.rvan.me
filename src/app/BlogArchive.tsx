@@ -438,6 +438,28 @@ export default function BlogArchive() {
         </div>
       </div>
 
+      {/* Subtle Editorial Idea CTA */}
+      <section className="relative px-4 sm:px-6 md:px-8 py-8">
+        <div className="mx-auto max-w-[1280px]">
+          <div className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/[0.04] via-card to-primary/[0.02] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xs">
+            <div className="space-y-1 text-center md:text-left max-w-xl">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                {isAz ? "Paylaşmağa dəyər bir fikriniz var?" : "Have an idea worth exploring?"}
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {isAz ? "Fikrinizi Rvan.me redaksiyası ilə bölüşün." : "Share your perspective with the Rvan.me editorial team."}
+              </p>
+            </div>
+            <Link
+              to={getLocalizedPath("/write")}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-xs tracking-wider uppercase bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-2xs shrink-0"
+            >
+              <span>{isAz ? "Fikrinizi paylaşın →" : "Share Your Ideas →"}</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Contextual Blog FAQ Section */}
       <section className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20">
         <div className="mx-auto max-w-[1200px]">

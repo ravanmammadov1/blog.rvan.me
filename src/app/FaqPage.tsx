@@ -95,31 +95,31 @@ export default function FaqPage() {
         </div>
       </div>
 
-      {/* Contributor Call to Action */}
+      {/* Editorial Invitation Call to Action */}
       <section className="relative px-6 pb-24 md:px-10 md:pb-32">
         <div className="mx-auto max-w-4xl rounded-3xl border border-border bg-gradient-to-b from-card to-background p-8 sm:p-12 text-center space-y-6 shadow-xl relative overflow-hidden">
           <div className="space-y-2">
             <Eyebrow className="text-primary tracking-[.2em]">
-              {isAz ? "MÜƏLLİF KİMİ QOŞULUN" : "BECOME A CONTRIBUTOR"}
+              {isAz ? "REDAKSİYA DƏVƏTİ" : "EDITORIAL INVITATION"}
             </Eyebrow>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-              {isAz ? "Fikirlərinizi ictimaiyyətlə bölüşməyə hazırsınız?" : "Have an idea worth publishing?"}
+              {isAz ? "Paylaşmağa dəyər bir fikriniz var?" : "Have an idea worth exploring?"}
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
               {isAz
-                ? "Dizayn, brendinq və marketinq sahəsindəki təcrübənizi və ya araşdırmanızı Rvan.me-də dərc edin. Adınızla qalan, icmaya fayda verən məzmun yaradın."
-                : "Share what you know, what you've learned, or what you see differently. Build your verified public author profile and submit your first article."}
+                ? "Dizayn, yaradıcılıq, texnologiya, marketinq və kreativ sənayeni formalaşdıran ideyalar haqqında maraqlı fikirləriniz varsa, onları bizimlə bölüşün."
+                : "We're always interested in thoughtful perspectives on design, creativity, technology, marketing, culture and the ideas shaping the creative industry."}
             </p>
           </div>
 
           <div className="pt-2 flex justify-center">
             <Button
-              to={getLocalizedPath("/contributor")}
+              to={getLocalizedPath("/write")}
               variant="primary"
               size="lg"
               icon={<ArrowRight size={16} />}
             >
-              {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+              {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
             </Button>
           </div>
         </div>

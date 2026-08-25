@@ -44,6 +44,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       authorEmail,
       authorBio,
       authorWebsite,
+      profilePhotoBase64,
+      profilePhotoName,
       title,
       language = "en",
       category,
@@ -51,7 +53,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       tags,
       excerpt,
       content,
-      coverImageUrl,
+      coverImageBase64,
+      coverImageName,
       editorialNote,
       originalWorkConfirmed,
       honeypot,
@@ -85,6 +88,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Please provide a short professional bio." });
     }
 
+    if (!profilePhotoBase64) {
+      return res.status(400).json({ error: "Please upload an author profile photo." });
+    }
+
     if (!trimmedTitle || trimmedTitle.length < 3) {
       return res.status(400).json({ error: "Please provide an article title." });
     }
@@ -97,13 +104,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Please provide the complete article content." });
     }
 
+    if (!coverImageBase64) {
+      return res.status(400).json({ error: "Please upload a cover image for the article." });
+    }
+
     if (!originalWorkConfirmed) {
       return res.status(400).json({
         error: "You must confirm that this is your original work to submit for publication.",
       });
     }
 
-    // 4. Resend configuration & recipient setup
+    // 4. Build Attachments
+    const attachments: Array<{ filename: string; content: Buffer }> = [];
+
+    if (coverImageBase64 && typeof coverImageBase64 === "string") {
+      const cleanCoverBase64 = coverImageBase64.replace(/^data:image\/\w+;base64,/, "");
+      const ext = coverImageBase64.includes("png") ? "png" : coverImageBase64.includes("webp") ? "webp" : "jpg";
+      attachments.push({
+        filename: coverImageName || `article_cover.${ext}`,
+        content: Buffer.from(cleanCoverBase64, "base64"),
+      });
+    }
+
+    if (profilePhotoBase64 && typeof profilePhotoBase64 === "string") {
+      const cleanProfileBase64 = profilePhotoBase64.replace(/^data:image\/\w+;base64,/, "");
+      const ext = profilePhotoBase64.includes("png") ? "png" : profilePhotoBase64.includes("webp") ? "webp" : "jpg";
+      attachments.push({
+        filename: profilePhotoName || `author_profile.${ext}`,
+        content: Buffer.from(cleanProfileBase64, "base64"),
+      });
+    }
+
+    // 5. Resend configuration & recipient setup
     const apiKey = process.env.RESEND_API_KEY;
     const recipientEmail = process.env.ADMIN_EMAIL || "mammadovravan1@gmail.com";
     const fromAddress =
@@ -118,41 +150,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Build plain-text fallback
     const plainText = `
-NEW ARTICLE SUBMISSION
+NEW ARTICLE SUBMISSION — Rvan.me
 
-Author: ${trimmedName}
+==================================================
+AUTHOR INFORMATION
+==================================================
+Name: ${trimmedName}
 Email: ${trimmedEmail}
+Bio: ${trimmedBio}
+Website / Portfolio: ${authorWebsite || "Not provided"}
+Profile Photo: Attached (${profilePhotoName || "author_profile.jpg"})
+
+==================================================
+ARTICLE INFORMATION
+==================================================
+Title: ${trimmedTitle}
 Language: ${selectedLang}
 Category: ${selectedCategory}
 Topic: ${topic || "Not specified"}
-Website: ${authorWebsite || "Not provided"}
-Bio: ${trimmedBio}
+Tags: ${Array.isArray(tags) ? tags.join(", ") : tags || "None"}
+Cover Image: Attached (${coverImageName || "article_cover.jpg"})
 
-EDITORIAL NOTE:
-${editorialNote || "No editorial note provided."}
-
-ARTICLE TITLE:
-${trimmedTitle}
-
-EXCERPT:
+EXCERPT / SHORT SUMMARY:
 ${trimmedExcerpt}
 
-COVER IMAGE URL:
-${coverImageUrl || "None (Editorial team to select or upload)"}
+${editorialNote ? `
+==================================================
+EDITORIAL NOTE
+==================================================
+${editorialNote}
+` : ""}
 
-TAGS:
-${Array.isArray(tags) ? tags.join(", ") : tags || "None"}
-
-ARTICLE CONTENT:
---------------------------------------------------
+==================================================
+ARTICLE CONTENT
+==================================================
 ${trimmedContent}
---------------------------------------------------
 
-COPYRIGHT CONFIRMATION:
-Confirmed (Original work of author)
-
-SUBMITTED AT:
-${timestampStr}
+==================================================
+COPYRIGHT CONFIRMATION: Confirmed by author
+SUBMITTED AT: ${timestampStr}
     `.trim();
 
     // Build HTML email layout
@@ -169,10 +205,11 @@ ${timestampStr}
             .title { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; line-height: 1.25; }
             .author-sub { font-size: 14px; color: #64748b; margin: 0; }
             .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #64748b; text-transform: uppercase; margin-top: 20px; margin-bottom: 6px; }
-            .value-box { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #1e293b; }
+            .value-box { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px; padding: 14px 16px; font-size: 14px; color: #1e293b; }
             .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
             .content-box { background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0f172a; border-radius: 8px; padding: 20px; font-size: 14px; color: #1e293b; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; line-height: 1.65; max-height: 800px; overflow-y: auto; }
             .note-box { background: #fffbeb; border: 1px solid #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #92400e; margin-top: 8px; }
+            .attachment-tag { display: inline-flex; align-items: center; gap: 6px; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-top: 6px; }
             .footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #94a3b8; text-align: center; }
           </style>
         </head>
@@ -184,12 +221,13 @@ ${timestampStr}
               <p class="author-sub">Submitted by <strong>${escapeHtml(trimmedName)}</strong> &lt;<a href="mailto:${escapeHtml(trimmedEmail)}">${escapeHtml(trimmedEmail)}</a>&gt;</p>
             </div>
 
-            <div class="section-label">Author Details</div>
+            <div class="section-label">Author Information</div>
             <div class="value-box">
               <strong>Name:</strong> ${escapeHtml(trimmedName)}<br>
-              <strong>Email:</strong> ${escapeHtml(trimmedEmail)}<br>
+              <strong>Email:</strong> <a href="mailto:${escapeHtml(trimmedEmail)}">${escapeHtml(trimmedEmail)}</a><br>
               <strong>Bio:</strong> ${escapeHtml(trimmedBio)}<br>
-              ${authorWebsite ? `<strong>Website / Portfolio:</strong> <a href="${escapeHtml(authorWebsite)}" target="_blank">${escapeHtml(authorWebsite)}</a>` : ""}
+              ${authorWebsite ? `<strong>Website / Portfolio:</strong> <a href="${escapeHtml(authorWebsite)}" target="_blank">${escapeHtml(authorWebsite)}</a><br>` : ""}
+              <div class="attachment-tag">📎 Author Profile Photo: Attached (${escapeHtml(profilePhotoName || "author_profile.jpg")})</div>
             </div>
 
             <div class="meta-grid">
@@ -203,13 +241,13 @@ ${timestampStr}
               </div>
             </div>
 
-            ${coverImageUrl ? `
-              <div class="section-label">Cover Image URL</div>
-              <div class="value-box"><a href="${escapeHtml(coverImageUrl)}" target="_blank">${escapeHtml(coverImageUrl)}</a></div>
-            ` : ""}
+            <div class="section-label">Cover Image</div>
+            <div class="value-box">
+              <div class="attachment-tag">📎 Article Cover Image: Attached (${escapeHtml(coverImageName || "article_cover.jpg")})</div>
+            </div>
 
             ${editorialNote ? `
-              <div class="section-label">Note to Editor</div>
+              <div class="section-label">Editorial Note to Editor</div>
               <div class="note-box">${escapeHtml(editorialNote)}</div>
             ` : ""}
 
@@ -228,7 +266,7 @@ ${timestampStr}
             </div>
 
             <div class="footer">
-              Rvan.me Editorial Intake System · Evaluated manually in Sanity CMS
+              Rvan.me Editorial Intake System · Reply directly to this email to contact the author
             </div>
           </div>
         </body>
@@ -251,6 +289,7 @@ ${timestampStr}
       text: plainText,
       html: emailHtml,
       replyTo: trimmedEmail,
+      attachments: attachments.length > 0 ? attachments : undefined,
     });
 
     if (emailError) {

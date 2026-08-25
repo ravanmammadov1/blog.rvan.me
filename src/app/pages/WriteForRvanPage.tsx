@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -26,6 +26,10 @@ import {
   Image as ImageIcon,
   Loader2,
   Send,
+  UploadCloud,
+  X,
+  RefreshCw,
+  Camera,
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Eyebrow } from "../components/Eyebrow";
@@ -44,18 +48,80 @@ import {
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/**
+ * Client-side helper to resize and compress images into compact base64 JPEG/WebP data URLs.
+ * Keeps payloads lightweight for fast serverless email delivery.
+ */
+async function compressImageFile(
+  file: File,
+  maxDimension: number,
+  quality: number = 0.82
+): Promise<{ base64: string; previewUrl: string; name: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return reject(new Error("Canvas context creation failed"));
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Try webp first, fallback to jpeg
+        let mimeType = "image/jpeg";
+        if (file.type === "image/webp") {
+          mimeType = "image/webp";
+        }
+
+        const base64 = canvas.toDataURL(mimeType, quality);
+        const previewUrl = URL.createObjectURL(file);
+        resolve({ base64, previewUrl, name: file.name });
+      };
+      img.onerror = () => reject(new Error("Failed to load image for compression"));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error("Failed to read image file"));
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function WriteForRvanPage() {
   const { t, getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
-  // Author Information
+  // Author Information State
   const [authorName, setAuthorName] = useState("");
   const [authorEmail, setAuthorEmail] = useState("");
   const [authorBio, setAuthorBio] = useState("");
   const [authorWebsite, setAuthorWebsite] = useState("");
 
-  // Article Information
+  // Author Profile Photo State
+  const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);
+  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string>("");
+  const [profilePhotoBase64, setProfilePhotoBase64] = useState<string>("");
+  const profileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Article Information State
   const [articleTitle, setArticleTitle] = useState("");
   const [category, setCategory] = useState<EditorialCategory>("Design");
   const [topic, setTopic] = useState<string>("Design Systems");
@@ -63,8 +129,13 @@ export default function WriteForRvanPage() {
   const [excerpt, setExcerpt] = useState("");
   const [articleContent, setArticleContent] = useState("");
   const [tagsStr, setTagsStr] = useState("");
-  const [coverImageUrl, setCoverImageUrl] = useState("");
   const [editorialNote, setEditorialNote] = useState("");
+
+  // Cover Image State
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string>("");
+  const [coverBase64, setCoverBase64] = useState<string>("");
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
 
   // Editor Tabs & Status
   const [activeEditorTab, setActiveEditorTab] = useState<"write" | "preview">("write");
@@ -79,6 +150,76 @@ export default function WriteForRvanPage() {
       if (data) setSiteSettings(data);
     });
   }, [language]);
+
+  // Handle Author Profile Photo Selection
+  const handleProfilePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage(
+        isAz
+          ? "Profil şəklinin həcmi 5MB-dan artıq ola bilməz."
+          : "Profile photo size must be less than 5MB."
+      );
+      return;
+    }
+
+    try {
+      const { base64, previewUrl } = await compressImageFile(file, 800, 0.85);
+      setProfilePhotoFile(file);
+      setProfilePhotoPreview(previewUrl);
+      setProfilePhotoBase64(base64);
+      setErrorMessage("");
+    } catch (err) {
+      console.error("Profile photo processing error:", err);
+      setErrorMessage(isAz ? "Şəkil oxunarkən xəta baş verdi." : "Failed to process profile photo.");
+    }
+  };
+
+  const handleRemoveProfilePhoto = () => {
+    setProfilePhotoFile(null);
+    setProfilePhotoPreview("");
+    setProfilePhotoBase64("");
+    if (profileInputRef.current) {
+      profileInputRef.current.value = "";
+    }
+  };
+
+  // Handle Cover Image Selection
+  const handleCoverFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 8 * 1024 * 1024) {
+      setErrorMessage(
+        isAz
+          ? "Üz qabığı şəklinin həcmi 8MB-dan artıq ola bilməz."
+          : "Cover image size must be less than 8MB."
+      );
+      return;
+    }
+
+    try {
+      const { base64, previewUrl } = await compressImageFile(file, 1600, 0.82);
+      setCoverFile(file);
+      setCoverPreview(previewUrl);
+      setCoverBase64(base64);
+      setErrorMessage("");
+    } catch (err) {
+      console.error("Cover image processing error:", err);
+      setErrorMessage(isAz ? "Şəkil oxunarkən xəta baş verdi." : "Failed to process cover image.");
+    }
+  };
+
+  const handleRemoveCover = () => {
+    setCoverFile(null);
+    setCoverPreview("");
+    setCoverBase64("");
+    if (coverInputRef.current) {
+      coverInputRef.current.value = "";
+    }
+  };
 
   const insertMarkdown = (before: string, after: string = "") => {
     const textarea = document.getElementById("article-markdown-input") as HTMLTextAreaElement | null;
@@ -116,6 +257,10 @@ export default function WriteForRvanPage() {
       setErrorMessage(isAz ? "Zəhmət olmasa qısa bioqrafiyanızı daxil edin." : "Please provide a short professional bio.");
       return;
     }
+    if (!profilePhotoBase64) {
+      setErrorMessage(isAz ? "Zəhmət olmasa müəllif profil şəklini yükləyin." : "Please upload an author profile photo.");
+      return;
+    }
 
     // Validate Article Information
     if (!articleTitle.trim()) {
@@ -128,6 +273,10 @@ export default function WriteForRvanPage() {
     }
     if (!articleContent.trim()) {
       setErrorMessage(isAz ? "Zəhmət olmasa məqalə mətnini daxil edin." : "Please enter the article content.");
+      return;
+    }
+    if (!coverBase64) {
+      setErrorMessage(isAz ? "Zəhmət olmasa məqalə üçün üz qabığı şəkli yükləyin." : "Please upload a cover image for the article.");
       return;
     }
 
@@ -153,13 +302,16 @@ export default function WriteForRvanPage() {
         authorEmail: authorEmail.trim(),
         authorBio: authorBio.trim(),
         authorWebsite: authorWebsite.trim(),
+        profilePhotoBase64,
+        profilePhotoName: profilePhotoFile?.name || "author_profile.jpg",
         title: articleTitle.trim(),
         excerpt: excerpt.trim(),
         content: articleContent.trim(),
         category,
         topic: topic.trim(),
         tags,
-        coverImageUrl: coverImageUrl.trim(),
+        coverImageBase64,
+        coverImageName: coverFile?.name || "article_cover.jpg",
         language: selectedLanguage,
         editorialNote: editorialNote.trim(),
         originalWorkConfirmed: true,
@@ -200,7 +352,12 @@ export default function WriteForRvanPage() {
     setExcerpt("");
     setArticleContent("");
     setTagsStr("");
-    setCoverImageUrl("");
+    setCoverFile(null);
+    setCoverPreview("");
+    setCoverBase64("");
+    setProfilePhotoFile(null);
+    setProfilePhotoPreview("");
+    setProfilePhotoBase64("");
     setEditorialNote("");
     setOriginalWorkConfirmed(false);
     setErrorMessage("");
@@ -212,13 +369,13 @@ export default function WriteForRvanPage() {
       <SEO
         title={
           isAz
-            ? "Paylaşmağa dəyər fikrin var? — Rvan.me Məqalə Təqdimatı"
-            : "Have Something Worth Sharing? — Rvan.me Article Submissions"
+            ? "Fikirləriniz görünməyə dəyər. — Rvan.me"
+            : "Your ideas deserve to be seen. — Rvan.me"
         }
         description={
           isAz
-            ? "Orijinal məqaləni Rvan.me ilə paylaş. Dizayn, texnologiya, marketinq, psixologiya, yaradıcılıq və strategiya mövzularında maraqlı baxış bucaqlarını qəbul edirik."
-            : "Share your finished article with Rvan.me. We welcome original perspectives on design, technology, marketing, psychology, creativity, and strategy."
+            ? "Maraqlı bir fikriniz, perspektiviniz və ya paylaşmağa dəyər hekayəniz var? Bizimlə bölüşün. Rvan.me üçün uyğun hesab etdiyimiz yazıları müəllifin adı ilə yayımlayırıq."
+            : "Have an idea, perspective, or story worth sharing? Send it our way. If it fits Rvan.me, we may publish it under your name."
         }
         canonical={isAz ? "/az/write" : "/write"}
       />
@@ -236,7 +393,7 @@ export default function WriteForRvanPage() {
             transition={{ duration: 0.5, ease: EASE }}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]"
           >
-            {isAz ? "Paylaşmağa dəyər fikrin var?" : "Have Something Worth Sharing?"}
+            {isAz ? "Fikirləriniz görünməyə dəyər." : "Your ideas deserve to be seen."}
           </motion.h1>
 
           <motion.p
@@ -246,8 +403,8 @@ export default function WriteForRvanPage() {
             className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
             {isAz
-              ? "Orijinal məqaləni Rvan.me ilə paylaş. Dizayn, texnologiya, marketinq, psixologiya, yaradıcılıq və strategiya mövzularında maraqlı baxış bucaqlarını qəbul edirik."
-              : "Share your finished article with Rvan.me. We welcome original perspectives on design, technology, marketing, psychology, creativity, and strategy."}
+              ? "Maraqlı bir fikriniz, perspektiviniz və ya paylaşmağa dəyər hekayəniz var? Bizimlə bölüşün. Rvan.me üçün uyğun hesab etdiyimiz yazıları müəllifin adı ilə yayımlayırıq."
+              : "Have an idea, perspective, or story worth sharing? Send it our way. If it fits Rvan.me, we may publish it under your name."}
           </motion.p>
 
           {/* Trust Matrix Badges */}
@@ -267,7 +424,7 @@ export default function WriteForRvanPage() {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border shadow-2xs">
               <CheckCircle2 size={14} className="text-emerald-500" />
-              <span>{isAz ? "Müəllif İstinadı ilə Nəşr" : "Published With Attribution"}</span>
+              <span>{isAz ? "Müəllif Adınızla Nəşr" : "Published Under Your Name"}</span>
             </div>
           </motion.div>
         </div>
@@ -278,7 +435,7 @@ export default function WriteForRvanPage() {
         <div className="mx-auto max-w-4xl">
           <AnimatePresence mode="wait">
             {isSubmittedSuccess ? (
-              /* Submission Success Screen */
+              /* Clean Success Screen without any mention of internal tools */
               <motion.div
                 key="receipt"
                 initial={{ opacity: 0, scale: 0.96 }}
@@ -293,35 +450,30 @@ export default function WriteForRvanPage() {
 
                 <div className="space-y-3 max-w-lg mx-auto">
                   <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-                    {isAz ? "Məqalə uğurla göndərildi." : "Article submitted successfully."}
+                    {isAz ? "Yazınız Rvan.me redaksiya komandasına göndərildi." : "Your submission has been sent to the Rvan.me editorial team."}
                   </h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {isAz
-                      ? "İşinizi Rvan.me ilə paylaşdığınız üçün təşəkkür edirik. Məqaləniz redaksiya tərəfindən nəzərdən keçirildikdən sonra qərar barədə sizinlə əlaqə saxlanılacaq."
-                      : "Thank you for sharing your work with Rvan.me. Our editorial team will review your submission."}
-                  </p>
                 </div>
 
-                <div className="rounded-2xl border border-primary/20 bg-primary/[0.03] p-6 text-left space-y-3 max-w-lg mx-auto">
+                <div className="rounded-2xl border border-primary/20 bg-primary/[0.03] p-6 text-left space-y-4 max-w-lg mx-auto">
                   <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                     <Sparkles size={16} className="text-primary" />
-                    <span>{isAz ? "Növbəti mərhələdə nə baş verir?" : "What happens next?"}</span>
+                    <span>{isAz ? "Növbəti mərhələ" : "What happens next?"}</span>
                   </h4>
-                  <ul className="text-xs text-muted-foreground space-y-2 leading-relaxed">
-                    <li className="flex items-start gap-2">
+                  <ul className="text-xs text-muted-foreground space-y-2.5 leading-relaxed">
+                    <li className="flex items-start gap-2.5">
                       <span className="text-primary font-bold">1.</span>
                       <span>
                         {isAz
-                          ? "Məqaləniz birbaşa Rvan.me baş redaktorunun e-poçt ünvanına daxil olur."
-                          : "Your submission is delivered directly to the Rvan.me editorial board inbox."}
+                          ? "Redaksiya komandamız yazınızı nəzərdən keçirəcək."
+                          : "Our editorial team will review your submission."}
                       </span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-2.5">
                       <span className="text-primary font-bold">2.</span>
                       <span>
                         {isAz
-                          ? "Yazınız qəbul edildikdə, redaksiya tərəfindən Sanity CMS vasitəsilə adınız və profilinizlə dərc olunur."
-                          : "If accepted, the piece is created in Sanity CMS and published live under your author attribution."}
+                          ? "Yazınız seçilərsə, sizinlə əlaqə saxlayacaq və onu Rvan.me-də müəllif adınızla yayımlayacağıq."
+                          : "If your piece is selected, we will contact you and publish it on Rvan.me under your name."}
                       </span>
                     </li>
                   </ul>
@@ -354,15 +506,15 @@ export default function WriteForRvanPage() {
                 <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm space-y-6">
                   <div className="space-y-1 border-b border-border pb-4">
                     <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase">
-                      01 / {isAz ? "MÜƏLLİF" : "AUTHOR IDENTITY"}
+                      01 / {isAz ? "MÜƏLLİF MƏLUMATLARI" : "AUTHOR INFORMATION"}
                     </span>
                     <h3 className="text-xl font-bold text-foreground">
                       {t("authorInformation", "Author Information")}
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {isAz
-                        ? "Hesab açmağa ehtiyac yoxdur. Məqalə qəbul edildikdə adınız və bioqrafiyanız yazıda qeyd olunacaq."
-                        : "No account required. Your name and bio will be attributed to the article if published."}
+                        ? "Hesab açmaq tələb olunmur. Məqaləniz qəbul edildikdə adınız, bioqrafiyanız və profil şəkliniz yazınızda qeyd olunacaq."
+                        : "No account required. Your name, bio, and profile photo will be credited next to your article."}
                     </p>
                   </div>
 
@@ -396,6 +548,74 @@ export default function WriteForRvanPage() {
                         className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       />
                     </div>
+                  </div>
+
+                  {/* Profile Photo Upload */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Camera size={13} className="text-muted-foreground" />
+                      <span>{isAz ? "Profil Şəkli *" : "Profile Photo *"}</span>
+                    </label>
+
+                    <input
+                      type="file"
+                      ref={profileInputRef}
+                      accept="image/png, image/jpeg, image/webp"
+                      onChange={handleProfilePhotoChange}
+                      className="hidden"
+                      id="profile-photo-upload-input"
+                    />
+
+                    {profilePhotoPreview ? (
+                      <div className="flex items-center gap-4 p-3 rounded-2xl border border-border bg-muted/20">
+                        <div className="h-16 w-16 rounded-full overflow-hidden border border-border shrink-0 bg-muted">
+                          <img
+                            src={profilePhotoPreview}
+                            alt="Profile Preview"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">{profilePhotoFile?.name}</p>
+                          <p className="text-[11px] text-muted-foreground">{isAz ? "Müəllif şəkli seçildi" : "Author photo attached"}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => profileInputRef.current?.click()}
+                            className="p-2 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition-colors"
+                            title={isAz ? "Dəyişdir" : "Replace"}
+                          >
+                            <RefreshCw size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleRemoveProfilePhoto}
+                            className="p-2 rounded-lg border border-destructive/20 bg-destructive/10 hover:bg-destructive/20 text-xs font-semibold text-destructive transition-colors"
+                            title={isAz ? "Sil" : "Remove"}
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => profileInputRef.current?.click()}
+                        className="cursor-pointer rounded-2xl border-2 border-dashed border-border hover:border-primary/50 bg-muted/10 hover:bg-primary/[0.02] p-4 text-center transition-all flex items-center justify-center gap-3"
+                      >
+                        <div className="grid h-10 w-10 place-items-center rounded-full bg-card border border-border text-primary shadow-2xs">
+                          <Camera size={18} />
+                        </div>
+                        <div className="text-left">
+                          <span className="text-xs font-bold text-foreground block">
+                            {isAz ? "Müəllif Profil Şəklini Yükləyin *" : "Upload Profile Photo *"}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground block">
+                            {isAz ? "JPG, PNG və ya WebP (maks. 5MB)" : "JPG, PNG, or WebP (max 5MB)"}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -432,7 +652,7 @@ export default function WriteForRvanPage() {
                 <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm space-y-6">
                   <div className="space-y-1 border-b border-border pb-4">
                     <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase">
-                      02 / {isAz ? "MƏQALƏ" : "ARTICLE CONTENT"}
+                      02 / {isAz ? "MƏQALƏ MƏLUMATLARI" : "ARTICLE INFORMATION"}
                     </span>
                     <h3 className="text-xl font-bold text-foreground">
                       {t("articleInformation", "Article Information")}
@@ -658,24 +878,71 @@ export default function WriteForRvanPage() {
                     />
                   </div>
 
-                  {/* Cover Image URL */}
-                  <div className="space-y-1.5">
+                  {/* Cover Image Upload */}
+                  <div className="space-y-2">
                     <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
                       <ImageIcon size={13} className="text-muted-foreground" />
-                      <span>{isAz ? "Üz Qabığı Şəklinin Linki (Könüllü)" : "Cover Image URL (Optional)"}</span>
+                      <span>{isAz ? "Üz Qabığı Şəkli *" : "Cover Image *"}</span>
                     </label>
+
                     <input
-                      type="url"
-                      value={coverImageUrl}
-                      onChange={(e) => setCoverImageUrl(e.target.value)}
-                      placeholder="https://example.com/cover-image.jpg"
-                      className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      type="file"
+                      ref={coverInputRef}
+                      accept="image/png, image/jpeg, image/webp"
+                      onChange={handleCoverFileChange}
+                      className="hidden"
+                      id="cover-image-upload-input"
                     />
-                    <p className="text-[11px] text-muted-foreground">
-                      {isAz
-                        ? "Könüllü. Əgər üz qabığı şəkliniz yoxdursa, redaksiya heyətimiz uyğun şəkil seçəcəkdir."
-                        : "Optional. If you don't have a cover image, our editorial team can select one."}
-                    </p>
+
+                    {coverPreview ? (
+                      <div className="relative rounded-2xl border border-border bg-muted/20 p-4 space-y-3">
+                        <div className="relative h-48 w-full rounded-xl overflow-hidden bg-black/5 dark:bg-white/5 border border-border">
+                          <img
+                            src={coverPreview}
+                            alt="Cover Preview"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground truncate">{coverFile?.name}</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => coverInputRef.current?.click()}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition-colors"
+                            >
+                              <RefreshCw size={13} />
+                              <span>{t("replaceImage", "Replace Image")}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleRemoveCover}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-destructive/20 bg-destructive/10 hover:bg-destructive/20 text-xs font-semibold text-destructive transition-colors"
+                            >
+                              <X size={13} />
+                              <span>{t("removeImage", "Remove Image")}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => coverInputRef.current?.click()}
+                        className="cursor-pointer rounded-2xl border-2 border-dashed border-border hover:border-primary/50 bg-muted/10 hover:bg-primary/[0.02] p-6 text-center transition-all space-y-2"
+                      >
+                        <div className="mx-auto grid h-10 w-10 place-items-center rounded-xl bg-card border border-border text-primary shadow-2xs">
+                          <UploadCloud size={20} />
+                        </div>
+                        <div className="space-y-0.5">
+                          <span className="text-xs font-bold text-foreground block">
+                            {isAz ? "Üz Qabığı Şəklini Yükləyin *" : "Upload Cover Image *"}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground block">
+                            {isAz ? "JPG, PNG və ya WebP (maks. 8MB)" : "JPG, PNG, or WebP (max 8MB)"}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Article Note to Editor */}
@@ -697,7 +964,7 @@ export default function WriteForRvanPage() {
                   </div>
                 </div>
 
-                {/* SECTION 3: COPYRIGHT & INTEGRITY NOTICE */}
+                {/* SECTION 3: COPYRIGHT & TRUST MESSAGE */}
                 <div className="rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/[0.04] to-card p-6 sm:p-8 space-y-5">
                   <div className="flex items-start gap-4">
                     <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary shrink-0">
@@ -705,12 +972,12 @@ export default function WriteForRvanPage() {
                     </div>
                     <div className="space-y-1">
                       <h4 className="text-base font-bold text-foreground">
-                        {isAz ? "Müəlliflik hüququnuz sizdə qalır." : "Your work remains yours."}
+                        {isAz ? "Yazınız sizə məxsus olaraq qalır." : "Your work stays yours."}
                       </h4>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         {isAz
-                          ? "Əsərinizin müəlliflik hüququ sizə məxsus olaraq qalır. Məqaləni Rvan.me-ə göndərmək onun mülkiyyətini və ya müəlliflik hüququnu Rvan.me-ə ötürmür. Məqalə qəbul edilərsə, müəllif adı göstərilməklə dərc olunur."
-                          : "Your work remains yours. Submitting your article to Rvan.me does not transfer ownership or copyright to Rvan.me. If accepted, the article will be published with author attribution."}
+                          ? "Yazınızı göndərmək müəlliflik hüquqlarınızı Rvan.me-yə ötürmür. Yazınız yayımlanmaq üçün seçilərsə, sizin adınız və müəllif məlumatlarınızla təqdim olunacaq."
+                          : "Submitting your article does not transfer ownership or copyright to Rvan.me. If your article is selected for publication, it will be published with your name and author attribution."}
                       </p>
                     </div>
                   </div>
@@ -725,8 +992,8 @@ export default function WriteForRvanPage() {
                     />
                     <span className="text-xs font-semibold text-foreground leading-snug">
                       {isAz
-                        ? "Bu məqalənin mənim orijinal işim olduğunu və onu dərc üçün təqdim etmək hüququna sahib olduğumu təsdiq edirəm."
-                        : "I confirm that this is my original work and that I have the right to submit it for publication."}
+                        ? "Təsdiq edirəm ki, bu mənim orijinal işimdir və onu təqdim etmək hüququna sahibəm."
+                        : "I confirm that this is my original work and that I have the right to submit it."}
                     </span>
                   </label>
                 </div>

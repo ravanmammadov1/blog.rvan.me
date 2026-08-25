@@ -486,7 +486,7 @@ export default function HeroSearchSection() {
             to={getLocalizedPath("/write")}
             className="inline-flex items-center gap-1 text-primary hover:underline"
           >
-            <span>{isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}</span>
+            <span>{isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}</span>
             <ArrowUpRight size={13} />
           </Link>
         </motion.div>

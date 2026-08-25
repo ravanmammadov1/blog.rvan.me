@@ -178,7 +178,7 @@ export default function TopicDetailPage() {
                 {isAz ? "BÜTÜN BLOQ YAZILARI" : "EXPLORE ALL ESSAYS"}
               </Button>
               <Button to={getLocalizedPath("/write")} variant="secondary" size="md">
-                {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
+                {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
               </Button>
             </div>
           </motion.div>
