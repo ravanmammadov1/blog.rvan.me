@@ -27,7 +27,7 @@ import {
   getContributorDashboardStats,
   saveContributorArticle,
   saveContributorProfile,
-  createDefaultContributorProfile,
+  isUserApprovedContributor,
   slugifyAuthorName,
   ContributorProfile,
   ContributorArticleDraft,
@@ -41,11 +41,12 @@ import { Button } from "../components/ui/Button";
 
 export default function ContributorDashboardPage() {
   const { user } = useAuth();
-  const { language, getLocalizedPath } = useLanguage();
+  const { t, language, getLocalizedPath } = useLanguage();
   const isAz = language === "az";
 
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [profile, setProfile] = useState<ContributorProfile | null>(null);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
   const [articles, setArticles] = useState<ContributorArticleDraft[]>([]);
   const [stats, setStats] = useState<ContributorDashboardStats>({
     draftsCount: 0,
@@ -80,19 +81,28 @@ export default function ContributorDashboardPage() {
     });
 
     if (user) {
-      Promise.all([
-        getContributorProfile(user.uid),
-        getContributorArticles(user.uid),
-      ])
-        .then(([prof, arts]) => {
-          const resolvedProf = prof || createDefaultContributorProfile(user.uid, user.displayName, user.email, user.photoURL);
-          setProfile(resolvedProf);
-          setArticles(arts);
-          getContributorDashboardStats(user.uid, resolvedProf).then((s) => setStats(s));
-        })
-        .catch(console.error)
-        .finally(() => setLoading(false));
+      isUserApprovedContributor(user.uid).then((approved) => {
+        setIsApproved(approved);
+        if (approved) {
+          Promise.all([
+            getContributorProfile(user.uid),
+            getContributorArticles(user.uid),
+          ])
+            .then(([prof, arts]) => {
+              setProfile(prof);
+              setArticles(arts);
+              if (prof) {
+                getContributorDashboardStats(user.uid, prof).then((s) => setStats(s));
+              }
+            })
+            .catch(console.error)
+            .finally(() => setLoading(false));
+        } else {
+          setLoading(false);
+        }
+      });
     } else {
+      setIsApproved(false);
       setLoading(false);
     }
   }, [user, language]);
@@ -171,7 +181,7 @@ export default function ContributorDashboardPage() {
               </p>
             </div>
 
-            {user ? (
+            {user && isApproved ? (
               <Button
                 onClick={() => setEditorOpen(true)}
                 variant="primary"
@@ -180,6 +190,16 @@ export default function ContributorDashboardPage() {
                 iconPosition="left"
               >
                 {isAz ? "YENİ MƏQALƏ YAZ" : "WRITE NEW ESSAY"}
+              </Button>
+            ) : user && !isApproved ? (
+              <Button
+                to={getLocalizedPath("/contact#contributor-application")}
+                variant="primary"
+                size="md"
+                icon={<ArrowRight size={14} />}
+                iconPosition="right"
+              >
+                {t("applyToBecomeContributor", "APPLY TO BECOME A CONTRIBUTOR")}
               </Button>
             ) : (
               <Button
@@ -206,6 +226,42 @@ export default function ContributorDashboardPage() {
               <Button onClick={() => setAuthModalOpen(true)} variant="primary" size="lg" className="mt-6">
                 {isAz ? "Google ilə Daxil Ol" : "Sign In with Google"}
               </Button>
+            </div>
+          ) : !isApproved ? (
+            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-10 md:p-14 text-center shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-2xl max-w-2xl mx-auto space-y-6">
+              <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-xs">
+                <PenTool size={28} />
+              </div>
+              <div className="space-y-2">
+                <span className="text-xs font-mono font-bold text-primary uppercase tracking-widest">
+                  {isAz ? "MÜƏLLİF GİRİŞİ" : "CONTRIBUTOR ACCESS"}
+                </span>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                  {t("contributorAccessNotActive", "Contributor Access Not Active")}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-lg mx-auto">
+                  {t("contributorAccessNotActiveDesc", "Interested in writing for Rvan.me? Send us your article idea through the Contact page and apply to become a contributor.")}
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+                <Button
+                  to={getLocalizedPath("/contact#contributor-application")}
+                  variant="primary"
+                  size="md"
+                  icon={<ArrowRight size={14} />}
+                  iconPosition="right"
+                >
+                  {t("applyToBecomeContributor", "APPLY TO BECOME A CONTRIBUTOR")}
+                </Button>
+                <Button
+                  to={getLocalizedPath("/blog")}
+                  variant="secondary"
+                  size="md"
+                >
+                  {isAz ? "BLOQ YAZILARINA BAX" : "READ ARTICLES"}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="space-y-10">

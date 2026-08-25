@@ -25,16 +25,16 @@ export default function Footer({ siteSettings }: FooterProps) {
         {/* Right Side */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
-            to={getLocalizedPath("/contributor/dashboard")}
+            to={getLocalizedPath("/contact#contributor-application")}
             className="transition-colors hover:text-primary text-primary/90 font-bold"
           >
             {isAz ? "MÜƏLLİF OL" : "BECOME A CONTRIBUTOR"}
           </Link>
           <Link
-            to={getLocalizedPath("/author/ravan-mammadov")}
+            to={getLocalizedPath("/about/ravan-mammadov")}
             className="transition-colors hover:text-foreground"
           >
-            {isAz ? "MÜƏLLİF" : "AUTHOR"}
+            {isAz ? "TƏSİSÇİ" : "FOUNDER"}
           </Link>
           <Link
             to={getLocalizedPath("/faq")}

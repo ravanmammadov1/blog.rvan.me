@@ -213,6 +213,23 @@ export function calculateProfileCompleteness(profile: Partial<ContributorProfile
 
 // ── 1. CONTRIBUTOR STATUS & APPLICATION ──
 
+export interface ContributorApplicationRecord {
+  id: string;
+  fullName: string;
+  email: string;
+  idea: string;
+  message: string;
+  portfolioUrl?: string;
+  userId?: string | null;
+  status: "PENDING" | "REVIEWING" | "APPROVED" | "REJECTED";
+  createdAt: string;
+  reviewedAt?: string | null;
+  reviewedBy?: string | null;
+  slug?: string;
+}
+
+export const APPLICATIONS_V2_STORAGE_KEY = "rvan_contributor_applications_v2";
+
 export function getContributorApplication(uid: string): ContributorApplication | null {
   if (!uid) return null;
   const applications = getLocalStorage<Record<string, ContributorApplication>>(
@@ -224,19 +241,259 @@ export function getContributorApplication(uid: string): ContributorApplication |
 
 export function getContributorStatus(uid: string): ContributorStatus {
   if (!uid) return "NONE";
+  if (uid === "founder-ravan-mammadov" || uid === "ravan-mammadov") return "APPROVED";
+
+  // Check local profile cache
+  try {
+    const raw = localStorage.getItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`);
+    if (raw) {
+      const prof = JSON.parse(raw) as ContributorProfile;
+      if (prof?.status === "approved") return "APPROVED";
+    }
+  } catch {}
+
+  // Check V2 applications
+  if (typeof window !== "undefined") {
+    try {
+      const appsV2 = getLocalStorage<ContributorApplicationRecord[]>(APPLICATIONS_V2_STORAGE_KEY, []);
+      const match = appsV2.find((a) => a.userId === uid);
+      if (match) {
+        if (match.status === "APPROVED") return "APPROVED";
+        if (match.status === "PENDING" || match.status === "REVIEWING") return "APPLICANT";
+      }
+    } catch {}
+  }
+
   const app = getContributorApplication(uid);
-  if (!app) return "NONE";
-
-  if (app.isVerifiedAuthor) return "VERIFIED";
-
-  const userSubmissions = getSubmissionsByAuthor(uid);
-  const hasPublished = userSubmissions.some((s) => s.status === "PUBLISHED");
-  if (hasPublished) return "PUBLISHED";
-
-  if (app.status === "APPROVED") return "APPROVED";
-  if (app.status === "APPLICANT") return "APPLICANT";
+  if (app) {
+    if (app.status === "APPROVED") return "APPROVED";
+    if (app.status === "APPLICANT") return "APPLICANT";
+  }
 
   return "NONE";
+}
+
+export async function isUserApprovedContributor(uid?: string | null): Promise<boolean> {
+  if (!uid) return false;
+  if (uid === "founder-ravan-mammadov" || uid === "ravan-mammadov") return true;
+
+  // 1. Check local cache
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`);
+      if (raw) {
+        const prof = JSON.parse(raw) as ContributorProfile;
+        if (prof?.status === "approved") return true;
+      }
+
+      const appsV2 = getLocalStorage<ContributorApplicationRecord[]>(APPLICATIONS_V2_STORAGE_KEY, []);
+      if (appsV2.some((a) => a.userId === uid && a.status === "APPROVED")) return true;
+    } catch {}
+  }
+
+  // 2. Query Firestore contributors
+  if (db) {
+    try {
+      const docRef = doc(db, CONTRIBUTORS_COLLECTION, uid);
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data() as ContributorProfile;
+        if (data.status === "approved") return true;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error checking contributor approval:", err);
+    }
+  }
+
+  return false;
+}
+
+export async function submitContributorApplicationDirect(data: {
+  fullName: string;
+  email: string;
+  idea: string;
+  message: string;
+  portfolioUrl?: string;
+  userId?: string | null;
+}): Promise<ContributorApplicationRecord> {
+  const appId = `app_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const slug = slugifyAuthorName(data.fullName);
+
+  const application: ContributorApplicationRecord = {
+    id: appId,
+    fullName: data.fullName.trim(),
+    email: data.email.trim(),
+    idea: data.idea.trim(),
+    message: data.message.trim(),
+    portfolioUrl: data.portfolioUrl?.trim() || "",
+    userId: data.userId || null,
+    status: "PENDING",
+    createdAt: new Date().toISOString(),
+    reviewedAt: null,
+    reviewedBy: null,
+    slug,
+  };
+
+  // 1. Local Storage Fallback
+  if (typeof window !== "undefined") {
+    try {
+      const all = getLocalStorage<ContributorApplicationRecord[]>(APPLICATIONS_V2_STORAGE_KEY, []);
+      setLocalStorage(APPLICATIONS_V2_STORAGE_KEY, [application, ...all]);
+    } catch {}
+  }
+
+  // 2. Firestore Document in contributor_applications
+  if (db) {
+    try {
+      const docRef = doc(db, "contributor_applications", appId);
+      await setDoc(docRef, application, { merge: true });
+    } catch (err) {
+      console.warn("[ContributorService] Error saving application to Firestore:", err);
+    }
+  }
+
+  // 3. Dispatch notification email safely
+  if (typeof window !== "undefined") {
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.fullName,
+          email: data.email,
+          projectDetails: `[CONTRIBUTOR APPLICATION]\nIdea: ${data.idea}\nMessage: ${data.message}\nPortfolio: ${data.portfolioUrl || "N/A"}`,
+        }),
+      });
+    } catch (e) {
+      console.warn("Could not dispatch application notification:", e);
+    }
+  }
+
+  return application;
+}
+
+export async function getAllContributorApplications(): Promise<ContributorApplicationRecord[]> {
+  let localApps: ContributorApplicationRecord[] = [];
+  if (typeof window !== "undefined") {
+    localApps = getLocalStorage<ContributorApplicationRecord[]>(APPLICATIONS_V2_STORAGE_KEY, []);
+  }
+
+  if (db) {
+    try {
+      const snap = await getDocs(collection(db, "contributor_applications"));
+      if (!snap.empty) {
+        const remoteApps = snap.docs.map((d) => d.data() as ContributorApplicationRecord);
+        remoteApps.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        if (typeof window !== "undefined") {
+          setLocalStorage(APPLICATIONS_V2_STORAGE_KEY, remoteApps);
+        }
+        return remoteApps;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error querying applications from Firestore:", err);
+    }
+  }
+
+  return localApps;
+}
+
+export async function approveContributorApplication(appId: string, adminEmail: string = "admin@rvan.me"): Promise<boolean> {
+  const all = await getAllContributorApplications();
+  const target = all.find((a) => a.id === appId);
+  if (!target) return false;
+
+  const reviewedAt = new Date().toISOString();
+  target.status = "APPROVED";
+  target.reviewedAt = reviewedAt;
+  target.reviewedBy = adminEmail;
+
+  if (typeof window !== "undefined") {
+    const updatedList = all.map((a) => (a.id === appId ? target : a));
+    setLocalStorage(APPLICATIONS_V2_STORAGE_KEY, updatedList);
+  }
+
+  if (db) {
+    try {
+      const appRef = doc(db, "contributor_applications", appId);
+      await updateDoc(appRef, {
+        status: "APPROVED",
+        reviewedAt,
+        reviewedBy: adminEmail,
+      });
+    } catch (err) {
+      console.warn("[ContributorService] Error updating application:", err);
+    }
+  }
+
+  // Activate profile for the user
+  const targetUid = target.userId || `contributor_${target.id}`;
+  const contributorSlug = target.slug || slugifyAuthorName(target.fullName);
+
+  const profile: ContributorProfile = {
+    uid: targetUid,
+    slug: contributorSlug,
+    name: target.fullName,
+    email: target.email,
+    profileImage: "",
+    professionalTitle: "Editorial Contributor",
+    bio: target.message || target.idea,
+    location: "Baku, Azerbaijan",
+    currentWorkplace: "",
+    experience: "",
+    education: "",
+    skills: [target.idea],
+    socialLinks: target.portfolioUrl ? { website: target.portfolioUrl } : {},
+    status: "approved",
+    appliedAt: target.createdAt,
+    approvedAt: reviewedAt,
+    publishedArticlesCount: 0,
+  };
+
+  try {
+    localStorage.setItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${targetUid}`, JSON.stringify(profile));
+  } catch {}
+
+  if (db) {
+    try {
+      const profRef = doc(db, CONTRIBUTORS_COLLECTION, targetUid);
+      await setDoc(profRef, profile, { merge: true });
+    } catch (err) {
+      console.warn("[ContributorService] Error activating contributor profile:", err);
+    }
+  }
+
+  return true;
+}
+
+export async function rejectContributorApplication(appId: string, adminEmail: string = "admin@rvan.me"): Promise<boolean> {
+  const all = await getAllContributorApplications();
+  const target = all.find((a) => a.id === appId);
+  if (!target) return false;
+
+  const reviewedAt = new Date().toISOString();
+  target.status = "REJECTED";
+  target.reviewedAt = reviewedAt;
+  target.reviewedBy = adminEmail;
+
+  if (typeof window !== "undefined") {
+    const updatedList = all.map((a) => (a.id === appId ? target : a));
+    setLocalStorage(APPLICATIONS_V2_STORAGE_KEY, updatedList);
+  }
+
+  if (db) {
+    try {
+      const appRef = doc(db, "contributor_applications", appId);
+      await updateDoc(appRef, {
+        status: "REJECTED",
+        reviewedAt,
+        reviewedBy: adminEmail,
+      });
+    } catch (err) {
+      console.warn("[ContributorService] Error rejecting application:", err);
+    }
+  }
+
+  return true;
 }
 
 export async function submitContributorApplication(
@@ -244,7 +501,7 @@ export async function submitContributorApplication(
 ): Promise<ContributorApplication> {
   const application: ContributorApplication = {
     ...appData,
-    status: "APPROVED",
+    status: "APPLICANT",
     submittedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -485,50 +742,25 @@ export async function getContributorProfile(uid: string): Promise<ContributorPro
   // 1. Check local contributor profile cache
   try {
     const raw = localStorage.getItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-
-  // 2. Check local application submissions
-  try {
-    const apps = getLocalStorage<Record<string, ContributorApplication>>(
-      APPLICATIONS_STORAGE_KEY,
-      {}
-    );
-    const app = apps[uid];
-    if (app) {
-      const mapped: ContributorProfile = {
-        uid: app.uid,
-        slug: app.slug || slugifyAuthorName(app.displayName),
-        name: app.displayName,
-        email: app.email || "",
-        profileImage: app.photoURL || "",
-        professionalTitle: app.roleTitle || "Creative Contributor",
-        bio: app.bio || "",
-        location: app.location || "Baku, Azerbaijan",
-        currentWorkplace: app.currentRole || "",
-        experience: app.yearsOfExperience || "",
-        education: "",
-        skills: app.preferredTopics || [],
-        socialLinks: app.socialLinks || {},
-        status: app.status === "APPROVED" ? "approved" : "pending",
-        appliedAt: app.submittedAt,
-        publishedArticlesCount: 0,
-      };
-      return mapped;
+    if (raw) {
+      const prof = JSON.parse(raw) as ContributorProfile;
+      if (prof && prof.status === "approved") return prof;
     }
   } catch {}
 
-  // 3. Query Firestore
+  // 2. Query Firestore
   if (db) {
     try {
       const docRef = doc(db, CONTRIBUTORS_COLLECTION, uid);
       const snap = await getDoc(docRef);
       if (snap.exists()) {
         const data = snap.data() as ContributorProfile;
-        try {
-          localStorage.setItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`, JSON.stringify(data));
-        } catch {}
-        return data;
+        if (data && data.status === "approved") {
+          try {
+            localStorage.setItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`, JSON.stringify(data));
+          } catch {}
+          return data;
+        }
       }
     } catch (err) {
       console.warn("[ContributorService] Error fetching profile:", err);
@@ -555,52 +787,22 @@ export async function getPublicAuthorBySlug(slug: string): Promise<ContributorPr
           const raw = localStorage.getItem(key);
           if (raw) {
             const prof = JSON.parse(raw) as ContributorProfile;
-            if (prof && prof.slug && prof.slug.toLowerCase() === cleanSlug) {
+            if (prof && prof.slug && prof.slug.toLowerCase() === cleanSlug && prof.status === "approved") {
               return prof;
             }
           }
         }
       }
     } catch {}
-
-    // 2. Check local applications
-    try {
-      const apps = getLocalStorage<Record<string, ContributorApplication>>(
-        APPLICATIONS_STORAGE_KEY,
-        {}
-      );
-      for (const app of Object.values(apps)) {
-        const appSlug = (app.slug || slugifyAuthorName(app.displayName)).toLowerCase();
-        if (appSlug === cleanSlug) {
-          return {
-            uid: app.uid,
-            slug: appSlug,
-            name: app.displayName,
-            email: app.email || "",
-            profileImage: app.photoURL || "",
-            professionalTitle: app.roleTitle || "Creative Contributor",
-            bio: app.bio || "",
-            location: app.location || "Baku, Azerbaijan",
-            currentWorkplace: app.currentRole || "",
-            experience: app.yearsOfExperience || "",
-            education: "",
-            skills: app.preferredTopics || [],
-            socialLinks: app.socialLinks || {},
-            status: "approved",
-            appliedAt: app.submittedAt,
-            publishedArticlesCount: 0,
-          };
-        }
-      }
-    } catch {}
   }
 
-  // 3. Query Firestore
+  // 2. Query Firestore
   if (db) {
     try {
       const q = query(
         collection(db, CONTRIBUTORS_COLLECTION),
-        where("slug", "==", cleanSlug)
+        where("slug", "==", cleanSlug),
+        where("status", "==", "approved")
       );
       const snap = await getDocs(q);
       if (!snap.empty) {
@@ -791,7 +993,7 @@ export async function getApprovedContributors(): Promise<ContributorProfile[]> {
         {}
       );
       Object.values(apps).forEach((app) => {
-        if (app.uid !== FOUNDER_CONTRIBUTOR_PROFILE.uid && !result.some((r) => r.uid === app.uid)) {
+        if (app.uid !== FOUNDER_CONTRIBUTOR_PROFILE.uid && app.status === "APPROVED" && !result.some((r) => r.uid === app.uid)) {
           result.push({
             uid: app.uid,
             slug: app.slug || slugifyAuthorName(app.displayName),

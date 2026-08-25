@@ -11,6 +11,8 @@ import {
   Moon,
   Globe,
   PenTool,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { SiteSettings } from "../../types/cms";
 import { useAuth } from "../../hooks/useAuth";
@@ -18,7 +20,7 @@ import { useTheme } from "../../context/ThemeContext";
 import AuthModal from "./AuthModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import ravanLogo from "../../assets/ravan_logo.svg";
-import { getContributorStatus, getContributorApplication } from "../../services/contributorService";
+import { isUserApprovedContributor, getContributorStatus } from "../../services/contributorService";
 
 function UserAuthMenu() {
   const { user, loading, signOut, userPhoto } = useAuth();
@@ -28,8 +30,18 @@ function UserAuthMenu() {
   const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
 
-  const isContributor = user?.uid ? getContributorStatus(user.uid) !== "NONE" : false;
-  const contributorApp = user?.uid ? getContributorApplication(user.uid) : null;
+  const [isApprovedContributor, setIsApprovedContributor] = useState(false);
+  const [contributorStatus, setContributorStatus] = useState<string>("NONE");
+
+  useEffect(() => {
+    if (user?.uid) {
+      isUserApprovedContributor(user.uid).then(setIsApprovedContributor);
+      setContributorStatus(getContributorStatus(user.uid));
+    } else {
+      setIsApprovedContributor(false);
+      setContributorStatus("NONE");
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -241,12 +253,12 @@ function UserAuthMenu() {
                   {/* Contributor badge status */}
                   <div className="flex items-center justify-between text-[11px] mono">
                     <span className="text-muted-foreground uppercase">{t("status", "Status")}:</span>
-                    {isContributor ? (
-                      <span className="text-primary font-bold">● {t("verifiedAuthor", "Təsdiqlənmiş Müəllif")}</span>
-                    ) : contributorApp?.status === "PENDING" ? (
-                      <span className="text-amber-500 font-bold">● {t("applicationUnderReview", "Baxılmaqdadır")}</span>
+                    {isApprovedContributor ? (
+                      <span className="text-primary font-bold">● {t("activeContributor", "Aktiv Müəllif")}</span>
+                    ) : contributorStatus === "APPLICANT" ? (
+                      <span className="text-amber-500 font-bold">● {t("pendingReview", "Müraciətə baxılır")}</span>
                     ) : (
-                      <span className="text-muted-foreground">● {t("reader", "Oxucu")}</span>
+                      <span className="text-muted-foreground">● {t("normalUser", "Oxucu")}</span>
                     )}
                   </div>
                 </div>
@@ -262,21 +274,44 @@ function UserAuthMenu() {
                     <span>{t("myAccount", "Mənim Hesabım")}</span>
                   </Link>
 
-                  <Link
-                    to={getLocalizedPath("/contributor/dashboard")}
-                    onClick={() => setDropdownOpen(false)}
-                    className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <PenTool size={13} className="text-primary shrink-0" />
-                      <span>{t("authorPanel", "Müəllif Paneli")}</span>
-                    </div>
-                    {isContributor && (
+                  {/* If user is an approved contributor -> Show Contributor Panel */}
+                  {isApprovedContributor ? (
+                    <Link
+                      to={getLocalizedPath("/contributor/dashboard")}
+                      onClick={() => setDropdownOpen(false)}
+                      className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <PenTool size={13} className="text-primary shrink-0" />
+                        <span>{t("contributorPanel", "Müəllif Paneli")}</span>
+                      </div>
                       <span className="text-[9px] font-bold uppercase tracking-wider text-primary mono bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
                         {t("active", "AKTİV")}
                       </span>
-                    )}
-                  </Link>
+                    </Link>
+                  ) : (
+                    /* If normal user -> Show Become a Contributor linking to /contact#contributor-application */
+                    <Link
+                      to={getLocalizedPath("/contact#contributor-application")}
+                      onClick={() => setDropdownOpen(false)}
+                      className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-primary hover:bg-primary/5 transition-colors font-semibold"
+                    >
+                      <Sparkles size={13} className="text-primary shrink-0" />
+                      <span>{t("becomeAContributor", "Müəllif Olun")}</span>
+                    </Link>
+                  )}
+
+                  {/* Admin Direct Access */}
+                  {(user.email === "ravanmammadov01@gmail.com" || user.email?.toLowerCase().includes("ravan")) && (
+                    <Link
+                      to={getLocalizedPath("/admin/linkedin")}
+                      onClick={() => setDropdownOpen(false)}
+                      className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                    >
+                      <ShieldCheck size={13} className="shrink-0" />
+                      <span>{t("adminPanel", "Admin Paneli")}</span>
+                    </Link>
+                  )}
                 </div>
 
                 {/* Preferences in signed in menu */}

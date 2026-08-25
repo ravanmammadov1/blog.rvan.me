@@ -1,10 +1,35 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { CheckCircle2, AlertTriangle, RefreshCw, Send, ShieldCheck, UserCheck, ExternalLink, Lock, LogOut, Key, Sparkles, Check, X, Clock, FileText, History } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertTriangle,
+  RefreshCw,
+  Send,
+  ShieldCheck,
+  UserCheck,
+  ExternalLink,
+  Lock,
+  LogOut,
+  Key,
+  Sparkles,
+  Check,
+  X,
+  Clock,
+  FileText,
+  History,
+  PenTool,
+  Users,
+} from "lucide-react";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+import {
+  getAllContributorApplications,
+  approveContributorApplication,
+  rejectContributorApplication,
+  ContributorApplicationRecord,
+} from "../services/contributorService";
 
 interface PendingPost {
   _id: string;
@@ -59,6 +84,15 @@ export default function LinkedInAdmin() {
   const [searchParams] = useSearchParams();
   const { getLocalizedPath } = useLanguage();
 
+  // Admin Section Tab State
+  const [adminTab, setAdminTab] = useState<"contributors" | "linkedin">("contributors");
+
+  // Contributor Applications State
+  const [applications, setApplications] = useState<ContributorApplicationRecord[]>([]);
+  const [loadingApps, setLoadingApps] = useState(false);
+  const [appFilter, setAppFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">("ALL");
+  const [processingAppId, setProcessingAppId] = useState<string | null>(null);
+
   // Security Auth State
   const [adminSecret, setAdminSecret] = useState<string>(() => {
     return sessionStorage.getItem("linkedin_admin_secret") || "";
@@ -86,6 +120,42 @@ export default function LinkedInAdmin() {
   const urlError = searchParams.get("error");
   const urlConnected = searchParams.get("connected");
 
+  const loadApplications = async () => {
+    setLoadingApps(true);
+    try {
+      const list = await getAllContributorApplications();
+      setApplications(list);
+    } catch (e) {
+      console.error("Error loading contributor applications:", e);
+    } finally {
+      setLoadingApps(false);
+    }
+  };
+
+  const handleApproveApp = async (id: string) => {
+    setProcessingAppId(id);
+    try {
+      await approveContributorApplication(id);
+      await loadApplications();
+    } catch (e) {
+      console.error("Error approving contributor application:", e);
+    } finally {
+      setProcessingAppId(null);
+    }
+  };
+
+  const handleRejectApp = async (id: string) => {
+    setProcessingAppId(id);
+    try {
+      await rejectContributorApplication(id);
+      await loadApplications();
+    } catch (e) {
+      console.error("Error rejecting contributor application:", e);
+    } finally {
+      setProcessingAppId(null);
+    }
+  };
+
   const checkStatusWithSecret = async (secret: string) => {
     setLoadingStatus(true);
     setAuthError(null);
@@ -106,6 +176,7 @@ export default function LinkedInAdmin() {
         setIsAuthenticated(true);
         setStatus(data);
         sessionStorage.setItem("linkedin_admin_secret", secret);
+        loadApplications();
       }
     } catch (err: any) {
       setStatus({
@@ -364,6 +435,192 @@ export default function LinkedInAdmin() {
           </div>
         ) : (
           <>
+            {/* ADMIN CONSOLE TABS */}
+            <div className="mb-8 flex items-center gap-3 border-b border-white/10 pb-4 overflow-x-auto">
+              <button
+                type="button"
+                onClick={() => setAdminTab("contributors")}
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold uppercase tracking-wider mono transition-all cursor-pointer ${
+                  adminTab === "contributors"
+                    ? "bg-primary text-black font-extrabold shadow-md shadow-primary/20"
+                    : "border border-white/10 bg-white/5 text-muted-foreground hover:text-white"
+                }`}
+              >
+                <Users size={14} /> Contributor Applications ({applications.filter((a) => a.status === "PENDING").length} Pending)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAdminTab("linkedin")}
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold uppercase tracking-wider mono transition-all cursor-pointer ${
+                  adminTab === "linkedin"
+                    ? "bg-primary text-black font-extrabold shadow-md shadow-primary/20"
+                    : "border border-white/10 bg-white/5 text-muted-foreground hover:text-white"
+                }`}
+              >
+                <Sparkles size={14} /> LinkedIn Automation & Pipeline
+              </button>
+            </div>
+
+            {/* TAB 1: CONTRIBUTOR APPLICATIONS */}
+            {adminTab === "contributors" && (
+              <div className="space-y-6 mb-12">
+                {/* Stats & Filters */}
+                <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-2xl border border-white/10 bg-white/5 glass">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                      <Users size={18} className="text-primary" /> Curated Contributor Applications
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Review editorial submissions. Approving an applicant activates their Contributor Profile & Dashboard.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {(["ALL", "PENDING", "APPROVED", "REJECTED"] as const).map((filter) => (
+                      <button
+                        key={filter}
+                        type="button"
+                        onClick={() => setAppFilter(filter)}
+                        className={`px-3 py-1.5 rounded-lg text-[10.5px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          appFilter === filter
+                            ? "bg-primary text-black font-extrabold"
+                            : "border border-white/10 bg-white/5 text-muted-foreground hover:text-white"
+                        }`}
+                      >
+                        {filter}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Applications List */}
+                {loadingApps ? (
+                  <div className="p-12 text-center text-xs mono text-muted-foreground animate-pulse">
+                    Loading contributor applications...
+                  </div>
+                ) : applications.filter((a) => appFilter === "ALL" || a.status === appFilter).length === 0 ? (
+                  <div className="p-12 rounded-2xl border border-white/10 bg-white/5 text-center text-xs mono text-muted-foreground">
+                    No applications found matching the "{appFilter}" filter.
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {applications
+                      .filter((a) => appFilter === "ALL" || a.status === appFilter)
+                      .map((app) => (
+                        <div
+                          key={app.id}
+                          className="p-6 rounded-2xl border border-white/10 bg-white/5 glass hover:border-primary/30 transition-all space-y-4"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
+                            <div>
+                              <div className="flex items-center gap-2.5">
+                                <h3 className="text-base font-bold text-foreground">{app.fullName}</h3>
+                                <span className="text-xs font-mono text-muted-foreground">({app.email})</span>
+                              </div>
+                              <span className="text-[10px] font-mono text-muted-foreground/80 mt-1 block">
+                                Submitted: {new Date(app.createdAt).toLocaleString()} · ID: {app.id}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {app.status === "PENDING" && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400">
+                                  <Clock size={11} /> Pending Review
+                                </span>
+                              )}
+                              {app.status === "APPROVED" && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                                  <CheckCircle2 size={11} /> Approved
+                                </span>
+                              )}
+                              {app.status === "REJECTED" && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-400">
+                                  <X size={11} /> Rejected
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div>
+                              <span className="text-[10px] font-mono font-bold text-primary uppercase tracking-wider block mb-0.5">
+                                Proposed Topic / Idea:
+                              </span>
+                              <p className="text-sm font-semibold text-foreground">{app.idea}</p>
+                            </div>
+
+                            <div>
+                              <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider block mb-0.5">
+                                Details & Editorial Angle:
+                              </span>
+                              <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">{app.message}</p>
+                            </div>
+
+                            {app.portfolioUrl && (
+                              <div className="pt-1">
+                                <a
+                                  href={app.portfolioUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-mono text-primary hover:underline"
+                                >
+                                  Portfolio / Profile: {app.portfolioUrl} <ExternalLink size={11} />
+                                </a>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                            <span className="text-[10.5px] font-mono text-muted-foreground">
+                              Suggested Slug: <code className="text-primary font-bold">{app.slug || slugifyAuthorName(app.fullName)}</code>
+                            </span>
+
+                            <div className="flex items-center gap-2">
+                              {app.status !== "APPROVED" && (
+                                <button
+                                  type="button"
+                                  disabled={processingAppId === app.id}
+                                  onClick={() => handleApproveApp(app.id)}
+                                  className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500 hover:text-black transition-all mono cursor-pointer disabled:opacity-50"
+                                >
+                                  <Check size={13} /> {processingAppId === app.id ? "Approving..." : "Approve & Activate"}
+                                </button>
+                              )}
+
+                              {app.status !== "REJECTED" && (
+                                <button
+                                  type="button"
+                                  disabled={processingAppId === app.id}
+                                  onClick={() => handleRejectApp(app.id)}
+                                  className="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-rose-400 hover:bg-rose-500 hover:text-white transition-all mono cursor-pointer disabled:opacity-50"
+                                >
+                                  <X size={13} /> Reject
+                                </button>
+                              )}
+
+                              {app.status === "APPROVED" && (
+                                <Link
+                                  to={getLocalizedPath(`/author/${app.slug || slugifyAuthorName(app.fullName)}`)}
+                                  target="_blank"
+                                  className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline font-bold px-2 py-1"
+                                >
+                                  View Author Page <ExternalLink size={12} />
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: LINKEDIN AUTOMATION */}
+            {adminTab === "linkedin" && (
+              <div>
             {/* OAuth URL Status Banners */}
             {urlConnected && (
               <div className="mb-8 p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm flex items-center gap-3 glass">
@@ -728,6 +985,8 @@ export default function LinkedInAdmin() {
                 </div>
               </div>
             </div>
+            </div>
+          )}
           </>
         )}
       </div>
