@@ -1038,3 +1038,43 @@ export async function getApprovedContributors(): Promise<ContributorProfile[]> {
 
   return result;
 }
+
+export async function getAllSubmittedArticles(): Promise<ContributorArticleDraft[]> {
+  const result: ContributorArticleDraft[] = [];
+  if (db) {
+    try {
+      const snap = await getDocs(collection(db, DRAFTS_COLLECTION));
+      snap.forEach((d) => {
+        const item = d.data() as ContributorArticleDraft;
+        if (item) result.push(item);
+      });
+      result.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+    } catch (err) {
+      console.warn("[ContributorService] Error querying all contributor articles:", err);
+    }
+  }
+  return result;
+}
+
+export async function getAdminOverviewMetrics(): Promise<{
+  totalApplications: number;
+  pendingApplications: number;
+  activeContributors: number;
+  submittedArticles: number;
+}> {
+  const [apps, contributors, articles] = await Promise.all([
+    getAllContributorApplications(),
+    getApprovedContributors(),
+    getAllSubmittedArticles(),
+  ]);
+
+  const pending = apps.filter((a) => a.status === "PENDING" || a.status === "APPLICANT").length;
+  const activeExternal = contributors.filter((c) => c.uid !== FOUNDER_CONTRIBUTOR_PROFILE.uid).length;
+
+  return {
+    totalApplications: apps.length,
+    pendingApplications: pending,
+    activeContributors: activeExternal,
+    submittedArticles: articles.length,
+  };
+}

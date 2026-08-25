@@ -25,7 +25,7 @@ const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
 const PublicAuthorProfilePage = lazy(() => import("./pages/PublicAuthorProfilePage"));
 const ContributorDashboardPage = lazy(() => import("./pages/ContributorDashboardPage"));
 const FaqPage = lazy(() => import("./FaqPage"));
-const LinkedInAdmin = lazy(() => import("./LinkedInAdmin"));
+const AdminConsolePage = lazy(() => import("./pages/admin/AdminConsolePage"));
 const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
 const TopicDetailPage = lazy(() => import("./pages/TopicDetailPage"));
 
@@ -77,8 +77,11 @@ function AppRoutes() {
       <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
 
       {/* Admin Control Routes */}
-      <Route path="/admin" element={<LinkedInAdmin />} />
-      <Route path="/admin/linkedin" element={<LinkedInAdmin />} />
+      <Route path="/admin" element={<AdminConsolePage />} />
+      <Route path="/admin/applications" element={<AdminConsolePage />} />
+      <Route path="/admin/contributors" element={<AdminConsolePage />} />
+      <Route path="/admin/articles" element={<AdminConsolePage />} />
+      <Route path="/admin/linkedin" element={<Navigate to="/admin" replace />} />
 
       {/* Azerbaijani (/az) Parallel Routes */}
       <Route path="/az" element={<HomePage />} />
@@ -111,8 +114,11 @@ function AppRoutes() {
       <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
-      <Route path="/az/admin" element={<LinkedInAdmin />} />
-      <Route path="/az/admin/linkedin" element={<LinkedInAdmin />} />
+      <Route path="/az/admin" element={<AdminConsolePage />} />
+      <Route path="/az/admin/applications" element={<AdminConsolePage />} />
+      <Route path="/az/admin/contributors" element={<AdminConsolePage />} />
+      <Route path="/az/admin/articles" element={<AdminConsolePage />} />
+      <Route path="/az/admin/linkedin" element={<Navigate to="/az/admin" replace />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

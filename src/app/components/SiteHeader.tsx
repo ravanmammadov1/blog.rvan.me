@@ -304,12 +304,12 @@ function UserAuthMenu() {
                   {/* Admin Direct Access */}
                   {isAdmin && (
                     <Link
-                      to={getLocalizedPath("/admin/linkedin")}
+                      to={getLocalizedPath("/admin")}
                       onClick={() => setDropdownOpen(false)}
-                      className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                      className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors font-semibold"
                     >
                       <ShieldCheck size={13} className="shrink-0" />
-                      <span>{t("adminPanel", "Admin Paneli")}</span>
+                      <span>{t("adminConsole", "Admin Console")}</span>
                     </Link>
                   )}
                 </div>
