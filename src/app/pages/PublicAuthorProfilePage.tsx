@@ -10,21 +10,22 @@ import {
   Instagram,
   ArrowRight,
   BookOpen,
-  Eye,
   CheckCircle2,
   Calendar,
   Clock,
   ArrowLeft,
+  UserX,
+  Compass,
 } from "lucide-react";
 
 import { useLanguage } from "../../lib/i18n/LanguageContext";
-import { fetchAllBlogs, fetchSiteSettings } from "../../lib/sanityQueries";
+import { fetchArticlesByAuthor, fetchSiteSettings } from "../../lib/sanityQueries";
 import { SiteSettings } from "../../types/cms";
 import { BlogPost } from "../../types/blog";
 import {
   getPublicAuthorBySlug,
+  getContributorArticles,
   ContributorProfile,
-  FOUNDER_CONTRIBUTOR_PROFILE,
 } from "../../services/contributorService";
 import { formatBlogDate, estimateReadingTime } from "../../lib/blogHelpers";
 import { urlFor } from "../../lib/sanityClient";
@@ -65,21 +66,58 @@ export default function PublicAuthorProfilePage() {
       if (data) setSiteSettings(data);
     });
 
-    const slug = authorSlug || "ravan-mammadov";
+    const cleanSlug = (authorSlug || "").trim().toLowerCase();
+    if (!cleanSlug) {
+      setLoading(false);
+      return;
+    }
 
     Promise.all([
-      getPublicAuthorBySlug(slug),
-      fetchAllBlogs(language),
+      getPublicAuthorBySlug(cleanSlug),
+      fetchArticlesByAuthor(cleanSlug, language),
     ])
-      .then(([authorProfile, allBlogs]) => {
-        setAuthor(authorProfile || FOUNDER_CONTRIBUTOR_PROFILE);
-        if (allBlogs) {
-          setArticles(allBlogs);
+      .then(async ([authorProfile, matchedBlogs]) => {
+        setAuthor(authorProfile);
+
+        let combinedArticles: BlogPost[] = matchedBlogs || [];
+
+        // Also check if author has published contributor drafts
+        if (authorProfile?.uid) {
+          try {
+            const drafts = await getContributorArticles(authorProfile.uid);
+            const publishedDrafts = drafts.filter((d) => d.status === "published");
+            const mappedDrafts: BlogPost[] = publishedDrafts.map((d) => ({
+              _id: d.id,
+              title: d.title,
+              slug: { current: d.slug },
+              originalSlug: d.slug,
+              excerpt: d.excerpt,
+              body: [],
+              publishDate: d.updatedAt || d.createdAt,
+              readTime: "4 min read",
+              category: d.category || "Design",
+              coverImage: d.coverImageUrl ? { asset: { url: d.coverImageUrl } } : null,
+              authorName: authorProfile.name,
+              authorSlug: authorProfile.slug,
+              authorRole: authorProfile.professionalTitle,
+            }));
+
+            // Append drafts if not already in combined list
+            mappedDrafts.forEach((md) => {
+              if (!combinedArticles.some((a) => a.slug?.current === md.slug.current || a._id === md._id)) {
+                combinedArticles.push(md);
+              }
+            });
+          } catch (e) {
+            console.warn("Could not fetch contributor drafts for author:", e);
+          }
         }
+
+        setArticles(combinedArticles);
       })
       .catch((err) => {
         console.error("Error loading author profile:", err);
-        setAuthor(FOUNDER_CONTRIBUTOR_PROFILE);
+        setAuthor(null);
       })
       .finally(() => setLoading(false));
   }, [authorSlug, language]);
@@ -92,15 +130,73 @@ export default function PublicAuthorProfilePage() {
     );
   }
 
-  const profile = author || FOUNDER_CONTRIBUTOR_PROFILE;
+  // Author Not Found State
+  if (!author) {
+    return (
+      <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
+        <SEO
+          title={isAz ? "Müəllif Tapılmadı — Rvan.me" : "Author Not Found — Rvan.me"}
+          description={isAz ? "Axtarılan müəllif profili tapılmadı." : "The requested contributor profile does not exist."}
+          noIndex={true}
+        />
+        <SiteHeader siteSettings={siteSettings} />
+
+        <section className="px-6 pt-36 pb-24 md:pt-48 md:pb-36">
+          <div className="mx-auto max-w-xl text-center space-y-6">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-border bg-card text-muted-foreground shadow-sm">
+              <UserX size={32} />
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-xs font-mono font-bold text-primary uppercase tracking-widest">
+                404 / {isAz ? "MÜƏLLİF PROFİLİ" : "AUTHOR PROFILE"}
+              </span>
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+                {isAz ? "Müəllif Profili Tapılmadı" : "Author Profile Not Found"}
+              </h1>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {isAz
+                  ? `«${authorSlug}» adlı müəllif profili mövcud deyil və ya hələ dərc edilməyib.`
+                  : `The contributor profile for "${authorSlug}" could not be found or has not been published yet.`}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+              <Button
+                to={getLocalizedPath("/blog")}
+                variant="primary"
+                size="md"
+                icon={<ArrowLeft size={14} />}
+                iconPosition="left"
+              >
+                {isAz ? "BÜTÜN MƏQALƏLƏR" : "EXPLORE BLOG"}
+              </Button>
+              <Button
+                to={getLocalizedPath("/contributor")}
+                variant="secondary"
+                size="md"
+                icon={<Compass size={14} />}
+              >
+                {isAz ? "MÜƏLLİFLİK PROQRAMI" : "CONTRIBUTOR PROGRAM"}
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <Footer siteSettings={siteSettings} />
+      </main>
+    );
+  }
+
+  const profile = author;
 
   return (
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title={`${profile.name} — ${isAz ? "Müəllif və Kontributor Profili" : "Author & Contributor Profile"} | Rvan.me`}
-        description={profile.bio}
-        image={profile.profileImage}
-        url={`https://www.rvan.me/author/${profile.slug}`}
+        description={profile.bio || `${profile.name} — ${profile.professionalTitle}`}
+        image={profile.profileImage || undefined}
+        url={isAz ? `https://www.rvan.me/az/author/${profile.slug}` : `https://www.rvan.me/author/${profile.slug}`}
       />
 
       <SiteHeader siteSettings={siteSettings} />
@@ -116,13 +212,24 @@ export default function PublicAuthorProfilePage() {
           </Link>
 
           <div className="flex flex-col md:flex-row items-start md:items-center gap-8 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-12 backdrop-blur-2xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-2xl">
-            {/* Portrait Photo */}
+            {/* Portrait Photo or Fallback Initials */}
             <div className="relative shrink-0">
-              <img
-                src={profile.profileImage}
-                alt={profile.name}
-                className="h-32 w-32 md:h-40 md:w-40 rounded-3xl object-cover border-2 border-primary/60 shadow-[0_0_35px_rgba(97,197,173,0.25)] bg-neutral-900"
-              />
+              {profile.profileImage ? (
+                <img
+                  src={profile.profileImage}
+                  alt={profile.name}
+                  className="h-32 w-32 md:h-40 md:w-40 rounded-3xl object-cover border-2 border-primary/60 shadow-[0_0_35px_rgba(97,197,173,0.25)] bg-neutral-900"
+                />
+              ) : (
+                <div className="h-32 w-32 md:h-40 md:w-40 rounded-3xl border-2 border-primary/60 shadow-[0_0_35px_rgba(97,197,173,0.25)] bg-gradient-to-br from-[#61c5ad]/20 to-[#984f9f]/20 flex items-center justify-center text-3xl font-extrabold text-primary mono">
+                  {profile.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2)}
+                </div>
+              )}
               <span className="absolute -bottom-2 -right-2 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold text-black shadow-md mono">
                 <CheckCircle2 size={12} /> {isAz ? "TƏSDİQLƏNMİŞ" : "VERIFIED"}
               </span>
@@ -161,13 +268,15 @@ export default function PublicAuthorProfilePage() {
                 </span>
               </div>
 
-              <p className="text-sm leading-relaxed text-muted-foreground max-w-3xl pt-2 font-medium">
-                {profile.bio}
-              </p>
+              {profile.bio && (
+                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground pt-2">
+                  {profile.bio}
+                </p>
+              )}
 
               {/* Social Links */}
-              {profile.socialLinks && (
-                <div className="flex items-center gap-3 pt-3">
+              {profile.socialLinks && Object.values(profile.socialLinks).some((v) => Boolean(v?.trim())) && (
+                <div className="flex flex-wrap items-center gap-2 pt-2">
                   {profile.socialLinks.linkedin && (
                     <a
                       href={profile.socialLinks.linkedin}
@@ -177,6 +286,17 @@ export default function PublicAuthorProfilePage() {
                       aria-label="LinkedIn"
                     >
                       <Linkedin size={15} />
+                    </a>
+                  )}
+                  {profile.socialLinks.instagram && (
+                    <a
+                      href={profile.socialLinks.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 shadow-2xs transition-colors"
+                      aria-label="Instagram"
+                    >
+                      <Instagram size={15} />
                     </a>
                   )}
                   {profile.socialLinks.behance && (
@@ -220,47 +340,51 @@ export default function PublicAuthorProfilePage() {
       </section>
 
       {/* Expertise & Career History Section */}
-      <section className="px-6 py-8 md:px-10">
-        <div className="mx-auto max-w-[1400px] grid gap-6 md:grid-cols-2">
-          {/* Expertise Skills */}
-          {profile.skills && profile.skills.length > 0 && (
-            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-primary mono mb-4">
-                {isAz ? "İXTİSASLAŞMA VƏ EKSPERTİZA" : "CORE EXPERTISE & COMPETENCIES"}
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {profile.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-1.5 text-xs text-foreground font-medium shadow-2xs"
-                  >
-                    {skill}
-                  </span>
-                ))}
+      {(profile.skills?.length > 0 || profile.experience || profile.education) && (
+        <section className="px-6 py-8 md:px-10">
+          <div className="mx-auto max-w-[1400px] grid gap-6 md:grid-cols-2">
+            {/* Expertise Skills */}
+            {profile.skills && profile.skills.length > 0 && (
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-primary mono mb-4">
+                  {isAz ? "İXTİSASLAŞMA VƏ EKSPERTİZA" : "CORE EXPERTISE & COMPETENCIES"}
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {profile.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50 dark:bg-white/5 px-3 py-1.5 text-xs text-foreground font-medium shadow-2xs"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Professional Background */}
-          <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-primary mono mb-4">
-              {isAz ? "PEŞƏKAR TƏCRÜBƏ VƏ TƏHSİL" : "PROFESSIONAL BACKGROUND"}
-            </h2>
-            <div className="space-y-3 text-xs leading-relaxed text-muted-foreground font-medium">
-              {profile.experience && (
-                <p>
-                  <strong className="text-foreground">{isAz ? "Təcrübə:" : "Experience:"}</strong> {profile.experience}
-                </p>
-              )}
-              {profile.education && (
-                <p>
-                  <strong className="text-foreground">{isAz ? "Təhsil:" : "Education:"}</strong> {profile.education}
-                </p>
-              )}
-            </div>
+            {/* Professional Background */}
+            {(profile.experience || profile.education) && (
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-primary mono mb-4">
+                  {isAz ? "PEŞƏKAR TƏCRÜBƏ VƏ TƏHSİL" : "PROFESSIONAL BACKGROUND"}
+                </h2>
+                <div className="space-y-3 text-xs leading-relaxed text-muted-foreground font-medium">
+                  {profile.experience && (
+                    <p>
+                      <strong className="text-foreground">{isAz ? "Təcrübə:" : "Experience:"}</strong> {profile.experience}
+                    </p>
+                  )}
+                  {profile.education && (
+                    <p>
+                      <strong className="text-foreground">{isAz ? "Təhsil:" : "Education:"}</strong> {profile.education}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Published Body of Work Section */}
       <section className="px-6 py-12 md:px-10 pb-28">
@@ -279,60 +403,74 @@ export default function PublicAuthorProfilePage() {
             </span>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((post) => {
-              const formattedDate = formatBlogDate(post.publishDate, language);
-              const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
-              const slugStr = post.slug?.current || post.originalSlug || post._id || "";
-              const imgUrl = post.coverImage ? urlFor(post.coverImage)?.url() : null;
+          {articles.length === 0 ? (
+            <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-12 text-center shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
+              <BookOpen size={32} className="mx-auto text-muted-foreground/40 mb-3" />
+              <h3 className="text-base font-bold text-foreground">
+                {isAz ? "Hələ Dərc Edilmiş Məqalə Yoxdur" : "No Published Articles Yet"}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto leading-relaxed">
+                {isAz
+                  ? `Bu müəllif Rvan.me redaksiyasına qoşulub. ${profile.name} tərəfindən yazılan məqalələr redaksiya baxışından sonra burada dərc olunacaq.`
+                  : `This author is a registered contributor on Rvan.me. Articles written by ${profile.name} will appear here once editorially approved and published.`}
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {articles.map((post) => {
+                const formattedDate = formatBlogDate(post.publishDate, language);
+                const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
+                const slugStr = post.slug?.current || post.originalSlug || post._id || "";
+                const imgUrl = post.coverImage?.asset?.url || (post.coverImage ? urlFor(post.coverImage)?.url() : null);
 
-              return (
-                <Link
-                  key={post._id || slugStr}
-                  to={getLocalizedPath(`/blog/${slugStr}`)}
-                  className="group flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/[0.05] hover:shadow-xl hover:shadow-primary/5 focus:outline-none"
-                >
-                  <div>
-                    {imgUrl && (
-                      <div className="mb-4 overflow-hidden rounded-2xl aspect-[16/9] bg-neutral-900 border border-white/5">
-                        <img
-                          src={imgUrl}
-                          alt={post.title}
-                          width={800}
-                          height={450}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
-                    )}
+                return (
+                  <Link
+                    key={post._id || slugStr}
+                    to={getLocalizedPath(`/blog/${slugStr}`)}
+                    className="group flex flex-col justify-between rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-white/[0.05] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none hover:shadow-xl hover:shadow-primary/5 focus:outline-none"
+                  >
+                    <div>
+                      {imgUrl && (
+                        <div className="mb-4 overflow-hidden rounded-2xl aspect-[16/9] bg-neutral-900 border border-[#DDE1E0] dark:border-white/5">
+                          <img
+                            src={imgUrl}
+                            alt={post.title}
+                            width={800}
+                            height={450}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      )}
 
-                    {post.category && (
-                      <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider mono uppercase text-primary">
-                        {post.category}
+                      {post.category && (
+                        <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider mono uppercase text-primary">
+                          {post.category}
+                        </span>
+                      )}
+
+                      <h3 className="mt-2.5 text-lg font-bold leading-snug text-foreground transition-colors group-hover:text-primary line-clamp-2">
+                        {post.title}
+                      </h3>
+
+                      {post.excerpt && (
+                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                          {post.excerpt}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-between border-t border-[#DDE1E0] dark:border-white/10 pt-4 text-[10px] text-muted-foreground mono font-bold">
+                      <span>{formattedDate}</span>
+                      <span className="flex items-center gap-1 text-primary">
+                        {readTimeStr} <ArrowRight size={12} />
                       </span>
-                    )}
-
-                    <h3 className="mt-2.5 text-lg font-bold leading-snug text-foreground transition-colors group-hover:text-primary line-clamp-2">
-                      {post.title}
-                    </h3>
-
-                    {post.excerpt && (
-                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-[10px] text-muted-foreground mono font-bold">
-                    <span>{formattedDate}</span>
-                    <span className="flex items-center gap-1 text-primary">
-                      {readTimeStr} <ArrowRight size={12} />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

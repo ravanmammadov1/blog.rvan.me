@@ -27,6 +27,8 @@ import {
   getContributorDashboardStats,
   saveContributorArticle,
   saveContributorProfile,
+  createDefaultContributorProfile,
+  slugifyAuthorName,
   ContributorProfile,
   ContributorArticleDraft,
   ContributorDashboardStats,
@@ -83,9 +85,10 @@ export default function ContributorDashboardPage() {
         getContributorArticles(user.uid),
       ])
         .then(([prof, arts]) => {
-          setProfile(prof);
+          const resolvedProf = prof || createDefaultContributorProfile(user.uid, user.displayName, user.email, user.photoURL);
+          setProfile(resolvedProf);
           setArticles(arts);
-          getContributorDashboardStats(user.uid, prof).then((s) => setStats(s));
+          getContributorDashboardStats(user.uid, resolvedProf).then((s) => setStats(s));
         })
         .catch(console.error)
         .finally(() => setLoading(false));
@@ -253,7 +256,7 @@ export default function ContributorDashboardPage() {
                 </div>
 
                 <Link
-                  to={getLocalizedPath(`/author/${profile?.slug || "ravan-mammadov"}`)}
+                  to={getLocalizedPath(`/author/${profile?.slug || slugifyAuthorName(user.displayName || "contributor")}`)}
                   className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline"
                 >
                   {isAz ? "İctimai Müəllif Profilinə Bax" : "View Public Author Profile"} <ArrowRight size={13} />

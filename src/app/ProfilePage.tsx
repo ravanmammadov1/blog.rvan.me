@@ -37,8 +37,9 @@ import ImageCropperModal from "./components/profile/ImageCropperModal";
 import {
   getContributorProfile,
   saveContributorProfile,
+  createDefaultContributorProfile,
+  slugifyAuthorName,
   ContributorProfile,
-  FOUNDER_CONTRIBUTOR_PROFILE,
 } from "../services/contributorService";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -106,14 +107,9 @@ export default function ProfilePage() {
 
     if (user) {
       getContributorProfile(user.uid).then((prof) => {
-        setContributorProfile(prof || {
-          ...FOUNDER_CONTRIBUTOR_PROFILE,
-          uid: user.uid,
-          name: user.displayName || "",
-          email: user.email || "",
-          profileImage: user.photoURL || "/imports/ravan_1-400.webp",
-          status: "approved",
-        });
+        setContributorProfile(
+          prof || createDefaultContributorProfile(user.uid, user.displayName, user.email, user.photoURL)
+        );
       });
     }
   }, [language, user]);
@@ -479,7 +475,7 @@ export default function ProfilePage() {
 
                   <div className="flex items-center gap-3">
                     <Link
-                      to={getLocalizedPath(`/author/${contributorProfile?.slug || "ravan-mammadov"}`)}
+                      to={getLocalizedPath(`/author/${contributorProfile?.slug || slugifyAuthorName(user?.displayName || "author")}`)}
                       className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline"
                     >
                       {isAz ? "Profilə Bax" : "View Live Profile"} <ExternalLink size={13} />

@@ -53,6 +53,7 @@ function AppRoutes() {
       <Route path="/contributor" element={<ContributorDashboardPage />} />
       <Route path="/contributor/dashboard" element={<ContributorDashboardPage />} />
       <Route path="/author/:authorSlug" element={<PublicAuthorProfilePage />} />
+      <Route path="/about/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
       <Route path="/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/work" element={<WorkArchive />} />
@@ -87,6 +88,7 @@ function AppRoutes() {
       <Route path="/az/contributor" element={<ContributorDashboardPage />} />
       <Route path="/az/contributor/dashboard" element={<ContributorDashboardPage />} />
       <Route path="/az/author/:authorSlug" element={<PublicAuthorProfilePage />} />
+      <Route path="/az/about/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />
       <Route path="/az/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/work" element={<WorkArchive />} />

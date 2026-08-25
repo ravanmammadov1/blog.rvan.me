@@ -58,9 +58,9 @@ const staticPages = [
     lastmod: todayIso,
   },
   {
-    path: "/author/ravan-mammadov",
-    title: "Ravan Mammadov — Author & Founder | Rvan.me",
-    description: "Articles, design essays, and creative publications by Ravan Mammadov on Rvan.me.",
+    path: "/about/ravan-mammadov",
+    title: "Ravan Mammadov — Founder & Senior Creative Designer",
+    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
     type: "profile",
     lastmod: todayIso,
   },
@@ -73,8 +73,8 @@ const staticPages = [
   },
   {
     path: "/author/ravan-mammadov",
-    title: "Ravan Mammadov — Editorial Contributor & Visual Strategist | Rvan.me",
-    description: "Verified editorial author profile, design research publications, and career background of Ravan Mammadov.",
+    title: "Ravan Mammadov — Editorial Author & Visual Strategist | Rvan.me",
+    description: "Verified editorial author profile, design research publications, and articles authored by Ravan Mammadov.",
     type: "profile",
     lastmod: todayIso,
   },

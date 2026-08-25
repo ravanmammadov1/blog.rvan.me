@@ -136,6 +136,55 @@ export const FOUNDER_CONTRIBUTOR_PROFILE: ContributorProfile = {
   publishedArticlesCount: 39,
 };
 
+/**
+ * Converts a person's display name into a clean, URL-safe slug with Azerbaijani transliteration support.
+ */
+export function slugifyAuthorName(name: string): string {
+  if (!name || !name.trim()) return "author";
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/ə/g, "e")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
+    .replace(/ç/g, "c")
+    .replace(/ş/g, "s")
+    .replace(/ğ/g, "g")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "author";
+}
+
+/**
+ * Builds a default ContributorProfile instance for an authenticated user.
+ */
+export function createDefaultContributorProfile(
+  uid: string,
+  name?: string | null,
+  email?: string | null,
+  photoURL?: string | null
+): ContributorProfile {
+  const cleanName = name?.trim() || "Contributor";
+  return {
+    uid,
+    slug: slugifyAuthorName(cleanName),
+    name: cleanName,
+    email: email || "",
+    profileImage: photoURL || "",
+    professionalTitle: "Creative Contributor",
+    bio: "",
+    location: "Baku, Azerbaijan",
+    currentWorkplace: "",
+    experience: "",
+    education: "",
+    skills: [],
+    socialLinks: {},
+    status: "approved",
+    appliedAt: new Date().toISOString(),
+    publishedArticlesCount: 0,
+  };
+}
+
 export function calculateProfileCompleteness(profile: Partial<ContributorProfile>): number {
   const fields = [
     Boolean(profile.name?.trim()),
@@ -425,11 +474,43 @@ export async function getContributorProfile(uid: string): Promise<ContributorPro
     return FOUNDER_CONTRIBUTOR_PROFILE;
   }
 
+  // 1. Check local contributor profile cache
   try {
     const raw = localStorage.getItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`);
     if (raw) return JSON.parse(raw);
   } catch {}
 
+  // 2. Check local application submissions
+  try {
+    const apps = getLocalStorage<Record<string, ContributorApplication>>(
+      APPLICATIONS_STORAGE_KEY,
+      {}
+    );
+    const app = apps[uid];
+    if (app) {
+      const mapped: ContributorProfile = {
+        uid: app.uid,
+        slug: app.slug || slugifyAuthorName(app.displayName),
+        name: app.displayName,
+        email: app.email || "",
+        profileImage: app.photoURL || "",
+        professionalTitle: app.roleTitle || "Creative Contributor",
+        bio: app.bio || "",
+        location: app.location || "Baku, Azerbaijan",
+        currentWorkplace: app.currentRole || "",
+        experience: app.yearsOfExperience || "",
+        education: "",
+        skills: app.preferredTopics || [],
+        socialLinks: app.socialLinks || {},
+        status: app.status === "APPROVED" ? "approved" : "pending",
+        appliedAt: app.submittedAt,
+        publishedArticlesCount: 0,
+      };
+      return mapped;
+    }
+  } catch {}
+
+  // 3. Query Firestore
   if (db) {
     try {
       const docRef = doc(db, CONTRIBUTORS_COLLECTION, uid);
@@ -453,16 +534,65 @@ export async function getPublicAuthorBySlug(slug: string): Promise<ContributorPr
   if (!slug) return null;
   const cleanSlug = slug.toLowerCase().trim();
 
-  if (cleanSlug === "ravan-mammadov" || cleanSlug === "ravanmammadov" || cleanSlug === "founder-ravan-mammadov") {
+  if (cleanSlug === "ravan-mammadov" || cleanSlug === "ravanmammadov" || cleanSlug === "founder-ravan-mammadov" || cleanSlug === "founder") {
     return FOUNDER_CONTRIBUTOR_PROFILE;
   }
 
+  // 1. Check local storage contributor profile caches
+  if (typeof window !== "undefined") {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(LOCAL_CONTRIBUTOR_CACHE_KEY)) {
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const prof = JSON.parse(raw) as ContributorProfile;
+            if (prof && prof.slug && prof.slug.toLowerCase() === cleanSlug) {
+              return prof;
+            }
+          }
+        }
+      }
+    } catch {}
+
+    // 2. Check local applications
+    try {
+      const apps = getLocalStorage<Record<string, ContributorApplication>>(
+        APPLICATIONS_STORAGE_KEY,
+        {}
+      );
+      for (const app of Object.values(apps)) {
+        const appSlug = (app.slug || slugifyAuthorName(app.displayName)).toLowerCase();
+        if (appSlug === cleanSlug) {
+          return {
+            uid: app.uid,
+            slug: appSlug,
+            name: app.displayName,
+            email: app.email || "",
+            profileImage: app.photoURL || "",
+            professionalTitle: app.roleTitle || "Creative Contributor",
+            bio: app.bio || "",
+            location: app.location || "Baku, Azerbaijan",
+            currentWorkplace: app.currentRole || "",
+            experience: app.yearsOfExperience || "",
+            education: "",
+            skills: app.preferredTopics || [],
+            socialLinks: app.socialLinks || {},
+            status: "approved",
+            appliedAt: app.submittedAt,
+            publishedArticlesCount: 0,
+          };
+        }
+      }
+    } catch {}
+  }
+
+  // 3. Query Firestore
   if (db) {
     try {
       const q = query(
         collection(db, CONTRIBUTORS_COLLECTION),
-        where("slug", "==", cleanSlug),
-        where("status", "==", "approved")
+        where("slug", "==", cleanSlug)
       );
       const snap = await getDocs(q);
       if (!snap.empty) {
@@ -480,33 +610,15 @@ export async function saveContributorProfile(
   uid: string,
   data: Partial<ContributorProfile>
 ): Promise<ContributorProfile> {
-  const existing = (await getContributorProfile(uid)) || {
-    uid,
-    slug: (data.name || "author")
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, ""),
-    name: data.name || "",
-    email: data.email || "",
-    profileImage: data.profileImage || "",
-    professionalTitle: data.professionalTitle || "",
-    bio: data.bio || "",
-    location: data.location || "",
-    currentWorkplace: data.currentWorkplace || "",
-    experience: data.experience || "",
-    education: data.education || "",
-    skills: data.skills || [],
-    socialLinks: data.socialLinks || {},
-    status: "approved",
-    appliedAt: new Date().toISOString(),
-    publishedArticlesCount: 0,
-  };
+  const existing = await getContributorProfile(uid);
+  const fallbackSlug = slugifyAuthorName(data.name || existing?.name || "author");
+  const baseProfile = existing || createDefaultContributorProfile(uid, data.name, data.email, data.profileImage);
 
   const updated: ContributorProfile = {
-    ...existing,
+    ...baseProfile,
     ...data,
     uid,
+    slug: data.slug || baseProfile.slug || fallbackSlug,
   };
 
   try {
@@ -653,6 +765,39 @@ export async function getContributorDashboardStats(
 export async function getApprovedContributors(): Promise<ContributorProfile[]> {
   const result: ContributorProfile[] = [FOUNDER_CONTRIBUTOR_PROFILE];
 
+  // 1. Local contributor applications
+  if (typeof window !== "undefined") {
+    try {
+      const apps = getLocalStorage<Record<string, ContributorApplication>>(
+        APPLICATIONS_STORAGE_KEY,
+        {}
+      );
+      Object.values(apps).forEach((app) => {
+        if (app.uid !== FOUNDER_CONTRIBUTOR_PROFILE.uid && !result.some((r) => r.uid === app.uid)) {
+          result.push({
+            uid: app.uid,
+            slug: app.slug || slugifyAuthorName(app.displayName),
+            name: app.displayName,
+            email: app.email || "",
+            profileImage: app.photoURL || "",
+            professionalTitle: app.roleTitle || "Creative Contributor",
+            bio: app.bio || "",
+            location: app.location || "Baku, Azerbaijan",
+            currentWorkplace: app.currentRole || "",
+            experience: app.yearsOfExperience || "",
+            education: "",
+            skills: app.preferredTopics || [],
+            socialLinks: app.socialLinks || {},
+            status: "approved",
+            appliedAt: app.submittedAt,
+            publishedArticlesCount: 0,
+          });
+        }
+      });
+    } catch {}
+  }
+
+  // 2. Firestore contributors
   if (db) {
     try {
       const q = query(

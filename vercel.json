@@ -46,6 +46,14 @@
       "destination": "/ravan-mammadov/index.html"
     },
     {
+      "source": "/about/ravan-mammadov",
+      "destination": "/ravan-mammadov/index.html"
+    },
+    {
+      "source": "/author/:slug",
+      "destination": "/author/:slug/index.html"
+    },
+    {
       "source": "/privacy-policy",
       "destination": "/privacy-policy/index.html"
     },

@@ -9,6 +9,7 @@ import { formatBlogDate, estimateReadingTime, CANONICAL_AUTHOR } from "../../../
 import { getArticleCoverImage } from "../../../lib/contentEngine";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { subscribeToArticleStats } from "../../../services/articleStatsService";
+import { slugifyAuthorName } from "../../../services/contributorService";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -62,13 +63,26 @@ export default function BlogCard({
       );
 
   const formattedDate = formatBlogDate(post.publishDate, language);
-  const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
+  // Author resolution: dynamically resolve author slug and link to /author/:slug
+  const rawAuthorName = post.authorName || post.author?.name || "";
+  const isFounder =
+    !rawAuthorName ||
+    rawAuthorName.toLowerCase().includes("ravan") ||
+    post.authorSlug === "ravan-mammadov" ||
+    post.authorSlug === "ravan";
 
-  // Author resolution: use post.author if available, or canonical author
-  const authorName = post.author?.name || (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name);
-  const authorRole = post.author?.role || (isAz ? CANONICAL_AUTHOR.role_az : CANONICAL_AUTHOR.role);
-  const authorAvatar = post.author?.avatar || CANONICAL_AUTHOR.avatar;
-  const authorProfileUrl = post.author?.profileUrl || CANONICAL_AUTHOR.profileUrl;
+  const authorSlug = post.authorSlug || (isFounder ? "ravan-mammadov" : slugifyAuthorName(rawAuthorName));
+  const authorName = rawAuthorName || (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name);
+  const authorRole =
+    post.authorRole ||
+    post.author?.role ||
+    (isFounder
+      ? (isAz ? CANONICAL_AUTHOR.role_az : CANONICAL_AUTHOR.role)
+      : (isAz ? "Redaksiya Müəllifi" : "Editorial Contributor"));
+  const authorAvatar = post.authorPhoto
+    ? (typeof post.authorPhoto === "string" ? post.authorPhoto : urlFor(post.authorPhoto)?.url() || CANONICAL_AUTHOR.avatar)
+    : (isFounder ? CANONICAL_AUTHOR.avatar : "");
+  const authorProfileUrl = `/author/${authorSlug}`;
 
   const handleMouseEnter = () => {
     setInternalHovered(true);

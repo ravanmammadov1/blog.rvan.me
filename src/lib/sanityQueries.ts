@@ -578,6 +578,7 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
           "Design"
         ),
         "authorName": coalesce(author->name, authorName, "Ravan Mammadov"),
+        "authorSlug": coalesce(author->slug.current, authorSlug, "ravan-mammadov"),
         "authorRole": coalesce(
           select(${isAz} && defined(author->role_az) => author->role_az, author->role),
           authorRole,
@@ -677,6 +678,7 @@ export async function fetchAllBlogs(lang: string = "en") {
           "Design"
         ),
         "authorName": coalesce(author->name, authorName, "Ravan Mammadov"),
+        "authorSlug": coalesce(author->slug.current, authorSlug, "ravan-mammadov"),
         "authorRole": coalesce(
           select(${isAz} && defined(author->role_az) => author->role_az, author->role),
           authorRole,
