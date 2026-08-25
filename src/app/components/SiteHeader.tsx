@@ -20,7 +20,7 @@ import { useTheme } from "../../context/ThemeContext";
 import AuthModal from "./AuthModal";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import ravanLogo from "../../assets/ravan_logo.svg";
-import { isUserApprovedContributor, getContributorStatus } from "../../services/contributorService";
+
 
 function UserAuthMenu() {
   const { user, isAdmin, loading, signOut, userPhoto } = useAuth();
@@ -30,18 +30,7 @@ function UserAuthMenu() {
   const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
 
-  const [isApprovedContributor, setIsApprovedContributor] = useState(false);
-  const [contributorStatus, setContributorStatus] = useState<string>("NONE");
 
-  useEffect(() => {
-    if (user?.uid) {
-      isUserApprovedContributor(user.uid).then(setIsApprovedContributor);
-      setContributorStatus(getContributorStatus(user.uid));
-    } else {
-      setIsApprovedContributor(false);
-      setContributorStatus("NONE");
-    }
-  }, [user]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -254,9 +243,7 @@ function UserAuthMenu() {
                   <div className="flex items-center justify-between text-[11px] mono">
                     <span className="text-muted-foreground uppercase">{t("status", "Status")}:</span>
                     {isAdmin ? (
-                      <span className="text-purple-600 dark:text-purple-400 font-bold">● {t("adminPanel", "Admin")}</span>
-                    ) : isApprovedContributor ? (
-                      <span className="text-primary font-bold">● {t("activeContributor", "Müəllif")}</span>
+                      <span className="text-purple-600 dark:text-purple-400 font-bold">● {t("adminConsole", "Admin")}</span>
                     ) : (
                       <span className="text-muted-foreground">● {t("normalUser", "Oxucu")}</span>
                     )}
@@ -274,22 +261,14 @@ function UserAuthMenu() {
                     <span>{t("myAccount", "Mənim Hesabım")}</span>
                   </Link>
 
-                  {/* If user is an approved legacy contributor -> Show Dashboard */}
-                  {isApprovedContributor && (
-                    <Link
-                      to={getLocalizedPath("/contributor/dashboard")}
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <PenTool size={13} className="text-primary shrink-0" />
-                        <span>{t("contributorPanel", "Müəllif Paneli")}</span>
-                      </div>
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-primary mono bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
-                        {t("active", "AKTİV")}
-                      </span>
-                    </Link>
-                  )}
+                  <Link
+                    to={getLocalizedPath("/write")}
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-foreground hover:bg-slate-100 dark:hover:bg-muted/60 transition-colors"
+                  >
+                    <Sparkles size={14} className="text-primary" />
+                    <span>{t("shareYourIdeas", "Share Your Ideas")}</span>
+                  </Link>
 
                   {/* Admin Direct Access */}
                   {isAdmin && (

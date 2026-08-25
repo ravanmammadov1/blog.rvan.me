@@ -291,35 +291,6 @@ export function getContributorStatus(uid: string): ContributorStatus {
 export async function isUserApprovedContributor(uid?: string | null): Promise<boolean> {
   if (!uid) return false;
   if (uid === "founder-ravan-mammadov" || uid === "ravan-mammadov") return true;
-
-  // 1. Check local cache
-  if (typeof window !== "undefined") {
-    try {
-      const raw = localStorage.getItem(`${LOCAL_CONTRIBUTOR_CACHE_KEY}_${uid}`);
-      if (raw) {
-        const prof = JSON.parse(raw) as ContributorProfile;
-        if (prof?.status === "approved") return true;
-      }
-
-      const appsV2 = getLocalStorage<ContributorApplicationRecord[]>(APPLICATIONS_V2_STORAGE_KEY, []);
-      if (appsV2.some((a) => a.userId === uid && a.status === "APPROVED")) return true;
-    } catch {}
-  }
-
-  // 2. Query Firestore contributors
-  if (db) {
-    try {
-      const docRef = doc(db, CONTRIBUTORS_COLLECTION, uid);
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        const data = snap.data() as ContributorProfile;
-        if (data.status === "approved") return true;
-      }
-    } catch (err) {
-      console.warn("[ContributorService] Error checking contributor approval:", err);
-    }
-  }
-
   return false;
 }
 
@@ -874,35 +845,13 @@ export async function saveContributorProfile(
 
 export async function getContributorArticles(authorUid: string): Promise<ContributorArticleDraft[]> {
   const localKey = `rvan_contributor_articles_${authorUid}`;
-  let localDrafts: ContributorArticleDraft[] = [];
-
   if (typeof window !== "undefined") {
     try {
       const raw = localStorage.getItem(localKey);
-      if (raw) localDrafts = JSON.parse(raw);
+      if (raw) return JSON.parse(raw);
     } catch {}
   }
-
-  if (db) {
-    try {
-      const q = query(
-        collection(db, DRAFTS_COLLECTION),
-        where("authorUid", "==", authorUid)
-      );
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        const remoteDrafts = snap.docs.map((d) => d.data() as ContributorArticleDraft);
-        if (typeof window !== "undefined") {
-          localStorage.setItem(localKey, JSON.stringify(remoteDrafts));
-        }
-        return remoteDrafts;
-      }
-    } catch (err) {
-      console.warn("[ContributorService] Error querying contributor articles:", err);
-    }
-  }
-
-  return localDrafts;
+  return [];
 }
 
 export function calculateReadTime(text: string = "", language: string = "en"): string {
@@ -1094,54 +1043,14 @@ export async function adminApproveAndPublishArticle(
 }
 
 export async function getPublishedContributorArticles(
-  lang?: string
+  _lang?: string
 ): Promise<ContributorArticleDraft[]> {
-  const list: ContributorArticleDraft[] = [];
-  if (db) {
-    try {
-      const q = query(
-        collection(db, DRAFTS_COLLECTION),
-        where("status", "==", "published")
-      );
-      const snap = await getDocs(q);
-      snap.forEach((d) => {
-        const item = d.data() as ContributorArticleDraft;
-        if (item && (!lang || item.language === lang || item.language === "en")) {
-          list.push(item);
-        }
-      });
-      list.sort(
-        (a, b) =>
-          new Date(b.publishedAt || b.createdAt).getTime() -
-          new Date(a.publishedAt || a.createdAt).getTime()
-      );
-    } catch (err) {
-      console.warn("[ContributorService] Error querying published contributor articles:", err);
-    }
-  }
-  return list;
+  return [];
 }
 
 export async function getPublishedContributorArticleBySlug(
-  slug: string
+  _slug: string
 ): Promise<ContributorArticleDraft | null> {
-  if (!slug) return null;
-  const cleanSlug = slug.toLowerCase().trim();
-  if (db) {
-    try {
-      const q = query(
-        collection(db, DRAFTS_COLLECTION),
-        where("slug", "==", cleanSlug),
-        where("status", "==", "published")
-      );
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        return snap.docs[0].data() as ContributorArticleDraft;
-      }
-    } catch (err) {
-      console.warn("[ContributorService] Error querying published article by slug:", err);
-    }
-  }
   return null;
 }
 

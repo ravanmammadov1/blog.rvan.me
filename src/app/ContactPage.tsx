@@ -17,6 +17,7 @@ import { SiteSettings } from "../types/cms";
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
+import { Button } from "./components/ui/Button";
 import { CONTACT_FAQS } from "../data/faqData";
 import FaqAccordion from "./components/ui/FaqAccordion";
 import { useAuth } from "../hooks/useAuth";
@@ -358,8 +359,8 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── SECTION B: WRITE FOR RVAN.ME EDITORIAL SUBMISSIONS ── */}
-      <section id="contributor-application" className="relative px-4 py-16 sm:px-6 md:px-8 md:py-24 border-t border-[#DDE1E0] dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
+      {/* ── Section 2: Editorial Submissions & Article Invitation ── */}
+      <section id="editorial-intake" className="relative px-4 py-16 sm:px-6 md:px-8 md:py-24 border-t border-[#DDE1E0] dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
         <div className="mx-auto max-w-[1280px]">
           <div className="p-8 md:p-12 lg:p-14 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-card shadow-[0_12px_40px_rgba(15,23,42,0.05)] dark:shadow-none">
             <div className="grid gap-12 lg:grid-cols-12 items-center">

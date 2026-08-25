@@ -23,7 +23,6 @@ const AiToolArchivePage = lazy(() => import("./pages/AiToolArchivePage"));
 const OpportunityArchivePage = lazy(() => import("./pages/OpportunityArchivePage"));
 const FontDetailPage = lazy(() => import("./pages/FontDetailPage"));
 const PublicAuthorProfilePage = lazy(() => import("./pages/PublicAuthorProfilePage"));
-const ContributorDashboardPage = lazy(() => import("./pages/ContributorDashboardPage"));
 const FaqPage = lazy(() => import("./FaqPage"));
 const AdminConsolePage = lazy(() => import("./pages/admin/AdminConsolePage"));
 const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
@@ -51,8 +50,8 @@ function AppRoutes() {
       <Route path="/faq" element={<FaqPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/settings" element={<ProfilePage />} />
-      <Route path="/contributor" element={<ContributorDashboardPage />} />
-      <Route path="/contributor/dashboard" element={<ContributorDashboardPage />} />
+      <Route path="/contributor" element={<Navigate to="/write" replace />} />
+      <Route path="/contributor/dashboard" element={<Navigate to="/write" replace />} />
       <Route path="/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/about/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/ravanmammadov" element={<Navigate to="/ravan-mammadov" replace />} />
@@ -92,8 +91,8 @@ function AppRoutes() {
       <Route path="/az/faq" element={<FaqPage />} />
       <Route path="/az/profile" element={<ProfilePage />} />
       <Route path="/az/settings" element={<ProfilePage />} />
-      <Route path="/az/contributor" element={<ContributorDashboardPage />} />
-      <Route path="/az/contributor/dashboard" element={<ContributorDashboardPage />} />
+      <Route path="/az/contributor" element={<Navigate to="/az/write" replace />} />
+      <Route path="/az/contributor/dashboard" element={<Navigate to="/az/write" replace />} />
       <Route path="/az/author/:authorSlug" element={<PublicAuthorProfilePage />} />
       <Route path="/az/about/ravan-mammadov" element={<FounderProfilePage />} />
       <Route path="/az/ravanmammadov" element={<Navigate to="/az/ravan-mammadov" replace />} />

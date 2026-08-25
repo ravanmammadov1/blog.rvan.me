@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Sparkles,
   User as UserIcon,
   Sun,
   Moon,
@@ -12,13 +10,7 @@ import {
   Camera,
   RotateCcw,
   Check,
-  ShieldCheck,
   Sliders,
-  PenTool,
-  ArrowRight,
-  ExternalLink,
-  Briefcase,
-  Layers,
   Trash2,
 } from "lucide-react";
 
@@ -34,13 +26,6 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 import AuthModal from "./components/AuthModal";
 import ImageCropperModal from "./components/profile/ImageCropperModal";
-import {
-  getContributorProfile,
-  saveContributorProfile,
-  isUserApprovedContributor,
-  slugifyAuthorName,
-  ContributorProfile,
-} from "../services/contributorService";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -53,7 +38,7 @@ const fadeUp = {
   },
 };
 
-type SettingsTab = "site" | "profile" | "contributor";
+type SettingsTab = "site" | "profile";
 
 export default function ProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
@@ -63,17 +48,10 @@ export default function ProfilePage() {
   const [cropperOpen, setCropperOpen] = useState(false);
   const [rawUploadedImage, setRawUploadedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Contributor state
-  const [isApprovedContributorState, setIsApprovedContributorState] = useState(false);
-  const [contributorProfile, setContributorProfile] = useState<ContributorProfile | null>(null);
-  const [isSavingContributor, setIsSavingContributor] = useState(false);
-  const [contributorSuccessMsg, setContributorSuccessMsg] = useState("");
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const {
     user,
-    signOut,
     deleteAccount,
     userPhoto,
     customAvatar,
@@ -81,7 +59,7 @@ export default function ProfilePage() {
     randomizeAvatar,
   } = useAuth();
   const { theme, setTheme } = useTheme();
-  const { language, switchLanguage, t, getLocalizedPath } = useLanguage();
+  const { language, switchLanguage, t } = useLanguage();
   const isAz = language === "az";
 
   const handleDeleteAccount = async () => {
@@ -105,25 +83,7 @@ export default function ProfilePage() {
     fetchSiteSettings(language).then((data) => {
       if (data) setSiteSettings(data);
     });
-
-    if (user) {
-      isUserApprovedContributor(user.uid).then((approved) => {
-        setIsApprovedContributorState(approved);
-        if (approved) {
-          getContributorProfile(user.uid).then((prof) => {
-            setContributorProfile(prof);
-          });
-        } else {
-          setContributorProfile(null);
-          setActiveTab((prev) => (prev === "contributor" ? "site" : prev));
-        }
-      });
-    } else {
-      setIsApprovedContributorState(false);
-      setContributorProfile(null);
-      setActiveTab((prev) => (prev === "contributor" ? "site" : prev));
-    }
-  }, [language, user]);
+  }, [language]);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -164,21 +124,6 @@ export default function ProfilePage() {
     setTimeout(() => setPhotoSuccessMsg(""), 3500);
   };
 
-  const handleSaveContributor = async () => {
-    if (!user || !contributorProfile) return;
-    setIsSavingContributor(true);
-    try {
-      const saved = await saveContributorProfile(user.uid, contributorProfile);
-      setContributorProfile(saved);
-      setContributorSuccessMsg(isAz ? "Müəllif profili uğurla yadda saxlanıldı!" : "Contributor profile updated successfully!");
-      setTimeout(() => setContributorSuccessMsg(""), 3500);
-    } catch (err) {
-      console.error("Error saving contributor info:", err);
-    } finally {
-      setIsSavingContributor(false);
-    }
-  };
-
   const userName = user ? (user.displayName || "User") : (isAz ? "Qonaq İstifadəçi" : "Guest User");
   const userEmail = user ? user.email : (isAz ? "Daxil olunmayıb" : "Not signed in");
 
@@ -186,7 +131,7 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
       <SEO
         title={`${isAz ? "Tənzimləmələr və Profil" : "Settings & Profile"} — Rvan.me`}
-        description={isAz ? "Vebsayt dili, görünüş teması, şəxsi profil və müəllif tənzimləmələri." : "Manage site language, appearance theme, personal profile, and author settings."}
+        description={isAz ? "Vebsayt dili, görünüş teması və şəxsi profil tənzimləmələri." : "Manage site language, appearance theme, and personal profile settings."}
         url="https://www.rvan.me/profile"
       />
 
@@ -204,8 +149,8 @@ export default function ProfilePage() {
             </h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-2xl font-medium">
               {isAz
-                ? "Vebsayt dili, görünüş, şəxsi profil və müəllif məlumatlarınızı vahid mərkəzdən idarə edin."
-                : "Manage your site preferences, appearance theme, profile photo, and public contributor profile."}
+                ? "Vebsayt dili, görünüş və şəxsi profil məlumatlarınızı idarə edin."
+                : "Manage your site preferences, appearance theme, and profile photo."}
             </p>
           </motion.div>
 
@@ -234,20 +179,6 @@ export default function ProfilePage() {
               <UserIcon size={14} />
               <span>{isAz ? "2. ŞƏXSİ PROFİL VƏ FOTO" : "2. PERSONAL PROFILE"}</span>
             </button>
-
-            {isApprovedContributorState && (
-              <button
-                onClick={() => setActiveTab("contributor")}
-                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all mono uppercase cursor-pointer ${
-                  activeTab === "contributor"
-                    ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                    : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-                }`}
-              >
-                <PenTool size={14} />
-                <span>{isAz ? "3. MÜƏLLİF PROFİLİ" : "3. AUTHOR PROFILE"}</span>
-              </button>
-            )}
           </div>
 
           {/* TAB 1: SITE & PREFERENCES */}
@@ -300,12 +231,12 @@ export default function ProfilePage() {
                   <Sun size={16} /> {isAz ? "GÖRÜNÜŞ VƏ TEMA" : "APPEARANCE & THEME"}
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">
-                  {isAz ? "Rəng Rejimi" : "Color Theme"}
+                  {isAz ? "Vizual İnterfeys" : "Color Theme"}
                 </h3>
                 <p className="text-xs text-muted-foreground mb-6">
                   {isAz
-                    ? "Oxuma rahatlığınıza uyğun olaraq qaranlıq (OLED) və ya açıq tema seçin."
-                    : "Switch between calibrated dark mode and high-contrast light mode."}
+                    ? "İstədiyiniz vizual kontrastı seçin. Seçiminiz brauzerinizdə yadda saxlanılır."
+                    : "Choose light or dark aesthetic. Your preference will be saved locally."}
                 </p>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -317,8 +248,8 @@ export default function ProfilePage() {
                         : "border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 text-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
-                    <Moon size={15} />
-                    <span>Dark Theme</span>
+                    <Moon size={15} className="text-primary" />
+                    <span>{isAz ? "Qaranlıq (Dark)" : "Dark Mode"}</span>
                     {theme === "dark" && <Check size={14} className="text-primary ml-auto" />}
                   </button>
 
@@ -330,8 +261,8 @@ export default function ProfilePage() {
                         : "border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 text-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40 hover:text-foreground"
                     }`}
                   >
-                    <Sun size={15} />
-                    <span>Light Theme</span>
+                    <Sun size={15} className="text-primary" />
+                    <span>{isAz ? "İşıqlı (Light)" : "Light Mode"}</span>
                     {theme === "light" && <Check size={14} className="text-primary ml-auto" />}
                   </button>
                 </div>
@@ -339,114 +270,120 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {/* TAB 2: PERSONAL PROFILE */}
+          {/* TAB 2: PERSONAL PROFILE & PHOTO */}
           {activeTab === "profile" && (
-            <motion.div variants={fadeUp} initial="hidden" animate="visible" className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl space-y-6">
-                <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase">
-                  <UserIcon size={16} /> {isAz ? "PROFİL MƏLUMATLARI" : "ACCOUNT IDENTITY"}
-                </div>
+            <motion.div variants={fadeUp} initial="hidden" animate="visible" className="space-y-6">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-10 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[#DDE1E0] dark:border-white/10 pb-8 mb-8">
+                  <div className="flex items-center gap-5">
+                    <div className="relative group">
+                      <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-primary/60 bg-black p-1 shadow-lg shadow-primary/20 shrink-0">
+                        {userPhoto ? (
+                          <img
+                            src={userPhoto}
+                            alt={userName}
+                            className="h-full w-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <div className="h-full w-full rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-2xl">
+                            {userName.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
 
-                <div className="flex items-center gap-4">
-                  <img
-                    src={userPhoto || "/imports/ravan_1-400.webp"}
-                    alt={userName}
-                    className="h-20 w-20 rounded-2xl object-cover border-2 border-primary/60 shadow-lg bg-neutral-900"
-                  />
-                  <div>
-                    <h3 className="text-lg font-bold text-foreground">{userName}</h3>
-                    <p className="text-xs text-muted-foreground mono">{userEmail}</p>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold mt-2 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                      <Check size={10} /> {customAvatar ? (isAz ? "Xüsusi Foto" : "Custom Photo") : (isAz ? "Vektor Avatar" : "Vector Avatar")}
-                    </span>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="absolute bottom-0 right-0 p-2 rounded-full bg-primary text-black shadow-md hover:scale-110 transition-transform cursor-pointer"
+                        title={isAz ? "Yeni şəkil yüklə" : "Upload new photo"}
+                      >
+                        <Camera size={14} />
+                      </button>
+                    </div>
+
+                    <div className="space-y-1">
+                      <h3 className="text-2xl font-bold text-foreground">{userName}</h3>
+                      <p className="text-xs font-mono text-muted-foreground">{userEmail}</p>
+                      {user && (
+                        <div className="pt-1 flex items-center gap-2">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                            ● {isAz ? "Google İlə Daxil Olunub" : "Signed In with Google"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileSelect}
+                      accept="image/*"
+                      className="hidden"
+                    />
+
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      variant="primary"
+                      size="sm"
+                      icon={<Camera size={14} />}
+                      iconPosition="left"
+                    >
+                      {isAz ? "Foto Yüklə" : "Upload Photo"}
+                    </Button>
+
+                    <Button
+                      onClick={handleRandomizeCharacter}
+                      variant="outline"
+                      size="sm"
+                      icon={<Dices size={14} />}
+                      iconPosition="left"
+                    >
+                      {isAz ? "Xarakter Seç" : "Randomize Character"}
+                    </Button>
+
+                    {customAvatar && (
+                      <Button
+                        onClick={handleResetPhoto}
+                        variant="secondary"
+                        size="sm"
+                        icon={<RotateCcw size={14} />}
+                        iconPosition="left"
+                      >
+                        {isAz ? "Sıfırla" : "Reset"}
+                      </Button>
+                    )}
                   </div>
                 </div>
 
                 {photoSuccessMsg && (
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400">
+                  <div className="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400">
                     {photoSuccessMsg}
                   </div>
                 )}
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-
-                <div className="space-y-3 pt-2">
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    variant="primary"
-                    size="md"
-                    className="w-full"
-                    icon={<Camera size={15} />}
-                    iconPosition="left"
-                  >
-                    {isAz ? "Yeni Foto Yüklə və Kəs" : "Upload & Crop Profile Photo"}
-                  </Button>
-
-                  <Button
-                    onClick={handleRandomizeCharacter}
-                    variant="secondary"
-                    size="md"
-                    className="w-full"
-                    icon={<Dices size={15} className="text-primary" />}
-                    iconPosition="left"
-                  >
-                    {isAz ? "Təsadüfi Vektor Avatar Yarat" : "Randomize Character Avatar"}
-                  </Button>
-
-                  {customAvatar && (
-                    <Button
-                      onClick={handleResetPhoto}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-xs text-muted-foreground hover:text-foreground"
-                      icon={<RotateCcw size={13} />}
-                      iconPosition="left"
-                    >
-                      {isAz ? "Vektor Avatarına Qayıt" : "Reset to Vector Avatar"}
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-primary mono uppercase mb-4">
-                    <Layers size={16} /> {isAz ? "AVATAR STUDİOSU" : "VECTOR AVATAR STUDIO"}
+                {/* Profile Information details */}
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="p-5 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 space-y-1">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase mono tracking-wider">
+                      {isAz ? "İSTİFADƏÇİ ADI" : "DISPLAY NAME"}
+                    </span>
+                    <p className="text-sm font-semibold text-foreground">{userName}</p>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    {isAz ? "Open Peeps Fərdiləşdirici" : "Open Peeps Character Studio"}
-                  </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {isAz
-                      ? "Öz unikal vektor xarakterinizi saç, eynək, geyim və emosiyalarla interaktiv studiyada dizayn edin."
-                      : "Handcraft your personalized modular vector avatar with customizable hairstyles, clothing, eyewear, and facial expressions."}
-                  </p>
-                </div>
 
-                <div className="pt-6">
-                  <Button
-                    to={getLocalizedPath("/tools/open-peeps")}
-                    variant="secondary"
-                    size="lg"
-                    className="w-full"
-                    icon={<ExternalLink size={15} />}
-                    iconPosition="right"
-                  >
-                    {isAz ? "Avatar Studiyasını Aç" : "Launch Avatar Studio"}
-                  </Button>
+                  <div className="p-5 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 space-y-1">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase mono tracking-wider">
+                      {isAz ? "E-POÇT ÜNVANI" : "EMAIL ADDRESS"}
+                    </span>
+                    <p className="text-sm font-semibold text-foreground font-mono">{userEmail}</p>
+                  </div>
                 </div>
               </div>
 
               {/* Danger Zone: Account Deletion */}
-              <div className="md:col-span-2 rounded-3xl border border-rose-500/20 bg-rose-500/[0.02] dark:bg-rose-500/[0.04] p-6 sm:p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="rounded-3xl border border-rose-500/20 bg-rose-500/[0.02] p-8 md:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold tracking-widest text-rose-500 mono uppercase">
+                  <span className="text-xs font-bold text-rose-500 mono uppercase tracking-wider">
                     {isAz ? "HESABIN SİLİNMƏSİ" : "DANGER ZONE"}
                   </span>
                   <h4 className="text-base font-bold text-foreground">
@@ -468,159 +405,6 @@ export default function ProfilePage() {
                   <Trash2 size={14} />
                   <span>{isDeletingAccount ? (isAz ? "Silinir..." : "Deleting...") : (isAz ? "Hesabı Sil" : "Delete Account")}</span>
                 </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* TAB 3: AUTHOR PROFILE (LEGACY APPROVED CONTRIBUTORS ONLY) */}
-          {activeTab === "contributor" && isApprovedContributorState && (
-            <motion.div variants={fadeUp} initial="hidden" animate="visible" className="space-y-6">
-              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-10 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#DDE1E0] dark:border-white/10 pb-6 mb-8">
-                    <div>
-                      <span className="text-xs font-bold tracking-widest text-primary mono uppercase flex items-center gap-2">
-                        <Briefcase size={15} /> {isAz ? "İCTİMAİ MÜƏLLİF PROFİLİ" : "PUBLIC AUTHOR PROFILE"}
-                      </span>
-                      <h2 className="mt-2 text-2xl font-bold text-foreground">
-                        {isAz ? "Peşəkar Müəllif Məlumatları" : "Professional Author Information"}
-                      </h2>
-                    </div>
-
-                  <div className="flex items-center gap-3">
-                    <Link
-                      to={getLocalizedPath(`/author/${contributorProfile?.slug || slugifyAuthorName(user?.displayName || "author")}`)}
-                      className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline font-semibold"
-                    >
-                      {isAz ? "İctimai Profilinizə Baxın" : "View Your Live Profile"} <ExternalLink size={13} />
-                    </Link>
-
-                    <Button
-                      to={getLocalizedPath("/contributor/dashboard")}
-                      variant="primary"
-                      size="sm"
-                      icon={<PenTool size={14} />}
-                      iconPosition="left"
-                    >
-                      {isAz ? "Müəllif Paneli" : "Open Dashboard"}
-                    </Button>
-                  </div>
-                </div>
-
-                {contributorSuccessMsg && (
-                  <div className="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs font-mono text-emerald-600 dark:text-emerald-400">
-                    {contributorSuccessMsg}
-                  </div>
-                )}
-
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div>
-                    <label className="block text-xs font-mono text-muted-foreground mb-1.5">
-                      {isAz ? "PEŞƏKAR VƏZİFƏ / ROL" : "PROFESSIONAL TITLE / ROLE"}
-                    </label>
-                    <input
-                      type="text"
-                      autoComplete="organization-title"
-                      value={contributorProfile?.professionalTitle || ""}
-                      onChange={(e) =>
-                        setContributorProfile((prev) =>
-                          prev ? { ...prev, professionalTitle: e.target.value } : null
-                        )
-                      }
-                      placeholder={isAz ? "məs. Baş Kreativ Dizayner" : "e.g. Senior Creative Designer"}
-                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-muted-foreground mb-1.5">
-                      {isAz ? "İŞ YERİ / ŞİRKƏT" : "CURRENT WORKPLACE / COMPANY"}
-                    </label>
-                    <input
-                      type="text"
-                      autoComplete="organization-title"
-                      value={contributorProfile?.currentWorkplace || ""}
-                      onChange={(e) =>
-                        setContributorProfile((prev) =>
-                          prev ? { ...prev, currentWorkplace: e.target.value } : null
-                        )
-                      }
-                      placeholder={isAz ? "məs. RAM Holding" : "e.g. RAM Holding"}
-                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-muted-foreground mb-1.5">
-                      {isAz ? "ŞƏHƏR VƏ ÖLKƏ" : "LOCATION"}
-                    </label>
-                    <input
-                      type="text"
-                      autoComplete="address-level2"
-                      value={contributorProfile?.location || ""}
-                      onChange={(e) =>
-                        setContributorProfile((prev) =>
-                          prev ? { ...prev, location: e.target.value } : null
-                        )
-                      }
-                      placeholder={isAz ? "Bakı, Azərbaycan" : "Baku, Azerbaijan"}
-                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-muted-foreground mb-1.5">
-                      {isAz ? "LINKEDIN PROFİLİ" : "LINKEDIN URL"}
-                    </label>
-                    <input
-                      type="url"
-                      autoComplete="url"
-                      value={contributorProfile?.socialLinks?.linkedin || ""}
-                      onChange={(e) =>
-                        setContributorProfile((prev) =>
-                          prev
-                            ? {
-                                ...prev,
-                                socialLinks: { ...prev.socialLinks, linkedin: e.target.value },
-                              }
-                            : null
-                        )
-                      }
-                      placeholder="https://linkedin.com/in/..."
-                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-mono text-muted-foreground mb-1.5">
-                      {isAz ? "QISA MÜƏLLİF BİOQRAFİYASI" : "AUTHOR BIO & EDITORIAL MISSION"}
-                    </label>
-                    <textarea
-                      rows={3}
-                      autoComplete="off"
-                      value={contributorProfile?.bio || ""}
-                      onChange={(e) =>
-                        setContributorProfile((prev) =>
-                          prev ? { ...prev, bio: e.target.value } : null
-                        )
-                      }
-                      placeholder={isAz ? "Tədqiqat sahəniz və dizayn baxışınız..." : "Your creative philosophy and areas of research..."}
-                      className="w-full rounded-xl border border-[#DDE1E0] dark:border-white/15 bg-slate-50/80 dark:bg-white/5 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-8 flex justify-end">
-                  <Button
-                    onClick={handleSaveContributor}
-                    variant="primary"
-                    size="md"
-                    disabled={isSavingContributor}
-                    icon={<Check size={15} />}
-                    iconPosition="left"
-                  >
-                    {isSavingContributor ? (isAz ? "Saxlanılır..." : "Saving...") : (isAz ? "Məlumatları Saxla" : "Save Profile Details")}
-                  </Button>
-                </div>
               </div>
             </motion.div>
           )}

@@ -6,13 +6,20 @@ import {
   Sparkles,
   Building2,
   MapPin,
+  Briefcase,
+  BookOpen,
+  Mail,
+  Layers,
+  Award,
+  ChevronRight,
 } from "lucide-react";
 
 import RavanPortrait1200 from "@/imports/ravan_1-1200.webp";
 import RavanPortrait800 from "@/imports/ravan_1-800.webp";
 import RavanPortrait400 from "@/imports/ravan_1-400.webp";
-import { fetchAboutSection, fetchSiteSettings } from "../../lib/sanityQueries";
+import { fetchAboutSection, fetchSiteSettings, fetchAllBlogs } from "../../lib/sanityQueries";
 import { AboutSection, SiteSettings } from "../../types/cms";
+import { BlogPost } from "../../types/blog";
 import { urlFor } from "../../lib/sanityClient";
 import SEO from "../components/SEO";
 import SiteHeader from "../components/SiteHeader";
@@ -46,7 +53,7 @@ const BehanceIcon = ({ size = 15, className = "" }: { size?: number; className?:
   </svg>
 );
 
-// ── Verified Career Experience (Timeless — No dates) ──
+// ── Verified Career Experience ──
 const realExperienceEn = [
   {
     role: "Senior Creative Designer",
@@ -174,6 +181,7 @@ const realExperienceAz = [
 export default function FounderProfilePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [aboutData, setAboutData] = useState<AboutSection | null>(null);
+  const [founderArticles, setFounderArticles] = useState<BlogPost[]>([]);
   const { t, getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
 
@@ -185,51 +193,110 @@ export default function FounderProfilePage() {
     fetchAboutSection(language).then((data) => {
       if (data) setAboutData(data);
     });
+    fetchAllBlogs(language).then((blogs) => {
+      if (blogs && blogs.length > 0) {
+        // Filter articles authored by Ravan Mammadov or general editorial articles
+        const filtered = blogs.filter(
+          (b) =>
+            b.authorName?.toLowerCase().includes("ravan") ||
+            b.authorName?.toLowerCase().includes("mammadov")
+        );
+        setFounderArticles(filtered.length > 0 ? filtered.slice(0, 3) : blogs.slice(0, 3));
+      }
+    });
   }, [language]);
 
   const sanityPortraitUrl = aboutData?.profilePhoto
     ? urlFor(aboutData.profilePhoto)?.width(1200).height(1200).url()
     : null;
 
-  const activeExperience = (aboutData?.experience && aboutData.experience.length > 0)
-    ? aboutData.experience
-    : (isAz ? realExperienceAz : realExperienceEn);
+  const activeExperience =
+    aboutData?.experience && aboutData.experience.length > 0
+      ? aboutData.experience
+      : isAz
+      ? realExperienceAz
+      : realExperienceEn;
 
   const displayProjects = PORTFOLIO_FALLBACK_PROJECTS.map((project) => ({
     _id: project.slug,
     title: project.title,
     slug: { current: project.slug },
     type: isAz
-      ? (project.slug === "wuling-creative-campaign"
-          ? "Art Direksiya · Motion · Kampaniya"
-          : project.slug === "limitless-drive"
-          ? "Brend Kimliyi · 3D · Avtomobil"
-          : "Kreativ Dəst · Motion Sistemi")
+      ? project.slug === "wuling-creative-campaign"
+        ? "Art Direksiya · Motion · Kampaniya"
+        : project.slug === "limitless-drive"
+        ? "Brend Kimliyi · 3D · Avtomobil"
+        : "Kreativ Dəst · Motion Sistemi"
       : project.type,
     description: isAz
-      ? (project.slug === "wuling-creative-campaign"
-          ? "Avtomobil sahəsində art direksiya, motion qrafika və ardıcıl brend təcrübəsi üçün rəqəmsal kampaniya vizual sistemi."
-          : project.slug === "limitless-drive"
-          ? "Güclü vizual kimlik, kinematik məhsul təqdimatı və kampaniyaya hazır brend aktivləri üzərində qurulmuş 3D avtomobil vizual istiqaməti."
-          : "Avtomobil brendləri üçün rəqəmsal buraxılış və performans reklamlarını vahid vizual dildə saxlayan çevik kreativ və motion sistemi.")
+      ? project.slug === "wuling-creative-campaign"
+        ? "Avtomobil sahəsində art direksiya, motion qrafika və ardıcıl brend təcrübəsi üçün rəqəmsal kampaniya vizual sistemi."
+        : project.slug === "limitless-drive"
+        ? "Güclü vizual kimlik, kinematik məhsul təqdimatı və kampaniyaya hazır brend aktivləri üzərində qurulmuş 3D avtomobil vizual istiqaməti."
+        : "Avtomobil brendləri üçün rəqəmsal buraxılış və performans reklamlarını vahid vizual dildə saxlayan çevik kreativ və motion sistemi."
       : project.description,
     tags: project.tags,
     year: project.year,
     behanceCoverUrl: project.image,
   }));
 
-  const founderName = isAz ? "Rəvan Məmmədov" : "Ravan Mammadov";
-  const founderRole = isAz ? "Kreativ Direktor və Strateq" : "Creative Director & Strategist";
-  const founderBadge = isAz ? "TƏSİSÇİ VƏ KREATİV DİREKTOR" : "FOUNDER & CREATIVE DIRECTOR";
+  // Canonical Name: ALWAYS "Ravan Mammadov" in both languages
+  const founderName = "Ravan Mammadov";
+  const founderRole = isAz
+    ? "Kreativ Strateq · Dizayner · Marketoloq"
+    : "Creative Strategist · Designer · Marketer";
+  const founderBadge = isAz
+    ? "TƏSİSÇİ VƏ KREATİV STRATEQ"
+    : "FOUNDER & CREATIVE STRATEGIST";
   const founderLocation = isAz ? "Bakı, Azərbaycan" : "Baku, Azerbaijan";
 
-  const skillPills = isAz
-    ? ["Brend Arxitekturası", "Motion Qrafika", "Kreativ Strategiya", "Süni İntellekt Məhsulları", "FMCG Qablaşdırma"]
-    : ["Brand Architecture", "Motion Graphics", "Creative Strategy", "AI Products", "FMCG Packaging"];
+  const expertisePillars = isAz
+    ? [
+        { title: "Brend Arxitekturası & Dizayn", desc: "Kommersiya biznesləri üçün unikal vizual kimlik, sistem dizaynı və tipoqrafik struktur." },
+        { title: "Kreativ Strategiya & Kampaniyalar", desc: "Çoxkanallı reklam, məzmun planlaması və performans yönümlü kreativ həllər." },
+        { title: "Marketinq Vizual Kommunikasiyası", desc: "Rəqəmsal reklam aktivləri, qablaşdırma (FMCG) və brend təqdimatları." },
+        { title: "Motion Qrafika & Video İstehsalı", desc: "Kinematik 2D/3D animasiya, kommersiya video montajı və vizual effektlər (VFX)." },
+        { title: "Müasir Rəqəmsal Texnologiyalar & AI", desc: "Yüksək faydalı veb ekosistemləri, alətlər və süni intellekt yönümlü təcrübələr." },
+      ]
+    : [
+        { title: "Brand Architecture & Design", desc: "Distinctive visual identities, design systems, and typographic hierarchy for commercial brands." },
+        { title: "Creative Strategy & Campaigns", desc: "Cross-platform advertising, content architecture, and performance-driven creative strategy." },
+        { title: "Marketing Visual Communication", desc: "Digital advertising assets, product packaging (FMCG), and executive presentation design." },
+        { title: "Motion Graphics & Video Direction", desc: "Kinematic 2D/3D animation, commercial video editing, and visual effects (VFX)." },
+        { title: "Emerging Technologies & AI", desc: "High-utility digital ecosystems, interactive creative tools, and AI workflows." },
+      ];
 
-  const heroBio = isAz
-    ? "Dizaynerin estetik baxışını strateqin kommersiya dəqiqliyi ilə birləşdirirəm: biznes performansı üçün nəzərdə tutulmuş vahid vizual kimliklər, motion qrafikalar və inteqrasiya olunmuş marketinq kampaniyaları yaradıram."
-    : "I pair a designer's aesthetic eye with a strategist's commercial clarity: building cohesive visual identities, motion graphics, and integrated marketing campaigns designed to perform.";
+  const positioningStatement = isAz
+    ? "Ravan Mammadov dizayn, marketinq, vizual kommunikasiya və müasir rəqəmsal texnologiyalar sahəsində fəaliyyət göstərən yaradıcı peşəkardır."
+    : "Ravan Mammadov is a creative professional working across design, marketing, visual communication and emerging digital technologies.";
+
+  const biographyText = isAz
+    ? "Dizaynerin estetik həssaslığını strateqin kommersiya dəqiqliyi ilə birləşdirərək güclü brend kimlikləri, təsirli motion qrafikalar və inteqrasiya olunmuş marketinq kampaniyaları formalaşdırır. Avtomobil, lüks, FMCG və texnologiya sektorlarında aparıcı holdinqlər və brendlərlə çoxillik iş təcrübəsinə malikdir."
+    : "Pairing a designer's aesthetic sensibility with a strategist's commercial clarity to construct cohesive visual identities, impactful motion graphics, and integrated marketing campaigns. Bringing extensive creative experience across automotive, luxury, FMCG, and technology enterprises.";
+
+  const rvanPlatformStatement = isAz
+    ? "Rvan.me dizayn, yaradıcılıq, texnologiya, marketinq və kreativ sənayeni formalaşdıran ideyaları araşdıran müstəqil redaksiya platformasıdır."
+    : "Rvan.me is an independent editorial platform exploring design, creativity, technology, marketing and the ideas shaping the creative industry.";
+
+  // JSON-LD Person Schema for SEO Authority
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Ravan Mammadov",
+    url: isAz ? "https://www.rvan.me/az/about/ravan-mammadov" : "https://www.rvan.me/about/ravan-mammadov",
+    image: "https://www.rvan.me/imports/ravan_1-1200.webp",
+    jobTitle: "Creative Strategist, Designer, Marketer",
+    worksFor: {
+      "@type": "Organization",
+      name: "Rvan.me",
+      url: "https://www.rvan.me",
+    },
+    sameAs: [
+      "https://www.linkedin.com/in/ravanmammadov1/",
+      "https://www.behance.net/mammadovravan",
+    ],
+    description: positioningStatement,
+  };
 
   return (
     <main
@@ -237,9 +304,15 @@ export default function FounderProfilePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title={isAz ? "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli" : "Ravan Mammadov — Founder & Creative Director"}
-        description={isAz ? "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri." : "Founder profile, strategic focus, brand experience, and creative portfolio of Ravan Mammadov, Founder & Creative Director of Rvan.me."}
-        url={isAz ? "https://www.rvan.me/az/ravan-mammadov" : "https://www.rvan.me/ravan-mammadov"}
+        title={isAz ? "Ravan Mammadov — Kreativ Strateq, Dizayner, Marketoloq" : "Ravan Mammadov — Creative Strategist, Designer, Marketer"}
+        description={positioningStatement}
+        url={isAz ? "https://www.rvan.me/az/about/ravan-mammadov" : "https://www.rvan.me/about/ravan-mammadov"}
+      />
+
+      {/* Structured Data Script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
 
       <SiteHeader siteSettings={siteSettings} />
@@ -249,7 +322,8 @@ export default function FounderProfilePage() {
         <div
           className="absolute -top-[15%] left-[10%] h-[700px] w-[700px] rounded-full"
           style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(97,197,173,0.1) 0%, rgba(66,111,186,0.04) 50%, transparent 75%)",
+            background:
+              "radial-gradient(circle at 50% 50%, rgba(97,197,173,0.1) 0%, rgba(66,111,186,0.04) 50%, transparent 75%)",
             filter: "blur(90px)",
           }}
         />
@@ -274,20 +348,17 @@ export default function FounderProfilePage() {
 
               <h1 className="mt-6 text-4xl font-extrabold tracking-[-.06em] md:text-6xl lg:text-7xl leading-none">
                 {founderName} <br />
-                <span className="text-primary font-bold">{founderRole}</span>
+                <span className="text-primary font-bold text-2xl md:text-4xl lg:text-5xl block mt-2 tracking-tight">
+                  {founderRole}
+                </span>
               </h1>
 
-              <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold tracking-wider text-muted-foreground mono uppercase">
-                {skillPills.map((skill, sIdx) => (
-                  <span key={skill} className="flex items-center gap-2">
-                    <span className="text-foreground">{skill}</span>
-                    {sIdx < skillPills.length - 1 && <span>•</span>}
-                  </span>
-                ))}
-              </div>
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-foreground md:text-lg font-medium">
+                {positioningStatement}
+              </p>
 
-              <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg font-medium">
-                {heroBio}
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                {biographyText}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -295,9 +366,19 @@ export default function FounderProfilePage() {
                   href="mailto:mammadovravan1@gmail.com?subject=Project%20Inquiry"
                   variant="outline"
                   size="lg"
-                  icon={<ArrowUpRight size={16} />}
+                  icon={<Mail size={16} />}
                 >
                   {isAz ? "Əlaqə Saxla" : "Get in Touch"}
+                </Button>
+
+                <Button
+                  href="https://www.linkedin.com/in/ravanmammadov1/"
+                  external
+                  variant="primary"
+                  size="lg"
+                  icon={<ArrowUpRight size={14} />}
+                >
+                  LinkedIn
                 </Button>
 
                 <Button
@@ -309,7 +390,7 @@ export default function FounderProfilePage() {
                 >
                   <span className="flex items-center gap-2">
                     <BehanceIcon size={15} />
-                    {isAz ? "Behance-ə Bax" : "View Behance"}
+                    {isAz ? "Behance Portfeli" : "Behance Portfolio"}
                   </span>
                 </Button>
               </div>
@@ -324,7 +405,7 @@ export default function FounderProfilePage() {
               className="lg:col-span-5"
             >
               <div className="group/profile relative p-8 md:p-10 rounded-3xl border border-[#DDE1E0] dark:border-white/15 bg-white dark:bg-white/5 backdrop-blur-2xl shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-2xl transition-all duration-500 overflow-hidden aurora-card">
-                {/* Header: Photo & Name */}
+                {/* Header: Photo & Identity */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-[#DDE1E0] dark:border-white/10 pb-8">
                   <div className="h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-3xl border-2 border-[#61c5ad]/50 bg-black p-1 shadow-[0_0_30px_rgba(97,197,173,0.25)] shrink-0">
                     <picture>
@@ -354,12 +435,12 @@ export default function FounderProfilePage() {
                     </picture>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <h3 className="text-2xl font-extrabold text-foreground tracking-tight">
                       {founderName}
                     </h3>
-                    <p className="text-xs font-bold text-primary tracking-widest uppercase mono">
-                      {founderRole}
+                    <p className="text-xs font-bold text-primary tracking-wider uppercase mono">
+                      {isAz ? "Təsisçi · Rvan.me" : "Founder · Rvan.me"}
                     </p>
                     <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
                       <MapPin size={13} className="text-primary/70" /> {founderLocation}
@@ -367,47 +448,38 @@ export default function FounderProfilePage() {
                   </div>
                 </div>
 
-                {/* Founder Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-8 border-b border-[#DDE1E0] dark:border-white/10">
-                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
+                {/* Connection Box */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-6 border-b border-[#DDE1E0] dark:border-white/10">
+                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      {isAz ? "HAZIRDA QURULUR" : "CURRENTLY BUILDING"}
+                      {isAz ? "REDAKSİYA PLATFORMASI" : "EDITORIAL PLATFORM"}
                     </span>
-                    <p className="text-sm font-extrabold text-foreground tracking-tight">
-                      {isAz ? "Rvan.me Ekosistemi" : "Rvan.me Ecosystem"}
+                    <p className="text-xs font-bold text-foreground">
+                      Rvan.me
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
+                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      {isAz ? "ƏSAS MİSSİYA" : "CORE MISSION"}
+                      {isAz ? "PEŞƏKAR STATUS" : "PROFESSIONAL FOCUS"}
                     </span>
-                    <p className="text-xs font-bold text-foreground leading-snug">
-                      {isAz ? "Yüksək Funksionallıqlı Yaradıcı & Developer Alətləri" : "High-Utility Creative & Developer Tools"}
+                    <p className="text-xs font-bold text-foreground">
+                      {isAz ? "Kreativ Strateq & Dizayner" : "Creative Strategist"}
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
+                  <div className="sm:col-span-2 p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md">
                     <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      {isAz ? "SAHƏ TƏCRÜBƏSİ" : "INDUSTRY TRACK RECORD"}
+                      {isAz ? "PLATFORMA HAQQINDA" : "ABOUT RVAN.ME"}
                     </span>
-                    <p className="text-xs font-bold text-foreground leading-snug">
-                      {isAz ? "Avtomobil · Lüks · FMCG · Texnologiya" : "Automotive · Luxury · FMCG · Tech"}
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/5 backdrop-blur-md shadow-2xs">
-                    <span className="text-[9.5px] font-bold text-primary mono uppercase tracking-wider block mb-1">
-                      {isAz ? "MƏKAN" : "LOCATION"}
-                    </span>
-                    <p className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1.5">
-                      <MapPin size={13} className="text-primary" /> {founderLocation}
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {rvanPlatformStatement}
                     </p>
                   </div>
                 </div>
 
                 {/* Direct Action Inside Card */}
-                <div className="pt-8 flex flex-col sm:flex-row items-center gap-3">
+                <div className="pt-6 flex flex-col sm:flex-row items-center gap-3">
                   <Button
                     to={getLocalizedPath("/contact")}
                     variant="primary"
@@ -435,7 +507,42 @@ export default function FounderProfilePage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          2. AUTHENTIC PROFESSIONAL EXPERIENCE
+          2. CORE EXPERTISE PILLARS
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-[#DDE1E0] dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="mb-12">
+            <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
+              {isAz ? "EKSPERTİZA VƏ SAHƏLƏR" : "AREAS OF EXPERTISE"}
+            </span>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
+              {isAz ? "Əsas Peşəkar İstiqamətlər" : "Core Professional Pillars"}
+            </h2>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {expertisePillars.map((pillar, pIdx) => (
+              <div
+                key={pIdx}
+                className="p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl space-y-2 hover:border-primary/40 transition-colors"
+              >
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+                  <span>0{pIdx + 1}</span>
+                  <span>/</span>
+                  <span className="uppercase">{isAz ? "İstiqamət" : "Pillar"}</span>
+                </div>
+                <h3 className="text-lg font-bold text-foreground">{pillar.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                  {pillar.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          3. AUTHENTIC PROFESSIONAL EXPERIENCE
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-[#DDE1E0] dark:border-white/10">
         <div className="mx-auto max-w-[1600px]">
@@ -494,14 +601,14 @@ export default function FounderProfilePage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          3. SELECTED PORTFOLIO CASE STUDIES
+          4. SELECTED PORTFOLIO CASE STUDIES
       ───────────────────────────────────────────────────────────────────────────── */}
       <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-[#DDE1E0] dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
         <div className="mx-auto max-w-[1600px]">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
             <div>
               <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
-                {isAz ? "PORTFOLİO NÜMUNƏLƏRİ" : "PORTFOLIO CASE STUDIES"}
+                {isAz ? "PORTFOLİO VƏ LAYİHƏLƏR" : "PORTFOLIO CASE STUDIES"}
               </span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
                 {isAz ? "Seçilmiş İşlər" : "Selected Work"}
@@ -513,7 +620,7 @@ export default function FounderProfilePage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-6 py-3 text-xs font-bold text-primary mono uppercase hover:bg-primary hover:text-black transition-colors"
             >
-              <BehanceIcon size={14} /> {isAz ? "BEHANCE-Ə BAX" : "VIEW BEHANCE"} <ArrowUpRight size={14} />
+              <BehanceIcon size={14} /> {isAz ? "BEHANCE-DƏ BAX" : "VIEW BEHANCE"} <ArrowUpRight size={14} />
             </a>
           </div>
 
@@ -521,7 +628,7 @@ export default function FounderProfilePage() {
             {displayProjects.map((project) => (
               <a
                 key={project._id}
-                href={`https://www.behance.net/mammadovravan`}
+                href="https://www.behance.net/mammadovravan"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group p-5 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl hover:border-primary/40 transition-all duration-300 aurora-card flex flex-col justify-between"
@@ -534,7 +641,9 @@ export default function FounderProfilePage() {
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-                  <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider">{project.type}</span>
+                  <span className="text-[10px] font-bold text-primary mono uppercase tracking-wider">
+                    {project.type}
+                  </span>
                   <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mt-1 mb-2">
                     {project.title}
                   </h3>
@@ -550,6 +659,98 @@ export default function FounderProfilePage() {
                 </div>
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          5. WRITING ON RVAN.ME
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {founderArticles.length > 0 && (
+        <section className="px-6 py-16 md:px-10 md:py-24 relative z-10 border-t border-[#DDE1E0] dark:border-white/10">
+          <div className="mx-auto max-w-[1600px]">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+              <div>
+                <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
+                  {isAz ? "MƏQALƏLƏR VƏ YAZILAR" : "WRITING & PERSPECTIVES"}
+                </span>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
+                  {isAz ? "Rvan.me Üzərində Nəşrlər" : "Articles on Rvan.me"}
+                </h2>
+              </div>
+              <Link
+                to={getLocalizedPath("/blog")}
+                className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-6 py-3 text-xs font-bold text-primary mono uppercase hover:bg-primary hover:text-black transition-colors"
+              >
+                <BookOpen size={14} /> {isAz ? "BÜTÜN BLOQ ARXİVİ" : "VIEW ALL ARTICLES"} <ArrowRight size={14} />
+              </Link>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {founderArticles.map((article) => (
+                <Link
+                  key={article._id}
+                  to={getLocalizedPath(`/blog/${article.slug?.current || article._id}`)}
+                  className="group p-6 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl hover:border-primary/40 transition-colors flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                      <span className="font-bold text-primary uppercase">{article.category}</span>
+                      <span>•</span>
+                      <span>{article.readTime || "4 min read"}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {article.excerpt}
+                    </p>
+                  </div>
+                  <div className="pt-4 mt-4 border-t border-[#DDE1E0] dark:border-white/10 flex items-center justify-between text-xs font-bold mono text-primary">
+                    <span>{isAz ? "MƏQALƏNİ OXU" : "READ ARTICLE"}</span>
+                    <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          6. FOOTER CTA: EDITORIAL INVITATION
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="px-6 py-16 md:px-10 md:py-20 relative z-10 border-t border-[#DDE1E0] dark:border-white/10 bg-gradient-to-b from-transparent to-primary/[0.03]">
+        <div className="mx-auto max-w-[1200px] text-center space-y-6">
+          <span className="text-xs font-bold tracking-widest text-primary mono uppercase">
+            {isAz ? "REDAKSİYA İLƏ ƏLAQƏ" : "CONNECT WITH RVAN.ME"}
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold text-foreground tracking-tight">
+            {isAz ? "Fikrinizi və ya Məqalənizi Bizimlə Paylaşın" : "Share Your Ideas or Submit an Article"}
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            {isAz
+              ? "Dizayn, marketinq, texnologiya və yaradıcı sənaye mövzularında orijinal ideyanız və ya yazınız varsa, ictimai portalımız vasitəsilə redaksiyamıza göndərin."
+              : "If you have an original perspective, article, or research piece on design, technology, or creative strategy, submit it directly to our editorial board."}
+          </p>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+            <Button
+              to={getLocalizedPath("/write")}
+              variant="primary"
+              size="lg"
+              icon={<ArrowRight size={16} />}
+              iconPosition="right"
+            >
+              {isAz ? "FİKRİNİZİ BİZİMLƏ PAYLAŞIN" : "SHARE YOUR IDEAS"}
+            </Button>
+            <Button
+              to={getLocalizedPath("/contact")}
+              variant="outline"
+              size="lg"
+              icon={<Mail size={16} />}
+            >
+              {isAz ? "ƏLAQƏ" : "CONTACT"}
+            </Button>
           </div>
         </div>
       </section>
