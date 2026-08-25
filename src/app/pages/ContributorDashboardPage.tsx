@@ -443,16 +443,15 @@ export default function ContributorDashboardPage() {
             </div>
             <div className="space-y-2">
               <span className="text-xs font-mono font-bold text-primary uppercase tracking-widest">
-                {isAz ? "MÜƏLLİF GİRİŞİ" : "CONTRIBUTOR ACCESS"}
+                {isAz ? "RVAN.ME REDAKSİYASI" : "RVAN.ME EDITORIAL"}
               </span>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                {t("contributorAccessNotActive", "Contributor Access Not Active")}
+                {isAz ? "Rvan.me Üçün Məqalə Yazın" : "Write for Rvan.me"}
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-lg mx-auto">
-                {t(
-                  "contributorAccessNotActiveDesc",
-                  "Interested in writing for Rvan.me? Send us your article idea through the Contact page and apply to become a contributor."
-                )}
+                {isAz
+                  ? "Rvan.me-də dərc olunması üçün bir məqalə ideyanız və ya hazır yazınız var? Təklifinizi redaksiya baxışına təqdim edin."
+                  : "Have an article idea or a draft to contribute to Rvan.me? Submit your proposal through the Contact portal for editorial review."}
               </p>
             </div>
 
@@ -464,7 +463,7 @@ export default function ContributorDashboardPage() {
                 icon={<ArrowRight size={14} />}
                 iconPosition="right"
               >
-                {t("applyToBecomeContributor", "APPLY TO BECOME A CONTRIBUTOR")}
+                {isAz ? "MƏQALƏ TƏKLİFİ GÖNDƏR" : "SUBMIT ARTICLE PROPOSAL"}
               </Button>
               <Button to={getLocalizedPath("/blog")} variant="secondary" size="md">
                 {isAz ? "BLOQ YAZILARINA BAX" : "READ ARTICLES"}

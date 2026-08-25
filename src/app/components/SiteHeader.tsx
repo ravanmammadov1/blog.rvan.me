@@ -242,7 +242,7 @@ function UserAuthMenu() {
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="text-xs font-bold text-foreground truncate">
-                        {user.displayName || "Creative Contributor"}
+                        {user.displayName || "User"}
                       </div>
                       <div className="text-[11px] text-muted-foreground truncate mono">
                         {user.email}
@@ -250,13 +250,13 @@ function UserAuthMenu() {
                     </div>
                   </div>
 
-                  {/* Contributor badge status */}
+                  {/* Account status */}
                   <div className="flex items-center justify-between text-[11px] mono">
                     <span className="text-muted-foreground uppercase">{t("status", "Status")}:</span>
-                    {isApprovedContributor ? (
-                      <span className="text-primary font-bold">● {t("activeContributor", "Aktiv Müəllif")}</span>
-                    ) : contributorStatus === "APPLICANT" ? (
-                      <span className="text-amber-500 font-bold">● {t("pendingReview", "Müraciətə baxılır")}</span>
+                    {isAdmin ? (
+                      <span className="text-purple-600 dark:text-purple-400 font-bold">● {t("adminPanel", "Admin")}</span>
+                    ) : isApprovedContributor ? (
+                      <span className="text-primary font-bold">● {t("activeContributor", "Müəllif")}</span>
                     ) : (
                       <span className="text-muted-foreground">● {t("normalUser", "Oxucu")}</span>
                     )}
@@ -274,8 +274,8 @@ function UserAuthMenu() {
                     <span>{t("myAccount", "Mənim Hesabım")}</span>
                   </Link>
 
-                  {/* If user is an approved contributor -> Show Contributor Panel */}
-                  {isApprovedContributor ? (
+                  {/* If user is an approved legacy contributor -> Show Dashboard */}
+                  {isApprovedContributor && (
                     <Link
                       to={getLocalizedPath("/contributor/dashboard")}
                       onClick={() => setDropdownOpen(false)}
@@ -288,16 +288,6 @@ function UserAuthMenu() {
                       <span className="text-[9px] font-bold uppercase tracking-wider text-primary mono bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
                         {t("active", "AKTİV")}
                       </span>
-                    </Link>
-                  ) : (
-                    /* If normal user -> Show Become a Contributor linking to /contact#contributor-application */
-                    <Link
-                      to={getLocalizedPath("/contact#contributor-application")}
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-primary hover:bg-primary/5 transition-colors font-semibold"
-                    >
-                      <Sparkles size={13} className="text-primary shrink-0" />
-                      <span>{t("becomeAContributor", "Müəllif Olun")}</span>
                     </Link>
                   )}
 

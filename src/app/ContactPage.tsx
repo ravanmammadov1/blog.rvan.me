@@ -475,8 +475,8 @@ export default function ContactPage() {
                       </h3>
                       <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
                         {isAz
-                          ? "Təsdiqləndikdən sonra öz adınız və bioqrafiyanızla fərdi müəllif səhifəniz yaranır."
-                          : "Approved contributors receive a dedicated public author page with custom bio & social links."}
+                          ? "Yazınız dərc edildikdə öz adınız və bioqrafiyanızla fərdi müəllif səhifəniz yaranır."
+                          : "Published articles feature a dedicated author profile with custom bio and portfolio attribution."}
                       </p>
                     </div>
                   </div>

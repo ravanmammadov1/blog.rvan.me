@@ -197,13 +197,13 @@ export default function BlogSection() {
           </Button>
 
           <Button
-            to={getLocalizedPath("/contributor/dashboard")}
+            to={getLocalizedPath("/contact#contributor-application")}
             variant="secondary"
             size="lg"
             icon={<Sparkles size={15} className="text-primary" />}
             iconPosition="left"
           >
-            {isAz ? "MÜƏLLİF KİMİ QOŞULUN" : "BECOME A CONTRIBUTOR"}
+            {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
           </Button>
         </div>
       </div>

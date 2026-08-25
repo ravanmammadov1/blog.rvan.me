@@ -28,7 +28,7 @@ export default function Footer({ siteSettings }: FooterProps) {
             to={getLocalizedPath("/contact#contributor-application")}
             className="transition-colors hover:text-primary text-primary/90 font-bold"
           >
-            {isAz ? "MÜƏLLİF OL" : "BECOME A CONTRIBUTOR"}
+            {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
           </Link>
           <Link
             to={getLocalizedPath("/about/ravan-mammadov")}

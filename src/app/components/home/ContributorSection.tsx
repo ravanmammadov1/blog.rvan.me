@@ -96,7 +96,7 @@ export default function ContributorSection() {
               size="md"
               icon={<ArrowUpRight size={15} />}
             >
-              {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+              {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
             </Button>
             <span className="text-xs text-muted-foreground mono">
               {isAz

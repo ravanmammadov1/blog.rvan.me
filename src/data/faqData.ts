@@ -45,36 +45,36 @@ export const GLOBAL_FAQS: FaqItem[] = [
   },
   {
     id: 3,
-    qEn: "How do I become a contributor?",
-    qAz: "Necə müəllif (kontributor) ola bilərəm?",
-    aEn: "Any authenticated user can apply to become a contributor. Once signed in, navigate to the Contributor page (/contributor) or Settings (/profile) and set up your author profile.",
-    aAz: "Hesabı olan hər bir istifadəçi müəlliflik üçün müraciət edə bilər. Daxil olduqdan sonra Müəlliflik səhifəsinə (/contributor) və ya Tənzimləmələrə (/profile) keçərək müəllif profilinizi qurun.",
+    qEn: "How do I write for Rvan.me?",
+    qAz: "Rvan.me üçün necə məqalə yaza bilərəm?",
+    aEn: "Anyone can submit an article idea or a draft for editorial consideration on Rvan.me. Navigate to the Contact page (/contact) and submit your topic proposal.",
+    aAz: "Hər kəs Rvan.me-də dərc olunması üçün məqalə ideyası və ya qaralama təqdim edə bilər. Əlaqə səhifəsinə (/contact) keçərək mövzu təklifinizi göndərin.",
     bulletsEn: [
-      "Fill out your professional title, short biography, and portfolio/social links.",
-      "Select your primary areas of expertise (Brand Design, UI/UX, AI, Creative Industry).",
-      "Upon completion, your contributor workspace is immediately ready for drafting articles."
+      "Share your topic title, short summary, and target audience.",
+      "Include any relevant background, research, or portfolio links.",
+      "Our editorial team reviews every submission and reaches out with next steps."
     ],
     bulletsAz: [
-      "Peşəkar vəzifənizi, qısa bioqrafiyanızı və portfolio/sosial linklərinizi daxil edin.",
-      "Əsas ixtisas sahələrinizi (Brend Dizaynı, UI/UX, AI, Kreativ Sənaye) seçin.",
-      "Tamamlandıqdan sonra müəllif kabinetiniz qaralama yazmaq üçün dərhal aktivləşir."
+      "Məqalə mövzusunu, qısa xülasəsini və hədəf oxucu kütlənizi qeyd edin.",
+      "Mövzuya aid təcrübənizi və ya portfolio linkinizi əlavə edin.",
+      "Redaksiya heyətimiz hər bir müraciəti nəzərdən keçirib növbəti addımlar üçün sizinlə əlaqə saxlayır."
     ]
   },
   {
     id: 4,
-    qEn: "How do I submit an article?",
-    qAz: "Məqaləni necə təqdim edə bilərəm?",
-    aEn: "From your Contributor Dashboard (/contributor), click 'New Article' to open the submission editor.",
-    aAz: "Müəllif Kabinetinizdən (/contributor) 'Yeni Məqalə' düyməsinə klikləyərək yazı redaktorunu açın.",
+    qEn: "How do article submissions work?",
+    qAz: "Məqalə təqdimatı necə işləyir?",
+    aEn: "Once your article proposal or draft is submitted through the Contact page, it enters our editorial review queue.",
+    aAz: "Məqalə təklifiniz və ya yazınız Əlaqə səhifəsindən göndərildikdən sonra redaksiyanın baxış növbəsinə daxil olur.",
     bulletsEn: [
-      "Enter your article title, concise summary, category, and main body content in Markdown or text.",
-      "Select your preferred language (Azerbaijani or English) and provide transparent AI assistance disclosure.",
-      "Agree to the Contributor Terms (confirming your copyright ownership) and submit for editorial review."
+      "Submit your article premise, key takeaways, and preferred language (Azerbaijani or English).",
+      "Editorial Board reviews the piece for originality, analytical depth, and practical utility.",
+      "Upon approval, your piece is published on Rvan.me with verified author attribution."
     ],
     bulletsAz: [
-      "Məqalənizin başlığını, qısa xülasəsini, kateqoriyasını və əsas mətnini daxil edin.",
-      "Yazının dilini (Azərbaycan və ya İngilis) seçin və şəffaf AI istifadə bəyanatını qeyd edin.",
-      "Müəllif Qaydaları ilə razılaşaraq (müəllif hüququnuzu təsdiq edərək) yazını redaksiyaya göndərin."
+      "Məqalənin əsas tezisini, faydalı fikirlərini və dilini (Azərbaycan və ya İngilis) təqdim edin.",
+      "Redaksiya heyəti yazını orijinallıq, analitik dərinlik və faydalılıq üzrə qiymətləndirir.",
+      "Təsdiqləndikdən sonra məqaləniz təsdiqlənmiş müəllif adınızla Rvan.me-də canlı yayımlanır."
     ]
   },
   {

@@ -115,11 +115,13 @@ export default function ProfilePage() {
           });
         } else {
           setContributorProfile(null);
+          setActiveTab((prev) => (prev === "contributor" ? "site" : prev));
         }
       });
     } else {
       setIsApprovedContributorState(false);
       setContributorProfile(null);
+      setActiveTab((prev) => (prev === "contributor" ? "site" : prev));
     }
   }, [language, user]);
 
@@ -233,17 +235,19 @@ export default function ProfilePage() {
               <span>{isAz ? "2. ŞƏXSİ PROFİL VƏ FOTO" : "2. PERSONAL PROFILE"}</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab("contributor")}
-              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all mono uppercase cursor-pointer ${
-                activeTab === "contributor"
-                  ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                  : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-              }`}
-            >
-              <PenTool size={14} />
-              <span>{isAz ? "3. KONTRIBUTOR VƏ MÜƏLLİF" : "3. CONTRIBUTOR PROFILE"}</span>
-            </button>
+            {isApprovedContributorState && (
+              <button
+                onClick={() => setActiveTab("contributor")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all mono uppercase cursor-pointer ${
+                  activeTab === "contributor"
+                    ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
+                    : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
+                }`}
+              >
+                <PenTool size={14} />
+                <span>{isAz ? "3. MÜƏLLİF PROFİLİ" : "3. AUTHOR PROFILE"}</span>
+              </button>
+            )}
           </div>
 
           {/* TAB 1: SITE & PREFERENCES */}
@@ -468,40 +472,10 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {/* TAB 3: CONTRIBUTOR */}
-          {activeTab === "contributor" && (
+          {/* TAB 3: AUTHOR PROFILE (LEGACY APPROVED CONTRIBUTORS ONLY) */}
+          {activeTab === "contributor" && isApprovedContributorState && (
             <motion.div variants={fadeUp} initial="hidden" animate="visible" className="space-y-6">
-              {!isApprovedContributorState ? (
-                <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-10 md:p-14 text-center shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl max-w-2xl mx-auto space-y-6">
-                  <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-xs">
-                    <PenTool size={28} />
-                  </div>
-                  <div className="space-y-2">
-                    <span className="text-xs font-mono font-bold text-primary uppercase tracking-widest">
-                      {isAz ? "MÜƏLLİFLİK STATUSU" : "CONTRIBUTOR STATUS"}
-                    </span>
-                    <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                      {t("contributorAccessNotActive", "Contributor Access Not Active")}
-                    </h2>
-                    <p className="text-sm text-muted-foreground leading-relaxed max-w-lg mx-auto">
-                      {t("contributorAccessNotActiveDesc", "Interested in writing for Rvan.me? Send us your article idea through the Contact page and apply to become a contributor.")}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
-                    <Button
-                      to={getLocalizedPath("/contact#contributor-application")}
-                      variant="primary"
-                      size="md"
-                      icon={<ArrowRight size={14} />}
-                      iconPosition="right"
-                    >
-                      {t("applyToBecomeContributor", "APPLY TO BECOME A CONTRIBUTOR")}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-10 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
+              <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] p-8 md:p-10 shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none backdrop-blur-xl">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#DDE1E0] dark:border-white/10 pb-6 mb-8">
                     <div>
                       <span className="text-xs font-bold tracking-widest text-primary mono uppercase flex items-center gap-2">
@@ -646,9 +620,8 @@ export default function ProfilePage() {
                   >
                     {isSavingContributor ? (isAz ? "Saxlanılır..." : "Saving...") : (isAz ? "Məlumatları Saxla" : "Save Profile Details")}
                   </Button>
-                  </div>
                 </div>
-              )}
+              </div>
             </motion.div>
           )}
         </div>

@@ -169,16 +169,16 @@ export default function TopicDetailPage() {
 
             <p className="mt-3 text-xs md:text-sm text-muted-foreground leading-relaxed">
               {isAz
-                ? "Redaksiyamız bu mövzu üzrə yeni dərin tədqiqat və məqalələr hazırlayır. Digər mövzuları araşdıra və ya müəllif kimi töhfə verə bilərsiniz."
-                : "Our editorial board is currently preparing in-depth research essays for this vertical. Explore other published topics or apply to become a contributor."}
+                ? "Redaksiyamız bu mövzu üzrə yeni dərin tədqiqat və məqalələr hazırlayır. Digər mövzuları araşdıra və ya məqalə təklif edə bilərsiniz."
+                : "Our editorial board is currently preparing in-depth research essays for this vertical. Explore other published topics or submit your article proposal."}
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Button to={getLocalizedPath("/blog")} variant="primary" size="md">
                 {isAz ? "BÜTÜN BLOQ YAZILARI" : "EXPLORE ALL ESSAYS"}
               </Button>
-              <Button to={getLocalizedPath("/contributor/dashboard")} variant="secondary" size="md">
-                {isAz ? "MÜƏLLİF KİMİ QOŞUL" : "BECOME A CONTRIBUTOR"}
+              <Button to={getLocalizedPath("/contact#contributor-application")} variant="secondary" size="md">
+                {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
               </Button>
             </div>
           </motion.div>

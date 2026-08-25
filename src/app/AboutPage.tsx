@@ -108,12 +108,12 @@ export default function AboutPage() {
               {isAz ? "MƏQALƏLƏRİ OXU" : "READ ARTICLES"}
             </Button>
             <Button
-              to={getLocalizedPath("/contributor")}
+              to={getLocalizedPath("/contact#contributor-application")}
               variant="secondary"
               size="lg"
               icon={<ArrowRight size={16} />}
             >
-              {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+              {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
             </Button>
           </div>
 
@@ -374,12 +374,12 @@ export default function AboutPage() {
             </p>
             <div className="pt-2">
               <Button
-                to={getLocalizedPath("/contributor")}
+                to={getLocalizedPath("/contact#contributor-application")}
                 variant="primary"
                 size="lg"
                 icon={<ArrowUpRight size={16} />}
               >
-                {isAz ? "MÜƏLLİFLİK ŞƏRTLƏRİNƏ BAX" : "EXPLORE CONTRIBUTOR PROGRAM"}
+                {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
               </Button>
             </div>
           </div>
@@ -437,10 +437,10 @@ export default function AboutPage() {
             {[
               {
                 step: "01",
-                titleEn: "Draft & Apply",
-                titleAz: "Qaralama və Müraciət",
-                descEn: "Sign in with Google, complete your author profile in Settings, and submit your draft.",
-                descAz: "Google ilə daxil olun, Tənzimləmələrdə müəllif profilinizi tamamlayın və qaralamanızı göndərin.",
+                titleEn: "Submit Proposal / Draft",
+                titleAz: "Təklif və ya Qaralama Göndərin",
+                descEn: "Share your article idea or draft with our editorial board through the contact proposal portal.",
+                descAz: "Məqalə ideyanızı və ya hazır yazınızı əlaqə bölməsindən redaksiya heyətimizə təqdim edin.",
               },
               {
                 step: "02",
@@ -601,17 +601,17 @@ export default function AboutPage() {
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
-              to={getLocalizedPath("/contributor")}
+              to={getLocalizedPath("/contact#contributor-application")}
               variant="primary"
               size="lg"
               icon={<ArrowRight size={16} />}
             >
-              {isAz ? "MÜƏLLİF OLUN" : "BECOME A CONTRIBUTOR"}
+              {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
             </Button>
           </div>
 
           <p className="text-[11px] font-mono text-muted-foreground">
-            {isAz ? "Profilinizi yaradın. İlk məqalənizi redaksiyaya təqdim edin." : "Create your profile. Submit your first article."}
+            {isAz ? "Məqalə ideyanızı və ya qaralamanızı redaksiyaya təqdim edin." : "Submit your article proposal or essay draft to our editorial board."}
           </p>
         </div>
       </section>
