@@ -483,7 +483,7 @@ export default function HeroSearchSection() {
           </Link>
           <span className="text-muted-foreground/40">•</span>
           <Link
-            to={getLocalizedPath("/contact#contributor-application")}
+            to={getLocalizedPath("/write")}
             className="inline-flex items-center gap-1 text-primary hover:underline"
           >
             <span>{isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}</span>

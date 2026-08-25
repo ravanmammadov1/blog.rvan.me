@@ -97,5 +97,25 @@ service cloud.firestore {
       // ONLY Admin can delete an application
       allow delete: if isAdmin();
     }
+
+    // Article Submissions ("Write for Rvan.me")
+    match /article_submissions/{submissionId} {
+      // Any visitor (even unauthenticated) can submit an article idea or finished draft with initial status PENDING
+      allow create: if request.resource.data.status == "PENDING" &&
+                       request.resource.data.originalWorkConfirmed == true &&
+                       request.resource.data.fullName is string &&
+                       request.resource.data.email is string &&
+                       request.resource.data.title is string &&
+                       request.resource.data.submissionType in ["idea", "article"];
+
+      // Private submission data -> ONLY Admin can read
+      allow read: if isAdmin();
+
+      // ONLY Admin can update review notes, request changes, reject, or publish
+      allow update: if isAdmin();
+
+      // ONLY Admin can delete
+      allow delete: if isAdmin();
+    }
   }
 }

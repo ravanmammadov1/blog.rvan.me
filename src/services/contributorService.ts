@@ -18,6 +18,9 @@ import {
   ArticleAnalytics,
   ArticleDailyView,
   ArticleReport,
+  ArticleSubmissionRecord,
+  ArticleSubmissionType,
+  ArticleSubmissionStatus,
 } from "../types/contributor";
 
 export interface ContributorProfile {
@@ -1260,25 +1263,256 @@ export async function getAllSubmittedArticles(): Promise<ContributorArticleDraft
   return result;
 }
 
+export const ARTICLE_SUBMISSIONS_COLLECTION = "article_submissions";
+
+export async function computeSha256Hash(text: string): Promise<string> {
+  try {
+    if (typeof window !== "undefined" && window.crypto?.subtle) {
+      const msgBuffer = new TextEncoder().encode(text);
+      const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch (e) {
+    console.warn("Could not compute SHA-256 hash:", e);
+  }
+  return `hash-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+export function generateSubmissionId(): string {
+  const year = new Date().getFullYear();
+  const randomSuffix = Math.floor(100000 + Math.random() * 900000);
+  return `RVAN-SUB-${year}-${randomSuffix}`;
+}
+
+export async function createArticleSubmission(
+  input: Omit<
+    ArticleSubmissionRecord,
+    "id" | "originalContent" | "contentHash" | "status" | "submittedAt" | "createdAt" | "updatedAt"
+  >
+): Promise<ArticleSubmissionRecord> {
+  const subId = generateSubmissionId();
+  const now = new Date().toISOString();
+  const originalContent = input.content || "";
+  const contentHash = await computeSha256Hash(originalContent);
+
+  const newRecord: ArticleSubmissionRecord = {
+    id: subId,
+    submissionType: input.submissionType,
+    fullName: input.fullName.trim(),
+    email: input.email.trim().toLowerCase(),
+    shortBio: input.shortBio.trim(),
+    website: input.website?.trim() || "",
+    title: input.title.trim(),
+    excerpt: input.excerpt?.trim() || "",
+    content: input.content,
+    originalContent,
+    contentHash,
+    pitchReason: input.pitchReason?.trim() || "",
+    category: input.category || "Design",
+    topic: input.topic?.trim() || "",
+    tags: input.tags || [],
+    coverImageUrl: input.coverImageUrl || "",
+    language: input.language || "en",
+    status: "PENDING",
+    originalWorkConfirmed: Boolean(input.originalWorkConfirmed),
+    submittedAt: now,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  // Cache in local storage for the submitter
+  if (typeof window !== "undefined") {
+    try {
+      const localKey = "rvan_my_article_submissions";
+      const existing = getLocalStorage<ArticleSubmissionRecord[]>(localKey, []);
+      setLocalStorage(localKey, [newRecord, ...existing]);
+    } catch {}
+  }
+
+  // Save to Firestore
+  if (db) {
+    try {
+      const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, subId);
+      await setDoc(docRef, newRecord);
+    } catch (err) {
+      console.error("[ContributorService] Error saving article submission to Firestore:", err);
+    }
+  }
+
+  return newRecord;
+}
+
+export async function getAllArticleSubmissions(): Promise<ArticleSubmissionRecord[]> {
+  const result: ArticleSubmissionRecord[] = [];
+  if (db) {
+    try {
+      const snap = await getDocs(collection(db, ARTICLE_SUBMISSIONS_COLLECTION));
+      snap.forEach((d) => {
+        const item = d.data() as ArticleSubmissionRecord;
+        if (item) result.push(item);
+      });
+      result.sort((a, b) => new Date(b.submittedAt || b.createdAt).getTime() - new Date(a.submittedAt || a.createdAt).getTime());
+      return result;
+    } catch (err) {
+      console.warn("[ContributorService] Error querying article submissions:", err);
+    }
+  }
+
+  // Fallback to local storage if Firestore offline
+  if (typeof window !== "undefined") {
+    return getLocalStorage<ArticleSubmissionRecord[]>("rvan_my_article_submissions", []);
+  }
+
+  return result;
+}
+
+export async function getArticleSubmissionById(id: string): Promise<ArticleSubmissionRecord | null> {
+  if (db) {
+    try {
+      const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, id);
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        return snap.data() as ArticleSubmissionRecord;
+      }
+    } catch (err) {
+      console.warn("[ContributorService] Error querying submission by ID:", err);
+    }
+  }
+  return null;
+}
+
+export async function adminRequestChangesOnSubmission(
+  submissionId: string,
+  reviewNote: string,
+  adminIdentifier: string = "Admin"
+): Promise<boolean> {
+  const now = new Date().toISOString();
+  if (db) {
+    try {
+      const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, submissionId);
+      await updateDoc(docRef, {
+        status: "CHANGES_REQUESTED",
+        reviewNote,
+        reviewedAt: now,
+        reviewedBy: adminIdentifier,
+        updatedAt: now,
+      });
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error requesting changes on submission:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
+export async function adminRejectSubmission(
+  submissionId: string,
+  rejectionReason: string,
+  adminIdentifier: string = "Admin"
+): Promise<boolean> {
+  const now = new Date().toISOString();
+  if (db) {
+    try {
+      const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, submissionId);
+      await updateDoc(docRef, {
+        status: "REJECTED",
+        reviewNote: rejectionReason,
+        reviewedAt: now,
+        reviewedBy: adminIdentifier,
+        updatedAt: now,
+      });
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error rejecting submission:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
+export async function adminApproveAndPublishSubmission(
+  submissionId: string,
+  adminIdentifier: string = "Admin"
+): Promise<boolean> {
+  const now = new Date().toISOString();
+  if (db) {
+    try {
+      const sub = await getArticleSubmissionById(submissionId);
+      if (!sub) return false;
+
+      const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, submissionId);
+      await updateDoc(docRef, {
+        status: "PUBLISHED",
+        publishedAt: now,
+        reviewedAt: now,
+        reviewedBy: adminIdentifier,
+        updatedAt: now,
+      });
+
+      // If it's a finished article, bridge it directly to published contributor_articles
+      if (sub.submissionType === "article") {
+        const authorSlug = slugifyAuthorName(sub.fullName || "author");
+        const cleanSlug = slugifyAuthorName(sub.title || "untitled-article");
+
+        await saveContributorArticle({
+          id: `art-${sub.id.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+          authorUid: `submitter-${authorSlug}`,
+          authorName: sub.fullName,
+          authorSlug,
+          authorBio: sub.shortBio,
+          authorRole: "Editorial Contributor",
+          title: sub.title,
+          slug: cleanSlug,
+          category: sub.category || "Design",
+          topic: sub.topic || "",
+          tags: sub.tags || [],
+          language: sub.language || "en",
+          excerpt: sub.excerpt || "",
+          content: sub.content || "",
+          coverImageUrl: sub.coverImageUrl || "",
+          status: "published",
+          publishedAt: now,
+          reviewedAt: now,
+          reviewedBy: adminIdentifier,
+        });
+      }
+
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error approving & publishing submission:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
 export async function getAdminOverviewMetrics(): Promise<{
   totalApplications: number;
   pendingApplications: number;
   activeContributors: number;
   submittedArticles: number;
+  totalSubmissions: number;
+  pendingSubmissions: number;
 }> {
-  const [apps, contributors, articles] = await Promise.all([
+  const [apps, contributors, articles, submissions] = await Promise.all([
     getAllContributorApplications(),
     getApprovedContributors(),
     getAllSubmittedArticles(),
+    getAllArticleSubmissions(),
   ]);
 
-  const pending = apps.filter((a) => a.status === "PENDING" || a.status === "APPLICANT").length;
+  const pendingApps = apps.filter((a) => a.status === "PENDING" || a.status === "APPLICANT").length;
   const activeExternal = contributors.filter((c) => c.uid !== FOUNDER_CONTRIBUTOR_PROFILE.uid).length;
+  const pendingSubs = submissions.filter((s) => s.status === "PENDING" || s.status === "IN_REVIEW").length;
 
   return {
     totalApplications: apps.length,
-    pendingApplications: pending,
+    pendingApplications: pendingApps,
     activeContributors: activeExternal,
     submittedArticles: articles.length,
+    totalSubmissions: submissions.length,
+    pendingSubmissions: pendingSubs,
   };
 }

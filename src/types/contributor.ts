@@ -136,3 +136,44 @@ export interface ArticleReport {
   createdAt: string;
   status: "NEW" | "REVIEWING" | "RESOLVED" | "DISMISSED";
 }
+
+// ── NEW "WRITE FOR RVAN.ME" ARTICLE SUBMISSION SYSTEM ──
+export type ArticleSubmissionType = "idea" | "article";
+
+export type ArticleSubmissionStatus =
+  | "PENDING"
+  | "IN_REVIEW"
+  | "CHANGES_REQUESTED"
+  | "REJECTED"
+  | "APPROVED"
+  | "PUBLISHED";
+
+export interface ArticleSubmissionRecord {
+  id: string; // e.g. RVAN-SUB-2026-XXXXXX
+  submissionType: ArticleSubmissionType;
+  fullName: string;
+  email: string;
+  shortBio: string;
+  website?: string;
+  title: string;
+  excerpt?: string;
+  content: string; // Idea details OR full markdown article content
+  originalContent: string; // preserved snapshot of initial submission
+  contentHash?: string; // SHA-256 hash of originalContent
+  pitchReason?: string; // Why should Rvan.me publish this? (for idea mode)
+  category: string;
+  topic?: string;
+  tags?: string[];
+  coverImageUrl?: string;
+  language: "en" | "az";
+  status: ArticleSubmissionStatus;
+  originalWorkConfirmed: boolean;
+  submittedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  // Editorial Review fields
+  reviewNote?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  publishedAt?: string;
+}

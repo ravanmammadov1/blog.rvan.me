@@ -457,7 +457,7 @@ export default function ContributorDashboardPage() {
 
             <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
               <Button
-                to={getLocalizedPath("/contact#contributor-application")}
+                to={getLocalizedPath("/write")}
                 variant="primary"
                 size="md"
                 icon={<ArrowRight size={14} />}

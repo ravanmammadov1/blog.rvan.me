@@ -28,6 +28,7 @@ const FaqPage = lazy(() => import("./FaqPage"));
 const AdminConsolePage = lazy(() => import("./pages/admin/AdminConsolePage"));
 const TopicArchivePage = lazy(() => import("./pages/TopicArchivePage"));
 const TopicDetailPage = lazy(() => import("./pages/TopicDetailPage"));
+const WriteForRvanPage = lazy(() => import("./pages/WriteForRvanPage"));
 
 import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
@@ -59,6 +60,7 @@ function AppRoutes() {
       <Route path="/work" element={<WorkArchive />} />
       <Route path="/work/:slug" element={<ProjectDetail />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/write" element={<WriteForRvanPage />} />
       <Route path="/blog" element={<BlogArchive />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
       <Route path="/topics" element={<TopicArchivePage />} />
@@ -78,6 +80,7 @@ function AppRoutes() {
 
       {/* Admin Control Routes */}
       <Route path="/admin" element={<AdminConsolePage />} />
+      <Route path="/admin/submissions" element={<AdminConsolePage />} />
       <Route path="/admin/applications" element={<AdminConsolePage />} />
       <Route path="/admin/contributors" element={<AdminConsolePage />} />
       <Route path="/admin/articles" element={<AdminConsolePage />} />
@@ -98,6 +101,7 @@ function AppRoutes() {
       <Route path="/az/work" element={<WorkArchive />} />
       <Route path="/az/work/:slug" element={<ProjectDetail />} />
       <Route path="/az/contact" element={<ContactPage />} />
+      <Route path="/az/write" element={<WriteForRvanPage />} />
       <Route path="/az/blog" element={<BlogArchive />} />
       <Route path="/az/blog/:slug" element={<BlogDetail />} />
       <Route path="/az/topics" element={<TopicArchivePage />} />
@@ -115,6 +119,7 @@ function AppRoutes() {
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
       <Route path="/az/admin" element={<AdminConsolePage />} />
+      <Route path="/az/admin/submissions" element={<AdminConsolePage />} />
       <Route path="/az/admin/applications" element={<AdminConsolePage />} />
       <Route path="/az/admin/contributors" element={<AdminConsolePage />} />
       <Route path="/az/admin/articles" element={<AdminConsolePage />} />

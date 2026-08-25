@@ -177,7 +177,7 @@ export default function TopicDetailPage() {
               <Button to={getLocalizedPath("/blog")} variant="primary" size="md">
                 {isAz ? "BÜTÜN BLOQ YAZILARI" : "EXPLORE ALL ESSAYS"}
               </Button>
-              <Button to={getLocalizedPath("/contact#contributor-application")} variant="secondary" size="md">
+              <Button to={getLocalizedPath("/write")} variant="secondary" size="md">
                 {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}
               </Button>
             </div>

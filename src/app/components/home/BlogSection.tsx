@@ -197,7 +197,7 @@ export default function BlogSection() {
           </Button>
 
           <Button
-            to={getLocalizedPath("/contact#contributor-application")}
+            to={getLocalizedPath("/write")}
             variant="secondary"
             size="lg"
             icon={<Sparkles size={15} className="text-primary" />}

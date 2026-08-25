@@ -25,7 +25,7 @@ export default function Footer({ siteSettings }: FooterProps) {
         {/* Right Side */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
-            to={getLocalizedPath("/contact#contributor-application")}
+            to={getLocalizedPath("/write")}
             className="transition-colors hover:text-primary text-primary/90 font-bold"
           >
             {isAz ? "RVAN.ME ÜÇÜN YAZ" : "WRITE FOR RVAN.ME"}

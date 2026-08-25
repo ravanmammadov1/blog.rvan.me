@@ -91,7 +91,7 @@ export default function ContributorSection() {
           {/* Action Row */}
           <div className="pt-2 flex flex-wrap items-center gap-4 border-t border-border pt-6">
             <Button
-              to={getLocalizedPath("/contact#contributor-application")}
+              to={getLocalizedPath("/write")}
               variant="primary"
               size="md"
               icon={<ArrowUpRight size={15} />}

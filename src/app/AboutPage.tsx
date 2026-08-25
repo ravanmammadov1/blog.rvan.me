@@ -108,7 +108,7 @@ export default function AboutPage() {
               {isAz ? "MƏQALƏLƏRİ OXU" : "READ ARTICLES"}
             </Button>
             <Button
-              to={getLocalizedPath("/contact#contributor-application")}
+              to={getLocalizedPath("/write")}
               variant="secondary"
               size="lg"
               icon={<ArrowRight size={16} />}
@@ -374,7 +374,7 @@ export default function AboutPage() {
             </p>
             <div className="pt-2">
               <Button
-                to={getLocalizedPath("/contact#contributor-application")}
+                to={getLocalizedPath("/write")}
                 variant="primary"
                 size="lg"
                 icon={<ArrowUpRight size={16} />}
@@ -601,7 +601,7 @@ export default function AboutPage() {
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
-              to={getLocalizedPath("/contact#contributor-application")}
+              to={getLocalizedPath("/write")}
               variant="primary"
               size="lg"
               icon={<ArrowRight size={16} />}

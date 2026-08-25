@@ -19,6 +19,10 @@ import {
   AlertCircle,
   Sparkles,
   BookOpen,
+  Lightbulb,
+  Copy,
+  ArrowRight,
+  Inbox,
 } from "lucide-react";
 import SEO from "../../components/SEO";
 import SiteHeader from "../../components/SiteHeader";
@@ -36,16 +40,22 @@ import {
   adminRequestChanges,
   adminRejectArticle,
   adminApproveAndPublishArticle,
+  getAllArticleSubmissions,
+  adminRequestChangesOnSubmission,
+  adminRejectSubmission,
+  adminApproveAndPublishSubmission,
   ContributorApplicationRecord,
   ContributorProfile,
   ContributorArticleDraft,
+  ArticleSubmissionRecord,
   slugifyAuthorName,
   calculateReadTime,
 } from "../../../services/contributorService";
+import { ArticleSubmissionStatus } from "../../../types/contributor";
 import { SiteSettings } from "../../../types/cms";
 import { fetchSiteSettings } from "../../../lib/sanityQueries";
 
-type AdminTab = "overview" | "applications" | "contributors" | "articles";
+type AdminTab = "overview" | "submissions" | "applications" | "contributors" | "articles";
 
 export default function AdminConsolePage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -57,6 +67,7 @@ export default function AdminConsolePage() {
   // Determine active tab from URL pathname
   const getTabFromPath = (): AdminTab => {
     const path = location.pathname.replace(/^\/az/, "");
+    if (path.includes("/submissions")) return "submissions";
     if (path.includes("/applications")) return "applications";
     if (path.includes("/contributors")) return "contributors";
     if (path.includes("/articles")) return "articles";
@@ -72,11 +83,22 @@ export default function AdminConsolePage() {
     pendingApplications: 0,
     activeContributors: 0,
     submittedArticles: 0,
+    totalSubmissions: 0,
+    pendingSubmissions: 0,
   });
+  const [submissions, setSubmissions] = useState<ArticleSubmissionRecord[]>([]);
   const [applications, setApplications] = useState<ContributorApplicationRecord[]>([]);
   const [contributors, setContributors] = useState<ContributorProfile[]>([]);
   const [articles, setArticles] = useState<ContributorArticleDraft[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+
+  // Submissions Tab Filter & Review Modal State
+  const [submissionFilter, setSubmissionFilter] = useState<"ALL" | ArticleSubmissionStatus>("ALL");
+  const [selectedSubmission, setSelectedSubmission] = useState<ArticleSubmissionRecord | null>(null);
+  const [subReviewActionType, setSubReviewActionType] = useState<"publish" | "changes" | "reject" | null>(null);
+  const [subEditorialNoteInput, setSubEditorialNoteInput] = useState("");
+  const [processingSubId, setProcessingSubId] = useState<string | null>(null);
+  const [copiedSubHash, setCopiedSubHash] = useState(false);
 
   // Application Filters & Details Modal
   const [appFilter, setAppFilter] = useState<"ALL" | "PENDING" | "REVIEWING" | "APPROVED" | "REJECTED">("ALL");
@@ -108,16 +130,18 @@ export default function AdminConsolePage() {
     if (!isAdmin) return;
     setLoadingData(true);
     try {
-      const [m, apps, contribs, arts] = await Promise.all([
+      const [m, apps, contribs, arts, subs] = await Promise.all([
         getAdminOverviewMetrics(),
         getAllContributorApplications(),
         getApprovedContributors(),
         getAllSubmittedArticles(),
+        getAllArticleSubmissions(),
       ]);
       setMetrics(m);
       setApplications(apps);
       setContributors(contribs);
       setArticles(arts);
+      setSubmissions(subs);
     } catch (err) {
       console.error("[AdminConsole] Error loading data:", err);
     } finally {
@@ -231,6 +255,107 @@ export default function AdminConsolePage() {
     }
   };
 
+  // ── ARTICLE SUBMISSIONS MODERATION HANDLERS ──
+  const handleApproveSubmission = async (sub: ArticleSubmissionRecord) => {
+    setProcessingSubId(sub.id);
+    setActionSuccessMsg(null);
+    try {
+      const reviewer = user?.email || user?.displayName || "Platform Admin";
+      const ok = await adminApproveAndPublishSubmission(sub.id, reviewer);
+      if (ok) {
+        setActionSuccessMsg(
+          isAz
+            ? `Təqdimat (${sub.id}) təsdiqləndi və rəsmi olaraq nəşr edildi!`
+            : `Submission (${sub.id}) approved and published live with author attribution!`
+        );
+        setSelectedSubmission(null);
+        setSubReviewActionType(null);
+        setSubEditorialNoteInput("");
+        await loadAllData();
+      }
+    } catch (err) {
+      console.error("Error approving submission:", err);
+    } finally {
+      setProcessingSubId(null);
+    }
+  };
+
+  const handleRequestChangesSubmission = async () => {
+    if (!selectedSubmission || !subEditorialNoteInput.trim()) return;
+    setProcessingSubId(selectedSubmission.id);
+    setActionSuccessMsg(null);
+    try {
+      const reviewer = user?.email || user?.displayName || "Platform Admin";
+      const ok = await adminRequestChangesOnSubmission(
+        selectedSubmission.id,
+        subEditorialNoteInput.trim(),
+        reviewer
+      );
+      if (ok) {
+        setActionSuccessMsg(
+          isAz
+            ? `Düzəliş təklifləri (${selectedSubmission.id}) qeydə alındı.`
+            : `Editorial revision notes stored for submission ${selectedSubmission.id}.`
+        );
+        setSelectedSubmission((prev) =>
+          prev ? { ...prev, status: "CHANGES_REQUESTED", reviewNote: subEditorialNoteInput.trim() } : null
+        );
+        setSubReviewActionType(null);
+        setSubEditorialNoteInput("");
+        await loadAllData();
+      }
+    } catch (err) {
+      console.error("Error requesting changes on submission:", err);
+    } finally {
+      setProcessingSubId(null);
+    }
+  };
+
+  const handleRejectSubmission = async () => {
+    if (!selectedSubmission) return;
+    setProcessingSubId(selectedSubmission.id);
+    setActionSuccessMsg(null);
+    try {
+      const reviewer = user?.email || user?.displayName || "Platform Admin";
+      const ok = await adminRejectSubmission(
+        selectedSubmission.id,
+        subEditorialNoteInput.trim() || "Does not match current editorial criteria.",
+        reviewer
+      );
+      if (ok) {
+        setActionSuccessMsg(
+          isAz
+            ? `Təqdimat (${selectedSubmission.id}) imtina statusuna keçirildi.`
+            : `Submission (${selectedSubmission.id}) marked as rejected.`
+        );
+        setSelectedSubmission((prev) =>
+          prev ? { ...prev, status: "REJECTED", reviewNote: subEditorialNoteInput.trim() } : null
+        );
+        setSubReviewActionType(null);
+        setSubEditorialNoteInput("");
+        await loadAllData();
+      }
+    } catch (err) {
+      console.error("Error rejecting submission:", err);
+    } finally {
+      setProcessingSubId(null);
+    }
+  };
+
+  // Filtered submissions (prioritize 'PENDING' / 'IN_REVIEW' at top)
+  const sortedSubmissions = [...submissions].sort((a, b) => {
+    const isAPending = a.status === "PENDING" || a.status === "IN_REVIEW";
+    const isBPending = b.status === "PENDING" || b.status === "IN_REVIEW";
+    if (isAPending && !isBPending) return -1;
+    if (!isAPending && isBPending) return 1;
+    return new Date(b.submittedAt || b.createdAt).getTime() - new Date(a.submittedAt || a.createdAt).getTime();
+  });
+
+  const filteredSubmissions = sortedSubmissions.filter((sub) => {
+    if (submissionFilter === "ALL") return true;
+    return sub.status === submissionFilter;
+  });
+
   // Filtered applications
   const filteredApps = applications.filter((app) => {
     if (appFilter === "ALL") return true;
@@ -342,6 +467,26 @@ export default function AdminConsolePage() {
 
               <button
                 type="button"
+                onClick={() => switchTab("submissions")}
+                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  activeTab === "submissions"
+                    ? "bg-primary text-black font-extrabold shadow-sm shadow-primary/20"
+                    : "border border-border bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Inbox size={14} />
+                <span>
+                  {t("adminSubmissions", "Submissions")}
+                  {metrics.pendingSubmissions > 0 && (
+                    <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30">
+                      {metrics.pendingSubmissions}
+                    </span>
+                  )}
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => switchTab("applications")}
                 className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "applications"
@@ -420,21 +565,21 @@ export default function AdminConsolePage() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
                     <div className="flex items-center justify-between text-muted-foreground text-xs font-mono uppercase">
-                      <span>{t("adminPendingApps", "Pending Applications")}</span>
+                      <span>{t("adminPendingSubmissions", "Pending Submissions")}</span>
                       <Clock size={16} className="text-amber-500" />
                     </div>
                     <p className="mt-3 text-3xl font-extrabold text-foreground">
-                      {metrics.pendingApplications}
+                      {metrics.pendingSubmissions}
                     </p>
                   </div>
 
                   <div className="rounded-2xl border border-border bg-card p-6 shadow-xs backdrop-blur-xl">
                     <div className="flex items-center justify-between text-muted-foreground text-xs font-mono uppercase">
-                      <span>{t("underReview", "Articles Awaiting Review")}</span>
-                      <PenTool size={16} className="text-amber-500" />
+                      <span>{t("adminTotalSubmissions", "Total Submissions")}</span>
+                      <Inbox size={16} className="text-primary" />
                     </div>
                     <p className="mt-3 text-3xl font-extrabold text-foreground">
-                      {articles.filter((a) => a.status === "submitted").length}
+                      {metrics.totalSubmissions}
                     </p>
                   </div>
 
@@ -460,21 +605,21 @@ export default function AdminConsolePage() {
                 </div>
 
                 {/* Submissions Requiring Review */}
-                {articles.filter((a) => a.status === "submitted").length > 0 && (
+                {submissions.filter((s) => s.status === "PENDING" || s.status === "IN_REVIEW").length > 0 && (
                   <div className="rounded-3xl border border-amber-500/30 bg-amber-500/5 p-6 md:p-8 space-y-4">
                     <div className="flex items-center justify-between border-b border-amber-500/20 pb-4">
                       <div className="flex items-center gap-2">
                         <Clock size={16} className="text-amber-500" />
                         <h2 className="text-base font-bold text-foreground">
-                          {isAz ? "Baxış Gözləyən Məqalələr" : "Submissions Awaiting Editorial Review"}
+                          {isAz ? "Baxış Gözləyən Məqalə Təqdimatları" : "Article Submissions Awaiting Review"}
                         </h2>
                       </div>
 
                       <button
                         type="button"
                         onClick={() => {
-                          setArticleFilter("submitted");
-                          switchTab("articles");
+                          setSubmissionFilter("PENDING");
+                          switchTab("submissions");
                         }}
                         className="text-xs font-mono text-amber-500 hover:underline font-bold"
                       >
@@ -483,25 +628,33 @@ export default function AdminConsolePage() {
                     </div>
 
                     <div className="divide-y divide-border/60">
-                      {articles
-                        .filter((a) => a.status === "submitted")
+                      {submissions
+                        .filter((s) => s.status === "PENDING" || s.status === "IN_REVIEW")
                         .slice(0, 3)
-                        .map((art) => (
-                          <div key={art.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
-                            <div>
-                              <h3 className="text-sm font-bold text-foreground">{art.title}</h3>
-                              <span className="text-xs font-mono text-muted-foreground">
-                                By {art.authorName} · {art.category} · {new Date(art.submittedAt || art.updatedAt).toLocaleDateString(isAz ? "az-AZ" : "en-US")}
+                        .map((sub) => (
+                          <div key={sub.id} className="py-3 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
+                            <div className="space-y-0.5 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                  {sub.submissionType === "idea" ? (isAz ? "İdeya" : "Idea") : (isAz ? "Məqalə" : "Article")}
+                                </span>
+                                <span className="text-xs font-mono text-muted-foreground">{sub.id}</span>
+                              </div>
+                              <h3 className="text-sm font-bold text-foreground truncate">{sub.title}</h3>
+                              <span className="text-xs font-mono text-muted-foreground block truncate">
+                                By {sub.authorName} ({sub.authorEmail}) · {new Date(sub.submittedAt).toLocaleDateString(isAz ? "az-AZ" : "en-US")}
                               </span>
                             </div>
                             <button
                               type="button"
                               onClick={() => {
-                                setSelectedArticle(art);
+                                setSelectedSubmission(sub);
+                                setSubReviewActionType(null);
+                                setSubEditorialNoteInput("");
                               }}
-                              className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-primary text-black hover:brightness-110 transition-all cursor-pointer shrink-0"
+                              className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-primary text-black hover:brightness-110 transition-all cursor-pointer shrink-0 shadow-xs"
                             >
-                              {isAz ? "Nəzərdən Keçir" : "Review Article"}
+                              {isAz ? "Nəzərdən Keçir" : "Review & Decide"}
                             </button>
                           </div>
                         ))}
@@ -509,23 +662,23 @@ export default function AdminConsolePage() {
                   </div>
                 )}
 
-                {/* Recent Applications Quick Review Deck */}
+                {/* Recent Submissions Quick Review Deck */}
                 <div className="rounded-3xl border border-border bg-card p-6 md:p-8 space-y-6">
                   <div className="flex items-center justify-between border-b border-border pb-4">
                     <div>
                       <h2 className="text-base font-bold text-foreground">
-                        {t("adminRecentApps", "Recent Applications")}
+                        {t("adminRecentSubmissions", "Recent Article Submissions")}
                       </h2>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {isAz
-                          ? "Ən son daxil olmuş redaksiya müəlliflik müraciətləri."
-                          : "Latest editorial contributor applications submitted through the contact portal."}
+                          ? "Write for Rvan.me portalından daxil olmuş ən son məqalə və ideya təqdimatları."
+                          : "Latest article ideas and drafts submitted via the public Write for Rvan.me portal."}
                       </p>
                     </div>
 
                     <button
                       type="button"
-                      onClick={() => switchTab("applications")}
+                      onClick={() => switchTab("submissions")}
                       className="inline-flex items-center gap-1 text-xs font-mono text-primary hover:underline font-bold"
                     >
                       <span>{isAz ? "Hamısına Bax" : "View All"}</span>
@@ -533,58 +686,61 @@ export default function AdminConsolePage() {
                     </button>
                   </div>
 
-                  {applications.length === 0 ? (
+                  {submissions.length === 0 ? (
                     <div className="py-12 text-center text-xs font-mono text-muted-foreground">
-                      {t("adminNoApps", "No applications found matching the selected filter.")}
+                      {t("adminNoSubmissions", "No article submissions found.")}
                     </div>
                   ) : (
                     <div className="divide-y divide-border">
-                      {applications.slice(0, 5).map((app) => (
+                      {submissions.slice(0, 5).map((sub) => (
                         <div
-                          key={app.id}
+                          key={sub.id}
                           className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 first:pt-0 last:pb-0"
                         >
                           <div className="space-y-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-bold text-foreground truncate">
-                                {app.fullName}
+                                {sub.title}
                               </span>
                               <span className="text-xs font-mono text-muted-foreground truncate">
-                                ({app.email})
+                                by {sub.authorName}
                               </span>
                             </div>
-                            <p className="text-xs text-muted-foreground truncate max-w-xl">
-                              <span className="font-semibold text-foreground/80">
-                                {t("adminArticleIdea", "Idea")}:
-                              </span>{" "}
-                              {app.idea}
-                            </p>
-                            <span className="text-[10px] font-mono text-muted-foreground/70 block">
-                              {new Date(app.createdAt).toLocaleDateString(isAz ? "az-AZ" : "en-US")}
-                            </span>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span className="font-mono text-[10.5px] text-primary font-bold">
+                                {sub.id}
+                              </span>
+                              <span>·</span>
+                              <span className="capitalize">{sub.submissionType}</span>
+                              <span>·</span>
+                              <span>{new Date(sub.submittedAt).toLocaleDateString(isAz ? "az-AZ" : "en-US")}</span>
+                            </div>
                           </div>
 
                           <div className="flex items-center gap-3 shrink-0">
-                            {app.status === "PENDING" && (
-                              <span className="inline-flex items-center gap-1 text-[10.5px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-500 dark:text-amber-400">
-                                <Clock size={11} /> {t("adminFilterPending", "Pending")}
-                              </span>
-                            )}
-                            {app.status === "APPROVED" && (
-                              <span className="inline-flex items-center gap-1 text-[10.5px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                                <CheckCircle2 size={11} /> {t("adminFilterApproved", "Approved")}
-                              </span>
-                            )}
-                            {app.status === "REJECTED" && (
-                              <span className="inline-flex items-center gap-1 text-[10.5px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-500">
-                                <X size={11} /> {t("adminFilterRejected", "Rejected")}
-                              </span>
-                            )}
+                            <span
+                              className={`inline-flex items-center gap-1 text-[10.5px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                                sub.status === "APPROVED" || sub.status === "PUBLISHED"
+                                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                  : sub.status === "CHANGES_REQUESTED"
+                                  ? "border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                                  : sub.status === "REJECTED"
+                                  ? "border-rose-500/30 bg-rose-500/10 text-rose-500"
+                                  : "border-amber-500/30 bg-amber-500/10 text-amber-500 dark:text-amber-400"
+                              }`}
+                            >
+                              {sub.status === "PENDING" && <Clock size={11} />}
+                              {(sub.status === "APPROVED" || sub.status === "PUBLISHED") && <CheckCircle2 size={11} />}
+                              {sub.status === "REJECTED" && <X size={11} />}
+                              {sub.status}
+                            </span>
 
                             <button
                               type="button"
                               onClick={() => {
-                                setSelectedApp(app);
+                                setSelectedSubmission(sub);
+                                setSubReviewActionType(null);
+                                setSubEditorialNoteInput("");
                               }}
                               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-mono font-bold border border-border bg-card hover:border-primary/50 text-foreground transition-colors cursor-pointer"
                             >
@@ -597,6 +753,148 @@ export default function AdminConsolePage() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* ── TAB 2: SUBMISSIONS ── */}
+            {activeTab === "submissions" && (
+              <div className="space-y-6">
+                {/* Filter Toolbar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 p-4 md:p-6 rounded-2xl border border-border bg-card">
+                  <div className="flex items-center gap-2">
+                    <Filter size={15} className="text-primary" />
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                      {t("adminStatus", "Status")}:
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(["ALL", "PENDING", "IN_REVIEW", "CHANGES_REQUESTED", "APPROVED", "PUBLISHED", "REJECTED"] as const).map((filter) => (
+                      <button
+                        key={filter}
+                        type="button"
+                        onClick={() => setSubmissionFilter(filter)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          submissionFilter === filter
+                            ? "bg-primary text-black font-extrabold shadow-xs"
+                            : "border border-border bg-card text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {filter === "ALL" && t("adminFilterAll", "All")}
+                        {filter === "PENDING" && t("adminFilterPending", "Pending")}
+                        {filter === "IN_REVIEW" && (isAz ? "Baxışda" : "In Review")}
+                        {filter === "CHANGES_REQUESTED" && t("changesRequested", "Changes Requested")}
+                        {filter === "APPROVED" && t("adminFilterApproved", "Approved")}
+                        {filter === "PUBLISHED" && t("published", "Published")}
+                        {filter === "REJECTED" && t("adminFilterRejected", "Rejected")}
+                        {filter !== "ALL" && ` (${submissions.filter((s) => s.status === filter).length})`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Submissions Deck */}
+                {loadingData ? (
+                  <div className="py-16 text-center text-xs font-mono text-muted-foreground">
+                    <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto mb-2" />
+                    {isAz ? "Təqdimatlar yüklənir..." : "Loading submissions..."}
+                  </div>
+                ) : filteredSubmissions.length === 0 ? (
+                  <div className="py-16 text-center rounded-3xl border border-border bg-card text-xs font-mono text-muted-foreground space-y-3">
+                    <Inbox size={28} className="mx-auto text-muted-foreground/50" />
+                    <p>{t("adminNoSubmissions", "No article submissions found matching the selected filter.")}</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {filteredSubmissions.map((sub) => (
+                      <div
+                        key={sub.id}
+                        className="rounded-3xl border border-border bg-card p-6 md:p-8 space-y-4 hover:border-primary/40 transition-all shadow-xs"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
+                          <div className="space-y-1.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-mono text-xs font-extrabold text-primary px-2.5 py-0.5 rounded-lg bg-primary/10 border border-primary/20">
+                                {sub.id}
+                              </span>
+                              <span
+                                className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                                  sub.submissionType === "article"
+                                    ? "border-sky-500/30 bg-sky-500/10 text-sky-500"
+                                    : "border-amber-500/30 bg-amber-500/10 text-amber-500"
+                                }`}
+                              >
+                                {sub.submissionType === "article" ? "Finished Article" : "Article Idea"}
+                              </span>
+                              <span
+                                className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                                  sub.status === "APPROVED" || sub.status === "PUBLISHED"
+                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                                    : sub.status === "CHANGES_REQUESTED"
+                                    ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30"
+                                    : sub.status === "REJECTED"
+                                    ? "bg-rose-500/10 text-rose-500 border-rose-500/30"
+                                    : "bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30"
+                                }`}
+                              >
+                                {sub.status}
+                              </span>
+                              {sub.category && (
+                                <span className="text-xs font-mono text-muted-foreground font-semibold">
+                                  · {sub.category}
+                                </span>
+                              )}
+                            </div>
+
+                            <h3 className="text-lg font-bold text-foreground mt-1">
+                              {sub.title}
+                            </h3>
+
+                            <div className="text-xs font-mono text-muted-foreground flex flex-wrap items-center gap-3">
+                              <span>
+                                Author: <strong className="text-foreground">{sub.authorName}</strong> ({sub.authorEmail})
+                              </span>
+                              <span>·</span>
+                              <span>
+                                {new Date(sub.submittedAt).toLocaleString(isAz ? "az-AZ" : "en-US")}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedSubmission(sub);
+                              setSubReviewActionType(null);
+                              setSubEditorialNoteInput("");
+                            }}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-primary text-black hover:brightness-110 transition-all cursor-pointer font-extrabold shadow-xs shrink-0"
+                          >
+                            <BookOpen size={13} />
+                            <span>{isAz ? "Bax & Qərar Ver" : "Review & Decide"}</span>
+                          </button>
+                        </div>
+
+                        {sub.excerpt && (
+                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                            {sub.excerpt}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[11px] font-mono text-muted-foreground">
+                          <span className="truncate max-w-md">
+                            SHA-256: <code className="text-foreground/70">{sub.contentHash.substring(0, 16)}...</code>
+                          </span>
+                          {sub.originalWorkConfirmed && (
+                            <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                              <CheckCircle2 size={12} /> Original work confirmed
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1010,6 +1308,310 @@ export default function AdminConsolePage() {
           </div>
         )}
       </main>
+
+      {/* ── SUBMISSION DETAILS & REVIEW MODAL ── */}
+      {selectedSubmission && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md overflow-y-auto"
+          onClick={() => setSelectedSubmission(null)}
+        >
+          <div
+            className="w-full max-w-3xl rounded-3xl border border-border bg-card p-6 md:p-8 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-border pb-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-xs font-bold text-primary uppercase tracking-widest px-2.5 py-0.5 rounded-lg bg-primary/10 border border-primary/20">
+                    {selectedSubmission.id}
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                      selectedSubmission.submissionType === "article"
+                        ? "border-sky-500/30 bg-sky-500/10 text-sky-500"
+                        : "border-amber-500/30 bg-amber-500/10 text-amber-500"
+                    }`}
+                  >
+                    {selectedSubmission.submissionType === "article" ? "Finished Article" : "Article Idea"}
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                      selectedSubmission.status === "APPROVED" || selectedSubmission.status === "PUBLISHED"
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                        : selectedSubmission.status === "CHANGES_REQUESTED"
+                        ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30"
+                        : selectedSubmission.status === "REJECTED"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-500/30"
+                        : "bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30"
+                    }`}
+                  >
+                    {selectedSubmission.status}
+                  </span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mt-2">
+                  {selectedSubmission.title}
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedSubmission(null)}
+                className="grid h-8 w-8 place-items-center rounded-full border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Author Profile Block */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-muted/40 border border-border text-xs font-mono">
+              <div>
+                <span className="text-muted-foreground uppercase text-[10px] block mb-0.5">Author Name</span>
+                <span className="font-bold text-foreground text-sm font-sans">{selectedSubmission.authorName}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground uppercase text-[10px] block mb-0.5">Email</span>
+                <span className="text-foreground">{selectedSubmission.authorEmail}</span>
+              </div>
+              <div className="sm:col-span-2">
+                <span className="text-muted-foreground uppercase text-[10px] block mb-0.5">Short Bio</span>
+                <p className="text-foreground font-sans text-xs leading-relaxed">{selectedSubmission.authorBio}</p>
+              </div>
+              {selectedSubmission.authorWebsite && (
+                <div className="sm:col-span-2">
+                  <span className="text-muted-foreground uppercase text-[10px] block mb-0.5">Website / Portfolio</span>
+                  <a
+                    href={selectedSubmission.authorWebsite}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline inline-flex items-center gap-1 font-bold"
+                  >
+                    <span>{selectedSubmission.authorWebsite}</span>
+                    <ExternalLink size={11} />
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Cryptographic SHA-256 Proof */}
+            <div className="p-3.5 rounded-2xl bg-background border border-border space-y-1.5 text-xs font-mono">
+              <div className="flex items-center justify-between">
+                <span className="text-[10.5px] font-bold text-primary uppercase tracking-wider">
+                  SHA-256 Content Fingerprint
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(selectedSubmission.contentHash);
+                    setCopiedSubHash(true);
+                    setTimeout(() => setCopiedSubHash(false), 2000);
+                  }}
+                  className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  <Copy size={11} />
+                  <span>{copiedSubHash ? "Copied" : "Copy Hash"}</span>
+                </button>
+              </div>
+              <code className="block p-2 rounded-lg bg-muted text-[11px] text-foreground/80 break-all">
+                {selectedSubmission.contentHash}
+              </code>
+            </div>
+
+            {/* Cover Image Preview if available */}
+            {selectedSubmission.coverImageUrl && (
+              <div className="rounded-2xl border border-border overflow-hidden aspect-video bg-muted max-h-56">
+                <img
+                  src={selectedSubmission.coverImageUrl}
+                  alt={selectedSubmission.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            {/* Excerpt if available */}
+            {selectedSubmission.excerpt && (
+              <div className="p-4 rounded-2xl bg-muted/30 border border-border space-y-1">
+                <span className="font-mono text-[10.5px] font-bold text-primary uppercase tracking-wider block">
+                  {t("articleExcerpt", "Excerpt / Short Premise")}:
+                </span>
+                <p className="text-sm font-sans text-foreground leading-relaxed">
+                  {selectedSubmission.excerpt}
+                </p>
+              </div>
+            )}
+
+            {/* Content / Proposal Body */}
+            <div className="space-y-2">
+              <span className="font-mono text-[10.5px] font-bold text-muted-foreground uppercase tracking-wider block">
+                {selectedSubmission.submissionType === "idea" ? "Article Proposal & Pitch" : "Full Article Content"}:
+              </span>
+              <div className="p-6 rounded-2xl border border-border bg-background whitespace-pre-wrap font-sans text-xs text-foreground/90 leading-relaxed max-h-80 overflow-y-auto">
+                {selectedSubmission.content}
+              </div>
+            </div>
+
+            {/* Taxonomy info */}
+            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-muted-foreground pt-2 border-t border-border">
+              {selectedSubmission.category && (
+                <span>Category: <strong className="text-foreground">{selectedSubmission.category}</strong></span>
+              )}
+              {selectedSubmission.topic && (
+                <span>Topic: <strong className="text-foreground">{selectedSubmission.topic}</strong></span>
+              )}
+              {selectedSubmission.tags && selectedSubmission.tags.length > 0 && (
+                <span>Tags: <strong className="text-foreground">{selectedSubmission.tags.join(", ")}</strong></span>
+              )}
+            </div>
+
+            {/* Existing Review Note */}
+            {selectedSubmission.reviewNote && (
+              <div className="rounded-2xl border border-purple-500/30 bg-purple-500/10 p-4 space-y-1">
+                <span className="text-[10.5px] font-mono font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block">
+                  Latest Editorial Note / Reason:
+                </span>
+                <p className="text-xs font-sans text-foreground">{selectedSubmission.reviewNote}</p>
+                {selectedSubmission.reviewedBy && (
+                  <span className="text-[10px] font-mono text-muted-foreground block">
+                    Reviewed by {selectedSubmission.reviewedBy} at {new Date(selectedSubmission.reviewedAt || "").toLocaleString(isAz ? "az-AZ" : "en-US")}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Request Changes Action Drawer */}
+            {subReviewActionType === "changes" && (
+              <div className="rounded-2xl border border-purple-500/30 bg-purple-500/10 p-5 space-y-3">
+                <label className="block text-xs font-mono font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                  {t("reviewNote", "Editorial Review Note / Feedback for Author")} <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  rows={3}
+                  autoComplete="off"
+                  value={subEditorialNoteInput}
+                  onChange={(e) => setSubEditorialNoteInput(e.target.value)}
+                  placeholder={t("reviewNotePlaceholder", "Specify required changes or suggestions for the author...")}
+                  className="w-full rounded-xl border border-border bg-card p-3 text-xs text-foreground focus:border-primary focus:outline-none"
+                />
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSubReviewActionType(null)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-mono text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    {t("discardChanges", "Cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!subEditorialNoteInput.trim() || processingSubId === selectedSubmission.id}
+                    onClick={handleRequestChangesSubmission}
+                    className="px-4 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs font-mono uppercase tracking-wider hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
+                  >
+                    {processingSubId === selectedSubmission.id ? "Saving..." : t("requestChanges", "Save & Request Changes")}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Reject Action Drawer */}
+            {subReviewActionType === "reject" && (
+              <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-5 space-y-3">
+                <label className="block text-xs font-mono font-bold text-rose-500 uppercase tracking-wider">
+                  {t("rejectionReason", "Rejection Reason / Internal Note")}
+                </label>
+                <textarea
+                  rows={3}
+                  autoComplete="off"
+                  value={subEditorialNoteInput}
+                  onChange={(e) => setSubEditorialNoteInput(e.target.value)}
+                  placeholder={t("rejectionReasonPlaceholder", "State the reason for rejecting this submission...")}
+                  className="w-full rounded-xl border border-border bg-card p-3 text-xs text-foreground focus:border-primary focus:outline-none"
+                />
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSubReviewActionType(null)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-mono text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    {t("discardChanges", "Cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={processingSubId === selectedSubmission.id}
+                    onClick={handleRejectSubmission}
+                    className="px-4 py-1.5 rounded-xl bg-rose-600 text-white font-bold text-xs font-mono uppercase tracking-wider hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
+                  >
+                    {processingSubId === selectedSubmission.id ? "Rejecting..." : t("rejected", "Confirm Rejection")}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Modal Actions Footer */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border">
+              <button
+                type="button"
+                onClick={() => setSelectedSubmission(null)}
+                className="px-4 py-2 rounded-xl text-xs font-mono font-bold border border-border hover:bg-muted text-muted-foreground transition-colors cursor-pointer"
+              >
+                {isAz ? "Bağla" : "Close"}
+              </button>
+
+              <div className="flex items-center gap-2">
+                {selectedSubmission.status !== "PUBLISHED" && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSubReviewActionType("changes");
+                        setSubEditorialNoteInput(selectedSubmission.reviewNote || "");
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider border border-purple-500/40 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500 hover:text-white transition-all cursor-pointer"
+                    >
+                      <MessageSquare size={13} />
+                      <span>{t("requestChanges", "Request Changes")}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSubReviewActionType("reject");
+                        setSubEditorialNoteInput(selectedSubmission.reviewNote || "");
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider border border-rose-500/30 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                    >
+                      <X size={13} />
+                      <span>{t("rejected", "Reject")}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={processingSubId === selectedSubmission.id}
+                      onClick={() => handleApproveSubmission(selectedSubmission)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-primary text-black hover:brightness-110 transition-all cursor-pointer font-extrabold disabled:opacity-50 shadow-xs"
+                    >
+                      <Sparkles size={13} />
+                      <span>
+                        {processingSubId === selectedSubmission.id
+                          ? isAz ? "Nəşr edilir..." : "Publishing..."
+                          : t("approveAndPublish", "Approve & Publish")}
+                      </span>
+                    </button>
+                  </>
+                )}
+
+                {selectedSubmission.status === "PUBLISHED" && (
+                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                    <CheckCircle2 size={13} />
+                    <span>Published & Attributed</span>
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── APPLICATION DETAILS MODAL ── */}
       {selectedApp && (
