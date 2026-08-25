@@ -397,7 +397,7 @@ export async function getAllContributorApplications(): Promise<ContributorApplic
   return localApps;
 }
 
-export async function approveContributorApplication(appId: string, adminEmail: string = "admin@rvan.me"): Promise<boolean> {
+export async function approveContributorApplication(appId: string, reviewerIdentifier: string = "Admin"): Promise<boolean> {
   const all = await getAllContributorApplications();
   const target = all.find((a) => a.id === appId);
   if (!target) return false;
@@ -405,7 +405,7 @@ export async function approveContributorApplication(appId: string, adminEmail: s
   const reviewedAt = new Date().toISOString();
   target.status = "APPROVED";
   target.reviewedAt = reviewedAt;
-  target.reviewedBy = adminEmail;
+  target.reviewedBy = reviewerIdentifier;
 
   if (typeof window !== "undefined") {
     const updatedList = all.map((a) => (a.id === appId ? target : a));
@@ -418,7 +418,7 @@ export async function approveContributorApplication(appId: string, adminEmail: s
       await updateDoc(appRef, {
         status: "APPROVED",
         reviewedAt,
-        reviewedBy: adminEmail,
+        reviewedBy: reviewerIdentifier,
       });
     } catch (err) {
       console.warn("[ContributorService] Error updating application:", err);
@@ -465,7 +465,7 @@ export async function approveContributorApplication(appId: string, adminEmail: s
   return true;
 }
 
-export async function rejectContributorApplication(appId: string, adminEmail: string = "admin@rvan.me"): Promise<boolean> {
+export async function rejectContributorApplication(appId: string, reviewerIdentifier: string = "Admin"): Promise<boolean> {
   const all = await getAllContributorApplications();
   const target = all.find((a) => a.id === appId);
   if (!target) return false;
@@ -473,7 +473,7 @@ export async function rejectContributorApplication(appId: string, adminEmail: st
   const reviewedAt = new Date().toISOString();
   target.status = "REJECTED";
   target.reviewedAt = reviewedAt;
-  target.reviewedBy = adminEmail;
+  target.reviewedBy = reviewerIdentifier;
 
   if (typeof window !== "undefined") {
     const updatedList = all.map((a) => (a.id === appId ? target : a));
@@ -486,7 +486,7 @@ export async function rejectContributorApplication(appId: string, adminEmail: st
       await updateDoc(appRef, {
         status: "REJECTED",
         reviewedAt,
-        reviewedBy: adminEmail,
+        reviewedBy: reviewerIdentifier,
       });
     } catch (err) {
       console.warn("[ContributorService] Error rejecting application:", err);

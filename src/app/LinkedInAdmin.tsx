@@ -24,6 +24,7 @@ import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
 import Footer from "./components/Footer";
 import { useLanguage } from "../lib/i18n/LanguageContext";
+import { useAuth } from "../hooks/useAuth";
 import {
   getAllContributorApplications,
   approveContributorApplication,
@@ -83,6 +84,7 @@ interface StatusResponse {
 export default function LinkedInAdmin() {
   const [searchParams] = useSearchParams();
   const { getLocalizedPath } = useLanguage();
+  const { user, isAdmin, loading: authLoading } = useAuth();
 
   // Admin Section Tab State
   const [adminTab, setAdminTab] = useState<"contributors" | "linkedin">("contributors");
@@ -188,6 +190,14 @@ export default function LinkedInAdmin() {
       setLoadingStatus(false);
     }
   };
+
+  // Authenticate immediately if the logged in Firebase user is the platform admin
+  useEffect(() => {
+    if (isAdmin) {
+      setIsAuthenticated(true);
+      loadApplications();
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     if (adminSecret) {

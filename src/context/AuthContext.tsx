@@ -3,6 +3,7 @@ import { User, onAuthStateChanged, updateProfile as updateFirebaseProfile, delet
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, storage, isKeyConfigured } from "../lib/firebase";
 import { signInWithGoogle, checkRedirectResult, logout } from "../services/auth";
+import { isPlatformAdminUid, checkIsAdmin } from "../config/admin";
 
 export interface UserProfile {
   uid: string;
@@ -17,6 +18,7 @@ export interface UserProfile {
 export interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
+  isAdmin: boolean;
   loading: boolean;
   error: string | null;
   userPhoto: string | null;
@@ -40,6 +42,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [customAvatar, setCustomAvatar] = useState<string | null>(null);
@@ -111,7 +114,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       (currentUser) => {
         setUser(currentUser);
         loadUserProfile(currentUser);
-        setLoading(false);
+        if (currentUser) {
+          currentUser
+            .getIdTokenResult()
+            .then((tokenResult) => {
+              const hasAdminAccess = checkIsAdmin(currentUser.uid, tokenResult.claims as any);
+              setIsAdmin(hasAdminAccess);
+            })
+            .catch(() => {
+              setIsAdmin(isPlatformAdminUid(currentUser.uid));
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        } else {
+          setIsAdmin(false);
+          setLoading(false);
+        }
       },
       (err) => {
         console.error("[Auth Context Error] Auth state listener error:", err);
@@ -119,6 +138,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
         setProfile(null);
         setCustomAvatar(null);
+        setIsAdmin(false);
         setLoading(false);
       }
     );
@@ -295,6 +315,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       value={{
         user,
         profile,
+        isAdmin,
         loading,
         error,
         userPhoto,

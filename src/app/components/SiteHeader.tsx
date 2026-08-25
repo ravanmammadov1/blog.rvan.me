@@ -23,7 +23,7 @@ import ravanLogo from "../../assets/ravan_logo.svg";
 import { isUserApprovedContributor, getContributorStatus } from "../../services/contributorService";
 
 function UserAuthMenu() {
-  const { user, loading, signOut, userPhoto } = useAuth();
+  const { user, isAdmin, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -302,7 +302,7 @@ function UserAuthMenu() {
                   )}
 
                   {/* Admin Direct Access */}
-                  {(user.email === "ravanmammadov01@gmail.com" || user.email?.toLowerCase().includes("ravan")) && (
+                  {isAdmin && (
                     <Link
                       to={getLocalizedPath("/admin/linkedin")}
                       onClick={() => setDropdownOpen(false)}

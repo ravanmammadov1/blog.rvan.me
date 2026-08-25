@@ -77,6 +77,7 @@ function AppRoutes() {
       <Route path="/fonts/:fontSlug" element={<FontDetailPage />} />
 
       {/* Admin Control Routes */}
+      <Route path="/admin" element={<LinkedInAdmin />} />
       <Route path="/admin/linkedin" element={<LinkedInAdmin />} />
 
       {/* Azerbaijani (/az) Parallel Routes */}
@@ -110,6 +111,7 @@ function AppRoutes() {
       <Route path="/az/opportunities" element={<OpportunityArchivePage />} />
       <Route path="/az/fonts" element={<Navigate to="/az/resources?category=fonts" replace />} />
       <Route path="/az/fonts/:fontSlug" element={<FontDetailPage />} />
+      <Route path="/az/admin" element={<LinkedInAdmin />} />
       <Route path="/az/admin/linkedin" element={<LinkedInAdmin />} />
 
       <Route path="*" element={<NotFound />} />

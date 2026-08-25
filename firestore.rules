@@ -11,47 +11,61 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
+    // Server-Side Cryptographic Admin Identity:
+    // Bound to the platform owner's Firebase Authentication UID or Firebase Auth custom claim 'admin: true'
     function isAdmin() {
       return isAuthenticated() && (
-        request.auth.token.admin == true ||
-        request.auth.token.email == "ravanmammadov07@gmail.com" ||
-        request.auth.token.email == "ravanmammadov01@gmail.com"
+        request.auth.uid == "6oo1oPvtLZZ93Sry6jbcDuvIuPG3" ||
+        request.auth.token.admin == true
       );
     }
 
     // User Profile Documents
     match /users/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
     }
 
     // Public Contributor Profiles
     match /contributors/{contributorId} {
-      // Anyone can view approved contributor profiles publicly
-      allow read: if true;
-      // Contributor can create or update only their own profile
-      allow create, update: if isOwner(contributorId) || isAdmin();
+      // Anyone can view approved profiles; admins and profile owners can view any status
+      allow read: if resource.data.status == "approved" || isAdmin() || isOwner(contributorId);
+      
+      // ONLY Admin can create a new contributor profile (activating contributor status)
+      allow create: if isAdmin();
+      
+      // An approved contributor can edit their own profile fields (bio, title, links),
+      // but CANNOT change their status, email, or uid; Admin can update any field
+      allow update: if isAdmin() || (
+        isOwner(contributorId) &&
+        resource.data.status == "approved" &&
+        request.resource.data.status == resource.data.status &&
+        request.resource.data.uid == resource.data.uid
+      );
+      
+      // ONLY Admin can delete a contributor profile
       allow delete: if isAdmin();
     }
 
     // Contributor Article Drafts & Submissions
     match /contributor_articles/{articleId} {
-      // Anyone can read published articles; authors and admins can read drafts
+      // Anyone can read published articles; authors and admins can read drafts & submitted articles
       allow read: if resource.data.status == "published" ||
                      (isAuthenticated() && (request.auth.uid == resource.data.authorUid || isAdmin()));
 
-      // Authors can create drafts and submit for review (cannot self-publish)
+      // Authors can create drafts or submit articles (cannot create directly with status 'published')
       allow create: if isAuthenticated() &&
                        request.auth.uid == request.resource.data.authorUid &&
                        (request.resource.data.status == "draft" || request.resource.data.status == "submitted");
 
-      // Authors can update their own drafts; only admins can publish or approve
-      allow update: if isAuthenticated() && (
-                       isAdmin() ||
-                       (
-                         request.auth.uid == resource.data.authorUid &&
-                         request.resource.data.authorUid == resource.data.authorUid &&
-                         (request.resource.data.status == "draft" || request.resource.data.status == "submitted")
-                       )
+      // Authors can update their own drafts/submissions, BUT cannot publish directly.
+      // ONLY Admin can approve, reject, or publish articles.
+      allow update: if isAdmin() || (
+                       isAuthenticated() &&
+                       request.auth.uid == resource.data.authorUid &&
+                       request.resource.data.authorUid == resource.data.authorUid &&
+                       request.resource.data.status != "published" &&
+                       (request.resource.data.status == "draft" || request.resource.data.status == "submitted")
                      );
 
       // Authors can delete their own drafts; admins can delete any
@@ -66,9 +80,17 @@ service cloud.firestore {
 
     // Contributor Applications
     match /contributor_applications/{appId} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if isAdmin() || (isAuthenticated() && (request.auth.uid == resource.data.userId || isOwner(appId)));
+      // Prospective authors (including guests) can submit an application with initial status PENDING
+      allow create: if request.resource.data.status == "PENDING" || request.resource.data.status == "APPLICANT";
+      
+      // Only Admin and the applicant can read the application
+      allow read: if isAdmin() || (isAuthenticated() && (request.auth.uid == resource.data.userId || isOwner(appId)));
+      
+      // ONLY Admin can update application status (e.g. approve or reject)
+      allow update: if isAdmin();
+      
+      // ONLY Admin can delete an application
+      allow delete: if isAdmin();
     }
   }
 }
