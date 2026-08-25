@@ -92,12 +92,21 @@ export default function BlogHero({ post }: BlogHeroProps) {
 
         {/* Author & Timestamp Bar */}
         <div className="flex flex-wrap items-center gap-6 pt-2 text-xs font-mono text-muted-foreground border-t border-white/10">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs">
-              R
+          <Link
+            to={getLocalizedPath(`/author/${post.authorSlug || (post.authorName ? post.authorName.toLowerCase().replace(/[^a-z0-9]+/g, "-") : "ravan-mammadov")}`)}
+            className="group/author flex items-center gap-2.5 hover:text-primary transition-colors"
+          >
+            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs uppercase mono group-hover/author:border-primary">
+              {(post.authorName || "Ravan Mammadov")
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)}
             </div>
-            <span className="text-foreground font-semibold">Ravan Mammadov</span>
-          </div>
+            <span className="text-foreground font-semibold group-hover/author:text-primary transition-colors">
+              {post.authorName || (language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov")}
+            </span>
+          </Link>
 
           {formattedDate && (
             <div className="flex items-center gap-1.5">

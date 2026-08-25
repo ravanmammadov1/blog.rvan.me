@@ -165,9 +165,17 @@ export function createDefaultContributorProfile(
   photoURL?: string | null
 ): ContributorProfile {
   const cleanName = name?.trim() || "Contributor";
+  let baseSlug = slugifyAuthorName(cleanName);
+
+  // If a non-founder user has the name "Ravan Mammadov", ensure their slug is distinct from founder canonical slug
+  const isFounderUid = uid === "founder-ravan-mammadov" || uid === "ravan-mammadov";
+  if (!isFounderUid && (baseSlug === "ravan-mammadov" || baseSlug === "ravan")) {
+    baseSlug = `ravan-mammadov-${uid.slice(-4).toLowerCase()}`;
+  }
+
   return {
     uid,
-    slug: slugifyAuthorName(cleanName),
+    slug: baseSlug,
     name: cleanName,
     email: email || "",
     profileImage: photoURL || "",
@@ -611,14 +619,24 @@ export async function saveContributorProfile(
   data: Partial<ContributorProfile>
 ): Promise<ContributorProfile> {
   const existing = await getContributorProfile(uid);
-  const fallbackSlug = slugifyAuthorName(data.name || existing?.name || "author");
+  const isFounderUid = uid === "founder-ravan-mammadov" || uid === "ravan-mammadov";
+
+  let chosenSlug = data.slug || existing?.slug;
+  if (!chosenSlug) {
+    let fallback = slugifyAuthorName(data.name || existing?.name || "author");
+    if (!isFounderUid && (fallback === "ravan-mammadov" || fallback === "ravan")) {
+      fallback = `ravan-mammadov-${uid.slice(-4).toLowerCase()}`;
+    }
+    chosenSlug = fallback;
+  }
+
   const baseProfile = existing || createDefaultContributorProfile(uid, data.name, data.email, data.profileImage);
 
   const updated: ContributorProfile = {
     ...baseProfile,
     ...data,
     uid,
-    slug: data.slug || baseProfile.slug || fallbackSlug,
+    slug: chosenSlug,
   };
 
   try {

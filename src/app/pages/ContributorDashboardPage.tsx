@@ -257,9 +257,9 @@ export default function ContributorDashboardPage() {
 
                 <Link
                   to={getLocalizedPath(`/author/${profile?.slug || slugifyAuthorName(user.displayName || "contributor")}`)}
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline font-semibold"
                 >
-                  {isAz ? "İctimai Müəllif Profilinə Bax" : "View Public Author Profile"} <ArrowRight size={13} />
+                  {isAz ? "İctimai Müəllif Profilinizə Baxın" : "View Your Public Author Profile"} <ArrowRight size={13} />
                 </Link>
               </div>
 

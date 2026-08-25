@@ -1,0 +1,72 @@
+﻿rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        request.auth.token.email == "ravanmammadov07@gmail.com"
+      );
+    }
+
+    // User Profile Documents
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Public Contributor Profiles
+    match /contributors/{contributorId} {
+      // Anyone can view approved contributor profiles publicly
+      allow read: if true;
+      // Contributor can create or update only their own profile
+      allow create, update: if isOwner(contributorId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Contributor Article Drafts & Submissions
+    match /contributor_articles/{articleId} {
+      // Anyone can read published articles; authors and admins can read drafts
+      allow read: if resource.data.status == "published" ||
+                     (isAuthenticated() && (request.auth.uid == resource.data.authorUid || isAdmin()));
+
+      // Authors can create drafts and submit for review (cannot self-publish)
+      allow create: if isAuthenticated() &&
+                       request.auth.uid == request.resource.data.authorUid &&
+                       (request.resource.data.status == "draft" || request.resource.data.status == "submitted");
+
+      // Authors can update their own drafts; only admins can publish or approve
+      allow update: if isAuthenticated() && (
+                       isAdmin() ||
+                       (
+                         request.auth.uid == resource.data.authorUid &&
+                         request.resource.data.authorUid == resource.data.authorUid &&
+                         (request.resource.data.status == "draft" || request.resource.data.status == "submitted")
+                       )
+                     );
+
+      // Authors can delete their own drafts; admins can delete any
+      allow delete: if isAuthenticated() && (request.auth.uid == resource.data.authorUid || isAdmin());
+    }
+
+    // Article Views & Stats Tracking
+    match /article_stats/{slug} {
+      allow read: if true;
+      allow create, update: if true;
+    }
+
+    // Contributor Applications
+    match /contributor_applications/{appId} {
+      allow read: if isOwner(appId) || isAdmin();
+      allow create, update: if isOwner(appId) || isAdmin();
+    }
+  }
+}

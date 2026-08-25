@@ -476,9 +476,9 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-3">
                     <Link
                       to={getLocalizedPath(`/author/${contributorProfile?.slug || slugifyAuthorName(user?.displayName || "author")}`)}
-                      className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:underline font-semibold"
                     >
-                      {isAz ? "Profilə Bax" : "View Live Profile"} <ExternalLink size={13} />
+                      {isAz ? "İctimai Profilinizə Baxın" : "View Your Live Profile"} <ExternalLink size={13} />
                     </Link>
 
                     <Button
