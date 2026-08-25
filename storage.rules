@@ -1,0 +1,21 @@
+﻿rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Article submission covers: public read, image uploads under 5MB
+    match /article_submissions_covers/{imageId} {
+      allow read: if true;
+      allow write: if request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // User profile avatars and media
+    match /users/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && (
+        request.auth.uid == userId ||
+        request.auth.uid == "6oo1oPvtLZZ93Sry6jbcDuvIuPG3" ||
+        request.auth.token.admin == true
+      );
+    }
+  }
+}

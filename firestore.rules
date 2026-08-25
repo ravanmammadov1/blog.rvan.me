@@ -98,15 +98,15 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Article Submissions ("Write for Rvan.me")
+    // Article Submissions ("Write for Rvan.me" Editorial System)
     match /article_submissions/{submissionId} {
-      // Any visitor (even unauthenticated) can submit an article idea or finished draft with initial status PENDING
+      // Any visitor (even unauthenticated) can submit an article with initial status PENDING
       allow create: if request.resource.data.status == "PENDING" &&
                        request.resource.data.originalWorkConfirmed == true &&
-                       request.resource.data.fullName is string &&
-                       request.resource.data.email is string &&
+                       (request.resource.data.authorName is string || request.resource.data.fullName is string) &&
+                       (request.resource.data.authorEmail is string || request.resource.data.email is string) &&
                        request.resource.data.title is string &&
-                       request.resource.data.submissionType in ["idea", "article"];
+                       request.resource.data.content is string;
 
       // Private submission data -> ONLY Admin can read
       allow read: if isAdmin();
@@ -116,6 +116,11 @@ service cloud.firestore {
 
       // ONLY Admin can delete
       allow delete: if isAdmin();
+
+      // Revisions subcollection
+      match /revisions/{revisionId} {
+        allow read, write: if isAdmin();
+      }
     }
   }
 }

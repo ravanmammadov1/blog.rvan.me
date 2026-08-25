@@ -137,9 +137,32 @@ export interface ArticleReport {
   status: "NEW" | "REVIEWING" | "RESOLVED" | "DISMISSED";
 }
 
-// ── NEW "WRITE FOR RVAN.ME" ARTICLE SUBMISSION SYSTEM ──
-export type ArticleSubmissionType = "idea" | "article";
+// ── STANDARDIZED EDITORIAL TAXONOMY ──
+export const EDITORIAL_CATEGORIES = [
+  "Design",
+  "Technology",
+  "Marketing",
+  "Psychology & UX",
+  "Creative Culture",
+  "Strategy",
+] as const;
 
+export type EditorialCategory = (typeof EDITORIAL_CATEGORIES)[number];
+
+export const EDITORIAL_TOPICS = [
+  "Design Systems",
+  "Brand Identity",
+  "Motion Design",
+  "Generative AI",
+  "Typography",
+  "Product Strategy",
+  "Web Design",
+  "Creative Process",
+] as const;
+
+export type EditorialTopic = (typeof EDITORIAL_TOPICS)[number];
+
+// ── NEW "WRITE FOR RVAN.ME" ARTICLE SUBMISSION SYSTEM ──
 export type ArticleSubmissionStatus =
   | "PENDING"
   | "IN_REVIEW"
@@ -148,22 +171,37 @@ export type ArticleSubmissionStatus =
   | "APPROVED"
   | "PUBLISHED";
 
+export interface ArticleSubmissionRevision {
+  revisionId: string;
+  submittedAt: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  contentHash: string;
+  editorialNote?: string;
+}
+
 export interface ArticleSubmissionRecord {
   id: string; // e.g. RVAN-SUB-2026-XXXXXX
-  submissionType: ArticleSubmissionType;
-  fullName: string;
-  email: string;
-  shortBio: string;
+  authorName: string;
+  authorEmail: string;
+  authorBio: string;
+  authorWebsite?: string;
+  // Legacy aliases for backward compatibility with existing records
+  fullName?: string;
+  email?: string;
+  shortBio?: string;
   website?: string;
   title: string;
-  excerpt?: string;
-  content: string; // Idea details OR full markdown article content
-  originalContent: string; // preserved snapshot of initial submission
-  contentHash?: string; // SHA-256 hash of originalContent
-  pitchReason?: string; // Why should Rvan.me publish this? (for idea mode)
+  excerpt: string;
+  content: string; // Full markdown article content
+  originalContent: string; // preserved immutable snapshot of initial submission
+  contentHash: string; // SHA-256 cryptographic fingerprint of originalContent
+  editorialNote?: string; // Author's note to the editor
+  pitchReason?: string; // Legacy field
   category: string;
   topic?: string;
-  tags?: string[];
+  tags: string[];
   coverImageUrl?: string;
   language: "en" | "az";
   status: ArticleSubmissionStatus;
@@ -176,4 +214,5 @@ export interface ArticleSubmissionRecord {
   reviewedBy?: string;
   reviewedAt?: string;
   publishedAt?: string;
+  revisions?: ArticleSubmissionRevision[];
 }

@@ -1,4 +1,5 @@
-import { db } from "../lib/firebase";
+import { db, storage } from "../lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   doc,
   getDoc,
@@ -19,8 +20,8 @@ import {
   ArticleDailyView,
   ArticleReport,
   ArticleSubmissionRecord,
-  ArticleSubmissionType,
   ArticleSubmissionStatus,
+  ArticleSubmissionRevision,
 } from "../types/contributor";
 
 export interface ContributorProfile {
@@ -1285,6 +1286,39 @@ export function generateSubmissionId(): string {
   return `RVAN-SUB-${year}-${randomSuffix}`;
 }
 
+export async function uploadSubmissionCoverImage(
+  fileOrBlob: File | Blob,
+  submissionId?: string
+): Promise<string> {
+  const timestamp = Date.now();
+  const rand = Math.random().toString(36).substring(2, 8);
+  const ext = fileOrBlob.type === "image/png" ? "png" : fileOrBlob.type === "image/jpeg" ? "jpg" : "webp";
+  const fileName = `cover_${submissionId || timestamp}_${rand}.${ext}`;
+
+  // 1. Try Firebase Storage if available
+  if (storage) {
+    try {
+      const storageRef = ref(storage, `article_submissions_covers/${fileName}`);
+      const snap = await uploadBytes(storageRef, fileOrBlob, {
+        contentType: fileOrBlob.type || "image/webp",
+        cacheControl: "public, max-age=31536000",
+      });
+      const downloadUrl = await getDownloadURL(snap.ref);
+      return downloadUrl;
+    } catch (storageErr) {
+      console.warn("[ContributorService] Firebase Storage upload error, falling back to data URL:", storageErr);
+    }
+  }
+
+  // 2. Fallback: Compact Data URL
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("Failed to read image file"));
+    reader.readAsDataURL(fileOrBlob);
+  });
+}
+
 export async function createArticleSubmission(
   input: Omit<
     ArticleSubmissionRecord,
@@ -1296,21 +1330,30 @@ export async function createArticleSubmission(
   const originalContent = input.content || "";
   const contentHash = await computeSha256Hash(originalContent);
 
+  const authorName = (input.authorName || input.fullName || "").trim();
+  const authorEmail = (input.authorEmail || input.email || "").trim().toLowerCase();
+  const authorBio = (input.authorBio || input.shortBio || "").trim();
+  const authorWebsite = (input.authorWebsite || input.website || "").trim();
+
   const newRecord: ArticleSubmissionRecord = {
     id: subId,
-    submissionType: input.submissionType,
-    fullName: input.fullName.trim(),
-    email: input.email.trim().toLowerCase(),
-    shortBio: input.shortBio.trim(),
-    website: input.website?.trim() || "",
+    authorName,
+    authorEmail,
+    authorBio,
+    authorWebsite,
+    fullName: authorName,
+    email: authorEmail,
+    shortBio: authorBio,
+    website: authorWebsite,
     title: input.title.trim(),
-    excerpt: input.excerpt?.trim() || "",
+    excerpt: (input.excerpt || "").trim(),
     content: input.content,
     originalContent,
     contentHash,
-    pitchReason: input.pitchReason?.trim() || "",
+    editorialNote: (input.editorialNote || input.pitchReason || "").trim(),
+    pitchReason: (input.editorialNote || input.pitchReason || "").trim(),
     category: input.category || "Design",
-    topic: input.topic?.trim() || "",
+    topic: (input.topic || "").trim(),
     tags: input.tags || [],
     coverImageUrl: input.coverImageUrl || "",
     language: input.language || "en",
@@ -1319,6 +1362,7 @@ export async function createArticleSubmission(
     submittedAt: now,
     createdAt: now,
     updatedAt: now,
+    revisions: [],
   };
 
   // Cache in local storage for the submitter
@@ -1343,6 +1387,52 @@ export async function createArticleSubmission(
   return newRecord;
 }
 
+export async function addSubmissionRevision(
+  submissionId: string,
+  revision: {
+    title: string;
+    excerpt: string;
+    content: string;
+    editorialNote?: string;
+  }
+): Promise<boolean> {
+  const now = new Date().toISOString();
+  const contentHash = await computeSha256Hash(revision.content);
+  const revId = `rev-${Date.now()}`;
+
+  const newRev: ArticleSubmissionRevision = {
+    revisionId: revId,
+    submittedAt: now,
+    title: revision.title,
+    excerpt: revision.excerpt,
+    content: revision.content,
+    contentHash,
+    editorialNote: revision.editorialNote,
+  };
+
+  if (db) {
+    try {
+      const sub = await getArticleSubmissionById(submissionId);
+      if (!sub) return false;
+      const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, submissionId);
+      const existingRevs = sub.revisions || [];
+      await updateDoc(docRef, {
+        title: revision.title,
+        excerpt: revision.excerpt,
+        content: revision.content,
+        status: "PENDING",
+        updatedAt: now,
+        revisions: [...existingRevs, newRev],
+      });
+      return true;
+    } catch (err) {
+      console.error("[ContributorService] Error adding submission revision:", err);
+      return false;
+    }
+  }
+  return false;
+}
+
 export async function getAllArticleSubmissions(): Promise<ArticleSubmissionRecord[]> {
   const result: ArticleSubmissionRecord[] = [];
   if (db) {
@@ -1350,7 +1440,14 @@ export async function getAllArticleSubmissions(): Promise<ArticleSubmissionRecor
       const snap = await getDocs(collection(db, ARTICLE_SUBMISSIONS_COLLECTION));
       snap.forEach((d) => {
         const item = d.data() as ArticleSubmissionRecord;
-        if (item) result.push(item);
+        if (item) {
+          // Normalize author fields for both new and legacy records
+          item.authorName = item.authorName || item.fullName || "Author";
+          item.authorEmail = item.authorEmail || item.email || "";
+          item.authorBio = item.authorBio || item.shortBio || "";
+          item.authorWebsite = item.authorWebsite || item.website || "";
+          result.push(item);
+        }
       });
       result.sort((a, b) => new Date(b.submittedAt || b.createdAt).getTime() - new Date(a.submittedAt || a.createdAt).getTime());
       return result;
@@ -1373,7 +1470,12 @@ export async function getArticleSubmissionById(id: string): Promise<ArticleSubmi
       const docRef = doc(db, ARTICLE_SUBMISSIONS_COLLECTION, id);
       const snap = await getDoc(docRef);
       if (snap.exists()) {
-        return snap.data() as ArticleSubmissionRecord;
+        const item = snap.data() as ArticleSubmissionRecord;
+        item.authorName = item.authorName || item.fullName || "Author";
+        item.authorEmail = item.authorEmail || item.email || "";
+        item.authorBio = item.authorBio || item.shortBio || "";
+        item.authorWebsite = item.authorWebsite || item.website || "";
+        return item;
       }
     } catch (err) {
       console.warn("[ContributorService] Error querying submission by ID:", err);
@@ -1451,33 +1553,32 @@ export async function adminApproveAndPublishSubmission(
         updatedAt: now,
       });
 
-      // If it's a finished article, bridge it directly to published contributor_articles
-      if (sub.submissionType === "article") {
-        const authorSlug = slugifyAuthorName(sub.fullName || "author");
-        const cleanSlug = slugifyAuthorName(sub.title || "untitled-article");
+      const authorName = sub.authorName || sub.fullName || "Guest Author";
+      const authorBio = sub.authorBio || sub.shortBio || "";
+      const authorSlug = slugifyAuthorName(authorName);
+      const cleanSlug = slugifyAuthorName(sub.title || "untitled-article");
 
-        await saveContributorArticle({
-          id: `art-${sub.id.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-          authorUid: `submitter-${authorSlug}`,
-          authorName: sub.fullName,
-          authorSlug,
-          authorBio: sub.shortBio,
-          authorRole: "Editorial Contributor",
-          title: sub.title,
-          slug: cleanSlug,
-          category: sub.category || "Design",
-          topic: sub.topic || "",
-          tags: sub.tags || [],
-          language: sub.language || "en",
-          excerpt: sub.excerpt || "",
-          content: sub.content || "",
-          coverImageUrl: sub.coverImageUrl || "",
-          status: "published",
-          publishedAt: now,
-          reviewedAt: now,
-          reviewedBy: adminIdentifier,
-        });
-      }
+      await saveContributorArticle({
+        id: `art-${sub.id.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        authorUid: `author-${authorSlug}`,
+        authorName,
+        authorSlug,
+        authorBio,
+        authorRole: "Author",
+        title: sub.title,
+        slug: cleanSlug,
+        category: sub.category || "Design",
+        topic: sub.topic || "",
+        tags: sub.tags || [],
+        language: sub.language || "en",
+        excerpt: sub.excerpt || "",
+        content: sub.content || "",
+        coverImageUrl: sub.coverImageUrl || "",
+        status: "published",
+        publishedAt: now,
+        reviewedAt: now,
+        reviewedBy: adminIdentifier,
+      });
 
       return true;
     } catch (err) {

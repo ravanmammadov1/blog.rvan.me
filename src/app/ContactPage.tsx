@@ -369,17 +369,17 @@ export default function ContactPage() {
                 <div>
                   <div className="inline-flex items-center gap-2 text-xs font-bold tracking-[.2em] text-primary mono uppercase mb-3">
                     <PenTool size={14} />
-                    <span>{t("contributorHeading", "WRITE FOR RVAN.ME")}</span>
+                    <span>{t("writePageEyebrow", "EDITORIAL INVITATION")}</span>
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground uppercase leading-tight mb-4">
                     <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] bg-clip-text text-transparent inline-block">
-                      {isAz ? "Məqalə və İdeyalarınızı Təqdim Edin." : "Share your ideas & articles with Rvan.me."}
+                      {isAz ? "Paylaşmağa dəyər fikrin var?" : "Have Something Worth Sharing?"}
                     </span>
                   </h2>
                   <p className="text-base text-muted-foreground leading-relaxed font-normal">
                     {t(
                       "writePageSubtitle",
-                      "Submit an article idea or a finished essay. Every piece is carefully evaluated by our editorial board."
+                      "Share your article with Rvan.me. We welcome original perspectives on design, technology, marketing, psychology, creativity, and strategy. Every submission is reviewed by our editorial team before publication."
                     )}
                   </p>
                 </div>
@@ -428,12 +428,12 @@ export default function ContactPage() {
                       {isAz ? "RƏSMİ NƏŞR PORTALI" : "OFFICIAL SUBMISSION PORTAL"}
                     </span>
                     <h3 className="text-2xl font-bold text-foreground">
-                      {isAz ? "Rvan.me Yazıçı və Redaksiya Portalı" : "Rvan.me Article Submission Portal"}
+                      {isAz ? "Məqalə Təqdimatı Portalı" : "Article Submission Portal"}
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {isAz
-                        ? "İstər yeni bir mövzu təklifiniz, istərsə də tam hazır məqaləniz olsun — xüsusi təqdimat portalımız vasitəsilə redaksiyaya birbaşa göndərin."
-                        : "Whether you have an initial topic pitch or a completed essay draft, submit directly through our dedicated editorial submission portal."}
+                        ? "Orijinal məqalənizi birbaşa Rvan.me təqdimat portalı vasitəsilə redaksiyamıza göndərin."
+                        : "Submit your original article directly to our editorial board through the public submission portal."}
                     </p>
                   </div>
 
@@ -453,7 +453,7 @@ export default function ContactPage() {
                   <div className="flex flex-wrap items-center gap-4 text-[11px] font-mono text-muted-foreground pt-2 border-t border-border">
                     <span>✓ {isAz ? "Hesab tələb olunmur" : "No account required"}</span>
                     <span>✓ {isAz ? "İlkin qaralama qorunur" : "Original content preserved"}</span>
-                    <span>✓ {isAz ? "İdeya və ya hazır məqalə" : "Idea or finished essay"}</span>
+                    <span>✓ {isAz ? "İnsan redaksiya baxışı" : "Human editorial review"}</span>
                   </div>
                 </div>
               </div>
