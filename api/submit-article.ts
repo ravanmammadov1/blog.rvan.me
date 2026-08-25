@@ -105,8 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 4. Resend configuration & recipient setup
     const apiKey = process.env.RESEND_API_KEY;
-    const recipientEmail =
-      process.env.RVAN_EDITOR_EMAIL || process.env.ADMIN_EMAIL || "mammadovravan1@gmail.com";
+    const recipientEmail = process.env.ADMIN_EMAIL || "mammadovravan1@gmail.com";
     const fromAddress =
       process.env.RESEND_FROM_EMAIL || "Rvan.me Editorial <onboarding@resend.dev>";
 
@@ -247,11 +246,11 @@ ${timestampStr}
     const resend = new Resend(apiKey);
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: fromAddress,
-      to: [recipientEmail],
-      replyTo: trimmedEmail,
+      to: recipientEmail,
       subject: `New Rvan.me Article Submission — ${trimmedTitle}`,
       text: plainText,
       html: emailHtml,
+      replyTo: trimmedEmail,
     });
 
     if (emailError) {
