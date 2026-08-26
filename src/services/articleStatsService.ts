@@ -21,8 +21,8 @@ export type ArticleReactionType = "like" | "dislike";
 
 const STATS_COLLECTION = "article_stats";
 const VOTES_COLLECTION = "article_votes";
-const LOCAL_STORAGE_STATS_KEY = "rvan_article_stats_cache_v2";
-const LOCAL_STORAGE_VOTES_KEY = "rvan_user_votes_cache_v2";
+const LOCAL_STORAGE_STATS_KEY = "rvan_article_stats_cache_v4";
+const LOCAL_STORAGE_VOTES_KEY = "rvan_user_votes_cache_v4";
 
 // In-memory guard to prevent duplicate view increments in the same session
 const inMemoryViewLocks = new Set<string>();
@@ -75,9 +75,9 @@ export function getBaselineStats(postId: string): ArticleStats {
     hash |= 0;
   }
   const positive = Math.abs(hash);
-  const baseViews = 280 + (positive % 820); // 280 to 1,100 realistic views
-  const baseLikes = Math.max(16, Math.floor(baseViews * (0.042 + (positive % 20) / 1000)));
-  const baseDislikes = Math.floor(baseLikes * 0.03);
+  const baseViews = 54 + (positive % 145); // Strictly in the 50–200 range
+  const baseLikes = Math.max(4, Math.floor(baseViews * (0.055 + (positive % 20) / 1000)));
+  const baseDislikes = positive % 8 === 0 ? 1 : 0;
 
   return {
     viewCount: baseViews,
@@ -367,9 +367,7 @@ export async function getUserArticleReaction(
         setLocalUserVote(normId, val);
         return val;
       }
-    } catch (err) {
-      console.warn("[ArticleStats] Failed to retrieve user reaction:", err);
-    }
+    } catch {}
   }
 
   return null;

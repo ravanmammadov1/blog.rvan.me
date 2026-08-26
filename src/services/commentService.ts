@@ -1,6 +1,6 @@
 import { Comment, CreateCommentInput, UpdateCommentInput, VoteInput, ReactionInput } from "../types/comments";
 
-const LOCAL_STORAGE_KEY = "rvan_comments_store_v3";
+const LOCAL_STORAGE_KEY = "rvan_comments_store_v4";
 
 type CommentsSubscriber = (comments: Comment[]) => void;
 const subscribers = new Map<string, Set<CommentsSubscriber>>();

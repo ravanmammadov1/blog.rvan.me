@@ -61,8 +61,8 @@ export default function CommentItemComponent({
   const isAz = language === "az";
   const isOwner = Boolean(user && user.uid === comment.authorId);
   const currentUserId = user?.uid || "";
-  const isLiked = Boolean(currentUserId && comment.likedBy?.includes(currentUserId));
-  const isDisliked = Boolean(currentUserId && comment.dislikedBy?.includes(currentUserId));
+  const isLiked = Boolean(currentUserId && Array.isArray(comment.likedBy) && comment.likedBy.includes(currentUserId));
+  const isDisliked = Boolean(currentUserId && Array.isArray(comment.dislikedBy) && comment.dislikedBy.includes(currentUserId));
 
   // Canonical avatar: If owner and has custom/active user photo, use it; otherwise use stored photoURL or fallback initial
   const avatarUri = isOwner && userPhoto ? userPhoto : comment.author.photoURL || null;
@@ -275,9 +275,18 @@ export default function CommentItemComponent({
             {comment.reactions && Object.keys(comment.reactions).length > 0 && (
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 {REACTION_LIST.map((item) => {
-                  const uids = comment.reactions?.[item.type] || [];
-                  if (uids.length === 0) return null;
-                  const hasUserReacted = Boolean(currentUserId && uids.includes(currentUserId));
+                  const rawReaction = (comment.reactions as any)?.[item.type];
+                  const count = Array.isArray(rawReaction)
+                    ? rawReaction.length
+                    : typeof rawReaction === "number"
+                    ? rawReaction
+                    : 0;
+
+                  if (count === 0) return null;
+                  const hasUserReacted = Array.isArray(rawReaction)
+                    ? Boolean(currentUserId && rawReaction.includes(currentUserId))
+                    : false;
+
                   return (
                     <button
                       key={item.type}
@@ -287,10 +296,10 @@ export default function CommentItemComponent({
                           ? "border-primary/50 bg-primary/15 text-primary scale-105"
                           : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-white"
                       }`}
-                      title={`${isAz ? item.labelAz : item.labelEn} (${uids.length})`}
+                      title={`${isAz ? item.labelAz : item.labelEn} (${count})`}
                     >
                       <span>{item.emoji}</span>
-                      <span className="mono text-[10px] font-bold">{uids.length}</span>
+                      <span className="mono text-[10px] font-bold">{count}</span>
                     </button>
                   );
                 })}
