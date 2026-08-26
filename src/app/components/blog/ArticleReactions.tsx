@@ -42,9 +42,17 @@ export default function ArticleReactions({ postId, postTitle }: ArticleReactions
   // Fetch current user's reaction
   useEffect(() => {
     if (!postId) return;
-    getUserArticleReaction(postId, user ? user.uid : null).then((reaction) => {
-      setUserReaction(reaction);
-    });
+    let isMounted = true;
+    getUserArticleReaction(postId, user ? user.uid : null)
+      ?.then((reaction) => {
+        if (isMounted) setUserReaction(reaction);
+      })
+      ?.catch((err) => {
+        console.warn("[ArticleReactions] Failed to load reaction:", err);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, [postId, user]);
 
   const handleVote = async (type: ArticleReactionType) => {

@@ -323,11 +323,40 @@ export function getUserVoteForArticle(postId: string): ArticleReactionType | nul
   return getLocalUserVotes()[normId] || null;
 }
 
-export function getUserArticleReaction(postId: string, userId?: string): ArticleReactionType | null {
-  return getUserVoteForArticle(postId);
+export async function getUserArticleReaction(
+  postId: string,
+  userId?: string | null
+): Promise<ArticleReactionType | null> {
+  const normId = normalizePostId(postId);
+  if (!normId) return null;
+
+  // Check local cache first
+  const localVotes = getLocalUserVotes();
+  if (localVotes[normId] !== undefined) {
+    return localVotes[normId];
+  }
+
+  if (db && userId) {
+    try {
+      const voteDocId = `${normId}_${userId}`;
+      const voteRef = doc(db, VOTES_COLLECTION, voteDocId);
+      const snap = await getDoc(voteRef);
+      if (snap.exists()) {
+        const val = snap.data()?.vote as ArticleReactionType | null;
+        setLocalUserVote(normId, val);
+        return val;
+      }
+    } catch (err) {
+      console.warn("[ArticleStats] Failed to retrieve user reaction:", err);
+    }
+  }
+
+  return null;
 }
 
 export async function fetchAllArticleStats(): Promise<Record<string, ArticleStats>> {
-  return getLocalStatsCache();
+  const local = getLocalStatsCache();
+  return local;
 }
+
 
