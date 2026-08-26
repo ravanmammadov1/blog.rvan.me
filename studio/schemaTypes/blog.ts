@@ -3,35 +3,27 @@ import { FileText } from 'lucide-react'
 
 export default defineType({
   name: 'blog',
-  title: 'Article / Post',
+  title: 'Məqalə / Article',
   type: 'document',
   icon: FileText,
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'media', title: 'Media' },
-    { name: 'publishing', title: 'Publishing' },
-    { name: 'seo', title: 'SEO' },
-  ],
   fields: [
-    // ── CONTENT GROUP ──
     defineField({
       name: 'title',
-      title: 'Article Title (English)',
+      title: 'Məqalə Başlığı (Title)',
       type: 'string',
-      group: 'content',
-      validation: (Rule) => Rule.required().max(120),
+      description: 'Məqalənin əsas adı (English və ya Azərbaycanca)',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'title_az',
-      title: 'Article Title (Azerbaijani)',
+      title: 'Azərbaycanca Başlıq (Optional)',
       type: 'string',
-      group: 'content',
+      description: 'Əgər əsas başlıq ingiliscədirsə, azərbaycanca tərcüməsi',
     }),
     defineField({
       name: 'slug',
-      title: 'URL Slug (English)',
+      title: 'URL Link (Slug)',
       type: 'slug',
-      group: 'content',
       options: {
         source: 'title',
         maxLength: 96,
@@ -39,143 +31,92 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'slug_az',
-      title: 'URL Slug (Azerbaijani)',
-      type: 'slug',
-      group: 'content',
-      options: {
-        source: 'title_az',
-        maxLength: 96,
-      },
-    }),
-    defineField({
-      name: 'excerpt',
-      title: 'Editorial Excerpt (English)',
-      type: 'text',
-      rows: 3,
-      group: 'content',
-      description: 'A concise 2-3 sentence summary that engages readers',
-      validation: (Rule) => Rule.required().max(280),
-    }),
-    defineField({
-      name: 'excerpt_az',
-      title: 'Editorial Excerpt (Azerbaijani)',
-      type: 'text',
-      rows: 3,
-      group: 'content',
-    }),
-    defineField({
-      name: 'body',
-      title: 'Article Body (English)',
-      type: 'blockContent',
-      group: 'content',
-      description: 'Main editorial text with rich headings, blockquotes, code, and figures',
-    }),
-    defineField({
-      name: 'body_az',
-      title: 'Article Body (Azerbaijani)',
-      type: 'blockContent',
-      group: 'content',
-    }),
-
-    // ── MEDIA GROUP ──
-    defineField({
       name: 'coverImage',
-      title: 'Featured Cover Image',
+      title: 'Üz Qabığı Şəkli (Cover Image)',
       type: 'image',
-      group: 'media',
+      description: 'Məqalənin əsas afişası (OpenGraph sosial şəbəkə şəkli kimi də avtomatik istifadə olunur)',
       options: {
         hotspot: true,
       },
-      fields: [
-        {
-          name: 'alt',
-          type: 'string',
-          title: 'Alternative Text (Alt Text)',
-          description: 'Description of the image for accessibility and SEO',
-        },
-        {
-          name: 'caption',
-          type: 'string',
-          title: 'Cover Caption / Credit',
-        },
-      ],
       validation: (Rule) => Rule.required(),
     }),
-
-    // ── PUBLISHING GROUP ──
     defineField({
       name: 'category',
-      title: 'Category',
+      title: 'Kateqoriya',
       type: 'reference',
       to: [{ type: 'category' }],
-      group: 'publishing',
-      description: 'Select the primary editorial vertical for this article',
+      description: 'Məqalənin aid olduğu əsas mövzu',
     }),
     defineField({
-      name: 'author',
-      title: 'Author',
-      type: 'reference',
-      to: [{ type: 'author' }],
-      group: 'publishing',
-      description: 'Select the article author or contributor',
+      name: 'excerpt',
+      title: 'Qısa Xülasə (Lead Summary / Excerpt)',
+      type: 'text',
+      rows: 3,
+      description: 'Google və sosial şəbəkələrdə görünən 2 cümləlik cəlbedici xülasə',
     }),
     defineField({
-      name: 'publishDate',
-      title: 'Publish Date',
-      type: 'datetime',
-      group: 'publishing',
-      initialValue: () => new Date().toISOString(),
-      validation: (Rule) => Rule.required(),
+      name: 'excerpt_az',
+      title: 'Qısa Xülasə (Azərbaycanca)',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'body',
+      title: 'Məqalə Mətni (Article Content)',
+      type: 'blockContent',
+      description: 'Məqalənin tam mətni (başlıqlar, abzaslar, sitatlar və şəkillər)',
+    }),
+    defineField({
+      name: 'body_az',
+      title: 'Məqalə Mətni (Azərbaycanca)',
+      type: 'blockContent',
+      description: 'Məqalənin Azərbaycan dilindəki tam mətni (əgər ayrıca varsa)',
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Açar Sözlər (Tags)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        layout: 'tags',
+      },
     }),
     defineField({
       name: 'readTime',
-      title: 'Estimated Reading Time',
+      title: 'Oxu Müddəti',
       type: 'string',
-      group: 'publishing',
-      placeholder: 'e.g. 5 min read',
       initialValue: '5 min read',
     }),
     defineField({
       name: 'featured',
-      title: 'Featured Article',
+      title: 'Əsas Səhifədə Seçilmiş Et (Featured)',
       type: 'boolean',
-      group: 'publishing',
-      description: 'Pin this article as a featured editorial piece',
       initialValue: false,
     }),
     defineField({
       name: 'status',
-      title: 'Editorial Status',
+      title: 'Status',
       type: 'string',
-      group: 'publishing',
       options: {
         list: [
-          { title: '📝 Draft', value: 'draft' },
-          { title: '🔍 In Review', value: 'review' },
-          { title: '🚀 Published', value: 'published' },
+          { title: '🚀 Canlı (Published)', value: 'published' },
+          { title: '📝 Qaralama (Draft)', value: 'draft' },
         ],
         layout: 'radio',
       },
       initialValue: 'published',
     }),
     defineField({
-      name: 'tags',
-      title: 'Editorial Tags',
-      type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        layout: 'tags',
-      },
-      group: 'publishing',
+      name: 'publishDate',
+      title: 'Dərc Tarixi',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
     }),
-
-    // ── SEO GROUP ──
     defineField({
-      name: 'seo',
-      title: 'SEO & Metadata',
-      type: 'seo',
-      group: 'seo',
+      name: 'authorName',
+      title: 'Müəllif Adı',
+      type: 'string',
+      initialValue: 'Ravan Mammadov',
     }),
   ],
   preview: {
@@ -187,22 +128,22 @@ export default defineType({
     },
     prepare(selection) {
       const { title, subtitle, media, status } = selection
-      const statusIcon = status === 'draft' ? '📝 ' : status === 'review' ? '🔍 ' : ''
+      const statusIcon = status === 'draft' ? '📝 ' : '🚀 '
       return {
-        title: `${statusIcon}${title || 'Untitled Article'}`,
-        subtitle: subtitle || 'Uncategorized',
+        title: `${statusIcon}${title || 'Başlıqsız Məqalə'}`,
+        subtitle: subtitle || 'Rvan.me Editorial',
         media: media,
       }
     },
   },
   orderings: [
     {
-      title: 'Publish Date, Newest First',
+      title: 'Dərc Tarixi (Yenilər əvvəl)',
       name: 'publishDateDesc',
       by: [{ field: 'publishDate', direction: 'desc' }],
     },
     {
-      title: 'Title, A-Z',
+      title: 'Başlıq (A-Z)',
       name: 'titleAsc',
       by: [{ field: 'title', direction: 'asc' }],
     },
