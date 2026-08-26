@@ -31,50 +31,50 @@ const staticPages = [
   },
   {
     path: "/blog",
-    title: "Design & Motion Insights Blog — Ravan Mammadov",
-    description: "Original insights about motion design, graphic design, brand identity, marketing creative, and creative technology.",
+    title: "Editorial Articles & Design Knowledge Base — Rvan.me",
+    description: "In-depth editorial articles on visual strategy, motion mechanics, design systems, and creative technology.",
     type: "website",
     lastmod: todayIso,
   },
   {
     path: "/about",
-    title: "About Rvan.me — Creative Ecosystem & Platform Vision",
-    description: "Learn about Rvan.me, a curated creative ecosystem for designers, marketers and developers. Discover our mission, core pillars, and studio vision.",
+    title: "About Rvan.me — Creative Publication & Knowledge Platform",
+    description: "Learn about Rvan.me, a curated creative publication and knowledge ecosystem for designers, marketers and developers.",
     type: "website",
     lastmod: todayIso,
   },
   {
     path: "/faq",
     title: "Frequently Asked Questions (FAQ) — Rvan.me",
-    description: "Detailed answers to the 10 most essential questions about Rvan.me, publishing, contributor onboarding, editorial review, and AI policies.",
+    description: "Detailed answers to essential questions about Rvan.me, publishing, article submissions, editorial review, and AI policies.",
     type: "website",
     lastmod: todayIso,
   },
   {
-    path: "/contributor",
-    title: "Become a Contributor — Rvan.me Creative Community",
-    description: "A creative publication built around Azerbaijan's creative community. Share what you know, build your professional identity, and get published under your name.",
+    path: "/write",
+    title: "Share Your Ideas & Submit an Article — Rvan.me",
+    description: "Submit your original design, branding, marketing, or technology articles and essays for publication on Rvan.me.",
     type: "website",
     lastmod: todayIso,
   },
   {
     path: "/about/ravan-mammadov",
-    title: "Ravan Mammadov — Founder & Senior Creative Designer",
-    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
+    title: "Ravan Mammadov — Founder & Creative Director | Rvan.me",
+    description: "Professional profile, career timeline, brand experience, and selected creative work of Founder & Creative Director Ravan Mammadov.",
     type: "profile",
     lastmod: todayIso,
   },
   {
     path: "/ravan-mammadov",
-    title: "Ravan Mammadov — Founder & Senior Creative Designer",
-    description: "Professional profile, career timeline, brand experience, and selected creative portfolio of Senior Creative Designer Ravan Mammadov.",
+    title: "Ravan Mammadov — Founder & Creative Director | Rvan.me",
+    description: "Professional profile, career timeline, brand experience, and selected creative work of Founder & Creative Director Ravan Mammadov.",
     type: "profile",
     lastmod: todayIso,
   },
   {
     path: "/author/ravan-mammadov",
     title: "Ravan Mammadov — Editorial Author & Visual Strategist | Rvan.me",
-    description: "Verified editorial author profile, design research publications, and articles authored by Ravan Mammadov.",
+    description: "Verified editorial author profile, design research publications, and articles authored by Ravan Mammadov on Rvan.me.",
     type: "profile",
     lastmod: todayIso,
   },
@@ -87,14 +87,14 @@ const staticPages = [
   },
   {
     path: "/ai-tools",
-    title: "AI Tools & Automation Directory — Ravan Mammadov",
+    title: "AI Tools & Automation Directory — Rvan.me",
     description: "Curated directory of high-utility AI generators, prompt systems, and design workflow automation tools.",
     type: "website",
     lastmod: todayIso,
   },
   {
     path: "/opportunities",
-    title: "Remote Jobs, Scholarships & Contests — Ravan Mammadov",
+    title: "Remote Jobs, Scholarships & Contests — Rvan.me",
     description: "Curated global remote design jobs, tech opportunities, academic scholarships, and creative competitions.",
     type: "website",
     lastmod: todayIso,
@@ -426,8 +426,8 @@ async function fetchDynamicPages() {
       // EN Page
       enPages.push({
         path: `${prefix}/${item.slug}`,
-        title: `${item.title || "Creative resource"} — Ravan Mammadov`,
-        description: item.excerpt || item.description || `Explore ${item.title || "this resource"} by Senior Creative Designer Ravan Mammadov.`,
+        title: `${item.title || "Creative Publication"} — Rvan.me`,
+        description: item.excerpt || item.description || `Read "${item.title || "this article"}" on Rvan.me — Creative Publication & Knowledge Platform.`,
         type: type === "blog" ? "article" : "website",
         schemaType: "BlogPosting",
         publishDate: item.publishDate || item.publishedAt,
@@ -440,12 +440,12 @@ async function fetchDynamicPages() {
 
       // AZ Page (Localized)
       const azTitle = item.title_az || item.title || "Yaradıcı resurs";
-      const azDesc = item.excerpt_az || item.description_az || item.excerpt || item.description || `${azTitle} haqqında ətraflı oxuyun.`;
+      const azDesc = item.excerpt_az || item.description_az || item.excerpt || item.description || `"${azTitle}" haqqında Rvan.me platformasında ətraflı oxuyun.`;
       const azSlug = item.slug_az || item.slug;
 
       azPages.push({
         path: `/az${prefix}/${azSlug}`,
-        title: `${azTitle} — Rəvan Məmmədov`,
+        title: `${azTitle} — Rvan.me`,
         description: azDesc,
         type: type === "blog" ? "article" : "website",
         schemaType: "BlogPosting",
@@ -461,7 +461,7 @@ async function fetchDynamicPages() {
       if (item.slug_az && item.slug_az !== item.slug) {
         azPages.push({
           path: `/az${prefix}/${item.slug}`,
-          title: `${azTitle} — Rəvan Məmmədov`,
+          title: `${azTitle} — Rvan.me`,
           description: azDesc,
           type: type === "blog" ? "article" : "website",
           schemaType: "BlogPosting",
@@ -500,8 +500,8 @@ async function fetchDynamicPages() {
           if (slug && title) {
             enPages.push({
               path: `/blog/${slug}`,
-              title: `${title} — Ravan Mammadov`,
-              description: excerpt || `Explore ${title} by Senior Creative Designer Ravan Mammadov.`,
+              title: `${title} — Rvan.me`,
+              description: excerpt || `Read "${title}" on Rvan.me — Creative Publication & Knowledge Platform.`,
               type: "article",
               schemaType: "BlogPosting",
               lastmod: todayIso,
@@ -510,8 +510,8 @@ async function fetchDynamicPages() {
             if (slug_az) {
               azPages.push({
                 path: `/az/blog/${slug_az}`,
-                title: `${title_az || title} — Rəvan Məmmədov`,
-                description: excerpt_az || excerpt || `${title_az || title} haqqında oxuyun.`,
+                title: `${title_az || title} — Rvan.me`,
+                description: excerpt_az || excerpt || `"${title_az || title}" haqqında Rvan.me platformasında oxuyun.`,
                 type: "article",
                 schemaType: "BlogPosting",
                 lastmod: todayIso,
@@ -520,8 +520,8 @@ async function fetchDynamicPages() {
               if (slug_az !== slug) {
                 azPages.push({
                   path: `/az/blog/${slug}`,
-                  title: `${title_az || title} — Rəvan Məmmədov`,
-                  description: excerpt_az || excerpt || `${title_az || title} haqqında oxuyun.`,
+                  title: `${title_az || title} — Rvan.me`,
+                  description: excerpt_az || excerpt || `"${title_az || title}" haqqında Rvan.me platformasında oxuyun.`,
                   type: "article",
                   schemaType: "BlogPosting",
                   lastmod: todayIso,
@@ -636,35 +636,39 @@ const staticAzTranslations = {
     description: "Motion dizayn, brend identikliyi və rəqəmsal kampaniya layihələri üçün Rəvan Məmmədov ilə əlaqə saxlayın.",
   },
   "/blog": {
-    title: "Dizayn, Motion və AI Məqalələri — Rəvan Məmmədov Bloq",
-    description: "Motion dizayn, qrafik dizayn, brend strategiyası və süni intellekt alətləri haqqında dərin analitik məqalələr.",
+    title: "Dizayn, Brendinq və Texnologiya Redaksiya Bloqu — Rvan.me",
+    description: "Vizual strategiya, brend arxitekturası, tipoqrafiya və süni intellekt haqqında dərin redaksiya məqalələri.",
   },
   "/tools": {
-    title: "Dizayner Alətləri və Kreativ Dəst — Rəvan Məmmədov",
+    title: "Dizayner Alətləri və Kreativ Dəst — Rvan.me",
     description: "Motion dizaynerlər, qrafik dizaynerlər və developerlər üçün brauzerdaxili praktik dizayn və CSS alətləri.",
   },
   "/about": {
-    title: "Haqqında — Rvan.me Rəqəmsal Ekosistem və Missiya",
-    description: "Dizaynerlər, marketoloqlar və developerlər üçün qurulmuş vahid yaradıcı ekosistem və studiya vizyonu.",
+    title: "Haqqında — Rvan.me Kreativ Nəşr və Bilik Platforması",
+    description: "Dizaynerlər, marketoloqlar və developerlər üçün qurulmuş vahid yaradıcı nəşr və bilik ekosistemi.",
   },
   "/faq": {
     title: "Tez-tez Verilən Suallar (FAQ) — Rvan.me",
-    description: "Rvan.me nəşr prosesi, müəlliflik qaydaları, redaksiya meyarları və süni intellekt siyasəti haqqında ən vacib 10 sualın ətraflı cavabları.",
+    description: "Rvan.me nəşr prosesi, məqalə təqdimatı, redaksiya meyarları və süni intellekt siyasəti haqqında ən vacib sualların ətraflı cavabları.",
+  },
+  "/write": {
+    title: "Fikrini Bölüş & Məqalə Göndər — Rvan.me",
+    description: "Orijinal dizayn, brendinq və marketinq yazılarınızı Rvan.me-də dərc olunması üçün redaksiyamıza göndərin.",
   },
   "/ravan-mammadov": {
-    title: "Rəvan Məmmədov — Kreativ Direktor & CV Portfeli",
-    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və brend layihələri.",
+    title: "Rəvan Məmmədov — Təsisçi və Kreativ Direktor | Rvan.me",
+    description: "Aparıcı kreativ dizayner Rəvan Məmmədovun peşəkar təcrübəsi, karyera xronologiyası və seçilmiş brend layihələri.",
   },
   "/resources": {
     title: "Kreativ Resurslar — Açıq Mənbəli Şriftlər, İkonlar və Alətlər | Rvan.me",
     description: "Dizaynerlər və proqramçılar üçün açıq mənbəli şrift ailələri, vektor aktivləri və UI dəstləri.",
   },
   "/ai-tools": {
-    title: "AI Alətləri və Avtomatlaşdırma Kataloqu — Rəvan Məmmədov",
+    title: "AI Alətləri və Avtomatlaşdırma Kataloqu — Rvan.me",
     description: "Yüksək faydalı AI generatorları və dizayn iş axını avtomatlaşdırma alətləri kataloqu.",
   },
   "/opportunities": {
-    title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rəvan Məmmədov",
+    title: "Distant İşlər, Təqaüdlər və Müsabiqələr — Rvan.me",
     description: "Qlobal dizayn vakansiyaları, texnoloji imkanlar, akademik təqaüdlər və yaradıcı müsabiqələr.",
   },
   "/blog/guide-responsive-fluid-typography-css-clamp": {
@@ -704,16 +708,16 @@ const staticAzTranslations = {
     description: "Modul personaj quraşdırıcı ilə xüsusi əl ilə çəkilmiş illüstrasiyalar yaradın. Üz ifadələri, saç düzümləri və geyimləri birləşdirin, təmiz SVG və PNG ixrac edin.",
   },
   "/privacy-policy": {
-    title: "Məxfilik Siyasəti — Rəvan Məmmədov",
-    description: "Rəvan Məmmədov platformasının istifadəçi məlumatlarının qorunması və məxfilik siyasəti.",
+    title: "Məxfilik Siyasəti — Rvan.me",
+    description: "Rvan.me platformasının istifadəçi məlumatlarının qorunması və məxfilik siyasəti.",
   },
   "/cookie-policy": {
-    title: "Kuki Siyasəti — Rəvan Məmmədov",
+    title: "Kuki Siyasəti — Rvan.me",
     description: "Kuki siyasəti və razılıq tənzimləmələri.",
   },
   "/terms": {
-    title: "İstifadə Şərtləri — Rəvan Məmmədov",
-    description: "Rəvan Məmmədov platformasının rəsmi istifadə şərtləri və hüquqi bildirişləri.",
+    title: "İstifadə Şərtləri — Rvan.me",
+    description: "Rvan.me platformasının rəsmi istifadə şərtləri və hüquqi bildirişləri.",
   },
   "/admin/linkedin": {
     title: "LinkedIn İdarəetmə Paneli — Rvan.me",

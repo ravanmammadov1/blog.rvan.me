@@ -120,7 +120,7 @@ export default function BlogDetail() {
   if (error || !post) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-foreground">
-        <SEO title={`${t("articleNotFound", "Article Not Found")} — Ravan Mammadov`} noIndex />
+        <SEO title={`${t("articleNotFound", "Article Not Found")} — Rvan.me`} noIndex />
         <div className="text-center">
           <h1 className="text-4xl font-bold">{t("articleNotFound", "Article Not Found")}</h1>
           <p className="mt-4 text-muted-foreground">
@@ -156,12 +156,13 @@ export default function BlogDetail() {
       <ReadingProgress />
 
       <SEO
-        title={`${post.title} — Ravan Mammadov`}
-        description={post.excerpt || `Read ${post.title} by Ravan Mammadov.`}
+        title={`${post.title} — Rvan.me`}
+        description={post.excerpt || `Read "${post.title}" on Rvan.me — Creative Publication & Knowledge Platform.`}
         image={coverUrl}
         url={`https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
+        authorName={post.authorName || "Rvan.me Editorial"}
       />
 
       <SiteHeader siteSettings={siteSettings} />
