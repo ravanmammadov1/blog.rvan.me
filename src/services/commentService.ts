@@ -476,6 +476,88 @@ function notifySubscribers(postId: string) {
   });
 }
 
+const DYNAMIC_COMMUNITY_PERSONAS = [
+  { name: "Orxan Quliyev", role: "Product Designer", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Aydan Əliyeva", role: "UX Researcher", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Murad Həsənov", role: "Frontend Lead", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Leyla Məcidova", role: "Brand Strategist", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Samir Məmmədli", role: "Growth Marketer", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Elmir Rzayev", role: "Creative Technologist", avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Nigar Əhmədova", role: "Talent Specialist", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=faces" },
+  { name: "Kamran Hüseynov", role: "Software Architect", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces" },
+];
+
+export function getDynamicCommentsForPost(canonicalId: string): Comment[] {
+  let hash = 0;
+  for (let i = 0; i < canonicalId.length; i++) {
+    hash = (hash << 5) - hash + canonicalId.charCodeAt(i);
+    hash |= 0;
+  }
+  const pos = Math.abs(hash);
+  const persona1 = DYNAMIC_COMMUNITY_PERSONAS[pos % DYNAMIC_COMMUNITY_PERSONAS.length];
+  const persona2 = DYNAMIC_COMMUNITY_PERSONAS[(pos + 3) % DYNAMIC_COMMUNITY_PERSONAS.length];
+
+  const templates = [
+    {
+      c1: "Məqalədə vurğulanan yanaşma yerli və qlobal layihələrdə qarşılaşdığımız real problemlərə tam cavab verir. Xüsusilə praktiki nümunələr çox aydın izah olunub.",
+      c2: "Tamamilə qatılıram. Biz də komandada oxşar strukturu tətbiq etdikdən sonra işlərin icra sürəti və keyfiyyəti nəzərəçarpacaq dərəcədə artdı.",
+    },
+    {
+      c1: "Çox dəyərli və detallı analizdir. Mövzunun psixoloji və analitik tərəflərinin birləşdirilməsi məqaləni digər standart yazılardan fərqləndirir.",
+      c2: "Düz qeyd etdiniz. Əksər hallarda ancaq nəzəriyyə danışılır, burada isə addım-addım tətbiq qaydası verilib.",
+    },
+    {
+      c1: "Bu metodologiyanı cari layihəmizdə test etməyi planlaşdırıram. Təcrübədə ən çox diqqət edilməli olan nüanslar çox vaxtında qeyd edilib.",
+      c2: "Nəticələri maraqla gözləyirik! Bizdə ilkin mərhələdə bir qədər adaptasiya vaxtı tələb etdi, amma nəticə gözləntiləri aşdı.",
+    },
+    {
+      c1: "Dizayn və biznes maraqlarının kəsişməsini bu qədər səlis izah edən mənbələr azdır. Praktiki tövsiyələri dərhal qeyd etdim.",
+      c2: "Xüsusilə qərarvermə prosesini optimallaşdırmaq baxımından çox faydalı bələdçidir.",
+    }
+  ];
+
+  const tpl = templates[pos % templates.length];
+  const date1 = new Date(Date.now() - ((pos % 14) + 2) * 86400000);
+  const date2 = new Date(date1.getTime() + ((pos % 6) + 1) * 3600000);
+
+  return [
+    {
+      id: `comm-dyn-${canonicalId}-1`,
+      postId: canonicalId,
+      authorId: persona1.name.toLowerCase().replace(/\s+/g, "-"),
+      author: {
+        id: persona1.name.toLowerCase().replace(/\s+/g, "-"),
+        name: persona1.name,
+        role: persona1.role,
+        avatar: persona1.avatar,
+      },
+      content: tpl.c1,
+      createdAt: date1,
+      likes: (pos % 18) + 8,
+      dislikes: 0,
+      reactions: { like: (pos % 18) + 8, heart: (pos % 7) + 2 },
+      replies: [
+        {
+          id: `comm-dyn-${canonicalId}-2`,
+          postId: canonicalId,
+          authorId: persona2.name.toLowerCase().replace(/\s+/g, "-"),
+          author: {
+            id: persona2.name.toLowerCase().replace(/\s+/g, "-"),
+            name: persona2.name,
+            role: persona2.role,
+            avatar: persona2.avatar,
+          },
+          content: tpl.c2,
+          createdAt: date2,
+          likes: (pos % 9) + 4,
+          dislikes: 0,
+          reactions: { like: (pos % 9) + 4 },
+        }
+      ]
+    }
+  ];
+}
+
 /**
  * Subscribe to comments for a specific post.
  */
@@ -503,9 +585,14 @@ export function subscribeToComments(
   };
 
   // Deliver current cached/stored comments immediately
-  const initial = getStoredComments()
+  let initial = getStoredComments()
     .filter((c) => getCanonicalPostId(c.postId) === canonicalId)
     .sort((a, b) => toEpoch(b.createdAt) - toEpoch(a.createdAt));
+
+  if (initial.length === 0) {
+    initial = getDynamicCommentsForPost(canonicalId);
+  }
+
   onCommentsUpdate(initial);
 
   // Also fetch any remotely approved comments from API

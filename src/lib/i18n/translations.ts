@@ -163,6 +163,12 @@ export const translations: Record<Language, Record<string, string>> = {
     articleNotFoundDesc: "The requested publication could not be located.",
     loadingArticle: "LOADING ARTICLE...",
     loadingEditorial: "LOADING EDITORIAL...",
+    sortBy: "SORT BY:",
+    sortNewest: "Newest First",
+    sortOldest: "Oldest First",
+    sortMostViewed: "Most Viewed",
+    sortAz: "Alphabetical (A-Z)",
+    sortZa: "Alphabetical (Z-A)",
 
     // Tools Archive
     toolsArchiveEyebrow: "FREE IN-BROWSER DEVELOPER & DESIGNER UTILITIES",
@@ -609,6 +615,12 @@ export const translations: Record<Language, Record<string, string>> = {
     articleNotFoundDesc: "Tələb olunan nəşr tapıla bilmədi.",
     loadingArticle: "MƏQALƏ YÜKLƏNIR...",
     loadingEditorial: "YÜKLƏNIR...",
+    sortBy: "SIRALAMA:",
+    sortNewest: "Ən yeni",
+    sortOldest: "Ən köhnə",
+    sortMostViewed: "Ən çox oxunan",
+    sortAz: "Əlifba sırası (A-Z)",
+    sortZa: "Əlifba sırası (Z-A)",
 
     // Tools Archive
     toolsArchiveEyebrow: "PULSUZ BRAUZERDAXİLİ DEVELOPER VƏ DİZAYNER ALƏTLƏRİ",

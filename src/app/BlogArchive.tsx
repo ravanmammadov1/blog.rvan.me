@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Calendar, Clock, Search, SlidersHorizontal, X } from "lucide-react";
+import { Sparkles, ArrowRight, Calendar, Clock, Search, SlidersHorizontal, X, ArrowUpDown } from "lucide-react";
 
 import { fetchAllBlogs, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -16,7 +16,8 @@ import { useProgressiveRendering } from "./hooks/useProgressiveRendering";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 import { Button } from "./components/ui/Button";
 import { urlFor } from "../lib/sanityClient";
-import { formatBlogDate, estimateReadingTime } from "../lib/blogHelpers";
+import { formatBlogDate, estimateReadingTime, parseBlogDate } from "../lib/blogHelpers";
+import { getBaselineStats } from "../services/articleStatsService";
 import { getArticleCoverImage } from "../lib/contentEngine";
 import { BLOG_FAQS } from "../data/faqData";
 import GlobalFaqSection from "./components/GlobalFaqSection";
@@ -38,6 +39,7 @@ export default function BlogArchive() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "views" | "alpha-asc" | "alpha-desc">("newest");
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
   const { t, getLocalizedPath, language } = useLanguage();
 
@@ -77,7 +79,7 @@ export default function BlogArchive() {
   }, [posts]);
 
   const filteredPosts = useMemo(() => {
-    let result = posts;
+    let result = [...posts];
 
     if (activeCategory !== "All") {
       result = result.filter((p) => p.category === activeCategory);
@@ -88,14 +90,47 @@ export default function BlogArchive() {
       result = result.filter(
         (p) =>
           p.title?.toLowerCase().includes(q) ||
+          p.title_az?.toLowerCase().includes(q) ||
           p.excerpt?.toLowerCase().includes(q) ||
+          p.excerpt_az?.toLowerCase().includes(q) ||
           p.category?.toLowerCase().includes(q) ||
+          p.category_az?.toLowerCase().includes(q) ||
           p.tags?.some((t) => t.toLowerCase().includes(q))
       );
     }
 
+    // Apply sorting
+    result.sort((a, b) => {
+      if (sortBy === "views") {
+        const slugA = typeof a.slug === "string" ? a.slug : a.slug?.current || a.originalSlug || a._id || "";
+        const slugB = typeof b.slug === "string" ? b.slug : b.slug?.current || b.originalSlug || b._id || "";
+        const viewsA = getBaselineStats(slugA).viewCount;
+        const viewsB = getBaselineStats(slugB).viewCount;
+        return viewsB - viewsA;
+      }
+      if (sortBy === "alpha-asc") {
+        const titleA = (isAz && a.title_az ? a.title_az : a.title || "").toLowerCase();
+        const titleB = (isAz && b.title_az ? b.title_az : b.title || "").toLowerCase();
+        return titleA.localeCompare(titleB, isAz ? "az" : "en");
+      }
+      if (sortBy === "alpha-desc") {
+        const titleA = (isAz && a.title_az ? a.title_az : a.title || "").toLowerCase();
+        const titleB = (isAz && b.title_az ? b.title_az : b.title || "").toLowerCase();
+        return titleB.localeCompare(titleA, isAz ? "az" : "en");
+      }
+      if (sortBy === "oldest") {
+        const dateA = parseBlogDate(a.publishDate || a._createdAt)?.getTime() || 0;
+        const dateB = parseBlogDate(b.publishDate || b._createdAt)?.getTime() || 0;
+        return dateA - dateB;
+      }
+      // Default: "newest" (publishDate descending)
+      const dateA = parseBlogDate(a.publishDate || a._createdAt)?.getTime() || 0;
+      const dateB = parseBlogDate(b.publishDate || b._createdAt)?.getTime() || 0;
+      return dateB - dateA;
+    });
+
     return result;
-  }, [posts, activeCategory, searchQuery]);
+  }, [posts, activeCategory, searchQuery, sortBy, isAz]);
 
   const featuredPost = useMemo(() => {
     if (posts.length === 0) return null;
@@ -111,7 +146,7 @@ export default function BlogArchive() {
   } = useProgressiveRendering(filteredPosts, {
     initialBatchSize: 12,
     stepBatchSize: 12,
-    resetDependencies: [activeCategory, searchQuery],
+    resetDependencies: [activeCategory, searchQuery, sortBy],
   });
 
   return (
@@ -308,12 +343,37 @@ export default function BlogArchive() {
 
         {/* 5. Article Grid & List */}
         <div>
-          {/* Results count info */}
-          <div className="mt-4 flex items-center justify-between">
+          {/* Results count info and Sort Dropdown */}
+          <div className="mt-6 mb-2 flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-bold tracking-[.14em] text-muted-foreground mono">
               {filteredPosts.length} {t("articles", "ARTICLES")}
               {searchQuery && ` FOR "${searchQuery.toUpperCase()}"`}
             </p>
+
+            {/* Sort Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <ArrowUpDown size={12} className="text-primary" />
+                <span className="hidden sm:inline">{t("sortBy", "SORT BY:")}</span>
+              </span>
+              <div className="relative inline-block">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  aria-label={t("sortBy", "Sort by")}
+                  className="appearance-none bg-slate-100/90 dark:bg-white/[0.06] border border-[#DDE1E0] dark:border-white/10 rounded-xl px-3 py-1.5 pr-8 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all hover:bg-slate-200/80 dark:hover:bg-white/[0.09]"
+                >
+                  <option value="newest" className="bg-card text-foreground">{t("sortNewest", "Newest First")}</option>
+                  <option value="views" className="bg-card text-foreground">{t("sortMostViewed", "Most Viewed")}</option>
+                  <option value="alpha-asc" className="bg-card text-foreground">{t("sortAz", "Alphabetical (A-Z)")}</option>
+                  <option value="alpha-desc" className="bg-card text-foreground">{t("sortZa", "Alphabetical (Z-A)")}</option>
+                  <option value="oldest" className="bg-card text-foreground">{t("sortOldest", "Oldest First")}</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground">
+                  <SlidersHorizontal size={11} />
+                </div>
+              </div>
+            </div>
           </div>
 
           {loading ? (

@@ -4,18 +4,62 @@
  * and canonical verified author information.
  */
 
+const AZ_MONTHS: Record<string, string> = {
+  yanvar: "January",
+  fevral: "February",
+  mart: "March",
+  aprel: "April",
+  may: "May",
+  iyun: "June",
+  i̇yun: "June",
+  iyul: "July",
+  i̇yul: "July",
+  avqust: "August",
+  sentyabr: "September",
+  oktyabr: "October",
+  noyabr: "November",
+  dekabr: "December",
+};
+
+/**
+ * Robust date parser supporting Azerbaijani, English, and ISO date strings.
+ */
+export function parseBlogDate(dateString?: string): Date | null {
+  if (!dateString) return null;
+  const str = String(dateString).trim();
+  if (!str) return null;
+
+  // 1. Direct standard parse
+  const direct = new Date(str);
+  if (!isNaN(direct.getTime())) return direct;
+
+  // 2. Normalize Azerbaijani month names (e.g. "24 Avqust 2026", "22 İyul 2026")
+  let normalized = str.toLowerCase();
+  for (const [az, en] of Object.entries(AZ_MONTHS)) {
+    if (normalized.includes(az)) {
+      normalized = normalized.replace(az, en);
+      break;
+    }
+  }
+
+  const parsed = new Date(normalized);
+  if (!isNaN(parsed.getTime())) return parsed;
+
+  return null;
+}
+
 export function formatBlogDate(dateString?: string, language: string = "en"): string {
   if (!dateString) return "";
   try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    const date = parseBlogDate(dateString);
+    if (!date || isNaN(date.getTime())) return dateString;
 
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const isAz = language === "az";
 
     // If future or less than 1 minute ago
-    if (diffMs < 60 * 1000) {
+    if (diffMs < 60 * 1000 && diffMs >= 0) {
       return isAz ? "İndicə dərc edildi" : "Published just now";
     }
 
@@ -24,14 +68,14 @@ export function formatBlogDate(dateString?: string, language: string = "en"): st
     const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
 
     // Under 1 hour
-    if (diffMinutes < 60) {
+    if (diffMinutes >= 0 && diffMinutes < 60) {
       return isAz
         ? `${diffMinutes} dəqiqə əvvəl`
         : `${diffMinutes} ${diffMinutes === 1 ? "minute" : "minutes"} ago`;
     }
 
     // Under 24 hours
-    if (diffHours < 24) {
+    if (diffHours >= 0 && diffHours < 24) {
       return isAz
         ? `${diffHours} saat əvvəl`
         : `${diffHours} ${diffHours === 1 ? "hour" : "hours"} ago`;
@@ -43,13 +87,13 @@ export function formatBlogDate(dateString?: string, language: string = "en"): st
     }
 
     // 2 to 6 days ago
-    if (diffDays < 7) {
+    if (diffDays >= 2 && diffDays < 7) {
       return isAz ? `${diffDays} gün əvvəl` : `${diffDays} days ago`;
     }
 
     // 1 to 4 weeks ago
     const diffWeeks = Math.floor(diffDays / 7);
-    if (diffWeeks <= 4) {
+    if (diffWeeks >= 1 && diffWeeks <= 4) {
       return isAz
         ? `${diffWeeks} həftə əvvəl`
         : `${diffWeeks} ${diffWeeks === 1 ? "week" : "weeks"} ago`;
@@ -63,7 +107,7 @@ export function formatBlogDate(dateString?: string, language: string = "en"): st
       day: "numeric",
     });
   } catch {
-    return "";
+    return dateString || "";
   }
 }
 
