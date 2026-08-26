@@ -60,9 +60,9 @@ export default function BlogHero({ post }: BlogHeroProps) {
       >
         {/* Category & Tags Row */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {post.category && (
+          {(post.category || post.category_az) && (
             <span className="rounded-full bg-primary px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-black">
-              {post.category}
+              {language === "az" && post.category_az ? post.category_az : (post.category || post.category_az)}
             </span>
           )}
 
@@ -80,13 +80,13 @@ export default function BlogHero({ post }: BlogHeroProps) {
 
         {/* Big Crisp Headline */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
-          {post.title}
+          {language === "az" && post.title_az ? post.title_az : post.title}
         </h1>
 
         {/* Excerpt / Lead Description */}
-        {post.excerpt && (
+        {(post.excerpt || post.excerpt_az) && (
           <p className="text-base sm:text-lg md:text-xl leading-relaxed text-muted-foreground font-medium">
-            {post.excerpt}
+            {language === "az" && post.excerpt_az ? post.excerpt_az : (post.excerpt || post.excerpt_az)}
           </p>
         )}
 

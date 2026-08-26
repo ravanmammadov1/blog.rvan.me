@@ -151,13 +151,17 @@ export default function BlogDetail() {
 
   const postTrackingId = post.slug?.current || post.originalSlug || post._id || "";
 
+  const currentTitle = language === "az" && post.title_az ? post.title_az : post.title;
+  const currentExcerpt = language === "az" && post.excerpt_az ? post.excerpt_az : post.excerpt;
+  const activeBody = language === "az" && post.body_az ? post.body_az : (post.body || post.body_az);
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ReadingProgress />
 
       <SEO
-        title={post.seo?.metaTitle || `${post.title} — Rvan.me`}
-        description={post.seo?.metaDescription || post.excerpt || `Read "${post.title}" on Rvan.me — Creative Publication & Knowledge Platform.`}
+        title={post.seo?.metaTitle || `${currentTitle} — Rvan.me`}
+        description={post.seo?.metaDescription || currentExcerpt || `Read "${currentTitle}" on Rvan.me — Creative Publication & Knowledge Platform.`}
         image={post.seo?.ogImage ? urlFor(post.seo.ogImage)?.width(1200).height(630).url() : coverUrl}
         url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
@@ -176,13 +180,13 @@ export default function BlogDetail() {
           <div className="lg:col-span-8 space-y-10 min-w-0">
             {/* Mobile Collapsible TOC */}
             <div className="lg:hidden">
-              <TableOfContents body={post.body} isMobile />
+              <TableOfContents body={activeBody} isMobile />
             </div>
 
             <BlogContent post={post} />
 
             {/* Article Like / Dislike Feedback Reaction */}
-            <ArticleReactions postId={postTrackingId} postTitle={post.title} />
+            <ArticleReactions postId={postTrackingId} postTitle={currentTitle} />
 
             {/* Author Profile Card */}
             <AuthorCard post={post} />
