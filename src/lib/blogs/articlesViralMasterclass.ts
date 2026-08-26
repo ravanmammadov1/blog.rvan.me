@@ -14,15 +14,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 01. Salary Negotiation ──
   {
     _id: "blog-masterclass-maas-danisigi-psixologiyasi-harvard-metodu",
-    title: "The Art of Salary Negotiation: Harvard Methodology & Behavioral Psychology Against the 'What Are Your Salary Expectations?' Trap",
-    title_az: "Azərbaycanda Maaş Danışığı Sənəti: Şirkətlərin \"Maaş Gözləntiniz Nədir?\" Tələsinə Qarşı Harvard Metodologiyası və Davranış Psixologiyası",
+    title: "The Harvard Salary Negotiation Framework: Escaping the Budget Trap",
+    title_az: "Maaş Danışığında Harvard Metodu: Şirkətlərin Qiymət Tələsindən Çıxış",
     slug: { _type: "slug", current: "salary-negotiation-psychology-harvard-method" },
     slug_az: { _type: "slug", current: "maas-danisigi-psixologiyasi-harvard-metodu" },
     originalSlug: "maas-danisigi-psixologiyasi-harvard-metodu",
     category: "Career & Negotiations",
     category_az: "Karyera & Danışıqlar",
     excerpt: "Who should state the first number in an interview? Daniel Kahneman's anchoring heuristic, FBI negotiator Chris Voss's calibrated questions, and exact scripts to command top-of-market compensation offers.",
-    excerpt_az: "Müsahibədə ilk rəqəmi kim deməlidir? Daniel Kanemanın Lövbər effekti, FTB danışıqçısı Kris Vossun sualları və yerli şirkətlərdən +500 AZN yüksək təklif almağın dəqiq skriptləri.",
+    excerpt_az: "Müsahibədə ilk rəqəmi kim deməlidir? Daniel Kanemanın Lövbər effekti, FTB danışıqçısı Kris Vossun sualları və şirkətlərdən yüksək təklif almağın dəqiq skriptləri.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -31,6 +31,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "26 Avqust 2026",
     readTime: "8 min read",
     featured: true,
+    authorName: "Ravan Mammadov",
+    authorRole: "Lead Creative Designer & Visual Strategist",
+    authorSlug: "ravan-mammadov",
     tags: ["career", "salary", "interview", "hr", "negotiation", "psychology"],
     body: [
       createBlock("Let's be candid: discussing compensation remains one of the greatest career taboos across modern labor markets.", "normal"),
@@ -60,37 +63,33 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("3. Voss, C. – 'Never Split the Difference'.", "normal")
     ],
     body_az: [
-      createBlock("Gəlin səmimi olaq: Azərbaycanda əmək bazarında ən böyük tabulardan biri maaş haqqında açıq danışmaqdır.", "normal"),
-      createBlock("Uşaqlıqdan bəri bizə aşılanan \"pulu çox soruşmaq ayıbdır\" və ya \"işi verən nə verərsə, ona qane ol\" təfəkkürü peşəkar həyatımıza keçəndə böyük bir maliyyə fəlakətinə çevrilir. Nəticədə eyni təcrübəyə və bacarığa malik iki mütəxəssisdən biri ayda 700 AZN alarkən, digəri düzgün danışıq apardığı üçün eyni şirkətdə 1600 AZN qazanır.", "normal"),
-      createBlock("Çoxları düşünür ki, maaş danışığı sadəcə bəxt və ya \"tərs durmaq\" məsələsidir. Lakin Harvard Universitetinin danışıqlar üzrə professoru Dikpak Malhotra (Deepak Malhotra) və Nobel mükafatçısı Daniel Kanemanın (Daniel Kahneman) araşdırmaları göstərir ki, maaş danışığı 100% davranış iqtisadiyyatı və psixologiyaya əsaslanan idarəolunan bir prosesdir.", "normal"),
-      createBlock("1. Masanın Digər Tərəfi: HR və Rəhbər Əslində Nə Düşünür?", "h3"),
-      createBlock("LinkedIn-in \"Global Talent Trends\" hesabatına görə, işəgötürənlərin 73%-nin hər vakansiya üçün əvvəlcədən təsdiqlənmiş \"Büdcə Dəhlizi\" (Salary Band) olur.", "normal"),
-      createBlock("Məsələn, şirkət bir qrafik dizayner və ya marketoloq üçün büdcədə 900 – 1400 AZN ayırıb.", "normal"),
-      createBlock("* Əgər siz müsahibədə ilk olaraq \"Mənim üçün 800 AZN bəs edər\" desəniz, HR daxilən sevinəcək və şirkətin büdcəsinə 600 AZN qənaət etdiyi üçün rəhbərlikdən xal qazanacaq.", "normal"),
-      createBlock("* Əgər \"1400 AZN\" desəniz və bunu düzgün əsaslandırsanız, şirkət yenə də sizi işə götürəcək, çünki bu məbləğ onların onsuz da təsdiqlənmiş dəhlizinin içindədir.", "normal"),
-      createBlock("2. \"Lövbər Effekti\" (Anchoring Bias): İlk Rəqəmi Kim Deməlidir?", "h3"),
-      createBlock("Davranış iqtisadiyyatının ən məşhur qanunlarından biri Daniel Kaneman və Amos Tverskinin kəşf etdiyi Lövbər Effektidir.", "normal"),
-      createBlock("Bu qanuna görə, danışıq masasında səslənən ilk rəqəm (lövbər) bütün sonrakı müzakirələrin cazibə mərkəzinə çevrilir. Əgər qarşı tərəf \"Biz bu vəzifə üçün 600 AZN düşünürük\" deyərək lövbəri aşağı atsa, sizin oradan 1200 AZN-ə qalxmağınız psixoloji cəhətdən 10 qat çətinləşir.", "normal"),
-      createBlock("Harvard Danışıqlar Məktəbinin tövsiyəsi: Bazar dəyərini dəqiq bilirsinizsə, lövbəri birinci siz atın; amma tək rəqəmlə yox, \"Strateji Aralıq\" (Range) ilə.", "normal"),
-      createBlock("Columbia Business School-un tədqiqatları sübut edir ki, yuxarı sərhədi yüksək olan aralıq verdikdə (məsələn: 1200 - 1500 AZN), işəgötürən avtomatik olaraq aralığın minimumunu (1200 AZN) kompromis kimi qəbul edir.", "normal"),
-      createBlock("3. Keçmiş FTB Baş Danışıqçısı Kris Vossdan \"Kalibrlənmiş Suallar\"", "h3"),
-      createBlock("Keçmiş FTB girov danışıqçısı Kris Vossun (\"Never Split the Difference\" kitabının müəllifi) metodu: \"Necə?\" sualları ilə təzyiqi qarşı tərəfə ötürmək.", "normal"),
-      createBlock("Real Dialoq Ssenarisi:", "normal"),
-      createBlock("Şirkət: \"Biz sizin namizədliyinizi bəyəndik, lakin hazırda maksimum 700 AZN təklif edə bilərik.\"", "blockquote"),
+      createBlock("Gəlin səmimi olaq: əmək bazarında ən böyük tabulardan biri maaş haqqında açıq danışmaqdır.", "normal"),
+      createBlock("Uşaqlıqdan bəri bizə aşılanan \"pulu çox soruşmaq ayıbdır\" təfəkkürü peşəkar həyatımıza keçəndə böyük maliyyə itkisinə çevrilir. Nəticədə eyni bacarığa malik iki mütəxəssisdən biri ayda 700 AZN alarkən, digəri düzgün danışıq apardığı üçün 1600 AZN qazanır.", "normal"),
+      createBlock("Harvard Universitetinin professoru Dikpak Malhotra və Nobel mükafatçısı Daniel Kanemanın araşdırmaları göstərir ki, maaş danışığı 100% davranış iqtisadiyyatı və psixologiyaya əsaslanan idarəolunan bir prosesdir.", "normal"),
+      createBlock("1. Masanın Digər Tərəfi: HR Əslində Nə Düşünür?", "h3"),
+      createBlock("LinkedIn-in qlobal hesabatına görə, işəgötürənlərin 73%-nin hər vakansiya üçün əvvəlcədən təsdiqlənmiş büdcə dəhlizi olur (məsələn: 900 – 1400 AZN).", "normal"),
+      createBlock("* Əgər ilk olaraq \"Mənim üçün 800 AZN bəs edər\" desəniz, HR daxilən sevinərək büdcəyə qənaət edir.", "normal"),
+      createBlock("* Əgər dəyəri əsaslandırıb \"1400 AZN\" desəniz, şirkət yenə də sizi işə götürür, çünki bu məbləğ onların onsuz da təsdiqlənmiş dəhlizinin içindədir.", "normal"),
+      createBlock("2. \"Lövbər Effekti\": İlk Rəqəmi Kim Deməlidir?", "h3"),
+      createBlock("Daniel Kanemanın kəşf etdiyi Lövbər Effektinə görə, masada səslənən ilk rəqəm bütün sonrakı müzakirələrin mərkəzinə çevrilir.", "normal"),
+      createBlock("Harvard tövsiyəsi: Bazar dəyərini bilirsinizsə, lövbəri birinci siz atın; amma tək rəqəmlə yox, 'Strateji Aralıq' (məsələn: 1200 - 1500 AZN) ilə. Bu zaman işəgötürən aralığın minimumunu kompromis kimi qəbul edir.", "normal"),
+      createBlock("3. Kris Vossdan 'Kalibrlənmiş Suallar'", "h3"),
+      createBlock("Keçmiş FTB girov danışıqçısı Kris Vossun metodu: 'Necə?' sualları ilə təzyiqi qarşı tərəfə ötürmək.", "normal"),
+      createBlock("Şirkət: \"Biz sizə maksimum 700 AZN təklif edə bilərik.\"", "blockquote"),
       createBlock(">", "normal"),
-      createBlock("Siz: \"Şirkətinizin hazırkı büdcə çərçivəsini və resursları optimallaşdırmaq istəyini tam başa düşürəm. Eyni zamanda, bu vəzifədə məndən gözlənilən problemləri həll etmək hədəflərini nəzərə alsaq, bu büdcə ilə qarşılıqlı olaraq necə irəliləyə bilərik?\"", "blockquote"),
-      createBlock("4. Təkcə \"Net Maaş\" Yox: \"Total Compensation\" Paketi", "h3"),
-      createBlock("1. Hibrid / Uzaqdan İş: Həftədə 2 gün evdən işləmək ayda 100-150 AZN yol/yemək və 30-40 saat vaxt qənaətidir.", "normal"),
-      createBlock("2. Peşəkar İnkişaf Büdcəsi: İllik beynəlxalq kurs və konfrans xərclərinin qarşılanması.", "normal"),
-      createBlock("3. Protokollaşdırılmış Artım: \"3 aylıq sınaq müddətində X metrikanı yerinə yetirdikdən sonra maaş rəsmi olaraq 1200 AZN-ə qaldırılır.\"", "normal"),
-      createBlock("Mənbələr və Ədəbiyyat:", "h3"),
-      createBlock("1. Malhotra, D. (Harvard Business Review) – \"15 Rules for Negotiating a Job Offer\".", "normal"),
-      createBlock("2. Kahneman, D., & Tversky, A. – \"Judgment under Uncertainty: Heuristics and Biases\".", "normal"),
-      createBlock("3. Voss, C. – \"Never Split the Difference: Negotiating As If Your Life Depended On It\".", "normal")
+      createBlock("Siz: \"Büdcə çərçivənizi tam başa düşürəm. Eyni zamanda, bu vəzifədə məndən gözlənilən hədəfləri nəzərə alsaq, bu büdcə ilə qarşılıqlı olaraq necə irəliləyə bilərik?\"", "blockquote"),
+      createBlock("4. 'Total Compensation' Paketi", "h3"),
+      createBlock("1. Hibrid/Uzaqdan iş imkanı (ayda 100-150 AZN və 30 saat qənaət).", "normal"),
+      createBlock("2. İllik təhsil və konfrans büdcəsi.", "normal"),
+      createBlock("3. Rəsmi artım protokolu: '3 aylıq sınaqdan sonra maaş 1200 AZN-ə qaldırılır.'", "normal"),
+      createBlock("Mənbələr:", "h3"),
+      createBlock("1. Malhotra, D. (HBR) – '15 Rules for Negotiating a Job Offer'.", "normal"),
+      createBlock("2. Kahneman, D. – 'Thinking, Fast and Slow'.", "normal"),
+      createBlock("3. Voss, C. – 'Never Split the Difference'.", "normal")
     ],
     seo: {
-      metaTitle: "The Art of Salary Negotiation: Harvard Methodology & Behavioral Economics | Rvan.me",
-      metaDescription: "Who should anchor first in a compensation interview? Daniel Kahneman's anchoring heuristic, FBI negotiator Chris Voss's calibrated questions, and exact scripts to command top-of-market offers.",
+      metaTitle: "Maaş Danışığında Harvard Metodu: Şirkətlərin Qiymət Tələsindən Çıxış | Rvan.me",
+      metaDescription: "Müsahibədə ilk rəqəmi kim deməlidir? Daniel Kanemanın Lövbər effekti, FTB danışıqçısı Kris Vossun sualları və yüksək təklif almağın dəqiq skriptləri.",
       canonicalUrl: "https://www.rvan.me/blog/salary-negotiation-psychology-harvard-method"
     }
   },
@@ -98,15 +97,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 02. Beautiful Design Loses Money ──
   {
     _id: "blog-masterclass-gozel-dizayn-niye-pul-itirir-nielsen-norman-group",
-    title: "Why 'Beautiful Design' Loses Money: Nielsen Norman Group Research & The 42% E-Commerce Friction Lesson",
-    title_az: "Niyə \"Gözəl Dizayn\" Şirkətlərə Pul İtirir? Nielsen Norman Group Tədqiqatları və Yerli E-Ticarətin 42%-lik Dərsi",
+    title: "Why Beautiful Design Loses Money: Dribbble vs Real UX",
+    title_az: "Gözəl Dizayn Niyə Pul İtirir? Dribbble Mifləri və UX Reallığı",
     slug: { _type: "slug", current: "why-beautiful-design-loses-money-nng-research" },
     slug_az: { _type: "slug", current: "gozel-dizayn-niye-pul-itirir-nielsen-norman-group" },
     originalSlug: "gozel-dizayn-niye-pul-itirir-nielsen-norman-group",
     category: "UI/UX & Product Design",
     category_az: "UI/UX & Rəqəmsal Məhsul",
     excerpt: "Why Dribbble-perfect visual concepts destroy checkout conversion rates in production. Baymard Institute's 68.8% cart abandonment research and 4 critical business metrics that triple designer value.",
-    excerpt_az: "Dribbble-dakı min layklı dizaynlar real biznesdə niyə satışları öldürür? Baymard İnstitutunun 68.8% səbət tərki araşdırması və dizaynerin maaşını 3 qat artıran 4 biznes metrikası.",
+    excerpt_az: "Dribbble-dakı min layklı dizaynlar real biznesdə niyə satışları öldürür? Baymard İnstitutunun 68.8% səbət tərki araşdırması və dizaynerin dəyərini artıran 4 biznes metrikası.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -115,7 +114,10 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "24 Avqust 2026",
     readTime: "9 min read",
     featured: true,
-    tags: ["uiux", "product design", "baymard", "nngroup", "ecommerce", "conversion", "metrics"],
+    authorName: "Leyla Karimova",
+    authorRole: "Senior Product Designer & UX Researcher",
+    authorSlug: "leyla-karimova",
+    tags: ["uiux", "product-design", "baymard", "nngroup", "ecommerce", "conversion", "metrics"],
     body: [
       createBlock("A pervasive fallacy circulates modern digital design: 'If a product looks aesthetic, modern, and colorful, it will inherently succeed.'", "normal"),
       createBlock("Every year, thousands of designers ship glowing concepts that accumulate thousands of likes on Dribbble and Behance. Yet when deployed into production, sales crater and users bounce in frustration.", "normal"),
@@ -125,10 +127,7 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("* 18% – Overly complicated multi-step checkout sequences.", "normal"),
       createBlock("* 17% – Hidden or unexpected shipping and handling surcharges.", "normal"),
       createBlock("2. Nielsen Norman Group (NN/g): The F-Shape Scanning Paradigm", "h3"),
-      createBlock("Pioneered by Don Norman and Jakob Nielsen, eye-tracking research proves web users do not read interfaces like books—they scan in an F-shaped pattern:", "normal"),
-      createBlock("1. A horizontal scan across the top visual plane.", "normal"),
-      createBlock("2. A shorter secondary horizontal scan lower down.", "normal"),
-      createBlock("3. A vertical downward sweep along the left edge.", "normal"),
+      createBlock("Pioneered by Don Norman and Jakob Nielsen, eye-tracking research proves web users do not read interfaces like books—they scan in an F-shaped pattern.", "normal"),
       createBlock("When Call-to-Action (CTA) triggers violate this natural reading vector, cognitive friction spikes and bounce rates surge.", "normal"),
       createBlock("3. Production Case Study: How Radical Simplicity Increased Conversions by +42%", "h3"),
       createBlock("In an on-demand delivery app redesign:", "normal"),
@@ -142,44 +141,35 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("3. **Task Completion Rate:** Time-to-value for completing essential flows.", "normal"),
       createBlock("4. **Funnel Drop-Off Rate:** Pinpointing the exact step where users abandon.", "normal"),
       createBlock("Key References:", "h3"),
-      createBlock("1. Baymard Institute (2023) – '48 Cart Abandonment Rate Statistics'.", "normal"),
-      createBlock("2. Nielsen, J. – 'Eyetracking Web Usability' (Nielsen Norman Group).", "normal"),
+      createBlock("1. Baymard Institute – 'Cart Abandonment Rate Statistics'.", "normal"),
+      createBlock("2. Nielsen, J. – 'Eyetracking Web Usability'.", "normal"),
       createBlock("3. Norman, D. – 'The Design of Everyday Things'.", "normal")
     ],
     body_az: [
-      createBlock("Müasir rəqəmsal dünyada çox təhlükəli bir mif dolaşır: \"Əgər dizayn estetik, müasir və rəngarəngdirsə, o mütləq uğurlu olacaq.\"", "normal"),
-      createBlock("Hər il minlərlə dizayner Dribbble və Behance platformalarında minlərlə layk toplayan animasiyalı, neon rəngli konseptlər paylaşır. Amma eyni dizaynları real biznesə tətbiq etdikdə acı reallıq üzə çıxır: Satışlar kəskin düşür, istifadəçilər çaşqınlıq içində tətbiqi tərk edir.", "normal"),
-      createBlock("1. Baymard İnstitutunun Statistikası: 68.8% Səbət Tərki", "h3"),
-      createBlock("Dünyanın aparıcı e-ticarət və UX tədqiqat institutu olan Baymard Institute-un 48.000-dən çox istifadəçini əhatə edən qlobal araşdırmasına görə, onlayn alış-verişdə səbətə məhsul atıb saytı tərk edənlərin ortalama göstəricisi 68.8%-dir.", "normal"),
-      createBlock("Səbəblər:", "normal"),
-      createBlock("* 24% – Saytın məcburi şəkildə uzun qeydiyyat tələb etməsi.", "normal"),
-      createBlock("* 18% – Ödəniş və checkout prosesinin həddindən artıq mürəkkəb olması.", "normal"),
+      createBlock("Dizayn dünyasında çox təhlükəli bir mif var: \"Əgər dizayn estetik və rəngarəngdirsə, o mütləq uğurlu olacaq.\"", "normal"),
+      createBlock("Dribbble-da minlərlə layk toplayan animasiyalı dizaynları real biznesə tətbiq etdikdə acı reallıq üzə çıxır: Satışlar kəskin düşür, istifadəçilər çaşqınlıq içində saytı tərk edir.", "normal"),
+      createBlock("1. Baymard İnstitutu: 68.8% Səbət Tərki", "h3"),
+      createBlock("48.000-dən çox istifadəçini əhatə edən qlobal araşdırmaya görə, onlayn alış-verişdə səbəti tərk edənlərin ortalaması 68.8%-dir. Əsas səbəblər:", "normal"),
+      createBlock("* 24% – Məcburi uzun qeydiyyat tələbi.", "normal"),
+      createBlock("* 18% – Ödəniş prosesinin həddindən artıq mürəkkəb olması.", "normal"),
       createBlock("* 17% – Sonda gözlənilməz əlavə xərclərin çıxması.", "normal"),
-      createBlock("2. Nielsen Norman Group (NN/g): F-Shape Scanning Modeli", "h3"),
-      createBlock("Don Norman və Yakob Nilsenin (Jakob Nielsen) qurduğu Nielsen Norman Group göz izləmə (Eye-tracking) araşdırması ilə sübut etdi ki, istifadəçilər veb-saytları kitab kimi oxumur, F-şəkilli trayektoriya ilə gözdən keçirir:", "normal"),
-      createBlock("1. Əvvəlcə yuxarı horizontal xətt.", "normal"),
-      createBlock("2. Sonra bir qədər qısa ikinci horizontal xətt.", "normal"),
-      createBlock("3. Sol tərəf boyunca şaquli eniş.", "normal"),
-      createBlock("Əgər ən vacib çağırış (CTA) düyməsi bu təbii axına uyğun qoyulmayıbsa, istifadəçi koqnitiv yüklənmə yaşayır və səhifəni tərk edir.", "normal"),
-      createBlock("3. Yerli E-Ticarətdən Real Case: Sadəlik Satışı Necə 42% Artırdı?", "h3"),
-      createBlock("Bakıda fəaliyyət göstərən çatdırılma xidmətində tətbiq edilən UX dəyişikliyi:", "normal"),
-      createBlock("* Qeydiyyat tam ləğv edildi (Yalnız nömrə + 1 SMS kod).", "normal"),
-      createBlock("* Checkout tək səhifəyə endirildi (One-Page Checkout).", "normal"),
-      createBlock("* \"Sifarişi Təsdiqlə\" düyməsi baş barmağın çatdığı Thumb Zone sahəsinə yerləşdirildi.", "normal"),
+      createBlock("2. NN/g: F-Şəkilli Baxış Modeli", "h3"),
+      createBlock("Nielsen Norman Group sübut etdi ki, istifadəçilər saytları kitab kimi oxumur, F-şəkilli trayektoriya ilə gözdən keçirir. Ən vacib düymə bu təbii axına uyğun deyilsə, istifadəçi saytdan çıxır.", "normal"),
+      createBlock("3. Sadəlik Satışı Necə 42% Artırdı?", "h3"),
+      createBlock("Real çatdırılma xidmətində edilən UX dəyişiklikləri:", "normal"),
+      createBlock("* Qeydiyyat tam ləğv edildi (tək SMS kod).", "normal"),
+      createBlock("* Checkout tək səhifəyə endirildi.", "normal"),
+      createBlock("* Əsas düymə baş barmağın rahat çatdığı Thumb Zone sahəsinə qoyuldu.", "normal"),
       createBlock("Nəticə: Sifarişi tamamlayanların nisbəti 32%-dən 45.4%-ə yüksəldi (+42% xalis artım).", "normal"),
-      createBlock("Dizaynerin Maaşını Artıran 4 Biznes Metrikası:", "h3"),
+      createBlock("Dizaynerin Dəyərini Artıran 4 Metrika:", "h3"),
       createBlock("1. Conversion Rate (Konversiya dərəcəsi)", "normal"),
-      createBlock("2. Bounce Rate (Hemen çıxma faizi)", "normal"),
-      createBlock("3. Task Completion Rate (Tapşırığı tamamlama vaxtı)", "normal"),
-      createBlock("4. Drop-off Rate (Mərhələdən qopma dərəcəsi)", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Baymard Institute (2023 Research) – \"48 Cart Abandonment Rate Statistics\".", "normal"),
-      createBlock("2. Nielsen, J., & Pernice, K. – \"Eyetracking Web Usability\" (Nielsen Norman Group).", "normal"),
-      createBlock("3. Norman, D. – \"The Design of Everyday Things\".", "normal")
+      createBlock("2. Bounce Rate (Həmən çıxma faizi)", "normal"),
+      createBlock("3. Task Completion Rate (Tapşırığı bitirmə vaxtı)", "normal"),
+      createBlock("4. Drop-off Rate (Mərhələdən qopma dərəcəsi)", "normal")
     ],
     seo: {
-      metaTitle: "Why 'Beautiful Design' Loses Money: Nielsen Norman Group Research | Rvan.me",
-      metaDescription: "Why Dribbble-perfect visual concepts destroy checkout conversion rates. Baymard Institute's 68.8% cart abandonment study and 4 essential UX business metrics.",
+      metaTitle: "Gözəl Dizayn Niyə Pul İtirir? Dribbble Mifləri və UX Reallığı | Rvan.me",
+      metaDescription: "Dribbble-dakı min layklı dizaynlar real biznesdə niyə satışları öldürür? Baymard İnstitutunun 68.8% səbət tərki araşdırması və 4 əsas UX metrikası.",
       canonicalUrl: "https://www.rvan.me/blog/why-beautiful-design-loses-money-nng-research"
     }
   },
@@ -187,15 +177,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 03. Followers Don't Equal Sales ──
   {
     _id: "blog-masterclass-izleyici-coxlugu-satis-getirmir-cialdini-funnel",
-    title: "Why Large Audiences Fail to Convert: Escaping Vanity Metrics with Cialdini's Sales Funnel Architecture",
-    title_az: "Niyə 50.000 İzləyicisi Olan Səhifə 100 AZN Qazanır, Amma 2.000 İzləyicisi Olan Şirkət Satış Rekordları Qırır?",
+    title: "Why 50K Followers Fail to Sell: Cialdini's Funnel Rules",
+    title_az: "50k İzləyici Niyə Satış Gətirmir? Çaldini Qanunları və Satış Qıfı",
     slug: { _type: "slug", current: "why-large-followers-dont-equal-sales-cialdini-funnel" },
     slug_az: { _type: "slug", current: "izleyici-coxlugu-satis-getirmir-cialdini-funnel" },
     originalSlug: "izleyici-coxlugu-satis-getirmir-cialdini-funnel",
     category: "Marketing & Growth",
     category_az: "Marketinq & SMM",
     excerpt: "The trap of social vanity metrics. Robert Cialdini's persuasion principles and a 3-tier sales funnel that converts cold impressions into high-ticket recurring clients.",
-    excerpt_az: "Sosial mediada 'Vanity Metrics' tələsi. Robert Çaldininin 3 psixoloji prinsipi və soyuq izləyicini sadiq alıcıya çevirən 3 pilləli satış qıfı (Funnel) strategiyası.",
+    excerpt_az: "Sosial mediada 'Vanity Metrics' tələsi. Robert Çaldininin 3 psixoloji prinsipi və soyuq izləyicini sadiq alıcıya çevirən 3 pilləli satış qıfı strategiyası.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1563986768609-322da13575f2?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -204,6 +194,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "22 Avqust 2026",
     readTime: "8 min read",
     featured: true,
+    authorName: "Tural Aliyev",
+    authorRole: "Growth Architect & Performance Marketer",
+    authorSlug: "tural-aliyev",
     tags: ["growth", "marketing", "cialdini", "sales-funnel", "conversion", "branding"],
     body: [
       createBlock("A costly illusion dominates modern digital marketing: 'Massive follower counts automatically translate into massive revenue.'", "normal"),
@@ -222,24 +215,21 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Berger, J. – 'Contagious: Why Things Catch On'.", "normal")
     ],
     body_az: [
-      createBlock("Azərbaycan sosial media bazarında ən çox pul və enerji itkisinə səbəb olan təməl bir yanılsama var: \"İzləyici sayı çoxdursa, deməli satış da çox olacaq.\"", "normal"),
-      createBlock("Hər gün minlərlə manat büdcə giveaway-lərə və mənasız izləyici artırmağa xərclənir. Nəticədə 50-100 minlik \"nəhəng\" səhifələr yaranır, amma bir post paylaşanda altına cəmi 3 nəfər rəy yazır, WhatsApp-a isə günlərlə heç bir real müştəri mesajı gəlmir.", "normal"),
-      createBlock("Əsl dəyər \"İzləyici sayı\"nda deyil, \"Auditoriyanın Güvən İndeksi\"ndədir.", "normal"),
-      createBlock("1. Robert Çaldininin 3 Qızıl Qaydasının Tətbiqi", "h3"),
-      createBlock("1. **Sosial Sübut (Social Proof):** Məhsulu istifadə edən real müştərinin səs yazısını, unboxing videosunu və ya emosional rəyini paylaşmaq. Harvard araşdırmalarına görə, real istifadəçi rəyi olan postlar konversiyanı 270% artırır.", "normal"),
-      createBlock("2. **Avtoritet (Authority):** Hər gün \"Məhsul satılır\" deməyin. Sahənizdə insanların aldanmaması üçün maarifləndirici ekspert təhlilləri paylaşın.", "normal"),
-      createBlock("3. **Qarşılıqlılıq (Reciprocity):** İnsanlara əvvəlcə təmənnasız dəyər verin (Pulsuz bələdçi, şablon, analiz).", "normal"),
-      createBlock("2. Satış Qıfının (Sales Funnel) 3 Pilləsi:", "h3"),
-      createBlock("* **TOFU (Top of Funnel - 60% Məzmun):** Hamı üçün maraqlı, viral, maarifləndirici Reels və postlar.", "normal"),
-      createBlock("* **MOFU (Middle of Funnel - 30% Məzmun):** Etibar və Avtoritet: Case Study, rəylər, komanda arxası.", "normal"),
-      createBlock("* **BOFU (Bottom of Funnel - 10% Məzmun):** Birbaşa Satış: Konkret təklif, zəmanət və aydın CTA.", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Cialdini, R. B. – \"Influence: The Psychology of Persuasion\".", "normal"),
-      createBlock("2. Berger, J. – \"Contagious: Why Things Catch On\".", "normal")
+      createBlock("Sosial mediada ən çox pul itkisinə səbəb olan təməl yanılsama: \"İzləyici sayı çoxdursa, satış da çox olacaq.\"", "normal"),
+      createBlock("Hər gün minlərlə manat giveaway-lərə xərclənir. Nəticədə 50-100 minlik səhifələr yaranır, amma bir post paylaşanda heç kim rəy yazmır və satış olmur.", "normal"),
+      createBlock("Əsl dəyər 'İzləyici sayı'nda deyil, 'Auditoriyanın Güvən İndeksi'ndədir.", "normal"),
+      createBlock("1. Robert Çaldininin 3 Qızıl Qaydası", "h3"),
+      createBlock("1. **Sosial Sübut:** Real müştəri rəyləri və səs yazıları. Araşdırmalara görə real rəylər satışı 270% artırır.", "normal"),
+      createBlock("2. **Avtoritet:** Sadəcə məhsul satmayın, sahənizdə maarifləndirici ekspert təhlilləri verin.", "normal"),
+      createBlock("3. **Qarşılıqlılıq:** Əvvəlcə təmənnasız dəyər verin (Pulsuz bələdçi, şablon, analiz).", "normal"),
+      createBlock("2. Satış Qıfının 3 Pilləsi:", "h3"),
+      createBlock("* **TOFU (60%):** Hər kəs üçün maraqlı, viral maarifləndirici məzmun.", "normal"),
+      createBlock("* **MOFU (30%):** Etibar yaradan Case Study və real nəticələr.", "normal"),
+      createBlock("* **BOFU (10%):** Birbaşa konkret təklif və aydın çağırış (CTA).", "normal")
     ],
     seo: {
-      metaTitle: "Why Large Audiences Fail to Convert: Escaping Vanity Metrics | Rvan.me",
-      metaDescription: "The trap of social vanity metrics. Robert Cialdini's persuasion principles and a 3-tier sales funnel that converts cold impressions into high-ticket clients.",
+      metaTitle: "50k İzləyici Niyə Satış Gətirmir? Çaldini Qanunları və Satış Qıfı | Rvan.me",
+      metaDescription: "Sosial mediada 'Vanity Metrics' tələsi. Robert Çaldininin 3 psixoloji prinsipi və soyuq izləyicini sadiq alıcıya çevirən 3 pilləli satış qıfı strategiyası.",
       canonicalUrl: "https://www.rvan.me/blog/why-large-followers-dont-equal-sales-cialdini-funnel"
     }
   },
@@ -247,15 +237,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 04. Global Freelancing ──
   {
     _id: "blog-masterclass-qlobal-frilans-upwork-linkedin-saati-40-dollar",
-    title: "Global Freelancing Blueprint: Securing $40+/hr Contracts on Upwork & LinkedIn from Anywhere",
-    title_az: "Bakıda Oturaraq Qlobal Bazardan Valyuta Qazanmaq: Upwork və LinkedIn-də Saatı 40$+ Təklif Almağın Strateji Anatomiyası",
+    title: "Commanding $40+/hr Globally: Upwork & LinkedIn Playbook",
+    title_az: "Qlobal Frilansda Saatı $40+: Upwork və LinkedIn Satış Skripti",
     slug: { _type: "slug", current: "global-freelancing-upwork-linkedin-40-dollar-hour" },
     slug_az: { _type: "slug", current: "qlobal-frilans-upwork-linkedin-saati-40-dollar" },
     originalSlug: "qlobal-frilans-upwork-linkedin-saati-40-dollar",
     category: "Freelance & Global Business",
     category_az: "Frilanserlik & Qlobal",
     excerpt: "Breaking free from local salary ceilings. The Futur pricing frameworks, high-converting cold proposal architecture, and building an inbound LinkedIn client acquisition engine.",
-    excerpt_az: "Yerli bazarın büdcə limitlərindən çıxış yolu. The Futur metodologiyası, qlobal müştəriyə təsir edən Cold Proposal şablonu və LinkedIn Inbound satış sistemi.",
+    excerpt_az: "Yerli bazarın büdcə limitlərindən çıxış yolu. The Futur metodologiyası, qlobal müştəriyə təsir edən Proposal şablonu və LinkedIn Inbound satış sistemi.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -264,6 +254,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "20 Avqust 2026",
     readTime: "9 min read",
     featured: false,
+    authorName: "Ravan Mammadov",
+    authorRole: "Founder & Creative Director",
+    authorSlug: "ravan-mammadov",
     tags: ["freelance", "upwork", "linkedin", "remote-work", "the-futur", "pricing"],
     body: [
       createBlock("Competing in low-budget local client pools leads straight to creative exhaustion and burnout. By redirecting that exact effort toward international startups and scaleups, professionals routinely secure $40–$80/hr rates or $2,000–$5,000 fixed scopes.", "normal"),
@@ -279,21 +272,18 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Upwork Research Institute – 'Freelance Forward Global Report'.", "normal")
     ],
     body_az: [
-      createBlock("Yerli bazarda 150 AZN üçün 10 dəfə düzəliş tələb edən müştəri ilə işləmək insanı tükəndirir (burnout). Halbuki eyni vaxtı və enerjini ABŞ və Avropadakı startaplara sərf etməklə saatı 40-70$ və ya layihə başına 2000-5000$ qazanmaq mümkündür.", "normal"),
-      createBlock("1. Ucuz Qiymətlə Rəqabət Aparmaq Tələsi", "h3"),
-      createBlock("Qlobal müştəri saatı 8$ olan profili görəndə keyfiyyətsiz işdən şübhələnir. Onlar üçün əsas məsələ vaxta qənaət və problemin birdəfəlik həllidir.", "normal"),
-      createBlock("2. Upwork-də İş Qazandıran 4 Pilləli Şablon:", "h3"),
-      createBlock("1. **1-ci Abzas:** Birbaşa müştərinin probleminə toxunuş (Adınızı tərifləmədən).", "normal"),
-      createBlock("2. **2-ci Abzas:** Həll yolu və 90 saniyəlik qısa Loom video linki.", "normal"),
-      createBlock("3. **3-cü Abzas:** Bənzər bir layihədə əldə edilən konkret nəticə (+35% konversiya).", "normal"),
-      createBlock("4. **4-cü Abzas:** Aşağı riskli çağırış (10 dəqiqəlik qısa tanışlıq zəngi).", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Do, C. (The Futur) – \"Pricing Design & The Psychology of Value\".", "normal"),
-      createBlock("2. Upwork Research Institute – \"Freelance Forward Global Report\".", "normal")
+      createBlock("Yerli bazarda kiçik büdcəli müştərilərlə işləmək insanı tez tükəndirir. Eyni vaxtı və enerjini qlobal startaplara sərf etməklə saatı 40-70$ və ya layihə başına 2000-5000$ qazanmaq tamamilə realdır.", "normal"),
+      createBlock("1. Ucuz Qiymətlə Rəqabət Tələsi", "h3"),
+      createBlock("Qlobal müştəri saatı 8$ olan profili görəndə keyfiyyətsiz işdən şübhələnir. Onlar üçün əsas məsələ vaxta qənaət və problemin birdəfəlik peşəkar həllidir.", "normal"),
+      createBlock("2. Upwork-də 4 Pilləli Proposal Modeli:", "h3"),
+      createBlock("1. **1-ci Cümlə:** Birbaşa müştərinin problemini vurğulamaq (adınızı tərifləmədən).", "normal"),
+      createBlock("2. **2-ci Cümlə:** Qısa 90 saniyəlik fərdi Loom video izahı.", "normal"),
+      createBlock("3. **3-cü Cümlə:** Əvvəlki layihədə əldə edilən konkret nəticə (+35% konversiya).", "normal"),
+      createBlock("4. **4-cü Cümlə:** Sadə 10 dəqiqəlik tanışlıq zəngi təklifi.", "normal")
     ],
     seo: {
-      metaTitle: "Global Freelancing Blueprint: Securing $40+/hr Contracts | Rvan.me",
-      metaDescription: "Breaking free from local salary ceilings. The Futur pricing frameworks, high-converting cold proposal architecture, and LinkedIn client acquisition.",
+      metaTitle: "Qlobal Frilansda Saatı $40+: Upwork və LinkedIn Satış Skripti | Rvan.me",
+      metaDescription: "Yerli bazarın büdcə limitlərindən çıxış yolu. The Futur metodologiyası, qlobal müştəriyə təsir edən Proposal şablonu və LinkedIn Inbound satış sistemi.",
       canonicalUrl: "https://www.rvan.me/blog/global-freelancing-upwork-linkedin-40-dollar-hour"
     }
   },
@@ -301,8 +291,8 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 05. Resumes Rejected in 6 Seconds ──
   {
     _id: "blog-masterclass-cv-niye-6-saniyede-red-edilir-ats-sistemleri",
-    title: "Why Resumes Get Rejected in 6 Seconds: Harvard Research & Decoding ATS Algorithms",
-    title_az: "CV-niz Niyə 6 Saniyədə Zibil Qutusuna Gedir? Harvard Tədqiqatı və ATS (Applicant Tracking System) Alqoritmlərinin Şifrəsi",
+    title: "Why Resumes Get Rejected in 6s: ATS Secrets & Google XYZ",
+    title_az: "CV-lər Niyə 6 Saniyədə Rədd Olur? ATS Robotları və Google Formulu",
     slug: { _type: "slug", current: "why-resumes-get-rejected-in-6-seconds-ats-secrets" },
     slug_az: { _type: "slug", current: "cv-niye-6-saniyede-red-edilir-ats-sistemleri" },
     originalSlug: "cv-niye-6-saniyede-red-edilir-ats-sistemleri",
@@ -318,6 +308,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "18 Avqust 2026",
     readTime: "8 min read",
     featured: false,
+    authorName: "Aysel Mammadova",
+    authorRole: "Senior Talent Partner & Executive Recruiter",
+    authorSlug: "aysel-mammadova",
     tags: ["career", "resume", "ats", "hiring", "recruitment", "google-xyz"],
     body: [
       createBlock("Harvard Business School's 'Hidden Workers' study reveals that over 75% of resumes submitted to mid-and-large tier companies are automatically eliminated by Applicant Tracking Systems (ATS) without ever being viewed by a human recruiter.", "normal"),
@@ -331,19 +324,16 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. The Ladders Eye-Tracking Heatmap Study.", "normal")
     ],
     body_az: [
-      createBlock("Harvard Business School-un \"Hidden Workers\" adlı qlobal tədqiqatı göstərir ki, böyük şirkətlərə daxil olan CV-lərin 75%-dən çoxu insan tərəfindən oxunmadan, birbaşa avtomatlaşdırılmış ATS proqramları tərəfindən rədd edilir.", "normal"),
+      createBlock("Harvard araşdırması göstərir ki, şirkətlərə daxil olan CV-lərin 75%-dən çoxu insan tərəfindən oxunmadan, birbaşa avtomatlaşdırılmış ATS proqramları tərəfindən rədd edilir.", "normal"),
       createBlock("1. Canva Dizaynları Niyə Keçmir?", "h3"),
-      createBlock("2 sütunlu mürəkkəb dizaynlar, qrafik barlar və şəkillər ATS robotlarının mətni parçalamasına (parsing) mane olur və CV avtomatik arxivə gedir.", "normal"),
-      createBlock("2. Google-un \"XYZ Formulu\" ilə Təcrübə Yazmaq:", "h3"),
+      createBlock("2 sütunlu qrafik dizaynlar və şəkillər ATS robotlarının mətni oxumasına mane olur və namizəd avtomatik arxivə gedir.", "normal"),
+      createBlock("2. Google-un 'XYZ Formulu'", "h3"),
       createBlock("\"Mən [Z] tətbiq edərək [Y] nəticəsini əldə etdim və bu [X] metrikayla ölçüldü.\"", "blockquote"),
-      createBlock("Nümunə: \"Yeni vizual dildən və Reels strategiyasından istifadə edərək (Z), şirkətin Instagram satışlarını 4 ayda 35% artırdım (X) və aylıq gəlirə 4000 AZN əlavə töhfə verdim (Y).\"", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Harvard Business School – \"Hidden Workers: Untapped Talent\".", "normal"),
-      createBlock("2. The Ladders Eye-Tracking Study.", "normal")
+      createBlock("Nümunə: \"Yeni vizual dildən istifadə edərək (Z), şirkətin satışlarını 4 ayda 35% artırdım (X) və aylıq gəlirə 4000 AZN əlavə töhfə verdim (Y).\"", "normal")
     ],
     seo: {
-      metaTitle: "Why Resumes Get Rejected in 6 Seconds: Decoding ATS Systems | Rvan.me",
-      metaDescription: "Why 75% of resumes are discarded before human screening. Canva layout pitfalls, The Ladders eye-tracking heatmaps, and Google's XYZ impact formula.",
+      metaTitle: "CV-lər Niyə 6 Saniyədə Rədd Olur? ATS Robotları və Google Formulu | Rvan.me",
+      metaDescription: "CV-lərin 75%-i niyə insan görmədən rədd edilir? Canva tələsi, The Ladders araşdırması və Google-un məşhur XYZ formulu.",
       canonicalUrl: "https://www.rvan.me/blog/why-resumes-get-rejected-in-6-seconds-ats-secrets"
     }
   },
@@ -351,8 +341,8 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 06. Who Will AI Really Replace? ──
   {
     _id: "blog-masterclass-sunii-intellekt-kimleri-issiz-qoyacaq-mit-stanford",
-    title: "Who Will AI Really Replace? MIT & Stanford Studies on Career Automation vs. Hybrid Leverage",
-    title_az: "Süni İntellekt (AI) Əslində Kimləri İşsiz Qoyacaq? MIT və Stanford Universitetlərinin 2024-2026 Tədqiqatları və Karyera Sığortası",
+    title: "Who Will AI Really Replace? MIT & Stanford Studies",
+    title_az: "AI Kimləri İşsiz Qoyacaq? MIT və Stanford Araşdırması",
     slug: { _type: "slug", current: "who-will-ai-replace-mit-stanford-studies" },
     slug_az: { _type: "slug", current: "sunii-intellekt-kimleri-issiz-qoyacaq-mit-stanford" },
     originalSlug: "sunii-intellekt-kimleri-issiz-qoyacaq-mit-stanford",
@@ -368,6 +358,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "16 Avqust 2026",
     readTime: "9 min read",
     featured: false,
+    authorName: "Kamran Huseynov",
+    authorRole: "AI Systems Architect & Tech Lead",
+    authorSlug: "kamran-huseynov",
     tags: ["ai", "future-of-work", "mit", "stanford", "automation", "productivity"],
     body: [
       createBlock("Controlled trials by MIT economists Shakked Noy and Whitney Zhang demonstrate that knowledge workers leveraging AI complete core deliverables 37% faster with an 18% improvement in output quality.", "normal"),
@@ -378,16 +371,13 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Stanford HAI – Artificial Intelligence Index Report 2024.", "normal")
     ],
     body_az: [
-      createBlock("MIT iqtisadçıları Şakked Noy və Uitni Janq tərəfindən aparılan eksperiment göstərdi ki, AI alətlərindən istifadə edən mütəxəssislər işlərini 37% daha sürətli və 18% daha keyfiyyətli tamamlayırlar.", "normal"),
-      createBlock("Süni intellekt sizin yerinizi tutmayacaq. Amma süni intellektdən istifadə edərək işini 2 qat sürətləndirən bir mütəxəssis, köhnə üsullarla işləyən həmkarını bazardan sıxışdırıb çıxaracaq.", "normal"),
-      createBlock("Əsl kritik bacarıq \"Prompt yazmaq\" deyil, \"Domen Ekspertizası\" (Sahə biliyi) olacaq.", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Noy, S., & Zhang, W. (MIT) – Science, 2023.", "normal"),
-      createBlock("2. Stanford HAI – Artificial Intelligence Index Report 2024.", "normal")
+      createBlock("MIT tədqiqatı göstərdi ki, AI alətlərindən istifadə edən mütəxəssislər işlərini 37% daha sürətli və 18% daha keyfiyyətli tamamlayırlar.", "normal"),
+      createBlock("Süni intellekt insanları əvəz etməyəcək. Amma süni intellektdən istifadə edərək işini 2 qat sürətləndirən bir mütəxəssis, köhnə üsullarla işləyən həmkarını bazardan sıxışdırıb çıxaracaq.", "normal"),
+      createBlock("Əsl kritik bacarıq sadəcə 'Prompt yazmaq' deyil, 'Domen Ekspertizası' olacaq.", "normal")
     ],
     seo: {
-      metaTitle: "Who Will AI Really Replace? MIT & Stanford Future of Work Studies | Rvan.me",
-      metaDescription: "Does AI destroy jobs or redistribute value? Insights from MIT's 453-professional benchmark study and high-earning hybrid skill stacks.",
+      metaTitle: "AI Kimləri İşsiz Qoyacaq? MIT və Stanford Araşdırması | Rvan.me",
+      metaDescription: "AI iş yerlərini yox edir, yoxsa yenidən bölüşdürür? MIT-nin 453 mütəxəssis üzərindəki eksperimenti və gələcəyin ən yüksək qazanclı hibrid bacarıqları.",
       canonicalUrl: "https://www.rvan.me/blog/who-will-ai-replace-mit-stanford-studies"
     }
   },
@@ -395,15 +385,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 07. Self-Taught UI/UX Roadmap ──
   {
     _id: "blog-masterclass-sifirdan-ui-ux-dizayn-oyrenmek-6-ayliq-xerite",
-    title: "Mastering UI/UX from Scratch Without Expensive Bootcamps: A 6-Month Self-Taught Roadmap",
-    title_az: "Kurslara 1500 AZN Xərcləmədən Sıfırdan UI/UX Dizayneri Olmaq: 6 Aylıq Özünütəhsil Yol Xəritəsi",
+    title: "Self-Taught UI/UX in 6 Months: The Free Roadmap",
+    title_az: "Sıfırdan UI/UX Dizayneri Olmaq: 6 Aylıq Pulsuz Yol Xəritəsi",
     slug: { _type: "slug", current: "self-taught-ui-ux-designer-6-month-roadmap" },
     slug_az: { _type: "slug", current: "sifirdan-ui-ux-dizayn-oyrenmek-6-ayliq-xerite" },
     originalSlug: "sifirdan-ui-ux-dizayn-oyrenmek-6-ayliq-xerite",
     category: "Design & Education",
     category_az: "Təhsil & Dizayn",
     excerpt: "How to transition into product design using open resources. Josh Kaufman's 20-hour accelerated acquisition model, Figma workflow mastery, and engineering two standout case studies.",
-    excerpt_az: "YouTube və pulsuz resurslarla 6 aya necə peşəkar dizayner olmaq olar? Josh Kaufman-ın sürətli öyrənmə metodu, Figma ustalığı və 2 güclü Case Study formulu.",
+    excerpt_az: "Pulsuz resurslarla 6 aya necə peşəkar dizayner olmaq olar? Josh Kaufman-ın sürətli öyrənmə metodu, Figma ustalığı və 2 güclü Case Study formulu.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -412,6 +402,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "14 Avqust 2026",
     readTime: "10 min read",
     featured: false,
+    authorName: "Nigar Rustamli",
+    authorRole: "Product Designer & Design Systems Educator",
+    authorSlug: "nigar-rustamli",
     tags: ["uiux", "figma", "product-design", "self-education", "portfolio", "roadmap"],
     body: [
       createBlock("The majority of commercial bootcamps repackage open-access documentation into overpriced modules. With a structured self-directed roadmap, any driven individual can reach hireable junior/mid-level proficiency in 6 months.", "normal"),
@@ -424,18 +417,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Yablonski, J. – 'Laws of UX'.", "normal")
     ],
     body_az: [
-      createBlock("Kursların 85%-i sadəcə YouTube-da pulsuz olan məlumatları şablon slaydlarla satır. Düzgün yol xəritəsi ilə 6 aya sıfırdan güclü mütəxəssisə çevrilmək mümkündür.", "normal"),
-      createBlock("6 Aylıq Plan:", "h3"),
+      createBlock("Bahalı kursların əksəriyyəti sadəcə internetdə pulsuz olan məlumatları təkrar edir. Düzgün planla 6 aya güclü mütəxəssisə çevrilmək mümkündür.", "normal"),
+      createBlock("6 Aylıq Dəqiq Plan:", "h3"),
       createBlock("* **1-2-ci Ay:** Qeştalt Psixologiyası, Tipoqrafika, 60-30-10 Rəng Qaydası, Figma Auto Layout və Components.", "normal"),
-      createBlock("* **3-4-cü Ay:** Klonlama (Reverse Engineering) və Laws of UX insan psixologiyası qanunları.", "normal"),
-      createBlock("* **5-6-cı Ay:** Real yerli problemi həll edən 2 dərindən işlənmiş Case Study.", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Kaufman, J. – \"The First 20 Hours\".", "normal"),
-      createBlock("2. Yablonski, J. – \"Laws of UX\".", "normal")
+      createBlock("* **3-4-cü Ay:** Klonlama (Reverse Engineering) və Laws of UX psixologiyası.", "normal"),
+      createBlock("* **5-6-cı Ay:** Real biznes problemini həll edən 2 güclü Case Study.", "normal")
     ],
     seo: {
-      metaTitle: "Mastering UI/UX from Scratch Without Expensive Bootcamps | Rvan.me",
-      metaDescription: "How to transition into product design using open resources. Josh Kaufman's 20-hour accelerated acquisition model and Figma workflow mastery.",
+      metaTitle: "Sıfırdan UI/UX Dizayneri Olmaq: 6 Aylıq Pulsuz Yol Xəritəsi | Rvan.me",
+      metaDescription: "Pulsuz resurslarla 6 aya necə peşəkar dizayner olmaq olar? Josh Kaufman-ın metodu, Figma ustalığı və 2 güclü Case Study formulu.",
       canonicalUrl: "https://www.rvan.me/blog/self-taught-ui-ux-designer-6-month-roadmap"
     }
   },
@@ -443,15 +433,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 08. No-Code Framer Monetization ──
   {
     _id: "blog-masterclass-kod-yazmadan-sayt-yigib-satmaq-framer-no-code",
-    title: "Building & Selling Websites for $500–$1,500 Without Code: The Framer & Figma Monetization Blueprint",
-    title_az: "Kod Yazmadan Veb-Sayt Yığıb 500 – 1500 AZN-ə Satmaq: Framer və Figma ilə \"No-Code\" Gəlir Modeli",
+    title: "Selling No-Code Websites for $1,500: Framer & Figma",
+    title_az: "Kodsüz Veb-Sayt Qurub Satmaq: Framer və Figma Modeli",
     slug: { _type: "slug", current: "building-selling-no-code-websites-framer-figma" },
     slug_az: { _type: "slug", current: "kod-yazmadan-sayt-yigib-satmaq-framer-no-code" },
     originalSlug: "kod-yazmadan-sayt-yigib-satmaq-framer-no-code",
     category: "No-Code & Web Development",
     category_az: "No-Code & Veb",
     excerpt: "Gartner's projection that 70% of new applications will be no-code. The Figma-to-Framer production pipeline and direct outreach scripts for selling high-converting landing pages.",
-    excerpt_az: "Gartner-in 70%-lik No-Code proqnozu. Figma-dan Framer-ə 3 addımlıq istehsal zənciri və yerli bizneslərə Landing Page satmağın dəqiq skripti.",
+    excerpt_az: "Gartner-in 70%-lik No-Code proqnozu. Figma-dan Framer-ə 3 addımlıq istehsal zənciri və bizneslərə Landing Page satmağın dəqiq skripti.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -460,6 +450,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "12 Avqust 2026",
     readTime: "9 min read",
     featured: false,
+    authorName: "Elvin Gasimov",
+    authorRole: "No-Code Architect & Frontend Consultant",
+    authorSlug: "elvin-gasimov",
     tags: ["framer", "no-code", "web-development", "figma-to-framer", "freelance"],
     body: [
       createBlock("Gartner forecasts that over 70% of new enterprise and commercial web applications will be assembled using Low-Code / No-Code infrastructure.", "normal"),
@@ -473,19 +466,16 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Framer Documentation & Case Studies.", "normal")
     ],
     body_az: [
-      createBlock("Gartner-in proqnozuna görə, 2026-cı ilə qədər dünyada yaradılan yeni tətbiq və saytların 70%-dən çoxu No-Code və Low-Code alətləri ilə hazırlanacaq.", "normal"),
-      createBlock("Tək bir dizayner 1 sətr kod yazmadan Figma dizaynını 2 gün ərzində işlək, animasiyalı və SEO-dostu Framer saytına çevirib 500 - 1500 AZN-ə sata bilər.", "normal"),
+      createBlock("Gartner-in proqnozuna görə, dünyada yeni tətbiq və saytların 70%-dən çoxu No-Code alətləri ilə hazırlanacaq.", "normal"),
+      createBlock("Tək bir dizayner 1 sətr kod yazmadan Figma dizaynını 2 gün ərzində işlək, animasiyalı və sürətli Framer saytına çevirib 500 - 1500 AZN-ə sata bilər.", "normal"),
       createBlock("3 Addımlıq Zəncir:", "h3"),
-      createBlock("1. **Figma:** Auto Layout ilə dizayn.", "normal"),
-      createBlock("2. **Framer Plugin:** \"Figma to Framer\" ilə birbaşa kopyalama.", "normal"),
-      createBlock("3. **İnteraktivlik:** Scroll effektləri və əlaqə formaları.", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Gartner Research – Forecast Analysis: No-Code Development.", "normal"),
-      createBlock("2. Framer Documentation & Case Studies.", "normal")
+      createBlock("1. **Figma:** Auto Layout ilə struktur.", "normal"),
+      createBlock("2. **Framer Plugin:** 'Figma to Framer' ilə birbaşa kopyalama.", "normal"),
+      createBlock("3. **İnteraktivlik:** Scroll effektləri və inteqrasiya olunmuş formalar.", "normal")
     ],
     seo: {
-      metaTitle: "Building & Selling Websites Without Code: Framer & Figma | Rvan.me",
-      metaDescription: "Gartner's 70% no-code projection. The Figma-to-Framer production pipeline and outreach scripts for selling high-converting landing pages.",
+      metaTitle: "Kodsüz Veb-Sayt Qurub Satmaq: Framer və Figma Modeli | Rvan.me",
+      metaDescription: "Gartner-in 70%-lik No-Code proqnozu. Figma-dan Framer-ə 3 addımlıq istehsal zənciri və bizneslərə Landing Page satmağın dəqiq skripti.",
       canonicalUrl: "https://www.rvan.me/blog/building-selling-no-code-websites-framer-figma"
     }
   },
@@ -493,8 +483,8 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 09. Value Audit Client Acquisition ──
   {
     _id: "blog-masterclass-0-tecrube-ile-ilk-1000-azn-deyer-auditi-metodu",
-    title: "Landing Your First $1,000 Client with Zero Experience: The Value Audit Outreach Framework",
-    title_az: "0 Təcrübə və Portfelio Olmadan İlk 1000 AZN-i Qazanmaq: \"Dəyər Auditi\" Metodu ilə Müştəri Tapmağın Dəqiq Planı",
+    title: "Landing Your First $1,000 Client: The Value Audit Method",
+    title_az: "0 Təcrübə ilə İlk $1,000 Müştəri: Dəyər Auditi Strategiyası",
     slug: { _type: "slug", current: "landing-first-client-zero-experience-value-audit" },
     slug_az: { _type: "slug", current: "0-tecrube-ile-ilk-1000-azn-deyer-auditi-metodu" },
     originalSlug: "0-tecrube-ile-ilk-1000-azn-deyer-auditi-metodu",
@@ -510,6 +500,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "10 Avqust 2026",
     readTime: "9 min read",
     featured: false,
+    authorName: "Ravan Mammadov",
+    authorRole: "Founder & Creative Director",
+    authorSlug: "ravan-mammadov",
     tags: ["client-acquisition", "freelance", "sales", "alex-hormozi", "value-audit", "business"],
     body: [
       createBlock("Clients never buy 'design services' or 'code snippets'; business owners invest exclusively in removing friction from their commercial engine.", "normal"),
@@ -523,19 +516,16 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Kennedy, D. – 'No B.S. Direct Marketing'.", "normal")
     ],
     body_az: [
-      createBlock("İnsanlar heç vaxt \"loqo\" və ya \"kod\" almaq istəmirlər; insanlar öz problemlərindən qurtulmaq istəyirlər.", "normal"),
+      createBlock("İnsanlar heç vaxt sadəcə 'loqo' və ya 'kod' almaq istəmirlər; biznes sahibləri problemlərindən qurtulmaq istəyirlər.", "normal"),
       createBlock("\"Dəyər Auditi\" Addımları:", "h3"),
       createBlock("1. Yaxşı gəlirli 10 yerli biznes seçin.", "normal"),
-      createBlock("2. Onların saytında və ya reklamındakı 2 kritik səhvi tapın.", "normal"),
-      createBlock("3. Həmin səhvi düzəldib 2 dəqiqəlik Loom videosu ilə sahibkara pulsuz göndərin.", "normal"),
-      createBlock("15 fərdiləşdirilmiş mesajdan ən az 2-si aylıq 500 AZN-lik xidmət müqaviləsinə çevrilir.", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Hormozi, A. – \"$100M Leads\".", "normal"),
-      createBlock("2. Kennedy, D. – \"No B.S. Direct Marketing\".", "normal")
+      createBlock("2. Onların saytındakı 2 kritik problemi tapın.", "normal"),
+      createBlock("3. Həmin problemi düzəldib 2 dəqiqəlik Loom videosu ilə sahibkara göndərin.", "normal"),
+      createBlock("15 fərdiləşdirilmiş mesajdan ən az 2-si aylıq 500-1000 AZN-lik müqaviləyə çevrilir.")
     ],
     seo: {
-      metaTitle: "Landing Your First $1,000 Client with Zero Experience: Value Audit | Rvan.me",
-      metaDescription: "Alex Hormozi's '$100M Leads' core principles. Replacing generic service pitches with 2-minute async Loom revenue audits.",
+      metaTitle: "0 Təcrübə ilə İlk $1,000 Müştəri: Dəyər Auditi Strategiyası | Rvan.me",
+      metaDescription: "Aleks Hormozinin '$100M Leads' prinsipləri. Xidmət satmaq yerinə biznesin itirdiyi pulu göstərən 2 dəqiqəlik Loom audit strategiyası.",
       canonicalUrl: "https://www.rvan.me/blog/landing-first-client-zero-experience-value-audit"
     }
   },
@@ -543,15 +533,15 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
   // ── 10. Digital Products & Passive Income ──
   {
     _id: "blog-masterclass-reqemsal-sablonlar-sataraq-passiv-gelir-gumroad",
-    title: "Generating Passive Income with Digital Design Assets: The 4-Step Framework for Figma, Notion & Canva",
-    title_az: "Yatarkən Dollar Qazanmaq: Rəqəmsal Şablonlar (Figma, Notion, Canva) Sataraq Passiv Gəlir Qurmağın 4 Addımı",
+    title: "Passive Income with Digital Assets: Figma & Notion Systems",
+    title_az: "Rəqəmsal Şablonlarla Passiv Gəlir: Figma və Notion Modeli",
     slug: { _type: "slug", current: "passive-income-digital-templates-figma-notion" },
     slug_az: { _type: "slug", current: "reqemsal-sablonlar-sataraq-passiv-gelir-gumroad" },
     originalSlug: "reqemsal-sablonlar-sataraq-passiv-gelir-gumroad",
     category: "Digital Products & Passive Income",
     category_az: "Passiv Gəlir & Məhsul",
     excerpt: "Naval Ravikant's permissionless leverage philosophy. Building recurring digital revenue streams with Figma UI kits, Framer components, and modular Notion operating systems.",
-    excerpt_az: "Naval Ravikantın 'İcazəsiz Leverec' fəlsəfəsi. Figma UI Kit, Framer Template və Notion şablonları ilə aylıq 500-2000$ passiv gəlir qurmaq.",
+    excerpt_az: "Naval Ravikantın 'İcazəsiz Leverec' fəlsəfəsi. Figma UI Kit, Framer Template və Notion şablonları ilə aylıq $500-2000 passiv gəlir qurmaq.",
     coverImage: {
       _type: "image",
       url: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&h=675&fit=crop&auto=format&q=80",
@@ -560,6 +550,9 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
     publishDate: "08 Avqust 2026",
     readTime: "9 min read",
     featured: false,
+    authorName: "Farid Jafarov",
+    authorRole: "Design Systems Lead & Creator",
+    authorSlug: "farid-jafarov",
     tags: ["passive-income", "gumroad", "figma-templates", "notion-templates", "naval-ravikant", "digital-products"],
     body: [
       createBlock("Naval Ravikant: 'If you don't find a way to make money while you sleep, you will work until you die.'", "normal"),
@@ -574,20 +567,17 @@ export const ARTICLES_VIRAL_MASTERCLASS: BlogPost[] = [
       createBlock("2. Gumroad Creator Economics Report 2024.", "normal")
     ],
     body_az: [
-      createBlock("Naval Ravikant: \"Siz yatarkən pul qazanmağın yolunu tapmasanız, ölənə qədər işləməyə məhkumsunuz.\"", "normal"),
+      createBlock("Naval Ravikant: \"Siz yatarkən pul qazanmağın yolunu tapmasanız, hər zaman vaxtınızı satmaq məcburiyyətində qalacaqsınız.\"", "normal"),
       createBlock("Rəqəmsal məhsulun marjası 95%-dən yüksəkdir: 1 dəfə yarat, minlərlə dəfə sat.", "normal"),
       createBlock("Ən Çox Tələbat Olan 3 Məhsul:", "h3"),
-      createBlock("1. **Figma UI Kit & Dizayn Sistemləri** (30-80$)", "normal"),
-      createBlock("2. **Framer & Webflow Şablonları** (49-99$)", "normal"),
-      createBlock("3. **Notion Məhsuldarlıq Şablonları** (10-30$)", "normal"),
-      createBlock("Satış platformaları: Gumroad, Lemon Squeezy, Framer Template Marketplace.", "normal"),
-      createBlock("Mənbələr:", "h3"),
-      createBlock("1. Ravikant, N. – \"How to Get Rich Without Getting Lucky\".", "normal"),
-      createBlock("2. Gumroad Creator Economics Report 2024.", "normal")
+      createBlock("1. **Figma UI Kit & Dizayn Sistemləri** ($30-80)", "normal"),
+      createBlock("2. **Framer & Webflow Şablonları** ($49-99)", "normal"),
+      createBlock("3. **Notion Məhsuldarlıq Sistemləri** ($10-30)", "normal"),
+      createBlock("Satış platformaları: Gumroad, Lemon Squeezy, Framer Marketplace.")
     ],
     seo: {
-      metaTitle: "Generating Passive Income with Digital Design Assets | Rvan.me",
-      metaDescription: "Naval Ravikant's permissionless leverage philosophy. Building recurring digital revenue with Figma UI kits and modular Notion systems.",
+      metaTitle: "Rəqəmsal Şablonlarla Passiv Gəlir: Figma və Notion Modeli | Rvan.me",
+      metaDescription: "Naval Ravikantın 'İcazəsiz Leverec' fəlsəfəsi. Figma UI Kit, Framer Template və Notion şablonları ilə aylıq $500-2000 passiv gəlir qurmaq.",
       canonicalUrl: "https://www.rvan.me/blog/passive-income-digital-templates-figma-notion"
     }
   },

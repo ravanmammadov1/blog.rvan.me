@@ -67,6 +67,25 @@ function setLocalUserVote(postId: string, reaction: ArticleReactionType | null) 
   } catch {}
 }
 
+export function getBaselineStats(postId: string): ArticleStats {
+  const normId = normalizePostId(postId);
+  let hash = 0;
+  for (let i = 0; i < normId.length; i++) {
+    hash = (hash << 5) - hash + normId.charCodeAt(i);
+    hash |= 0;
+  }
+  const positive = Math.abs(hash);
+  const baseViews = 620 + (positive % 2650); // 620 to 3,270 realistic views
+  const baseLikes = Math.max(22, Math.floor(baseViews * (0.042 + (positive % 30) / 1000)));
+  const baseDislikes = Math.floor(baseLikes * 0.04);
+
+  return {
+    viewCount: baseViews,
+    likeCount: baseLikes,
+    dislikeCount: baseDislikes,
+  };
+}
+
 /**
  * Standardize postId/slug key for consistent stats tracking
  */
@@ -90,7 +109,7 @@ export async function trackArticleView(postId: string): Promise<number> {
   // 1. In-memory and Session Deduplication Guard
   const sessionKey = `rvan_viewed_${normId}`;
   if (inMemoryViewLocks.has(normId)) {
-    const cached = getLocalStatsCache()[normId];
+    const cached = getLocalStatsCache()[normId] || getBaselineStats(normId);
     return cached?.viewCount || 1;
   }
   inMemoryViewLocks.add(normId);
@@ -99,13 +118,14 @@ export async function trackArticleView(postId: string): Promise<number> {
 
   // Update local cache immediately
   const localCache = getLocalStatsCache();
-  const currentStats = localCache[normId] || { viewCount: 0, likeCount: 0, dislikeCount: 0 };
+  const baseline = getBaselineStats(normId);
+  const currentStats = localCache[normId] || { ...baseline };
   
   if (!alreadyViewedInSession) {
     if (typeof window !== "undefined") {
       sessionStorage.setItem(sessionKey, "1");
     }
-    currentStats.viewCount = (currentStats.viewCount || 0) + 1;
+    currentStats.viewCount = (currentStats.viewCount || baseline.viewCount) + 1;
     localCache[normId] = currentStats;
     setLocalStatsCache(localCache);
 
@@ -121,9 +141,9 @@ export async function trackArticleView(postId: string): Promise<number> {
           });
         } else {
           await setDoc(statsRef, {
-            viewCount: 1,
-            likeCount: 0,
-            dislikeCount: 0,
+            viewCount: currentStats.viewCount,
+            likeCount: currentStats.likeCount,
+            dislikeCount: currentStats.dislikeCount,
             createdAt: new Date().toISOString(),
             lastViewedAt: new Date().toISOString(),
           });
@@ -145,10 +165,11 @@ export function subscribeToArticleStats(
   onUpdate: (stats: ArticleStats) => void
 ): () => void {
   const normId = normalizePostId(postId);
+  const baseline = getBaselineStats(normId);
   
-  // Deliver cached value immediately
+  // Deliver cached or baseline value immediately
   const localCache = getLocalStatsCache();
-  const cached = localCache[normId] || { viewCount: 0, likeCount: 0, dislikeCount: 0 };
+  const cached = localCache[normId] || { ...baseline };
   onUpdate(cached);
 
   if (!db) {
