@@ -58,11 +58,17 @@ export default function BlogHero({ post }: BlogHeroProps) {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="space-y-6 max-w-4xl"
       >
-        {/* Category & Tags Row */}
+        {/* Category, Format & Tags Row */}
         <div className="flex flex-wrap items-center gap-2.5">
           {(post.category || post.category_az) && (
             <span className="rounded-full bg-primary px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-black">
               {language === "az" && post.category_az ? post.category_az : (post.category || post.category_az)}
+            </span>
+          )}
+
+          {post.format && (
+            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-mono font-semibold uppercase tracking-wider text-foreground">
+              {post.format}
             </span>
           )}
 
@@ -83,30 +89,29 @@ export default function BlogHero({ post }: BlogHeroProps) {
           {language === "az" && post.title_az ? post.title_az : post.title}
         </h1>
 
-        {/* Excerpt / Lead Description */}
-        {(post.excerpt || post.excerpt_az) && (
+        {/* Deck / Lead Description */}
+        {(post.deck || post.deck_az || post.excerpt || post.excerpt_az) && (
           <p className="text-base sm:text-lg md:text-xl leading-relaxed text-muted-foreground font-medium">
-            {language === "az" && post.excerpt_az ? post.excerpt_az : (post.excerpt || post.excerpt_az)}
+            {language === "az"
+              ? post.deck_az || post.deck || post.excerpt_az || post.excerpt
+              : post.deck || post.excerpt || post.deck_az || post.excerpt_az}
           </p>
         )}
 
-        {/* Author & Timestamp Bar */}
+        {/* Author / Editorial Desk & Timestamp Bar */}
         <div className="flex flex-wrap items-center gap-6 pt-2 text-xs font-mono text-muted-foreground border-t border-white/10">
-          <Link
-            to={getLocalizedPath(`/author/${post.authorSlug || (post.authorName ? post.authorName.toLowerCase().replace(/[^a-z0-9]+/g, "-") : "ravan-mammadov")}`)}
-            className="group/author flex items-center gap-2.5 hover:text-primary transition-colors"
-          >
-            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs uppercase mono group-hover/author:border-primary">
-              {(post.authorName || "Ravan Mammadov")
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs uppercase mono">
+              {(post.desk || post.authorName || "RM")
                 .split(" ")
                 .map((n) => n[0])
                 .join("")
                 .slice(0, 2)}
             </div>
-            <span className="text-foreground font-semibold group-hover/author:text-primary transition-colors">
-              {post.authorName || (language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov")}
+            <span className="text-foreground font-semibold">
+              {post.desk || post.authorName || (language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov")}
             </span>
-          </Link>
+          </div>
 
           {formattedDate && (
             <div className="flex items-center gap-1.5">

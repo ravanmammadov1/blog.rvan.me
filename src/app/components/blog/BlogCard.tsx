@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calendar, Clock, ArrowRight, Eye } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Eye, Sparkles } from "lucide-react";
 
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
@@ -33,7 +33,7 @@ export default function BlogCard({
   const rawSlug = typeof post.slug === "string" ? post.slug : post.slug?.current || post.originalSlug || post._id || "";
   const slugStr = rawSlug.replace(/^\/?(az\/)?blog\//, "").replace(/^\//, "").replace(/\/+$/, "");
 
-  // Real-time Firestore View Counter (Defaults to 0, always displayed)
+  // Real-time View Counter (Truthfully tracks actual reader views)
   const [views, setViews] = useState<number>(0);
 
   useEffect(() => {
@@ -65,26 +65,24 @@ export default function BlogCard({
   const formattedDate = formatBlogDate(post.publishDate, language);
   const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
 
-  // Author resolution: dynamically resolve author slug and link to /author/:slug
-  const rawAuthorName = post.authorName || post.author?.name || "";
-  const isFounder =
-    !rawAuthorName ||
-    rawAuthorName.toLowerCase().includes("ravan") ||
-    post.authorSlug === "ravan-mammadov" ||
-    post.authorSlug === "ravan";
+  // Author resolution: prioritize transparent Editorial Desks or founder author
+  const rawAuthorName = post.authorName || post.authorRole || "";
+  const displayAuthorName = post.desk
+    ? post.desk
+    : rawAuthorName || (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name);
 
-  const authorSlug = post.authorSlug || (isFounder ? "ravan-mammadov" : slugifyAuthorName(rawAuthorName));
-  const authorName = rawAuthorName || (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name);
-  const authorRole =
-    post.authorRole ||
-    post.author?.role ||
-    (isFounder
-      ? (isAz ? CANONICAL_AUTHOR.role_az : CANONICAL_AUTHOR.role)
-      : (isAz ? "Redaksiya Müəllifi" : "Editorial Contributor"));
+  const authorRole = post.authorRole || (post.format ? `${post.format} Təhlili` : isAz ? "Redaksiya Analizi" : "Editorial Analysis");
+
   const authorAvatar = post.authorPhoto
     ? (typeof post.authorPhoto === "string" ? post.authorPhoto : urlFor(post.authorPhoto)?.url() || CANONICAL_AUTHOR.avatar)
-    : (isFounder ? CANONICAL_AUTHOR.avatar : "");
-  const authorProfileUrl = `/author/${authorSlug}`;
+    : CANONICAL_AUTHOR.avatar;
+
+  const currentTitle = isAz && post.title_az ? post.title_az : post.title;
+  const currentDeck = isAz
+    ? post.deck_az || post.excerpt_az || post.deck || post.excerpt
+    : post.deck || post.excerpt || post.deck_az || post.excerpt_az;
+
+  const categoryLabel = isAz && post.category_az ? post.category_az : (post.category || "Məqalə");
 
   const handleMouseEnter = () => {
     setInternalHovered(true);
@@ -97,7 +95,7 @@ export default function BlogCard({
   };
 
   return (
-    <div
+    <article
       className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.02] dark:hover:bg-white/[0.05] dark:shadow-none dark:hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -111,7 +109,7 @@ export default function BlogCard({
         >
           <img
             src={coverUrl}
-            alt={post.title || "Blog cover"}
+            alt={currentTitle}
             width={1200}
             height={675}
             loading="lazy"
@@ -127,66 +125,60 @@ export default function BlogCard({
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
         </Link>
 
-        {/* Category & Arrow Row */}
-        <div className="mb-4 flex items-center justify-between">
-          <span
-            className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-[10px] font-bold tracking-wider mono uppercase text-primary"
-          >
-            {isAz && post.category_az ? post.category_az : (post.category || "Article")}
-          </span>
+        {/* Category & Format Badges + Action Arrow */}
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-primary">
+              {categoryLabel}
+            </span>
+            {post.format && (
+              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-mono text-muted-foreground uppercase">
+                {post.format}
+              </span>
+            )}
+          </div>
 
           <Link
             to={getLocalizedPath(`/blog/${slugStr}`)}
-            className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-background/60 transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black focus:outline-none shadow-xs"
-            aria-label={`Read ${post.title}`}
+            className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-background/60 transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black focus:outline-none shadow-xs shrink-0"
+            aria-label={`Oxu: ${currentTitle}`}
           >
             <ArrowRight size={13} className="transition-transform group-hover:-rotate-45" />
           </Link>
         </div>
 
-        {/* Article Title */}
-        <h3 className="mb-3 text-xl font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
+        {/* Short, Magnetic Headline (Clean 2 lines, no ellipsis) */}
+        <h3 className="mb-3 text-lg sm:text-xl font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
           <Link to={getLocalizedPath(`/blog/${slugStr}`)} className="focus:outline-none focus-visible:underline">
-            {isAz && post.title_az ? post.title_az : post.title}
+            {currentTitle}
           </Link>
         </h3>
 
-        {/* Short Description */}
-        {(post.excerpt || post.excerpt_az) && (
-          <p className="mb-6 text-xs leading-relaxed text-muted-foreground line-clamp-3 font-medium">
-            {isAz && post.excerpt_az ? post.excerpt_az : post.excerpt}
+        {/* Short Deck (1-2 lines) */}
+        {currentDeck && (
+          <p className="mb-6 text-xs leading-relaxed text-muted-foreground line-clamp-2 font-medium">
+            {currentDeck}
           </p>
         )}
       </div>
 
-      {/* Footer Section: Author + Metadata */}
-      <div className="mt-auto space-y-4 pt-4 border-t border-border/80 dark:border-white/10">
-        {/* Author Details (Avatar + Name + Professional Title) */}
-        <Link
-          to={getLocalizedPath(authorProfileUrl)}
-          className="flex items-center gap-3 group/author hover:opacity-90 transition-opacity focus:outline-none"
-        >
-          <img
-            src={authorAvatar}
-            alt={authorName}
-            className="h-9 w-9 rounded-full object-cover border border-border/80 dark:border-white/20 bg-muted shrink-0"
-            onError={(e) => {
-              (e.currentTarget as HTMLElement).style.display = "none";
-            }}
-          />
+      {/* Footer Section: Editorial Desk + Metadata */}
+      <div className="mt-auto space-y-3 pt-4 border-t border-border/80 dark:border-white/10">
+        {/* Editorial Desk / Author */}
+        <div className="flex items-center gap-2.5">
+          <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-[10px] uppercase mono">
+            {displayAuthorName.slice(0, 2)}
+          </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-foreground group-hover/author:text-primary transition-colors truncate">
-              {authorName}
-            </p>
-            <p className="text-[10px] text-muted-foreground mono truncate">
-              {authorRole}
+            <p className="text-xs font-semibold text-foreground truncate">
+              {displayAuthorName}
             </p>
           </div>
-        </Link>
+        </div>
 
-        {/* Publication Details: Date, Reading Time, Real View Counter (Always Visible) */}
-        <div className="flex items-center justify-between text-[10px] font-bold tracking-wider mono uppercase text-muted-foreground pt-2 border-t border-border/40 dark:border-white/5">
-          <div className="flex items-center gap-3">
+        {/* Publication Date, Reading Time, Genuine Real View Count */}
+        <div className="flex items-center justify-between text-[10px] font-bold tracking-wider mono uppercase text-muted-foreground pt-1 border-t border-border/40 dark:border-white/5">
+          <div className="flex items-center gap-2.5">
             {formattedDate && (
               <span className="flex items-center gap-1">
                 <Calendar size={11} className="text-primary/80" />
@@ -200,13 +192,13 @@ export default function BlogCard({
             </span>
           </div>
 
-          {/* Real View Counter (e.g. 0 views / 1.2k views) */}
+          {/* Real View Counter */}
           <span className="flex items-center gap-1 font-bold text-primary">
             <Eye size={11} />
-            {views.toLocaleString()} {isAz ? "baxış" : "views"}
+            {views > 0 ? `${views.toLocaleString()} ${isAz ? "baxış" : "views"}` : `${isAz ? "Yeni" : "New"}`}
           </span>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

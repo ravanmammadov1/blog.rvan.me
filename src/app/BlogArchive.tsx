@@ -204,19 +204,21 @@ export default function BlogArchive() {
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary mono">
                     <Sparkles size={12} />
-                    {isAz ? "SEÇİLMİŞ TƏDQİQAT" : "FEATURED ESSAY"}
+                    {isAz ? "SEÇİLMİŞ TƏHLİL" : "FEATURED ESSAY"}
                   </span>
                   <span className="text-xs text-muted-foreground mono">
-                    {featuredPost.category}
+                    {isAz && featuredPost.category_az ? featuredPost.category_az : featuredPost.category}
                   </span>
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
-                  {featuredPost.title}
+                  {isAz && featuredPost.title_az ? featuredPost.title_az : featuredPost.title}
                 </h2>
 
                 <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                  {featuredPost.excerpt}
+                  {isAz
+                    ? featuredPost.deck_az || featuredPost.excerpt_az || featuredPost.excerpt
+                    : featuredPost.deck || featuredPost.excerpt || featuredPost.deck_az || featuredPost.excerpt_az}
                 </p>
 
                 <div className="pt-2 flex flex-wrap items-center justify-between gap-4">

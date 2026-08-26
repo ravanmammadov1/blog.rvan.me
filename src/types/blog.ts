@@ -11,6 +11,28 @@ export interface BlogSeo {
   noIndex?: boolean;
 }
 
+export interface BlogSource {
+  title: string;
+  author?: string;
+  year?: string | number;
+  url?: string;
+}
+
+export interface BlogDiscussionPrompt {
+  question: string;
+  question_az?: string;
+  context?: string;
+  context_az?: string;
+}
+
+export interface BlogSocialDrafts {
+  linkedin?: string;
+  instagram?: string;
+  x?: string;
+  telegram?: string;
+  newsletter?: string;
+}
+
 export interface BlogPost {
   _id: string;
   title: string;
@@ -21,12 +43,18 @@ export interface BlogPost {
   azSlug?: string;
   excerpt: string;
   excerpt_az?: string;
+  deck?: string;
+  deck_az?: string;
   body: any[];
   body_az?: any[];
   publishDate: string;
   readTime: string;
   category: string;
   category_az?: string;
+  desk?: string;
+  desk_az?: string;
+  format?: "Analiz" | "Bələdçi" | "Keys" | "Tədqiqat" | "Fikir";
+  cluster?: "career" | "design" | "marketing" | "ai" | "strategy";
   tags?: string[];
   tag?: string[];
   featured?: boolean;
@@ -37,5 +65,9 @@ export interface BlogPost {
   authorPhoto?: any;
   authorBio?: string;
   status?: "draft" | "review" | "published";
+  discussionPrompt?: BlogDiscussionPrompt;
+  sources?: BlogSource[];
+  relatedSlugs?: string[];
+  socialDrafts?: BlogSocialDrafts;
   seo?: BlogSeo;
 }

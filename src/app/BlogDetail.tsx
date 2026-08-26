@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen, ExternalLink } from "lucide-react";
 
 import { fetchSiteSettings, fetchBlogBySlug, fetchAllBlogs } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
 import { BlogPost } from "../types/blog";
 import { useLanguage } from "../lib/i18n/LanguageContext";
-import { trackArticleView } from "../services/articleStatsService";
+import { trackArticleView, trackReadingProgress } from "../services/articleStatsService";
+import { captureTrafficAttribution } from "../services/attributionService";
 
 import SEO from "./components/SEO";
 import SiteHeader from "./components/SiteHeader";
@@ -17,21 +18,29 @@ import BlogContent from "./components/blog/BlogContent";
 import TableOfContents from "./components/blog/TableOfContents";
 import AuthorCard from "./components/blog/AuthorCard";
 import ArticleReactions from "./components/blog/ArticleReactions";
+import DiscussionTrigger from "./components/blog/DiscussionTrigger";
 import RelatedPosts from "./components/blog/RelatedPosts";
 import CommentSection from "./components/CommentSection";
 import GlobalFaqSection from "./components/GlobalFaqSection";
 import { Button } from "./components/ui/Button";
+import { urlFor } from "../lib/sanityClient";
 
 export default function BlogDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { t, getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [post, setPost] = useState<BlogPost | null>(null);
   const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Capture UTM traffic attribution once on page load
+  useEffect(() => {
+    captureTrafficAttribution();
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -83,6 +92,7 @@ export default function BlogDetail() {
         if (foundPost) {
           setPost(foundPost);
           trackArticleView(foundPost._id || foundPost.slug?.current || cleanSlug);
+          trackReadingProgress(foundPost._id || foundPost.slug?.current || cleanSlug, "start");
         } else {
           setError(t("articleNotFound", "Article Not Found"));
         }
@@ -93,6 +103,27 @@ export default function BlogDetail() {
       })
       .finally(() => setLoading(false));
   }, [slug, language, t]);
+
+  // Track scroll depth milestones (25%, 50%, 75%, 100%)
+  useEffect(() => {
+    if (!post) return;
+    const trackingId = post.slug?.current || post.originalSlug || post._id;
+    if (!trackingId) return;
+
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) return;
+      const progress = (window.scrollY / scrollHeight) * 100;
+
+      if (progress >= 25 && progress < 50) trackReadingProgress(trackingId, 25);
+      else if (progress >= 50 && progress < 75) trackReadingProgress(trackingId, 50);
+      else if (progress >= 75 && progress < 95) trackReadingProgress(trackingId, 75);
+      else if (progress >= 95) trackReadingProgress(trackingId, 100);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [post]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -151,9 +182,9 @@ export default function BlogDetail() {
 
   const postTrackingId = post.slug?.current || post.originalSlug || post._id || "";
 
-  const currentTitle = language === "az" && post.title_az ? post.title_az : post.title;
-  const currentExcerpt = language === "az" && post.excerpt_az ? post.excerpt_az : post.excerpt;
-  const activeBody = language === "az" && post.body_az ? post.body_az : (post.body || post.body_az);
+  const currentTitle = isAz && post.title_az ? post.title_az : post.title;
+  const currentExcerpt = isAz ? (post.deck_az || post.excerpt_az || post.excerpt) : (post.deck || post.excerpt);
+  const activeBody = isAz && post.body_az ? post.body_az : (post.body || post.body_az);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -166,7 +197,7 @@ export default function BlogDetail() {
         url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
-        authorName={post.authorName || "Rvan.me Editorial"}
+        authorName={post.desk || post.authorName || "Rvan.me Editorial"}
         noIndex={post.seo?.noIndex}
       />
 
@@ -185,14 +216,51 @@ export default function BlogDetail() {
 
             <BlogContent post={post} />
 
+            {/* Verified Sources & Literature Section */}
+            {Array.isArray(post.sources) && post.sources.length > 0 && (
+              <section className="rounded-2xl border border-border/80 dark:border-white/10 bg-card/60 dark:bg-white/[0.02] p-6 backdrop-blur-md">
+                <div className="flex items-center gap-2 mb-3 text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                  <BookOpen size={14} className="text-primary" />
+                  <span>{isAz ? "Mənbələr və Ədəbiyyat" : "Sources & Literature"}</span>
+                </div>
+                <ul className="space-y-2 text-xs text-muted-foreground font-mono">
+                  {post.sources.map((src, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-primary font-bold">{i + 1}.</span>
+                      <div>
+                        <span className="text-foreground font-medium">{src.title}</span>
+                        {src.author && <span> — {src.author}</span>}
+                        {src.year && <span> ({src.year})</span>}
+                        {src.url && (
+                          <a
+                            href={src.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 ml-1.5 text-primary hover:underline"
+                          >
+                            <ExternalLink size={10} />
+                          </a>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             {/* Article Like / Dislike Feedback Reaction */}
             <ArticleReactions postId={postTrackingId} postTitle={currentTitle} />
 
-            {/* Author Profile Card */}
+            {/* Author / Editorial Desk Profile Card */}
             <AuthorCard post={post} />
 
-            {/* Genuine Reader Discussion */}
-            <CommentSection postId={postTrackingId} postTitle={post.title} />
+            {/* Provocative Discussion Trigger Prompt */}
+            <DiscussionTrigger prompt={post.discussionPrompt} postTitle={currentTitle} />
+
+            {/* Genuine Reader Discussion Section */}
+            <div id="comments-section">
+              <CommentSection postId={postTrackingId} postTitle={currentTitle} />
+            </div>
 
             {/* Previous / Next Article Navigation */}
             {(prevPost || nextPost) && (
@@ -205,8 +273,8 @@ export default function BlogDetail() {
                     <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
                       ← {t("previousArticle", "PREVIOUS ARTICLE")}
                     </span>
-                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {prevPost.title}
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      {isAz && prevPost.title_az ? prevPost.title_az : prevPost.title}
                     </p>
                   </Link>
                 ) : (
@@ -221,8 +289,8 @@ export default function BlogDetail() {
                     <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
                       {t("nextArticle", "NEXT ARTICLE")} →
                     </span>
-                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {nextPost.title}
+                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      {isAz && nextPost.title_az ? nextPost.title_az : nextPost.title}
                     </p>
                   </Link>
                 ) : (
@@ -243,13 +311,13 @@ export default function BlogDetail() {
               </Button>
             </div>
 
-            {/* Contextual Related Published Articles */}
+            {/* Contextual Related Published Articles (Topic Cluster Internal Loop) */}
             <RelatedPosts currentPost={post} allPosts={allPosts} />
           </div>
 
           {/* Sticky Desktop Aside Sidebar */}
           <aside className="hidden lg:block lg:col-span-4 sticky top-28 space-y-6">
-            <TableOfContents body={post.body} />
+            <TableOfContents body={activeBody} />
           </aside>
         </div>
       </article>
