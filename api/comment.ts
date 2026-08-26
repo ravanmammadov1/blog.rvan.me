@@ -74,7 +74,7 @@ function analyzeComment(authorName: string, authorEmail: string, text: string): 
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Allow OPTIONS preflight for CORS just in case
+  // Allow OPTIONS preflight for CORS
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -102,12 +102,48 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   });
 
   if (req.method === "GET") {
-    const { postId } = req.query;
+    const { postId, all } = req.query;
+
+    // Admin query: fetch all comments
+    if (all === "true" || !postId) {
+      try {
+        const query = `*[_type == "comment"] | order(createdAt desc){
+          _id,
+          postId,
+          authorName,
+          authorEmail,
+          authorPhoto,
+          commentText,
+          status,
+          likes,
+          dislikes,
+          createdAt
+        }`;
+        const comments = await client.fetch(query);
+        return res.status(200).json({ comments: comments || [] });
+      } catch (e: any) {
+        console.warn("Error fetching all comments from Sanity:", e.message);
+        return res.status(200).json({ comments: [] });
+      }
+    }
+
     if (!postId || typeof postId !== "string") {
       return res.status(200).json({ comments: [] });
     }
+
     try {
-      const query = `*[_type == "comment" && (relatedPost._ref == $postId || postId == $postId) && status != "declined"] | order(createdAt desc)`;
+      const query = `*[_type == "comment" && (relatedPost._ref == $postId || postId == $postId) && status != "declined"] | order(createdAt desc){
+        _id,
+        postId,
+        authorName,
+        authorEmail,
+        authorPhoto,
+        commentText,
+        status,
+        likes,
+        dislikes,
+        createdAt
+      }`;
       const comments = await client.fetch(query, { postId });
       return res.status(200).json({ comments: comments || [] });
     } catch (e: any) {
@@ -121,7 +157,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { action, postId, authorName, authorEmail, authorPhoto, commentText, commentId, voteType, reactionType } = req.body || {};
+  const {
+    action,
+    postId,
+    authorName,
+    authorEmail,
+    authorPhoto,
+    commentText,
+    commentId,
+    voteType,
+    reactionType,
+    status: newStatus,
+  } = req.body || {};
 
   try {
     if (action === "submit") {
@@ -159,6 +206,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const result = await client.create(doc);
       return res.status(200).json({ success: true, docId: result._id, status });
+
+    } else if (action === "approve") {
+      if (!commentId) {
+        return res.status(400).json({ error: "Missing commentId for approval." });
+      }
+      const result = await client.patch(commentId).set({ status: "approved" }).commit();
+      return res.status(200).json({ success: true, message: "Comment approved successfully.", comment: result });
+
+    } else if (action === "decline") {
+      if (!commentId) {
+        return res.status(400).json({ error: "Missing commentId for decline." });
+      }
+      const result = await client.patch(commentId).set({ status: "declined" }).commit();
+      return res.status(200).json({ success: true, message: "Comment declined.", comment: result });
+
+    } else if (action === "edit") {
+      if (!commentId || !commentText) {
+        return res.status(400).json({ error: "Missing commentId or commentText for edit." });
+      }
+      const result = await client.patch(commentId).set({ commentText: commentText.trim() }).commit();
+      return res.status(200).json({ success: true, message: "Comment updated successfully.", comment: result });
+
+    } else if (action === "delete") {
+      if (!commentId) {
+        return res.status(400).json({ error: "Missing commentId for deletion." });
+      }
+      await client.delete(commentId);
+      return res.status(200).json({ success: true, message: "Comment deleted successfully." });
 
     } else if (action === "vote") {
       if (!commentId) {
