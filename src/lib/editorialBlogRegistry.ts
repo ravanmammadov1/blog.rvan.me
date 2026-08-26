@@ -7,6 +7,7 @@ import { ARTICLES_01_TO_10 } from "./blogs/articles01to10";
 import { ARTICLES_11_TO_20 } from "./blogs/articles11to20";
 import { ARTICLES_21_TO_30 } from "./blogs/articles21to30";
 import { ARTICLES_31_TO_39 } from "./blogs/articles31to39";
+import { ARTICLES_VIRAL_MASTERCLASS } from "./blogs/articlesViralMasterclass";
 
 /**
  * Master Editorial Blog Registry
@@ -20,6 +21,7 @@ export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   ...ARTICLES_01_TO_10,
   ...ARTICLES_11_TO_20,
   ...ARTICLES_21_TO_30,
+  ...ARTICLES_VIRAL_MASTERCLASS,
   ...ARTICLES_31_TO_39,
 ];
 
