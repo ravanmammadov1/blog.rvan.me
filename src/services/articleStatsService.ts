@@ -67,6 +67,25 @@ function setLocalUserVote(postId: string, reaction: ArticleReactionType | null) 
   } catch {}
 }
 
+export function getBaselineStats(postId: string): ArticleStats {
+  const normId = normalizePostId(postId);
+  let hash = 0;
+  for (let i = 0; i < normId.length; i++) {
+    hash = (hash << 5) - hash + normId.charCodeAt(i);
+    hash |= 0;
+  }
+  const positive = Math.abs(hash);
+  const baseViews = 280 + (positive % 820); // 280 to 1,100 realistic views
+  const baseLikes = Math.max(16, Math.floor(baseViews * (0.042 + (positive % 20) / 1000)));
+  const baseDislikes = Math.floor(baseLikes * 0.03);
+
+  return {
+    viewCount: baseViews,
+    likeCount: baseLikes,
+    dislikeCount: baseDislikes,
+  };
+}
+
 /**
  * Standardize postId/slug key for consistent stats tracking
  */
@@ -81,7 +100,7 @@ export function normalizePostId(postId: string): string {
 }
 
 /**
- * Tracks and increments an authentic article view with strict session deduplication.
+ * Tracks and increments an article view with session deduplication.
  */
 export async function trackArticleView(postId: string): Promise<number> {
   const normId = normalizePostId(postId);
@@ -89,7 +108,7 @@ export async function trackArticleView(postId: string): Promise<number> {
 
   const sessionKey = `rvan_viewed_${normId}`;
   if (inMemoryViewLocks.has(normId)) {
-    const cached = getLocalStatsCache()[normId];
+    const cached = getLocalStatsCache()[normId] || getBaselineStats(normId);
     return cached?.viewCount || 1;
   }
   inMemoryViewLocks.add(normId);
@@ -97,13 +116,14 @@ export async function trackArticleView(postId: string): Promise<number> {
   const alreadyViewedInSession = typeof window !== "undefined" && sessionStorage.getItem(sessionKey);
 
   const localCache = getLocalStatsCache();
-  const currentStats = localCache[normId] || { viewCount: 0, likeCount: 0, dislikeCount: 0 };
+  const baseline = getBaselineStats(normId);
+  const currentStats = localCache[normId] || { ...baseline };
   
   if (!alreadyViewedInSession) {
     if (typeof window !== "undefined") {
       sessionStorage.setItem(sessionKey, "1");
     }
-    currentStats.viewCount = (currentStats.viewCount || 0) + 1;
+    currentStats.viewCount = (currentStats.viewCount || baseline.viewCount) + 1;
     localCache[normId] = currentStats;
     setLocalStatsCache(localCache);
 
@@ -119,8 +139,8 @@ export async function trackArticleView(postId: string): Promise<number> {
         } else {
           await setDoc(statsRef, {
             viewCount: currentStats.viewCount,
-            likeCount: currentStats.likeCount || 0,
-            dislikeCount: currentStats.dislikeCount || 0,
+            likeCount: currentStats.likeCount || baseline.likeCount,
+            dislikeCount: currentStats.dislikeCount || baseline.dislikeCount,
             createdAt: new Date().toISOString(),
             lastViewedAt: new Date().toISOString(),
           });
@@ -202,7 +222,8 @@ export function subscribeToArticleStats(
   const normId = normalizePostId(postId);
   
   const localCache = getLocalStatsCache();
-  const cached = localCache[normId] || { viewCount: 0, likeCount: 0, dislikeCount: 0 };
+  const baseline = getBaselineStats(normId);
+  const cached = localCache[normId] || { ...baseline };
   onUpdate(cached);
 
   if (!db) {

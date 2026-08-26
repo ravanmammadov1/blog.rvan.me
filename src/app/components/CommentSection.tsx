@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { Share2, Check, Copy, Twitter, Linkedin, MessageSquare, ArrowUpDown } from "lucide-react";
 import { Comment } from "../../types/comments";
-import { subscribeToComments, addComment, updateComment, deleteComment } from "../../services/commentService";
+import { subscribeToComments, addComment, updateComment, deleteComment, getCanonicalPostId } from "../../services/commentService";
 import { useAuth } from "../../hooks/useAuth";
 import { useLanguage } from "../../lib/i18n/LanguageContext";
 import CommentForm from "./comments/CommentForm";
@@ -16,6 +16,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
   const { user, userPhoto } = useAuth();
   const { language } = useLanguage();
   const isAz = language === "az";
+  const canonicalPostId = getCanonicalPostId(postId);
 
   const [firestoreComments, setFirestoreComments] = useState<Comment[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -42,7 +43,7 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     return () => observer.disconnect();
   }, []);
 
-  // Real-time Firestore Listener strictly filtered by postId
+  // Real-time listener strictly filtered by postId
   useEffect(() => {
     if (!postId || !isVisible) return;
 
@@ -59,14 +60,14 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     return () => unsubscribe();
   }, [postId, isVisible]);
 
-  // Separate top-level comments and nested replies for this specific article/post (100% genuine user comments)
+  // Separate top-level comments and nested replies for this specific article/post
   const { topLevelComments, repliesMap, totalCount } = useMemo(() => {
     const topLevel: Comment[] = [];
     const replies: Record<string, Comment[]> = {};
     let count = 0;
 
     firestoreComments.forEach((c) => {
-      if (c.postId === postId) {
+      if (getCanonicalPostId(c.postId) === canonicalPostId) {
         count++;
         if (c.parentId) {
           if (!replies[c.parentId]) replies[c.parentId] = [];
