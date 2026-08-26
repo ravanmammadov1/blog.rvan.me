@@ -156,13 +156,14 @@ export default function BlogDetail() {
       <ReadingProgress />
 
       <SEO
-        title={`${post.title} — Rvan.me`}
-        description={post.excerpt || `Read "${post.title}" on Rvan.me — Creative Publication & Knowledge Platform.`}
-        image={coverUrl}
-        url={`https://www.rvan.me/blog/${post.slug?.current || slug}`}
+        title={post.seo?.metaTitle || `${post.title} — Rvan.me`}
+        description={post.seo?.metaDescription || post.excerpt || `Read "${post.title}" on Rvan.me — Creative Publication & Knowledge Platform.`}
+        image={post.seo?.ogImage ? urlFor(post.seo.ogImage)?.width(1200).height(630).url() : coverUrl}
+        url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
         authorName={post.authorName || "Rvan.me Editorial"}
+        noIndex={post.seo?.noIndex}
       />
 
       <SiteHeader siteSettings={siteSettings} />

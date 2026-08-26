@@ -426,16 +426,16 @@ async function fetchDynamicPages() {
       // EN Page
       enPages.push({
         path: `${prefix}/${item.slug}`,
-        title: `${item.title || "Creative Publication"} — Rvan.me`,
-        description: item.excerpt || item.description || `Read "${item.title || "this article"}" on Rvan.me — Creative Publication & Knowledge Platform.`,
+        title: item.seo?.metaTitle || `${item.title || "Creative Publication"} — Rvan.me`,
+        description: item.seo?.metaDescription || item.excerpt || item.description || `Read "${item.title || "this article"}" on Rvan.me — Creative Publication & Knowledge Platform.`,
         type: type === "blog" ? "article" : "website",
         schemaType: "BlogPosting",
         publishDate: item.publishDate || item.publishedAt,
         modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
-        coverImage: item.coverImage,
+        coverImage: item.seo?.ogImage || item.coverImage,
         body: item.body,
         lastmod: lastmodDate,
-        noindex: false,
+        noindex: item.seo?.noIndex || false,
       });
 
       // AZ Page (Localized)
@@ -445,16 +445,16 @@ async function fetchDynamicPages() {
 
       azPages.push({
         path: `/az${prefix}/${azSlug}`,
-        title: `${azTitle} — Rvan.me`,
-        description: azDesc,
+        title: item.seo?.metaTitle_az || `${azTitle} — Rvan.me`,
+        description: item.seo?.metaDescription_az || azDesc,
         type: type === "blog" ? "article" : "website",
         schemaType: "BlogPosting",
         publishDate: item.publishDate || item.publishedAt,
         modifiedDate: item._updatedAt ? item._updatedAt.split("T")[0] : undefined,
-        coverImage: item.coverImage,
+        coverImage: item.seo?.ogImage || item.coverImage,
         body: item.body_az || item.body,
         lastmod: lastmodDate,
-        noindex: false,
+        noindex: item.seo?.noIndex || false,
       });
 
       // If AZ slug is different from EN slug, also generate the /az/blog/original-slug route as alias
