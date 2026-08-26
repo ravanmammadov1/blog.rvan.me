@@ -117,22 +117,26 @@ const svg = `
 `;
 
 async function generateOgImages() {
-  const svgBuffer = Buffer.from(svg);
-  const publicDir = path.resolve("public");
+  try {
+    const svgBuffer = Buffer.from(svg);
+    const publicDir = path.resolve("public");
 
-  // Generate public/og-image.jpg (JPEG format, 1200x630, high quality)
-  await sharp(svgBuffer)
-    .jpeg({ quality: 95, chromaSubsampling: "4:4:4" })
-    .toFile(path.join(publicDir, "og-image.jpg"));
+    // Generate public/og-image.jpg (JPEG format, 1200x630, high quality)
+    await sharp(svgBuffer)
+      .jpeg({ quality: 95, chromaSubsampling: "4:4:4" })
+      .toFile(path.join(publicDir, "og-image.jpg"));
 
-  // Also generate public/og-image.png for PNG-seeking crawlers
-  await sharp(svgBuffer)
-    .png({ compressionLevel: 9 })
-    .toFile(path.join(publicDir, "og-image.png"));
+    // Also generate public/og-image.png for PNG-seeking crawlers
+    await sharp(svgBuffer)
+      .png({ compressionLevel: 9 })
+      .toFile(path.join(publicDir, "og-image.png"));
 
-  console.log("✓ Successfully generated new Rvan.me branded OG images (1200x630):");
-  console.log("  - public/og-image.jpg");
-  console.log("  - public/og-image.png");
+    console.log("✓ Successfully generated new Rvan.me branded OG images (1200x630):");
+    console.log("  - public/og-image.jpg");
+    console.log("  - public/og-image.png");
+  } catch (err) {
+    console.warn("Notice: OG image generator skipped:", err?.message || err);
+  }
 }
 
-generateOgImages().catch(console.error);
+generateOgImages();

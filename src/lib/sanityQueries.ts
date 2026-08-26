@@ -701,11 +701,19 @@ export async function fetchAllBlogs(lang: string = "en") {
     );
 
     if (Array.isArray(data) && data.length > 0) {
-      return data.map((item: any) => {
+      const seenIds = new Set<string>();
+      const seenSlugs = new Set<string>();
+
+      const mergedList = data.map((item: any) => {
         const slugKey = (typeof item.slug === "object" ? item.slug?.current : item.slug || "").toLowerCase().trim();
         const origSlugKey = (item.originalSlug || "").toLowerCase().trim();
         const idKey = (item._id || "").toLowerCase().trim();
         const titleKey = (item.title || "").toLowerCase().trim();
+
+        seenIds.add(idKey);
+        if (slugKey) seenSlugs.add(slugKey);
+        if (origSlugKey) seenSlugs.add(origSlugKey);
+
         const ed = editorialMap.get(idKey) || 
                    editorialMap.get(slugKey) || 
                    editorialMap.get(origSlugKey) || 
@@ -735,6 +743,25 @@ export async function fetchAllBlogs(lang: string = "en") {
         }
         return item;
       });
+
+      // Append any editorial master blogs that are not yet in Sanity
+      MASTER_EDITORIAL_BLOGS.forEach((ed) => {
+        const idKey = ed._id.toLowerCase().trim();
+        const slugKey = (ed.slug?.current || "").toLowerCase().trim();
+        const origSlugKey = (ed.originalSlug || "").toLowerCase().trim();
+
+        if (!seenIds.has(idKey) && !seenSlugs.has(slugKey) && (!origSlugKey || !seenSlugs.has(origSlugKey))) {
+          mergedList.push(isAz ? {
+            ...ed,
+            title: ed.title_az || ed.title,
+            category: ed.category_az || ed.category,
+            excerpt: ed.excerpt_az || ed.excerpt,
+            body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+          } : ed);
+        }
+      });
+
+      return mergedList;
     }
 
     return getAllEditorialBlogs().map((ed) => isAz ? {

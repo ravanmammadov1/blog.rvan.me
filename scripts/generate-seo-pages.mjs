@@ -489,13 +489,18 @@ async function fetchDynamicPages() {
         const blogBlocks = content.split(/{\s*_id:\s*"/);
         for (let i = 1; i < blogBlocks.length; i++) {
           const b = blogBlocks[i];
-          const title = (b.match(/title:\s*"([^"]+)"/) || [])[1];
-          const title_az = (b.match(/title_az:\s*"([^"]+)"/) || [])[1];
-          const slug = (b.match(/current:\s*"([^"]+)"/) || [])[1];
+          const titleMatch = b.match(/title:\s*"((?:\\.|[^"\\])*)"/);
+          const title = titleMatch ? titleMatch[1].replace(/\\"/g, '"') : "";
+          const title_azMatch = b.match(/title_az:\s*"((?:\\.|[^"\\])*)"/);
+          const title_az = title_azMatch ? title_azMatch[1].replace(/\\"/g, '"') : title;
+          const slugMatch = b.match(/slug:\s*\{\s*_type:\s*"slug",\s*current:\s*"([^"]+)"\s*\}/) || b.match(/slug:\s*"([^"]+)"/);
+          const slug = slugMatch ? slugMatch[1] : (b.match(/current:\s*"([^"]+)"/) || [])[1];
           const slug_azMatch = b.match(/slug_az:\s*\{\s*_type:\s*"slug",\s*current:\s*"([^"]+)"\s*\}/);
           const slug_az = slug_azMatch ? slug_azMatch[1] : slug;
-          const excerpt = (b.match(/excerpt:\s*"([^"]+)"/) || [])[1];
-          const excerpt_az = (b.match(/excerpt_az:\s*"([^"]+)"/) || [])[1];
+          const excerptMatch = b.match(/excerpt:\s*"((?:\\.|[^"\\])*)"/);
+          const excerpt = excerptMatch ? excerptMatch[1].replace(/\\"/g, '"') : "";
+          const excerpt_azMatch = b.match(/excerpt_az:\s*"((?:\\.|[^"\\])*)"/);
+          const excerpt_az = excerpt_azMatch ? excerpt_azMatch[1].replace(/\\"/g, '"') : excerpt;
 
           if (slug && title) {
             enPages.push({
