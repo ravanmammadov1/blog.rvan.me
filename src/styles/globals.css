@@ -332,89 +332,146 @@ html {
   border-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%) 1;
 }
 
-/* ─── Aurora Floating Ambient Animations ─── */
-@keyframes aurora-wave-1 {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    opacity: 0.75;
+/* ─── Moving Gradient Lines & Laser Beams Animations ─── */
+@keyframes line-drift-1 {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
   }
   50% {
-    transform: translate3d(8vw, 12vh, 0) rotate(35deg) scale(1.18);
-    opacity: 0.95;
+    transform: translateY(-8px) scaleY(1.02);
   }
-  100% {
-    transform: translate3d(-6vw, 16vh, 0) rotate(-25deg) scale(0.92);
+}
+
+@keyframes line-drift-2 {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
+  }
+  50% {
+    transform: translateY(10px) scaleY(0.98);
+  }
+}
+
+@keyframes line-pulse {
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
     opacity: 0.75;
   }
 }
 
-@keyframes aurora-wave-2 {
+@keyframes beam-flow-1 {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1.1);
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1940;
+  }
+}
+
+@keyframes beam-flow-2 {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -2360;
+  }
+}
+
+@keyframes beam-flow-3 {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -2020;
+  }
+}
+
+@keyframes laser-slide-1 {
+  0% {
+    left: -20%;
+    opacity: 0;
+  }
+  20% {
     opacity: 0.7;
   }
-  50% {
-    transform: translate3d(-10vw, -12vh, 0) rotate(-40deg) scale(0.88);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate3d(12vw, 8vh, 0) rotate(35deg) scale(1.22);
+  80% {
     opacity: 0.7;
   }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
 }
 
-@keyframes aurora-wave-3 {
+@keyframes laser-slide-2 {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.95);
-    opacity: 0.65;
+    right: -20%;
+    opacity: 0;
   }
-  50% {
-    transform: translate3d(10vw, -15vh, 0) rotate(50deg) scale(1.2);
-    opacity: 0.9;
+  20% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.7;
   }
   100% {
-    transform: translate3d(-8vw, -6vh, 0) rotate(-20deg) scale(1);
-    opacity: 0.65;
+    right: 110%;
+    opacity: 0;
   }
 }
 
-@keyframes aurora-wave-4 {
+@keyframes laser-slide-3 {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    opacity: 0.75;
+    left: -20%;
+    opacity: 0;
   }
-  50% {
-    transform: translate3d(-12vw, 14vh, 0) rotate(-35deg) scale(1.15);
-    opacity: 0.95;
+  20% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.7;
   }
   100% {
-    transform: translate3d(8vw, -8vh, 0) rotate(30deg) scale(0.88);
-    opacity: 0.75;
+    left: 110%;
+    opacity: 0;
   }
 }
 
-.aurora-orb-mint,
-.aurora-orb-1 {
-  animation: aurora-wave-1 26s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+.animate-line-drift-1 {
+  animation: line-drift-1 18s ease-in-out infinite;
 }
 
-.aurora-orb-blue,
-.aurora-orb-2 {
-  animation: aurora-wave-2 34s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+.animate-line-drift-2 {
+  animation: line-drift-2 22s ease-in-out infinite;
 }
 
-.aurora-orb-indigo,
-.aurora-orb-3 {
-  animation: aurora-wave-3 40s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+.animate-line-pulse {
+  animation: line-pulse 8s ease-in-out infinite;
 }
 
-.aurora-orb-violet,
-.aurora-orb-4 {
-  animation: aurora-wave-4 30s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+.animate-beam-flow-1 {
+  animation: beam-flow-1 12s linear infinite;
+}
+
+.animate-beam-flow-2 {
+  animation: beam-flow-2 16s linear infinite;
+}
+
+.animate-beam-flow-3 {
+  animation: beam-flow-3 14s linear infinite;
+}
+
+.animate-laser-slide-1 {
+  animation: laser-slide-1 14s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-laser-slide-2 {
+  animation: laser-slide-2 18s cubic-bezier(0.4, 0, 0.2, 1) infinite 4s;
+}
+
+.animate-laser-slide-3 {
+  animation: laser-slide-3 16s cubic-bezier(0.4, 0, 0.2, 1) infinite 8s;
 }
 
 /* ─── Reduced Motion Respect ─── */
@@ -425,14 +482,15 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .aurora-orb-mint,
-  .aurora-orb-blue,
-  .aurora-orb-indigo,
-  .aurora-orb-violet,
-  .aurora-orb-1,
-  .aurora-orb-2,
-  .aurora-orb-3,
-  .aurora-orb-4 {
+  .animate-line-drift-1,
+  .animate-line-drift-2,
+  .animate-line-pulse,
+  .animate-beam-flow-1,
+  .animate-beam-flow-2,
+  .animate-beam-flow-3,
+  .animate-laser-slide-1,
+  .animate-laser-slide-2,
+  .animate-laser-slide-3 {
     animation: none !important;
   }
 }

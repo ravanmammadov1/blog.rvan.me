@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import HeroSearchSection from "./components/home/HeroSearchSection";
 import GlobalFaqSection from "./components/GlobalFaqSection";
-import AuroraBackground from "./components/ui/AuroraBackground";
+import GradientLinesBackground from "./components/ui/GradientLinesBackground";
 import { HOMEPAGE_FAQS } from "../data/faqData";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -32,7 +32,7 @@ export default function HomePage() {
 
   return (
     <main
-      className="relative min-h-screen text-foreground overflow-x-hidden"
+      className="relative min-h-screen bg-background text-foreground overflow-x-hidden"
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
@@ -41,8 +41,8 @@ export default function HomePage() {
         url="https://www.rvan.me"
       />
 
-      {/* ── AMBIENT AURORA LIGHTS BACKGROUND (Full Homepage Brand Gradient) ── */}
-      <AuroraBackground />
+      {/* ── SUBTLE MOVING GRADIENT LINES & LIGHT BEAMS (rvan.me logo colors) ── */}
+      <GradientLinesBackground />
 
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />
