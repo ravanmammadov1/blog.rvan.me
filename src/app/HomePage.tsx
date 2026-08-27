@@ -32,7 +32,7 @@ export default function HomePage() {
 
   return (
     <main
-      className="relative min-h-screen bg-background text-foreground overflow-x-hidden"
+      className="relative min-h-screen text-foreground overflow-x-hidden"
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
@@ -42,7 +42,7 @@ export default function HomePage() {
       />
 
       {/* ── AMBIENT AURORA LIGHTS BACKGROUND (Full Homepage Brand Gradient) ── */}
-      <AuroraBackground intensity="subtle" />
+      <AuroraBackground />
 
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />

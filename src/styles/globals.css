@@ -333,69 +333,88 @@ html {
 }
 
 /* ─── Aurora Floating Ambient Animations ─── */
-@keyframes aurora-float-1 {
-  0%, 100% {
+@keyframes aurora-wave-1 {
+  0% {
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translate3d(8vw, 12vh, 0) rotate(45deg) scale(1.15);
-  }
-  66% {
-    transform: translate3d(-6vw, 18vh, 0) rotate(-30deg) scale(0.92);
-  }
-}
-
-@keyframes aurora-float-2 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1.1);
-  }
-  33% {
-    transform: translate3d(-10vw, -12vh, 0) rotate(-60deg) scale(0.9);
-  }
-  66% {
-    transform: translate3d(12vw, 8vh, 0) rotate(40deg) scale(1.2);
-  }
-}
-
-@keyframes aurora-float-3 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.95);
+    opacity: 0.75;
   }
   50% {
-    transform: translate3d(10vw, -15vh, 0) rotate(90deg) scale(1.18);
+    transform: translate3d(8vw, 12vh, 0) rotate(35deg) scale(1.18);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(-6vw, 16vh, 0) rotate(-25deg) scale(0.92);
+    opacity: 0.75;
   }
 }
 
-@keyframes aurora-float-4 {
-  0%, 100% {
+@keyframes aurora-wave-2 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1.1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(-10vw, -12vh, 0) rotate(-40deg) scale(0.88);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(12vw, 8vh, 0) rotate(35deg) scale(1.22);
+    opacity: 0.7;
+  }
+}
+
+@keyframes aurora-wave-3 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.95);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translate3d(10vw, -15vh, 0) rotate(50deg) scale(1.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(-8vw, -6vh, 0) rotate(-20deg) scale(1);
+    opacity: 0.65;
+  }
+}
+
+@keyframes aurora-wave-4 {
+  0% {
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 0.75;
   }
-  40% {
-    transform: translate3d(-12vw, 14vh, 0) rotate(-45deg) scale(1.1);
+  50% {
+    transform: translate3d(-12vw, 14vh, 0) rotate(-35deg) scale(1.15);
+    opacity: 0.95;
   }
-  80% {
-    transform: translate3d(8vw, -8vh, 0) rotate(35deg) scale(0.88);
+  100% {
+    transform: translate3d(8vw, -8vh, 0) rotate(30deg) scale(0.88);
+    opacity: 0.75;
   }
 }
 
+.aurora-orb-mint,
 .aurora-orb-1 {
-  animation: aurora-float-1 32s ease-in-out infinite alternate;
-  will-change: transform;
+  animation: aurora-wave-1 26s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
+.aurora-orb-blue,
 .aurora-orb-2 {
-  animation: aurora-float-2 40s ease-in-out infinite alternate;
-  will-change: transform;
+  animation: aurora-wave-2 34s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
+.aurora-orb-indigo,
 .aurora-orb-3 {
-  animation: aurora-float-3 48s ease-in-out infinite alternate;
-  will-change: transform;
+  animation: aurora-wave-3 40s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
+.aurora-orb-violet,
 .aurora-orb-4 {
-  animation: aurora-float-4 36s ease-in-out infinite alternate;
-  will-change: transform;
+  animation: aurora-wave-4 30s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
 /* ─── Reduced Motion Respect ─── */
@@ -406,6 +425,10 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .aurora-orb-mint,
+  .aurora-orb-blue,
+  .aurora-orb-indigo,
+  .aurora-orb-violet,
   .aurora-orb-1,
   .aurora-orb-2,
   .aurora-orb-3,
