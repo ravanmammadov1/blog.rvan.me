@@ -136,17 +136,20 @@ export default function ResourcesArchive() {
     if (fontCategorySubfilter === "azerbaijani") {
       list = list.filter((f) => f.supportsAzerbaijani);
     } else if (fontCategorySubfilter !== "all") {
-      list = list.filter((f) => f.category?.toLowerCase() === fontCategorySubfilter.toLowerCase());
+      const target = fontCategorySubfilter.toLowerCase().replace(/[^a-z0-9]/g, "");
+      list = list.filter((f) => f.category?.toLowerCase().replace(/[^a-z0-9]/g, "") === target);
     }
 
     if (deferredSearch.trim()) {
       const q = deferredSearch.toLowerCase().trim();
+      const qNorm = q.replace(/[^a-z0-9]/g, "");
       list = list.filter(
         (f) =>
           f.family.toLowerCase().includes(q) ||
           f.name.toLowerCase().includes(q) ||
           f.designer?.toLowerCase().includes(q) ||
           f.category?.toLowerCase().includes(q) ||
+          (qNorm.length >= 3 && f.category?.toLowerCase().replace(/[^a-z0-9]/g, "").includes(qNorm)) ||
           f.foundry?.toLowerCase().includes(q) ||
           f.aliases?.some((a) => a.toLowerCase().includes(q)) ||
           (q === "calibri" && f.family.toLowerCase() === "carlito")
@@ -292,8 +295,10 @@ export default function ResourcesArchive() {
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               </div>
             ) : filteredFonts.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center my-6 glass">
-                <p className="text-muted-foreground text-xs">No Google Fonts found matching your criteria.</p>
+              <div className="rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white/70 dark:bg-white/5 p-8 text-center my-6 glass">
+                <p className="text-muted-foreground text-xs">
+                  {isAz ? "Axtarışınıza və ya seçilmiş filtrə uyğun şrift tapılmadı." : "No Google Fonts found matching your criteria."}
+                </p>
                 <button
                   onClick={() => {
                     setFontCategorySubfilter("all");
@@ -301,7 +306,7 @@ export default function ResourcesArchive() {
                   }}
                   className="mt-3 text-xs font-bold tracking-widest text-primary uppercase mono hover:text-white cursor-pointer"
                 >
-                  RESET FILTERS
+                  {isAz ? "FİLTERLƏRİ SIFIRLA" : "RESET FILTERS"}
                 </button>
               </div>
             ) : (
