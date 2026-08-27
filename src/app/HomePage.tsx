@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import HeroSearchSection from "./components/home/HeroSearchSection";
 import GlobalFaqSection from "./components/GlobalFaqSection";
+import AuroraBackground from "./components/ui/AuroraBackground";
 import { HOMEPAGE_FAQS } from "../data/faqData";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -39,6 +40,9 @@ export default function HomePage() {
         description="A creative publication about design, marketing, branding, AI and visual culture."
         url="https://www.rvan.me"
       />
+
+      {/* ── AMBIENT AURORA LIGHTS BACKGROUND (Full Homepage Brand Gradient) ── */}
+      <AuroraBackground intensity="subtle" />
 
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />
