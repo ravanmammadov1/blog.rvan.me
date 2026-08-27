@@ -33,6 +33,7 @@ import { useClarity } from "./hooks/useClarity";
 import { CookieConsentProvider, useCookieConsent } from "./context/CookieConsentContext";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import CookiePreferencesModal from "./components/CookiePreferencesModal";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import GoogleTagManager from "./components/GoogleTagManager";
 
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
@@ -143,6 +144,7 @@ function AppContent() {
 
       <CookieConsentBanner />
       <CookiePreferencesModal />
+      <GoogleAnalytics />
       <GoogleTagManager />
 
       {consent?.analytics && (

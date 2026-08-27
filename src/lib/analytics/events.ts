@@ -51,7 +51,19 @@ export function trackEvent({
   if (typeof window === "undefined") return;
   if (!hasAnalyticsConsent()) return;
 
-  // 1. Google Tag Manager / GA4 via dataLayer
+  // 1. Google Analytics 4 via gtag & dataLayer
+  if (typeof (window as any).gtag === "function") {
+    try {
+      (window as any).gtag("event", eventName, {
+        event_category: category,
+        event_action: action,
+        event_label: label,
+        value: value,
+        ...metadata,
+      });
+    } catch {}
+  }
+
   if (Array.isArray(window.dataLayer)) {
     window.dataLayer.push({
       event: eventName,
