@@ -262,44 +262,7 @@ export default function BlogDetail() {
               <CommentSection postId={postTrackingId} postTitle={currentTitle} />
             </div>
 
-            {/* Previous / Next Article Navigation */}
-            {(prevPost || nextPost) && (
-              <div className="mt-16 grid gap-6 sm:grid-cols-2 border-t border-border/80 dark:border-white/10 pt-12">
-                {prevPost ? (
-                  <Link
-                    to={getLocalizedPath(`/blog/${prevPost.slug?.current || prevPost._id}`)}
-                    className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/5 p-6 backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:bg-card dark:hover:bg-white/10 hover:shadow-lg shadow-sm"
-                  >
-                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
-                      ← {t("previousArticle", "PREVIOUS ARTICLE")}
-                    </span>
-                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      {isAz && prevPost.title_az ? prevPost.title_az : prevPost.title}
-                    </p>
-                  </Link>
-                ) : (
-                  <div />
-                )}
-
-                {nextPost ? (
-                  <Link
-                    to={getLocalizedPath(`/blog/${nextPost.slug?.current || nextPost._id}`)}
-                    className="group flex flex-col justify-between items-end rounded-2xl border border-border/80 bg-card/80 dark:border-white/10 dark:bg-white/5 p-6 backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:bg-card dark:hover:bg-white/10 hover:shadow-lg shadow-sm text-right"
-                  >
-                    <span className="text-[10px] font-bold tracking-widest text-muted-foreground mono uppercase">
-                      {t("nextArticle", "NEXT ARTICLE")} →
-                    </span>
-                    <p className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      {isAz && nextPost.title_az ? nextPost.title_az : nextPost.title}
-                    </p>
-                  </Link>
-                ) : (
-                  <div />
-                )}
-              </div>
-            )}
-
-            <div className="mt-10 flex justify-center border-t border-border/80 dark:border-white/10 pt-8">
+            <div className="mt-12 flex justify-center border-t border-border/80 dark:border-white/10 pt-8">
               <Button
                 to={getLocalizedPath("/blog")}
                 variant="secondary"

@@ -17,7 +17,6 @@ import { Comment } from "../../../types/comments";
 import { useAuth } from "../../../hooks/useAuth";
 import { useLanguage } from "../../../lib/i18n/LanguageContext";
 import { voteComment, reactToComment } from "../../../services/commentService";
-import { generateDeterministicPeep, peepConfigToSvgDataUri } from "../../../lib/avatarEngine";
 import AuthModal from "../AuthModal";
 
 interface CommentItemProps {
@@ -37,6 +36,16 @@ const REACTION_LIST = [
   { type: "clap" as const, emoji: "👏", labelEn: "Clap", labelAz: "Əla" },
 ];
 
+function getGuestVoterId(): string {
+  if (typeof window === "undefined") return "guest-default";
+  let guestId = localStorage.getItem("rvan_guest_voter_uid");
+  if (!guestId) {
+    guestId = "guest-" + Math.random().toString(36).substring(2, 11);
+    localStorage.setItem("rvan_guest_voter_uid", guestId);
+  }
+  return guestId;
+}
+
 export default function CommentItemComponent({
   comment,
   replies = [],
@@ -46,8 +55,11 @@ export default function CommentItemComponent({
 }: CommentItemProps) {
   const { user, userPhoto } = useAuth();
   const { language } = useLanguage();
+  const isAz = language === "az";
+
+  const displayText = comment.text || comment.content || "";
   const [isEditing, setIsEditing] = useState(false);
-  const [editText, setEditText] = useState(comment.text);
+  const [editText, setEditText] = useState(displayText);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -58,41 +70,94 @@ export default function CommentItemComponent({
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const isAz = language === "az";
+  // Voting & Reactions local state for instant feedback
+  const currentUserId = user?.uid || getGuestVoterId();
   const isOwner = Boolean(user && user.uid === comment.authorId);
-  const currentUserId = user?.uid || "";
-  const isLiked = Boolean(currentUserId && Array.isArray(comment.likedBy) && comment.likedBy.includes(currentUserId));
-  const isDisliked = Boolean(currentUserId && Array.isArray(comment.dislikedBy) && comment.dislikedBy.includes(currentUserId));
 
-  // Canonical avatar: If owner and has custom/active user photo, use it; otherwise use stored photoURL or fallback initial
-  const avatarUri = isOwner && userPhoto ? userPhoto : comment.author.photoURL || null;
-  const authorInitial = comment.author.displayName
-    ? comment.author.displayName.charAt(0).toUpperCase()
-    : "U";
+  const [localLikedBy, setLocalLikedBy] = useState<string[]>(
+    Array.isArray(comment.likedBy) ? comment.likedBy : []
+  );
+  const [localDislikedBy, setLocalDislikedBy] = useState<string[]>(
+    Array.isArray(comment.dislikedBy) ? comment.dislikedBy : []
+  );
+  const [localReactions, setLocalReactions] = useState<Record<string, string[]>>(
+    comment.reactions || {}
+  );
+
+  const isLiked = localLikedBy.includes(currentUserId);
+  const isDisliked = localDislikedBy.includes(currentUserId);
+
+  const displayLikes = localLikedBy.length > 0
+    ? localLikedBy.length
+    : (typeof comment.likesCount === "number" ? comment.likesCount : (comment.likes || 0));
+
+  const displayDislikes = localDislikedBy.length > 0
+    ? localDislikedBy.length
+    : (typeof comment.dislikesCount === "number" ? comment.dislikesCount : (comment.dislikes || 0));
+
+  const displayAuthorName = comment.author?.displayName || comment.author?.name || "Anonim Oxucu";
+  const avatarUri = (isOwner && userPhoto) ? userPhoto : (comment.author?.photoURL || comment.author?.avatar || null);
+  const authorInitial = displayAuthorName ? displayAuthorName.charAt(0).toUpperCase() : "U";
 
   const handleVote = async (voteType: "like" | "dislike") => {
-    if (!user) {
-      setAuthModalOpen(true);
-      return;
+    const voterId = user?.uid || getGuestVoterId();
+
+    // Optimistic UI updates
+    if (voteType === "like") {
+      if (localLikedBy.includes(voterId)) {
+        setLocalLikedBy((prev) => prev.filter((id) => id !== voterId));
+      } else {
+        setLocalLikedBy((prev) => [...prev, voterId]);
+        setLocalDislikedBy((prev) => prev.filter((id) => id !== voterId));
+      }
+    } else if (voteType === "dislike") {
+      if (localDislikedBy.includes(voterId)) {
+        setLocalDislikedBy((prev) => prev.filter((id) => id !== voterId));
+      } else {
+        setLocalDislikedBy((prev) => [...prev, voterId]);
+        setLocalLikedBy((prev) => prev.filter((id) => id !== voterId));
+      }
     }
-    await voteComment({
-      commentId: comment.id,
-      voteType,
-      userId: user.uid,
-    });
+
+    try {
+      const res = await voteComment({
+        commentId: comment.id,
+        voteType,
+        userId: voterId,
+        type: voteType,
+      });
+      if (res && Array.isArray(res.likedBy)) setLocalLikedBy(res.likedBy);
+      if (res && Array.isArray(res.dislikedBy)) setLocalDislikedBy(res.dislikedBy);
+    } catch (e) {
+      console.warn("Failed to register vote:", e);
+    }
   };
 
-  const handleReact = async (reactionType: "heart" | "laugh" | "think" | "fire" | "insight" | "clap") => {
-    if (!user) {
-      setAuthModalOpen(true);
-      return;
-    }
+  const handleReact = async (reactionType: string) => {
     setShowReactionPicker(false);
-    await reactToComment({
-      commentId: comment.id,
-      reactionType,
-      userId: user.uid,
-    });
+    const voterId = user?.uid || getGuestVoterId();
+
+    const existingList = Array.isArray(localReactions[reactionType]) ? localReactions[reactionType] : [];
+    const nextList = existingList.includes(voterId)
+      ? existingList.filter((id) => id !== voterId)
+      : [...existingList, voterId];
+
+    setLocalReactions((prev) => ({
+      ...prev,
+      [reactionType]: nextList,
+    }));
+
+    try {
+      const updated = await reactToComment({
+        commentId: comment.id,
+        reactionType,
+        userId: voterId,
+        type: reactionType,
+      });
+      if (updated) setLocalReactions(updated);
+    } catch (e) {
+      console.warn("Failed to register reaction:", e);
+    }
   };
 
   const handleShareComment = async () => {
@@ -167,6 +232,9 @@ export default function CommentItemComponent({
     }
   };
 
+  // If text is totally empty, hide comment from rendering
+  if (!displayText.trim()) return null;
+
   return (
     <div id={`comment-${comment.id}`} className="space-y-3 scroll-mt-28">
       {/* Primary Comment Box */}
@@ -174,7 +242,7 @@ export default function CommentItemComponent({
         className={`group relative rounded-2xl border p-4 sm:p-5 transition-all duration-300 ${
           comment.isOptimistic
             ? "border-primary/30 bg-primary/[0.02] opacity-75"
-            : "border-border bg-card/90 hover:border-primary/40 shadow-sm"
+            : "border-border bg-card/90 hover:border-primary/40 shadow-xs"
         }`}
       >
         <div className="flex items-start gap-3">
@@ -182,11 +250,11 @@ export default function CommentItemComponent({
           {avatarUri ? (
             <img
               src={avatarUri}
-              alt={comment.author.displayName}
-              className="h-9 w-9 rounded-full object-cover border border-border shrink-0 mt-0.5 shadow-sm bg-surface"
+              alt={displayAuthorName}
+              className="h-9 w-9 rounded-full object-cover border border-border shrink-0 mt-0.5 shadow-xs bg-surface"
             />
           ) : (
-            <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs shrink-0 mt-0.5 shadow-sm">
+            <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs shrink-0 mt-0.5 shadow-xs">
               {authorInitial}
             </div>
           )}
@@ -196,7 +264,7 @@ export default function CommentItemComponent({
             <div className="flex items-center justify-between gap-2 mb-1">
               <div className="flex items-center gap-2 truncate">
                 <span className="text-xs font-bold text-foreground truncate">
-                  {comment.author.displayName}
+                  {displayAuthorName}
                 </span>
                 <span className="text-[10px] text-muted-foreground/60 mono">
                   {formatTimestamp(comment.createdAt)}
@@ -220,14 +288,14 @@ export default function CommentItemComponent({
                     <>
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors"
+                        className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors cursor-pointer"
                         title={isAz ? "Düzəliş et" : "Edit comment"}
                       >
                         <Edit2 size={12} />
                       </button>
                       <button
                         onClick={() => setShowDeleteConfirm(true)}
-                        className="p-1 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="p-1 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                         title={isAz ? "Sil" : "Delete comment"}
                       >
                         <Trash2 size={12} />
@@ -251,14 +319,14 @@ export default function CommentItemComponent({
                 <div className="mt-2 flex items-center justify-end gap-2">
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2.5 py-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2.5 py-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
                     <X size={11} /> {isAz ? "Ləğv et" : "Cancel"}
                   </button>
                   <button
                     onClick={handleSaveEdit}
                     disabled={!editText.trim() || updating}
-                    className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1 text-[10px] font-bold text-black hover:bg-primary/90 transition-colors disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1 text-[10px] font-bold text-black hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {updating ? <Loader2 size={11} className="animate-spin" /> : <Check size={11} />}
                     <span>{isAz ? "Saxla" : "Save"}</span>
@@ -267,34 +335,28 @@ export default function CommentItemComponent({
               </div>
             ) : (
               <p className="text-xs sm:text-[13px] leading-relaxed text-foreground/90 font-medium whitespace-pre-wrap break-words mt-1">
-                {comment.text}
+                {displayText}
               </p>
             )}
 
             {/* Active Emoji Reactions Badges */}
-            {comment.reactions && Object.keys(comment.reactions).length > 0 && (
-              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {localReactions && Object.keys(localReactions).length > 0 && (
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                 {REACTION_LIST.map((item) => {
-                  const rawReaction = (comment.reactions as any)?.[item.type];
-                  const count = Array.isArray(rawReaction)
-                    ? rawReaction.length
-                    : typeof rawReaction === "number"
-                    ? rawReaction
-                    : 0;
-
+                  const rawList = localReactions[item.type];
+                  const uids = Array.isArray(rawList) ? rawList : [];
+                  const count = uids.length;
                   if (count === 0) return null;
-                  const hasUserReacted = Array.isArray(rawReaction)
-                    ? Boolean(currentUserId && rawReaction.includes(currentUserId))
-                    : false;
+                  const hasUserReacted = uids.includes(currentUserId);
 
                   return (
                     <button
                       key={item.type}
                       onClick={() => handleReact(item.type)}
-                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium border transition-all ${
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium border transition-all cursor-pointer ${
                         hasUserReacted
                           ? "border-primary/50 bg-primary/15 text-primary scale-105"
-                          : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20 hover:text-white"
+                          : "border-border bg-surface text-muted-foreground hover:border-primary/30 hover:text-foreground"
                       }`}
                       title={`${isAz ? item.labelAz : item.labelEn} (${count})`}
                     >
@@ -308,52 +370,52 @@ export default function CommentItemComponent({
 
             {/* Action Bar (Likes, Dislikes, Reactions, Reply, Share) */}
             {!isEditing && !comment.isOptimistic && (
-              <div className="mt-3 flex flex-wrap items-center gap-3 pt-2 border-t border-white/5 text-muted-foreground text-xs">
+              <div className="mt-3 flex flex-wrap items-center gap-3 pt-2 border-t border-border/50 text-muted-foreground text-xs">
                 {/* Like Button */}
                 <button
                   onClick={() => handleVote("like")}
-                  className={`inline-flex items-center gap-1 text-[11px] font-semibold transition-colors ${
-                    isLiked ? "text-emerald-400 font-bold" : "hover:text-emerald-400"
+                  className={`inline-flex items-center gap-1.5 text-[11px] font-semibold transition-colors cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5 ${
+                    isLiked ? "text-emerald-400 font-bold bg-emerald-500/10" : "hover:text-emerald-400"
                   }`}
                   title={isAz ? "Bəyən" : "Like"}
                 >
-                  <ThumbsUp size={12} className={isLiked ? "fill-emerald-400" : ""} />
-                  <span className="mono">{comment.likesCount || 0}</span>
+                  <ThumbsUp size={13} className={isLiked ? "fill-emerald-400" : ""} />
+                  <span className="mono">{displayLikes}</span>
                 </button>
 
                 {/* Dislike Button */}
                 <button
                   onClick={() => handleVote("dislike")}
-                  className={`inline-flex items-center gap-1 text-[11px] font-semibold transition-colors ${
-                    isDisliked ? "text-rose-400 font-bold" : "hover:text-rose-400"
+                  className={`inline-flex items-center gap-1.5 text-[11px] font-semibold transition-colors cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5 ${
+                    isDisliked ? "text-rose-400 font-bold bg-rose-500/10" : "hover:text-rose-400"
                   }`}
                   title={isAz ? "Bəyənmə" : "Dislike"}
                 >
-                  <ThumbsDown size={12} className={isDisliked ? "fill-rose-400" : ""} />
-                  {comment.dislikesCount && comment.dislikesCount > 0 ? (
-                    <span className="mono">{comment.dislikesCount}</span>
+                  <ThumbsDown size={13} className={isDisliked ? "fill-rose-400" : ""} />
+                  {displayDislikes > 0 ? (
+                    <span className="mono">{displayDislikes}</span>
                   ) : null}
                 </button>
 
-                {/* Emoji / Avatar Reaction Trigger */}
+                {/* Emoji Reaction Trigger */}
                 <div className="relative">
                   <button
                     onClick={() => setShowReactionPicker(!showReactionPicker)}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold hover:text-amber-400 transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold hover:text-amber-400 transition-colors cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5"
                     title={isAz ? "Reaksiya bildir" : "React"}
                   >
-                    <Smile size={12} />
+                    <Smile size={13} />
                     <span>{isAz ? "Reaksiya" : "React"}</span>
                   </button>
 
                   {/* Reaction Picker Popover */}
                   {showReactionPicker && (
-                    <div className="absolute bottom-full left-0 mb-2 z-30 flex items-center gap-1 rounded-2xl border border-white/15 bg-neutral-900/95 p-1.5 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-150">
+                    <div className="absolute bottom-full left-0 mb-2 z-30 flex items-center gap-1 rounded-2xl border border-border bg-card p-1.5 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-150">
                       {REACTION_LIST.map((r) => (
                         <button
                           key={r.type}
                           onClick={() => handleReact(r.type)}
-                          className="flex h-8 w-8 items-center justify-center rounded-xl text-base hover:scale-125 hover:bg-white/10 transition-transform"
+                          className="flex h-8 w-8 items-center justify-center rounded-xl text-base hover:scale-125 hover:bg-white/10 transition-transform cursor-pointer"
                           title={isAz ? r.labelAz : r.labelEn}
                         >
                           {r.emoji}
@@ -372,28 +434,28 @@ export default function CommentItemComponent({
                       setShowReplyForm(!showReplyForm);
                     }
                   }}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold hover:text-primary transition-colors"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold hover:text-primary transition-colors cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5"
                 >
-                  <CornerDownRight size={12} />
+                  <CornerDownRight size={13} />
                   <span>{isAz ? "Cavabla" : "Reply"}</span>
                 </button>
 
                 {/* Share Link */}
                 <button
                   onClick={handleShareComment}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold hover:text-cyan-400 transition-colors ml-auto"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold hover:text-cyan-400 transition-colors ml-auto cursor-pointer py-1 px-2 rounded-lg hover:bg-white/5"
                   title={isAz ? "Rəyi Paylaş" : "Share comment link"}
                 >
                   {copiedLink ? (
                     <>
-                      <Check size={12} className="text-emerald-400" />
+                      <Check size={13} className="text-emerald-400" />
                       <span className="text-emerald-400 font-bold">
                         {isAz ? "Kopyalandı!" : "Link Copied!"}
                       </span>
                     </>
                   ) : (
                     <>
-                      <Share2 size={12} />
+                      <Share2 size={13} />
                       <span>{isAz ? "Paylaş" : "Share"}</span>
                     </>
                   )}
@@ -410,14 +472,14 @@ export default function CommentItemComponent({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="rounded-lg border border-white/10 px-2.5 py-1 text-[10px] text-muted-foreground hover:text-foreground"
+                    className="rounded-lg border border-white/10 px-2.5 py-1 text-[10px] text-muted-foreground hover:text-foreground cursor-pointer"
                   >
                     {isAz ? "Ləğv et" : "Cancel"}
                   </button>
                   <button
                     onClick={handleDelete}
                     disabled={deleting}
-                    className="inline-flex items-center gap-1 rounded-lg bg-red-500 px-3 py-1 text-[10px] font-bold text-white hover:bg-red-600 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-lg bg-red-500 px-3 py-1 text-[10px] font-bold text-white hover:bg-red-600 disabled:opacity-50 cursor-pointer"
                   >
                     {deleting && <Loader2 size={10} className="animate-spin" />}
                     <span>{isAz ? "Bəli, Sil" : "Delete"}</span>
@@ -428,7 +490,7 @@ export default function CommentItemComponent({
 
             {/* Inline Reply Form */}
             {showReplyForm && (
-              <form onSubmit={handlePostReply} className="mt-3 pt-3 border-t border-white/10">
+              <form onSubmit={handlePostReply} className="mt-3 pt-3 border-t border-border">
                 <div className="flex items-start gap-2">
                   <textarea
                     value={replyText}
@@ -437,24 +499,24 @@ export default function CommentItemComponent({
                     rows={2}
                     placeholder={
                       isAz
-                        ? `${comment.author.displayName} üçün cavabınızı yazın...`
-                        : `Reply to ${comment.author.displayName}...`
+                        ? `${displayAuthorName} üçün cavabınızı yazın...`
+                        : `Reply to ${displayAuthorName}...`
                     }
-                    className="w-full resize-y rounded-xl border border-white/15 bg-background/90 p-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none"
+                    className="w-full resize-y rounded-xl border border-border bg-surface p-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none"
                   />
                 </div>
                 <div className="mt-2 flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setShowReplyForm(false)}
-                    className="rounded-lg border border-white/10 px-2.5 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+                    className="rounded-lg border border-border px-2.5 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground cursor-pointer"
                   >
                     {isAz ? "Ləğv et" : "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={!replyText.trim() || replySubmitting}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1 text-[10px] font-bold text-black hover:bg-primary/90 disabled:opacity-40"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1 text-[10px] font-bold text-black hover:bg-primary/90 disabled:opacity-40 cursor-pointer"
                   >
                     {replySubmitting ? (
                       <Loader2 size={11} className="animate-spin" />

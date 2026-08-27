@@ -67,6 +67,9 @@ export default function CommentSection({ postId, postTitle }: CommentSectionProp
     let count = 0;
 
     firestoreComments.forEach((c) => {
+      const text = (c.text || c.content || "").trim();
+      if (!text) return; // Drop any empty comment
+
       if (getCanonicalPostId(c.postId) === canonicalPostId) {
         count++;
         if (c.parentId) {
