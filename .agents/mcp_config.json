@@ -4,8 +4,9 @@
       "command": "npx",
       "args": ["-y", "@googleanalytics/google-analytics-mcp"],
       "env": {
-        "GA4_PROPERTY_ID": "15321469347",
-        "GA_MEASUREMENT_ID": "G-WSJMQHM7VM"
+        "GA4_PROPERTY_ID": "547072364",
+        "GA_MEASUREMENT_ID": "G-WSJMQHM7VM",
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:/Users/mamma/OneDrive/Desktop/rvan-2796c-48b56f62f8a7.json"
       }
     }
   }
