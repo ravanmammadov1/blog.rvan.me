@@ -739,9 +739,19 @@ export async function fetchAllBlogs(lang: string = "en") {
             readTime: ed.readTime || item.readTime,
             featured: ed.featured ?? item.featured,
             body: (isAz && Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+            authorName: isAz ? "Rəvan Məmmədov" : "Ravan Mammadov",
+            authorSlug: "ravan-mammadov",
+            authorPhoto: "/imports/ravan_1-400.webp",
+            authorRole: isAz ? "Baş Kreativ Dizayner və Vizual Strateq" : "Senior Creative Designer & Visual Strategist",
           };
         }
-        return item;
+        return {
+          ...item,
+          authorName: isAz ? "Rəvan Məmmədov" : "Ravan Mammadov",
+          authorSlug: "ravan-mammadov",
+          authorPhoto: "/imports/ravan_1-400.webp",
+          authorRole: isAz ? "Baş Kreativ Dizayner və Vizual Strateq" : "Senior Creative Designer & Visual Strategist",
+        };
       });
 
       // Append any editorial master blogs that are not yet in Sanity
@@ -757,7 +767,17 @@ export async function fetchAllBlogs(lang: string = "en") {
             category: ed.category_az || ed.category,
             excerpt: ed.excerpt_az || ed.excerpt,
             body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
-          } : ed);
+            authorName: "Rəvan Məmmədov",
+            authorSlug: "ravan-mammadov",
+            authorPhoto: "/imports/ravan_1-400.webp",
+            authorRole: "Baş Kreativ Dizayner və Vizual Strateq",
+          } : {
+            ...ed,
+            authorName: "Ravan Mammadov",
+            authorSlug: "ravan-mammadov",
+            authorPhoto: "/imports/ravan_1-400.webp",
+            authorRole: "Senior Creative Designer & Visual Strategist",
+          });
         }
       });
 
@@ -770,7 +790,17 @@ export async function fetchAllBlogs(lang: string = "en") {
       category: ed.category_az || ed.category,
       excerpt: ed.excerpt_az || ed.excerpt,
       body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
-    } : ed);
+      authorName: "Rəvan Məmmədov",
+      authorSlug: "ravan-mammadov",
+      authorPhoto: "/imports/ravan_1-400.webp",
+      authorRole: "Baş Kreativ Dizayner və Vizual Strateq",
+    } : {
+      ...ed,
+      authorName: "Ravan Mammadov",
+      authorSlug: "ravan-mammadov",
+      authorPhoto: "/imports/ravan_1-400.webp",
+      authorRole: "Senior Creative Designer & Visual Strategist",
+    });
   } catch (error) {
     console.error("Error fetching all blogs from Sanity:", error);
     const isAz = lang === "az" || (typeof window !== "undefined" && window.location.pathname.startsWith("/az"));
@@ -780,7 +810,17 @@ export async function fetchAllBlogs(lang: string = "en") {
       category: ed.category_az || ed.category,
       excerpt: ed.excerpt_az || ed.excerpt,
       body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
-    } : ed);
+      authorName: "Rəvan Məmmədov",
+      authorSlug: "ravan-mammadov",
+      authorPhoto: "/imports/ravan_1-400.webp",
+      authorRole: "Baş Kreativ Dizayner və Vizual Strateq",
+    } : {
+      ...ed,
+      authorName: "Ravan Mammadov",
+      authorSlug: "ravan-mammadov",
+      authorPhoto: "/imports/ravan_1-400.webp",
+      authorRole: "Senior Creative Designer & Visual Strategist",
+    });
   }
 }
 

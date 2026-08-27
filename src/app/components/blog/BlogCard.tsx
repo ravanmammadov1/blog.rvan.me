@@ -65,17 +65,20 @@ export default function BlogCard({
   const formattedDate = formatBlogDate(post.publishDate, language);
   const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
 
-  // Author resolution: prioritize transparent Editorial Desks or founder author
-  const rawAuthorName = post.authorName || post.authorRole || "";
-  const displayAuthorName = post.desk
-    ? post.desk
-    : rawAuthorName || (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name);
+  // Author resolution: canonical founder author Ravan Mammadov
+  const isFounderAuthor =
+    !post.authorName ||
+    post.authorName.toLowerCase().includes("ravan") ||
+    post.authorSlug === "ravan-mammadov" ||
+    post.authorName.includes("Masası");
+
+  const displayAuthorName = isFounderAuthor
+    ? (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name)
+    : (post.authorName || (isAz ? CANONICAL_AUTHOR.name_az : CANONICAL_AUTHOR.name));
 
   const authorRole = post.authorRole || (post.format ? `${post.format} Təhlili` : isAz ? "Redaksiya Analizi" : "Editorial Analysis");
 
-  const authorAvatar = post.authorPhoto
-    ? (typeof post.authorPhoto === "string" ? post.authorPhoto : urlFor(post.authorPhoto)?.url() || CANONICAL_AUTHOR.avatar)
-    : CANONICAL_AUTHOR.avatar;
+  const authorAvatar = CANONICAL_AUTHOR.avatar;
 
   const currentTitle = isAz && post.title_az ? post.title_az : post.title;
   const currentDeck = isAz
@@ -162,17 +165,38 @@ export default function BlogCard({
         )}
       </div>
 
-      {/* Footer Section: Editorial Desk + Metadata */}
+      {/* Footer Section: Author Photo + Name + Metadata */}
       <div className="mt-auto space-y-3 pt-4 border-t border-border/80 dark:border-white/10">
-        {/* Editorial Desk / Author */}
+        {/* Author Avatar & Name */}
         <div className="flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-[10px] uppercase mono">
-            {displayAuthorName.slice(0, 2)}
-          </div>
+          <Link
+            to={getLocalizedPath("/about/ravan-mammadov")}
+            className="relative h-7 w-7 rounded-full overflow-hidden border border-primary/30 shrink-0 bg-muted/50 hover:border-primary transition-colors focus:outline-none ring-1 ring-primary/20"
+            aria-label={displayAuthorName}
+          >
+            <img
+              src={authorAvatar}
+              alt={displayAuthorName}
+              width={28}
+              height={28}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover object-center"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.src.endsWith("ravan_portrait.png")) {
+                  target.src = "/imports/ravan_portrait.png";
+                }
+              }}
+            />
+          </Link>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-foreground truncate">
+            <Link
+              to={getLocalizedPath("/about/ravan-mammadov")}
+              className="text-xs font-semibold text-foreground hover:text-primary transition-colors truncate block focus:outline-none"
+            >
               {displayAuthorName}
-            </p>
+            </Link>
           </div>
         </div>
 

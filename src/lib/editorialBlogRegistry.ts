@@ -13,7 +13,7 @@ import { ARTICLES_VIRAL_MASTERCLASS } from "./blogs/articlesViralMasterclass";
  * Master Editorial Blog Registry
  * Contains the 39 publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
  */
-export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
+const RAW_MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY,
   GUIDE_APCA_ACCESSIBILITY,
   GUIDE_COGNITIVE_COPYWRITING,
@@ -24,6 +24,14 @@ export const MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   ...ARTICLES_VIRAL_MASTERCLASS,
   ...ARTICLES_31_TO_39,
 ];
+
+export const MASTER_EDITORIAL_BLOGS: BlogPost[] = RAW_MASTER_EDITORIAL_BLOGS.map((post) => ({
+  ...post,
+  authorName: "Ravan Mammadov",
+  authorSlug: "ravan-mammadov",
+  authorPhoto: "/imports/ravan_1-400.webp",
+  authorRole: post.authorRole || "Senior Creative Designer & Visual Strategist",
+}));
 
 // Verify that the count is at least 39
 if (MASTER_EDITORIAL_BLOGS.length < 39) {

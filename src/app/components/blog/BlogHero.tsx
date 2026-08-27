@@ -101,16 +101,33 @@ export default function BlogHero({ post }: BlogHeroProps) {
         {/* Author / Editorial Desk & Timestamp Bar */}
         <div className="flex flex-wrap items-center gap-6 pt-2 text-xs font-mono text-muted-foreground border-t border-white/10">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold text-xs uppercase mono">
-              {(post.desk || post.authorName || "RM")
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .slice(0, 2)}
-            </div>
-            <span className="text-foreground font-semibold">
-              {post.desk || post.authorName || (language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov")}
-            </span>
+            <Link
+              to={getLocalizedPath("/about/ravan-mammadov")}
+              className="relative w-7 h-7 rounded-full overflow-hidden border border-primary/40 shrink-0 bg-muted/50 hover:border-primary transition-colors focus:outline-none ring-1 ring-primary/20"
+              aria-label={language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov"}
+            >
+              <img
+                src="/imports/ravan_1-400.webp"
+                alt={language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov"}
+                width={28}
+                height={28}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-center"
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (!target.src.endsWith("ravan_portrait.png")) {
+                    target.src = "/imports/ravan_portrait.png";
+                  }
+                }}
+              />
+            </Link>
+            <Link
+              to={getLocalizedPath("/about/ravan-mammadov")}
+              className="text-foreground font-semibold hover:text-primary transition-colors"
+            >
+              {language === "az" ? "Rəvan Məmmədov" : "Ravan Mammadov"}
+            </Link>
           </div>
 
           {formattedDate && (
