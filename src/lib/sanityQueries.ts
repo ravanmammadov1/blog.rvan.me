@@ -4,6 +4,7 @@ import {
   getEditorialBlogBySlug,
   getAllEditorialBlogs,
 } from "./editorialBlogRegistry";
+import { estimateReadingTime } from "./blogHelpers";
 import {
   ProjectItem,
   SiteSettings,
@@ -628,7 +629,7 @@ export async function fetchBlogBySlug(slug: string, lang: string = "en") {
         excerpt: localizedExcerpt,
         tags: base.tags || data?.tags,
         body: localizedBody,
-        readTime: base.readTime || data?.readTime,
+        readTime: estimateReadingTime(localizedBody, base.readTime || data?.readTime, isAzPost ? "az" : "en", base.body_az),
         featured: base.featured ?? data?.featured,
       };
     }
@@ -729,6 +730,7 @@ export async function fetchAllBlogs(lang: string = "en") {
             ? item.coverImage
             : (ed.coverImage || item.coverImage);
 
+          const activeBody = (isAz && Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body;
           return {
             ...item,
             coverImage: effectiveCover,
@@ -736,9 +738,9 @@ export async function fetchAllBlogs(lang: string = "en") {
             category: (isAz && ed.category_az) ? ed.category_az : ed.category,
             excerpt: (isAz && ed.excerpt_az) ? ed.excerpt_az : ed.excerpt,
             tags: ed.tags || item.tags,
-            readTime: ed.readTime || item.readTime,
+            readTime: estimateReadingTime(activeBody, ed.readTime || item.readTime, isAz ? "az" : "en", ed.body_az),
             featured: ed.featured ?? item.featured,
-            body: (isAz && Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+            body: activeBody,
             authorName: isAz ? "Rəvan Məmmədov" : "Ravan Mammadov",
             authorSlug: "ravan-mammadov",
             authorPhoto: "/imports/ravan_1-400.webp",
@@ -747,6 +749,7 @@ export async function fetchAllBlogs(lang: string = "en") {
         }
         return {
           ...item,
+          readTime: estimateReadingTime(item.body, item.readTime, isAz ? "az" : "en"),
           authorName: isAz ? "Rəvan Məmmədov" : "Ravan Mammadov",
           authorSlug: "ravan-mammadov",
           authorPhoto: "/imports/ravan_1-400.webp",
@@ -761,18 +764,21 @@ export async function fetchAllBlogs(lang: string = "en") {
         const origSlugKey = (ed.originalSlug || "").toLowerCase().trim();
 
         if (!seenIds.has(idKey) && !seenSlugs.has(slugKey) && (!origSlugKey || !seenSlugs.has(origSlugKey))) {
+          const activeBody = (isAz && Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body;
           mergedList.push(isAz ? {
             ...ed,
             title: ed.title_az || ed.title,
             category: ed.category_az || ed.category,
             excerpt: ed.excerpt_az || ed.excerpt,
-            body: (Array.isArray(ed.body_az) && ed.body_az.length > 0) ? ed.body_az : ed.body,
+            body: activeBody,
+            readTime: estimateReadingTime(activeBody, ed.readTime, "az", ed.body_az),
             authorName: "Rəvan Məmmədov",
             authorSlug: "ravan-mammadov",
             authorPhoto: "/imports/ravan_1-400.webp",
             authorRole: "Baş Kreativ Dizayner və Vizual Strateq",
           } : {
             ...ed,
+            readTime: estimateReadingTime(ed.body, ed.readTime, "en", ed.body_az),
             authorName: "Ravan Mammadov",
             authorSlug: "ravan-mammadov",
             authorPhoto: "/imports/ravan_1-400.webp",

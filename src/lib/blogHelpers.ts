@@ -111,29 +111,77 @@ export function formatBlogDate(dateString?: string, language: string = "en"): st
   }
 }
 
-export function estimateReadingTime(body?: any[], specifiedReadTime?: string, language: string = "en"): string {
-  const isAz = language === "az";
-  if (specifiedReadTime && specifiedReadTime.trim().length > 0) {
-    if (isAz && specifiedReadTime.includes("min read")) {
-      return specifiedReadTime.replace("min read", "dəq oxu");
-    }
-    return specifiedReadTime;
+/**
+ * Counts total words in a PortableText body or string content.
+ */
+export function countArticleWords(body?: any): number {
+  if (!body) return 0;
+  if (typeof body === "string") {
+    return body.split(/\s+/).filter(Boolean).length;
   }
-  if (!body || !Array.isArray(body)) return isAz ? "3 dəq oxu" : "3 min read";
+  if (!Array.isArray(body)) return 0;
 
-  let wordCount = 0;
+  let count = 0;
   for (const block of body) {
+    if (!block) continue;
+    if (typeof block === "string") {
+      count += block.split(/\s+/).filter(Boolean).length;
+      continue;
+    }
     if (block._type === "block" && Array.isArray(block.children)) {
       for (const child of block.children) {
-        if (child.text) {
-          wordCount += child.text.split(/\s+/).filter(Boolean).length;
+        if (child && typeof child.text === "string") {
+          count += child.text.split(/\s+/).filter(Boolean).length;
         }
       }
+    } else if (typeof block.text === "string") {
+      count += block.text.split(/\s+/).filter(Boolean).length;
+    }
+  }
+  return count;
+}
+
+/**
+ * Automatically calculates reading time in minutes based on 200 words = 1 minute.
+ */
+export function estimateReadingMinutes(body?: any, bodyAz?: any, language: string = "en"): number {
+  const isAz = language === "az";
+  const activeBody = (isAz && bodyAz && Array.isArray(bodyAz) && bodyAz.length > 0) ? bodyAz : (body || bodyAz);
+  const words = countArticleWords(activeBody);
+  if (words > 0) {
+    return Math.max(1, Math.ceil(words / 200));
+  }
+  return 2;
+}
+
+/**
+ * Estimates reading time formatted as string (e.g. "3 min read" or "3 dəq oxu").
+ * Strictly applies the 200 words / minute formula when body content is present.
+ */
+export function estimateReadingTime(
+  body?: any[],
+  specifiedReadTime?: string,
+  language: string = "en",
+  bodyAz?: any[]
+): string {
+  const isAz = language === "az";
+  const activeBody = (isAz && bodyAz && Array.isArray(bodyAz) && bodyAz.length > 0) ? bodyAz : (body || bodyAz);
+  const words = countArticleWords(activeBody);
+
+  if (words > 0) {
+    const minutes = Math.max(1, Math.ceil(words / 200));
+    return isAz ? `${minutes} dəq oxu` : `${minutes} min read`;
+  }
+
+  // Fallback if body content is not directly loaded
+  if (specifiedReadTime && specifiedReadTime.trim().length > 0) {
+    const parsedNum = parseInt(specifiedReadTime.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(parsedNum) && parsedNum > 0) {
+      return isAz ? `${parsedNum} dəq oxu` : `${parsedNum} min read`;
     }
   }
 
-  const minutes = Math.max(1, Math.ceil(wordCount / 200));
-  return isAz ? `${minutes} dəq oxu` : `${minutes} min read`;
+  return isAz ? "2 dəq oxu" : "2 min read";
 }
 
 export const CANONICAL_AUTHOR = {

@@ -63,7 +63,7 @@ export default function BlogCard({
       );
 
   const formattedDate = formatBlogDate(post.publishDate, language);
-  const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
+  const readTimeStr = estimateReadingTime(post.body, post.readTime, language, post.body_az);
 
   // Author resolution: canonical founder author Ravan Mammadov
   const isFounderAuthor =

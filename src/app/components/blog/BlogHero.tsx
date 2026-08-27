@@ -29,7 +29,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
         post.title
       );
   const formattedDate = formatBlogDate(post.publishDate, language);
-  const readTimeStr = estimateReadingTime(post.body, post.readTime, language);
+  const readTimeStr = estimateReadingTime(post.body, post.readTime, language, post.body_az);
 
   return (
     <header className="space-y-8 pt-4 pb-6">
