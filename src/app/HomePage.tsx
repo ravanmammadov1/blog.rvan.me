@@ -7,7 +7,6 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import HeroSearchSection from "./components/home/HeroSearchSection";
 import GlobalFaqSection from "./components/GlobalFaqSection";
-import GradientLinesBackground from "./components/ui/GradientLinesBackground";
 import { HOMEPAGE_FAQS } from "../data/faqData";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
@@ -40,9 +39,6 @@ export default function HomePage() {
         description="A creative publication about design, marketing, branding, AI and visual culture."
         url="https://www.rvan.me"
       />
-
-      {/* ── SUBTLE MOVING GRADIENT LINES & LIGHT BEAMS (rvan.me logo colors) ── */}
-      <GradientLinesBackground />
 
       {/* ── NAVBAR ── */}
       <SiteHeader siteSettings={siteSettings} />
