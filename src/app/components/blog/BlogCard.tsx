@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Clock, Eye } from "lucide-react";
 
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
@@ -25,7 +24,6 @@ export default function BlogCard({
   const { getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
   const [internalHovered, setInternalHovered] = useState(false);
-  const isHovered = externalHovered ?? internalHovered;
 
   // Safely extract tracking ID & slug string
   const rawSlug = typeof post.slug === "string" ? post.slug : post.slug?.current || post.originalSlug || post._id || "";
@@ -98,15 +96,15 @@ export default function BlogCard({
 
   return (
     <article
-      className="group relative flex h-full flex-col justify-between rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#111215] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-black/20 dark:hover:border-white/20 hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] focus-within:ring-2 focus-within:ring-primary"
+      className="group relative flex h-full flex-col justify-between rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-card dark:bg-[#0e0f12] p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-black/20 dark:hover:border-white/20 hover:shadow-[0_10px_25px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_10px_25px_rgba(0,0,0,0.4)] focus-within:ring-2 focus-within:ring-primary"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div>
-        {/* Editorial Cover Image Frame with Precision Optical Hairline */}
+        {/* Clean 16:9 Editorial Image Frame */}
         <Link
           to={detailPath}
-          className="mb-4 block aspect-[16/9] w-full overflow-hidden rounded-xl bg-muted/60 dark:bg-neutral-900 relative ring-1 ring-inset ring-black/5 dark:ring-white/10 focus:outline-none"
+          className="mb-4 block aspect-[16/9] w-full overflow-hidden rounded-lg bg-muted/50 dark:bg-neutral-900 relative ring-1 ring-inset ring-black/5 dark:ring-white/10 focus:outline-none"
           tabIndex={-1}
         >
           <img
@@ -116,7 +114,7 @@ export default function BlogCard({
             height={675}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover object-center group-hover:scale-[1.018] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
                 post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : "designNews",
@@ -126,30 +124,24 @@ export default function BlogCard({
           />
         </Link>
 
-        {/* Clean Taxonomy Strip: Category + Format + Reading Time */}
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="inline-flex items-center rounded-md border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-primary">
-              {categoryLabel}
-            </span>
+        {/* Pure Typographic Eyebrow & Read Time (No Pill Badges) */}
+        <div className="mb-2 flex items-center justify-between gap-2 text-[11px] font-mono uppercase tracking-[0.12em]">
+          <div className="flex items-center gap-1.5 font-bold text-primary">
+            <span>{categoryLabel}</span>
             {post.format && (
-              <span className="inline-flex items-center rounded-md border border-border/80 bg-muted/50 dark:bg-white/[0.04] px-2 py-0.5 text-[10px] font-mono text-muted-foreground uppercase">
-                {post.format}
-              </span>
+              <>
+                <span className="text-muted-foreground/40 font-normal">/</span>
+                <span className="text-muted-foreground font-semibold">{post.format}</span>
+              </>
             )}
           </div>
-
-          {/* Reading Time & View Indicator */}
-          <div className="flex items-center gap-2 text-[10px] font-mono font-semibold text-muted-foreground/80">
-            <span className="flex items-center gap-1">
-              <Clock size={11} className="text-muted-foreground/60" />
-              {readTimeStr}
-            </span>
-          </div>
+          <span className="text-[10px] text-muted-foreground/70 font-medium normal-case tracking-normal">
+            {readTimeStr}
+          </span>
         </div>
 
         {/* Authoritative Editorial Headline */}
-        <h3 className="mb-2.5 text-[17px] sm:text-[18px] font-bold leading-[1.32] tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
+        <h3 className="text-[17px] sm:text-[18px] font-bold leading-[1.32] tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
           <Link to={detailPath} className="focus:outline-none focus-visible:underline">
             {currentTitle}
           </Link>
@@ -157,27 +149,27 @@ export default function BlogCard({
 
         {/* Refined Excerpt / Deck */}
         {currentDeck && (
-          <p className="mb-5 text-[13px] leading-relaxed text-muted-foreground line-clamp-2 font-normal">
+          <p className="mt-2 mb-4 text-[13px] leading-[1.58] text-muted-foreground line-clamp-2 font-normal">
             {currentDeck}
           </p>
         )}
       </div>
 
-      {/* Integrated Unified Metadata Footer */}
-      <div className="mt-auto pt-3.5 border-t border-border/70 dark:border-white/5 flex items-center justify-between gap-3">
+      {/* Understated Editorial Signature Footer */}
+      <div className="mt-auto pt-3 border-t border-border/60 dark:border-white/5 flex items-center justify-between text-[11px]">
         {/* Author Details + Date */}
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
           <Link
             to={authorPath}
-            className="relative h-6 w-6 rounded-full overflow-hidden border border-border shrink-0 bg-muted focus:outline-none ring-1 ring-border/50 hover:ring-primary/40 transition-all"
+            className="relative h-5 w-5 rounded-full overflow-hidden border border-border/80 shrink-0 bg-muted focus:outline-none"
             aria-label={displayAuthorName}
             tabIndex={-1}
           >
             <img
               src={authorAvatar}
               alt={displayAuthorName}
-              width={24}
-              height={24}
+              width={20}
+              height={20}
               loading="lazy"
               decoding="async"
               className="h-full w-full object-cover object-center"
@@ -190,31 +182,28 @@ export default function BlogCard({
             />
           </Link>
 
-          <div className="flex items-center gap-1.5 text-[11px] min-w-0 truncate">
+          <div className="flex items-center gap-1.5 truncate text-muted-foreground">
             <Link
               to={authorPath}
-              className="font-semibold text-foreground hover:text-primary transition-colors truncate focus:outline-none"
+              className="font-medium text-foreground hover:text-primary transition-colors truncate focus:outline-none"
             >
               {displayAuthorName}
             </Link>
             {formattedDate && (
               <>
                 <span className="text-muted-foreground/40 shrink-0">•</span>
-                <span className="mono text-muted-foreground text-[10px] shrink-0">{formattedDate}</span>
+                <span className="mono text-[10px] shrink-0 text-muted-foreground/80">{formattedDate}</span>
               </>
             )}
           </div>
         </div>
 
-        {/* Action Cue with Micro Arrow */}
-        <Link
-          to={detailPath}
-          className="flex h-6 w-6 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground group-hover:border-primary/50 group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black transition-all duration-300 shrink-0 shadow-2xs"
-          aria-label={`${isAz ? "Məqaləni oxu" : "Read article"}: ${currentTitle}`}
-          tabIndex={-1}
-        >
-          <ArrowUpRight size={12} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </Link>
+        {/* Quiet View Counter (If Available) */}
+        {views > 0 && (
+          <span className="mono text-[10px] font-semibold text-muted-foreground/60 shrink-0">
+            {views.toLocaleString()} {isAz ? "oxu" : "reads"}
+          </span>
+        )}
       </div>
     </article>
   );
