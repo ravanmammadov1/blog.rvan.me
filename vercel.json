@@ -22,16 +22,16 @@
       "destination": "/blog/:slug/index.html"
     },
     {
-      "source": "/news",
-      "destination": "/news/index.html"
+      "source": "/ai-tools",
+      "destination": "/ai-tools/index.html"
     },
     {
-      "source": "/news/:slug",
-      "destination": "/news/:slug/index.html"
+      "source": "/opportunities",
+      "destination": "/opportunities/index.html"
     },
     {
-      "source": "/tools",
-      "destination": "/tools/index.html"
+      "source": "/write",
+      "destination": "/write/index.html"
     },
     {
       "source": "/work",
@@ -101,6 +101,36 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/tools",
+      "destination": "/resources?category=tools",
+      "permanent": true
+    },
+    {
+      "source": "/az/tools",
+      "destination": "/az/resources?category=tools",
+      "permanent": true
+    },
+    {
+      "source": "/news",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/az/news",
+      "destination": "/az/blog",
+      "permanent": true
+    },
+    {
+      "source": "/news/:slug",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/az/news/:slug",
+      "destination": "/az/blog",
+      "permanent": true
+    },
     {
       "source": "/ravanmammadov",
       "destination": "/ravan-mammadov",
