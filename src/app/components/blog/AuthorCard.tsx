@@ -15,7 +15,8 @@ interface AuthorCardProps {
 }
 
 export default function AuthorCard({ post }: AuthorCardProps) {
-  const { getLocalizedPath, isAz } = useLanguage();
+  const { getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
   const [aboutSection, setAboutSection] = useState<AboutSection | null>(null);
   const [localApp, setLocalApp] = useState<any>(null);
 

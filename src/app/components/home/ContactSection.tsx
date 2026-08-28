@@ -17,7 +17,8 @@ const fadeUp = {
 
 export default function ContactSection() {
   const [siteSettings, setSiteSettings] = useState<any>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isAz = language === "az";
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");

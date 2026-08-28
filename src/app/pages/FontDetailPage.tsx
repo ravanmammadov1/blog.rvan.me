@@ -50,7 +50,8 @@ export default function FontDetailPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [catalog, setCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t, getLocalizedPath, language, isAz } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   // Live Specimen Tester State
   const [previewText, setPreviewText] = useState(

@@ -51,7 +51,8 @@ export const HOME_RESOURCE_CATEGORIES: Record<HomeResourceCategoryKey, { label: 
 export default function ResourcesSection() {
   const [resources, setResources] = useState<SharedResourceItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<HomeResourceCategoryKey>("fonts");
-  const { t, getLocalizedPath, isAz } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   const categoryLabels: Record<HomeResourceCategoryKey, string> = {
     fonts: t("fonts", "Fonts"),

@@ -62,7 +62,8 @@ export default function ResourcesArchive() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [fontCatalog, setFontCatalog] = useState<FontItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { t, language, isAz } = useLanguage();
+  const { t, language } = useLanguage();
+  const isAz = language === "az";
 
   // Font Specimen Interactive Controls
   const [previewText, setPreviewText] = useState("Design systems engineered for precision & elegance.");
