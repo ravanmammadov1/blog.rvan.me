@@ -42,37 +42,34 @@ export default function CookiePreferencesModal() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showPreferencesModal, closePreferences]);
 
-  if (!showPreferencesModal) return null;
-
   return (
     <AnimatePresence>
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cookie-modal-title"
-      >
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={closePreferences}
-          className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md"
-        />
-
-        {/* Modal Window */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.98, y: 12 }}
-          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-xl rounded-3xl border border-border bg-card text-foreground p-6 sm:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.7)] dark:bg-[#09090b]/95 dark:border-white/15 z-10 my-auto"
+      {showPreferencesModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cookie-modal-title"
         >
-          {/* Header */}
-          <div className="flex items-center justify-between gap-4 border-b border-border dark:border-white/10 pb-5">
-            <div>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.3, ease: "easeOut" } }}
+            exit={{ opacity: 0, transition: { duration: 0.2, ease: "easeIn" } }}
+            onClick={closePreferences}
+            className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md"
+          />
+
+          {/* Modal Window */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0, transition: { duration: 0.32, ease: [0.25, 1, 0.5, 1] } }}
+            exit={{ opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }}
+            className="relative w-full max-w-xl rounded-3xl border border-border bg-card text-foreground p-6 sm:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.7)] dark:bg-[#09090b]/95 dark:border-white/15 z-10 my-auto"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between gap-4 border-b border-border dark:border-white/10 pb-5">
+              <div>
               <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[.18em] text-primary mono">
                 {isAz ? "MƏXFİLİK NƏZARƏTİ" : "PRIVACY CONTROLS"}
               </span>
@@ -185,6 +182,7 @@ export default function CookiePreferencesModal() {
           </div>
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }

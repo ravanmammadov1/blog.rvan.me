@@ -55,19 +55,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {/* Backdrop overlay */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            animate={{ opacity: 1, transition: { duration: 0.3, ease: "easeOut" } }}
+            exit={{ opacity: 0, transition: { duration: 0.2, ease: "easeIn" } }}
             onClick={onClose}
             className="fixed inset-0 bg-black/70 backdrop-blur-sm"
           />
 
           {/* Modal card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 12 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, scale: 0.97, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0, transition: { duration: 0.32, ease: [0.25, 1, 0.5, 1] } }}
+            exit={{ opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }}
             className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-2xl text-foreground"
           >
             {/* Close button */}

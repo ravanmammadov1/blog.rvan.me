@@ -54,7 +54,7 @@ export function FontSpecimenCard({
       whileInView="visible"
       viewport={{ once: true, amount: 0.05 }}
       custom={(idx % 20) * 0.02}
-      className="group p-6 rounded-2xl border border-border bg-card hover:border-primary/40 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40"
+      className="group p-6 rounded-2xl border border-border bg-card hover:border-primary/40 flex flex-col justify-between transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40"
     >
       <div>
         {/* Header Badges */}
@@ -83,7 +83,7 @@ export function FontSpecimenCard({
         </div>
 
         {/* Font Family Name with Crawlable Link */}
-        <h3 className="text-xl font-bold tracking-tight text-card-foreground group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-bold tracking-tight text-card-foreground group-hover:text-primary transition-colors duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]">
           <Link to={detailPath} className="hover:underline">
             {font.name}
           </Link>
@@ -93,7 +93,7 @@ export function FontSpecimenCard({
         </p>
 
         {/* Specimen Live Preview in Authentic Font Style */}
-        <div className="my-4 p-4 rounded-xl border border-border bg-surface/60 overflow-hidden min-h-[96px] flex items-center">
+        <div className="my-4 p-4 rounded-xl border border-border bg-surface/60 group-hover:bg-surface/90 overflow-hidden min-h-[96px] flex items-center transition-colors duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]">
           <p
             style={{
               fontFamily: `"${font.family}", "${font.family.replace(/\s+(Pro|Display|Extra|Variable|Math|Code|Sans|Mono|Serif)$/i, "").trim()}", system-ui, -apple-system, sans-serif`,
@@ -111,16 +111,17 @@ export function FontSpecimenCard({
       <div className="pt-4 border-t border-border flex items-center justify-between text-xs font-bold mono">
         <Link
           to={detailPath}
-          className="text-[11px] text-primary hover:underline uppercase tracking-wider transition-colors flex items-center gap-1"
+          className="text-[11px] text-primary hover:underline uppercase tracking-wider transition-colors flex items-center gap-1 group/cta"
         >
-          {t("specimenAndDetails", "SPECIMEN & DETAILS")} →
+          <span>{t("specimenAndDetails", "SPECIMEN & DETAILS")}</span>
+          <span className="transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover/cta:translate-x-0.5">→</span>
         </Link>
         <a
           href={resolveDirectFontDownloadUrl(font)}
           download={`${font.family}.zip`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground uppercase tracking-wider hover:opacity-95 transition-opacity cursor-pointer shadow-sm"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground uppercase tracking-wider hover:opacity-95 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] cursor-pointer shadow-sm"
         >
           ZIP <Download size={12} />
         </a>

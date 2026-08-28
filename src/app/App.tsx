@@ -1,7 +1,8 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import HomePage from "./HomePage";
 import ContactPage from "./ContactPage";
@@ -42,8 +43,26 @@ import { AuthProvider } from "../context/AuthContext";
 import { ExperienceProvider } from "../context/ExperienceContext";
 
 function AppRoutes() {
+  const location = useLocation();
+
   return (
-    <Routes>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.35, ease: [0.25, 1, 0.5, 1] },
+        }}
+        exit={{
+          opacity: 0,
+          y: -4,
+          transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
+        }}
+        className="w-full min-h-screen"
+      >
+        <Routes location={location}>
       {/* English Default Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/about" element={<AboutPage />} />
@@ -128,7 +147,9 @@ function AppRoutes() {
       <Route path="/az/admin/linkedin" element={<Navigate to="/az/admin" replace />} />
 
       <Route path="*" element={<NotFound />} />
-    </Routes>
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 

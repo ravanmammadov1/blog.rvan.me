@@ -40,7 +40,7 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
   ) => {
     // Base Design System Classes matching clean editorial hierarchy with polished micro-interactions
     const baseClasses =
-      "group inline-flex items-center justify-center gap-2 rounded-xl font-bold uppercase tracking-[.14em] transition-all duration-300 cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985]";
+      "group inline-flex items-center justify-center gap-2 rounded-xl font-bold uppercase tracking-[.14em] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] cursor-pointer select-none mono whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985]";
 
     // Size Variant Classes
     const sizeClasses = {
@@ -55,26 +55,26 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
 
     if (variant === "primary") {
       variantClasses =
-        "text-white shadow-md shadow-black/10 dark:shadow-black/40 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#61c5ad]/25 bg-[length:200%_200%] bg-left hover:bg-right transition-all duration-300 relative overflow-hidden";
+        "text-white shadow-md shadow-black/10 dark:shadow-black/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#61c5ad]/20 bg-[length:200%_200%] bg-left hover:bg-right transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] relative overflow-hidden";
       inlineStyle.backgroundImage = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
     } else if (variant === "secondary") {
       variantClasses =
-        "border border-[#DDE1E0] dark:border-white/10 bg-white/95 dark:bg-white/[0.04] text-foreground hover:bg-slate-50 dark:hover:bg-white/[0.08] hover:border-primary/50 hover:text-foreground hover:-translate-y-0.5 shadow-sm transition-all duration-300";
+        "border border-[#DDE1E0] dark:border-white/10 bg-white/95 dark:bg-white/[0.04] text-foreground hover:bg-slate-50 dark:hover:bg-white/[0.08] hover:border-primary/40 hover:text-foreground hover:-translate-y-0.5 shadow-xs transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]";
     } else if (variant === "outline") {
       variantClasses =
-        "border border-[#DDE1E0] dark:border-white/15 bg-transparent text-foreground hover:border-primary hover:text-primary hover:bg-primary/5 hover:-translate-y-0.5 transition-all duration-300";
+        "border border-[#DDE1E0] dark:border-white/15 bg-transparent text-foreground hover:border-primary/80 hover:text-primary hover:bg-primary/5 hover:-translate-y-0.5 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]";
     } else if (variant === "filter") {
       if (active) {
         variantClasses =
-          "text-white font-bold border border-transparent shadow-md shadow-primary/20 hover:-translate-y-0.5 transition-all duration-300";
+          "text-white font-bold border border-transparent shadow-md shadow-primary/20 hover:-translate-y-0.5 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]";
         inlineStyle.backgroundImage = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
       } else {
         variantClasses =
-          "border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/[0.08] hover:border-primary/40 transition-all duration-300";
+          "border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/[0.08] hover:border-primary/30 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]";
       }
     } else if (variant === "ghost") {
       variantClasses =
-        "border border-transparent text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300";
+        "border border-transparent text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]";
     }
 
     const combinedClassName = `${baseClasses} ${sizeClasses} ${variantClasses} ${className}`;
@@ -82,13 +82,13 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     const content = (
       <>
         {icon && iconPosition === "left" && (
-          <span className="shrink-0 transition-transform duration-300 group-hover:-translate-x-0.5">
+          <span className="shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:-translate-x-0.5">
             {icon}
           </span>
         )}
         {children && <span>{children}</span>}
         {icon && iconPosition === "right" && (
-          <span className="shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+          <span className="shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-x-0.5">
             {icon}
           </span>
         )}

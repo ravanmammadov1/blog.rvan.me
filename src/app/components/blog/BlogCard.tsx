@@ -99,7 +99,7 @@ export default function BlogCard({
 
   return (
     <article
-      className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.02] dark:hover:bg-white/[0.05] dark:shadow-none dark:hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary"
+      className="group relative z-10 flex h-full flex-col justify-between rounded-3xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_12px_28px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/[0.02] dark:hover:bg-white/[0.05] dark:shadow-none dark:hover:shadow-primary/5 focus-within:ring-2 focus-within:ring-primary"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -117,7 +117,7 @@ export default function BlogCard({
             height={675}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-700 ease-out"
+            className="h-full w-full object-cover object-center group-hover:scale-[1.025] transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = getArticleCoverImage(
                 post.category === "Design" ? "designNews" : post.category === "AI" ? "aiNews" : "designNews",
@@ -143,15 +143,15 @@ export default function BlogCard({
 
           <Link
             to={getLocalizedPath(`/blog/${slugStr}`)}
-            className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-background/60 transition-all duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black focus:outline-none shadow-xs shrink-0"
+            className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-background/60 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black focus:outline-none shadow-xs shrink-0"
             aria-label={`Oxu: ${currentTitle}`}
           >
-            <ArrowRight size={13} className="transition-transform group-hover:-rotate-45" />
+            <ArrowRight size={13} className="transition-transform duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:-rotate-45" />
           </Link>
         </div>
 
         {/* Short, Magnetic Headline (Clean 2 lines, no ellipsis) */}
-        <h3 className="mb-3 text-lg sm:text-xl font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
+        <h3 className="mb-3 text-lg sm:text-xl font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]">
           <Link to={getLocalizedPath(`/blog/${slugStr}`)} className="focus:outline-none focus-visible:underline">
             {currentTitle}
           </Link>

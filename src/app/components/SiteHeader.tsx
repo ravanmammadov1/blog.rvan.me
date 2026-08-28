@@ -89,10 +89,9 @@ function UserAuthMenu() {
         {dropdownOpen && (
           <motion.div
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.98 }}
-            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-[#DDE1E0] dark:border-border bg-white dark:bg-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden"
+            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.25, ease: [0.25, 1, 0.5, 1] } }}
+            exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.16, ease: [0.4, 0, 1, 1] } }}
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-[#DDE1E0] dark:border-border bg-white dark:bg-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden origin-top-right"
           >
             {/* Identity / Header area */}
             {!user ? (
@@ -450,10 +449,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.25, 1, 0.5, 1] } }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: [0.4, 0, 1, 1] } }}
             className="fixed inset-0 z-40 flex flex-col justify-center bg-background/98 backdrop-blur-md px-8 pt-20 md:hidden"
           >
             <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 relative z-10">

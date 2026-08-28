@@ -142,17 +142,15 @@ export default function GlobalSearchModal({ isOpen, onClose, initialQuery }: Glo
       {isOpen && (
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          animate={{ opacity: 1, transition: { duration: 0.26, ease: "easeOut" } }}
+          exit={{ opacity: 0, transition: { duration: 0.16, ease: "easeIn" } }}
           className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-900/[0.12] dark:bg-black/45 backdrop-blur-xs"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, y: -12, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: -8, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.28, ease: [0.25, 1, 0.5, 1] } }}
+            exit={{ opacity: 0, y: -6, scale: 0.985, transition: { duration: 0.16, ease: [0.4, 0, 1, 1] } }}
             className="w-full max-w-2xl rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-[#121215] p-4 sm:p-5 shadow-[0_20px_60px_rgba(15,23,42,0.10)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.55)] space-y-3.5 backdrop-blur-xl"
             onClick={(e) => e.stopPropagation()}
           >
