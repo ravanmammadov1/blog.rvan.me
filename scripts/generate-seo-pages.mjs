@@ -475,14 +475,12 @@ async function fetchDynamicPages() {
       }
     }
 
-    return { enPages, azPages };
-  } catch (error) {
-    console.warn("SEO prerender dynamic CMS fetch fallback:", error?.message || error);
-    const enPages = [];
-    const azPages = [];
+    // Always merge local master blogs from src/lib/blogs to guarantee 100% route coverage
     try {
       const blogsDir = path.join(projectRoot, "src", "lib", "blogs");
       const files = await fs.readdir(blogsDir);
+      const seenEnSlugs = new Set(enPages.map((p) => p.path));
+
       for (const file of files) {
         if (!file.endsWith(".ts")) continue;
         const content = await fs.readFile(path.join(blogsDir, file), "utf8");
@@ -502,7 +500,8 @@ async function fetchDynamicPages() {
           const excerpt_azMatch = b.match(/excerpt_az:\s*"((?:\\.|[^"\\])*)"/);
           const excerpt_az = excerpt_azMatch ? excerpt_azMatch[1].replace(/\\"/g, '"') : excerpt;
 
-          if (slug && title) {
+          if (slug && title && !seenEnSlugs.has(`/blog/${slug}`)) {
+            seenEnSlugs.add(`/blog/${slug}`);
             enPages.push({
               path: `/blog/${slug}`,
               title: `${title} — Rvan.me`,
@@ -538,9 +537,13 @@ async function fetchDynamicPages() {
         }
       }
     } catch (e) {
-      console.warn("Local blog fallback error:", e?.message || e);
+      console.warn("Local blog merge error:", e?.message || e);
     }
+
     return { enPages, azPages };
+  } catch (error) {
+    console.warn("SEO prerender dynamic CMS fetch fallback:", error?.message || error);
+    return { enPages: [], azPages: [] };
   }
 }
 
