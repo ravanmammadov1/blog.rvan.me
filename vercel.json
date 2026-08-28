@@ -132,6 +132,46 @@
       "permanent": true
     },
     {
+      "source": "/blog/apca-contrast-science-guide",
+      "destination": "/blog/apca-vs-wcag-contrast-accessibility-guide",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/apca-contrast-science-guide",
+      "destination": "/az/blog/apca-vs-wcag-contrast-accessibility-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/visual-hierarchy-3-second-framework",
+      "destination": "/blog/visual-hierarchy-framework-web-interfaces",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/visual-hierarchy-3-second-framework",
+      "destination": "/az/blog/visual-hierarchy-framework-web-interfaces",
+      "permanent": true
+    },
+    {
+      "source": "/blog/cognitive-conversion-copywriting-framework",
+      "destination": "/blog/guide-cognitive-conversion-copywriting",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/cognitive-conversion-copywriting-framework",
+      "destination": "/az/blog/guide-cognitive-conversion-copywriting",
+      "permanent": true
+    },
+    {
+      "source": "/blog/responsive-fluid-typography-enterprise-guide",
+      "destination": "/blog/guide-responsive-fluid-typography-css-clamp",
+      "permanent": true
+    },
+    {
+      "source": "/az/blog/responsive-fluid-typography-enterprise-guide",
+      "destination": "/az/blog/guide-responsive-fluid-typography-css-clamp",
+      "permanent": true
+    },
+    {
       "source": "/ravanmammadov",
       "destination": "/ravan-mammadov",
       "permanent": true
