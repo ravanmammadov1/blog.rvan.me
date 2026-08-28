@@ -434,29 +434,45 @@ export default function HeroSearchSection() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {popularConcepts.map((item) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {popularConcepts.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.id}
                   to={getLocalizedPath(item.path)}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-border/70 bg-white/60 dark:bg-white/[0.04] p-3.5 text-left backdrop-blur-md shadow-xs hover:border-primary/50 hover:shadow-md hover:bg-white/90 dark:hover:bg-white/[0.07] transition-all duration-300 hover:-translate-y-1"
+                  className="group relative flex flex-col justify-between rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-gradient-to-b from-white/95 to-white/75 dark:from-[#141519]/90 dark:to-[#0c0d10]/90 p-4 text-left backdrop-blur-xl shadow-[0_4px_16px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)] hover:border-primary/40 dark:hover:border-white/20 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.65)] transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] hover:-translate-y-1 overflow-hidden"
                 >
+                  {/* Subtle Top Glow Accent Line on Hover */}
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/0 to-transparent group-hover:via-primary/50 transition-all duration-500 pointer-events-none" />
+
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className={`flex h-7 w-7 items-center justify-center rounded-lg border ${item.accent}`}>
-                        <Icon size={14} />
+                    {/* Top Row: Icon + Index + Tactile Arrow */}
+                    <div className="flex items-center justify-between mb-3.5">
+                      <div className="flex items-center gap-2">
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-xl border shadow-2xs transition-transform duration-300 group-hover:scale-105 ${item.accent}`}>
+                          <Icon size={15} />
+                        </div>
+                        <span className="text-[10px] font-mono font-bold text-muted-foreground/50 tracking-wider">
+                          0{idx + 1}
+                        </span>
                       </div>
-                      <ArrowUpRight
-                        size={14}
-                        className="text-muted-foreground/60 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300"
-                      />
+
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full border border-border/80 bg-background/80 text-muted-foreground group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black transition-all duration-300 shadow-2xs shrink-0">
+                        <ArrowUpRight
+                          size={12}
+                          className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        />
+                      </div>
                     </div>
-                    <span className="text-[9px] font-bold mono uppercase tracking-wider text-muted-foreground block mb-1">
+
+                    {/* Category Eyebrow */}
+                    <span className="text-[9.5px] font-mono font-bold uppercase tracking-[.14em] text-muted-foreground/80 group-hover:text-primary transition-colors block mb-1.5">
                       {item.category}
                     </span>
-                    <h2 className="text-xs sm:text-[13px] font-bold leading-snug text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2">
+
+                    {/* Headline */}
+                    <h2 className="text-xs sm:text-[13px] font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2">
                       {item.title}
                     </h2>
                   </div>
