@@ -10,12 +10,11 @@ import GlobalFaqSection from "./components/GlobalFaqSection";
 import { HOMEPAGE_FAQS } from "../data/faqData";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
-// Lazy-loaded section components for optimal performance
-const BlogSection = lazy(() => import("./components/home/BlogSection"));
-const TopicsSection = lazy(() => import("./components/home/TopicsSection"));
-const HomeAboutSection = lazy(() => import("./components/home/HomeAboutSection"));
-const ResourcesSection = lazy(() => import("./components/home/ResourcesSection"));
-const ContactSection = lazy(() => import("./components/home/ContactSection"));
+import BlogSection from "./components/home/BlogSection";
+import TopicsSection from "./components/home/TopicsSection";
+import HomeAboutSection from "./components/home/HomeAboutSection";
+import ResourcesSection from "./components/home/ResourcesSection";
+import ContactSection from "./components/home/ContactSection";
 
 export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
@@ -47,59 +46,19 @@ export default function HomePage() {
       <HeroSearchSection />
 
       {/* ── 2. LATEST ARTICLES ── */}
-      <Suspense
-        fallback={
-          <div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">
-            LOADING LATEST ARTICLES...
-          </div>
-        }
-      >
-        <BlogSection />
-      </Suspense>
+      <BlogSection />
 
       {/* ── 3. TOPICS (EDITORIAL INDEX) ── */}
-      <Suspense
-        fallback={
-          <div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">
-            LOADING TOPICS INDEX...
-          </div>
-        }
-      >
-        <TopicsSection />
-      </Suspense>
+      <TopicsSection />
 
       {/* ── 4. ABOUT RVAN.ME & FOUNDER ── */}
-      <Suspense
-        fallback={
-          <div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">
-            LOADING ABOUT SECTION...
-          </div>
-        }
-      >
-        <HomeAboutSection />
-      </Suspense>
+      <HomeAboutSection />
 
       {/* ── 5. RESOURCES (CURATED SHOWCASE) ── */}
-      <Suspense
-        fallback={
-          <div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">
-            LOADING SHOWCASE RESOURCES...
-          </div>
-        }
-      >
-        <ResourcesSection />
-      </Suspense>
+      <ResourcesSection />
 
       {/* ── 6. COLLABORATE & CONTACT ── */}
-      <Suspense
-        fallback={
-          <div className="h-96 flex items-center justify-center text-xs text-muted-foreground mono">
-            LOADING CONTACT...
-          </div>
-        }
-      >
-        <ContactSection />
-      </Suspense>
+      <ContactSection />
 
       {/* ── 7. GLOBAL FAQ SECTION (IMMEDIATELY BEFORE FOOTER) ── */}
       <GlobalFaqSection

@@ -5,8 +5,9 @@ import { lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import HomePage from "./HomePage";
-import ContactPage from "./ContactPage";
-import NotFound from "./NotFound";
+
+const ContactPage = lazy(() => import("./ContactPage"));
+const NotFound = lazy(() => import("./NotFound"));
 
 const BlogArchive = lazy(() => import("./BlogArchive"));
 const BlogDetail = lazy(() => import("./BlogDetail"));

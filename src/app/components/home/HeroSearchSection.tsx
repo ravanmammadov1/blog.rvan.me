@@ -216,7 +216,7 @@ export default function HeroSearchSection() {
 
       <div className="mx-auto w-full max-w-[1280px] relative z-10 flex flex-col items-center">
         {/* ── Micro-label ── */}
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}>
+        <motion.div variants={fadeUp} initial={false} animate="visible" custom={0}>
           <Eyebrow className="mb-4 text-primary tracking-[.24em] font-semibold">
             {isAz
               ? "YARADICI NƏŞR · BİLİK · MƏDƏNİYYƏT"
@@ -224,10 +224,10 @@ export default function HeroSearchSection() {
           </Eyebrow>
         </motion.div>
 
-        {/* ── Dominant Brand Headline ── */}
+        {/* ── Dominant Brand Headline (Critical LCP Target) ── */}
         <motion.h1
           variants={fadeUp}
-          initial="hidden"
+          initial={false}
           animate="visible"
           custom={0.1}
           className="font-extrabold tracking-tight leading-[1.04] mb-5 w-full max-w-4xl"
@@ -245,7 +245,7 @@ export default function HeroSearchSection() {
         {/* ── Short Supporting Description ── */}
         <motion.p
           variants={fadeUp}
-          initial="hidden"
+          initial={false}
           animate="visible"
           custom={0.15}
           className="text-base sm:text-lg text-muted-foreground font-normal max-w-xl leading-relaxed mb-8 mx-auto"
@@ -260,7 +260,7 @@ export default function HeroSearchSection() {
         ══════════════════════════════════════════════════════════════════ */}
         <motion.div
           variants={fadeUp}
-          initial="hidden"
+          initial={false}
           animate="visible"
           custom={0.2}
           ref={searchContainerRef}
