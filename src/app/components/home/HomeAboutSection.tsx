@@ -19,9 +19,9 @@ export default function HomeAboutSection() {
   const isAz = language === "az";
 
   return (
-    <section id="about-summary" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-[#DDE1E0] dark:border-white/10 bg-transparent">
+    <section id="about-summary" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border/70 bg-surface/20">
       <div className="mx-auto max-w-[1280px] relative z-10">
-        <div className="p-8 md:p-12 rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-[0_8px_30px_rgba(15,23,42,0.04)] dark:shadow-none">
+        <div className="p-8 md:p-12 rounded-3xl border border-black/[0.08] dark:border-white/[0.08] bg-gradient-to-b from-white/95 to-white/80 dark:from-[#141519]/90 dark:to-[#0c0d10]/90 shadow-[0_8px_32px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] backdrop-blur-xl">
           <div className="grid gap-10 lg:grid-cols-12 items-center">
             {/* Platform Information */}
             <motion.div
@@ -46,7 +46,7 @@ export default function HomeAboutSection() {
               </p>
 
               {/* Founder Subsection */}
-              <div className="pt-6 border-t border-[#DDE1E0] dark:border-white/10 space-y-2">
+              <div className="pt-6 border-t border-border/70 dark:border-white/10 space-y-2">
                 <div className="inline-flex items-center gap-2 text-xs font-bold text-primary mono uppercase">
                   <UserCheck size={14} />
                   <span>{isAz ? "Təsisçi: Rəvan Məmmədov" : "Founded by Ravan Mammadov"}</span>
@@ -79,8 +79,8 @@ export default function HomeAboutSection() {
               custom={0.15}
               className="lg:col-span-5 flex justify-center"
             >
-              <div className="p-8 rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.03] space-y-5 w-full max-w-md shadow-2xs">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+              <div className="p-8 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-slate-50/90 dark:bg-white/[0.04] space-y-5 w-full max-w-md shadow-2xs backdrop-blur-md">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary shadow-2xs">
                   <BookOpenCheck size={20} />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">
@@ -91,8 +91,8 @@ export default function HomeAboutSection() {
                     ? "Hər bir məqalə, resurs və analitik esse real kommersiya və yaradıcı faydalılıq üçün hazırlanır. Reklam səs-küyü olmadan təmiz bilik."
                     : "Every article, resource, and analytical essay is curated for real commercial and creative utility. Zero promotional noise, pure knowledge."}
                 </p>
-                <div className="flex items-center gap-2.5 text-xs text-muted-foreground mono border-t border-[#DDE1E0] dark:border-white/10 pt-4">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <div className="flex items-center gap-2.5 text-xs text-muted-foreground mono border-t border-border/70 dark:border-white/10 pt-4">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>{isAz ? "Aktiv Nəşr Mərkəzi" : "Active Knowledge Hub"}</span>
                 </div>
               </div>

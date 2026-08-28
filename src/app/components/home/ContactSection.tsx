@@ -104,15 +104,23 @@ export default function ContactSection() {
               {contactSubtext}
             </p>
 
-            <div>
-              <Button
-                href="mailto:hello@rvan.me"
-                variant="secondary"
-                size="lg"
-                icon={<ArrowDownRight size={16} />}
-              >
-                {letsTalkLabel}
-              </Button>
+            <div className="p-6 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-slate-50/90 dark:bg-white/[0.03] space-y-4 backdrop-blur-md">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary block">
+                {isAz ? "BİRBASHA ƏLAQƏ" : "DIRECT INQUIRIES"}
+              </span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-base sm:text-lg font-bold text-foreground font-mono">
+                  hello@rvan.me
+                </span>
+                <Button
+                  href="mailto:hello@rvan.me"
+                  variant="secondary"
+                  size="sm"
+                  icon={<ArrowDownRight size={14} />}
+                >
+                  {letsTalkLabel}
+                </Button>
+              </div>
             </div>
           </motion.div>
 
@@ -123,7 +131,7 @@ export default function ContactSection() {
             whileInView="visible"
             viewport={{ once: true }}
             custom={0.15}
-            className="rounded-2xl border border-border bg-card p-8 md:p-10"
+            className="rounded-3xl border border-black/[0.08] dark:border-white/[0.08] bg-gradient-to-b from-white/95 to-white/80 dark:from-[#141519]/90 dark:to-[#0c0d10]/90 p-8 md:p-10 backdrop-blur-xl shadow-[0_12px_36px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)]"
           >
             <form onSubmit={handleContactSubmit} className="space-y-6" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">

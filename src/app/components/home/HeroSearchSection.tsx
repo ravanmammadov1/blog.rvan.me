@@ -248,12 +248,28 @@ export default function HeroSearchSection() {
           initial={false}
           animate="visible"
           custom={0.15}
-          className="text-base sm:text-lg text-muted-foreground font-normal max-w-xl leading-relaxed mb-8 mx-auto"
+          className="text-base sm:text-lg text-muted-foreground font-normal max-w-xl leading-relaxed mb-6 mx-auto"
         >
           {isAz
             ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr."
             : "A creative publication about design, marketing, branding, AI and visual culture."}
         </motion.p>
+
+        {/* ── Live Knowledge Ticker ── */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] mono font-semibold text-muted-foreground/80 mb-8 select-none">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-2xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <span>39 {isAz ? "Tədqiqat Məqaləsi" : "Research Articles"}</span>
+          </span>
+          <span className="hidden sm:inline text-muted-foreground/30">•</span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/60 dark:bg-white/[0.04] border border-border/80 text-foreground shadow-2xs">
+            <span>2,000+ {isAz ? "Açıq Şrift" : "Open Fonts"}</span>
+          </span>
+          <span className="hidden sm:inline text-muted-foreground/30">•</span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/60 dark:bg-white/[0.04] border border-border/80 text-foreground shadow-2xs">
+            <span>1,400+ {isAz ? "Vektor İkon" : "Vector Icons"}</span>
+          </span>
+        </div>
 
         {/* ══════════════════════════════════════════════════════════════════
             ── HERO INLINE SEARCH BAR — ZERO RECTANGLE FOCUS OUTLINE ──
