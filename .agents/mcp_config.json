@@ -16,6 +16,23 @@
         "GSC_SITE_URL": "https://www.rvan.me/",
         "GOOGLE_APPLICATION_CREDENTIALS": "C:/Users/mamma/OneDrive/Desktop/rvan-2796c-48b56f62f8a7.json"
       }
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "firebase-tools@latest", "mcp"],
+      "env": {
+        "FIREBASE_PROJECT_ID": "rvan-2796c",
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:/Users/mamma/OneDrive/Desktop/rvan-2796c-48b56f62f8a7.json"
+      }
+    },
+    "vercel": {
+      "command": "npx",
+      "args": ["-y", "vercel-mcp-server"],
+      "env": {
+        "VERCEL_TOKEN": "${VERCEL_TOKEN}",
+        "VERCEL_PROJECT_ID": "prj_YQ9sdRGFh8nx0ZA0VYS2V08lWoam",
+        "VERCEL_TEAM_ID": "team_1w0ae08rkeaKDizNrLWPY4RJ"
+      }
     }
   }
 }
