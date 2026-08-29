@@ -385,8 +385,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             </span>
           </Link>
 
-          {/* Desktop Navigation — Tightly Hugged Liquid Glass Capsule */}
-          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0 relative z-10">
+          {/* Desktop Navigation — Links floating directly inside main navbar container */}
+          <nav className="hidden md:flex items-center gap-1 text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0 relative z-10">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isHome = item.target === "/";
