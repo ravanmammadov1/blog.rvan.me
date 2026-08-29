@@ -157,74 +157,68 @@ export default function HeroSearchSection() {
   return (
     <section className="relative w-full min-h-[85vh] sm:min-h-[88vh] lg:min-h-[90vh] flex flex-col justify-between overflow-hidden bg-background text-foreground select-none">
       
-      {/* ── Layer 0: Background Cinematic Portrait Image (Responsive Art-Direction) ── */}
+      {/* ── Layer 0: Full-Bleed Background Cinematic Image (No Outer Borders or Card Wrappers) ── */}
       <div
         className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden select-none"
         aria-hidden="true"
       >
-        {/* Centered Desktop Frame wrapper to bring portrait and text closer */}
-        <div className="relative w-full h-full max-w-[1320px] mx-auto">
-          {/* Light Mode Picture */}
-          <picture className="block dark:hidden h-full w-full">
-            {/* Mobile Light (< 768px) */}
-            <source media="(max-width: 767px)" srcSet="/images/hero_light_mobile.jpg" />
-            {/* Desktop / Tablet Light (>= 768px) */}
-            <source media="(min-width: 768px)" srcSet="/images/hero_light.jpg" />
-            <img
-              src="/images/hero_light.jpg"
-              alt="Rvan.me Editorial Vision"
-              width={2752}
-              height={1536}
-              fetchPriority="high"
-              decoding="async"
-              className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none"
-            />
-          </picture>
+        {/* Light Mode Picture */}
+        <picture className="block dark:hidden h-full w-full">
+          {/* Mobile Light (< 768px) */}
+          <source media="(max-width: 767px)" srcSet="/images/hero_light_mobile.jpg" />
+          {/* Desktop / Tablet Light (>= 768px) */}
+          <source media="(min-width: 768px)" srcSet="/images/hero_light.jpg" />
+          <img
+            src="/images/hero_light.jpg"
+            alt="Rvan.me Editorial Vision"
+            width={2752}
+            height={1536}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none"
+          />
+        </picture>
 
-          {/* Dark Mode Picture */}
-          <picture className="hidden dark:block h-full w-full">
-            {/* Mobile Dark (< 768px) */}
-            <source media="(max-width: 767px)" srcSet="/images/hero_dark_mobile.jpg" />
-            {/* Desktop / Tablet Dark (>= 768px) */}
-            <source media="(min-width: 768px)" srcSet="/images/hero-dark.jpg" />
-            <img
-              src="/images/hero-dark.jpg"
-              alt="Rvan.me Editorial Vision"
-              width={2752}
-              height={1536}
-              fetchPriority="high"
-              decoding="async"
-              className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none"
-            />
-          </picture>
-
-          {/* Desktop-only subtle left blend within container */}
-          <div className="hidden lg:block absolute inset-y-0 left-0 w-32 xl:w-48 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none" />
-        </div>
+        {/* Dark Mode Picture */}
+        <picture className="hidden dark:block h-full w-full">
+          {/* Mobile Dark (< 768px) */}
+          <source media="(max-width: 767px)" srcSet="/images/hero_dark_mobile.jpg" />
+          {/* Desktop / Tablet Dark (>= 768px) */}
+          <source media="(min-width: 768px)" srcSet="/images/hero-dark.jpg" />
+          <img
+            src="/images/hero-dark.jpg"
+            alt="Rvan.me Editorial Vision"
+            width={2752}
+            height={1536}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none"
+          />
+        </picture>
       </div>
 
-      {/* ── Layer 1: Floating Frosted Glass Navbar (Compact 52px-54px) ── */}
-      <div className="relative z-30 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto pt-3 sm:pt-5 px-4 sm:px-6">
-        <div className="flex items-center justify-between w-full h-[48px] sm:h-[54px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
+      {/* ── Layer 1: Compact Floating Frosted Glass Navbar (Slim ~48px-52px) ── */}
+      <div className="relative z-30 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
+        <div className="flex items-center justify-between w-full h-[44px] sm:h-[48px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
-            className="flex items-center gap-2 rounded-full px-1.5 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
+            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
           >
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={24}
-              height={24}
-              className="h-5.5 w-5.5 sm:h-6 sm:w-6 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={22}
+              height={22}
+              className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
+            <span className="hidden sm:inline-block text-[11px] sm:text-xs font-bold tracking-[.14em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
-          {/* Floating Pill Navigation */}
-          <nav className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] font-bold tracking-[.08em] mono uppercase">
+          {/* Compact Floating Pill Navigation */}
+          <nav className="hidden md:flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[10.5px] font-bold tracking-[.06em] mono uppercase">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive = idx === 0;
@@ -233,7 +227,7 @@ export default function HeroSearchSection() {
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-3 py-1 transition-all duration-200 rounded-full select-none ${
+                  className={`relative px-2.5 py-1 transition-all duration-200 rounded-full select-none ${
                     isActive
                       ? "text-foreground dark:text-white font-bold bg-gradient-to-r from-[#61c5ad]/20 via-[#426fba]/20 to-[#984f9f]/20 border border-[#61c5ad]/30 shadow-2xs"
                       : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
@@ -245,7 +239,7 @@ export default function HeroSearchSection() {
             })}
           </nav>
 
-          {/* Right Action Group: User/Profile Control Only */}
+          {/* Right Action Group: Compact User/Profile Control */}
           <div className="flex items-center gap-2 shrink-0">
             <UserAuthMenu />
 
@@ -261,7 +255,7 @@ export default function HeroSearchSection() {
         </div>
       </div>
 
-      {/* ── Layer 2: Left Editorial Content (Centered Container, Closer Composition) ── */}
+      {/* ── Layer 2: Left Editorial Content (Disciplined Minimal Scale, Stable Search Control) ── */}
       <div className="relative z-10 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 xs:px-6 sm:px-8 my-auto py-6 xs:py-8 sm:py-12 lg:py-16 text-left">
         <div className="max-w-[48%] xs:max-w-[50%] sm:max-w-[420px] lg:max-w-[460px] space-y-3 xs:space-y-3.5 sm:space-y-5 lg:space-y-6">
           
@@ -305,7 +299,7 @@ export default function HeroSearchSection() {
               : "A creative publication and knowledge ecosystem exploring design, marketing, branding, AI, and visual culture."}
           </motion.p>
 
-          {/* CTA Group: [1. İDEYA AXTAR (In-place interactive search)] [2. MƏQALƏLƏRİ KƏŞF ET] */}
+          {/* CTA Group: [1. İDEYA AXTAR (Permanent Fixed Dimensions)] [2. MƏQALƏLƏRİ KƏŞF ET] */}
           <motion.div
             variants={fadeUp}
             initial={false}
@@ -313,17 +307,17 @@ export default function HeroSearchSection() {
             custom={0.18}
             className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-2.5 sm:gap-3.5 pt-0.5 sm:pt-1"
           >
-            {/* Primary Interactive Search Box (In-Place Transformation, NO Modal) */}
+            {/* Primary Interactive Search Box (Fixed Stable Dimensions in Both States) */}
             <div ref={searchContainerRef} className="relative z-30 shrink-0">
               <div
                 onClick={() => {
                   setIsSearching(true);
                   setTimeout(() => searchInputRef.current?.focus(), 20);
                 }}
-                className={`flex items-center gap-2 rounded-full border transition-all duration-200 ${
+                className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full border transition-colors duration-200 flex items-center gap-2 shadow-2xs backdrop-blur-xl cursor-pointer ${
                   isSearching
-                    ? "w-full xs:w-[220px] sm:w-[260px] md:w-[280px] bg-card/98 dark:bg-[#121418] border-primary ring-2 ring-primary/20 shadow-md px-3 py-1.5 xs:py-2"
-                    : "w-auto bg-card/90 dark:bg-[#14161b]/90 border-border hover:border-primary/60 hover:bg-card px-3.5 py-2 xs:px-4 xs:py-2.5 sm:px-5 sm:py-2.5 cursor-pointer shadow-2xs backdrop-blur-xl"
+                    ? "bg-card/98 dark:bg-[#121418] border-primary ring-1 ring-primary/30"
+                    : "bg-card/90 dark:bg-[#14161b]/90 border-border hover:border-primary/60 hover:bg-card"
                 }`}
               >
                 <Search size={13} className={isSearching ? "text-primary shrink-0" : "text-muted-foreground shrink-0"} />
@@ -338,16 +332,16 @@ export default function HeroSearchSection() {
                       setSelectedIndex(0);
                     }}
                     onKeyDown={handleSearchKeyDown}
-                    placeholder={isAz ? "İdeya və ya mövzu axtar..." : "Search ideas or topics..."}
-                    className="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none font-mono"
+                    placeholder={isAz ? "Axtarış..." : "Search..."}
+                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none font-mono min-w-0"
                     autoFocus
                   />
                 ) : (
-                  <div className="flex items-center gap-1.5 select-none">
-                    <span className="text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider text-foreground">
+                  <div className="w-full flex items-center justify-between min-w-0 select-none">
+                    <span className="text-[10px] xs:text-[11px] font-mono font-bold tracking-wider text-foreground truncate">
                       {isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}
                     </span>
-                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10">
+                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10 shrink-0">
                       ⌘K
                     </kbd>
                   </div>
