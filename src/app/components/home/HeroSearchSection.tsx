@@ -155,9 +155,9 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative w-full min-h-[85vh] sm:min-h-[88vh] lg:min-h-[90vh] flex flex-col justify-between overflow-hidden bg-background text-foreground select-none">
+    <section className="relative z-20 w-full min-h-[85vh] sm:min-h-[88vh] lg:min-h-[90vh] flex flex-col justify-between bg-background text-foreground select-none">
       
-      {/* ── Layer 0: Full-Bleed Background Cinematic Image (No Outer Borders or Card Wrappers) ── */}
+      {/* ── Layer 0: Full-Bleed Background Cinematic Image (Clipped inside Layer 0 only) ── */}
       <div
         className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden select-none"
         aria-hidden="true"
@@ -197,7 +197,7 @@ export default function HeroSearchSection() {
         </picture>
       </div>
 
-      {/* ── Layer 1: Compact Floating Frosted Glass Navbar (Slim ~48px-52px) ── */}
+      {/* ── Layer 1: Compact Floating Frosted Glass Navbar (Slim ~44px-48px) ── */}
       <div className="relative z-30 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
         <div className="flex items-center justify-between w-full h-[44px] sm:h-[48px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-all">
           {/* Logo & Brand */}
@@ -256,7 +256,7 @@ export default function HeroSearchSection() {
       </div>
 
       {/* ── Layer 2: Left Editorial Content (Disciplined Minimal Scale, Stable Search Control) ── */}
-      <div className="relative z-10 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 xs:px-6 sm:px-8 my-auto py-6 xs:py-8 sm:py-12 lg:py-16 text-left">
+      <div className="relative z-20 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 xs:px-6 sm:px-8 my-auto py-6 xs:py-8 sm:py-12 lg:py-16 text-left">
         <div className="max-w-[48%] xs:max-w-[50%] sm:max-w-[420px] lg:max-w-[460px] space-y-3 xs:space-y-3.5 sm:space-y-5 lg:space-y-6">
           
           {/* Refined Minimal Editorial Headline */}
@@ -307,18 +307,19 @@ export default function HeroSearchSection() {
             custom={0.18}
             className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-2.5 sm:gap-3.5 pt-0.5 sm:pt-1"
           >
-            {/* Primary Interactive Search Box (Fixed Stable Dimensions in Both States) */}
-            <div ref={searchContainerRef} className="relative z-30 shrink-0">
+            {/* Primary Interactive Search Box (Fixed Dimensions, Clean Rounded Border, NO Rectangular Outline) */}
+            <div ref={searchContainerRef} className="relative z-40 shrink-0">
               <div
                 onClick={() => {
                   setIsSearching(true);
                   setTimeout(() => searchInputRef.current?.focus(), 20);
                 }}
-                className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full border transition-colors duration-200 flex items-center gap-2 shadow-2xs backdrop-blur-xl cursor-pointer ${
+                className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full border transition-colors duration-200 flex items-center gap-2 shadow-2xs backdrop-blur-xl cursor-pointer outline-none focus:outline-none focus-visible:outline-none ${
                   isSearching
-                    ? "bg-card/98 dark:bg-[#121418] border-primary ring-1 ring-primary/30"
+                    ? "bg-card/98 dark:bg-[#121418] border-primary"
                     : "bg-card/90 dark:bg-[#14161b]/90 border-border hover:border-primary/60 hover:bg-card"
                 }`}
+                style={{ outline: "none", boxShadow: "none" }}
               >
                 <Search size={13} className={isSearching ? "text-primary shrink-0" : "text-muted-foreground shrink-0"} />
 
@@ -333,7 +334,8 @@ export default function HeroSearchSection() {
                     }}
                     onKeyDown={handleSearchKeyDown}
                     placeholder={isAz ? "Axtarış..." : "Search..."}
-                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none font-mono min-w-0"
+                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none"
+                    style={{ outline: "none", boxShadow: "none", border: "none" }}
                     autoFocus
                   />
                 ) : (
@@ -355,7 +357,7 @@ export default function HeroSearchSection() {
                       setSearchQuery("");
                       searchInputRef.current?.focus();
                     }}
-                    className="p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
+                    className="p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0 outline-none"
                     aria-label="Clear search"
                   >
                     <X size={12} />
@@ -363,7 +365,7 @@ export default function HeroSearchSection() {
                 )}
               </div>
 
-              {/* In-Place Live Results Dropdown (Directly Below the Search Control) */}
+              {/* In-Place Live Results Dropdown (Unconstrained Floating Panel, Never Clipped) */}
               <AnimatePresence>
                 {isSearching && searchQuery.trim().length > 0 && (
                   <motion.div
