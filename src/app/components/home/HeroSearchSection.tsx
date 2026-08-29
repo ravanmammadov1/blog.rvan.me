@@ -43,59 +43,57 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative w-full p-2.5 sm:p-4 md:p-6 lg:p-7 max-w-[1536px] mx-auto">
-      {/* ── Single Large Framed Hero Canvas (Strict Reference Match) ── */}
-      <div className="relative min-h-[92vh] lg:h-[calc(100vh-3.5rem)] lg:min-h-[680px] lg:max-h-[960px] w-full rounded-3xl lg:rounded-[36px] bg-[#0c0d12] dark:bg-[#07080a] text-white border border-black/10 dark:border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col justify-between p-5 sm:p-8 lg:p-10 select-none">
-        
-        {/* ── Layer 0: Background Cinematic Portrait Image (Dominant, Person Clearly Visible) ── */}
-        <div
-          className="pointer-events-none absolute right-0 top-0 bottom-0 z-0 h-full w-full lg:w-[65%] xl:w-[60%] overflow-hidden select-none"
-          aria-hidden="true"
-        >
-          {/* Light Theme Image */}
-          <picture className="block dark:hidden h-full w-full">
-            <source type="image/webp" srcSet="/images/hero-light.webp" />
-            <img
-              src="/images/hero-light.jpg"
-              alt="Rvan.me Editorial Vision"
-              width={2752}
-              height={1536}
-              fetchPriority="high"
-              decoding="async"
-              className="h-full w-full object-cover object-center lg:object-right select-none opacity-40 md:opacity-75 lg:opacity-100"
-              style={{
-                maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.92) 34%, black 100%)",
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.92) 34%, black 100%)",
-              }}
-            />
-          </picture>
+    <section className="relative w-full min-h-[88vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden bg-background text-foreground select-none">
+      
+      {/* ── Layer 0: Background Cinematic Portrait Image (Dominant, Face Crisp & Luminous) ── */}
+      <div
+        className="pointer-events-none absolute right-0 top-0 bottom-0 z-0 h-full w-full lg:w-[65%] xl:w-[60%] overflow-hidden select-none"
+        aria-hidden="true"
+      >
+        {/* Light Mode Picture */}
+        <picture className="block dark:hidden h-full w-full">
+          <source type="image/webp" srcSet="/images/hero-light.webp" />
+          <img
+            src="/images/hero-light.jpg"
+            alt="Rvan.me Editorial Vision"
+            width={2752}
+            height={1536}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-center lg:object-right select-none opacity-80 sm:opacity-90 lg:opacity-100"
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 8%, rgba(0,0,0,0.75) 26%, black 45%, black 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 8%, rgba(0,0,0,0.75) 26%, black 45%, black 100%)",
+            }}
+          />
+        </picture>
 
-          {/* Dark Theme Image */}
-          <picture className="hidden dark:block h-full w-full">
-            <source type="image/webp" srcSet="/images/hero-dark.webp" />
-            <img
-              src="/images/hero-dark.jpg"
-              alt="Rvan.me Editorial Vision"
-              width={2752}
-              height={1536}
-              fetchPriority="high"
-              decoding="async"
-              className="h-full w-full object-cover object-center lg:object-right select-none opacity-50 md:opacity-85 lg:opacity-100"
-              style={{
-                maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.92) 34%, black 100%)",
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.92) 34%, black 100%)",
-              }}
-            />
-          </picture>
+        {/* Dark Mode Picture */}
+        <picture className="hidden dark:block h-full w-full">
+          <source type="image/webp" srcSet="/images/hero-dark.webp" />
+          <img
+            src="/images/hero-dark.jpg"
+            alt="Rvan.me Editorial Vision"
+            width={2752}
+            height={1536}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-center lg:object-right select-none opacity-85 sm:opacity-95 lg:opacity-100"
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 8%, rgba(0,0,0,0.75) 26%, black 45%, black 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 8%, rgba(0,0,0,0.75) 26%, black 45%, black 100%)",
+            }}
+          />
+        </picture>
 
-          {/* Subtle Left Vignette Fade ONLY on the left text area, NO darkening over face */}
-          <div className="absolute inset-y-0 left-0 w-36 sm:w-56 lg:w-80 bg-gradient-to-r from-[#0c0d12] dark:from-[#07080a] via-[#0c0d12]/70 dark:via-[#07080a]/70 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0c0d12]/60 dark:from-[#07080a]/60 to-transparent pointer-events-none" />
-        </div>
+        {/* Subtle Left Vignette ONLY behind text, NO darkening over subject's face */}
+        <div className="absolute inset-y-0 left-0 w-36 sm:w-56 lg:w-80 bg-gradient-to-r from-background via-background/70 to-transparent pointer-events-none" />
+      </div>
 
-        {/* ── Layer 1: Floating Frosted Glass Navbar (At the top of the scene) ── */}
-        <div className="relative z-30 flex items-center justify-between w-full">
-          {/* Brand Logo */}
+      {/* ── Layer 1: Floating Frosted Glass Navbar (Seamless at top of page) ── */}
+      <div className="relative z-30 w-full max-w-[1400px] mx-auto pt-4 sm:pt-6 px-4 sm:px-8">
+        <div className="flex items-center justify-between w-full py-2 px-3 sm:px-5 rounded-full bg-white/70 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
+          {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
             className="flex items-center gap-2.5 rounded-full px-2 py-1 text-left focus-visible:outline-none shrink-0 group select-none"
@@ -107,16 +105,16 @@ export default function HeroSearchSection() {
               height={30}
               className="h-7 w-7 sm:h-8 sm:w-8 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-xs sm:text-sm font-bold tracking-[.18em] uppercase text-white leading-none">
+            <span className="hidden sm:inline-block text-xs sm:text-sm font-bold tracking-[.18em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
           {/* Floating Pill Navigation */}
-          <nav className="hidden md:flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/40 border border-white/15 backdrop-blur-2xl text-[11px] sm:text-xs font-bold tracking-[.1em] mono uppercase shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
+          <nav className="hidden md:flex items-center gap-1 sm:gap-1.5 px-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] sm:text-xs font-bold tracking-[.1em] mono uppercase">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
-              const isActive = idx === 0; // Home is active on hero
+              const isActive = idx === 0;
 
               return (
                 <Link
@@ -124,8 +122,8 @@ export default function HeroSearchSection() {
                   to={localizedTarget}
                   className={`relative px-3.5 py-1.5 transition-all duration-200 rounded-full select-none ${
                     isActive
-                      ? "text-white font-bold bg-gradient-to-r from-[#61c5ad]/25 via-[#426fba]/25 to-[#984f9f]/25 border border-[#61c5ad]/40 shadow-xs"
-                      : "text-neutral-300 hover:text-white hover:bg-white/10"
+                      ? "text-foreground dark:text-white font-bold bg-gradient-to-r from-[#61c5ad]/20 via-[#426fba]/20 to-[#984f9f]/20 border border-[#61c5ad]/30 shadow-2xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -150,34 +148,25 @@ export default function HeroSearchSection() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
-              className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-white/10 md:hidden text-white hover:border-[#61c5ad] transition-colors shrink-0"
+              className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors shrink-0"
             >
               {mobileMenuOpen ? <X size={15} /> : <Menu size={15} />}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* ── Layer 2: Left Editorial Content (Vertically in middle-left) ── */}
-        <div className="relative z-10 max-w-xl xl:max-w-2xl text-left space-y-4 sm:space-y-5 lg:space-y-6 my-auto pt-4 sm:pt-6">
-          {/* Eyebrow */}
-          <motion.div variants={fadeUp} initial={false} animate="visible" custom={0}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/10 dark:bg-white/[0.06] backdrop-blur-xl text-[11px] sm:text-xs font-mono font-bold tracking-wider text-neutral-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#61c5ad] animate-pulse" />
-              <span>
-                {isAz
-                  ? "YARADICI NƏŞR · BİLİK · MƏDƏNİYYƏT"
-                  : "CREATIVE PUBLICATION · KNOWLEDGE · CULTURE"}
-              </span>
-            </div>
-          </motion.div>
-
+      {/* ── Layer 2: Left Editorial Content (Generous Space, Breathing Room) ── */}
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 my-auto py-12 lg:py-20 text-left">
+        <div className="max-w-xl xl:max-w-2xl space-y-6 sm:space-y-8">
+          
           {/* Dominant Editorial 3-Line Headline */}
           <motion.h1
             variants={fadeUp}
             initial={false}
             animate="visible"
-            custom={0.1}
-            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.02] text-white"
+            custom={0.05}
+            className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[0.98] text-foreground uppercase"
           >
             {isAz ? (
               <>
@@ -198,13 +187,13 @@ export default function HeroSearchSection() {
             )}
           </motion.h1>
 
-          {/* Description */}
+          {/* Short Supporting Description */}
           <motion.p
             variants={fadeUp}
             initial={false}
             animate="visible"
-            custom={0.15}
-            className="text-sm sm:text-base lg:text-lg text-neutral-300 font-normal max-w-md lg:max-w-lg leading-relaxed"
+            custom={0.12}
+            className="text-base sm:text-lg lg:text-xl text-muted-foreground font-normal max-w-lg lg:max-w-xl leading-relaxed"
           >
             {isAz
               ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr və bilik ekosistemi."
@@ -216,83 +205,33 @@ export default function HeroSearchSection() {
             variants={fadeUp}
             initial={false}
             animate="visible"
-            custom={0.2}
-            className="flex flex-wrap items-center gap-3 pt-1"
+            custom={0.18}
+            className="flex flex-wrap items-center gap-4 pt-2"
           >
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] text-white font-bold text-xs sm:text-sm tracking-wide shadow-[0_8px_24px_rgba(97,197,173,0.28)] hover:opacity-95 active:scale-95 transition-all mono select-none"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] text-white font-bold text-xs sm:text-sm tracking-wide shadow-[0_8px_24px_rgba(97,197,173,0.28)] hover:opacity-95 active:scale-95 transition-all mono select-none"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
-              <ArrowRight size={15} />
+              <ArrowRight size={16} />
             </Link>
 
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
-              className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full border border-white/15 bg-white/10 dark:bg-white/[0.06] backdrop-blur-xl text-white font-semibold text-xs sm:text-sm hover:bg-white/15 active:scale-95 transition-all mono cursor-pointer select-none"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full border border-black/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] backdrop-blur-xl text-foreground font-semibold text-xs sm:text-sm hover:bg-white/80 dark:hover:bg-white/[0.12] active:scale-95 transition-all mono cursor-pointer select-none"
             >
-              <Search size={15} className="text-[#61c5ad]" />
-              <span>{isAz ? "İdeya Axtar" : "Search Ideas"}</span>
-              <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-white/15 text-neutral-200 border border-white/10">
+              <Search size={15} className="text-primary" />
+              <span>{isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}</span>
+              <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10">
                 ⌘K
               </kbd>
             </button>
           </motion.div>
         </div>
-
-        {/* ── Layer 3: Bottom Horizontal Frosted Glass Information Panel ── */}
-        <motion.div
-          variants={fadeUp}
-          initial={false}
-          animate="visible"
-          custom={0.25}
-          className="relative z-10 w-full max-w-3xl xl:max-w-4xl mt-6 lg:mt-0 rounded-2xl border border-white/15 bg-white/10 dark:bg-black/40 backdrop-blur-2xl p-3.5 sm:p-4 lg:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.3)]"
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/15 gap-3 sm:gap-0">
-            {/* Col 1 */}
-            <div className="sm:px-4 first:sm:pl-1">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white mb-1">
-                <span className="text-[#61c5ad] font-bold">┌</span>
-                <span>39 {isAz ? "Tədqiqat Məqaləsi" : "Research Articles"}</span>
-              </div>
-              <p className="text-[11px] sm:text-xs text-neutral-300/90 leading-snug">
-                {isAz
-                  ? "Dizayn sistemləri, UX və koqnitiv psixologiya üzrə dərin elmi təhlillər."
-                  : "In-depth research on design systems, UX & cognitive psychology."}
-              </p>
-            </div>
-
-            {/* Col 2 */}
-            <div className="pt-2 sm:pt-0 sm:px-4">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white mb-1">
-                <span className="text-[#61c5ad] font-bold">┌</span>
-                <span>2,000+ {isAz ? "Açıq Şrift" : "Curated Fonts"}</span>
-              </div>
-              <p className="text-[11px] sm:text-xs text-neutral-300/90 leading-snug">
-                {isAz
-                  ? "Seçilmiş variativ və açıq mənbəli tipoqrafiya arxivi və CSS kodları."
-                  : "Curated open-source variable typography catalog and specimen tools."}
-              </p>
-            </div>
-
-            {/* Col 3 */}
-            <div className="pt-2 sm:pt-0 sm:px-4 last:sm:pr-1">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white mb-1">
-                <span className="text-[#61c5ad] font-bold">┌</span>
-                <span>1,400+ {isAz ? "Vektor İkon" : "Vector Icons"}</span>
-              </div>
-              <p className="text-[11px] sm:text-xs text-neutral-300/90 leading-snug">
-                {isAz
-                  ? "Müasir interfeys və rəqəmsal məhsullar üçün təmiz SVG kitabxanası."
-                  : "High-precision SVG vector library for modern interface applications."}
-              </p>
-            </div>
-          </div>
-        </motion.div>
       </div>
 
-      {/* ── Mobile Slide-Over Menu (Inside Hero) ── */}
+      {/* ── Mobile Slide-Over Menu ── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
