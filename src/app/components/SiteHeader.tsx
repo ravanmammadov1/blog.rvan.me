@@ -385,28 +385,28 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   return (
     <>
-      <header className="relative w-full pt-3 sm:pt-5 pb-2 px-4 sm:px-6 lg:px-8 z-30">
-        <div className="mx-auto flex items-center justify-between max-w-[1400px] h-[52px] sm:h-[56px] px-3 sm:px-4 rounded-full bg-white/80 dark:bg-[#0c0d12]/75 border border-black/10 dark:border-white/12 shadow-[0_4px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
+      <header className="relative z-30 w-full pt-3 sm:pt-4 px-4 flex justify-center pointer-events-none select-none">
+        <div className="pointer-events-auto w-full md:w-auto inline-flex items-center justify-between md:justify-start gap-2.5 sm:gap-4 md:gap-5 h-[42px] sm:h-[46px] px-3.5 sm:px-4 rounded-full bg-white/70 dark:bg-[#0c0d11]/75 border border-black/[0.08] dark:border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all">
           {/* Logo & Brand — Always links to Home in active language */}
           <Link
             to={getLocalizedPath("/")}
-            className="group flex items-center gap-2 rounded-full px-1.5 py-0.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 select-none"
+            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
             aria-label="Rvan.me Home"
           >
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={26}
-              height={26}
-              className="h-6 w-6 sm:h-6.5 sm:w-6.5 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={20}
+              height={20}
+              className="h-4.5 w-4.5 sm:h-5 sm:w-5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
+            <span className="text-[11px] sm:text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
-          {/* Desktop Navigation — Floating Central Frosted Glass Capsule */}
-          <nav className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] font-bold tracking-[.08em] mono uppercase">
+          {/* Desktop Navigation — Tightly Hugged Frosted Glass Capsule */}
+          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isHome = item.target === "/";
@@ -419,11 +419,11 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-3 py-1 transition-all duration-200 rounded-full select-none ${
+                  className={`relative px-2.5 py-0.5 transition-all duration-200 rounded-full select-none ${
                     isActive
-                      ? "text-foreground dark:text-white font-bold bg-gradient-to-r from-[#61c5ad]/20 via-[#426fba]/20 to-[#984f9f]/20 border border-[#61c5ad]/30 shadow-2xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
-                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
+                      ? "text-foreground dark:text-white font-bold bg-white/90 dark:bg-white/[0.08] border border-black/10 dark:border-[#61c5ad]/40 shadow-xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
                 >
                   <span>{item.label}</span>
                 </Link>
@@ -432,9 +432,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </nav>
 
           {/* Action & Profile Control on Right */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Integrated Compact Profile & Preferences Control */}
-            <UserAuthMenu />
+          <div className="flex items-center gap-1.5 shrink-0">
+            <UserAuthMenu compact={true} />
 
             {/* Mobile Menu Toggle */}
             <button
@@ -442,9 +441,9 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation"
-              className="grid h-7 w-7 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
+              className="grid h-7 w-7 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors shrink-0 cursor-pointer"
             >
-              {menuOpen ? <X size={15} /> : <Menu size={15} />}
+              {menuOpen ? <X size={14} /> : <Menu size={14} />}
             </button>
           </div>
         </div>

@@ -197,9 +197,9 @@ export default function HeroSearchSection() {
         </picture>
       </div>
 
-      {/* ── Layer 1: Compact Floating Glass Navbar (Hugs Content, Pure Light/Dark Glass) ── */}
-      <div className="relative z-30 w-full max-w-[740px] md:max-w-[780px] lg:max-w-[820px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
-        <div className="flex items-center justify-between w-full h-[42px] sm:h-[46px] px-3 sm:px-3.5 rounded-full bg-white/70 dark:bg-[#0c0d11]/75 border border-black/[0.08] dark:border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all">
+      {/* ── Layer 1: Compact Floating Glass Navbar (Hugs Content, Identical to SiteHeader) ── */}
+      <div className="relative z-30 w-full pt-3 sm:pt-4 px-4 flex justify-center pointer-events-none select-none">
+        <div className="pointer-events-auto w-full md:w-auto inline-flex items-center justify-between md:justify-start gap-2.5 sm:gap-4 md:gap-5 h-[42px] sm:h-[46px] px-3.5 sm:px-4 rounded-full bg-white/70 dark:bg-[#0c0d11]/75 border border-black/[0.08] dark:border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
@@ -212,13 +212,13 @@ export default function HeroSearchSection() {
               height={20}
               className="h-4.5 w-4.5 sm:h-5 sm:w-5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-[11px] sm:text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
+            <span className="text-[11px] sm:text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
           {/* Compact Centered Pill Navigation (Tightly Fitted to Content) */}
-          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase">
+          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive = idx === 0;
@@ -247,7 +247,7 @@ export default function HeroSearchSection() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
-              className="grid h-7 w-7 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors shrink-0"
+              className="grid h-7 w-7 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors shrink-0 cursor-pointer"
             >
               {mobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
             </button>
@@ -316,8 +316,8 @@ export default function HeroSearchSection() {
                 }}
                 className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full border transition-colors duration-200 flex items-center gap-2 shadow-2xs backdrop-blur-xl cursor-pointer outline-none focus:outline-none focus-visible:outline-none ${
                   isSearching
-                    ? "bg-card/98 dark:bg-[#121418] border-primary"
-                    : "bg-card/90 dark:bg-[#14161b]/90 border-border hover:border-primary/60 hover:bg-card"
+                    ? "bg-white/95 dark:bg-[#121418] border-primary"
+                    : "bg-white/60 dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.12] hover:border-primary/60 hover:bg-white/80 dark:hover:bg-white/[0.08]"
                 }`}
                 style={{ outline: "none", boxShadow: "none" }}
               >
@@ -372,7 +372,7 @@ export default function HeroSearchSection() {
                     initial={{ opacity: 0, y: 6, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } }}
                     exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
-                    className="absolute top-full left-0 mt-2 z-50 w-[260px] xs:w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl border border-border/90 bg-card/98 dark:bg-[#101115]/98 backdrop-blur-2xl shadow-2xl p-1.5 space-y-1 overflow-hidden"
+                    className="absolute top-full left-0 mt-2 z-50 w-[260px] xs:w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl border border-black/[0.08] dark:border-white/[0.12] bg-white/95 dark:bg-[#101115]/98 backdrop-blur-2xl shadow-2xl p-1.5 space-y-1 overflow-hidden"
                   >
                     <div className="px-2.5 py-1 text-[9.5px] font-mono font-bold text-muted-foreground/70 uppercase tracking-wider flex items-center justify-between border-b border-border/40 pb-1">
                       <span>{isAz ? "NƏTİCƏLƏR" : "RESULTS"}</span>
@@ -436,7 +436,7 @@ export default function HeroSearchSection() {
             {/* Secondary Article Action */}
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2.5 sm:px-5 sm:py-2.5 rounded-full border border-border/80 bg-background/50 hover:bg-muted/50 text-muted-foreground hover:text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 rounded-full border border-black/[0.08] dark:border-white/[0.12] bg-white/60 dark:bg-white/[0.05] backdrop-blur-xl hover:bg-white/80 dark:hover:bg-white/[0.10] text-muted-foreground hover:text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit shadow-2xs"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
               <ArrowRight size={12} className="shrink-0" />

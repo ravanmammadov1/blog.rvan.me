@@ -17,6 +17,46 @@
   font-family: 'Geist Mono', monospace;
 }
 
+/* ─── Unified Glassmorphism System (Figma Design-System Tokens) ─── */
+.glass-surface {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+}
+
+.dark .glass-surface {
+  background-color: rgba(12, 13, 17, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45);
+}
+
+.glass-btn {
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.glass-btn:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.dark .glass-btn {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dark .glass-btn:hover {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
 /* ─── Smooth scroll ─── */
 html {
   scroll-behavior: smooth;
