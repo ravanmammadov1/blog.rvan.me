@@ -138,11 +138,11 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
                   right: `${dropdownPos.right}px`,
                   zIndex: 99999,
                 }}
-                className="w-[310px] sm:w-[320px] max-w-[calc(100vw-24px)] rounded-[26px] liquid-glass-card shadow-2xl pointer-events-auto text-foreground origin-top-right overflow-visible p-5 sm:p-6 text-left"
+                className="w-[310px] sm:w-[320px] max-w-[calc(100vw-24px)] rounded-[26px] liquid-glass-dropdown shadow-2xl pointer-events-auto text-foreground origin-top-right overflow-visible p-5 sm:p-6 text-left"
               >
                 {/* Top Caret pointing directly to Avatar */}
                 <div
-                  className="absolute -top-[6px] w-3 h-3 rotate-45 border-t border-l border-white/25 dark:border-white/20 bg-white/60 dark:bg-[#121620]/90 backdrop-blur-xl pointer-events-none"
+                  className="absolute -top-[6px] w-3 h-3 rotate-45 border-t border-l border-white/25 dark:border-white/20 bg-white/60 dark:bg-[#161a24]/80 backdrop-blur-xl pointer-events-none z-[2]"
                   style={{ right: "10px" }}
                 />
 
