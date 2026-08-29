@@ -22,15 +22,13 @@ import { useLanguage } from "../../lib/i18n/LanguageContext";
 import ravanLogo from "../../assets/ravan_logo.svg";
 
 
-export function UserAuthMenu() {
+export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
   const { user, isAdmin, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-
-
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -55,7 +53,7 @@ export function UserAuthMenu() {
   }, [dropdownOpen]);
 
   if (loading) {
-    return <div className="h-7 w-16 rounded-full bg-muted border border-border animate-pulse shrink-0 self-center" />;
+    return <div className={compact ? "h-7 w-7 rounded-full bg-muted border border-border animate-pulse shrink-0 self-center" : "h-7 w-16 rounded-full bg-muted border border-border animate-pulse shrink-0 self-center"} />;
   }
 
   const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
@@ -64,7 +62,10 @@ export function UserAuthMenu() {
     <div className="relative shrink-0 flex items-center" ref={menuRef}>
       <button
         onClick={() => setDropdownOpen((prev) => !prev)}
-        className="flex items-center gap-1.5 rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] px-2.5 py-1 text-xs text-foreground transition-all hover:bg-muted/80 dark:hover:bg-white/[0.08] focus:outline-none cursor-pointer select-none shadow-2xs"
+        className={compact
+          ? "h-7 w-7 sm:h-8 sm:w-8 rounded-full border border-black/10 dark:border-white/15 bg-card/60 dark:bg-white/[0.04] p-0.5 flex items-center justify-center text-foreground transition-all hover:border-primary/60 focus:outline-none cursor-pointer select-none shadow-2xs"
+          : "flex items-center gap-1.5 rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] px-2.5 py-1 text-xs text-foreground transition-all hover:bg-muted/80 dark:hover:bg-white/[0.08] focus:outline-none cursor-pointer select-none shadow-2xs"
+        }
         aria-label="User Account Menu"
         aria-expanded={dropdownOpen}
       >
@@ -72,17 +73,21 @@ export function UserAuthMenu() {
           <img
             src={userPhoto}
             alt={user?.displayName || "Profile"}
-            className="h-5 w-5 rounded-full object-cover border border-border shrink-0"
+            className={compact ? "h-full w-full rounded-full object-cover" : "h-5 w-5 rounded-full object-cover border border-border shrink-0"}
           />
         ) : (
-          <div className="h-5 w-5 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-[10px] shrink-0">
-            {user ? userInitial : <UserIcon size={11} />}
+          <div className={compact ? "h-full w-full rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[10px]" : "h-5 w-5 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-[10px] shrink-0"}>
+            {user ? userInitial : <UserIcon size={compact ? 12 : 11} />}
           </div>
         )}
-        <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[90px] text-foreground font-semibold text-[11px]">
-          {user ? (user.displayName?.split(" ")[0] || user.email?.split("@")[0]) : t("profile", "PROFILE")}
-        </span>
-        <ChevronDown size={11} className={`transition-transform duration-200 shrink-0 text-muted-foreground ${dropdownOpen ? "rotate-180" : ""}`} />
+        {!compact && (
+          <>
+            <span className="hidden sm:inline font-mono tracking-wider truncate max-w-[90px] text-foreground font-semibold text-[11px]">
+              {user ? (user.displayName?.split(" ")[0] || user.email?.split("@")[0]) : t("profile", "PROFILE")}
+            </span>
+            <ChevronDown size={11} className={`transition-transform duration-200 shrink-0 text-muted-foreground ${dropdownOpen ? "rotate-180" : ""}`} />
+          </>
+        )}
       </button>
 
       <AnimatePresence>

@@ -197,13 +197,13 @@ export default function HeroSearchSection() {
         </picture>
       </div>
 
-      {/* ── Layer 1: Compact Floating Frosted Glass Navbar (Slim ~44px-48px) ── */}
-      <div className="relative z-30 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
-        <div className="flex items-center justify-between w-full h-[44px] sm:h-[48px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-all">
+      {/* ── Layer 1: Compact Floating Frosted Glass Navbar (Slim ~46px-50px Reference Match) ── */}
+      <div className="relative z-30 w-full max-w-[1080px] lg:max-w-[1160px] xl:max-w-[1220px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
+        <div className="flex items-center justify-between w-full h-[46px] sm:h-[50px] px-3.5 sm:px-4 rounded-full bg-black/40 dark:bg-[#0c0d11]/70 border border-black/10 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
-            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
+            className="flex items-center gap-2.5 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
           >
             <img
               src={ravanLogo}
@@ -212,13 +212,13 @@ export default function HeroSearchSection() {
               height={22}
               className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-[11px] sm:text-xs font-bold tracking-[.14em] uppercase text-foreground leading-none">
+            <span className="hidden sm:inline-block text-[11px] sm:text-xs font-bold tracking-[.18em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
-          {/* Compact Floating Pill Navigation */}
-          <nav className="hidden md:flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[10.5px] font-bold tracking-[.06em] mono uppercase">
+          {/* Compact Floating Pill Navigation (Reference Structure) */}
+          <nav className="hidden md:flex items-center gap-1 px-1.5 py-1 rounded-full bg-black/30 dark:bg-white/[0.03] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.08em] mono uppercase">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive = idx === 0;
@@ -227,10 +227,10 @@ export default function HeroSearchSection() {
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-2.5 py-1 transition-all duration-200 rounded-full select-none ${
+                  className={`relative px-3.5 py-1 transition-all duration-200 rounded-full select-none ${
                     isActive
-                      ? "text-foreground dark:text-white font-bold bg-gradient-to-r from-[#61c5ad]/20 via-[#426fba]/20 to-[#984f9f]/20 border border-[#61c5ad]/30 shadow-2xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+                      ? "text-white font-bold bg-white/[0.08] dark:bg-white/[0.07] border border-[#61c5ad]/40 shadow-2xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -241,7 +241,7 @@ export default function HeroSearchSection() {
 
           {/* Right Action Group: Compact User/Profile Control */}
           <div className="flex items-center gap-2 shrink-0">
-            <UserAuthMenu />
+            <UserAuthMenu compact={true} />
 
             {/* Mobile Menu Toggle */}
             <button
