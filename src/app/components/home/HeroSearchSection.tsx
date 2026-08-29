@@ -8,11 +8,11 @@ import GlobalSearchModal from "../GlobalSearchModal";
 import ravanLogo from "../../../assets/ravan_logo.svg";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -43,7 +43,7 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative w-full min-h-[90vh] sm:min-h-[88vh] lg:min-h-[92vh] flex flex-col justify-between overflow-hidden bg-background text-foreground select-none">
+    <section className="relative w-full min-h-[85vh] sm:min-h-[88vh] lg:min-h-[90vh] flex flex-col justify-between overflow-hidden bg-background text-foreground select-none">
       
       {/* ── Layer 0: Background Cinematic Portrait Image (Responsive Art-Direction) ── */}
       <div
@@ -88,9 +88,9 @@ export default function HeroSearchSection() {
         <div className="hidden lg:block absolute inset-y-0 left-0 w-36 sm:w-56 lg:w-80 bg-gradient-to-r from-background via-background/70 to-transparent pointer-events-none" />
       </div>
 
-      {/* ── Layer 1: Floating Frosted Glass Navbar (Compact 54px, Floating over Hero) ── */}
+      {/* ── Layer 1: Floating Frosted Glass Navbar (Compact 52px-54px) ── */}
       <div className="relative z-30 w-full max-w-[1400px] mx-auto pt-3 sm:pt-5 px-4 sm:px-8">
-        <div className="flex items-center justify-between w-full h-[52px] sm:h-[56px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
+        <div className="flex items-center justify-between w-full h-[48px] sm:h-[54px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
@@ -99,9 +99,9 @@ export default function HeroSearchSection() {
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={26}
-              height={26}
-              className="h-6 w-6 sm:h-6.5 sm:w-6.5 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={24}
+              height={24}
+              className="h-5.5 w-5.5 sm:h-6 sm:w-6 object-contain transition-transform duration-300 group-hover:scale-105"
             />
             <span className="hidden sm:inline-block text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
               RVAN.ME
@@ -146,17 +146,17 @@ export default function HeroSearchSection() {
         </div>
       </div>
 
-      {/* ── Layer 2: Left Editorial Content (Generous Negative Space on Left, Perfect Framing) ── */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-5 sm:px-8 my-auto py-8 sm:py-12 lg:py-20 text-left">
-        <div className="max-w-[260px] xs:max-w-[285px] sm:max-w-md lg:max-w-xl xl:max-w-2xl space-y-4 sm:space-y-6 lg:space-y-8">
+      {/* ── Layer 2: Left Editorial Content (Disciplined Minimal Typography, Strictly Left-Bounded) ── */}
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 xs:px-5 sm:px-8 my-auto py-6 xs:py-8 sm:py-12 lg:py-16 text-left">
+        <div className="max-w-[48%] xs:max-w-[50%] sm:max-w-md lg:max-w-lg xl:max-w-xl space-y-3 xs:space-y-3.5 sm:space-y-5 lg:space-y-6">
           
-          {/* Dominant Editorial 3-Line Headline */}
+          {/* Refined Minimal Editorial Headline */}
           <motion.h1
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.05}
-            className="text-[32px] xs:text-[36px] sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[0.96] sm:leading-[0.98] text-foreground uppercase"
+            className="text-[22px] xs:text-[25px] sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[58px] font-black tracking-tight leading-[1.0] lg:leading-[0.98] text-foreground uppercase"
           >
             {isAz ? (
               <>
@@ -177,43 +177,43 @@ export default function HeroSearchSection() {
             )}
           </motion.h1>
 
-          {/* Short Supporting Description */}
+          {/* Minimal Supporting Description — Strictly bounded on left, naturally multi-line */}
           <motion.p
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.12}
-            className="text-xs sm:text-base lg:text-lg text-muted-foreground font-normal max-w-[230px] xs:max-w-[260px] sm:max-w-lg lg:max-w-xl leading-relaxed"
+            className="text-[10.5px] xs:text-[11.5px] sm:text-xs md:text-sm lg:text-[15px] text-muted-foreground font-normal leading-[1.55] max-w-[185px] xs:max-w-[210px] sm:max-w-sm lg:max-w-md"
           >
             {isAz
               ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr və bilik ekosistemi."
               : "A creative publication and knowledge ecosystem exploring design, marketing, branding, AI, and visual culture."}
           </motion.p>
 
-          {/* CTA Group: Primary Pill + Frosted Search */}
+          {/* Minimal CTA Buttons — Compact & Clean */}
           <motion.div
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.18}
-            className="flex flex-col xs:flex-row xs:items-center gap-3 sm:gap-4 pt-1 sm:pt-2"
+            className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-2.5 sm:gap-3.5 pt-0.5 sm:pt-1"
           >
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-7 sm:py-3.5 rounded-full bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] text-white font-bold text-xs sm:text-sm tracking-wide shadow-[0_8px_24px_rgba(97,197,173,0.28)] hover:opacity-95 active:scale-95 transition-all mono select-none shrink-0 w-fit"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2.5 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] text-white font-bold text-[10px] xs:text-[11px] sm:text-xs tracking-wider shadow-[0_4px_16px_rgba(97,197,173,0.25)] hover:opacity-95 active:scale-95 transition-all mono select-none shrink-0 w-fit"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
-              <ArrowRight size={15} />
+              <ArrowRight size={13} className="shrink-0" />
             </Link>
 
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-full border border-black/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] backdrop-blur-xl text-foreground font-semibold text-xs sm:text-sm hover:bg-white/80 dark:hover:bg-white/[0.12] active:scale-95 transition-all mono cursor-pointer select-none shrink-0 w-fit"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 xs:px-3.5 xs:py-2 sm:px-5 sm:py-2.5 rounded-full border border-black/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] backdrop-blur-xl text-foreground font-semibold text-[10px] xs:text-[11px] sm:text-xs hover:bg-white/80 dark:hover:bg-white/[0.12] active:scale-95 transition-all mono cursor-pointer select-none shrink-0 w-fit"
             >
-              <Search size={14} className="text-primary" />
+              <Search size={12} className="text-primary shrink-0" />
               <span>{isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}</span>
-              <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10">
+              <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10">
                 ⌘K
               </kbd>
             </button>
