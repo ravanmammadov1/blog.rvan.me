@@ -175,7 +175,7 @@ export default function HeroSearchSection() {
             height={1536}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none"
+            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none md:translate-y-6 lg:translate-y-8 xl:translate-y-10 transition-transform duration-300"
           />
         </picture>
 
@@ -192,7 +192,7 @@ export default function HeroSearchSection() {
             height={1536}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none"
+            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none md:translate-y-6 lg:translate-y-8 xl:translate-y-10 transition-transform duration-300"
           />
         </picture>
       </div>
