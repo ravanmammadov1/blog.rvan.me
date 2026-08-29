@@ -40,10 +40,7 @@ export default function HomePage() {
         url="https://www.rvan.me"
       />
 
-      {/* ── NAVBAR ── */}
-      <SiteHeader siteSettings={siteSettings} />
-
-      {/* ── 1. HERO EDITORIAL KNOWLEDGE PLATFORM (STRICT REFERENCE COMPOSITION) ── */}
+      {/* ── 1. UNIFIED HERO SCENE WITH FLOATING NAVBAR (STRICT REFERENCE COMPOSITION) ── */}
       <HeroSearchSection />
 
       {/* ── 2. CURATED TOPICS & CONCEPT GUIDES ── */}

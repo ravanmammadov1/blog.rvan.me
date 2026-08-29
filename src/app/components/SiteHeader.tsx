@@ -22,7 +22,7 @@ import { useLanguage } from "../../lib/i18n/LanguageContext";
 import ravanLogo from "../../assets/ravan_logo.svg";
 
 
-function UserAuthMenu() {
+export function UserAuthMenu() {
   const { user, isAdmin, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
