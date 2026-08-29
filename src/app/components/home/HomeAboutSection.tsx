@@ -78,7 +78,7 @@ export default function HomeAboutSection() {
             custom={0.12}
             className="lg:col-span-5"
           >
-            <div className="p-7 sm:p-8 rounded-2xl liquid-glass space-y-5 text-left">
+            <div className="p-7 sm:p-8 rounded-2xl liquid-glass-card space-y-5 text-left relative z-10">
               <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
                 <BookOpenCheck size={18} />
               </div>

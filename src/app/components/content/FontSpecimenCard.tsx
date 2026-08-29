@@ -54,9 +54,9 @@ export function FontSpecimenCard({
       whileInView="visible"
       viewport={{ once: true, amount: 0.05 }}
       custom={(idx % 20) * 0.02}
-      className="group p-6 rounded-2xl liquid-glass liquid-glass-interactive flex flex-col justify-between"
+      className="group p-6 rounded-2xl liquid-glass-card liquid-glass-interactive flex flex-col justify-between"
     >
-      <div>
+      <div className="relative z-10">
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-1.5 flex-wrap">

@@ -132,9 +132,9 @@ export default function ContactSection() {
             whileInView="visible"
             viewport={{ once: true }}
             custom={0.12}
-            className="rounded-2xl liquid-glass p-6 sm:p-8"
+            className="rounded-2xl liquid-glass-card p-6 sm:p-8 relative z-10"
           >
-            <form onSubmit={handleContactSubmit} className="space-y-6" noValidate>
+            <form onSubmit={handleContactSubmit} className="space-y-6 relative z-10" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
                   <label htmlFor="name" className="block text-[11px] font-bold tracking-[.14em] mono uppercase text-muted-foreground mb-2">

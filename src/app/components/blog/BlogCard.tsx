@@ -96,15 +96,15 @@ export default function BlogCard({
 
   return (
     <article
-      className="group relative flex h-full flex-col justify-between rounded-2xl liquid-glass liquid-glass-interactive p-4 sm:p-5 focus-within:ring-2 focus-within:ring-primary"
+      className="group relative flex h-full flex-col justify-between rounded-2xl liquid-glass-card liquid-glass-interactive p-4 sm:p-5 focus-within:ring-2 focus-within:ring-primary"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div>
+      <div className="relative z-10">
         {/* Clean 16:9 Editorial Image Frame */}
         <Link
           to={detailPath}
-          className="mb-4 block aspect-[16/9] w-full overflow-hidden rounded-lg bg-muted/50 dark:bg-neutral-900 relative ring-1 ring-inset ring-black/5 dark:ring-white/10 focus:outline-none"
+          className="mb-4 block aspect-[16/9] w-full overflow-hidden rounded-xl bg-muted/40 dark:bg-neutral-900 relative ring-1 ring-inset ring-black/10 dark:ring-white/15 shadow-inner focus:outline-none"
           tabIndex={-1}
         >
           <img
@@ -156,7 +156,7 @@ export default function BlogCard({
       </div>
 
       {/* Understated Editorial Signature Footer */}
-      <div className="mt-auto pt-3 border-t border-border/60 dark:border-white/5 flex items-center justify-between text-[11px]">
+      <div className="relative z-10 mt-auto pt-3 border-t border-border/60 dark:border-white/5 flex items-center justify-between text-[11px]">
         {/* Author Details + Date */}
         <div className="flex items-center gap-2 min-w-0">
           <Link

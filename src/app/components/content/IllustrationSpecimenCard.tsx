@@ -106,8 +106,8 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   };
 
   return (
-    <article className="group relative rounded-2xl liquid-glass liquid-glass-interactive p-5 flex flex-col justify-between overflow-hidden">
-      <div>
+    <article className="group relative rounded-2xl liquid-glass-card liquid-glass-interactive p-5 flex flex-col justify-between overflow-hidden">
+      <div className="relative z-10">
         {/* Header: Category Badge & Copy SVG */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <span className="text-[10px] font-bold uppercase tracking-wider mono truncate max-w-[170px] liquid-glass-pill liquid-glass-pill-active px-2 py-0.5 rounded-md">
@@ -182,7 +182,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       </div>
 
       {/* Action Buttons: SVG & PNG Downloads */}
-      <div className="pt-3 border-t border-border/50 dark:border-white/5 grid grid-cols-2 gap-2">
+      <div className="relative z-10 pt-3 border-t border-border/50 dark:border-white/5 grid grid-cols-2 gap-2">
         <button
           onClick={handleDownloadSvg}
           className="flex items-center justify-center gap-1.5 rounded-full py-2 text-[11px] font-mono font-bold text-foreground liquid-glass-btn cursor-pointer active:scale-[0.98]"

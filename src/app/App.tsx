@@ -160,12 +160,30 @@ function AmbientLiquidBackground() {
       className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden select-none"
       aria-hidden="true"
     >
-      {/* Top right atmospheric cyan/teal orb */}
-      <div className="absolute -top-[12%] right-[2%] w-[480px] sm:w-[650px] h-[480px] sm:h-[650px] rounded-full bg-[#61c5ad]/[0.06] dark:bg-[#61c5ad]/[0.045] blur-[130px]" />
-      {/* Mid-left atmospheric cobalt/blue orb */}
-      <div className="absolute top-[32%] -left-[12%] w-[520px] sm:w-[720px] h-[520px] sm:h-[720px] rounded-full bg-[#426fba]/[0.05] dark:bg-[#426fba]/[0.035] blur-[150px]" />
-      {/* Bottom right atmospheric magenta/purple orb */}
-      <div className="absolute top-[68%] -right-[8%] w-[480px] sm:w-[680px] h-[480px] sm:h-[680px] rounded-full bg-[#984f9f]/[0.045] dark:bg-[#984f9f]/[0.03] blur-[140px]" />
+      {/* Top right atmospheric cyan/teal light field (refracted by navbar & hero) */}
+      <div className="absolute -top-[10%] right-[5%] w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] rounded-full bg-[#61c5ad]/[0.12] dark:bg-[#61c5ad]/[0.08] blur-[140px]" />
+
+      {/* Upper-left atmospheric cobalt/blue light field (refracted by blog section) */}
+      <div className="absolute top-[22%] -left-[10%] w-[600px] sm:w-[850px] h-[600px] sm:h-[850px] rounded-full bg-[#426fba]/[0.10] dark:bg-[#426fba]/[0.07] blur-[160px]" />
+
+      {/* Mid-right atmospheric violet/magenta light field (refracted by topics & about) */}
+      <div className="absolute top-[48%] -right-[8%] w-[550px] sm:w-[800px] h-[550px] sm:h-[800px] rounded-full bg-[#984f9f]/[0.11] dark:bg-[#984f9f]/[0.075] blur-[150px]" />
+
+      {/* Lower-left atmospheric emerald/teal light field (refracted by resources & contact) */}
+      <div className="absolute top-[72%] -left-[6%] w-[600px] sm:w-[850px] h-[600px] sm:h-[850px] rounded-full bg-[#61c5ad]/[0.10] dark:bg-[#61c5ad]/[0.07] blur-[160px]" />
+
+      {/* Bottom atmospheric indigo/violet light field (refracted by footer & FAQ) */}
+      <div className="absolute -bottom-[5%] right-[15%] w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full bg-[#426fba]/[0.09] dark:bg-[#426fba]/[0.06] blur-[140px]" />
+
+      {/* Optical Displacement & Refraction Filter (Accessible globally) */}
+      <svg className="sr-only" aria-hidden="true">
+        <defs>
+          <filter id="liquid-glass-distortion" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04 0.04" numOctaves="2" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
     </div>
   );
 }

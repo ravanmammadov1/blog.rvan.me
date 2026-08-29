@@ -96,12 +96,12 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.25, ease: [0.25, 1, 0.5, 1] } }}
             exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.16, ease: [0.4, 0, 1, 1] } }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl liquid-glass shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden origin-top-right"
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl liquid-glass-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden origin-top-right"
           >
             {/* Identity / Header area */}
             {!user ? (
               /* Signed Out Header */
-              <div>
+              <div className="relative z-10">
                 <div className="p-4 space-y-3">
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-[.18em] text-primary mono mb-1">
@@ -219,7 +219,7 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
               </div>
             ) : (
               /* Signed In Profile View */
-              <div>
+              <div className="relative z-10">
                 <div className="p-4 border-b border-[#DDE1E0] dark:border-border space-y-3">
                   <div className="flex items-center gap-3">
                     {userPhoto ? (
@@ -390,7 +390,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           {/* Logo & Brand — Always links to Home in active language */}
           <Link
             to={getLocalizedPath("/")}
-            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
+            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none relative z-10"
             aria-label="Rvan.me Home"
           >
             <img
@@ -406,7 +406,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </Link>
 
           {/* Desktop Navigation — Tightly Hugged Liquid Glass Capsule */}
-          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0">
+          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0 relative z-10">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isHome = item.target === "/";
@@ -432,7 +432,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </nav>
 
           {/* Action & Profile Control on Right */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 relative z-10">
             <UserAuthMenu compact={true} />
 
             {/* Mobile Menu Toggle */}

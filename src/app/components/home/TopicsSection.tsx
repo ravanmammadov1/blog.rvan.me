@@ -61,9 +61,9 @@ export default function TopicsSection() {
               >
                 <Link
                   to={getLocalizedPath(`/topics/${topic.slug}`)}
-                  className="group relative p-6 sm:p-7 rounded-2xl liquid-glass liquid-glass-interactive flex flex-col justify-between h-full"
+                  className="group relative p-6 sm:p-7 rounded-2xl liquid-glass-card liquid-glass-interactive flex flex-col justify-between h-full"
                 >
-                  <div>
+                  <div className="relative z-10">
                     <div className="flex items-center justify-between mb-5">
                       <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 dark:bg-white/[0.05] text-foreground border border-border/40">
                         <Icon size={18} />
@@ -81,7 +81,7 @@ export default function TopicsSection() {
                     </p>
                   </div>
 
-                  <div className="mt-6 pt-3.5 border-t border-border/40 flex items-center justify-between">
+                  <div className="relative z-10 mt-6 pt-3.5 border-t border-border/40 flex items-center justify-between">
                     <span className="text-xs font-mono font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase tracking-wider">
                       {isAz ? "Mövzuya Bax" : "Explore Topic"}
                     </span>

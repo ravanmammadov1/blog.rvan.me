@@ -34,7 +34,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item }) => {
   const displayTitle = formatHumanTitle(item.title);
 
   return (
-    <article className="group p-5 flex flex-col justify-between relative min-h-[220px] rounded-2xl liquid-glass liquid-glass-interactive">
+    <article className="group p-5 flex flex-col justify-between relative min-h-[220px] rounded-2xl liquid-glass-card liquid-glass-interactive">
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Category Tag */}
         <div className="flex items-center justify-between gap-2 mb-3">

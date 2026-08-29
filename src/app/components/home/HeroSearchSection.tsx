@@ -203,7 +203,7 @@ export default function HeroSearchSection() {
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
-            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
+            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none relative z-10"
           >
             <img
               src={ravanLogo}
@@ -218,7 +218,7 @@ export default function HeroSearchSection() {
           </Link>
 
           {/* Compact Centered Pill Navigation (Tightly Fitted to Content) */}
-          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0">
+          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0 relative z-10">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive = idx === 0;
@@ -240,7 +240,7 @@ export default function HeroSearchSection() {
           </nav>
 
           {/* Right Action Group: Compact User/Profile Control */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 relative z-10">
             <UserAuthMenu compact={true} />
 
             {/* Mobile Menu Toggle */}
@@ -316,12 +316,12 @@ export default function HeroSearchSection() {
                 }}
                 className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
                   isSearching
-                    ? "liquid-glass border-primary"
+                    ? "liquid-glass-pill liquid-glass-pill-active"
                     : "liquid-glass-btn text-foreground"
                 }`}
                 style={{ outline: "none", boxShadow: "none" }}
               >
-                <Search size={13} className={isSearching ? "text-primary shrink-0" : "text-muted-foreground shrink-0"} />
+                <Search size={13} className={isSearching ? "text-primary shrink-0 relative z-10" : "text-muted-foreground shrink-0 relative z-10"} />
 
                 {isSearching ? (
                   <input
@@ -334,12 +334,12 @@ export default function HeroSearchSection() {
                     }}
                     onKeyDown={handleSearchKeyDown}
                     placeholder={isAz ? "Axtarış..." : "Search..."}
-                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none"
+                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10"
                     style={{ outline: "none", boxShadow: "none", border: "none" }}
                     autoFocus
                   />
                 ) : (
-                  <div className="w-full flex items-center justify-between min-w-0 select-none">
+                  <div className="w-full flex items-center justify-between min-w-0 select-none relative z-10">
                     <span className="text-[10px] xs:text-[11px] font-mono font-bold tracking-wider text-foreground truncate">
                       {isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}
                     </span>
@@ -357,7 +357,7 @@ export default function HeroSearchSection() {
                       setSearchQuery("");
                       searchInputRef.current?.focus();
                     }}
-                    className="p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0 outline-none"
+                    className="p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0 outline-none relative z-10"
                     aria-label="Clear search"
                   >
                     <X size={12} />
@@ -372,7 +372,7 @@ export default function HeroSearchSection() {
                     initial={{ opacity: 0, y: 6, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } }}
                     exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
-                    className="absolute top-full left-0 mt-2 z-50 w-[260px] xs:w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl liquid-glass shadow-2xl p-1.5 space-y-1 overflow-hidden"
+                    className="absolute top-full left-0 mt-2 z-50 w-[260px] xs:w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl liquid-glass-card shadow-2xl p-1.5 space-y-1 overflow-hidden"
                   >
                     <div className="px-2.5 py-1 text-[9.5px] font-mono font-bold text-muted-foreground/70 uppercase tracking-wider flex items-center justify-between border-b border-border/40 pb-1">
                       <span>{isAz ? "NƏTİCƏLƏR" : "RESULTS"}</span>
