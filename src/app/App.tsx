@@ -61,7 +61,7 @@ function AppRoutes() {
           y: -4,
           transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
         }}
-        className="w-full min-h-screen"
+        className="relative z-10 w-full min-h-screen"
       >
         <Routes location={location}>
       {/* English Default Routes */}
@@ -157,25 +157,9 @@ function AppRoutes() {
 function AmbientLiquidBackground() {
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden select-none"
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none ambient-page-background"
       aria-hidden="true"
-    >
-      {/* Strategic ambient light fields — only visible through glass surfaces */}
-      {/* Top-right teal — shows through navbar & hero cards */}
-      <div className="absolute -top-[8%] right-[8%] w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full bg-[#61c5ad]/[0.08] dark:bg-[#61c5ad]/[0.05] blur-[140px]" />
-
-      {/* Upper-left blue — shows through blog section */}
-      <div className="absolute top-[25%] -left-[8%] w-[550px] sm:w-[800px] h-[550px] sm:h-[800px] rounded-full bg-[#426fba]/[0.07] dark:bg-[#426fba]/[0.045] blur-[160px]" />
-
-      {/* Mid-right violet — shows through topics & about */}
-      <div className="absolute top-[50%] -right-[6%] w-[500px] sm:w-[750px] h-[500px] sm:h-[750px] rounded-full bg-[#8c6fbf]/[0.06] dark:bg-[#8c6fbf]/[0.04] blur-[150px]" />
-
-      {/* Lower-left teal — shows through resources & contact */}
-      <div className="absolute top-[75%] -left-[5%] w-[500px] sm:w-[750px] h-[500px] sm:h-[750px] rounded-full bg-[#61c5ad]/[0.06] dark:bg-[#61c5ad]/[0.04] blur-[160px]" />
-
-      {/* Bottom-right blue — shows through footer */}
-      <div className="absolute -bottom-[5%] right-[12%] w-[450px] sm:w-[650px] h-[450px] sm:h-[650px] rounded-full bg-[#426fba]/[0.05] dark:bg-[#426fba]/[0.035] blur-[140px]" />
-    </div>
+    />
   );
 }
 

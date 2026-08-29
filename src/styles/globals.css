@@ -515,6 +515,43 @@
     inset 0 3px 10px 0 rgba(97, 197, 173, 0.06) !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBAL EDITORIAL AMBIENT BACKGROUND
+   Subtle, large, feathered ambient gradients echoing Hero artwork.
+   Gives Liquid Glass surfaces subtle depth to react to while keeping
+   the page essentially clean white / dark.
+   ═══════════════════════════════════════════════════════════════════ */
+
+body {
+  background-color: #ffffff;
+}
+
+.dark body {
+  background-color: #0a0a0c;
+}
+
+.ambient-page-background {
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(1200px circle at 12% 12%, rgba(125, 211, 252, 0.028), transparent 70%),
+    radial-gradient(1300px circle at 88% 18%, rgba(167, 139, 250, 0.024), transparent 72%),
+    radial-gradient(1100px circle at 50% 85%, rgba(94, 234, 212, 0.022), transparent 70%);
+}
+
+.dark .ambient-page-background {
+  background-color: #0a0a0c;
+  background-image:
+    radial-gradient(1200px circle at 85% 15%, rgba(66, 111, 186, 0.045), transparent 70%),
+    radial-gradient(1100px circle at 15% 30%, rgba(97, 197, 173, 0.035), transparent 70%),
+    radial-gradient(1200px circle at 50% 85%, rgba(140, 120, 200, 0.035), transparent 70%);
+}
+
+/* Allow fixed ambient background to smoothly breathe through page containers */
+main.bg-background,
+section.bg-background {
+  background-color: transparent;
+}
+
 /* ─── Smooth scroll ─── */
 html {
   scroll-behavior: smooth;
