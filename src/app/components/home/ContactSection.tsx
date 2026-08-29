@@ -74,24 +74,24 @@ export default function ContactSection() {
   const letsTalkLabel = siteSettings?.letsTalkLabel || t("btnGetInTouch", "GET IN TOUCH");
 
   return (
-    <section id="contact" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-surface/30">
+    <section id="contact" className="relative px-4 sm:px-6 md:px-10 py-16 sm:py-24 lg:py-28 border-b border-border/40">
       <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-12 flex items-end justify-between border-b border-border pb-6"
+          className="mb-10 flex items-end justify-between border-b border-border/60 pb-6"
         >
           <div>
-            <Eyebrow className="text-primary tracking-[.2em]">{t("contactBadge", "GET IN TOUCH")}</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{isAz ? "06 / BİZİMLƏ ƏLAQƏ" : "06 / GET IN TOUCH"}</Eyebrow>
             <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
               {contactHeading}
             </h2>
           </div>
         </motion.div>
 
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-start">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14 items-start">
           {/* Left: Info */}
           <motion.div
             variants={fadeUp}
@@ -99,15 +99,15 @@ export default function ContactSection() {
             whileInView="visible"
             viewport={{ once: true }}
             custom={0.08}
-            className="flex flex-col justify-center space-y-6"
+            className="flex flex-col justify-center space-y-6 text-left"
           >
-            <p className="text-base leading-relaxed text-muted-foreground font-normal md:text-lg">
+            <p className="text-base leading-relaxed text-muted-foreground font-normal md:text-lg max-w-lg">
               {contactSubtext}
             </p>
 
-            <div className="p-6 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-slate-50/90 dark:bg-white/[0.03] space-y-4 backdrop-blur-md">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary block">
-                {isAz ? "BİRBASHA ƏLAQƏ" : "DIRECT INQUIRIES"}
+            <div className="p-6 rounded-2xl border border-border/70 bg-card/60 dark:bg-card/40 space-y-3">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground block">
+                {isAz ? "BİRBAŞA ƏLAQƏ" : "DIRECT INQUIRIES"}
               </span>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-base sm:text-lg font-bold text-foreground font-mono">
@@ -131,8 +131,8 @@ export default function ContactSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            custom={0.15}
-            className="rounded-3xl border border-black/[0.08] dark:border-white/[0.08] bg-gradient-to-b from-white/95 to-white/80 dark:from-[#141519]/90 dark:to-[#0c0d10]/90 p-8 md:p-10 backdrop-blur-xl shadow-[0_12px_36px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)]"
+            custom={0.12}
+            className="rounded-2xl border border-border/70 bg-card/60 dark:bg-card/40 p-6 sm:p-8"
           >
             <form onSubmit={handleContactSubmit} className="space-y-6" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">

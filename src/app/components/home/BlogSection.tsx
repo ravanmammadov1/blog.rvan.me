@@ -65,30 +65,23 @@ export default function BlogSection() {
   }, [blogPosts, activeFilter, articleStats]);
 
   return (
-    <section id="blog" className="relative px-6 py-28 md:px-10 md:py-40 overflow-hidden">
-      {/* Subtle section aurora background */}
-      <div 
-        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
-        style={{
-          background: "radial-gradient(circle at 80% 60%, rgba(139,92,246,0.07) 0%, rgba(79,70,229,0.04) 45%, transparent 70%)",
-        }}
-      />
+    <section id="blog" className="relative px-4 sm:px-6 md:px-10 py-16 sm:py-24 lg:py-28 overflow-hidden border-b border-border/40">
       <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-12 flex flex-col md:flex-row items-start md:items-end justify-between border-b border-white/10 pb-6 gap-6"
+          className="mb-10 flex flex-col md:flex-row items-start md:items-end justify-between border-b border-border/60 pb-6 gap-6"
         >
           <div>
             <Eyebrow className="text-muted-foreground">
-              {isAz ? "03 / Redaksiya Nəşrləri və Fikirlər" : "03 / Editorial Publication & Insights"}
+              {isAz ? "02 / NƏŞRLƏR VƏ FİKİRLƏR" : "02 / EDITORIAL PUBLICATION & INSIGHTS"}
             </Eyebrow>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-6xl text-foreground">
+            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
               {isAz ? "Dizayn × Psixologiya." : "Thinking out loud."}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground font-medium max-w-xl">
+            <p className="mt-2 text-xs md:text-sm text-muted-foreground font-normal max-w-xl leading-relaxed">
               {isAz
                 ? "Gündəlik gördüyünüz dizayn qaydaları, qiymət modelləri və vizual qərarların arxasındakı elmi səbəblər."
                 : "Deep research on visual hierarchy, behavioural psychology, and creative culture."}
@@ -97,74 +90,37 @@ export default function BlogSection() {
 
           <Link
             to={getLocalizedPath("/blog")}
-            className="group hidden items-center gap-2 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
+            className="group hidden items-center gap-1.5 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            {isAz ? "BÜTÜN MƏQALƏLƏRƏ BAX" : "EXPLORE ALL ARTICLES"}
+            <span>{isAz ? "BÜTÜN MƏQALƏLƏRƏ BAX" : "EXPLORE ALL ARTICLES"}</span>
             <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
 
-        {/* Discovery Filter Tabs */}
-        <div className="mb-10 flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setActiveFilter("latest")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
-              activeFilter === "latest"
-                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-            }`}
-          >
-            <Clock size={13} className={activeFilter === "latest" ? "text-black" : "text-primary"} />
-            <span>{isAz ? "Ən Son Nəşrlər" : "Latest Essays"}</span>
-          </button>
-
-          <button
-            onClick={() => setActiveFilter("most_read")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
-              activeFilter === "most_read"
-                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-            }`}
-          >
-            <TrendingUp size={13} className={activeFilter === "most_read" ? "text-black" : "text-emerald-500"} />
-            <span>{isAz ? "Ən Çox Oxunanlar" : "Most Read"}</span>
-          </button>
-
-          <button
-            onClick={() => setActiveFilter("design")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
-              activeFilter === "design"
-                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-            }`}
-          >
-            <Compass size={13} className={activeFilter === "design" ? "text-black" : "text-primary"} />
-            <span>Design & Type</span>
-          </button>
-
-          <button
-            onClick={() => setActiveFilter("psychology")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
-              activeFilter === "psychology"
-                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-            }`}
-          >
-            <Brain size={13} className={activeFilter === "psychology" ? "text-black" : "text-secondary"} />
-            <span>Psychology & UX</span>
-          </button>
-
-          <button
-            onClick={() => setActiveFilter("marketing")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold mono transition-all cursor-pointer ${
-              activeFilter === "marketing"
-                ? "bg-primary text-black shadow-md shadow-primary/20 font-extrabold"
-                : "border border-[#DDE1E0] dark:border-white/10 bg-white/90 dark:bg-white/5 text-muted-foreground hover:text-foreground hover:bg-slate-50 dark:hover:bg-white/10"
-            }`}
-          >
-            <Zap size={13} className={activeFilter === "marketing" ? "text-black" : "text-accent"} />
-            <span>Marketing & Brand</span>
-          </button>
+        {/* Discovery Filter Tabs (Quiet Editorial Styling) */}
+        <div className="mb-8 flex flex-wrap items-center gap-2">
+          {[
+            { key: "latest", label: isAz ? "Ən Son Nəşrlər" : "Latest Essays" },
+            { key: "most_read", label: isAz ? "Ən Çox Oxunanlar" : "Most Read" },
+            { key: "design", label: "Design & Type" },
+            { key: "psychology", label: "Psychology & UX" },
+            { key: "marketing", label: "Marketing & Brand" },
+          ].map((tab) => {
+            const isActive = activeFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveFilter(tab.key as any)}
+                className={`rounded-full px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer select-none ${
+                  isActive
+                    ? "bg-foreground text-background shadow-xs"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40 dark:hover:bg-white/5 border border-border/60"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* 6-Card Responsive Grid */}

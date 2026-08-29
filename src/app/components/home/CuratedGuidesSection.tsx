@@ -52,7 +52,7 @@ export default function CuratedGuidesSection() {
   ];
 
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-b border-border/40">
+    <section className="relative w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 border-b border-border/40">
       <motion.div
         variants={fadeUp}
         initial="hidden"
@@ -60,16 +60,16 @@ export default function CuratedGuidesSection() {
         viewport={{ once: true, margin: "-40px" }}
         className="w-full"
       >
-        <div className="flex items-center justify-between mb-5 px-1">
+        <div className="flex items-center justify-between mb-6 px-1">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-primary" />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             <span className="text-[11px] sm:text-xs mono uppercase font-bold tracking-[.18em] text-muted-foreground">
               {isAz ? "MƏŞHUR MÖVZULAR VƏ TƏDQİQATLAR" : "POPULAR TOPICS & CURATED GUIDES"}
             </span>
           </div>
           <Link
             to={getLocalizedPath("/blog")}
-            className="text-xs mono font-bold text-primary hover:underline flex items-center gap-1 transition-transform hover:translate-x-0.5"
+            className="text-xs mono font-bold text-muted-foreground hover:text-primary flex items-center gap-1.5 transition-colors"
           >
             <span>{isAz ? "Bütün məqalələr" : "View all articles"}</span>
             <ArrowRight size={13} />
@@ -83,34 +83,24 @@ export default function CuratedGuidesSection() {
               <Link
                 key={item.id}
                 to={getLocalizedPath(item.path)}
-                className="group relative flex flex-col justify-between rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-card/60 dark:bg-card/40 p-4 sm:p-5 text-left backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:border-primary/40 dark:hover:border-white/20 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.55)] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] hover:-translate-y-1 overflow-hidden"
+                className="group relative flex flex-col justify-between rounded-xl border border-border/70 bg-card/50 dark:bg-card/30 p-4 sm:p-5 text-left transition-all duration-300 hover:border-foreground/20 hover:-translate-y-0.5 hover:shadow-sm"
               >
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/0 to-transparent group-hover:via-primary/50 transition-all duration-500 pointer-events-none" />
-
                 <div>
-                  <div className="flex items-center justify-between mb-3.5">
-                    <div className="flex items-center gap-2">
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-xl border shadow-2xs transition-transform duration-300 group-hover:scale-105 ${item.accent}`}>
-                        <Icon size={15} />
-                      </div>
-                      <span className="text-[10px] font-mono font-bold text-muted-foreground/50 tracking-wider">
-                        0{idx + 1}
-                      </span>
-                    </div>
-
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full border border-border/80 bg-background/80 text-muted-foreground group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-black transition-all duration-300 shadow-2xs shrink-0">
-                      <ArrowUpRight
-                        size={12}
-                        className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      />
-                    </div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] font-mono font-bold text-muted-foreground/60 tracking-wider">
+                      0{idx + 1}
+                    </span>
+                    <ArrowUpRight
+                      size={14}
+                      className="text-muted-foreground/60 group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+                    />
                   </div>
 
-                  <span className="text-[9.5px] font-mono font-bold uppercase tracking-[.14em] text-muted-foreground/80 group-hover:text-primary transition-colors block mb-1.5">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-[.12em] text-primary/90 block mb-1.5">
                     {item.category}
                   </span>
 
-                  <h3 className="text-xs sm:text-[13px] font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                  <h3 className="text-[13px] sm:text-sm font-bold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
                     {item.title}
                   </h3>
                 </div>

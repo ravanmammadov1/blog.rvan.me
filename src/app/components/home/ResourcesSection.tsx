@@ -89,53 +89,53 @@ export default function ResourcesSection() {
   }, []);
 
   return (
-    <section id="resources" className="relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-surface/40">
+    <section id="resources" className="relative px-4 sm:px-6 md:px-10 py-16 sm:py-24 lg:py-28 border-b border-border/40">
       <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between border-b border-border pb-6 gap-6"
+          className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between border-b border-border/60 pb-6 gap-6"
         >
           <div>
-            <Eyebrow className="text-primary tracking-[.2em]">{isAz ? "KURASİYA EDİLMİŞ KATALOQ" : "CURATED DIRECTORY"}</Eyebrow>
+            <Eyebrow className="text-muted-foreground">{isAz ? "05 / KURASİYA EDİLMİŞ KATALOQ" : "05 / CURATED DIRECTORY"}</Eyebrow>
             <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-5xl text-foreground">
               {isAz ? "Resurslar" : "Resources"}
             </h2>
-            <p className="mt-2 text-xs md:text-sm text-muted-foreground font-medium max-w-xl">
+            <p className="mt-2 text-xs md:text-sm text-muted-foreground font-normal max-w-xl leading-relaxed">
               {isAz
                 ? "Dizaynerlər, marketoloqlar və kreativ mütəxəssislər üçün seçilmiş faydalı açıq mənbəli resurslar, şriftlər, ikonlar və dizayn aktivləri."
-                : "Rvan.me curates useful open-source fonts, vector icons, 3D assets, and design kits for designers, marketers, and creative professionals."}
+                : "Rvan.me curates useful open-source fonts, vector icons, and design assets for designers, marketers, and creative professionals."}
             </p>
           </div>
 
-          <Button
+          <Link
             to={getLocalizedPath("/resources")}
-            variant="secondary"
-            size="md"
-            icon={<ArrowUpRight size={14} className="text-primary" />}
+            className="group hidden items-center gap-1.5 text-xs font-bold tracking-[.14em] text-muted-foreground transition-colors hover:text-primary mono md:flex"
           >
-            {isAz ? "BÜTÜN RESURSLARA BAX" : "EXPLORE ALL RESOURCES"}
-          </Button>
+            <span>{isAz ? "BÜTÜN RESURSLARA BAX" : "EXPLORE ALL RESOURCES"}</span>
+            <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
         </motion.div>
 
         {/* Category Tabs: FONTS | ICONS | ILLUSTRATIONS */}
-        <div className="mb-10 flex flex-wrap gap-2">
+        <div className="mb-8 flex flex-wrap gap-2">
           {(Object.keys(HOME_RESOURCE_CATEGORIES) as HomeResourceCategoryKey[]).map((catKey) => {
             const isActive = activeCategory === catKey;
             return (
-              <Button
+              <button
                 key={catKey}
                 onClick={() => setActiveCategory(catKey)}
-                variant="filter"
-                active={isActive}
-                size="sm"
-                icon={CATEGORY_ICONS[catKey]}
-                iconPosition="left"
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none ${
+                  isActive
+                    ? "bg-foreground text-background shadow-xs"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40 dark:hover:bg-white/5 border border-border/60"
+                }`}
               >
-                {categoryLabels[catKey] || HOME_RESOURCE_CATEGORIES[catKey].label}
-              </Button>
+                {CATEGORY_ICONS[catKey]}
+                <span>{categoryLabels[catKey] || HOME_RESOURCE_CATEGORIES[catKey].label}</span>
+              </button>
             );
           })}
         </div>

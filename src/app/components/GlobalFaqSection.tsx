@@ -29,7 +29,7 @@ export default function GlobalFaqSection({
   return (
     <section
       id="faq"
-      className={`relative px-6 py-20 md:px-10 md:py-28 border-t border-border bg-card/20 scroll-mt-20 ${className}`}
+      className={`relative px-4 sm:px-6 md:px-10 py-16 sm:py-24 lg:py-28 border-b border-border/40 scroll-mt-20 ${className}`}
     >
       <div className="mx-auto max-w-[1200px]">
         <FaqAccordion
