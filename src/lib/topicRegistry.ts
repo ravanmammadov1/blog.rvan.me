@@ -1,5 +1,5 @@
 import React from "react";
-import { Palette, Megaphone, ShieldCheck, Sparkles, Briefcase, Compass } from "lucide-react";
+import { Palette, Megaphone, ShieldCheck, Sparkles, Briefcase, Compass, type LucideIcon } from "lucide-react";
 
 export interface TopicItem {
   id: string;
@@ -9,7 +9,7 @@ export interface TopicItem {
     az: string;
   };
   tag: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   accentColor: string;
   description: {
     en: string;

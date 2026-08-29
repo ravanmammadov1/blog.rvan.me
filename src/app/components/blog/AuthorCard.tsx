@@ -75,7 +75,7 @@ export default function AuthorCard({ post }: AuthorCardProps) {
           <span className="text-xl font-bold text-primary mono">
             {authorName
               .split(" ")
-              .map((n) => n[0])
+              .map((n: string) => n[0])
               .join("")
               .toUpperCase()
               .slice(0, 2)}

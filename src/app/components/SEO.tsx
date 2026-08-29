@@ -11,6 +11,7 @@ interface SEOProps {
   description?: string;
   image?: string;
   url?: string;
+  canonical?: string;
   type?: SeoType;
   articleSchemaType?: ArticleSchemaType;
   publishDate?: string;

@@ -374,8 +374,8 @@ export default function ContributorApplicationWizard({
                   {isAz ? "Təcrübə Səviyyəsi" : "Years / Level of Experience"}
                 </label>
                 <select
-                  value={experienceLevel}
-                  onChange={(e) => setExperienceLevel(e.target.value)}
+                  value={yearsOfExperience}
+                  onChange={(e) => setYearsOfExperience(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                 >
                   <option value="1-3 years">1–3 years / Junior-Mid</option>
@@ -652,7 +652,7 @@ export default function ContributorApplicationWizard({
                     <>
                       I agree to the <span className="font-semibold text-foreground">Rvan.me Contributor Terms</span> and understand that I retain copyright ownership of my original work while granting Rvan.me a non-exclusive license to publish and promote it. (
                       <Link
-                        to={language === "az" ? "/az/terms" : "/terms"}
+                        to={isAz ? "/az/terms" : "/terms"}
                         target="_blank"
                         className="text-primary font-bold hover:underline"
                       >

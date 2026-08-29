@@ -24,6 +24,7 @@ export interface AuthContextType {
   userPhoto: string | null;
   customAvatar: string | null;
   updateCustomAvatar: (avatarUrl: string | null) => void;
+  randomizeAvatar: () => void;
   uploadAvatarBlob: (blob: Blob) => Promise<string>;
   updateBio: (bio: string) => void;
   updateDisplayName: (name: string) => Promise<void>;
@@ -310,6 +311,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // 3. Null (Guest fallback initial)
   const userPhoto = user ? customAvatar || user.photoURL || null : null;
 
+  const randomizeAvatar = () => {
+    if (!user?.uid) return;
+    const randomSeed = Math.random().toString(36).substring(7);
+    const dicebearUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${randomSeed}`;
+    updateCustomAvatar(dicebearUrl);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -321,6 +329,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         userPhoto,
         customAvatar,
         updateCustomAvatar,
+        randomizeAvatar,
         uploadAvatarBlob,
         updateBio,
         updateDisplayName,

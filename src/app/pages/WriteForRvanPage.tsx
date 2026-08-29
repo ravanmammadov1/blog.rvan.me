@@ -389,7 +389,7 @@ export default function WriteForRvanPage() {
       {/* Hero Section */}
       <section className="relative px-4 pt-32 pb-14 sm:px-6 md:px-8 md:pt-40 md:pb-20 border-b border-border bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent">
         <div className="mx-auto max-w-4xl text-center space-y-6">
-          <Eyebrow text={t("writePageEyebrow", "EDITORIAL INVITATION")} />
+          <Eyebrow>{t("writePageEyebrow", "EDITORIAL INVITATION")}</Eyebrow>
 
           <motion.h1
             initial={{ opacity: 0, y: 15 }}

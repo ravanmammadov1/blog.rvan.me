@@ -119,13 +119,13 @@ export default function BlogArchive() {
         return titleB.localeCompare(titleA, isAz ? "az" : "en");
       }
       if (sortBy === "oldest") {
-        const dateA = parseBlogDate(a.publishDate || a._createdAt)?.getTime() || 0;
-        const dateB = parseBlogDate(b.publishDate || b._createdAt)?.getTime() || 0;
+        const dateA = parseBlogDate(a.publishDate || (a as any)._createdAt)?.getTime() || 0;
+        const dateB = parseBlogDate(b.publishDate || (b as any)._createdAt)?.getTime() || 0;
         return dateA - dateB;
       }
       // Default: "newest" (publishDate descending)
-      const dateA = parseBlogDate(a.publishDate || a._createdAt)?.getTime() || 0;
-      const dateB = parseBlogDate(b.publishDate || b._createdAt)?.getTime() || 0;
+      const dateA = parseBlogDate(a.publishDate || (a as any)._createdAt)?.getTime() || 0;
+      const dateB = parseBlogDate(b.publishDate || (b as any)._createdAt)?.getTime() || 0;
       return dateB - dateA;
     });
 

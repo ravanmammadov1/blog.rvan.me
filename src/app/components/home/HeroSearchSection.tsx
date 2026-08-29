@@ -131,7 +131,7 @@ export default function HeroSearchSection() {
       e.preventDefault();
       const selected = filteredResults[selectedIndex];
       if (selected) {
-        trackSearchDiscovery("inline_result_selected", {
+        trackSearchDiscovery("result_selected", {
           resultType: selected.type,
           targetPath: selected.path,
         });
@@ -189,7 +189,54 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative flex min-h-[80vh] md:min-h-[85vh] flex-col items-center justify-center px-4 pt-16 pb-14 md:px-8 md:pt-20 md:pb-20 overflow-hidden text-center">
+    <section className="relative flex min-h-[85vh] lg:min-h-[88vh] flex-col justify-center px-4 pt-16 pb-14 md:px-8 md:pt-20 md:pb-20 overflow-hidden">
+      {/* ── Editorial Right Hero Visual (Theme-Aware: Dark & Light) ── */}
+      <div
+        className="pointer-events-none absolute right-0 top-0 bottom-0 z-0 h-full w-full lg:w-[60%] xl:w-[62%] select-none overflow-hidden"
+        aria-hidden="true"
+      >
+        {/* Light Mode Picture */}
+        <picture className="block dark:hidden h-full w-full">
+          <source type="image/webp" srcSet="/images/hero_light.webp" />
+          <img
+            src="/images/hero-light.jpg"
+            alt="Rvan.me Editorial Vision"
+            width={2752}
+            height={1536}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-center lg:object-right transition-opacity duration-700 opacity-25 sm:opacity-35 md:opacity-55 lg:opacity-100"
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 12%, rgba(0,0,0,0.85) 35%, black 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 12%, rgba(0,0,0,0.85) 35%, black 100%)",
+            }}
+          />
+        </picture>
+
+        {/* Dark Mode Picture */}
+        <picture className="hidden dark:block h-full w-full">
+          <source type="image/webp" srcSet="/images/hero_dark.webp" />
+          <img
+            src="/images/hero-dark.jpg"
+            alt="Rvan.me Editorial Vision"
+            width={2752}
+            height={1536}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-center lg:object-right transition-opacity duration-700 opacity-30 sm:opacity-40 md:opacity-65 lg:opacity-100"
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 12%, rgba(0,0,0,0.85) 35%, black 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 12%, rgba(0,0,0,0.85) 35%, black 100%)",
+            }}
+          />
+        </picture>
+
+        {/* Natural Ambient Gradient Edge Blends */}
+        <div className="absolute inset-y-0 left-0 w-32 md:w-56 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background via-background/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/60 to-transparent pointer-events-none" />
+      </div>
+
       {/* ── Floating Decorative Elements (Subtle Editorial Symbols) ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 select-none" aria-hidden="true">
         {/* Spark Icon — Top Left */}
@@ -214,7 +261,7 @@ export default function HeroSearchSection() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1280px] relative z-10 flex flex-col items-center">
+      <div className="mx-auto w-full max-w-[1280px] relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left">
         {/* ── Micro-label ── */}
         <motion.div variants={fadeUp} initial={false} animate="visible" custom={0}>
           <Eyebrow className="mb-4 text-primary tracking-[.24em] font-semibold">
@@ -230,8 +277,8 @@ export default function HeroSearchSection() {
           initial={false}
           animate="visible"
           custom={0.1}
-          className="font-extrabold tracking-tight leading-[1.04] mb-5 w-full max-w-4xl"
-          style={{ fontSize: "clamp(2.5rem, 6vw, 5.2rem)" }}
+          className="font-extrabold tracking-tight leading-[1.04] mb-5 w-full max-w-2xl xl:max-w-3xl"
+          style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.8rem)" }}
         >
           <span className="bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] dark:from-[#61c5ad] dark:via-[#6099df] dark:to-[#bc66c5] bg-clip-text text-transparent inline-block">
             {isAz ? (
@@ -248,7 +295,7 @@ export default function HeroSearchSection() {
           initial={false}
           animate="visible"
           custom={0.15}
-          className="text-base sm:text-lg text-muted-foreground font-normal max-w-xl leading-relaxed mb-6 mx-auto"
+          className="text-base sm:text-lg text-muted-foreground font-normal max-w-xl leading-relaxed mb-6 mx-auto lg:mx-0"
         >
           {isAz
             ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr."
@@ -256,7 +303,7 @@ export default function HeroSearchSection() {
         </motion.p>
 
         {/* ── Live Knowledge Ticker ── */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] mono font-semibold text-muted-foreground/80 mb-8 select-none">
+        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-[11px] mono font-semibold text-muted-foreground/80 mb-8 select-none">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-2xs">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             <span>39 {isAz ? "Tədqiqat Məqaləsi" : "Research Articles"}</span>
@@ -280,7 +327,7 @@ export default function HeroSearchSection() {
           animate="visible"
           custom={0.2}
           ref={searchContainerRef}
-          className="w-full max-w-2xl mx-auto mb-10 md:mb-12 relative"
+          className="w-full max-w-xl mx-auto lg:mx-0 mb-10 md:mb-12 relative"
         >
           <form onSubmit={handleSearchSubmit} className="relative group">
             {/* Ambient Animated Gradient Glow Halo */}
@@ -373,7 +420,7 @@ export default function HeroSearchSection() {
                           key={item.id}
                           type="button"
                           onClick={() => {
-                            trackSearchDiscovery("inline_result_selected", {
+                            trackSearchDiscovery("result_selected", {
                               resultType: item.type,
                               targetPath: item.path,
                             });
@@ -435,7 +482,7 @@ export default function HeroSearchSection() {
           initial="hidden"
           animate="visible"
           custom={0.25}
-          className="w-full max-w-4xl mx-auto mb-10"
+          className="w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto lg:mx-0 mb-10"
         >
           <div className="flex items-center justify-between mb-3 px-1">
             <span className="text-[10px] sm:text-[11px] mono uppercase font-bold tracking-[.18em] text-muted-foreground/80">
@@ -504,7 +551,7 @@ export default function HeroSearchSection() {
           initial="hidden"
           animate="visible"
           custom={0.3}
-          className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold mono"
+          className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-semibold mono"
         >
           <Link
             to={getLocalizedPath("/blog")}
