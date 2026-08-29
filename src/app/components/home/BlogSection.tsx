@@ -113,8 +113,8 @@ export default function BlogSection() {
                 onClick={() => setActiveFilter(tab.key as any)}
                 className={`rounded-full px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer select-none ${
                   isActive
-                    ? "bg-foreground text-background shadow-xs"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40 dark:hover:bg-white/5 border border-border/60"
+                    ? "liquid-glass-pill liquid-glass-pill-active font-bold"
+                    : "liquid-glass-pill text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {tab.label}

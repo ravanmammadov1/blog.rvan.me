@@ -54,7 +54,7 @@ export function FontSpecimenCard({
       whileInView="visible"
       viewport={{ once: true, amount: 0.05 }}
       custom={(idx % 20) * 0.02}
-      className="group p-6 rounded-2xl border border-border bg-card hover:border-primary/40 flex flex-col justify-between transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40"
+      className="group p-6 rounded-2xl liquid-glass liquid-glass-interactive flex flex-col justify-between"
     >
       <div>
         {/* Header Badges */}

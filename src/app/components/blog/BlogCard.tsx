@@ -96,7 +96,7 @@ export default function BlogCard({
 
   return (
     <article
-      className="group relative flex h-full flex-col justify-between rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-card dark:bg-[#0e0f12] p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-black/20 dark:hover:border-white/20 hover:shadow-[0_10px_25px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_10px_25px_rgba(0,0,0,0.4)] focus-within:ring-2 focus-within:ring-primary"
+      className="group relative flex h-full flex-col justify-between rounded-2xl liquid-glass liquid-glass-interactive p-4 sm:p-5 focus-within:ring-2 focus-within:ring-primary"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

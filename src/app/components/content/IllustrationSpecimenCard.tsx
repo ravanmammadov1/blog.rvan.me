@@ -106,11 +106,11 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
   };
 
   return (
-    <article className="group relative rounded-2xl border border-border bg-card p-5 hover:border-primary/40 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:hover:shadow-black/40">
+    <article className="group relative rounded-2xl liquid-glass liquid-glass-interactive p-5 flex flex-col justify-between overflow-hidden">
       <div>
         {/* Header: Category Badge & Copy SVG */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2 py-0.5 rounded-md mono truncate max-w-[170px]">
+          <span className="text-[10px] font-bold uppercase tracking-wider mono truncate max-w-[170px] liquid-glass-pill liquid-glass-pill-active px-2 py-0.5 rounded-md">
             {illustration.category}
           </span>
 
@@ -134,7 +134,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
         </div>
 
         {/* Live Vector SVG Render Preview */}
-        <div className="my-3 flex items-center justify-center p-4 rounded-xl border border-border bg-surface aspect-[4/3] overflow-hidden relative">
+        <div className="my-3 flex items-center justify-center p-4 rounded-xl border border-border/50 bg-surface/30 aspect-[4/3] overflow-hidden relative">
           <img
             src={illustration.src}
             alt={illustration.title}
@@ -163,7 +163,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
         </div>
 
         {/* Source & Open-Source License Attribution Bar */}
-        <div className="pt-2 pb-3 border-t border-border/50 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+        <div className="pt-2 pb-3 border-t border-border/50 dark:border-white/5 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
           <span className="truncate max-w-[130px]" title={illustration.license}>
             {illustration.collection} · Open Source
           </span>
@@ -182,10 +182,10 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
       </div>
 
       {/* Action Buttons: SVG & PNG Downloads */}
-      <div className="pt-3 border-t border-border grid grid-cols-2 gap-2">
+      <div className="pt-3 border-t border-border/50 dark:border-white/5 grid grid-cols-2 gap-2">
         <button
           onClick={handleDownloadSvg}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer active:scale-[0.98]"
+          className="flex items-center justify-center gap-1.5 rounded-full py-2 text-[11px] font-mono font-bold text-foreground liquid-glass-btn cursor-pointer active:scale-[0.98]"
           title="Download vector SVG"
         >
           {downloadedType === "svg" ? (
@@ -198,7 +198,7 @@ export const IllustrationSpecimenCard: React.FC<IllustrationSpecimenCardProps> =
 
         <button
           onClick={handleDownloadPng}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 py-2 text-[11px] font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer active:scale-[0.98]"
+          className="flex items-center justify-center gap-1.5 rounded-full py-2 text-[11px] font-mono font-bold text-foreground liquid-glass-btn cursor-pointer active:scale-[0.98]"
           title="Download high-resolution PNG (1200x900)"
         >
           {downloadedType === "png" ? (

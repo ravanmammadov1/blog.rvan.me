@@ -54,22 +54,17 @@ export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, Bu
     let inlineStyle: React.CSSProperties = { ...style };
 
     if (variant === "primary") {
-      variantClasses =
-        "text-white shadow-[0_4px_16px_rgba(97,197,173,0.25)] hover:opacity-95 active:scale-95 transition-all bg-[length:200%_200%] bg-left hover:bg-right relative overflow-hidden";
-      inlineStyle.backgroundImage = "linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%)";
+      variantClasses = "text-white liquid-glass-btn-primary";
     } else if (variant === "secondary") {
-      variantClasses =
-        "border border-black/[0.08] dark:border-white/[0.12] bg-white/60 dark:bg-white/[0.05] backdrop-blur-xl text-foreground hover:bg-white/80 dark:hover:bg-white/[0.10] hover:border-black/15 dark:hover:border-white/20 shadow-2xs transition-all";
+      variantClasses = "liquid-glass-btn text-foreground";
     } else if (variant === "outline") {
       variantClasses =
         "border border-black/[0.10] dark:border-white/15 bg-transparent text-foreground hover:border-primary/60 hover:text-primary transition-all";
     } else if (variant === "filter") {
       if (active) {
-        variantClasses =
-          "text-foreground dark:text-white font-bold bg-[#61c5ad]/15 dark:bg-white/[0.08] border border-[#61c5ad]/50 dark:border-[#61c5ad]/40 shadow-xs backdrop-blur-xl transition-all";
+        variantClasses = "liquid-glass-pill liquid-glass-pill-active font-bold";
       } else {
-        variantClasses =
-          "border border-black/[0.08] dark:border-white/[0.10] bg-white/50 dark:bg-white/[0.03] backdrop-blur-md text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/[0.06] hover:border-primary/30 transition-all";
+        variantClasses = "liquid-glass-pill text-muted-foreground hover:text-foreground";
       }
     } else if (variant === "ghost") {
       variantClasses =

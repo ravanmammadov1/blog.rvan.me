@@ -132,7 +132,7 @@ export default function ContactSection() {
             whileInView="visible"
             viewport={{ once: true }}
             custom={0.12}
-            className="rounded-2xl border border-border/70 bg-card/60 dark:bg-card/40 p-6 sm:p-8"
+            className="rounded-2xl liquid-glass p-6 sm:p-8"
           >
             <form onSubmit={handleContactSubmit} className="space-y-6" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">
@@ -148,7 +148,7 @@ export default function ContactSection() {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.12] bg-white/50 dark:bg-white/[0.04] backdrop-blur-md px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
                     placeholder={t("placeholderName", "Your name")}
                   />
                 </div>
@@ -164,7 +164,7 @@ export default function ContactSection() {
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.12] bg-white/50 dark:bg-white/[0.04] backdrop-blur-md px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
                     placeholder={t("placeholderEmail", "your@email.com")}
                   />
                 </div>
@@ -182,7 +182,7 @@ export default function ContactSection() {
                   onChange={(e) => setContactMessage(e.target.value)}
                   required
                   rows={5}
-                  className="w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors resize-none"
+                  className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.12] bg-white/50 dark:bg-white/[0.04] backdrop-blur-md px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors resize-none"
                   placeholder={t("placeholderMessage", "How can we collaborate? Share your details...")}
                 />
               </div>

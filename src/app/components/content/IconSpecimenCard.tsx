@@ -89,12 +89,12 @@ export const IconSpecimenCard: React.FC<IconSpecimenCardProps> = ({
   return (
     <article
       ref={cardRef}
-      className="group relative rounded-2xl border border-border bg-card p-4 transition-all duration-200 hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md dark:hover:shadow-black/40 flex flex-col justify-between overflow-hidden"
+      className="group relative rounded-2xl liquid-glass liquid-glass-interactive p-4 flex flex-col justify-between overflow-hidden"
     >
       <div>
         {/* Top Header & Category Tag */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/10 px-2 py-0.5 rounded-md mono truncate max-w-[140px]">
+          <span className="text-[10px] font-bold uppercase tracking-wider mono truncate max-w-[140px] liquid-glass-pill liquid-glass-pill-active px-2 py-0.5 rounded-md">
             {iconItem.category}
           </span>
           <span className="text-[10px] font-mono text-muted-foreground uppercase">
@@ -103,12 +103,11 @@ export const IconSpecimenCard: React.FC<IconSpecimenCardProps> = ({
         </div>
 
         {/* Live Dynamic Icon Specimen Render with Custom Color */}
-        <div className="my-3 flex items-center justify-center p-5 rounded-xl border border-border bg-surface/50 transition-colors duration-200 min-h-[88px]">
+        <div className="my-3 flex items-center justify-center p-5 rounded-xl border border-border/50 bg-surface/40 transition-colors duration-200 min-h-[88px]">
           <IconComponent
             size={iconSize}
             strokeWidth={strokeWidth}
             color={iconColor}
-            className="transition-transform duration-200 group-hover:scale-110"
           />
         </div>
 
@@ -124,10 +123,10 @@ export const IconSpecimenCard: React.FC<IconSpecimenCardProps> = ({
       </div>
 
       {/* Simplified Download Actions Footer */}
-      <div className="pt-3 border-t border-border grid grid-cols-2 gap-2">
+      <div className="pt-3 border-t border-border/50 dark:border-white/5 grid grid-cols-2 gap-2">
         <button
           onClick={handleDownloadSvg}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 px-3 py-1.5 text-xs font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
+          className="flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-mono font-bold text-foreground liquid-glass-btn cursor-pointer"
           title="Download SVG vector file"
         >
           {downloadedType === "svg" ? (
@@ -140,7 +139,7 @@ export const IconSpecimenCard: React.FC<IconSpecimenCardProps> = ({
 
         <button
           onClick={handleDownloadPng}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/60 px-3 py-1.5 text-xs font-mono font-bold text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
+          className="flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-mono font-bold text-foreground liquid-glass-btn cursor-pointer"
           title="Download high-res PNG image"
         >
           {downloadedType === "png" ? (

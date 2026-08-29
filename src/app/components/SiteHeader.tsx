@@ -63,8 +63,8 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
       <button
         onClick={() => setDropdownOpen((prev) => !prev)}
         className={compact
-          ? "h-7 w-7 sm:h-8 sm:w-8 rounded-full border border-black/10 dark:border-white/15 bg-card/60 dark:bg-white/[0.04] p-0.5 flex items-center justify-center text-foreground transition-all hover:border-primary/60 focus:outline-none cursor-pointer select-none shadow-2xs"
-          : "flex items-center gap-1.5 rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] px-2.5 py-1 text-xs text-foreground transition-all hover:bg-muted/80 dark:hover:bg-white/[0.08] focus:outline-none cursor-pointer select-none shadow-2xs"
+          ? "h-7 w-7 sm:h-8 sm:w-8 rounded-full liquid-glass-btn p-0.5 flex items-center justify-center text-foreground transition-all hover:border-primary/60 focus:outline-none cursor-pointer select-none"
+          : "flex items-center gap-1.5 rounded-full liquid-glass-btn px-2.5 py-1 text-xs text-foreground transition-all focus:outline-none cursor-pointer select-none"
         }
         aria-label="User Account Menu"
         aria-expanded={dropdownOpen}
@@ -96,7 +96,7 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.25, ease: [0.25, 1, 0.5, 1] } }}
             exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.16, ease: [0.4, 0, 1, 1] } }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-[#DDE1E0] dark:border-border bg-white dark:bg-card shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden origin-top-right"
+            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl liquid-glass shadow-2xl z-50 pointer-events-auto text-foreground overflow-hidden origin-top-right"
           >
             {/* Identity / Header area */}
             {!user ? (
@@ -386,7 +386,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   return (
     <>
       <header className="relative z-30 w-full pt-3 sm:pt-4 px-4 flex justify-center pointer-events-none select-none">
-        <div className="pointer-events-auto w-full md:w-auto inline-flex items-center justify-between md:justify-start gap-2.5 sm:gap-4 md:gap-5 h-[42px] sm:h-[46px] px-3.5 sm:px-4 rounded-full bg-white/70 dark:bg-[#0c0d11]/75 border border-black/[0.08] dark:border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all">
+        <div className="pointer-events-auto w-full md:w-auto inline-flex items-center justify-between md:justify-start gap-2.5 sm:gap-4 md:gap-5 h-[42px] sm:h-[46px] px-3.5 sm:px-4 rounded-full liquid-glass-nav transition-all">
           {/* Logo & Brand — Always links to Home in active language */}
           <Link
             to={getLocalizedPath("/")}
@@ -405,7 +405,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             </span>
           </Link>
 
-          {/* Desktop Navigation — Tightly Hugged Frosted Glass Capsule */}
+          {/* Desktop Navigation — Tightly Hugged Liquid Glass Capsule */}
           <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase shrink-0">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
@@ -421,7 +421,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                   to={localizedTarget}
                   className={`relative px-2.5 py-0.5 transition-all duration-200 rounded-full select-none ${
                     isActive
-                      ? "text-foreground dark:text-white font-bold bg-white/90 dark:bg-white/[0.08] border border-black/10 dark:border-[#61c5ad]/40 shadow-xs"
+                      ? "liquid-glass-pill liquid-glass-pill-active font-bold"
                       : "text-muted-foreground hover:text-foreground hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                   }`}
                 >

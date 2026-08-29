@@ -197,9 +197,9 @@ export default function HeroSearchSection() {
         </picture>
       </div>
 
-      {/* ── Layer 1: Compact Floating Glass Navbar (Hugs Content, Identical to SiteHeader) ── */}
+      {/* ── Layer 1: Compact Floating Liquid Glass Navbar (Hugs Content, Identical to SiteHeader) ── */}
       <div className="relative z-30 w-full pt-3 sm:pt-4 px-4 flex justify-center pointer-events-none select-none">
-        <div className="pointer-events-auto w-full md:w-auto inline-flex items-center justify-between md:justify-start gap-2.5 sm:gap-4 md:gap-5 h-[42px] sm:h-[46px] px-3.5 sm:px-4 rounded-full bg-white/70 dark:bg-[#0c0d11]/75 border border-black/[0.08] dark:border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all">
+        <div className="pointer-events-auto w-full md:w-auto inline-flex items-center justify-between md:justify-start gap-2.5 sm:gap-4 md:gap-5 h-[42px] sm:h-[46px] px-3.5 sm:px-4 rounded-full liquid-glass-nav transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
@@ -229,7 +229,7 @@ export default function HeroSearchSection() {
                   to={localizedTarget}
                   className={`relative px-2.5 py-0.5 transition-all duration-200 rounded-full select-none ${
                     isActive
-                      ? "text-foreground dark:text-white font-bold bg-white/90 dark:bg-white/[0.08] border border-black/10 dark:border-[#61c5ad]/40 shadow-xs"
+                      ? "liquid-glass-pill liquid-glass-pill-active font-bold"
                       : "text-muted-foreground hover:text-foreground hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                   }`}
                 >
@@ -314,10 +314,10 @@ export default function HeroSearchSection() {
                   setIsSearching(true);
                   setTimeout(() => searchInputRef.current?.focus(), 20);
                 }}
-                className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full border transition-colors duration-200 flex items-center gap-2 shadow-2xs backdrop-blur-xl cursor-pointer outline-none focus:outline-none focus-visible:outline-none ${
+                className={`w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
                   isSearching
-                    ? "bg-white/95 dark:bg-[#121418] border-primary"
-                    : "bg-white/60 dark:bg-white/[0.05] border-black/[0.08] dark:border-white/[0.12] hover:border-primary/60 hover:bg-white/80 dark:hover:bg-white/[0.08]"
+                    ? "liquid-glass border-primary"
+                    : "liquid-glass-btn text-foreground"
                 }`}
                 style={{ outline: "none", boxShadow: "none" }}
               >
@@ -372,7 +372,7 @@ export default function HeroSearchSection() {
                     initial={{ opacity: 0, y: 6, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.18 } }}
                     exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
-                    className="absolute top-full left-0 mt-2 z-50 w-[260px] xs:w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl border border-black/[0.08] dark:border-white/[0.12] bg-white/95 dark:bg-[#101115]/98 backdrop-blur-2xl shadow-2xl p-1.5 space-y-1 overflow-hidden"
+                    className="absolute top-full left-0 mt-2 z-50 w-[260px] xs:w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl liquid-glass shadow-2xl p-1.5 space-y-1 overflow-hidden"
                   >
                     <div className="px-2.5 py-1 text-[9.5px] font-mono font-bold text-muted-foreground/70 uppercase tracking-wider flex items-center justify-between border-b border-border/40 pb-1">
                       <span>{isAz ? "NƏTİCƏLƏR" : "RESULTS"}</span>
@@ -436,7 +436,7 @@ export default function HeroSearchSection() {
             {/* Secondary Article Action */}
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 rounded-full border border-black/[0.08] dark:border-white/[0.12] bg-white/60 dark:bg-white/[0.05] backdrop-blur-xl hover:bg-white/80 dark:hover:bg-white/[0.10] text-muted-foreground hover:text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit shadow-2xs"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 rounded-full liquid-glass-btn text-muted-foreground hover:text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
               <ArrowRight size={12} className="shrink-0" />

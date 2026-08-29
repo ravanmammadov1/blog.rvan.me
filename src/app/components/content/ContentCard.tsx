@@ -34,11 +34,11 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item }) => {
   const displayTitle = formatHumanTitle(item.title);
 
   return (
-    <article className="group p-5 aurora-card flex flex-col justify-between relative min-h-[220px] border border-white/10 bg-white/[0.02] backdrop-blur-lg hover:border-primary/40 hover:bg-white/[0.05] transition-all duration-300 rounded-2xl">
+    <article className="group p-5 flex flex-col justify-between relative min-h-[220px] rounded-2xl liquid-glass liquid-glass-interactive">
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Category Tag */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold tracking-wider uppercase text-primary mono">
+          <span className="inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-[10px] font-bold tracking-wider uppercase mono liquid-glass-pill liquid-glass-pill-active">
             {categoryLabel}
           </span>
         </div>
@@ -55,15 +55,15 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item }) => {
       </div>
 
       {/* Footer Explore CTA */}
-      <div className="relative z-10 border-t border-white/10 pt-4 flex items-center justify-between mt-auto">
-        <span className="text-[10px] font-bold text-muted-foreground/60 mono uppercase truncate max-w-[150px]">
+      <div className="relative z-10 border-t border-border/50 dark:border-white/5 pt-4 flex items-center justify-between mt-auto">
+        <span className="text-[10px] font-bold text-muted-foreground/70 mono uppercase truncate max-w-[150px]">
           {item.sourceName || "Resource"}
         </span>
         <a
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-black uppercase tracking-wider hover:bg-white transition-colors cursor-pointer shrink-0"
+          className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider liquid-glass-btn-primary text-white cursor-pointer shrink-0"
         >
           EXPLORE <ExternalLink size={11} />
         </a>

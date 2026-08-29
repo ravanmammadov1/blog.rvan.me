@@ -154,12 +154,29 @@ function AppRoutes() {
   );
 }
 
+function AmbientLiquidBackground() {
+  return (
+    <div
+      className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden select-none"
+      aria-hidden="true"
+    >
+      {/* Top right atmospheric cyan/teal orb */}
+      <div className="absolute -top-[12%] right-[2%] w-[480px] sm:w-[650px] h-[480px] sm:h-[650px] rounded-full bg-[#61c5ad]/[0.06] dark:bg-[#61c5ad]/[0.045] blur-[130px]" />
+      {/* Mid-left atmospheric cobalt/blue orb */}
+      <div className="absolute top-[32%] -left-[12%] w-[520px] sm:w-[720px] h-[520px] sm:h-[720px] rounded-full bg-[#426fba]/[0.05] dark:bg-[#426fba]/[0.035] blur-[150px]" />
+      {/* Bottom right atmospheric magenta/purple orb */}
+      <div className="absolute top-[68%] -right-[8%] w-[480px] sm:w-[680px] h-[480px] sm:h-[680px] rounded-full bg-[#984f9f]/[0.045] dark:bg-[#984f9f]/[0.03] blur-[140px]" />
+    </div>
+  );
+}
+
 function AppContent() {
   useClarity();
   const { consent } = useCookieConsent();
 
   return (
     <>
+      <AmbientLiquidBackground />
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}> 
         <AppRoutes />
       </Suspense>

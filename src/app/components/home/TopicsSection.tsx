@@ -61,7 +61,7 @@ export default function TopicsSection() {
               >
                 <Link
                   to={getLocalizedPath(`/topics/${topic.slug}`)}
-                  className="group relative p-6 sm:p-7 rounded-2xl border border-border/70 bg-card/60 dark:bg-card/40 transition-all duration-300 hover:border-foreground/20 hover:-translate-y-0.5 hover:shadow-sm flex flex-col justify-between h-full"
+                  className="group relative p-6 sm:p-7 rounded-2xl liquid-glass liquid-glass-interactive flex flex-col justify-between h-full"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-5">
