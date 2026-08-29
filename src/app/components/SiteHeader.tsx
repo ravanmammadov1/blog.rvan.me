@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -26,31 +27,56 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
   const { user, isAdmin, loading, signOut, userPhoto } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; right: number } | null>(null);
+
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const { t, getLocalizedPath, language, switchLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
 
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const top = rect.bottom + 8;
+    // Align dropdown right edge with trigger button right edge
+    const right = Math.max(12, window.innerWidth - rect.right);
+    setDropdownPos({ top, right });
+  }, []);
+
   useEffect(() => {
+    if (!dropdownOpen) return;
+    updatePosition();
+
     const handleOutsideClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
+      const target = e.target as Node;
+      if (triggerRef.current && triggerRef.current.contains(target)) return;
+      if (dropdownRef.current && dropdownRef.current.contains(target)) return;
+      setDropdownOpen(false);
     };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setDropdownOpen(false);
       }
     };
 
-    if (dropdownOpen) {
-      document.addEventListener("mousedown", handleOutsideClick);
-      document.addEventListener("keydown", handleKeyDown);
-    }
+    const handleScrollOrResize = () => {
+      updatePosition();
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("scroll", handleScrollOrResize, true);
+    window.addEventListener("resize", handleScrollOrResize);
+
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("scroll", handleScrollOrResize, true);
+      window.removeEventListener("resize", handleScrollOrResize);
     };
-  }, [dropdownOpen]);
+  }, [dropdownOpen, updatePosition]);
 
   if (loading) {
     return <div className={compact ? "h-7 w-7 rounded-full bg-muted border border-border animate-pulse shrink-0 self-center" : "h-7 w-16 rounded-full bg-muted border border-border animate-pulse shrink-0 self-center"} />;
@@ -59,9 +85,15 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
   const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="relative shrink-0 flex items-center" ref={menuRef}>
+    <div className="relative shrink-0 flex items-center">
       <button
-        onClick={() => setDropdownOpen((prev) => !prev)}
+        ref={triggerRef}
+        onClick={() => {
+          setDropdownOpen((prev) => {
+            if (!prev) updatePosition();
+            return !prev;
+          });
+        }}
         className={compact
           ? "h-7 w-7 sm:h-8 sm:w-8 rounded-full liquid-glass-btn p-0.5 flex items-center justify-center text-foreground transition-all hover:border-primary/60 focus:outline-none cursor-pointer select-none"
           : "flex items-center gap-1.5 rounded-full liquid-glass-btn px-2.5 py-1 text-xs text-foreground transition-all focus:outline-none cursor-pointer select-none"
@@ -90,184 +122,197 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
         )}
       </button>
 
-      <AnimatePresence>
-        {dropdownOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 4, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] } }}
-            exit={{ opacity: 0, y: 2, scale: 0.97, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}
-            className="absolute right-0 top-full mt-2.5 w-[230px] sm:w-[240px] max-w-[calc(100vw-24px)] rounded-2xl liquid-glass-card shadow-2xl z-50 pointer-events-auto text-foreground origin-top-right overflow-hidden p-2 text-left"
-          >
-            <div className="relative z-10 space-y-1">
-              {!user ? (
-                /* Signed Out State */
-                <>
-                  {/* Guest Identity & Sign In CTA */}
-                  <div className="px-2.5 py-2 space-y-2 border-b border-black/[0.06] dark:border-white/[0.08] pb-2.5">
+      {/* Anchored Popover Portal directly mounted into document.body */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {dropdownOpen && dropdownPos && (
+              <motion.div
+                ref={dropdownRef}
+                initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.16, ease: [0.22, 1, 0.36, 1] } }}
+                exit={{ opacity: 0, y: -4, scale: 0.96, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}
+                style={{
+                  position: "fixed",
+                  top: `${dropdownPos.top}px`,
+                  right: `${dropdownPos.right}px`,
+                  zIndex: 99999,
+                }}
+                className="w-[280px] sm:w-[290px] max-w-[calc(100vw-24px)] rounded-2xl liquid-glass-card shadow-2xl pointer-events-auto text-foreground origin-top-right overflow-hidden p-3 text-left"
+              >
+                <div className="relative z-10 space-y-1.5">
+                  {!user ? (
+                    /* Signed Out State */
+                    <>
+                      <div className="px-1 py-1 space-y-2.5 border-b border-black/[0.06] dark:border-white/[0.08] pb-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-[.14em] text-primary">
+                            {t("profile", "PROFILE")}
+                          </span>
+                          <span className="text-[10px] font-mono text-muted-foreground">
+                            {t("guestUser", "Qonaq")}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setDropdownOpen(false);
+                            setModalOpen(true);
+                          }}
+                          className="w-full flex items-center justify-center gap-1.5 rounded-xl liquid-glass-btn-primary px-3 py-2 text-xs font-bold text-white uppercase tracking-wider mono transition-all cursor-pointer"
+                        >
+                          {t("signInWithGoogle", "GOOGLE İLƏ DAXİL OL")}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    /* Signed In State */
+                    <>
+                      {/* User Profile Header */}
+                      <div className="px-1 py-1 border-b border-black/[0.06] dark:border-white/[0.08] pb-2.5 flex items-center gap-2.5">
+                        {userPhoto ? (
+                          <img
+                            src={userPhoto}
+                            alt={user.displayName || "User"}
+                            className="h-8 w-8 rounded-full object-cover ring-1 ring-primary/40 shrink-0"
+                          />
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-primary/20 text-primary border border-primary/40 flex items-center justify-center font-bold text-xs shrink-0">
+                            {userInitial}
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold text-foreground truncate leading-tight">
+                            {user.displayName || "User"}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground truncate mono mt-0.5">
+                            {user.email}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Navigation Links */}
+                      <div className="py-1 border-b border-black/[0.06] dark:border-white/[0.08] space-y-0.5">
+                        <Link
+                          to={getLocalizedPath("/write")}
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+                        >
+                          <Sparkles size={13} className="text-primary shrink-0" />
+                          <span className="truncate">{t("shareYourIdeas", "Fikrinizlə bizimlə paylaşın")}</span>
+                        </Link>
+
+                        {isAdmin && (
+                          <Link
+                            to={getLocalizedPath("/admin")}
+                            onClick={() => setDropdownOpen(false)}
+                            className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                          >
+                            <ShieldCheck size={13} className="shrink-0" />
+                            <span className="truncate">{t("adminConsole", "Admin idarəetmə Paneli")}</span>
+                          </Link>
+                        )}
+
+                        <Link
+                          to={getLocalizedPath("/profile")}
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+                        >
+                          <UserIcon size={13} className="text-muted-foreground shrink-0" />
+                          <span className="truncate">{t("myAccount", "Mənim hesabım")}</span>
+                        </Link>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Preferences: Appearance & Language (Clean, Compact Rows) */}
+                  <div className="py-2 px-1 space-y-2 border-b border-black/[0.06] dark:border-white/[0.08]">
+                    {/* Theme / Appearance */}
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-[.14em] text-primary">
-                        {t("profile", "PROFILE")}
+                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+                        {language === "az" ? "Görünüş" : "Theme"}
                       </span>
-                      <span className="text-[9.5px] font-mono text-muted-foreground">
-                        {t("guestUser", "Qonaq")}
-                      </span>
+                      <div className="flex items-center gap-1 p-0.5 rounded-lg border border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
+                        <button
+                          type="button"
+                          onClick={() => setTheme("dark")}
+                          className={`p-1 px-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1 text-[10px] font-mono font-bold ${
+                            theme === "dark"
+                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                          title="Dark mode"
+                        >
+                          <Moon size={11} />
+                          <span className="text-[9.5px]">◐</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTheme("light")}
+                          className={`p-1 px-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1 text-[10px] font-mono font-bold ${
+                            theme === "light"
+                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                          title="Light mode"
+                        >
+                          <Sun size={11} />
+                          <span className="text-[9.5px]">☼</span>
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        setModalOpen(true);
-                      }}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl liquid-glass-btn-primary px-3 py-1.5 text-[11px] font-bold text-white uppercase tracking-wider mono transition-all cursor-pointer"
-                    >
-                      {t("signInWithGoogle", "DAXİL OL")}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                /* Signed In State */
-                <>
-                  {/* User Profile Header */}
-                  <div className="px-2.5 py-2 border-b border-black/[0.06] dark:border-white/[0.08] pb-2.5 flex items-center gap-2.5">
-                    {userPhoto ? (
-                      <img
-                        src={userPhoto}
-                        alt={user.displayName || "User"}
-                        className="h-8 w-8 rounded-full object-cover ring-1 ring-primary/40 shrink-0"
-                      />
-                    ) : (
-                      <div className="h-8 w-8 rounded-full bg-primary/20 text-primary border border-primary/40 flex items-center justify-center font-bold text-xs shrink-0">
-                        {userInitial}
-                      </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-foreground truncate leading-tight">
-                        {user.displayName || "User"}
-                      </div>
-                      <div className="text-[10px] text-muted-foreground truncate mono mt-0.5">
-                        {user.email}
+
+                    {/* Language Switch */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+                        {language === "az" ? "Dil" : "Language"}
+                      </span>
+                      <div className="flex items-center gap-1 p-0.5 rounded-lg border border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
+                        <button
+                          type="button"
+                          onClick={() => switchLanguage("az")}
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                            language === "az"
+                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          AZ
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => switchLanguage("en")}
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                            language === "en"
+                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          EN
+                        </button>
                       </div>
                     </div>
                   </div>
 
-                  {/* Navigation Links */}
-                  <div className="py-1 border-b border-black/[0.06] dark:border-white/[0.08] space-y-0.5">
-                    <Link
-                      to={getLocalizedPath("/write")}
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
-                    >
-                      <Sparkles size={13} className="text-primary shrink-0" />
-                      <span className="truncate">{t("shareYourIdeas", "Fikrinizi bölüşün")}</span>
-                    </Link>
-
-                    {isAdmin && (
-                      <Link
-                        to={getLocalizedPath("/admin")}
-                        onClick={() => setDropdownOpen(false)}
-                        className="w-full flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                  {/* Sign Out (Signed In Only) */}
+                  {user && (
+                    <div className="pt-0.5">
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          signOut();
+                        }}
+                        className="w-full flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-destructive hover:bg-destructive/10 transition-colors text-left uppercase tracking-wider cursor-pointer"
                       >
-                        <ShieldCheck size={13} className="shrink-0" />
-                        <span className="truncate">{t("adminConsole", "Admin Paneli")}</span>
-                      </Link>
-                    )}
-
-                    <Link
-                      to={getLocalizedPath("/profile")}
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
-                    >
-                      <UserIcon size={13} className="text-muted-foreground shrink-0" />
-                      <span className="truncate">{t("myAccount", "Mənim Hesabım")}</span>
-                    </Link>
-                  </div>
-                </>
-              )}
-
-              {/* Preferences: Appearance & Language (Clean, Compact Rows) */}
-              <div className="py-1.5 px-2.5 space-y-2 border-b border-black/[0.06] dark:border-white/[0.08]">
-                {/* Theme / Appearance */}
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    {language === "az" ? "Görünüş" : "Theme"}
-                  </span>
-                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
-                    <button
-                      type="button"
-                      onClick={() => setTheme("dark")}
-                      className={`p-1 rounded-md transition-all cursor-pointer ${
-                        theme === "dark"
-                          ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                      title="Dark mode"
-                    >
-                      <Moon size={11} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setTheme("light")}
-                      className={`p-1 rounded-md transition-all cursor-pointer ${
-                        theme === "light"
-                          ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                      title="Light mode"
-                    >
-                      <Sun size={11} />
-                    </button>
-                  </div>
+                        <LogOut size={12} /> {t("signOut", "ÇIXIŞ ET")}
+                      </button>
+                    </div>
+                  )}
                 </div>
-
-                {/* Language Switch */}
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    {language === "az" ? "Dil" : "Language"}
-                  </span>
-                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
-                    <button
-                      type="button"
-                      onClick={() => switchLanguage("az")}
-                      className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
-                        language === "az"
-                          ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      AZ
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => switchLanguage("en")}
-                      className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
-                        language === "en"
-                          ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      EN
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sign Out (Signed In Only) */}
-              {user && (
-                <div className="pt-0.5">
-                  <button
-                    onClick={() => {
-                      setDropdownOpen(false);
-                      signOut();
-                    }}
-                    className="w-full flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-destructive hover:bg-destructive/10 transition-colors text-left uppercase tracking-wider cursor-pointer"
-                  >
-                    <LogOut size={12} /> {t("signOut", "ÇIXIŞ ET")}
-                  </button>
-                </div>
-              )}
-            </div>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
 
       <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
