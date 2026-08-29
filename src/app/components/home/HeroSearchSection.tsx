@@ -197,28 +197,28 @@ export default function HeroSearchSection() {
         </picture>
       </div>
 
-      {/* ── Layer 1: Compact Floating Frosted Glass Navbar (Slim ~46px-50px Reference Match) ── */}
-      <div className="relative z-30 w-full max-w-[1080px] lg:max-w-[1160px] xl:max-w-[1220px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
-        <div className="flex items-center justify-between w-full h-[46px] sm:h-[50px] px-3.5 sm:px-4 rounded-full bg-black/40 dark:bg-[#0c0d11]/70 border border-black/10 dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-all">
+      {/* ── Layer 1: Compact Floating Glass Navbar (Hugs Content, Pure Light/Dark Glass) ── */}
+      <div className="relative z-30 w-full max-w-[740px] md:max-w-[780px] lg:max-w-[820px] mx-auto pt-3 sm:pt-4 px-4 sm:px-6">
+        <div className="flex items-center justify-between w-full h-[42px] sm:h-[46px] px-3 sm:px-3.5 rounded-full bg-white/70 dark:bg-[#0c0d11]/75 border border-black/[0.08] dark:border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_28px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
-            className="flex items-center gap-2.5 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
+            className="flex items-center gap-2 rounded-full px-1 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
           >
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={22}
-              height={22}
-              className="h-5 w-5 sm:h-5.5 sm:w-5.5 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={20}
+              height={20}
+              className="h-4.5 w-4.5 sm:h-5 sm:w-5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-[11px] sm:text-xs font-bold tracking-[.18em] uppercase text-foreground leading-none">
+            <span className="hidden sm:inline-block text-[11px] sm:text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
-          {/* Compact Floating Pill Navigation (Reference Structure) */}
-          <nav className="hidden md:flex items-center gap-1 px-1.5 py-1 rounded-full bg-black/30 dark:bg-white/[0.03] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.08em] mono uppercase">
+          {/* Compact Centered Pill Navigation (Tightly Fitted to Content) */}
+          <nav className="hidden md:flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/[0.06] text-[10.5px] font-bold tracking-[.06em] mono uppercase">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive = idx === 0;
@@ -227,10 +227,10 @@ export default function HeroSearchSection() {
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-3.5 py-1 transition-all duration-200 rounded-full select-none ${
+                  className={`relative px-2.5 py-0.5 transition-all duration-200 rounded-full select-none ${
                     isActive
-                      ? "text-white font-bold bg-white/[0.08] dark:bg-white/[0.07] border border-[#61c5ad]/40 shadow-2xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
+                      ? "text-foreground dark:text-white font-bold bg-white/90 dark:bg-white/[0.08] border border-black/10 dark:border-[#61c5ad]/40 shadow-xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -240,7 +240,7 @@ export default function HeroSearchSection() {
           </nav>
 
           {/* Right Action Group: Compact User/Profile Control */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <UserAuthMenu compact={true} />
 
             {/* Mobile Menu Toggle */}
