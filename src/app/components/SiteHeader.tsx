@@ -38,9 +38,9 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
   const updatePosition = useCallback(() => {
     if (!triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
-    const top = rect.bottom + 8;
-    // Align dropdown right edge with trigger button right edge
-    const right = Math.max(12, window.innerWidth - rect.right);
+    const top = rect.bottom + 10;
+    // Align dropdown right edge with trigger button right edge, clamped inside viewport
+    const right = Math.max(12, Math.min(window.innerWidth - 330, window.innerWidth - rect.right));
     setDropdownPos({ top, right });
   }, []);
 
@@ -95,8 +95,8 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
           });
         }}
         className={compact
-          ? "h-7 w-7 sm:h-8 sm:w-8 rounded-full liquid-glass-btn p-0.5 flex items-center justify-center text-foreground transition-all hover:border-primary/60 focus:outline-none cursor-pointer select-none"
-          : "flex items-center gap-1.5 rounded-full liquid-glass-btn px-2.5 py-1 text-xs text-foreground transition-all focus:outline-none cursor-pointer select-none"
+          ? `h-7 w-7 sm:h-8 sm:w-8 rounded-full liquid-glass-btn p-0.5 flex items-center justify-center text-foreground transition-all hover:border-primary/60 focus:outline-none cursor-pointer select-none ${dropdownOpen ? "ring-2 ring-primary/60 border-primary" : ""}`
+          : `flex items-center gap-1.5 rounded-full liquid-glass-btn px-2.5 py-1 text-xs text-foreground transition-all focus:outline-none cursor-pointer select-none ${dropdownOpen ? "ring-2 ring-primary/60 border-primary" : ""}`
         }
         aria-label="User Account Menu"
         aria-expanded={dropdownOpen}
@@ -129,28 +129,34 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
             {dropdownOpen && dropdownPos && (
               <motion.div
                 ref={dropdownRef}
-                initial={{ opacity: 0, y: -4, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.16, ease: [0.22, 1, 0.36, 1] } }}
-                exit={{ opacity: 0, y: -4, scale: 0.96, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}
+                initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] } }}
+                exit={{ opacity: 0, y: -4, scale: 0.97, transition: { duration: 0.14, ease: [0.4, 0, 1, 1] } }}
                 style={{
                   position: "fixed",
                   top: `${dropdownPos.top}px`,
                   right: `${dropdownPos.right}px`,
                   zIndex: 99999,
                 }}
-                className="w-[280px] sm:w-[290px] max-w-[calc(100vw-24px)] rounded-2xl liquid-glass-card shadow-2xl pointer-events-auto text-foreground origin-top-right overflow-hidden p-3 text-left"
+                className="w-[310px] sm:w-[320px] max-w-[calc(100vw-24px)] rounded-[26px] liquid-glass-card shadow-2xl pointer-events-auto text-foreground origin-top-right overflow-visible p-5 sm:p-6 text-left"
               >
-                <div className="relative z-10 space-y-1.5">
+                {/* Top Caret pointing directly to Avatar */}
+                <div
+                  className="absolute -top-[6px] w-3 h-3 rotate-45 border-t border-l border-white/25 dark:border-white/20 bg-white/60 dark:bg-[#121620]/90 backdrop-blur-xl pointer-events-none"
+                  style={{ right: "10px" }}
+                />
+
+                <div className="relative z-10 space-y-4">
                   {!user ? (
                     /* Signed Out State */
                     <>
-                      <div className="px-1 py-1 space-y-2.5 border-b border-black/[0.06] dark:border-white/[0.08] pb-3">
+                      <div className="space-y-3 pb-3 border-b border-black/[0.08] dark:border-white/[0.08]">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-[.14em] text-primary">
+                          <span className="text-[11px] font-mono font-bold uppercase tracking-[.16em] text-primary">
                             {t("profile", "PROFILE")}
                           </span>
-                          <span className="text-[10px] font-mono text-muted-foreground">
-                            {t("guestUser", "Qonaq")}
+                          <span className="text-[10.5px] font-mono text-muted-foreground">
+                            {t("guestUser", "Qonaq İstifadəçi")}
                           </span>
                         </div>
                         <button
@@ -158,7 +164,7 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
                             setDropdownOpen(false);
                             setModalOpen(true);
                           }}
-                          className="w-full flex items-center justify-center gap-1.5 rounded-xl liquid-glass-btn-primary px-3 py-2 text-xs font-bold text-white uppercase tracking-wider mono transition-all cursor-pointer"
+                          className="w-full flex items-center justify-center gap-2 rounded-xl liquid-glass-btn-primary py-2.5 text-xs font-bold text-white uppercase tracking-wider mono transition-all cursor-pointer shadow-md hover:scale-[1.01] active:scale-[0.99]"
                         >
                           {t("signInWithGoogle", "GOOGLE İLƏ DAXİL OL")}
                         </button>
@@ -168,111 +174,111 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
                     /* Signed In State */
                     <>
                       {/* User Profile Header */}
-                      <div className="px-1 py-1 border-b border-black/[0.06] dark:border-white/[0.08] pb-2.5 flex items-center gap-2.5">
-                        {userPhoto ? (
-                          <img
-                            src={userPhoto}
-                            alt={user.displayName || "User"}
-                            className="h-8 w-8 rounded-full object-cover ring-1 ring-primary/40 shrink-0"
-                          />
-                        ) : (
-                          <div className="h-8 w-8 rounded-full bg-primary/20 text-primary border border-primary/40 flex items-center justify-center font-bold text-xs shrink-0">
-                            {userInitial}
-                          </div>
-                        )}
+                      <div className="flex items-center gap-3.5 pb-4 border-b border-black/[0.08] dark:border-white/[0.08]">
+                        <div className="relative h-11 w-11 rounded-full p-0.5 ring-2 ring-primary/40 dark:ring-white/20 shrink-0">
+                          {userPhoto ? (
+                            <img
+                              src={userPhoto}
+                              alt={user.displayName || "User"}
+                              className="h-full w-full rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm">
+                              {userInitial}
+                            </div>
+                          )}
+                        </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs font-bold text-foreground truncate leading-tight">
+                          <div className="text-[14px] font-bold text-foreground truncate tracking-tight leading-tight">
                             {user.displayName || "User"}
                           </div>
-                          <div className="text-[10px] text-muted-foreground truncate mono mt-0.5">
+                          <div className="text-[11px] text-muted-foreground truncate mono mt-0.5">
                             {user.email}
                           </div>
                         </div>
                       </div>
 
                       {/* Navigation Links */}
-                      <div className="py-1 border-b border-black/[0.06] dark:border-white/[0.08] space-y-0.5">
+                      <div className="space-y-1 pb-4 border-b border-black/[0.08] dark:border-white/[0.08]">
                         <Link
                           to={getLocalizedPath("/write")}
                           onClick={() => setDropdownOpen(false)}
-                          className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+                          className="w-full flex items-center gap-3 rounded-xl px-2 py-2 text-[13px] font-medium text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
                         >
-                          <Sparkles size={13} className="text-primary shrink-0" />
-                          <span className="truncate">{t("shareYourIdeas", "Fikrinizlə bizimlə paylaşın")}</span>
+                          <Sparkles size={16} className="text-[#61c5ad] shrink-0" />
+                          <span className="truncate">{t("shareYourIdeas", "Fikrinizi bizimlə paylaşın")}</span>
                         </Link>
 
                         {isAdmin && (
                           <Link
                             to={getLocalizedPath("/admin")}
                             onClick={() => setDropdownOpen(false)}
-                            className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                            className="w-full flex items-center gap-3 rounded-xl px-2 py-2 text-[13px] font-medium text-[#c084fc] hover:bg-purple-500/10 transition-colors"
                           >
-                            <ShieldCheck size={13} className="shrink-0" />
-                            <span className="truncate">{t("adminConsole", "Admin idarəetmə Paneli")}</span>
+                            <ShieldCheck size={16} className="text-[#a855f7] shrink-0" />
+                            <span className="truncate font-semibold">{t("adminConsole", "Admin İdarəetmə Paneli")}</span>
                           </Link>
                         )}
 
                         <Link
                           to={getLocalizedPath("/profile")}
                           onClick={() => setDropdownOpen(false)}
-                          className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 text-xs text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+                          className="w-full flex items-center gap-3 rounded-xl px-2 py-2 text-[13px] font-medium text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
                         >
-                          <UserIcon size={13} className="text-muted-foreground shrink-0" />
+                          <UserIcon size={16} className="text-muted-foreground shrink-0" />
                           <span className="truncate">{t("myAccount", "Mənim hesabım")}</span>
                         </Link>
                       </div>
                     </>
                   )}
 
-                  {/* Preferences: Appearance & Language (Clean, Compact Rows) */}
-                  <div className="py-2 px-1 space-y-2 border-b border-black/[0.06] dark:border-white/[0.08]">
+                  {/* Preferences: Appearance & Language (Matching Reference Segmented Capsules) */}
+                  <div className="space-y-3 pb-4 border-b border-black/[0.08] dark:border-white/[0.08]">
                     {/* Theme / Appearance */}
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                        {language === "az" ? "Görünüş" : "Theme"}
+                      <span className="text-[11px] font-mono tracking-[0.14em] text-muted-foreground uppercase">
+                        {language === "az" ? "GÖRÜNÜŞ" : "APPEARANCE"}
                       </span>
-                      <div className="flex items-center gap-1 p-0.5 rounded-lg border border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
+                      <div className="h-8 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/[0.04] p-0.5 flex items-center gap-0.5">
                         <button
                           type="button"
                           onClick={() => setTheme("dark")}
-                          className={`p-1 px-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1 text-[10px] font-mono font-bold ${
+                          className={`h-full px-3 rounded-full transition-all cursor-pointer flex items-center justify-center ${
                             theme === "dark"
-                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              ? "bg-[#61c5ad]/20 text-[#61c5ad] shadow-sm font-bold"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                           title="Dark mode"
                         >
-                          <Moon size={11} />
-                          <span className="text-[9.5px]">◐</span>
+                          <Moon size={13} />
                         </button>
                         <button
                           type="button"
                           onClick={() => setTheme("light")}
-                          className={`p-1 px-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1 text-[10px] font-mono font-bold ${
+                          className={`h-full px-3 rounded-full transition-all cursor-pointer flex items-center justify-center ${
                             theme === "light"
-                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              ? "bg-primary/20 text-primary shadow-sm font-bold"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                           title="Light mode"
                         >
-                          <Sun size={11} />
-                          <span className="text-[9.5px]">☼</span>
+                          <Sun size={13} />
                         </button>
                       </div>
                     </div>
 
                     {/* Language Switch */}
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                        {language === "az" ? "Dil" : "Language"}
+                      <span className="text-[11px] font-mono tracking-[0.14em] text-muted-foreground uppercase">
+                        {language === "az" ? "DİL" : "LANGUAGE"}
                       </span>
-                      <div className="flex items-center gap-1 p-0.5 rounded-lg border border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
+                      <div className="h-8 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/[0.04] p-0.5 flex items-center gap-0.5">
                         <button
                           type="button"
                           onClick={() => switchLanguage("az")}
-                          className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                          className={`h-full px-3 rounded-full text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center ${
                             language === "az"
-                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              ? "bg-[#a855f7]/30 text-white shadow-sm"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
@@ -281,9 +287,9 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
                         <button
                           type="button"
                           onClick={() => switchLanguage("en")}
-                          className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                          className={`h-full px-3 rounded-full text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center ${
                             language === "en"
-                              ? "liquid-glass-pill liquid-glass-pill-active text-foreground"
+                              ? "bg-[#a855f7]/30 text-white shadow-sm"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
@@ -295,15 +301,16 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
 
                   {/* Sign Out (Signed In Only) */}
                   {user && (
-                    <div className="pt-0.5">
+                    <div className="pt-1">
                       <button
                         onClick={() => {
                           setDropdownOpen(false);
                           signOut();
                         }}
-                        className="w-full flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-destructive hover:bg-destructive/10 transition-colors text-left uppercase tracking-wider cursor-pointer"
+                        className="w-full flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-xs font-mono font-bold text-[#ff5c5c] hover:text-[#ff3838] hover:bg-destructive/10 transition-colors text-left uppercase tracking-[0.18em] cursor-pointer"
                       >
-                        <LogOut size={12} /> {t("signOut", "ÇIXIŞ ET")}
+                        <LogOut size={14} className="shrink-0" />
+                        <span>{t("signOut", "ÇIXIŞ ET")}</span>
                       </button>
                     </div>
                   )}
