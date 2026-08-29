@@ -38,12 +38,12 @@ export function PageFilterBar({
   searchPlaceholder = "Search...",
   searchId = "page-filter-search",
   className = "",
-  stickyTopClass = "top-[58px] md:top-[68px]",
+  stickyTopClass = "top-0",
   children,
 }: PageFilterBarProps) {
   return (
     <section
-      className={`sticky ${stickyTopClass} z-30 px-4 sm:px-6 md:px-10 py-3.5 bg-background/90 backdrop-blur-xl border-y border-border/80 transition-all ${className}`}
+      className={`sticky ${stickyTopClass} z-30 px-4 sm:px-6 md:px-10 py-3.5 bg-background/95 dark:bg-background/95 backdrop-blur-2xl border-y border-border/80 transition-all ${className}`}
     >
       <div className="mx-auto max-w-[1280px] flex flex-col md:flex-row md:items-center justify-between gap-3.5 md:gap-6">
         {/* CATEGORY FILTERS:
