@@ -10,7 +10,6 @@ import GlobalFaqSection from "./components/GlobalFaqSection";
 import { HOMEPAGE_FAQS } from "../data/faqData";
 import { useLanguage } from "../lib/i18n/LanguageContext";
 
-import CuratedGuidesSection from "./components/home/CuratedGuidesSection";
 import BlogSection from "./components/home/BlogSection";
 import TopicsSection from "./components/home/TopicsSection";
 import HomeAboutSection from "./components/home/HomeAboutSection";
@@ -43,10 +42,7 @@ export default function HomePage() {
       {/* ── 1. UNIFIED HERO SCENE WITH FLOATING NAVBAR (STRICT REFERENCE COMPOSITION) ── */}
       <HeroSearchSection />
 
-      {/* ── 2. CURATED TOPICS & CONCEPT GUIDES ── */}
-      <CuratedGuidesSection />
-
-      {/* ── 3. LATEST ARTICLES ── */}
+      {/* ── 2. LATEST ARTICLES (Dizayn × Psixologiya) ── */}
       <BlogSection />
 
       {/* ── 3. TOPICS (EDITORIAL INDEX) ── */}
