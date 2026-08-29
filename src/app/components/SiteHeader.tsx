@@ -380,20 +380,20 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
 
   return (
     <>
-      <header className="relative w-full pt-4 sm:pt-6 pb-2 px-4 sm:px-6 lg:px-8 z-30">
-        <div className="mx-auto flex items-center justify-between max-w-[1400px] px-3 sm:px-6 py-2.5 rounded-full bg-white/80 dark:bg-[#0c0d12]/75 border border-black/10 dark:border-white/12 shadow-[0_8px_32px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-all">
+      <header className="relative w-full pt-3 sm:pt-5 pb-2 px-4 sm:px-6 lg:px-8 z-30">
+        <div className="mx-auto flex items-center justify-between max-w-[1400px] h-[52px] sm:h-[56px] px-3 sm:px-4 rounded-full bg-white/80 dark:bg-[#0c0d12]/75 border border-black/10 dark:border-white/12 shadow-[0_4px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
           {/* Logo & Brand — Always links to Home in active language */}
           <Link
             to={getLocalizedPath("/")}
-            className="group flex items-center gap-2.5 rounded-full px-2 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 select-none"
+            className="group flex items-center gap-2 rounded-full px-1.5 py-0.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 select-none"
             aria-label="Rvan.me Home"
           >
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={30}
-              height={30}
-              className="h-7 w-7 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={26}
+              height={26}
+              className="h-6 w-6 sm:h-6.5 sm:w-6.5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
             <span className="hidden sm:inline-block text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
               RVAN.ME
@@ -401,7 +401,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </Link>
 
           {/* Desktop Navigation — Floating Central Frosted Glass Capsule */}
-          <nav className="hidden md:flex items-center gap-1 sm:gap-1.5 px-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] font-bold tracking-[.1em] mono uppercase">
+          <nav className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] font-bold tracking-[.08em] mono uppercase">
             {navItems.map((item) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isHome = item.target === "/";
@@ -414,7 +414,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-3.5 py-1.5 transition-all duration-200 rounded-full select-none ${
+                  className={`relative px-3 py-1 transition-all duration-200 rounded-full select-none ${
                     isActive
                       ? "text-foreground dark:text-white font-bold bg-gradient-to-r from-[#61c5ad]/20 via-[#426fba]/20 to-[#984f9f]/20 border border-[#61c5ad]/30 shadow-2xs"
                       : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
@@ -427,16 +427,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
           </nav>
 
           {/* Action & Profile Control on Right */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Direct Collaborate / Write CTA */}
-            <Link
-              to={getLocalizedPath("/contact")}
-              className="hidden lg:inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold mono uppercase tracking-wider text-white bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] hover:opacity-95 shadow-xs transition-all active:scale-95 select-none"
-            >
-              <span>{t("contact", "ƏLAQƏ")}</span>
-              <Sparkles size={12} />
-            </Link>
-
+          <div className="flex items-center gap-2 shrink-0">
             {/* Integrated Compact Profile & Preferences Control */}
             <UserAuthMenu />
 
@@ -446,7 +437,7 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation"
-              className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
+              className="grid h-7 w-7 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
             >
               {menuOpen ? <X size={15} /> : <Menu size={15} />}
             </button>

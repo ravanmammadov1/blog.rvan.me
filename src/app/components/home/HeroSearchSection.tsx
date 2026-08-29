@@ -60,8 +60,9 @@ export default function HeroSearchSection() {
             height={1536}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-center lg:object-right select-none opacity-80 sm:opacity-90 lg:opacity-100"
+            className="h-full w-full object-cover object-center lg:object-right select-none opacity-85 sm:opacity-90 lg:opacity-100"
             style={{
+              filter: "brightness(0.93) contrast(1.03)",
               maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 8%, rgba(0,0,0,0.75) 26%, black 45%, black 100%)",
               WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 8%, rgba(0,0,0,0.75) 26%, black 45%, black 100%)",
             }}
@@ -90,28 +91,28 @@ export default function HeroSearchSection() {
         <div className="absolute inset-y-0 left-0 w-36 sm:w-56 lg:w-80 bg-gradient-to-r from-background via-background/70 to-transparent pointer-events-none" />
       </div>
 
-      {/* ── Layer 1: Floating Frosted Glass Navbar (Seamless at top of page) ── */}
-      <div className="relative z-30 w-full max-w-[1400px] mx-auto pt-4 sm:pt-6 px-4 sm:px-8">
-        <div className="flex items-center justify-between w-full py-2 px-3 sm:px-5 rounded-full bg-white/70 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
+      {/* ── Layer 1: Floating Frosted Glass Navbar (Compact 54px, Floating over Hero) ── */}
+      <div className="relative z-30 w-full max-w-[1400px] mx-auto pt-3 sm:pt-5 px-4 sm:px-8">
+        <div className="flex items-center justify-between w-full h-[52px] sm:h-[56px] px-3 sm:px-4 rounded-full bg-white/75 dark:bg-black/35 border border-black/10 dark:border-white/12 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all">
           {/* Logo & Brand */}
           <Link
             to={getLocalizedPath("/")}
-            className="flex items-center gap-2.5 rounded-full px-2 py-1 text-left focus-visible:outline-none shrink-0 group select-none"
+            className="flex items-center gap-2 rounded-full px-1.5 py-0.5 text-left focus-visible:outline-none shrink-0 group select-none"
           >
             <img
               src={ravanLogo}
               alt="Rvan.me Logo"
-              width={30}
-              height={30}
-              className="h-7 w-7 sm:h-8 sm:w-8 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={26}
+              height={26}
+              className="h-6 w-6 sm:h-6.5 sm:w-6.5 object-contain transition-transform duration-300 group-hover:scale-105"
             />
-            <span className="hidden sm:inline-block text-xs sm:text-sm font-bold tracking-[.18em] uppercase text-foreground leading-none">
+            <span className="hidden sm:inline-block text-xs font-bold tracking-[.16em] uppercase text-foreground leading-none">
               RVAN.ME
             </span>
           </Link>
 
           {/* Floating Pill Navigation */}
-          <nav className="hidden md:flex items-center gap-1 sm:gap-1.5 px-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] sm:text-xs font-bold tracking-[.1em] mono uppercase">
+          <nav className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-[11px] font-bold tracking-[.08em] mono uppercase">
             {navItems.map((item, idx) => {
               const localizedTarget = getLocalizedPath(item.target);
               const isActive = idx === 0;
@@ -120,7 +121,7 @@ export default function HeroSearchSection() {
                 <Link
                   key={item.target}
                   to={localizedTarget}
-                  className={`relative px-3.5 py-1.5 transition-all duration-200 rounded-full select-none ${
+                  className={`relative px-3 py-1 transition-all duration-200 rounded-full select-none ${
                     isActive
                       ? "text-foreground dark:text-white font-bold bg-gradient-to-r from-[#61c5ad]/20 via-[#426fba]/20 to-[#984f9f]/20 border border-[#61c5ad]/30 shadow-2xs"
                       : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
@@ -132,25 +133,17 @@ export default function HeroSearchSection() {
             })}
           </nav>
 
-          {/* Right Action Group */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <Link
-              to={getLocalizedPath("/contact")}
-              className="hidden lg:inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold mono uppercase tracking-wider text-white bg-gradient-to-r from-[#61c5ad] via-[#426fba] to-[#984f9f] hover:opacity-95 shadow-xs transition-all active:scale-95 select-none"
-            >
-              <span>{isAz ? "ƏLAQƏ SAXLAYIN" : "GET IN TOUCH"}</span>
-              <Sparkles size={12} />
-            </Link>
-
+          {/* Right Action Group: User/Profile Control Only */}
+          <div className="flex items-center gap-2 shrink-0">
             <UserAuthMenu />
 
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
-              className="grid h-8 w-8 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors shrink-0"
+              className="grid h-7 w-7 place-items-center rounded-full border border-border/80 bg-card/60 dark:bg-white/[0.04] md:hidden text-foreground hover:border-primary transition-colors shrink-0"
             >
-              {mobileMenuOpen ? <X size={15} /> : <Menu size={15} />}
+              {mobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
             </button>
           </div>
         </div>
