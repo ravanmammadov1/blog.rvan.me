@@ -129,21 +129,32 @@ export function UserAuthMenu({ compact = false }: { compact?: boolean }) {
             {dropdownOpen && dropdownPos && (
               <motion.div
                 ref={dropdownRef}
-                initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] } }}
-                exit={{ opacity: 0, y: -4, scale: 0.97, transition: { duration: 0.14, ease: [0.4, 0, 1, 1] } }}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] } }}
+                exit={{ opacity: 0, y: -6, transition: { duration: 0.14, ease: [0.4, 0, 1, 1] } }}
                 style={{
                   position: "fixed",
                   top: `${dropdownPos.top}px`,
                   right: `${dropdownPos.right}px`,
                   zIndex: 99999,
+                  backdropFilter: "blur(36px) saturate(160%)",
+                  WebkitBackdropFilter: "blur(36px) saturate(160%)",
+                  background: "var(--dropdown-glass-bg)",
+                  border: "1px solid var(--dropdown-glass-border)",
+                  boxShadow: "var(--dropdown-glass-shadow)",
                 }}
-                className="w-[310px] sm:w-[320px] max-w-[calc(100vw-24px)] rounded-[26px] liquid-glass-dropdown shadow-2xl pointer-events-auto text-foreground origin-top-right overflow-visible p-5 sm:p-6 text-left"
+                className="w-[310px] sm:w-[320px] max-w-[calc(100vw-24px)] rounded-[26px] pointer-events-auto text-foreground origin-top-right overflow-visible p-5 sm:p-6 text-left"
               >
                 {/* Top Caret pointing directly to Avatar */}
                 <div
-                  className="absolute -top-[6px] w-3 h-3 rotate-45 border-t border-l border-white/25 dark:border-white/20 bg-white/60 dark:bg-[#161a24]/80 backdrop-blur-xl pointer-events-none z-[2]"
-                  style={{ right: "10px" }}
+                  className="absolute -top-[6px] w-3 h-3 rotate-45 border-t border-l pointer-events-none z-[2]"
+                  style={{
+                    right: "10px",
+                    borderColor: "var(--dropdown-glass-border)",
+                    background: "var(--dropdown-caret-bg)",
+                    backdropFilter: "blur(20px)",
+                    WebkitBackdropFilter: "blur(20px)",
+                  }}
                 />
 
                 <div className="relative z-10 space-y-4">
