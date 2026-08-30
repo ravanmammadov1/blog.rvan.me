@@ -436,8 +436,16 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.25, 1, 0.5, 1] } }}
             exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: [0.4, 0, 1, 1] } }}
-            className="fixed inset-0 z-40 flex flex-col justify-center bg-background/98 backdrop-blur-md px-8 pt-20 md:hidden"
+            className="fixed inset-0 z-50 flex flex-col justify-center bg-background/85 dark:bg-[#07080b]/90 backdrop-blur-[36px] px-8 pt-20 md:hidden"
           >
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="absolute top-6 right-6 h-9 w-9 rounded-full liquid-glass-pill flex items-center justify-center text-foreground hover:scale-105 transition-all cursor-pointer"
+              aria-label="Close menu"
+            >
+              <X size={16} />
+            </button>
+
             <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 relative z-10">
               {mobileNavItems.map((item, i) => {
                 const localizedTarget = getLocalizedPath(item.target);
@@ -448,29 +456,35 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
                       location.pathname.startsWith(localizedTarget + "/");
 
                 return (
-                  <div key={item.label} className="border-b border-border">
+                  <div key={item.label} className="border-b border-black/[0.08] dark:border-white/[0.08]">
                     <Link
                       to={localizedTarget}
                       onClick={() => setMenuOpen(false)}
-                      className={`flex w-full items-baseline gap-4 py-4 text-left text-2xl font-bold uppercase tracking-tight transition-colors hover:text-primary ${
-                        isActive ? "text-primary" : "text-foreground"
+                      className={`flex w-full items-center justify-between py-4 text-left text-xl font-bold uppercase tracking-tight transition-colors ${
+                        isActive ? "text-foreground font-black" : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      <span className="mono text-xs text-muted-foreground">0{i + 1}</span>
-                      {item.label}
-                      {isActive && <span className="ml-auto h-2 w-2 rounded-full bg-primary" />}
+                      <div className="flex items-center gap-3.5">
+                        <span className="mono text-xs text-[#61c5ad]">0{i + 1}</span>
+                        <span>{item.label}</span>
+                      </div>
+                      {isActive && (
+                        <span className="px-2.5 py-0.5 rounded-full liquid-glass-pill liquid-glass-pill-active text-[10px] font-mono font-bold text-[#61c5ad]">
+                          {language === "az" ? "AKTİV" : "ACTIVE"}
+                        </span>
+                      )}
                     </Link>
                   </div>
                 );
               })}
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-border flex justify-between items-center text-xs mono text-muted-foreground relative z-10">
+            <div className="mt-8 pt-6 border-t border-black/[0.08] dark:border-white/[0.08] flex justify-between items-center text-xs mono text-muted-foreground relative z-10">
               <span>{t("creativePlatform", "CREATIVE PLATFORM & PUBLICATION")}</span>
               <Link
                 to={getLocalizedPath("/contact")}
                 onClick={() => setMenuOpen(false)}
-                className="text-primary font-bold hover:underline"
+                className="text-[#61c5ad] font-bold hover:underline"
               >
                 {t("collaborate", "COLLABORATE")} →
               </Link>

@@ -21,66 +21,66 @@ export default function CookieConsentBanner() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 30, scale: 0.98 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="fixed bottom-5 left-5 right-5 md:left-8 md:right-auto md:max-w-md z-50 rounded-3xl border border-border bg-card text-foreground p-5 md:p-6 shadow-[0_8px_30px_rgba(15,23,42,0.1)] backdrop-blur-2xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] dark:bg-[#09090b]/95 dark:border-white/15"
+        className="fixed bottom-3.5 left-3.5 right-3.5 sm:bottom-5 sm:left-5 sm:right-5 md:left-8 md:right-auto md:max-w-md z-50 rounded-[26px] liquid-glass-dropdown p-4 sm:p-5 md:p-6 text-foreground shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-[36px] border border-white/20 dark:border-white/12"
       >
-        <div className="flex items-start gap-4">
-          <div className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
-            <Cookie size={18} />
+        <div className="flex items-start gap-3.5 sm:gap-4">
+          <div className="grid h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 place-items-center rounded-2xl liquid-glass-pill text-primary">
+            <Cookie size={16} className="text-[#61c5ad]" />
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[9.5px] font-bold uppercase tracking-[.18em] text-primary mono">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full liquid-glass-pill text-[9px] sm:text-[9.5px] font-mono font-bold tracking-widest text-[#61c5ad] uppercase">
                 {isAz ? "MƏXFİLİK VƏ KUKİLƏR" : t("privacyCookiesTag", "PRIVACY & COOKIES")}
               </span>
               <button
                 onClick={rejectNonEssential}
-                className="text-muted-foreground hover:text-foreground transition-colors p-0.5 cursor-pointer"
+                className="h-6 w-6 rounded-full liquid-glass-pill flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 aria-label="Decline non-essential cookies and close"
               >
-                <X size={15} />
+                <X size={13} />
               </button>
             </div>
 
-            <h3 className="mt-1 text-sm font-bold text-foreground tracking-tight">
+            <h3 className="mt-2 text-[13.5px] sm:text-sm font-bold text-foreground tracking-tight">
               {isAz ? "Məxfiliyinizə önəm veririk." : t("cookieHeaderTitle", "We value your privacy.")}
             </h3>
 
-            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground font-medium">
+            <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-muted-foreground font-normal">
               {isAz
                 ? "Saytın fəaliyyəti üçün zəruri və platforma təcrübəsini artırmaq üçün analitik kukilərdən istifadə edirik. Ətraflı:"
                 : t("cookieBodyText", "We use essential cookies to operate this site and optional performance cookies to measure traffic. Read our")}{" "}
-              <Link to={getLocalizedPath("/privacy-policy")} className="underline underline-offset-2 hover:text-primary">
+              <Link to={getLocalizedPath("/privacy-policy")} className="underline underline-offset-2 hover:text-[#61c5ad] transition-colors">
                 {isAz ? "Məxfilik Siyasəti" : t("privacyPolicy", "Privacy Policy")}
               </Link>{" "}
               {isAz ? "və" : t("andWord", "and")}{" "}
-              <Link to={getLocalizedPath("/cookie-policy")} className="underline underline-offset-2 hover:text-primary">
+              <Link to={getLocalizedPath("/cookie-policy")} className="underline underline-offset-2 hover:text-[#61c5ad] transition-colors">
                 {isAz ? "Kuki Siyasəti" : t("cookiePolicy", "Cookie Policy")}
               </Link>
               .
             </p>
 
-            {/* Action Buttons */}
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+            {/* Action Buttons — Liquid Glass Pills */}
+            <div className="mt-3.5 sm:mt-4 flex flex-wrap items-center gap-2">
               <button
                 onClick={acceptAll}
-                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[10px] font-bold uppercase tracking-[.14em] text-primary-foreground dark:text-black hover:opacity-90 transition-all mono shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-full liquid-glass-pill liquid-glass-pill-active px-3.5 py-1.5 sm:px-4 sm:py-2 text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-wider text-foreground hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-sm"
               >
-                <Check size={12} /> {isAz ? "HAMISINI QƏBUL ET" : "ACCEPT ALL"}
+                <Check size={11} className="text-[#61c5ad]" /> {isAz ? "HAMISINI QƏBUL ET" : "ACCEPT ALL"}
               </button>
 
               <button
                 onClick={rejectNonEssential}
-                className="rounded-full border border-border bg-card/80 dark:border-white/20 dark:bg-transparent px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.14em] text-foreground hover:bg-muted/60 transition-colors mono cursor-pointer shadow-sm"
+                className="rounded-full liquid-glass-pill px-3 py-1.5 sm:px-3.5 sm:py-2 text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               >
                 {isAz ? "İMTİNA ET" : "DECLINE OPTIONAL"}
               </button>
 
               <button
                 onClick={openPreferences}
-                className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.14em] text-muted-foreground hover:text-primary transition-colors mono ml-auto py-1 cursor-pointer"
+                className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground hover:text-[#61c5ad] transition-colors ml-auto py-1 cursor-pointer"
               >
-                <Settings size={12} /> {isAz ? "TƏNZİMLƏMƏLƏR" : "PREFERENCES"}
+                <Settings size={11} /> {isAz ? "TƏNZİMLƏMƏLƏR" : "PREFERENCES"}
               </button>
             </div>
           </div>

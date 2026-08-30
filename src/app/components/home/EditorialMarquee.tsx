@@ -45,7 +45,7 @@ export default function EditorialMarquee() {
           animate={{ x: ["0%", "-50%"] }}
           transition={{
             ease: "linear",
-            duration: 48,
+            duration: 80,
             repeat: Infinity,
           }}
         >

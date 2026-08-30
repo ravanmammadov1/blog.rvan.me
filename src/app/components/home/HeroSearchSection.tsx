@@ -155,7 +155,7 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative z-20 w-full min-h-[85vh] sm:min-h-[88vh] md:min-h-[600px] lg:min-h-0 md:aspect-[1678/937] flex flex-col justify-between bg-background text-foreground select-none">
+    <section className="relative z-20 w-full aspect-[1080/1920] md:aspect-[1678/937] flex flex-col justify-between bg-background text-foreground select-none">
       
       {/* ── Layer 0: Full-Bleed Background Cinematic Image (Clipped inside Layer 0 only) ── */}
       <div
@@ -502,26 +502,37 @@ export default function HeroSearchSection() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 1, 0.5, 1] } }}
             exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: [0.4, 0, 1, 1] } }}
-            className="fixed inset-0 z-50 flex flex-col justify-center bg-background/98 backdrop-blur-md px-8 pt-20 md:hidden"
+            className="fixed inset-0 z-50 flex flex-col justify-center bg-background/85 dark:bg-[#07080b]/90 backdrop-blur-[36px] px-8 pt-20 md:hidden"
           >
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-6 right-6 p-2 text-foreground"
+              className="absolute top-6 right-6 h-9 w-9 rounded-full liquid-glass-pill flex items-center justify-center text-foreground hover:scale-105 transition-all cursor-pointer"
+              aria-label="Close menu"
             >
-              <X size={24} />
+              <X size={16} />
             </button>
-            <nav className="space-y-2">
+            <nav className="space-y-1 relative z-10">
               {navItems.map((item, i) => {
                 const localizedTarget = getLocalizedPath(item.target);
+                const isActive = i === 0;
                 return (
-                  <div key={item.label} className="border-b border-border">
+                  <div key={item.label} className="border-b border-black/[0.08] dark:border-white/[0.08]">
                     <Link
                       to={localizedTarget}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex w-full items-baseline gap-4 py-4 text-left text-2xl font-bold uppercase tracking-tight text-foreground hover:text-primary"
+                      className={`flex w-full items-center justify-between py-4 text-left text-xl font-bold uppercase tracking-tight transition-colors ${
+                        isActive ? "text-foreground font-black" : "text-muted-foreground hover:text-foreground"
+                      }`}
                     >
-                      <span className="mono text-xs text-muted-foreground">0{i + 1}</span>
-                      {item.label}
+                      <div className="flex items-center gap-3.5">
+                        <span className="mono text-xs text-[#61c5ad]">0{i + 1}</span>
+                        <span>{item.label}</span>
+                      </div>
+                      {isActive && (
+                        <span className="px-2.5 py-0.5 rounded-full liquid-glass-pill liquid-glass-pill-active text-[10px] font-mono font-bold text-[#61c5ad]">
+                          {isAz ? "AKTİV" : "ACTIVE"}
+                        </span>
+                      )}
                     </Link>
                   </div>
                 );
