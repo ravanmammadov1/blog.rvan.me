@@ -320,62 +320,13 @@ export default function HeroSearchSection() {
                 className="relative w-full sm:w-[230px] md:w-[260px] lg:w-[275px] h-[40px] xs:h-[42px] md:h-[44px] px-3.5 md:px-4 rounded-full flex items-center justify-center md:justify-start gap-2.5 md:gap-2.5 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
                 style={{ outline: "none", boxShadow: "none" }}
               >
-                {/* Full Perimeter Border with Continuously Revolving Gradient and Soft Glow */}
-                <svg
-                  className="pointer-events-none absolute inset-0 h-full w-full overflow-visible rounded-full z-20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient id="search-stroke-beam" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#61c5ad" />
-                      <stop offset="33%" stopColor="#6099df" />
-                      <stop offset="66%" stopColor="#bc66c5" />
-                      <stop offset="100%" stopColor="#61c5ad" />
-                      <animateTransform
-                        attributeName="gradientTransform"
-                        type="rotate"
-                        from="0 0.5 0.5"
-                        to="360 0.5 0.5"
-                        dur="6s"
-                        repeatCount="indefinite"
-                      />
-                    </linearGradient>
-                    <filter id="search-stroke-glow-soft" x="-30%" y="-30%" width="160%" height="160%">
-                      <feGaussianBlur stdDeviation="2.5" result="blur" />
-                    </filter>
-                  </defs>
-
-                  {/* Soft Ambient Glow Layer — Full Continuous Perimeter */}
-                  <rect
-                    x="0.75"
-                    y="0.75"
-                    className="search-pill-border"
-                    style={{
-                      width: "calc(100% - 1.5px)",
-                      height: "calc(100% - 1.5px)",
-                    }}
-                    stroke="url(#search-stroke-beam)"
-                    strokeWidth="3.5"
-                    fill="none"
-                    opacity={0.55}
-                    filter="url(#search-stroke-glow-soft)"
-                  />
-
-                  {/* Sharp Core 1.5px Stroke — Full Continuous Perimeter */}
-                  <rect
-                    x="0.75"
-                    y="0.75"
-                    className="search-pill-border"
-                    style={{
-                      width: "calc(100% - 1.5px)",
-                      height: "calc(100% - 1.5px)",
-                    }}
-                    stroke="url(#search-stroke-beam)"
-                    strokeWidth="1.5"
-                    fill="none"
-                  />
-                </svg>
+                {/* Full Perimeter Border with Hardware-Accelerated Continuously Revolving Gradient and Soft Glow (Mobile + Desktop) */}
+                <div className="search-pill-revolving-glow" aria-hidden="true">
+                  <div className="search-pill-revolving-beam" />
+                </div>
+                <div className="search-pill-revolving-wrapper" aria-hidden="true">
+                  <div className="search-pill-revolving-beam" />
+                </div>
 
                 <Search size={14} className="w-3.5 h-3.5 md:w-3.5 md:h-3.5 text-primary shrink-0 relative z-10" />
 

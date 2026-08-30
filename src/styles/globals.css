@@ -863,22 +863,53 @@ html {
   box-shadow: 0 8px 24px -4px rgba(97, 197, 173, 0.35);
 }
 
-/* ─── Search Pill Border Responsive Radii ─── */
-.search-pill-border {
-  rx: 20px;
-  ry: 20px;
-}
-@media (min-width: 420px) {
-  .search-pill-border {
-    rx: 21px;
-    ry: 21px;
+/* ─── Hardware-Accelerated Revolving Search Pill Gradient Border (Mobile & Desktop) ─── */
+@keyframes revolve-border-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
-@media (min-width: 768px) {
-  .search-pill-border {
-    rx: 21.25px;
-    ry: 21.25px;
-  }
+
+.search-pill-revolving-wrapper {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+  padding: 1.5px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.search-pill-revolving-beam {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: conic-gradient(from 0deg, #61c5ad 0%, #6099df 33%, #bc66c5 66%, #61c5ad 100%);
+  animation: revolve-border-spin 6s linear infinite;
+  will-change: transform;
+}
+
+.search-pill-revolving-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 19;
+  overflow: hidden;
+  padding: 3px;
+  opacity: 0.6;
+  filter: blur(3px);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 /* ─── Seamless Infinite Marquee Animation ─── */
