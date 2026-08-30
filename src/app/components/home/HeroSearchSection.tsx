@@ -312,13 +312,9 @@ export default function HeroSearchSection() {
               <div
                 onClick={() => {
                   setIsSearching(true);
-                  setTimeout(() => searchInputRef.current?.focus(), 20);
+                  searchInputRef.current?.focus();
                 }}
-                className={`relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
-                  isSearching
-                    ? "liquid-glass-pill liquid-glass-pill-active"
-                    : "liquid-glass-btn text-foreground"
-                }`}
+                className="relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
                 style={{ outline: "none", boxShadow: "none" }}
               >
                 {/* 1.5px Animated Gradient Stroke Locked Precisely to Button Perimeter */}
@@ -342,7 +338,7 @@ export default function HeroSearchSection() {
                     </filter>
                   </defs>
 
-                  {/* True 1.5px glowing animated stroke running exactly along the perimeter */}
+                  {/* True 1.5px glowing animated stroke running exactly along the perimeter (Increased length 42) */}
                   <motion.rect
                     x="0.75"
                     y="0.75"
@@ -356,7 +352,7 @@ export default function HeroSearchSection() {
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     pathLength="100"
-                    strokeDasharray="22 78"
+                    strokeDasharray="42 58"
                     animate={{ strokeDashoffset: [100, 0] }}
                     transition={{
                       duration: 6,
@@ -369,31 +365,28 @@ export default function HeroSearchSection() {
 
                 <Search size={13} className={isSearching ? "text-primary shrink-0 relative z-10" : "text-muted-foreground shrink-0 relative z-10"} />
 
-                {isSearching ? (
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setSelectedIndex(0);
-                    }}
-                    onKeyDown={handleSearchKeyDown}
-                    placeholder={isAz ? "Axtarış..." : "Search..."}
-                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10"
-                    style={{ outline: "none", boxShadow: "none", border: "none" }}
-                    autoFocus
-                  />
-                ) : (
-                  <div className="w-full flex items-center justify-between min-w-0 select-none relative z-10">
-                    <span className="text-[10px] xs:text-[11px] font-mono font-bold tracking-wider text-foreground truncate">
-                      {isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}
-                    </span>
-                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10 shrink-0">
-                      ⌘K
-                    </kbd>
-                  </div>
-                )}
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onFocus={() => setIsSearching(true)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setSelectedIndex(0);
+                  }}
+                  onKeyDown={handleSearchKeyDown}
+                  placeholder={
+                    isSearching
+                      ? (isAz ? "Axtarış..." : "Search...")
+                      : (isAz ? "İDEYA AXTAR" : "SEARCH IDEAS")
+                  }
+                  className={`w-full h-full bg-transparent text-xs text-foreground border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10 cursor-pointer focus:cursor-text ${
+                    isSearching
+                      ? "placeholder:text-muted-foreground/60 font-normal"
+                      : "placeholder:text-foreground font-bold tracking-wider"
+                  }`}
+                  style={{ outline: "none", boxShadow: "none", border: "none" }}
+                />
 
                 {isSearching && searchQuery && (
                   <button
@@ -479,10 +472,10 @@ export default function HeroSearchSection() {
               </AnimatePresence>
             </div>
 
-            {/* Secondary Article Action */}
+            {/* Secondary Article Action - Same Translucent Glass Color as Search Bar */}
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 rounded-full liquid-glass-btn text-muted-foreground hover:text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 h-[38px] rounded-full liquid-glass-pill liquid-glass-pill-active text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit cursor-pointer"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
               <ArrowRight size={12} className="shrink-0" />
