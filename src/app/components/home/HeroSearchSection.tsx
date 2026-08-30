@@ -256,7 +256,7 @@ export default function HeroSearchSection() {
       </div>
 
       {/* ── Layer 2: Centered Editorial Content on Mobile, Left-Aligned on Desktop ── */}
-      <div className="relative z-20 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-8 pt-3 xs:pt-4 md:pt-12 md:my-auto lg:py-16 text-center md:text-left">
+      <div className="relative z-20 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 sm:px-8 pt-7 xs:pt-8 md:pt-12 md:my-auto lg:py-16 text-center md:text-left">
         <div className="w-full max-w-[340px] xs:max-w-[380px] sm:max-w-[420px] lg:max-w-[490px] xl:max-w-[540px] mx-auto md:mx-0 space-y-3 xs:space-y-3.5 sm:space-y-5 lg:space-y-6 flex flex-col items-center md:items-start">
           
           {/* Centered Minimal Editorial Headline on Mobile */}
@@ -286,13 +286,13 @@ export default function HeroSearchSection() {
             )}
           </motion.h1>
 
-          {/* Centered Supporting Description on Mobile */}
+          {/* Centered Supporting Description on Mobile (2 Lines) */}
           <motion.p
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.12}
-            className="text-[11.5px] xs:text-[12px] sm:text-xs md:text-[13.5px] lg:text-[15.5px] text-muted-foreground font-normal leading-[1.48] sm:leading-[1.55] max-w-[280px] xs:max-w-[310px] sm:max-w-sm lg:max-w-md xl:max-w-lg text-center md:text-left mx-auto md:mx-0"
+            className="text-[11.5px] xs:text-[12px] sm:text-xs md:text-[13.5px] lg:text-[15.5px] text-muted-foreground font-normal leading-[1.48] sm:leading-[1.55] max-w-[325px] xs:max-w-[350px] sm:max-w-sm lg:max-w-md xl:max-w-lg text-center md:text-left mx-auto md:mx-0"
           >
             {isAz
               ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr və bilik ekosistemi."
@@ -374,7 +374,7 @@ export default function HeroSearchSection() {
                   />
                 </svg>
 
-                <Search size={16} className="w-4 h-4 md:w-3.5 md:h-3.5 text-primary shrink-0 relative z-10" />
+                <Search size={14} className="w-3.5 h-3.5 md:w-3.5 md:h-3.5 text-primary shrink-0 relative z-10" />
 
                 <input
                   ref={searchInputRef}
@@ -391,7 +391,7 @@ export default function HeroSearchSection() {
                       ? (isAz ? "Axtarış..." : "Search...")
                       : (isAz ? "İDEYA AXTAR" : "SEARCH IDEAS")
                   }
-                  className={`w-full h-full bg-transparent text-sm md:text-[13px] text-foreground border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10 cursor-pointer focus:cursor-text ${
+                  className={`w-full h-full bg-transparent text-[11.5px] xs:text-xs md:text-[13px] text-foreground border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10 cursor-pointer focus:cursor-text ${
                     isSearching
                       ? "placeholder:text-muted-foreground/60 font-normal"
                       : "placeholder:text-foreground font-bold tracking-wider"
