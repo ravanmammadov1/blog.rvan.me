@@ -65,7 +65,7 @@ export default function BlogSection() {
   }, [blogPosts, activeFilter, articleStats]);
 
   return (
-    <section id="blog" className="relative px-4 sm:px-6 md:px-10 py-16 sm:py-24 lg:py-28 overflow-hidden border-b border-border/40">
+    <section id="blog" className="relative px-4 sm:px-6 md:px-10 pt-20 sm:pt-24 lg:pt-28 pb-16 sm:pb-24 lg:pb-28 overflow-hidden border-b border-border/40">
       <div className="mx-auto max-w-[1280px] relative z-10">
         <motion.div
           variants={fadeUp}

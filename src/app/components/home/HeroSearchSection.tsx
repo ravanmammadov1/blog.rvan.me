@@ -195,6 +195,9 @@ export default function HeroSearchSection() {
             className="h-full w-full object-cover object-bottom sm:object-[center_top] md:object-top select-none"
           />
         </picture>
+
+        {/* Soft Atmospheric Fade at Bottom of Hero Transitioning into Blog Section */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 sm:h-36 md:h-44 bg-gradient-to-b from-transparent via-background/60 to-background z-10" />
       </div>
 
       {/* ── Layer 1: Compact Floating Liquid Glass Navbar (Hugs Content, Identical to SiteHeader) ── */}
