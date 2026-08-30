@@ -89,29 +89,6 @@ export default function HeroSearchSection() {
       .slice(0, 5);
   }, [searchQuery, searchCorpus]);
 
-  // Editorial Loop Marquee Items
-  const marqueeItems = useMemo(
-    () =>
-      isAz
-        ? [
-            "DESIGN",
-            "MARKETING",
-            "BRANDING",
-            "PSİXOLOGİYA",
-            "AI & CREATIVITY",
-            "STRATEGY",
-          ]
-        : [
-            "DESIGN",
-            "MARKETING",
-            "BRANDING",
-            "PSYCHOLOGY",
-            "AI & CREATIVITY",
-            "STRATEGY",
-          ],
-    [isAz]
-  );
-
   // Global Command+K / Ctrl+K keyboard shortcut focuses in-place search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -515,52 +492,6 @@ export default function HeroSearchSection() {
               <ArrowRight size={11} className="w-2.5 h-2.5 xs:w-3 xs:h-3 md:w-3.5 md:h-3.5 shrink-0" />
             </Link>
           </motion.div>
-        </div>
-      </div>
-
-      {/* ── Layer 3: Editorial Motion Marquee Ribbon (Infinite Right-to-Left Loop) ── */}
-      <div className="relative z-20 w-full overflow-hidden border-y border-border/40 dark:border-white/10 bg-background/70 dark:bg-[#0c0d12]/70 backdrop-blur-xl py-2.5 sm:py-3 select-none mt-auto">
-        {/* Soft edge fade masks */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-24 bg-gradient-to-r from-background to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-24 bg-gradient-to-l from-background to-transparent z-10" />
-
-        {/* Continuous Marquee Track */}
-        <div className="flex w-max animate-marquee-left">
-          {/* Half 1 */}
-          <div className="flex items-center shrink-0">
-            {[...Array(4)].map((_, setIdx) => (
-              <div key={`m1-set-${setIdx}`} className="flex items-center shrink-0">
-                {marqueeItems.map((item, idx) => (
-                  <div key={`m1-${setIdx}-${idx}`} className="flex items-center shrink-0">
-                    <span className="text-[10.5px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] sm:tracking-[0.25em] uppercase text-foreground/80 hover:text-foreground transition-colors px-3.5 sm:px-5">
-                      {item}
-                    </span>
-                    <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent text-xs sm:text-sm font-sans select-none opacity-80">
-                      ✦
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          {/* Half 2 (Exact duplicate for seamless looping) */}
-          <div className="flex items-center shrink-0" aria-hidden="true">
-            {[...Array(4)].map((_, setIdx) => (
-              <div key={`m2-set-${setIdx}`} className="flex items-center shrink-0">
-                {marqueeItems.map((item, idx) => (
-                  <div key={`m2-${setIdx}-${idx}`} className="flex items-center shrink-0">
-                    <span className="text-[10.5px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-[0.2em] sm:tracking-[0.25em] uppercase text-foreground/80 hover:text-foreground transition-colors px-3.5 sm:px-5">
-                      {item}
-                    </span>
-                    <span className="bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent text-xs sm:text-sm font-sans select-none opacity-80">
-                      ✦
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

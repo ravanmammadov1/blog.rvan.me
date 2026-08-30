@@ -15,6 +15,7 @@ import TopicsSection from "./components/home/TopicsSection";
 import HomeAboutSection from "./components/home/HomeAboutSection";
 import ResourcesSection from "./components/home/ResourcesSection";
 import ContactSection from "./components/home/ContactSection";
+import EditorialMarquee from "./components/home/EditorialMarquee";
 
 export default function HomePage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
@@ -41,6 +42,9 @@ export default function HomePage() {
 
       {/* ── 1. UNIFIED HERO SCENE WITH FLOATING NAVBAR (STRICT REFERENCE COMPOSITION) ── */}
       <HeroSearchSection />
+
+      {/* ── 1.5. EDITORIAL MOTION CATEGORIES MARQUEE (BELOW HERO IMAGE) ── */}
+      <EditorialMarquee />
 
       {/* ── 2. LATEST ARTICLES (Dizayn × Psixologiya) ── */}
       <BlogSection />
