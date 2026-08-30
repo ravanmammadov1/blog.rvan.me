@@ -317,25 +317,34 @@ export default function HeroSearchSection() {
                 className="relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
                 style={{ outline: "none", boxShadow: "none" }}
               >
-                {/* 1.5px Animated Gradient Stroke Locked Precisely to Button Perimeter with Soft Glow */}
+                {/* Full Perimeter Border with Continuously Revolving Gradient and Soft Glow */}
                 <svg
                   className="pointer-events-none absolute inset-0 h-full w-full overflow-visible rounded-full z-20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <defs>
-                    <linearGradient id="search-stroke-beam" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <linearGradient id="search-stroke-beam" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#61c5ad" />
-                      <stop offset="50%" stopColor="#6099df" />
-                      <stop offset="100%" stopColor="#bc66c5" />
+                      <stop offset="33%" stopColor="#6099df" />
+                      <stop offset="66%" stopColor="#bc66c5" />
+                      <stop offset="100%" stopColor="#61c5ad" />
+                      <animateTransform
+                        attributeName="gradientTransform"
+                        type="rotate"
+                        from="0 0.5 0.5"
+                        to="360 0.5 0.5"
+                        dur="6s"
+                        repeatCount="indefinite"
+                      />
                     </linearGradient>
                     <filter id="search-stroke-glow-soft" x="-30%" y="-30%" width="160%" height="160%">
                       <feGaussianBlur stdDeviation="2.5" result="blur" />
                     </filter>
                   </defs>
 
-                  {/* Soft Ambient Glow Layer */}
-                  <motion.rect
+                  {/* Soft Ambient Glow Layer — Full Continuous Perimeter */}
+                  <rect
                     x="0.75"
                     y="0.75"
                     rx="18.25"
@@ -346,21 +355,13 @@ export default function HeroSearchSection() {
                     }}
                     stroke="url(#search-stroke-beam)"
                     strokeWidth="3.5"
-                    strokeLinecap="round"
-                    pathLength="100"
-                    strokeDasharray="56 44"
-                    animate={{ strokeDashoffset: [100, 0] }}
-                    transition={{
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
+                    fill="none"
                     opacity={0.55}
                     filter="url(#search-stroke-glow-soft)"
                   />
 
-                  {/* Sharp Core 1.5px Stroke */}
-                  <motion.rect
+                  {/* Sharp Core 1.5px Stroke — Full Continuous Perimeter */}
+                  <rect
                     x="0.75"
                     y="0.75"
                     rx="18.25"
@@ -371,15 +372,7 @@ export default function HeroSearchSection() {
                     }}
                     stroke="url(#search-stroke-beam)"
                     strokeWidth="1.5"
-                    strokeLinecap="round"
-                    pathLength="100"
-                    strokeDasharray="56 44"
-                    animate={{ strokeDashoffset: [100, 0] }}
-                    transition={{
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
+                    fill="none"
                   />
                 </svg>
 
