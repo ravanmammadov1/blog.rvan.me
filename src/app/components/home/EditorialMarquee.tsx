@@ -32,11 +32,11 @@ export default function EditorialMarquee() {
   return (
     <section
       aria-label="Editorial Categories"
-      className="relative z-10 w-full overflow-hidden border-y border-border/70 dark:border-white/10 bg-background dark:bg-[#07080b] py-3.5 xs:py-4 sm:py-5 md:py-5.5 select-none"
+      className="relative z-10 w-full overflow-hidden border-y border-border/70 dark:border-white/10 bg-background dark:bg-[#07080b] py-2.5 xs:py-3 sm:py-4 md:py-5 select-none"
     >
       {/* Left and Right Soft Fade Masks */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-28 bg-gradient-to-r from-background dark:from-[#07080b] to-transparent z-10" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-28 bg-gradient-to-l from-background dark:from-[#07080b] to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 sm:w-28 bg-gradient-to-r from-background dark:from-[#07080b] to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 sm:w-28 bg-gradient-to-l from-background dark:from-[#07080b] to-transparent z-10" />
 
       {/* Hardware-accelerated Continuous Infinite Marquee Loop */}
       <div className="flex w-max overflow-visible">
@@ -55,10 +55,10 @@ export default function EditorialMarquee() {
               <div key={`set-1-${setIdx}`} className="flex shrink-0 items-center">
                 {items.map((item, idx) => (
                   <div key={`m1-${setIdx}-${idx}`} className="flex shrink-0 items-center">
-                    <span className="text-xs xs:text-sm sm:text-base md:text-[17px] font-black font-mono tracking-[0.2em] sm:tracking-[0.26em] uppercase text-foreground/90 hover:text-foreground transition-colors px-4 xs:px-6 sm:px-8">
+                    <span className="text-[11px] xs:text-xs sm:text-base md:text-[17px] font-bold font-mono tracking-[0.22em] sm:tracking-[0.26em] uppercase text-foreground/90 hover:text-foreground transition-colors px-3.5 xs:px-5 sm:px-8">
                       {item}
                     </span>
-                    <span className="inline-flex items-center justify-center bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent text-sm sm:text-base md:text-xl font-sans select-none opacity-90 mx-1 sm:mx-3">
+                    <span className="inline-flex items-center justify-center bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent text-xs sm:text-base md:text-xl font-sans select-none opacity-90 mx-1.5 sm:mx-3">
                       ✦
                     </span>
                   </div>
@@ -73,10 +73,10 @@ export default function EditorialMarquee() {
               <div key={`set-2-${setIdx}`} className="flex shrink-0 items-center">
                 {items.map((item, idx) => (
                   <div key={`m2-${setIdx}-${idx}`} className="flex shrink-0 items-center">
-                    <span className="text-xs xs:text-sm sm:text-base md:text-[17px] font-black font-mono tracking-[0.2em] sm:tracking-[0.26em] uppercase text-foreground/90 hover:text-foreground transition-colors px-4 xs:px-6 sm:px-8">
+                    <span className="text-[11px] xs:text-xs sm:text-base md:text-[17px] font-bold font-mono tracking-[0.22em] sm:tracking-[0.26em] uppercase text-foreground/90 hover:text-foreground transition-colors px-3.5 xs:px-5 sm:px-8">
                       {item}
                     </span>
-                    <span className="inline-flex items-center justify-center bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent text-sm sm:text-base md:text-xl font-sans select-none opacity-90 mx-1 sm:mx-3">
+                    <span className="inline-flex items-center justify-center bg-gradient-to-r from-[#61c5ad] via-[#6099df] to-[#bc66c5] bg-clip-text text-transparent text-xs sm:text-base md:text-xl font-sans select-none opacity-90 mx-1.5 sm:mx-3">
                       ✦
                     </span>
                   </div>

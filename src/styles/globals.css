@@ -865,8 +865,14 @@ html {
 
 /* ─── Search Pill Border Responsive Radii ─── */
 .search-pill-border {
-  rx: 19.25px;
-  ry: 19.25px;
+  rx: 17.25px;
+  ry: 17.25px;
+}
+@media (min-width: 420px) {
+  .search-pill-border {
+    rx: 18.25px;
+    ry: 18.25px;
+  }
 }
 @media (min-width: 768px) {
   .search-pill-border {
