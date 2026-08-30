@@ -307,92 +307,105 @@ export default function HeroSearchSection() {
             custom={0.18}
             className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-2.5 sm:gap-3.5 pt-0.5 sm:pt-1"
           >
-            {/* Primary Interactive Search Box with Rotating Glowing Stroke Animation */}
+            {/* Primary Interactive Search Box with 1.5px Traveling Border Stroke Animation */}
             <div ref={searchContainerRef} className="relative z-40 shrink-0">
-              {/* Outer Pill Container with Rotating Stroke Animation */}
-              <div className="relative p-[1.5px] rounded-full overflow-hidden group/search shadow-md shadow-black/5 dark:shadow-black/20">
-                {/* Soft Diffused Outer Glow Layer */}
-                <div
-                  className="absolute -inset-[150%] animate-border-rotate pointer-events-none blur-[5px] opacity-75 group-hover/search:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background:
-                      "conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 110deg, #61c5ad 140deg, #6099df 180deg, #bc66c5 220deg, transparent 250deg, transparent 360deg)",
-                  }}
-                  aria-hidden="true"
-                />
-
-                {/* Sharp Focused Rotating Gradient Beam */}
-                <div
-                  className="absolute -inset-[150%] animate-border-rotate pointer-events-none opacity-90 group-hover/search:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background:
-                      "conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 110deg, #61c5ad 140deg, #6099df 180deg, #bc66c5 220deg, transparent 250deg, transparent 360deg)",
-                  }}
-                  aria-hidden="true"
-                />
-
-                {/* Subtle base border ring for resting perimeter */}
-                <div
-                  className="absolute inset-0 rounded-full border border-black/10 dark:border-white/15 pointer-events-none"
-                  aria-hidden="true"
-                />
-
-                {/* Inner Search Capsule Surface */}
-                <div
-                  onClick={() => {
-                    setIsSearching(true);
-                    setTimeout(() => searchInputRef.current?.focus(), 20);
-                  }}
-                  className={`relative z-10 w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
-                    isSearching
-                      ? "bg-background/95 dark:bg-[#12141a]/95 text-foreground backdrop-blur-xl"
-                      : "bg-background/85 dark:bg-[#0c0d12]/85 text-foreground backdrop-blur-xl hover:bg-background/95 dark:hover:bg-[#12141a]/90"
-                  }`}
-                  style={{ outline: "none", boxShadow: "none" }}
+              <div
+                onClick={() => {
+                  setIsSearching(true);
+                  setTimeout(() => searchInputRef.current?.focus(), 20);
+                }}
+                className={`relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
+                  isSearching
+                    ? "liquid-glass-pill liquid-glass-pill-active"
+                    : "liquid-glass-btn text-foreground"
+                }`}
+                style={{ outline: "none", boxShadow: "none" }}
+              >
+                {/* 1.5px Animated Gradient Stroke Travelling Around Button Perimeter */}
+                <svg
+                  className="pointer-events-none absolute inset-0 h-full w-full overflow-visible rounded-full z-20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <Search size={13} className={isSearching ? "text-primary shrink-0 relative z-10" : "text-muted-foreground shrink-0 relative z-10"} />
+                  <defs>
+                    <linearGradient id="search-stroke-beam" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#61c5ad" />
+                      <stop offset="50%" stopColor="#6099df" />
+                      <stop offset="100%" stopColor="#bc66c5" />
+                    </linearGradient>
+                    <filter id="search-stroke-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="1.5" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
 
-                  {isSearching ? (
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setSelectedIndex(0);
-                      }}
-                      onKeyDown={handleSearchKeyDown}
-                      placeholder={isAz ? "Axtarış..." : "Search..."}
-                      className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10"
-                      style={{ outline: "none", boxShadow: "none", border: "none" }}
-                      autoFocus
-                    />
-                  ) : (
-                    <div className="w-full flex items-center justify-between min-w-0 select-none relative z-10">
-                      <span className="text-[10px] xs:text-[11px] font-mono font-bold tracking-wider text-foreground truncate">
-                        {isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}
-                      </span>
-                      <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10 shrink-0">
-                        ⌘K
-                      </kbd>
-                    </div>
-                  )}
+                  {/* True 1.5px glowing animated stroke running along the perimeter */}
+                  <motion.rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    rx="9999"
+                    stroke="url(#search-stroke-beam)"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    pathLength="100"
+                    strokeDasharray="26 74"
+                    animate={{ strokeDashoffset: [100, 0] }}
+                    transition={{
+                      duration: 3.5,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    filter="url(#search-stroke-glow)"
+                  />
+                </svg>
 
-                  {isSearching && searchQuery && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSearchQuery("");
-                        searchInputRef.current?.focus();
-                      }}
-                      className="p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0 outline-none relative z-10"
-                      aria-label="Clear search"
-                    >
-                      <X size={12} />
-                    </button>
-                  )}
-                </div>
+                <Search size={13} className={isSearching ? "text-primary shrink-0 relative z-10" : "text-muted-foreground shrink-0 relative z-10"} />
+
+                {isSearching ? (
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setSelectedIndex(0);
+                    }}
+                    onKeyDown={handleSearchKeyDown}
+                    placeholder={isAz ? "Axtarış..." : "Search..."}
+                    className="w-full h-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10"
+                    style={{ outline: "none", boxShadow: "none", border: "none" }}
+                    autoFocus
+                  />
+                ) : (
+                  <div className="w-full flex items-center justify-between min-w-0 select-none relative z-10">
+                    <span className="text-[10px] xs:text-[11px] font-mono font-bold tracking-wider text-foreground truncate">
+                      {isAz ? "İDEYA AXTAR" : "SEARCH IDEAS"}
+                    </span>
+                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono rounded bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/10 shrink-0">
+                      ⌘K
+                    </kbd>
+                  </div>
+                )}
+
+                {isSearching && searchQuery && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSearchQuery("");
+                      searchInputRef.current?.focus();
+                    }}
+                    className="p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0 outline-none relative z-10"
+                    aria-label="Clear search"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
               </div>
 
               {/* In-Place Live Results Dropdown (Unconstrained Floating Panel, Never Clipped) */}
