@@ -349,7 +349,7 @@ interface SiteHeaderProps {
 export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const { t, getLocalizedPath } = useLanguage();
+  const { t, getLocalizedPath, language } = useLanguage();
 
   // Global navigation items
   const navItems = [
