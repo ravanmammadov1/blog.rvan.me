@@ -155,7 +155,7 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative z-20 w-full aspect-[1080/1920] md:aspect-[1678/937] flex flex-col justify-between bg-background text-foreground select-none">
+    <section className="relative z-20 w-full aspect-[1080/1920] md:aspect-[1678/937] flex flex-col justify-start md:justify-between bg-background text-foreground select-none">
       
       {/* ── Layer 0: Full-Bleed Background Cinematic Image (Clipped inside Layer 0 only) ── */}
       <div
@@ -255,17 +255,17 @@ export default function HeroSearchSection() {
         </div>
       </div>
 
-      {/* ── Layer 2: Left Editorial Content (Positioned higher on mobile with 32px left margin) ── */}
-      <div className="relative z-20 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-8 sm:px-8 pt-4 xs:pt-6 sm:pt-12 sm:my-auto lg:py-16 text-left">
-        <div className="w-full max-w-full sm:max-w-[420px] lg:max-w-[490px] xl:max-w-[540px] space-y-3.5 xs:space-y-4 sm:space-y-5 lg:space-y-6">
+      {/* ── Layer 2: Left Editorial Content (Positioned in upper dark space, 0% portrait overlap) ── */}
+      <div className="relative z-20 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-6 xs:px-8 sm:px-8 pt-3 xs:pt-4 md:pt-12 md:my-auto lg:py-16 text-left">
+        <div className="w-full max-w-[270px] xs:max-w-[290px] sm:max-w-[420px] lg:max-w-[490px] xl:max-w-[540px] space-y-2.5 xs:space-y-3 sm:space-y-5 lg:space-y-6">
           
-          {/* Refined Minimal Editorial Headline — 1:1 Pixel Match with Reference Design */}
+          {/* Refined Minimal Editorial Headline — Positioned in Pure Black Space */}
           <motion.h1
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.05}
-            className="text-[40px] xs:text-[44px] sm:text-4xl md:text-5xl lg:text-[54px] xl:text-[62px] font-black tracking-tight leading-[0.94] lg:leading-[0.98] text-foreground uppercase"
+            className="text-[30px] xs:text-[34px] sm:text-4xl md:text-5xl lg:text-[54px] xl:text-[62px] font-black tracking-tight leading-[0.96] lg:leading-[0.98] text-foreground uppercase"
           >
             {isAz ? (
               <>
@@ -286,13 +286,13 @@ export default function HeroSearchSection() {
             )}
           </motion.h1>
 
-          {/* Minimal Supporting Description — 1:1 Match with 4-line flow */}
+          {/* Minimal Supporting Description — 4-line flow in left column */}
           <motion.p
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.12}
-            className="text-[12.5px] xs:text-[13px] sm:text-xs md:text-[13.5px] lg:text-[15.5px] text-muted-foreground font-normal leading-[1.5] sm:leading-[1.55] max-w-[320px] sm:max-w-sm lg:max-w-md xl:max-w-lg"
+            className="text-[11px] xs:text-[11.5px] sm:text-xs md:text-[13.5px] lg:text-[15.5px] text-muted-foreground font-normal leading-[1.48] sm:leading-[1.55] max-w-[220px] xs:max-w-[240px] sm:max-w-sm lg:max-w-md xl:max-w-lg"
           >
             {isAz
               ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr və bilik ekosistemi."
@@ -305,16 +305,16 @@ export default function HeroSearchSection() {
             initial={false}
             animate="visible"
             custom={0.18}
-            className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3.5 pt-1 sm:pt-1"
+            className="flex flex-col sm:flex-row sm:items-center gap-2.5 xs:gap-3 sm:gap-3.5 pt-0.5 sm:pt-1"
           >
-            {/* Primary Interactive Search Box with 1.5px Traveling Border Stroke Animation */}
-            <div ref={searchContainerRef} className="relative z-40 shrink-0 w-full max-w-[320px] sm:w-auto">
+            {/* Primary Interactive Search Box */}
+            <div ref={searchContainerRef} className="relative z-40 shrink-0 w-[220px] xs:w-[240px] sm:w-auto">
               <div
                 onClick={() => {
                   setIsSearching(true);
                   searchInputRef.current?.focus();
                 }}
-                className="relative w-full sm:w-[230px] md:w-[260px] lg:w-[275px] h-[58px] xs:h-[60px] md:h-[44px] px-4 md:px-4 rounded-full flex items-center gap-3 md:gap-2.5 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
+                className="relative w-full sm:w-[230px] md:w-[260px] lg:w-[275px] h-[44px] xs:h-[46px] md:h-[44px] px-3.5 md:px-4 rounded-full flex items-center gap-2.5 md:gap-2.5 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
                 style={{ outline: "none", boxShadow: "none" }}
               >
                 {/* Full Perimeter Border with Continuously Revolving Gradient and Soft Glow */}
@@ -483,13 +483,13 @@ export default function HeroSearchSection() {
               </AnimatePresence>
             </div>
 
-            {/* Secondary Article Action - 250–260px wide, 50px high, 10–14px gap */}
+            {/* Secondary Article Action */}
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-5 sm:py-2.5 md:px-6 w-[255px] xs:w-[260px] sm:w-fit h-[48px] xs:h-[50px] sm:h-[38px] md:h-[44px] rounded-full liquid-glass-pill liquid-glass-pill-active text-foreground text-[11px] xs:text-[11.5px] sm:text-xs md:text-[12.5px] lg:text-sm font-mono font-bold tracking-wider transition-all select-none shrink-0 cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 xs:px-4 xs:py-1.5 sm:px-5 sm:py-2.5 md:px-6 w-[190px] xs:w-[200px] sm:w-fit h-[38px] xs:h-[40px] sm:h-[38px] md:h-[44px] rounded-full liquid-glass-pill liquid-glass-pill-active text-foreground text-[9.5px] xs:text-[10px] sm:text-xs md:text-[12.5px] lg:text-sm font-mono font-bold tracking-wider transition-all select-none shrink-0 cursor-pointer"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
-              <ArrowRight size={13} className="w-3.5 h-3.5 sm:w-3 md:w-3.5 shrink-0" />
+              <ArrowRight size={11} className="w-3 h-3 sm:w-3 md:w-3.5 shrink-0" />
             </Link>
           </motion.div>
         </div>
