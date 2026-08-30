@@ -175,7 +175,7 @@ export default function HeroSearchSection() {
             height={1536}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none md:translate-y-6 lg:translate-y-8 xl:translate-y-10 transition-transform duration-300"
+            className="h-full w-full object-cover object-[right_top] sm:object-[center_top] lg:object-[right_top] select-none"
           />
         </picture>
 
@@ -192,7 +192,7 @@ export default function HeroSearchSection() {
             height={1536}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-right sm:object-center lg:object-right select-none md:translate-y-6 lg:translate-y-8 xl:translate-y-10 transition-transform duration-300"
+            className="h-full w-full object-cover object-[right_top] sm:object-[center_top] lg:object-[right_top] select-none"
           />
         </picture>
       </div>
@@ -299,7 +299,7 @@ export default function HeroSearchSection() {
               : "A creative publication and knowledge ecosystem exploring design, marketing, branding, AI, and visual culture."}
           </motion.p>
 
-          {/* CTA Group: [1. İDEYA AXTAR (Permanent Fixed Dimensions)] [2. MƏQALƏLƏRİ KƏŞF ET] */}
+          {/* Interactive Actions Group */}
           <motion.div
             variants={fadeUp}
             initial={false}
@@ -317,7 +317,7 @@ export default function HeroSearchSection() {
                 className="relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
                 style={{ outline: "none", boxShadow: "none" }}
               >
-                {/* 1.5px Animated Gradient Stroke Locked Precisely to Button Perimeter */}
+                {/* 1.5px Animated Gradient Stroke Locked Precisely to Button Perimeter with Soft Glow */}
                 <svg
                   className="pointer-events-none absolute inset-0 h-full w-full overflow-visible rounded-full z-20"
                   fill="none"
@@ -329,16 +329,37 @@ export default function HeroSearchSection() {
                       <stop offset="50%" stopColor="#6099df" />
                       <stop offset="100%" stopColor="#bc66c5" />
                     </linearGradient>
-                    <filter id="search-stroke-glow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="1.5" result="blur" />
-                      <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
+                    <filter id="search-stroke-glow-soft" x="-30%" y="-30%" width="160%" height="160%">
+                      <feGaussianBlur stdDeviation="2.5" result="blur" />
                     </filter>
                   </defs>
 
-                  {/* True 1.5px glowing animated stroke running exactly along the perimeter (Increased length 42) */}
+                  {/* Soft Ambient Glow Layer */}
+                  <motion.rect
+                    x="0.75"
+                    y="0.75"
+                    rx="18.25"
+                    ry="18.25"
+                    style={{
+                      width: "calc(100% - 1.5px)",
+                      height: "calc(100% - 1.5px)",
+                    }}
+                    stroke="url(#search-stroke-beam)"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    pathLength="100"
+                    strokeDasharray="56 44"
+                    animate={{ strokeDashoffset: [100, 0] }}
+                    transition={{
+                      duration: 6,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    opacity={0.55}
+                    filter="url(#search-stroke-glow-soft)"
+                  />
+
+                  {/* Sharp Core 1.5px Stroke */}
                   <motion.rect
                     x="0.75"
                     y="0.75"
@@ -352,14 +373,13 @@ export default function HeroSearchSection() {
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     pathLength="100"
-                    strokeDasharray="42 58"
+                    strokeDasharray="56 44"
                     animate={{ strokeDashoffset: [100, 0] }}
                     transition={{
                       duration: 6,
                       repeat: Infinity,
                       ease: "linear",
                     }}
-                    filter="url(#search-stroke-glow)"
                   />
                 </svg>
 
