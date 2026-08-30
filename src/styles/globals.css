@@ -863,8 +863,19 @@ html {
   box-shadow: 0 8px 24px -4px rgba(97, 197, 173, 0.35);
 }
 
-.brand-gradient-border {
-  border-image: linear-gradient(135deg, #61c5ad 0%, #426fba 50%, #984f9f 100%) 1;
+/* ─── Rotating Glowing Border Beam Animation ─── */
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-border-rotate {
+  animation: rotate-border 4s linear infinite;
+  will-change: transform;
 }
 
 /* ─── Reduced Motion Respect ─── */
