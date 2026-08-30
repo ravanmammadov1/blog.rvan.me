@@ -314,21 +314,21 @@ export default function HeroSearchSection() {
                   setIsSearching(true);
                   setTimeout(() => searchInputRef.current?.focus(), 20);
                 }}
-                className={`relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[34px] xs:h-[36px] sm:h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
+                className={`relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all ${
                   isSearching
                     ? "liquid-glass-pill liquid-glass-pill-active"
                     : "liquid-glass-btn text-foreground"
                 }`}
                 style={{ outline: "none", boxShadow: "none" }}
               >
-                {/* 1.5px Animated Gradient Stroke Travelling Around Button Perimeter */}
+                {/* 1.5px Animated Gradient Stroke Locked Precisely to Button Perimeter */}
                 <svg
                   className="pointer-events-none absolute inset-0 h-full w-full overflow-visible rounded-full z-20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <defs>
-                    <linearGradient id="search-stroke-beam" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="search-stroke-beam" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#61c5ad" />
                       <stop offset="50%" stopColor="#6099df" />
                       <stop offset="100%" stopColor="#bc66c5" />
@@ -342,21 +342,24 @@ export default function HeroSearchSection() {
                     </filter>
                   </defs>
 
-                  {/* True 1.5px glowing animated stroke running along the perimeter */}
+                  {/* True 1.5px glowing animated stroke running exactly along the perimeter */}
                   <motion.rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="9999"
+                    x="0.75"
+                    y="0.75"
+                    rx="18.25"
+                    ry="18.25"
+                    style={{
+                      width: "calc(100% - 1.5px)",
+                      height: "calc(100% - 1.5px)",
+                    }}
                     stroke="url(#search-stroke-beam)"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     pathLength="100"
-                    strokeDasharray="26 74"
+                    strokeDasharray="22 78"
                     animate={{ strokeDashoffset: [100, 0] }}
                     transition={{
-                      duration: 3.5,
+                      duration: 6,
                       repeat: Infinity,
                       ease: "linear",
                     }}
