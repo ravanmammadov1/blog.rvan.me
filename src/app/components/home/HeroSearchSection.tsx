@@ -257,15 +257,15 @@ export default function HeroSearchSection() {
 
       {/* ── Layer 2: Left Editorial Content (Disciplined Minimal Scale, Stable Search Control) ── */}
       <div className="relative z-20 w-full max-w-[1240px] xl:max-w-[1280px] mx-auto px-4 xs:px-6 sm:px-8 my-auto py-6 xs:py-8 sm:py-12 lg:py-16 text-left">
-        <div className="max-w-[48%] xs:max-w-[50%] sm:max-w-[420px] lg:max-w-[460px] space-y-3 xs:space-y-3.5 sm:space-y-5 lg:space-y-6">
+        <div className="max-w-[48%] xs:max-w-[50%] sm:max-w-[420px] lg:max-w-[490px] xl:max-w-[540px] space-y-3 xs:space-y-3.5 sm:space-y-5 lg:space-y-6">
           
-          {/* Refined Minimal Editorial Headline */}
+          {/* Refined Minimal Editorial Headline — Slightly scaled on desktop */}
           <motion.h1
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.05}
-            className="text-[22px] xs:text-[25px] sm:text-4xl md:text-5xl lg:text-[50px] xl:text-[56px] font-black tracking-tight leading-[1.0] lg:leading-[0.98] text-foreground uppercase"
+            className="text-[22px] xs:text-[25px] sm:text-4xl md:text-5xl lg:text-[54px] xl:text-[62px] font-black tracking-tight leading-[1.0] lg:leading-[0.98] text-foreground uppercase"
           >
             {isAz ? (
               <>
@@ -286,13 +286,13 @@ export default function HeroSearchSection() {
             )}
           </motion.h1>
 
-          {/* Minimal Supporting Description — Strictly bounded on left, naturally multi-line */}
+          {/* Minimal Supporting Description — Slightly scaled on desktop */}
           <motion.p
             variants={fadeUp}
             initial={false}
             animate="visible"
             custom={0.12}
-            className="text-[10.5px] xs:text-[11.5px] sm:text-xs md:text-sm lg:text-[14.5px] text-muted-foreground font-normal leading-[1.55] max-w-[185px] xs:max-w-[210px] sm:max-w-sm lg:max-w-md"
+            className="text-[10.5px] xs:text-[11.5px] sm:text-xs md:text-[13.5px] lg:text-[15.5px] text-muted-foreground font-normal leading-[1.55] max-w-[185px] xs:max-w-[210px] sm:max-w-sm lg:max-w-md xl:max-w-lg"
           >
             {isAz
               ? "Dizayn, marketinq, brendinq, süni intellekt və vizual mədəniyyət haqqında yaradıcı nəşr və bilik ekosistemi."
@@ -314,7 +314,7 @@ export default function HeroSearchSection() {
                   setIsSearching(true);
                   searchInputRef.current?.focus();
                 }}
-                className="relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[245px] h-[38px] px-3 rounded-full flex items-center gap-2 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
+                className="relative w-[185px] xs:w-[205px] sm:w-[230px] md:w-[260px] lg:w-[275px] h-[38px] md:h-[44px] px-3 md:px-4 rounded-full flex items-center gap-2 md:gap-2.5 cursor-pointer outline-none focus:outline-none focus-visible:outline-none transition-all liquid-glass-pill liquid-glass-pill-active text-foreground"
                 style={{ outline: "none", boxShadow: "none" }}
               >
                 {/* Full Perimeter Border with Continuously Revolving Gradient and Soft Glow */}
@@ -347,8 +347,7 @@ export default function HeroSearchSection() {
                   <rect
                     x="0.75"
                     y="0.75"
-                    rx="18.25"
-                    ry="18.25"
+                    className="search-pill-border"
                     style={{
                       width: "calc(100% - 1.5px)",
                       height: "calc(100% - 1.5px)",
@@ -364,8 +363,7 @@ export default function HeroSearchSection() {
                   <rect
                     x="0.75"
                     y="0.75"
-                    rx="18.25"
-                    ry="18.25"
+                    className="search-pill-border"
                     style={{
                       width: "calc(100% - 1.5px)",
                       height: "calc(100% - 1.5px)",
@@ -376,7 +374,7 @@ export default function HeroSearchSection() {
                   />
                 </svg>
 
-                <Search size={13} className={isSearching ? "text-primary shrink-0 relative z-10" : "text-muted-foreground shrink-0 relative z-10"} />
+                <Search size={13} className="md:w-3.5 md:h-3.5 text-primary shrink-0 relative z-10" />
 
                 <input
                   ref={searchInputRef}
@@ -393,7 +391,7 @@ export default function HeroSearchSection() {
                       ? (isAz ? "Axtarış..." : "Search...")
                       : (isAz ? "İDEYA AXTAR" : "SEARCH IDEAS")
                   }
-                  className={`w-full h-full bg-transparent text-xs text-foreground border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10 cursor-pointer focus:cursor-text ${
+                  className={`w-full h-full bg-transparent text-xs md:text-[13px] text-foreground border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 font-mono min-w-0 p-0 shadow-none relative z-10 cursor-pointer focus:cursor-text ${
                     isSearching
                       ? "placeholder:text-muted-foreground/60 font-normal"
                       : "placeholder:text-foreground font-bold tracking-wider"
@@ -488,10 +486,10 @@ export default function HeroSearchSection() {
             {/* Secondary Article Action - Same Translucent Glass Color as Search Bar */}
             <Link
               to={getLocalizedPath("/blog")}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 h-[38px] rounded-full liquid-glass-pill liquid-glass-pill-active text-foreground text-[10px] xs:text-[11px] sm:text-xs font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5 md:px-6 h-[38px] md:h-[44px] rounded-full liquid-glass-pill liquid-glass-pill-active text-foreground text-[10px] xs:text-[11px] sm:text-xs md:text-[12.5px] lg:text-sm font-mono font-bold tracking-wider transition-all select-none shrink-0 w-fit cursor-pointer"
             >
               <span>{isAz ? "MƏQALƏLƏRİ KƏŞF ET" : "EXPLORE ARTICLES"}</span>
-              <ArrowRight size={12} className="shrink-0" />
+              <ArrowRight size={12} className="md:w-3.5 md:h-3.5 shrink-0" />
             </Link>
           </motion.div>
         </div>

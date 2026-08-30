@@ -863,20 +863,19 @@ html {
   box-shadow: 0 8px 24px -4px rgba(97, 197, 173, 0.35);
 }
 
-/* ─── Rotating Glowing Border Beam Animation ─── */
-@keyframes rotate-border {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+/* ─── Search Pill Border Responsive Radii ─── */
+.search-pill-border {
+  rx: 18.25px;
+  ry: 18.25px;
+}
+@media (min-width: 768px) {
+  .search-pill-border {
+    rx: 21.25px;
+    ry: 21.25px;
   }
 }
 
-.animate-border-rotate {
-  animation: rotate-border 4s linear infinite;
-  will-change: transform;
-}
+/* ─── Reduced Motion Respect ─── */
 
 /* ─── Reduced Motion Respect ─── */
 @media (prefers-reduced-motion: reduce) {
