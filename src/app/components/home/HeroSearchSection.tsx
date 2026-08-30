@@ -155,7 +155,7 @@ export default function HeroSearchSection() {
   ];
 
   return (
-    <section className="relative z-20 w-full min-h-[85vh] sm:min-h-[88vh] lg:min-h-[90vh] flex flex-col justify-between bg-background text-foreground select-none">
+    <section className="relative z-20 w-full min-h-[85vh] sm:min-h-[88vh] md:min-h-[600px] lg:min-h-0 md:aspect-[1678/937] flex flex-col justify-between bg-background text-foreground select-none">
       
       {/* ── Layer 0: Full-Bleed Background Cinematic Image (Clipped inside Layer 0 only) ── */}
       <div
@@ -171,11 +171,11 @@ export default function HeroSearchSection() {
           <img
             src="/images/hero_light.jpg"
             alt="Rvan.me Editorial Vision"
-            width={2752}
-            height={1536}
+            width={1678}
+            height={937}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-[right_top] sm:object-[center_top] lg:object-[right_top] select-none"
+            className="h-full w-full object-cover object-[right_top] sm:object-[center_top] md:object-top select-none"
           />
         </picture>
 
@@ -188,11 +188,11 @@ export default function HeroSearchSection() {
           <img
             src="/images/hero-dark.jpg"
             alt="Rvan.me Editorial Vision"
-            width={2752}
-            height={1536}
+            width={1678}
+            height={937}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-[right_top] sm:object-[center_top] lg:object-[right_top] select-none"
+            className="h-full w-full object-cover object-[right_top] sm:object-[center_top] md:object-top select-none"
           />
         </picture>
       </div>
