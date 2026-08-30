@@ -411,10 +411,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             })}
           </nav>
 
-          {/* Action & Profile Control on Right */}
+          {/* Action & Profile Control on Right: Hamburger first, then Profile on Mobile */}
           <div className="flex items-center gap-1.5 shrink-0 relative z-10">
-            <UserAuthMenu compact={true} />
-
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -425,6 +423,8 @@ export default function SiteHeader({ siteSettings }: SiteHeaderProps) {
             >
               {menuOpen ? <X size={14} /> : <Menu size={14} />}
             </button>
+
+            <UserAuthMenu compact={true} />
           </div>
         </div>
       </header>

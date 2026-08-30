@@ -239,10 +239,8 @@ export default function HeroSearchSection() {
             })}
           </nav>
 
-          {/* Right Action Group: Compact User/Profile Control */}
+          {/* Right Action Group: Hamburger menu first, then profile on mobile */}
           <div className="flex items-center gap-1.5 shrink-0 relative z-10">
-            <UserAuthMenu compact={true} />
-
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -251,6 +249,8 @@ export default function HeroSearchSection() {
             >
               {mobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
             </button>
+
+            <UserAuthMenu compact={true} />
           </div>
         </div>
       </div>
