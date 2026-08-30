@@ -875,6 +875,27 @@ html {
   }
 }
 
+/* ─── Seamless Infinite Marquee Animation ─── */
+@keyframes marquee-left {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-left:hover {
+  animation-play-state: paused;
+}
+
 /* ─── Reduced Motion Respect ─── */
 
 /* ─── Reduced Motion Respect ─── */
