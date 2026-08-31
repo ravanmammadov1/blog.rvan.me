@@ -55,6 +55,20 @@ MASTER_EDITORIAL_BLOGS.forEach((post) => {
   BLOG_BY_ID.set(post._id, post);
 });
 
+// Backward compatibility aliases for replaced articles so old URLs resolve gracefully
+const avisBlog = BLOG_BY_ID.get("blog-guide-responsive-fluid-typography-css-clamp");
+if (avisBlog) {
+  BLOG_BY_SLUG.set("guide-responsive-fluid-typography-css-clamp", avisBlog);
+  BLOG_BY_SLUG.set("elastik-tipoqrafiya-css-clamp-rehberi", avisBlog);
+}
+
+const oatlyBlog = BLOG_BY_ID.get("blog-visual-hierarchy-masterclass");
+if (oatlyBlog) {
+  BLOG_BY_SLUG.set("why-eyes-look-at-certain-things-first", oatlyBlog);
+  BLOG_BY_SLUG.set("gozler-niye-ilk-baxir", oatlyBlog);
+  BLOG_BY_SLUG.set("visual-hierarchy-masterclass", oatlyBlog);
+}
+
 export function getEditorialBlogBySlug(slug: string): BlogPost | null {
   if (!slug) return null;
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "").toLowerCase();
