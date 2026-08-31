@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Calendar, Clock, Search, SlidersHorizontal, X, ArrowUpDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Calendar, Clock, Search, SlidersHorizontal, X, ArrowUpDown } from "lucide-react";
 
 import { fetchAllBlogs, fetchSiteSettings } from "../lib/sanityQueries";
 import { SiteSettings } from "../types/cms";
@@ -39,8 +39,10 @@ export default function BlogArchive() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "views" | "alpha-asc" | "alpha-desc">("newest");
   const [hoveredBlog, setHoveredBlog] = useState<string | null>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
   const { t, getLocalizedPath, language } = useLanguage();
 
   const isAz = language === "az";
@@ -62,6 +64,16 @@ export default function BlogArchive() {
       })
       .finally(() => setLoading(false));
   }, [language]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setFilterOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const categories = useMemo(() => {
     const list = [...new Set(posts.map((p) => p.category).filter(Boolean))];
@@ -137,6 +149,14 @@ export default function BlogArchive() {
     return posts.find((p) => p.featured) || posts[0];
   }, [posts]);
 
+  const featuredSlug = featuredPost
+    ? `/blog/${
+        typeof featuredPost.slug === "string"
+          ? featuredPost.slug
+          : featuredPost.slug?.current || featuredPost._id
+      }`
+    : "/blog";
+
   const {
     visibleItems: visiblePosts,
     hasMore,
@@ -199,9 +219,8 @@ export default function BlogArchive() {
         />
       </div>
 
-      {/* 1. Unified Master Page Hero */}
+      {/* 1. Master Page Hero — Eyebrow removed as requested */}
       <PageHero
-        eyebrow={isAz ? "BLOQ · İDEYALAR VƏ BİLİK" : "BLOG · INSIGHTS & IDEAS"}
         title={isAz ? "DİZAYN. İDEYALAR." : "DESIGN. IDEAS."}
         accentText={isAz ? "VİZUAL MƏDƏNİYYƏT." : "VISUAL CULTURE."}
         description={t(
@@ -211,134 +230,171 @@ export default function BlogArchive() {
       />
 
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-8 py-6 relative z-10 space-y-10">
-        {/* 2. Featured Highlighted Content (when not filtering/searching) */}
+        {/* 2. Featured Highlighted Content — Entire Card is Clickable */}
         {!searchQuery && activeCategory === "All" && featuredPost && !loading && (
           <motion.div
             variants={fadeUp}
             initial="hidden"
             animate="visible"
             custom={0.15}
-            className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-6 sm:p-8 backdrop-blur-xl transition-all duration-300 hover:border-primary/40 shadow-[0_12px_40px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
           >
-            <div className="grid gap-8 lg:grid-cols-12 items-center">
-              {/* Cover Image */}
-              <div className="lg:col-span-6 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#DDE1E0] dark:border-white/10 relative bg-neutral-900/80">
-                <img
-                  src={
-                    urlFor(featuredPost.coverImage)?.width(1200).height(675).quality(90).url() ||
-                    getArticleCoverImage("designNews", featuredPost.title)
-                  }
-                  alt={featuredPost.title}
-                  className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                  loading="eager"
-                />
-              </div>
-
-              {/* Text Info */}
-              <div className="lg:col-span-6 space-y-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary mono">
-                    <Sparkles size={12} />
-                    {isAz ? "SEÇİLMİŞ TƏHLİL" : "FEATURED ESSAY"}
-                  </span>
-                  <span className="text-xs text-muted-foreground mono">
-                    {isAz && featuredPost.category_az ? featuredPost.category_az : featuredPost.category}
-                  </span>
+            <Link
+              to={getLocalizedPath(featuredSlug)}
+              className="block group rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-6 sm:p-8 backdrop-blur-xl transition-all duration-300 hover:border-primary/40 shadow-[0_12px_40px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.4)] cursor-pointer"
+            >
+              <div className="grid gap-8 lg:grid-cols-12 items-center">
+                {/* Cover Image */}
+                <div className="lg:col-span-6 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#DDE1E0] dark:border-white/10 relative bg-neutral-900/80">
+                  <img
+                    src={
+                      urlFor(featuredPost.coverImage)?.width(1200).height(675).quality(90).url() ||
+                      getArticleCoverImage("designNews", featuredPost.title)
+                    }
+                    alt={featuredPost.title}
+                    className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    loading="eager"
+                  />
                 </div>
 
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
-                  {isAz && featuredPost.title_az ? featuredPost.title_az : featuredPost.title}
-                </h2>
-
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                  {isAz
-                    ? featuredPost.deck_az || featuredPost.excerpt_az || featuredPost.excerpt
-                    : featuredPost.deck || featuredPost.excerpt || featuredPost.deck_az || featuredPost.excerpt_az}
-                </p>
-
-                <div className="pt-2 flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground/80 mono">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={13} />
-                      {formatBlogDate(featuredPost.publishDate, language)}
+                {/* Text Info */}
+                <div className="lg:col-span-6 space-y-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary mono">
+                      {isAz ? "SEÇİLMİŞ TƏHLİL" : "FEATURED ESSAY"}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={13} />
-                      {estimateReadingTime(featuredPost.body, featuredPost.readTime, language)}
+                    <span className="text-xs text-muted-foreground mono">
+                      {isAz && featuredPost.category_az ? featuredPost.category_az : featuredPost.category}
                     </span>
                   </div>
 
-                  <Link
-                    to={getLocalizedPath(
-                      `/blog/${
-                        typeof featuredPost.slug === "string"
-                          ? featuredPost.slug
-                          : featuredPost.slug?.current || featuredPost._id
-                      }`
-                    )}
-                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition-transform hover:scale-105 mono"
-                  >
-                    <span>{isAz ? "Məqaləni Oxu" : "Read Essay"}</span>
-                    <ArrowRight size={14} />
-                  </Link>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight group-hover:text-primary transition-colors">
+                    {isAz && featuredPost.title_az ? featuredPost.title_az : featuredPost.title}
+                  </h2>
+
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                    {isAz
+                      ? featuredPost.deck_az || featuredPost.excerpt_az || featuredPost.excerpt
+                      : featuredPost.deck || featuredPost.excerpt || featuredPost.deck_az || featuredPost.excerpt_az}
+                  </p>
+
+                  <div className="pt-2 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground/80 mono">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={13} />
+                        {formatBlogDate(featuredPost.publishDate, language)}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock size={13} />
+                        {estimateReadingTime(featuredPost.body, featuredPost.readTime, language)}
+                      </span>
+                    </div>
+
+                    <span className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition-transform group-hover:scale-105 mono">
+                      <span>{isAz ? "Məqaləni Oxu" : "Read Essay"}</span>
+                      <ArrowRight size={14} />
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </motion.div>
         )}
 
-        {/* 3. Integrated Article Search & Category Filters */}
-        <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-3.5 sm:p-4.5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl space-y-3">
-          {/* Main Search Input */}
-          <div className="relative flex items-center">
-            <Search size={18} className="absolute left-3.5 text-primary shrink-0 pointer-events-none" />
-            <input
-              type="text"
-              autoComplete="off"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("searchArticles", "Search articles by title, excerpt, topic, or keyword...")}
-              className="w-full rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] pl-10 pr-10 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground placeholder:text-muted-foreground/60 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60 transition-all"
-              style={{ outline: "none", boxShadow: "none" }}
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3.5 p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                aria-label="Clear search"
-              >
-                <X size={15} />
-              </button>
-            )}
-          </div>
-
-          {/* Connected Category Filter Strip */}
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pt-0.5 pb-0.5">
-            <span className="text-[10px] font-mono font-bold text-muted-foreground/70 uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1">
-              <SlidersHorizontal size={12} className="text-primary" />
-              <span>{isAz ? "FİLTR:" : "FILTER:"}</span>
-            </span>
-            {categories.map((cat) => {
-              const isActive = activeCategory === cat;
-              const label = cat === "All" ? (isAz ? "Hamısı" : "All") : cat;
-
-              return (
+        {/* 3. Integrated Article Search & Unified Category Filter Popover */}
+        <div ref={filterRef} className="relative z-40">
+          <div className="rounded-3xl border border-[#DDE1E0] dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-2.5 sm:p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+            {/* Main Search Input Container */}
+            <div className="relative flex items-center">
+              <Search size={18} className="absolute left-3.5 text-primary shrink-0 pointer-events-none" />
+              <input
+                type="text"
+                autoComplete="off"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("searchArticles", "Search articles by title, excerpt, topic, or keyword...")}
+                className="w-full rounded-2xl border border-[#DDE1E0] dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.04] pl-10 pr-24 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-[#0F172A] dark:text-foreground placeholder:text-muted-foreground/60 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60 transition-all"
+                style={{ outline: "none", boxShadow: "none" }}
+              />
+              <div className="absolute right-3.5 flex items-center gap-2">
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    aria-label="Clear search"
+                  >
+                    <X size={15} />
+                  </button>
+                )}
+                {/* Filter Icon Button inside Search Bar */}
                 <button
-                  key={cat}
                   type="button"
-                  onClick={() => setActiveCategory(cat)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer shrink-0 ${
-                    isActive
-                      ? "bg-primary text-black font-bold shadow-2xs"
-                      : "bg-slate-100/70 dark:bg-white/[0.04] text-muted-foreground hover:text-foreground hover:bg-slate-200/80 dark:hover:bg-white/[0.08] border border-transparent hover:border-slate-300 dark:hover:border-white/10"
+                  onClick={() => setFilterOpen(!filterOpen)}
+                  aria-label="Toggle category filters"
+                  className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                    filterOpen || activeCategory !== "All"
+                      ? "border-primary/50 bg-primary/10 text-primary shadow-2xs"
+                      : "border-border/60 dark:border-white/10 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
                   }`}
                 >
-                  <span>{label}</span>
+                  <SlidersHorizontal size={16} />
                 </button>
-              );
-            })}
+              </div>
+            </div>
           </div>
+
+          {/* Liquid Glass Category Filter Popover */}
+          <AnimatePresence>
+            {filterOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="absolute top-full left-0 right-0 mt-3.5 z-50 p-4 sm:p-5 rounded-2xl border border-white/15 bg-card/95 dark:bg-[#0c0e12]/95 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] space-y-3.5"
+              >
+                <div className="flex items-center justify-between pb-2.5 border-b border-white/10 text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider">
+                  <span>{isAz ? "KATEGORİYA FİLTRLƏRİ" : "CATEGORY FILTERS"}</span>
+                  {activeCategory !== "All" && (
+                    <button
+                      onClick={() => setActiveCategory("All")}
+                      className="text-primary hover:underline cursor-pointer text-[11px]"
+                    >
+                      {isAz ? "Sıfırla" : "Reset"}
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto scrollbar-none py-1">
+                  {categories.map((cat) => {
+                    const isActive = activeCategory === cat;
+                    const label = cat === "All" ? (isAz ? "Hamısı" : "All") : cat;
+                    const count = categoryCounts[cat] || 0;
+
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => {
+                          setActiveCategory(cat);
+                          setFilterOpen(false);
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+                          isActive
+                            ? "bg-primary text-black font-bold shadow-2xs"
+                            : "bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 border border-white/10"
+                        }`}
+                      >
+                        <span>{label}</span>
+                        <span className={`text-[10px] opacity-75 ${isActive ? "text-black" : "text-muted-foreground"}`}>
+                          ({count})
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* 5. Article Grid & List */}
