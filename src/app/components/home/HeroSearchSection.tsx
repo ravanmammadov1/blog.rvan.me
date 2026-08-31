@@ -159,7 +159,7 @@ export default function HeroSearchSection() {
       
       {/* ── Layer 0: Full-Bleed Background Cinematic Image (Clipped inside Layer 0 only) ── */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden select-none"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden select-none [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)]"
         aria-hidden="true"
       >
         {/* Light Mode Picture */}
@@ -196,8 +196,8 @@ export default function HeroSearchSection() {
           />
         </picture>
 
-        {/* Soft Atmospheric Fade at Bottom of Hero Transitioning into Blog Section */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 sm:h-36 md:h-44 bg-gradient-to-b from-transparent via-background/60 to-background z-10" />
+        {/* Feather-Soft Atmospheric Fade at Bottom of Hero Transitioning into Blog Section */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 sm:h-56 md:h-72 lg:h-80 bg-gradient-to-b from-transparent via-background/30 via-[35%] via-background/75 via-[70%] to-background z-10" />
       </div>
 
       {/* ── Layer 1: Compact Floating Liquid Glass Navbar (Hugs Content, Identical to SiteHeader) ── */}
