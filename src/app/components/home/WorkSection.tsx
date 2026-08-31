@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { client, urlFor } from "../../../lib/sanityClient";
 import { Eyebrow } from "../Eyebrow";
+import { useLanguage } from "../../../lib/i18n/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -49,6 +50,8 @@ const fallbackProjects = [
 
 export default function WorkSection() {
   const [sanityProjects, setSanityProjects] = useState<any[]>([]);
+  const { getLocalizedPath, language } = useLanguage();
+  const isAz = language === "az";
 
   useEffect(() => {
     client
@@ -188,13 +191,16 @@ export default function WorkSection() {
         </div>
 
         {/* View All Projects CTA */}
-        <div className="mt-16 flex justify-center">
+        <div className="mt-14 sm:mt-16 flex justify-center">
           <Link
-            to="/work"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 text-xs font-bold tracking-[.18em] text-foreground uppercase transition-all duration-300 hover:border-[#61c5ad]/50 hover:bg-white/10 glass"
+            to={getLocalizedPath("/work")}
+            className="group relative inline-flex items-center justify-center gap-2.5 rounded-full px-8 sm:px-10 py-3.5 sm:py-4 h-[52px] sm:h-[56px] text-xs sm:text-sm font-mono font-bold tracking-[0.14em] uppercase text-foreground/90 transition-all duration-300 hover:scale-[1.02] hover:text-foreground active:scale-[0.985] select-none border border-white/20 dark:border-white/15 hover:border-white/35 dark:hover:border-white/25 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-indigo-500/10 dark:from-emerald-400/10 dark:via-cyan-400/10 dark:to-blue-500/10 backdrop-blur-md hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-indigo-500/20 max-w-full"
           >
-            <span>VIEW ALL ARCHIVED PROJECTS</span>
-            <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <span>{isAz ? "BÜTÜN ARXİVLƏNMİŞ LAYİHƏLƏR" : "VIEW ALL ARCHIVED PROJECTS"}</span>
+            <ArrowUpRight
+              size={16}
+              className="shrink-0 text-muted-foreground transition-transform duration-300 group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
           </Link>
         </div>
       </div>
