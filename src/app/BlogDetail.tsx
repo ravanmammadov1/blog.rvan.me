@@ -18,7 +18,6 @@ import BlogContent from "./components/blog/BlogContent";
 import TableOfContents from "./components/blog/TableOfContents";
 import AuthorCard from "./components/blog/AuthorCard";
 import ArticleReactions from "./components/blog/ArticleReactions";
-import DiscussionTrigger from "./components/blog/DiscussionTrigger";
 import RelatedPosts from "./components/blog/RelatedPosts";
 import CommentSection from "./components/CommentSection";
 import GlobalFaqSection from "./components/GlobalFaqSection";
@@ -251,11 +250,10 @@ export default function BlogDetail() {
             {/* Article Like / Dislike Feedback Reaction */}
             <ArticleReactions postId={postTrackingId} postTitle={currentTitle} />
 
-            {/* Author / Editorial Desk Profile Card */}
-            <AuthorCard post={post} />
-
-            {/* Provocative Discussion Trigger Prompt */}
-            <DiscussionTrigger prompt={post.discussionPrompt} postTitle={currentTitle} />
+            {/* Mobile Author Profile Card (Single-column layout) */}
+            <div className="lg:hidden">
+              <AuthorCard post={post} />
+            </div>
 
             {/* Genuine Reader Discussion Section */}
             <div id="comments-section">
@@ -281,6 +279,7 @@ export default function BlogDetail() {
           {/* Sticky Desktop Aside Sidebar */}
           <aside className="hidden lg:block lg:col-span-4 sticky top-28 space-y-6">
             <TableOfContents body={activeBody} />
+            <AuthorCard post={post} />
           </aside>
         </div>
       </article>

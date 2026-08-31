@@ -71,13 +71,6 @@ export default function Footer({ siteSettings }: FooterProps) {
           </Link>
 
           <Link
-            to={getLocalizedPath("/about/ravan-mammadov")}
-            className="hover:text-white transition-colors"
-          >
-            {isAz ? "Təsisçi" : "Founder"}
-          </Link>
-
-          <Link
             to={getLocalizedPath("/faq")}
             className="hover:text-white transition-colors"
           >

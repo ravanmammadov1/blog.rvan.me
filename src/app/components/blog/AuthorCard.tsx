@@ -12,9 +12,10 @@ import RavanPortrait400 from "@/imports/ravan_1-400.webp";
 
 interface AuthorCardProps {
   post?: BlogPost | null;
+  className?: string;
 }
 
-export default function AuthorCard({ post }: AuthorCardProps) {
+export default function AuthorCard({ post, className = "" }: AuthorCardProps) {
   const { getLocalizedPath, language } = useLanguage();
   const isAz = language === "az";
   const [aboutSection, setAboutSection] = useState<AboutSection | null>(null);
@@ -60,7 +61,7 @@ export default function AuthorCard({ post }: AuthorCardProps) {
   const authorPhotoUrl = localApp?.photoURL || (photoObj ? urlFor(photoObj)?.url() : (isFounder ? RavanPortrait1200 : null));
 
   return (
-    <div className="my-16 flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-8 text-center backdrop-blur-md sm:flex-row sm:text-left shadow-sm">
+    <div className={`flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-6 text-center backdrop-blur-md sm:flex-row sm:text-left shadow-sm ${className}`}>
       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-2 border-primary/60 bg-neutral-900 flex items-center justify-center">
         {authorPhotoUrl ? (
           isFounder ? (
