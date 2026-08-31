@@ -75,8 +75,9 @@ export function getBaselineStats(postId: string): ArticleStats {
     hash |= 0;
   }
   const positive = Math.abs(hash);
-  const baseViews = 54 + (positive % 145); // Strictly in the 50–200 range
-  const baseLikes = Math.max(4, Math.floor(baseViews * (0.055 + (positive % 20) / 1000)));
+  // Random number strictly between 50 and 100
+  const baseViews = 50 + (positive % 51);
+  const baseLikes = Math.max(3, Math.floor(baseViews * (0.06 + (positive % 15) / 1000)));
   const baseDislikes = positive % 8 === 0 ? 1 : 0;
 
   return {
@@ -109,7 +110,10 @@ export async function trackArticleView(postId: string): Promise<number> {
   const sessionKey = `rvan_viewed_${normId}`;
   if (inMemoryViewLocks.has(normId)) {
     const cached = getLocalStatsCache()[normId] || getBaselineStats(normId);
-    return cached?.viewCount || 1;
+    if (!cached.viewCount || cached.viewCount <= 1) {
+      cached.viewCount = getBaselineStats(normId).viewCount;
+    }
+    return cached?.viewCount || 50;
   }
   inMemoryViewLocks.add(normId);
 
@@ -118,12 +122,16 @@ export async function trackArticleView(postId: string): Promise<number> {
   const localCache = getLocalStatsCache();
   const baseline = getBaselineStats(normId);
   const currentStats = localCache[normId] || { ...baseline };
-  
+
+  if (!currentStats.viewCount || currentStats.viewCount <= 1) {
+    currentStats.viewCount = baseline.viewCount;
+  }
+
   if (!alreadyViewedInSession) {
     if (typeof window !== "undefined") {
       sessionStorage.setItem(sessionKey, "1");
     }
-    currentStats.viewCount = (currentStats.viewCount || baseline.viewCount) + 1;
+    currentStats.viewCount = currentStats.viewCount + 1;
     localCache[normId] = currentStats;
     setLocalStatsCache(localCache);
 
@@ -224,6 +232,10 @@ export function subscribeToArticleStats(
   const localCache = getLocalStatsCache();
   const baseline = getBaselineStats(normId);
   const cached = localCache[normId] || { ...baseline };
+  if (!cached.viewCount || cached.viewCount <= 1) {
+    cached.viewCount = baseline.viewCount;
+    cached.likeCount = Math.max(cached.likeCount || 0, baseline.likeCount);
+  }
   onUpdate(cached);
 
   if (!db) {
@@ -237,9 +249,10 @@ export function subscribeToArticleStats(
       (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
+          const rawViews = typeof data.viewCount === "number" ? data.viewCount : 0;
           const stats: ArticleStats = {
-            viewCount: typeof data.viewCount === "number" ? data.viewCount : 0,
-            likeCount: typeof data.likeCount === "number" ? data.likeCount : 0,
+            viewCount: rawViews <= 1 ? baseline.viewCount : rawViews,
+            likeCount: typeof data.likeCount === "number" ? data.likeCount : baseline.likeCount,
             dislikeCount: typeof data.dislikeCount === "number" ? data.dislikeCount : 0,
             readStarts: data.readStarts || 0,
             readCompletions: data.readCompletions || 0,
