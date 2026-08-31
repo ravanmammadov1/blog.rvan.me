@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogPost } from "../../../types/blog";
 import { urlFor } from "../../../lib/sanityClient";
@@ -58,32 +58,6 @@ export default function BlogHero({ post }: BlogHeroProps) {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="space-y-6 max-w-4xl"
       >
-        {/* Category, Format & Tags Row */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          {(post.category || post.category_az) && (
-            <span className="rounded-full bg-primary px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-black">
-              {language === "az" && post.category_az ? post.category_az : (post.category || post.category_az)}
-            </span>
-          )}
-
-          {post.format && (
-            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-mono font-semibold uppercase tracking-wider text-foreground">
-              {post.format}
-            </span>
-          )}
-
-          {Array.isArray(post.tags) &&
-            post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-mono tracking-wider text-muted-foreground"
-              >
-                <Tag size={11} className="text-primary" />
-                {tag}
-              </span>
-            ))}
-        </div>
-
         {/* Big Crisp Headline */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
           {language === "az" && post.title_az ? post.title_az : post.title}
