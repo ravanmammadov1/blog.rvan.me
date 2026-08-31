@@ -69,6 +69,13 @@ if (oatlyBlog) {
   BLOG_BY_SLUG.set("visual-hierarchy-masterclass", oatlyBlog);
 }
 
+const bettyCrockerBlog = BLOG_BY_ID.get("blog-iconography-and-vector-precision");
+if (bettyCrockerBlog) {
+  BLOG_BY_SLUG.set("why-notification-icon-is-a-bell", bettyCrockerBlog);
+  BLOG_BY_SLUG.set("bildiris-ikonu-niye-zengdir", bettyCrockerBlog);
+  BLOG_BY_SLUG.set("iconography-and-vector-precision", bettyCrockerBlog);
+}
+
 export function getEditorialBlogBySlug(slug: string): BlogPost | null {
   if (!slug) return null;
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "").toLowerCase();
