@@ -49,20 +49,19 @@ export default function AuthorCard({ post, className = "" }: AuthorCardProps) {
   }, [authorSlug]);
 
   const authorName = localApp?.displayName || (rawAuthorName || (isAz ? "Rəvan Məmmədov" : "Ravan Mammadov"));
-  const authorRole = localApp?.roleTitle || post?.authorRole || (isFounder ? (isAz ? "Təsisçi və Kreativ Direktor" : "Founder & Creative Director") : (isAz ? "Redaksiya Müəllifi" : "Editorial Contributor"));
-  const authorBio =
-    localApp?.bio ||
-    post?.authorBio ||
+  const authorRole =
+    localApp?.roleTitle ||
+    post?.authorRole ||
     (isFounder
-      ? (aboutSection?.introParagraph1 || "Visual systems, brand architecture, and behavioral design strategy.")
-      : (isAz ? "Rvan.me müəllif icmasının fəal üzvü." : "Active contributor and essayist on Rvan.me."));
+      ? "Senior Creative Designer & Visual Strategist"
+      : (isAz ? "Redaksiya Müəllifi" : "Editorial Contributor"));
 
   const photoObj = post?.authorPhoto || (isFounder ? aboutSection?.profilePhoto : null);
   const authorPhotoUrl = localApp?.photoURL || (photoObj ? urlFor(photoObj)?.url() : (isFounder ? RavanPortrait1200 : null));
 
   return (
-    <div className={`flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-6 text-center backdrop-blur-md sm:flex-row sm:text-left shadow-sm ${className}`}>
-      <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-2 border-primary/60 bg-neutral-900 flex items-center justify-center">
+    <div className={`flex flex-col items-center gap-5 rounded-2xl border border-border bg-card p-5 text-center backdrop-blur-md sm:flex-row sm:text-left shadow-sm ${className}`}>
+      <div className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-full border-2 border-primary/60 bg-neutral-900 flex items-center justify-center">
         {authorPhotoUrl ? (
           isFounder ? (
             <picture>
@@ -84,12 +83,12 @@ export default function AuthorCard({ post, className = "" }: AuthorCardProps) {
         )}
       </div>
 
-      <div>
-        <div className="text-xs font-bold uppercase tracking-[.18em] text-primary mono">
+      <div className="space-y-1">
+        <div className="text-[10px] sm:text-xs font-bold uppercase tracking-[.18em] text-primary mono">
           {isAz ? "MÜƏLLİF" : "WRITTEN BY"}
         </div>
 
-        <h4 className="mt-1 text-xl font-bold text-foreground">
+        <h4 className="text-lg sm:text-xl font-bold text-foreground leading-tight">
           <Link
             to={getLocalizedPath(`/author/${authorSlug}`)}
             className="hover:text-primary transition-colors"
@@ -98,12 +97,8 @@ export default function AuthorCard({ post, className = "" }: AuthorCardProps) {
           </Link>
         </h4>
 
-        <p className="mt-1 text-xs font-medium text-muted-foreground">
+        <p className="text-xs font-medium text-muted-foreground leading-normal">
           {authorRole}
-        </p>
-
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {authorBio}
         </p>
       </div>
     </div>
