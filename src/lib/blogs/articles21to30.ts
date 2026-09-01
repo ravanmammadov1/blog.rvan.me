@@ -13,8 +13,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
 export const ARTICLES_21_TO_30: BlogPost[] = [
   {
     _id: "blog-the-future-of-multidisciplinary-creators",
-    title: "Why Do Rounded Shapes Feel Friendlier Than Sharp Corners?",
-    title_az: "Dairəvi Formalar Niyə İti Künclərdən Daha Mehriban Və İsti Görünür?",
+    title: "Why Do Round Shapes Feel Friendlier?",
+    title_az: "Dairəvi formalar niyə daha mehriban görünür?",
     slug: { _type: "slug", current: "why-rounded-shapes-feel-friendlier-corner-radius-psychology" },
     slug_az: { _type: "slug", current: "dairevi-formalar-ve-kunclerin-psixologiyasi" },
     originalSlug: "the-future-of-multidisciplinary-creators",
@@ -57,8 +57,8 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
   },
   {
     _id: "blog-performance-creative-frameworks",
-    title: "Why Do Modern Websites All Look the Same?",
-    title_az: "Müasir Vebsaytlar Niyə Bir-birinin Eynisi Görünür?",
+    title: "Why Do Websites All Look the Same?",
+    title_az: "Vebsaytlar niyə bir-birinə oxşamağa başladı?",
     slug: { _type: "slug", current: "why-modern-websites-all-look-the-same" },
     slug_az: { _type: "slug", current: "vebsaytlar-niye-eyni-gorunur" },
     originalSlug: "performance-creative-frameworks",
@@ -109,8 +109,8 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
   },
   {
     _id: "blog-legal-ethics-and-licensing-in-ai-art",
-    title: "Why Is Comic Sans the Most Hated Font in Human History?",
-    title_az: "Comic Sans Niyə Bəşər Tarixinin Ən Nifrət Edilən Şriftidir?",
+    title: "Why Does Everyone Hate Comic Sans?",
+    title_az: "Comic Sans niyə bu qədər nifrət edilir?",
     slug: { _type: "slug", current: "why-comic-sans-is-the-most-hated-font-in-history" },
     slug_az: { _type: "slug", current: "comic-sans-niye-en-nifret-edilen-sriftdir" },
     originalSlug: "legal-ethics-and-licensing-in-ai-art",
@@ -155,8 +155,8 @@ export const ARTICLES_21_TO_30: BlogPost[] = [
   },
   {
     _id: "blog-content-strategy-hubs",
-    title: "Why Did Helvetica Become the Official Font of Corporate America?",
-    title_az: "Helvetica Niyə Korporativ Amerikanın Rəsmi Şriftinə Çevrildi?",
+    title: "Why Is Helvetica Everywhere?",
+    title_az: "Helvetica niyə hər yerdədir?",
     slug: { _type: "slug", current: "why-helvetica-became-the-font-of-corporate-america" },
     slug_az: { _type: "slug", current: "helvetica-ve-korporativ-amerika" },
     originalSlug: "content-strategy-hubs",

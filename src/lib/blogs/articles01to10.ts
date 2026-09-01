@@ -13,8 +13,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
 export const ARTICLES_01_TO_10: BlogPost[] = [
   {
     _id: "blog-iconography-and-vector-precision",
-    title: "Why Betty Crocker Made Bakers Add a Fresh Egg",
-    title_az: "Betty Crocker niyə tort qarışığına yumurta əlavə etdirdi?",
+    title: "Why Doesn't Making It Easier Always Sell?",
+    title_az: "Hər şeyi asanlaşdırmaq həmişə yaxşıdır?",
     slug: { _type: "slug", current: "betty-crocker-egg-myth-ikea-effect" },
     slug_az: { _type: "slug", current: "betty-crocker-tort-qarisigi-yumurta" },
     originalSlug: "betty-crocker-egg-myth-ikea-effect",
@@ -143,8 +143,8 @@ export const ARTICLES_01_TO_10: BlogPost[] = [
   },
   {
     _id: "blog-visual-hierarchy-masterclass",
-    title: "How Oatly Stood Out on the Milk Shelf",
-    title_az: "Oatly süd rəfində necə fərqləndi?",
+    title: "How Do You Stand Out?",
+    title_az: "Necə fərqlənmək olar?",
     slug: { _type: "slug", current: "oatly-packaging-design-strategy" },
     slug_az: { _type: "slug", current: "oatly-sud-refinde-nece-ferqlendi" },
     originalSlug: "oatly-packaging-design-strategy",
@@ -249,8 +249,8 @@ export const ARTICLES_01_TO_10: BlogPost[] = [
   },
   {
     _id: "blog-minimalist-packaging-and-graphic-layouts",
-    title: "Why Does Restraint Look Expensive? The Physics of Minimalist Design",
-    title_az: "Təmkin Niyə Bahalı Görünür? Minimalist Dizaynın Fizikası",
+    title: "Why Does Minimalist Design Look Expensive?",
+    title_az: "Minimalist dizayn niyə bahalı görünür?",
     slug: { _type: "slug", current: "why-minimalist-designs-look-more-expensive" },
     slug_az: { _type: "slug", current: "minimalist-dizayn-niye-bahali-gorunur" },
     originalSlug: "minimalist-packaging-and-graphic-layouts",
@@ -311,8 +311,8 @@ export const ARTICLES_01_TO_10: BlogPost[] = [
   },
   {
     _id: "blog-micro-and-macro-whitespace",
-    title: "Why Does Negative Space Make Designs Feel More Expensive?",
-    title_az: "Niyə Mənfi Boşluq (Negative Space) Dizaynları Daha Bahalı Göstərir?",
+    title: "Why Does Empty Space Make Design Feel Premium?",
+    title_az: "Boşluq niyə dizaynı daha premium göstərir?",
     slug: { _type: "slug", current: "why-negative-space-makes-designs-feel-expensive" },
     slug_az: { _type: "slug", current: "menfi-bosluq-ve-bahali-dizayn" },
     originalSlug: "micro-and-macro-whitespace",
@@ -350,7 +350,7 @@ export const ARTICLES_01_TO_10: BlogPost[] = [
   {
     _id: "blog-copywriting-psychology-cognitive-biases",
     title: "Why Does $999 Feel Cheaper Than $1,000?",
-    title_az: "Niyə $999 Qiyməti $1,000-dan Qat-qat Ucuz Görünür?",
+    title_az: "Niyə $999 bizə $1,000-dan ucuz görünür?",
     slug: { _type: "slug", current: "why-999-feels-cheaper-than-1000-pricing-psychology" },
     slug_az: { _type: "slug", current: "sol-reqem-effekti-qiymet-psixologiyasi" },
     originalSlug: "copywriting-psychology-cognitive-biases",
@@ -397,8 +397,8 @@ export const ARTICLES_01_TO_10: BlogPost[] = [
   },
   {
     _id: "blog-after-effects-optimization-expressions-render-systems",
-    title: "FOMO & Loss Aversion: The Psychology of Scarcity in Product Design",
-    title_az: "FOMO və İtkidən Qorxma: Məhsul Dizaynında Qıtlıq Psixologiyası",
+    title: "Why Does “Only 3 Left” Make Us Hurry?",
+    title_az: "“Yalnız 3 ədəd qaldı” niyə bizi tələsdirir?",
     slug: { _type: "slug", current: "fomo-loss-aversion-scarcity-psychology" },
     slug_az: { _type: "slug", current: "fomo-itirmek-qorxusu-psixologiyasi" },
     originalSlug: "what-is-the-fomo",

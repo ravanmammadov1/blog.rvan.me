@@ -13,8 +13,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
 export const ARTICLES_11_TO_20: BlogPost[] = [
   {
     _id: "blog-brand-identity-design-systems",
-    title: "Why Are Some Logos Impossible to Forget?",
-    title_az: "Bəzi Loqolar Niyə Heç Vaxt Yaddan Çıxmır?",
+    title: "Why Do Some Logos Stick in Your Mind?",
+    title_az: "Bəzi loqolar niyə yadda qalır?",
     slug: { _type: "slug", current: "why-some-logos-are-impossible-to-forget" },
     slug_az: { _type: "slug", current: "bezi-loqolar-niye-unudulmur" },
     originalSlug: "brand-identity-design-systems",
@@ -61,8 +61,8 @@ export const ARTICLES_11_TO_20: BlogPost[] = [
   },
   {
     _id: "blog-aida-framework-performance-creative-attention-action",
-    title: "What Is Visual Metaphor and Why Does It Make Ads Easier to Remember?",
-    title_az: "Vizual Metafora Nədir və Reklamları Niyə Yadda Qalan Edir?",
+    title: "How Do You Make a Visual Memorable?",
+    title_az: "Vizualı necə yadda qalan edək?",
     slug: { _type: "slug", current: "what-is-visual-metaphor-advertising" },
     slug_az: { _type: "slug", current: "vizual-metafora-ve-reklamlar" },
     originalSlug: "the-aida-framework",

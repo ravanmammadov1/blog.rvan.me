@@ -12,8 +12,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
 
 export const GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY: BlogPost = {
   _id: "blog-guide-responsive-fluid-typography-css-clamp",
-  title: "How Avis Turned Position No. 2 into a Competitive Advantage",
-  title_az: "Avis necə “2-ci yeri” üstünlüyə çevirdi?",
+  title: "How Did “We're No. 2” Become an Advantage?",
+  title_az: "“Biz 2-ciyik” demək necə üstünlüyə çevrildi?",
   slug: { _type: "slug", current: "avis-we-try-harder" },
   slug_az: { _type: "slug", current: "avis-2-ci-yeri-ustunluye-cevirdi" },
   originalSlug: "avis-we-try-harder",
@@ -24,7 +24,7 @@ export const GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY: BlogPost = {
   excerpt_az: "13 il zərər edən brend necə oldu ki, bazar liderinə qarşı öz 2-ci yerini ən böyük silahına çevirdi? Zəifliyi etiraf etməyin və Pratfall Effektinin marketinq psixologiyası.",
   coverImage: {
     _type: "image",
-    asset: { _type: "reference", _ref: "image-05b84901cc52ea9195189d594335788c9ed1a6ba-1600x1067-jpg" },
+    asset: { _type: "reference", _ref: "image-manual-typography" },
     alt: "Avis We Try Harder historical advertising campaign analysis and positioning diagram",
     url: "https://cdn.sanity.io/images/0lqwkcmg/production/35f291a056702bbc7354aee2e0378a7ab73a9781-1600x1067.jpg",
   },

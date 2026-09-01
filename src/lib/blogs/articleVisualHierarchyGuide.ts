@@ -12,8 +12,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
 
 export const GUIDE_VISUAL_HIERARCHY: BlogPost = {
   _id: "blog-visual-hierarchy-framework-web-interfaces",
-  title: "The 3-Second Visual Hierarchy Framework for Modern Web Interfaces",
-  title_az: "Müasir Veb İnterfeyslər Üçün 3 Saniyəlik Vizual İyerarxiya Çərçivəsi",
+  title: "Where Do Your Eyes Look First in a Design?",
+  title_az: "İnsan gözü dizaynda ilk hara baxır?",
   slug: { _type: "slug", current: "visual-hierarchy-framework-web-interfaces" },
   slug_az: { _type: "slug", current: "veb-interfeyslerde-vizual-iyerarxiya-cercivesi" },
   originalSlug: "visual-hierarchy-framework-web-interfaces",

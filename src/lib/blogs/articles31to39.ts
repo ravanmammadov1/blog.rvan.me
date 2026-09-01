@@ -13,8 +13,8 @@ function createBlock(text: string, style = "normal", key = Math.random().toStrin
 export const ARTICLES_31_TO_39: BlogPost[] = [
   {
     _id: "blog-ai-driven-hyper-personalization",
-    title: "Why Contrast Makes Designs Impossible to Ignore: The Von Restorff Isolation Effect",
-    title_az: "Kontrast Niyə Dizaynı Görməzdən Gəlməyi İmkansız Edir? Von Restorff Təcrid Effekti",
+    title: "How Does Contrast Control Our Attention?",
+    title_az: "Kontrast diqqətimizi necə idarə edir?",
     slug: { _type: "slug", current: "why-contrast-makes-designs-impossible-to-ignore-von-restorff" },
     slug_az: { _type: "slug", current: "kontrast-ve-von-restorff-effekti" },
     originalSlug: "ai-driven-hyper-personalization",
@@ -71,8 +71,8 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
   },
   {
     _id: "blog-building-custom-gpts-and-specialized-knowledge-bases",
-    title: "Why Does Changing a Font Completely Change a Brand's Personality?",
-    title_az: "Şrifti Dəyişmək Bir Brendin Xarakterini Niyə Kökündən Dəyişir?",
+    title: "How Can a Font Change a Brand's Personality?",
+    title_az: "Şrift brendin xarakterini necə dəyişir?",
     slug: { _type: "slug", current: "why-changing-a-font-changes-brand-personality" },
     slug_az: { _type: "slug", current: "srift-deyisikliyi-ve-brend-xarakteri" },
     originalSlug: "building-custom-gpts-and-specialized-knowledge-bases",
@@ -127,8 +127,8 @@ export const ARTICLES_31_TO_39: BlogPost[] = [
   },
   {
     _id: "blog-dark-mode-ui-architecture",
-    title: "The Psychology of Dark Mode: Why Developers and Night Owls Love OLED Blacks",
-    title_az: "Qaranlıq Rejim Psixologiyası: Proqramçılar Niyə OLED Qaralarını Bu Qədər Sevir?",
+    title: "Why Do We Love Dark Mode So Much?",
+    title_az: "Dark mode niyə bu qədər sevilir?",
     slug: { _type: "slug", current: "psychology-of-dark-mode-oled-black-ui" },
     slug_az: { _type: "slug", current: "qaranliq-rejim-psixologiyasi-oled" },
     originalSlug: "dark-mode-ui-architecture",
