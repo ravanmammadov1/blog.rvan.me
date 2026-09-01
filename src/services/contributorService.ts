@@ -148,7 +148,7 @@ export const FOUNDER_CONTRIBUTOR_PROFILE: ContributorProfile = {
   },
   status: "approved",
   approvedAt: "2026-01-01T00:00:00Z",
-  publishedArticlesCount: 39,
+  publishedArticlesCount: 10,
 };
 
 /**
@@ -1081,7 +1081,7 @@ export async function getContributorDashboardStats(
   });
 
   if (authorUid === "founder-ravan-mammadov" || authorUid === "ravan-mammadov") {
-    publishedCount = 39;
+    publishedCount = 10;
   }
 
   const profileCompleteness = profile ? calculateProfileCompleteness(profile) : 0;

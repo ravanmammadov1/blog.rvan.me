@@ -11,7 +11,7 @@ import { ARTICLES_VIRAL_MASTERCLASS } from "./blogs/articlesViralMasterclass";
 
 /**
  * Master Editorial Blog Registry
- * Contains the 39 publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
+ * Contains the curated Top 10 publication articles on DESIGN x PSYCHOLOGY x MARKETING x CULTURE.
  */
 const RAW_MASTER_EDITORIAL_BLOGS: BlogPost[] = [
   GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY,
@@ -33,10 +33,10 @@ export const MASTER_EDITORIAL_BLOGS: BlogPost[] = RAW_MASTER_EDITORIAL_BLOGS.map
   authorRole: post.authorRole || "Senior Creative Designer & Visual Strategist",
 }));
 
-// Verify that the count is at least 39
-if (MASTER_EDITORIAL_BLOGS.length < 39) {
+// Verify that the count is exactly 10
+if (MASTER_EDITORIAL_BLOGS.length !== 10) {
   console.warn(
-    `[editorialBlogRegistry] Expected at least 39 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
+    `[editorialBlogRegistry] Expected exactly 10 master blogs, but found ${MASTER_EDITORIAL_BLOGS.length}`
   );
 }
 
