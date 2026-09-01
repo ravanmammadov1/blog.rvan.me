@@ -24,7 +24,7 @@ export const GUIDE_RESPONSIVE_FLUID_TYPOGRAPHY: BlogPost = {
   excerpt_az: "13 il zərər edən brend necə oldu ki, bazar liderinə qarşı öz 2-ci yerini ən böyük silahına çevirdi? Zəifliyi etiraf etməyin və Pratfall Effektinin marketinq psixologiyası.",
   coverImage: {
     _type: "image",
-    asset: { _type: "reference", _ref: "image-manual-typography" },
+    asset: { _type: "reference", _ref: "image-05b84901cc52ea9195189d594335788c9ed1a6ba-1600x1067-jpg" },
     alt: "Avis We Try Harder historical advertising campaign analysis and positioning diagram",
     url: "https://cdn.sanity.io/images/0lqwkcmg/production/35f291a056702bbc7354aee2e0378a7ab73a9781-1600x1067.jpg",
   },
