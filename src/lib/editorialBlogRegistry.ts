@@ -76,6 +76,13 @@ if (bettyCrockerBlog) {
   BLOG_BY_SLUG.set("iconography-and-vector-precision", bettyCrockerBlog);
 }
 
+const economistBlog = BLOG_BY_ID.get("blog-conversion-rate-optimization-cro");
+if (economistBlog) {
+  BLOG_BY_SLUG.set("why-most-popular-works-on-pricing-tables", economistBlog);
+  BLOG_BY_SLUG.set("en-meshur-nisani-ve-sosial-subut", economistBlog);
+  BLOG_BY_SLUG.set("conversion-rate-optimization-cro", economistBlog);
+}
+
 export function getEditorialBlogBySlug(slug: string): BlogPost | null {
   if (!slug) return null;
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "").toLowerCase();
