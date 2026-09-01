@@ -124,7 +124,7 @@ export default function BlogHero({ post }: BlogHeroProps) {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-          className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] aspect-[16/9] md:aspect-[21/9] shadow-2xl group"
+          className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] aspect-[16/9] shadow-2xl group"
         >
           <img
             src={coverUrl}

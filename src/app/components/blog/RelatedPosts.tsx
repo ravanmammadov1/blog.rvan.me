@@ -111,7 +111,7 @@ export default function RelatedPosts({
             >
               <div>
                 {imgUrl && (
-                  <div className="mb-4 overflow-hidden rounded-xl aspect-[16/10] bg-muted/50 border border-border/60 dark:border-white/5">
+                  <div className="mb-4 overflow-hidden rounded-xl aspect-[16/9] bg-muted/50 border border-border/60 dark:border-white/5">
                     <img
                       src={imgUrl}
                       alt={post.title}
