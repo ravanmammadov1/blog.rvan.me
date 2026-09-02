@@ -812,4 +812,5 @@ ${sitemapPages
 </urlset>`;
 
 await fs.writeFile(path.join(distRoot, "sitemap.xml"), sitemapXml.trim(), "utf8");
-console.log(`Generated authoritative sitemap.xml with ${sitemapPages.length} indexable URLs (including lastmod and hreflang tags).`);
+await fs.writeFile(path.join(projectRoot, "public", "sitemap.xml"), sitemapXml.trim(), "utf8");
+console.log(`Generated authoritative sitemap.xml with ${sitemapPages.length} indexable URLs (including lastmod and hreflang tags) in both dist and public.`);

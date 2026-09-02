@@ -223,7 +223,7 @@ export default function SEO({
           "Rəvan Məmmədov Dizayner",
           "ravanimate",
         ],
-        url: `${siteDomain}/ravan-mammadov`,
+        url: `${siteDomain}/about/ravan-mammadov`,
         jobTitle: isAz ? "Aparıcı Kreativ Dizayner və Art Direktor" : "Senior Creative Designer & Art Director",
         image: {
           "@type": "ImageObject",
@@ -233,6 +233,7 @@ export default function SEO({
           representativeOfPage: true,
         },
         sameAs: [
+          `${siteDomain}/ravan-mammadov`,
           activeSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan",
           activeSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/",
           activeSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/",
