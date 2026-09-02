@@ -184,12 +184,12 @@ function createGraph(page) {
         "ravanimate",
       ],
       jobTitle: isAz ? "Aparıcı Kreativ Dizayner və Art Direktor" : "Senior Creative Designer & Art Director",
-      url: `${domain}/ravan-mammadov`,
+      url: isAz ? `${domain}/az/about/ravan-mammadov` : `${domain}/about/ravan-mammadov`,
       image: {
         "@type": "ImageObject",
         "@id": `${domain}/#portrait`,
-        url: `${domain}/og-image.jpg`,
-        caption: "Rəvan Məmmədov (Ravan Mammadov) — Senior Creative Designer & Art Director",
+        url: `${domain}/imports/ravan_1-1200.webp`,
+        caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov) — Aparıcı Kreativ Dizayner və Təsisçi" : "Ravan Mammadov (Rəvan Məmmədov) — Senior Creative Designer & Founder",
         representativeOfPage: true,
       },
       description: isAz

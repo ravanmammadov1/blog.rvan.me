@@ -284,8 +284,20 @@ export default function FounderProfilePage() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: founderName,
+    alternateName: [
+      "Rəvan Məmmədov",
+      "Ravan Mammadov",
+      "Ravan Mammadov Studio",
+      "Rəvan Məmmədov Dizayner",
+      "ravanimate",
+    ],
     url: isAz ? "https://www.rvan.me/az/about/ravan-mammadov" : "https://www.rvan.me/about/ravan-mammadov",
-    image: "https://www.rvan.me/imports/ravan_1-1200.webp",
+    image: {
+      "@type": "ImageObject",
+      url: "https://www.rvan.me/imports/ravan_1-1200.webp",
+      caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov)" : "Ravan Mammadov (Rəvan Məmmədov)",
+      representativeOfPage: true,
+    },
     jobTitle: isAz ? "Kreativ Strateq, Dizayner, Marketoloq" : "Creative Strategist, Designer, Marketer",
     worksFor: {
       "@type": "Organization",
@@ -294,7 +306,10 @@ export default function FounderProfilePage() {
     },
     sameAs: [
       "https://www.linkedin.com/in/ravanmammadov1/",
+      "https://www.instagram.com/ravanimate/",
       "https://www.behance.net/mammadovravan",
+      "https://github.com/ravanmammadov1",
+      "https://twitter.com/ravanimate",
     ],
     description: positioningStatement,
   };

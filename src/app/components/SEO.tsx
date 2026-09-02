@@ -223,16 +223,19 @@ export default function SEO({
           "Rəvan Məmmədov Dizayner",
           "ravanimate",
         ],
-        url: `${siteDomain}/about/ravan-mammadov`,
+        url: isAz ? `${siteDomain}/az/about/ravan-mammadov` : `${siteDomain}/about/ravan-mammadov`,
         jobTitle: isAz ? "Aparıcı Kreativ Dizayner və Art Direktor" : "Senior Creative Designer & Art Director",
         image: {
           "@type": "ImageObject",
           "@id": `${siteDomain}/#portrait`,
-          url: `${siteDomain}/og-image.jpg`,
-          caption: "Rəvan Məmmədov (Ravan Mammadov) — Senior Creative Designer & Art Director",
+          url: `${siteDomain}/imports/ravan_1-1200.webp`,
+          caption: isAz
+            ? "Rəvan Məmmədov (Ravan Mammadov) — Aparıcı Kreativ Dizayner və Təsisçi"
+            : "Ravan Mammadov (Rəvan Məmmədov) — Senior Creative Designer & Founder",
           representativeOfPage: true,
         },
         sameAs: [
+          `${siteDomain}/about/ravan-mammadov`,
           `${siteDomain}/ravan-mammadov`,
           activeSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan",
           activeSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/",
