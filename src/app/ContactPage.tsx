@@ -101,24 +101,24 @@ export default function ContactPage() {
     "@graph": [
       {
         "@type": "Person",
-        "@id": "https://www.rvan.me/#person",
+        "@id": "https://blog.rvan.me/#person",
         name: "Ravan Mammadov",
-        url: "https://www.rvan.me/ravan-mammadov",
+        url: "https://blog.rvan.me/ravan-mammadov",
       },
       {
         "@type": "WebSite",
-        "@id": "https://www.rvan.me/#website",
+        "@id": "https://blog.rvan.me/#website",
         name: "Ravan Mammadov Portfolio",
-        url: "https://www.rvan.me/",
-        publisher: { "@id": "https://www.rvan.me/#person" },
+        url: "https://blog.rvan.me/",
+        publisher: { "@id": "https://blog.rvan.me/#person" },
       },
       {
         "@type": "ContactPage",
-        "@id": "https://www.rvan.me/contact#webpage",
+        "@id": "https://blog.rvan.me/contact#webpage",
         name: "Contact Ravan Mammadov",
         description: "Get in touch with Ravan Mammadov for motion design, brand identity systems, or digital collaboration ideas.",
-        url: "https://www.rvan.me/contact",
-        mainEntity: { "@id": "https://www.rvan.me/#person" },
+        url: "https://blog.rvan.me/contact",
+        mainEntity: { "@id": "https://blog.rvan.me/#person" },
       },
     ],
   };
@@ -131,7 +131,7 @@ export default function ContactPage() {
       <SEO
         title={`${t("navContact", "Contact")} — Rvan.me Studio`}
         description={t("contactSubtitle", "Have a project, collaboration idea, or feedback? Let's talk.")}
-        url="https://www.rvan.me/contact"
+        url="https://blog.rvan.me/contact"
         jsonLd={jsonLd}
       />
 

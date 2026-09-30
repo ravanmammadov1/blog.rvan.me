@@ -68,12 +68,12 @@ export default function ProjectDetail() {
   const projectSchema = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
-    "@id": `https://www.rvan.me/work/${slug}#creative-work`,
+    "@id": `https://blog.rvan.me/work/${slug}#creative-work`,
     name: title,
     description,
-    url: `https://www.rvan.me/work/${slug}`,
+    url: `https://blog.rvan.me/work/${slug}`,
     image: image ? [image] : [],
-    creator: { "@id": "https://www.rvan.me/#person" },
+    creator: { "@id": "https://blog.rvan.me/#person" },
     keywords: tags,
     about: tags.map((tag) => ({ "@type": "Thing", name: tag })),
   };
@@ -84,7 +84,7 @@ export default function ProjectDetail() {
         title={`${title} — Creative Design Case Study | Ravan Mammadov`}
         description={description}
         image={image}
-        url={`https://www.rvan.me/work/${slug}`}
+        url={`https://blog.rvan.me/work/${slug}`}
         jsonLd={projectSchema}
       />
       <SiteHeader siteSettings={siteSettings} />

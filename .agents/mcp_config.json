@@ -13,7 +13,7 @@
       "command": "npx",
       "args": ["-y", "mcp-gsc"],
       "env": {
-        "GSC_SITE_URL": "https://www.rvan.me/",
+        "GSC_SITE_URL": "https://blog.rvan.me/",
         "GOOGLE_APPLICATION_CREDENTIALS": "C:/Users/mamma/OneDrive/Desktop/rvan-2796c-48b56f62f8a7.json"
       }
     },

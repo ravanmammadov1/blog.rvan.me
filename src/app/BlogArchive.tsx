@@ -180,7 +180,7 @@ export default function BlogArchive() {
           "blogArchiveSubtitle",
           "Original articles on visual strategy, motion mechanics, design systems, and creative technology."
         )}
-        url="https://www.rvan.me/blog"
+        url="https://blog.rvan.me/blog"
       />
 
       {/* Global Unified Header */}

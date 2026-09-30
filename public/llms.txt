@@ -4,20 +4,20 @@
 
 ## Canonical pages
 
-- Website: https://www.rvan.me/
-- Work archive: https://www.rvan.me/work
-- Work detail pattern: https://www.rvan.me/work/:slug
-- Profile: https://www.rvan.me/ravan-mammadov
-- Contact: https://www.rvan.me/contact
-- Blog: https://www.rvan.me/blog
-- Blog detail pattern: https://www.rvan.me/blog/:slug
-- News: https://www.rvan.me/news
-- News detail pattern: https://www.rvan.me/news/:slug
-- Designer tools: https://www.rvan.me/tools
-- Resources: https://www.rvan.me/resources
-- Resource detail pattern: https://www.rvan.me/resources/:slug
-- Sitemap: https://www.rvan.me/sitemap.xml
-- RSS feed: https://www.rvan.me/rss.xml
+- Website: https://blog.rvan.me/
+- Work archive: https://blog.rvan.me/work
+- Work detail pattern: https://blog.rvan.me/work/:slug
+- Profile: https://blog.rvan.me/ravan-mammadov
+- Contact: https://blog.rvan.me/contact
+- Blog: https://blog.rvan.me/blog
+- Blog detail pattern: https://blog.rvan.me/blog/:slug
+- News: https://blog.rvan.me/news
+- News detail pattern: https://blog.rvan.me/news/:slug
+- Designer tools: https://blog.rvan.me/tools
+- Resources: https://blog.rvan.me/resources
+- Resource detail pattern: https://blog.rvan.me/resources/:slug
+- Sitemap: https://blog.rvan.me/sitemap.xml
+- RSS feed: https://blog.rvan.me/rss.xml
 
 ## Professional profile
 
@@ -35,6 +35,6 @@ The work archive contains creative case studies. Individual case studies describ
 
 ## Legal pages
 
-- Privacy policy: https://www.rvan.me/privacy-policy
-- Cookie policy: https://www.rvan.me/cookie-policy
-- Terms: https://www.rvan.me/terms
+- Privacy policy: https://blog.rvan.me/privacy-policy
+- Cookie policy: https://blog.rvan.me/cookie-policy
+- Terms: https://blog.rvan.me/terms

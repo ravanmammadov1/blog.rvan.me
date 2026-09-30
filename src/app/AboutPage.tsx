@@ -63,7 +63,7 @@ export default function AboutPage() {
             ? "Rvan.me dizayn, brend arxitekturası, marketinq, texnologiya və yaradıcı sənaye üçün müstəqil intellektual platformadır."
             : "Rvan.me is an independent creative publication and knowledge ecosystem dedicated to design systems, branding, technology, and strategic perspectives."
         }
-        url="https://www.rvan.me/about"
+        url="https://blog.rvan.me/about"
       />
 
       <SiteHeader siteSettings={siteSettings} />

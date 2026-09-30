@@ -119,7 +119,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             <div class="value">${timestampStr}</div>
 
             <div class="footer">
-              Submitted via <a href="https://rvan.me">rvan.me</a> portfolio contact form.
+              Submitted via <a href="https://blog.rvan.me">rvan.me</a> portfolio contact form.
             </div>
           </div>
         </body>

@@ -2,7 +2,7 @@
 
 ## 1. Overview
 **Platform Name**: Rvan.me  
-**Domain**: [https://www.rvan.me](https://www.rvan.me)  
+**Domain**: [https://blog.rvan.me](https://blog.rvan.me)  
 **Founder & Creative Lead**: Ravan Mammadov (Senior Creative Designer & Art Director, Baku, Azerbaijan)  
 **Core Mission**: To transform from a personal portfolio into a premier, high-utility creative publication, tools suite, and design resource ecosystem.
 

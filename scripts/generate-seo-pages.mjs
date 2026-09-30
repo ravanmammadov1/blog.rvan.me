@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distRoot = path.join(projectRoot, "dist");
-const domain = "https://www.rvan.me";
+const domain = "https://blog.rvan.me";
 const todayIso = new Date().toISOString().split("T")[0];
 
 const staticPages = [

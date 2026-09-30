@@ -132,7 +132,7 @@ export default function ProfilePage() {
       <SEO
         title={`${isAz ? "Tənzimləmələr və Profil" : "Settings & Profile"} — Rvan.me`}
         description={isAz ? "Vebsayt dili, görünüş teması və şəxsi profil tənzimləmələri." : "Manage site language, appearance theme, and personal profile settings."}
-        url="https://www.rvan.me/profile"
+        url="https://blog.rvan.me/profile"
       />
 
       <SiteHeader siteSettings={siteSettings} />

@@ -193,7 +193,7 @@ export default function BlogDetail() {
         title={post.seo?.metaTitle || `${currentTitle} — Rvan.me`}
         description={post.seo?.metaDescription || currentExcerpt || `Read "${currentTitle}" on Rvan.me — Creative Publication & Knowledge Platform.`}
         image={post.seo?.ogImage ? urlFor(post.seo.ogImage)?.width(1200).height(630).url() : coverUrl}
-        url={post.seo?.canonicalUrl || `https://www.rvan.me/blog/${post.slug?.current || slug}`}
+        url={post.seo?.canonicalUrl || `https://blog.rvan.me/blog/${post.slug?.current || slug}`}
         type="article"
         publishDate={post.publishDate}
         authorName={post.desk || post.authorName || "Rvan.me Editorial"}

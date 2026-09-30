@@ -232,7 +232,7 @@ export default function ResourceDetail() {
         title={resource.seo?.metaTitle || `${resource.title} — Rvan.me`}
         description={resource.seo?.metaDescription || resource.description}
         image={ogImgUrl}
-        url={`https://www.rvan.me/resources/${typeof resource.slug === "string" ? resource.slug : resource.slug?.current || resource._id}`}
+        url={`https://blog.rvan.me/resources/${typeof resource.slug === "string" ? resource.slug : resource.slug?.current || resource._id}`}
       />
 
       <SiteHeader siteSettings={siteSettings} />

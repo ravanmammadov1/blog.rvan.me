@@ -44,7 +44,7 @@ export default function TopicArchivePage() {
             ? "Rvan.me nəşrinin 6 əsas redaksiya mövzusu: Dizayn, Marketinq, Brendinq, Sİ və Yaradıcılıq, Kreativ Sənaye və Strategiya."
             : "Explore our 6 core editorial verticals: Design, Marketing, Branding, AI & Creativity, Creative Industry, and Strategy."
         }
-        url="https://www.rvan.me/topics"
+        url="https://blog.rvan.me/topics"
       />
 
       <SiteHeader siteSettings={siteSettings} />

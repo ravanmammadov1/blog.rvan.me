@@ -194,7 +194,7 @@ export default function PublicAuthorProfilePage() {
         title={`${profile.name} — ${isAz ? "Müəllif Profili" : "Author Profile"} | Rvan.me`}
         description={profile.bio || `${profile.name} — ${profile.professionalTitle}`}
         image={profile.profileImage || undefined}
-        url={isAz ? `https://www.rvan.me/az/author/${profile.slug}` : `https://www.rvan.me/author/${profile.slug}`}
+        url={isAz ? `https://blog.rvan.me/az/author/${profile.slug}` : `https://blog.rvan.me/author/${profile.slug}`}
       />
 
       <SiteHeader siteSettings={siteSettings} />

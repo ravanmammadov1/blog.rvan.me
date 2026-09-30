@@ -887,7 +887,7 @@ export async function fetchAuthorBySlug(slug: string, lang: string = "en"): Prom
         ? "Vizual mədəniyyət, brend arxitekturası, texnologiya və kreativ strategiyanın kəsişməsini araşdıran dizayner və marketoloq."
         : "Designer and marketer exploring the intersection of visual culture, brand architecture, technology, and creative strategy.",
       socialLinks: {
-        website: "https://www.rvan.me",
+        website: "https://blog.rvan.me",
         linkedin: "https://linkedin.com/in/ravanmammadov",
         twitter: "https://x.com/ravanmammadov",
         github: "https://github.com/ravanmammadov1",

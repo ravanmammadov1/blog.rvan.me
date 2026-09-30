@@ -41,7 +41,7 @@ export default function TermsPage() {
             ? "Rvan.me platformasının rəsmi İstifadə Qaydaları: müəlliflik hüquqları, hesab idarəetməsi, nəşr lisenziyaları və ictimai məsuliyyət."
             : "Official Terms of Service for Rvan.me. Contributor copyright ownership, non-exclusive publishing license, account management, and community standards."
         }
-        url={isAz ? "https://www.rvan.me/az/terms" : "https://www.rvan.me/terms"}
+        url={isAz ? "https://blog.rvan.me/az/terms" : "https://blog.rvan.me/terms"}
       />
 
       <SiteHeader siteSettings={siteSettings} />

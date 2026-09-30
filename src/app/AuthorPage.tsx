@@ -113,7 +113,7 @@ export default function AuthorPage() {
       <SEO
         title={`${authorName} — Rvan.me ${isAz ? "Müəllifi" : "Author"}`}
         description={`${authorName} (${authorRole}) — ${authorBio.substring(0, 150)}`}
-        url={`https://www.rvan.me/author/${slug || "author"}`}
+        url={`https://blog.rvan.me/author/${slug || "author"}`}
       />
 
       <SiteHeader siteSettings={siteSettings} />

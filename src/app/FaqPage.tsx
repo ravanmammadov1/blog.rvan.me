@@ -69,7 +69,7 @@ export default function FaqPage() {
             ? "Rvan.me nəşr prosesi, müəlliflik qaydaları, redaksiya meyarları və süni intellekt siyasəti haqqında ən vacib 10 sualın ətraflı cavabları."
             : "Detailed answers to the 10 most essential questions about Rvan.me, publishing, contributor onboarding, editorial review, and AI policies."
         }
-        url={isAz ? "https://www.rvan.me/az/faq" : "https://www.rvan.me/faq"}
+        url={isAz ? "https://blog.rvan.me/az/faq" : "https://blog.rvan.me/faq"}
         jsonLd={faqSchema}
       />
 

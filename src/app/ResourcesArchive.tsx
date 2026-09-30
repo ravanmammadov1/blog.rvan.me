@@ -133,7 +133,7 @@ export default function ResourcesArchive() {
       <SEO
         title={`${t("resourcesArchiveTitle", "Open-Source Fonts, Vector Icons & Illustrations")} — Rvan.me`}
         description={t("resourcesArchiveSubtitle", "Curated open-source Google Font families, SVG/React vector icons, and open-source illustration catalog.")}
-        url="https://www.rvan.me/resources"
+        url="https://blog.rvan.me/resources"
       />
 
       {/* Aurora Ambient Lighting */}

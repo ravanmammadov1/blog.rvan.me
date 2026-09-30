@@ -43,7 +43,7 @@ export default function CookiePolicyPage() {
             ? "Rvan.me platformasında istifadə olunan kuki faylları, yerli yaddaş texnologiyaları və məxfilik seçimləri barədə rəsmi məlumat."
             : "Official Cookie Policy for Rvan.me. Transparent explanation of essential authentication tokens, client preferences, and privacy controls."
         }
-        url={isAz ? "https://www.rvan.me/az/cookie-policy" : "https://www.rvan.me/cookie-policy"}
+        url={isAz ? "https://blog.rvan.me/az/cookie-policy" : "https://blog.rvan.me/cookie-policy"}
       />
 
       <SiteHeader siteSettings={siteSettings} />

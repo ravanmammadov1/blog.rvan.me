@@ -201,7 +201,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Send confirmation email to author via Resend
         if (resend && submission.authorEmail) {
-          const liveUrl = `https://www.rvan.me/blog/${generatedSlug}`;
+          const liveUrl = `https://blog.rvan.me/blog/${generatedSlug}`;
           try {
             await resend.emails.send({
               from: resendFrom,

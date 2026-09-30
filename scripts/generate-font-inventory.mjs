@@ -53,8 +53,8 @@ async function generateFontInventory() {
       .replace(/^-+|-+$/g, "");
 
     const isTier1 = tier1Set.has(font.id);
-    const enUrl = `https://www.rvan.me/fonts/${slug}`;
-    const azUrl = `https://www.rvan.me/az/fonts/${slug}`;
+    const enUrl = `https://blog.rvan.me/fonts/${slug}`;
+    const azUrl = `https://blog.rvan.me/az/fonts/${slug}`;
 
     const stylesCount = font.stylesCount || 1;
     const isVariable = Boolean(font.isVariable);

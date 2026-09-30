@@ -144,7 +144,7 @@ export const FOUNDER_CONTRIBUTOR_PROFILE: ContributorProfile = {
     behance: "https://behance.net/ravanmammadov",
     dribbble: "https://dribbble.com/ravanmammadov",
     instagram: "https://instagram.com/rvan.me",
-    website: "https://www.rvan.me",
+    website: "https://blog.rvan.me",
   },
   status: "approved",
   approvedAt: "2026-01-01T00:00:00Z",

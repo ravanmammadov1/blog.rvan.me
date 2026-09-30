@@ -42,7 +42,7 @@ export default function WorkArchive() {
       <SEO
         title="Creative Portfolio — Motion, Brand & Graphic Design | Ravan Mammadov"
         description="Explore selected motion design, brand identity, graphic design, and marketing creative case studies by Ravan Mammadov in Baku, Azerbaijan."
-        url="https://www.rvan.me/work"
+        url="https://blog.rvan.me/work"
       />
       <SiteHeader siteSettings={siteSettings} />
 

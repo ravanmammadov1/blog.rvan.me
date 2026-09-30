@@ -23,21 +23,30 @@ interface SEOProps {
   siteSettings?: SiteSettings | null;
 }
 
-export const DEFAULT_SITE_DOMAIN = "https://www.rvan.me";
+export const DEFAULT_SITE_DOMAIN = "https://blog.rvan.me";
 
 function getSiteOrigin(value: string): string {
   try {
-    return new URL(value, DEFAULT_SITE_DOMAIN).origin.replace(/\/$/, "");
+    const origin = new URL(value, DEFAULT_SITE_DOMAIN).origin.replace(/\/$/, "");
+    if (origin === "https://www.rvan.me" || origin === "https://rvan.me" || origin === "http://www.rvan.me" || origin === "http://rvan.me") {
+      return DEFAULT_SITE_DOMAIN;
+    }
+    return origin;
   } catch {
     return DEFAULT_SITE_DOMAIN;
   }
 }
 
-/** Canonical URLs never contain tracking parameters, searches, or fragments. */
+/** Canonical URLs never contain tracking parameters, searches, or fragments and strictly target blog.rvan.me. */
 function normalizeCanonicalUrl(value: string, siteDomain: string): string {
   try {
-    const parsed = new URL(value, siteDomain);
-    const origin = getSiteOrigin(siteDomain);
+    const targetDomain = (siteDomain === "https://www.rvan.me" || siteDomain === "https://rvan.me") ? DEFAULT_SITE_DOMAIN : siteDomain;
+    let cleanVal = value;
+    if (cleanVal.startsWith("https://www.rvan.me") || cleanVal.startsWith("https://rvan.me") || cleanVal.startsWith("http://www.rvan.me") || cleanVal.startsWith("http://rvan.me")) {
+      cleanVal = cleanVal.replace(/^https?:\/\/(www\.)?rvan\.me/, DEFAULT_SITE_DOMAIN);
+    }
+    const parsed = new URL(cleanVal, targetDomain);
+    const origin = getSiteOrigin(targetDomain);
     const pathname = parsed.pathname === "/" ? "/" : parsed.pathname.replace(/\/+$/, "");
     return `${origin}${pathname}`;
   } catch {

@@ -111,7 +111,7 @@ const svg = `
   <!-- URL on Right Bottom -->
   <g transform="translate(1120, 528)">
     <circle cx="-135" cy="0" r="3.5" fill="#61c5ad" />
-    <text x="0" y="5" font-family="'Courier New', Courier, monospace, monospace" font-size="15" font-weight="700" fill="#cbd5e1" text-anchor="end" letter-spacing="1.2">https://rvan.me</text>
+    <text x="0" y="5" font-family="'Courier New', Courier, monospace, monospace" font-size="15" font-weight="700" fill="#cbd5e1" text-anchor="end" letter-spacing="1.2">https://blog.rvan.me</text>
   </g>
 </svg>
 `;

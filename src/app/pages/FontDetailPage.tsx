@@ -102,7 +102,7 @@ export default function FontDetailPage() {
   if (!font) {
     return (
       <main className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Geist', sans-serif" }}>
-        <SEO title="Font Not Found — Rvan.me" description="The requested font family could not be found." url="https://www.rvan.me/resources" />
+        <SEO title="Font Not Found — Rvan.me" description="The requested font family could not be found." url="https://blog.rvan.me/resources" />
         <SiteHeader siteSettings={siteSettings} />
         <div className="mx-auto max-w-4xl px-6 py-32 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground">Font Family Not Found</h1>
@@ -117,7 +117,7 @@ export default function FontDetailPage() {
   }
 
   const currentSlug = getFontSlug(font);
-  const canonicalUrl = `https://www.rvan.me/fonts/${currentSlug}`;
+  const canonicalUrl = `https://blog.rvan.me/fonts/${currentSlug}`;
   const directDownloadUrl = resolveDirectFontDownloadUrl(font);
 
   // Structured JSON-LD Data for Font Family
@@ -136,7 +136,7 @@ export default function FontDetailPage() {
         "publisher": {
           "@type": "Organization",
           "name": font.foundry,
-          "url": "https://www.rvan.me",
+          "url": "https://blog.rvan.me",
         },
         "genre": font.category,
         "license": font.license,
@@ -150,13 +150,13 @@ export default function FontDetailPage() {
             "@type": "ListItem",
             "position": 1,
             "name": language === "az" ? "Ana Səhifə" : "Home",
-            "item": language === "az" ? "https://www.rvan.me/az" : "https://www.rvan.me",
+            "item": language === "az" ? "https://blog.rvan.me/az" : "https://blog.rvan.me",
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": language === "az" ? "Şriftlər Kataloqu" : "Fonts Directory",
-            "item": language === "az" ? "https://www.rvan.me/az/resources?category=fonts" : "https://www.rvan.me/resources?category=fonts",
+            "item": language === "az" ? "https://blog.rvan.me/az/resources?category=fonts" : "https://blog.rvan.me/resources?category=fonts",
           },
           {
             "@type": "ListItem",

@@ -3,7 +3,7 @@
 **Date**: 2026-08-18  
 **Author**: Primary Implementation Engineer (Antigravity AI)  
 **Status**: COMPLETE STRATEGIC BLUEPRINT  
-**Target Platform**: Rvan.me (`https://www.rvan.me`)  
+**Target Platform**: Rvan.me (`https://blog.rvan.me`)  
 **Scope**: Route Quality Analysis, Editorial Content, Interactive Tools, Creative Resources, Sanity CMS, SEO Indexing, Internal Linking, Differentiation, Retention, and Execution Roadmap.
 
 ---
@@ -229,10 +229,10 @@ Sanity Schema:
      - Zero admin routes (`/admin/linkedin` excluded)
 
 ### 8.2 Canonical URL Rules
-* `/ravanmammadov` → `<link rel="canonical" href="https://www.rvan.me/ravan-mammadov" />`
-* `/profile` → `<link rel="canonical" href="https://www.rvan.me/ravan-mammadov" />`
-* `/az/ravanmammadov` → `<link rel="canonical" href="https://www.rvan.me/az/ravan-mammadov" />`
-* `/az/profile` → `<link rel="canonical" href="https://www.rvan.me/az/ravan-mammadov" />`
+* `/ravanmammadov` → `<link rel="canonical" href="https://blog.rvan.me/ravan-mammadov" />`
+* `/profile` → `<link rel="canonical" href="https://blog.rvan.me/ravan-mammadov" />`
+* `/az/ravanmammadov` → `<link rel="canonical" href="https://blog.rvan.me/az/ravan-mammadov" />`
+* `/az/profile` → `<link rel="canonical" href="https://blog.rvan.me/az/ravan-mammadov" />`
 * `/fonts` → 301 redirect / canonical to `/resources?category=fonts`
 
 ---
