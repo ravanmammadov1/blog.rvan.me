@@ -188,7 +188,8 @@ function createGraph(page) {
       image: {
         "@type": "ImageObject",
         "@id": `${domain}/#portrait`,
-        url: `${domain}/imports/ravan_1-1200.webp`,
+        url: `${domain}/ravan-mammadov.webp`,
+        contentUrl: `${domain}/ravan-mammadov.webp`,
         caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov) — Aparıcı Kreativ Dizayner və Təsisçi" : "Ravan Mammadov (Rəvan Məmmədov) — Senior Creative Designer & Founder",
         representativeOfPage: true,
       },
@@ -774,7 +775,7 @@ console.log(`Generated SEO-ready HTML for ${allPages.length} routes (EN + AZ).`)
 const sitemapPages = allPages.filter((p) => !p.noindex && !p.path.includes("/admin") && p.isTier1 !== false);
 
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${sitemapPages
   .map((p) => {
     const isAz = p.path === "/az" || p.path.startsWith("/az/");
@@ -788,7 +789,7 @@ ${sitemapPages
         ? "1.0"
         : p.path.startsWith("/blog") || p.path.startsWith("/az/blog") || p.path.startsWith("/tools") || p.path.startsWith("/az/tools")
         ? "0.9"
-        : p.path.startsWith("/work") || p.path.startsWith("/az/work") || p.path === "/ravan-mammadov" || p.path === "/az/ravan-mammadov"
+        : p.path.startsWith("/work") || p.path.startsWith("/az/work") || p.path.includes("ravan-mammadov")
         ? "0.8"
         : p.path.includes("/fonts/")
         ? "0.7"
@@ -798,6 +799,15 @@ ${sitemapPages
         ? "daily"
         : "weekly";
 
+    const isProfilePage = p.path.includes("ravan-mammadov") || p.path === "/about" || p.path === "/az/about";
+    const hasCoverImage = Boolean(p.coverImage);
+    const imageUrl = hasCoverImage ? getSanityImageUrl(p.coverImage) : `${domain}/ravan-mammadov.webp`;
+    const imageTitle = escapeHtml(p.title);
+
+    const imageTag = isProfilePage || hasCoverImage
+      ? `\n    <image:image>\n      <image:loc>${imageUrl}</image:loc>\n      <image:title>${imageTitle}</image:title>\n    </image:image>`
+      : "";
+
     return `  <url>
     <loc>${url}</loc>
     <lastmod>${lastmod}</lastmod>
@@ -805,7 +815,7 @@ ${sitemapPages
     <priority>${priority}</priority>
     <xhtml:link rel="alternate" hreflang="en" href="${enUrl}" />
     <xhtml:link rel="alternate" hreflang="az" href="${azUrl}" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}" />${imageTag}
   </url>`;
   })
   .join("\n")}

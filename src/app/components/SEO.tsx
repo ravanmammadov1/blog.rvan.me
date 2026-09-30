@@ -228,7 +228,8 @@ export default function SEO({
         image: {
           "@type": "ImageObject",
           "@id": `${siteDomain}/#portrait`,
-          url: `${siteDomain}/imports/ravan_1-1200.webp`,
+          url: `${siteDomain}/ravan-mammadov.webp`,
+          contentUrl: `${siteDomain}/ravan-mammadov.webp`,
           caption: isAz
             ? "Rəvan Məmmədov (Ravan Mammadov) — Aparıcı Kreativ Dizayner və Təsisçi"
             : "Ravan Mammadov (Rəvan Məmmədov) — Senior Creative Designer & Founder",

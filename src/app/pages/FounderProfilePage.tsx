@@ -294,8 +294,10 @@ export default function FounderProfilePage() {
     url: isAz ? "https://www.rvan.me/az/about/ravan-mammadov" : "https://www.rvan.me/about/ravan-mammadov",
     image: {
       "@type": "ImageObject",
-      url: "https://www.rvan.me/imports/ravan_1-1200.webp",
-      caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov)" : "Ravan Mammadov (Rəvan Məmmədov)",
+      "@id": "https://www.rvan.me/#portrait",
+      url: "https://www.rvan.me/ravan-mammadov.webp",
+      contentUrl: "https://www.rvan.me/ravan-mammadov.webp",
+      caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov) — Təsisçi və Kreativ Strateq" : "Ravan Mammadov (Rəvan Məmmədov) — Founder & Creative Director",
       representativeOfPage: true,
     },
     jobTitle: isAz ? "Kreativ Strateq, Dizayner, Marketoloq" : "Creative Strategist, Designer, Marketer",
