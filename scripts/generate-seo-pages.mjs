@@ -805,7 +805,7 @@ ${sitemapPages
     const imageTitle = escapeHtml(p.title);
 
     const imageTag = isProfilePage || hasCoverImage
-      ? `\n    <image:image>\n      <image:loc>${imageUrl}</image:loc>\n      <image:title>${imageTitle}</image:title>\n    </image:image>`
+      ? `\n    <image:image>\n      <image:loc>${escapeHtml(imageUrl)}</image:loc>\n      <image:title>${imageTitle}</image:title>\n    </image:image>`
       : "";
 
     return `  <url>
