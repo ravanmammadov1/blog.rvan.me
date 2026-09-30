@@ -10,8 +10,8 @@ const todayIso = new Date().toISOString().split("T")[0];
 const staticPages = [
   {
     path: "/",
-    title: "Rvan.me — Creative Publication & Knowledge Platform",
-    description: "A creative publication and knowledge platform exploring design, marketing, branding, AI & creativity, and the creative industry.",
+    title: "Ravan Mammadov — Creative Director & Designer | Rvan.me",
+    description: "Official portfolio and creative publication of Ravan Mammadov (Rəvan Məmmədov). Exploring design systems, marketing, branding, AI, and visual culture.",
     type: "website",
     lastmod: todayIso,
   },
@@ -633,8 +633,8 @@ async function fetchFontPages() {
 
 const staticAzTranslations = {
   "/": {
-    title: "Rvan.me — Kreativ Nəşr və Bilik Platforması",
-    description: "Dizayn, marketinq, brendinq, süni intellekt və yaradıcılıq, eləcə də kreativ sənayeni araşdıran müstəqil nəşr və bilik platforması.",
+    title: "Rəvan Məmmədov — Kreativ Direktor və Dizayner | Rvan.me",
+    description: "Rəvan Məmmədov (Ravan Mammadov) — Rvan.me rəsmi portfel və kreativ nəşr ekosistemi. Dizayn, marketinq, brendinq və vizual mədəniyyət.",
   },
   "/work": {
     title: "Kreativ Portfolio — Motion, Brendinq və Qrafik Dizayn | Rəvan Məmmədov",

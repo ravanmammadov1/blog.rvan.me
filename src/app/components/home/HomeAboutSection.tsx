@@ -45,16 +45,36 @@ export default function HomeAboutSection() {
             </p>
 
             {/* Founder Note */}
-            <div className="pt-6 border-t border-border/50 space-y-2">
-              <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-foreground uppercase tracking-wider">
-                <UserCheck size={14} className="text-primary" />
-                <span>{isAz ? "Təsisçi: Rəvan Məmmədov" : "Founded by Ravan Mammadov"}</span>
+            <div className="pt-6 border-t border-border/50 flex items-start gap-4">
+              <Link
+                to={getLocalizedPath("/about/ravan-mammadov")}
+                className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-2xl overflow-hidden border border-primary/40 shrink-0 bg-muted group shadow-md"
+                aria-label={isAz ? "Rəvan Məmmədov" : "Ravan Mammadov"}
+              >
+                <img
+                  src="/ravan-mammadov.webp"
+                  alt={isAz ? "Rəvan Məmmədov — Kreativ Direktor və Təsisçi" : "Ravan Mammadov — Creative Director & Founder"}
+                  title={isAz ? "Rəvan Məmmədov" : "Ravan Mammadov"}
+                  width={64}
+                  height={64}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </Link>
+              <div className="space-y-1">
+                <Link
+                  to={getLocalizedPath("/about/ravan-mammadov")}
+                  className="inline-flex items-center gap-2 text-xs font-mono font-bold text-foreground uppercase tracking-wider hover:text-primary transition-colors"
+                >
+                  <UserCheck size={14} className="text-primary" />
+                  <span>{isAz ? "Təsisçi: Rəvan Məmmədov" : "Founded by Ravan Mammadov"}</span>
+                </Link>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-normal max-w-xl">
+                  {isAz
+                    ? "Rəvan Məmmədov vizual mədəniyyət, brendlər, texnologiya və kreativ strategiyanın kəsişməsini araşdıran dizayner və marketoloqdur."
+                    : "Ravan Mammadov is a designer and marketer exploring the intersection of visual culture, brands, technology and creative strategy."}
+                </p>
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-normal max-w-xl">
-                {isAz
-                  ? "Rəvan Məmmədov vizual mədəniyyət, brendlər, texnologiya və kreativ strategiyanın kəsişməsini araşdıran dizayner və marketoloqdur."
-                  : "Ravan Mammadov is a designer and marketer exploring the intersection of visual culture, brands, technology and creative strategy."}
-              </p>
             </div>
 
             <div className="pt-2">

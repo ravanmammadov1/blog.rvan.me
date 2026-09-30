@@ -34,9 +34,9 @@ export default function HomePage() {
       style={{ fontFamily: "'Geist', sans-serif" }}
     >
       <SEO
-        title="Rvan.me — Creative Publication & Knowledge Platform"
-        description="A creative publication about design, marketing, branding, AI and visual culture."
-        url="https://www.rvan.me"
+        title={isAz ? "Rəvan Məmmədov — Kreativ Direktor və Dizayner | Rvan.me" : "Ravan Mammadov — Creative Director & Designer | Rvan.me"}
+        description={isAz ? "Rəvan Məmmədov (Ravan Mammadov) — Rvan.me rəsmi portfel və kreativ nəşr ekosistemi. Dizayn, marketinq, brendinq və süni intellekt." : "Ravan Mammadov (Rəvan Məmmədov) — Official portfolio and creative publication exploring design, marketing, branding, AI, and visual culture."}
+        url={isAz ? "https://www.rvan.me/az" : "https://www.rvan.me"}
       />
 
       {/* ── 1. UNIFIED HERO SCENE WITH FLOATING NAVBAR (STRICT REFERENCE COMPOSITION) ── */}
