@@ -245,8 +245,6 @@ export default function SEO({
           representativeOfPage: true,
         },
         sameAs: [
-          `${siteDomain}/about/ravan-mammadov`,
-          `${siteDomain}/ravan-mammadov`,
           activeSettings?.socialLinks?.behance || "https://www.behance.net/mammadovravan",
           activeSettings?.socialLinks?.linkedin || "https://www.linkedin.com/in/ravanmammadov1/",
           activeSettings?.socialLinks?.instagram || "https://www.instagram.com/ravanimate/",

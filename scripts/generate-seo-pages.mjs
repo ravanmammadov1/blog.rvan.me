@@ -281,8 +281,9 @@ function createGraph(page) {
       mainEntityOfPage: { "@id": `${canonical}#webpage` },
       author: {
         "@type": "Person",
+        "@id": personId,
         name: "Ravan Mammadov",
-        url: `${domain}/ravan-mammadov`,
+        url: `${domain}/about/ravan-mammadov`,
         sameAs: [
           "https://www.linkedin.com/in/ravanmammadov1/",
           "https://www.behance.net/mammadovravan",
