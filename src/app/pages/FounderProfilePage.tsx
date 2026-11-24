@@ -283,6 +283,7 @@ export default function FounderProfilePage() {
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": "https://rvan.me/#person",
     name: founderName,
     alternateName: [
       "Rəvan Məmmədov",
@@ -300,7 +301,7 @@ export default function FounderProfilePage() {
       caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov) — Təsisçi və Kreativ Strateq" : "Ravan Mammadov (Rəvan Məmmədov) — Founder & Creative Director",
       representativeOfPage: true,
     },
-    jobTitle: isAz ? "Kreativ Strateq, Dizayner, Marketoloq" : "Creative Strategist, Designer, Marketer",
+    jobTitle: isAz ? "Aparıcı Kreativ Dizayner və Art Direktor" : "Senior Creative Designer & Art Director",
     worksFor: {
       "@type": "Organization",
       name: "Rvan.me",
