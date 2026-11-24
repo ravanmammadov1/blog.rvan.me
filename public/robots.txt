@@ -1,4 +1,4 @@
-# robots.txt for https://blog.rvan.me
+# robots.txt for https://rvan.me
 User-agent: *
 Allow: /
 
@@ -10,4 +10,4 @@ Disallow: /admin/
 Disallow: /az/admin/
 
 # Sitemap
-Sitemap: https://blog.rvan.me/sitemap.xml
+Sitemap: https://rvan.me/sitemap.xml
