@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
             ? "Rvan.me platformasının rəsmi Məxfilik Siyasəti: istifadəçi hesabları, müəllif hüquqları, toplanan məlumatlar və təhlükəsizlik qaydaları."
             : "Official Privacy Policy for Rvan.me. Transparent information disclosures, Google authentication, contributor copyright ownership, and user privacy controls."
         }
-        url={isAz ? "https://blog.rvan.me/az/privacy-policy" : "https://blog.rvan.me/privacy-policy"}
+        url={isAz ? "https://rvan.me/az/privacy-policy" : "https://rvan.me/privacy-policy"}
       />
 
       <SiteHeader siteSettings={siteSettings} />

@@ -291,12 +291,12 @@ export default function FounderProfilePage() {
       "Rəvan Məmmədov Dizayner",
       "ravanimate",
     ],
-    url: isAz ? "https://blog.rvan.me/az/about/ravan-mammadov" : "https://blog.rvan.me/about/ravan-mammadov",
+    url: isAz ? "https://rvan.me/az/about/ravan-mammadov" : "https://rvan.me/about/ravan-mammadov",
     image: {
       "@type": "ImageObject",
-      "@id": "https://blog.rvan.me/#portrait",
-      url: "https://blog.rvan.me/ravan-mammadov.webp",
-      contentUrl: "https://blog.rvan.me/ravan-mammadov.webp",
+      "@id": "https://rvan.me/#portrait",
+      url: "https://rvan.me/ravan-mammadov.webp",
+      contentUrl: "https://rvan.me/ravan-mammadov.webp",
       caption: isAz ? "Rəvan Məmmədov (Ravan Mammadov) — Təsisçi və Kreativ Strateq" : "Ravan Mammadov (Rəvan Məmmədov) — Founder & Creative Director",
       representativeOfPage: true,
     },
@@ -304,7 +304,7 @@ export default function FounderProfilePage() {
     worksFor: {
       "@type": "Organization",
       name: "Rvan.me",
-      url: "https://blog.rvan.me",
+      url: "https://rvan.me",
     },
     sameAs: [
       "https://www.linkedin.com/in/ravanmammadov1/",
@@ -324,7 +324,7 @@ export default function FounderProfilePage() {
       <SEO
         title={isAz ? "Rəvan Məmmədov — Kreativ Strateq, Dizayner, Marketoloq" : "Ravan Mammadov — Creative Strategist, Designer, Marketer"}
         description={positioningStatement}
-        url={isAz ? "https://blog.rvan.me/az/about/ravan-mammadov" : "https://blog.rvan.me/about/ravan-mammadov"}
+        url={isAz ? "https://rvan.me/az/about/ravan-mammadov" : "https://rvan.me/about/ravan-mammadov"}
       />
 
       {/* Structured Data Script */}

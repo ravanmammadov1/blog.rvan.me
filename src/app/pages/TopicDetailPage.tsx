@@ -114,7 +114,7 @@ export default function TopicDetailPage() {
       <SEO
         title={`${topicName} — ${isAz ? "Mövzu İndeksi" : "Topic Index"} | Rvan.me`}
         description={topicDesc}
-        url={`https://blog.rvan.me/topics/${topic.slug}`}
+        url={`https://rvan.me/topics/${topic.slug}`}
       />
 
       <SiteHeader siteSettings={siteSettings} />

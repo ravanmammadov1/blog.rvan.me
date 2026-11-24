@@ -23,7 +23,7 @@ interface SEOProps {
   siteSettings?: SiteSettings | null;
 }
 
-export const DEFAULT_SITE_DOMAIN = "https://blog.rvan.me";
+export const DEFAULT_SITE_DOMAIN = "https://rvan.me";
 
 function getSiteOrigin(value: string): string {
   try {
@@ -37,7 +37,7 @@ function getSiteOrigin(value: string): string {
   }
 }
 
-/** Canonical URLs never contain tracking parameters, searches, or fragments and strictly target blog.rvan.me. */
+/** Canonical URLs never contain tracking parameters, searches, or fragments and strictly target rvan.me. */
 function normalizeCanonicalUrl(value: string, siteDomain: string): string {
   try {
     const targetDomain = (siteDomain === "https://www.rvan.me" || siteDomain === "https://rvan.me") ? DEFAULT_SITE_DOMAIN : siteDomain;
